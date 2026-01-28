@@ -9,8 +9,8 @@ import {
   ObjectManifest,
   RelationFieldManifest,
   RoleManifest,
-  ServerlessFunctionManifest,
-  ServerlessFunctionTriggerManifest,
+  LogicFunctionManifest,
+  LogicFunctionTriggerManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType, HTTPMethod, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,11 +23,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { CronTriggerV2Service } from 'src/engine/metadata-modules/cron-trigger/services/cron-trigger-v2.service';
-import { FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { DatabaseEventTriggerV2Service } from 'src/engine/metadata-modules/database-event-trigger/services/database-event-trigger-v2.service';
-import { FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -39,13 +35,16 @@ import { FieldPermissionService } from 'src/engine/metadata-modules/object-permi
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { RouteTriggerV2Service } from 'src/engine/metadata-modules/route-trigger/services/route-trigger-v2.service';
-import { FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
-import { ServerlessFunctionLayerService } from 'src/engine/metadata-modules/serverless-function-layer/serverless-function-layer.service';
-import { ServerlessFunctionV2Service } from 'src/engine/metadata-modules/serverless-function/services/serverless-function-v2.service';
-import { FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { LogicFunctionLayerService } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.service';
+import { LogicFunctionV2Service } from 'src/engine/metadata-modules/logic-function/services/logic-function-v2.service';
+import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -54,15 +53,12 @@ export class ApplicationSyncService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
-    private readonly serverlessFunctionLayerService: ServerlessFunctionLayerService,
+    private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly serverlessFunctionV2Service: ServerlessFunctionV2Service,
+    private readonly logicFunctionV2Service: LogicFunctionV2Service,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
-    private readonly databaseEventTriggerV2Service: DatabaseEventTriggerV2Service,
-    private readonly cronTriggerV2Service: CronTriggerV2Service,
-    private readonly routeTriggerV2Service: RouteTriggerV2Service,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly roleService: RoleService,
     private readonly objectPermissionService: ObjectPermissionService,
@@ -106,19 +102,19 @@ export class ApplicationSyncService {
     }
 
     if (manifest.functions.length > 0) {
-      if (!isDefined(application.serverlessFunctionLayerId)) {
+      if (!isDefined(application.logicFunctionLayerId)) {
         throw new ApplicationException(
-          `Failed to sync serverless function, could not find a serverless function layer.`,
+          `Failed to sync logic function, could not find a logic function layer.`,
           ApplicationExceptionCode.FIELD_NOT_FOUND,
         );
       }
 
-      await this.syncServerlessFunctions({
-        serverlessFunctionsToSync: manifest.functions,
+      await this.syncLogicFunctions({
+        logicFunctionsToSync: manifest.functions,
         code: manifest.sources,
         workspaceId,
         applicationId: application.id,
-        serverlessFunctionLayerId: application.serverlessFunctionLayerId,
+        logicFunctionLayerId: application.logicFunctionLayerId,
       });
     }
 
@@ -151,17 +147,17 @@ export class ApplicationSyncService {
         description: manifest.application.description,
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-        serverlessFunctionLayerId: null,
-        defaultServerlessFunctionRoleId: null,
+        logicFunctionLayerId: null,
+        defaultLogicFunctionRoleId: null,
         workspaceId,
       }));
 
-    let serverlessFunctionLayerId = application.serverlessFunctionLayerId;
+    let logicFunctionLayerId = application.logicFunctionLayerId;
 
     if (manifest.functions.length > 0) {
-      if (!isDefined(serverlessFunctionLayerId)) {
-        serverlessFunctionLayerId = (
-          await this.serverlessFunctionLayerService.create(
+      if (!isDefined(logicFunctionLayerId)) {
+        logicFunctionLayerId = (
+          await this.logicFunctionLayerService.create(
             {
               packageJson,
               yarnLock,
@@ -171,8 +167,8 @@ export class ApplicationSyncService {
         ).id;
       }
 
-      await this.serverlessFunctionLayerService.update(
-        serverlessFunctionLayerId,
+      await this.logicFunctionLayerService.update(
+        logicFunctionLayerId,
         {
           packageJson,
           yarnLock,
@@ -193,8 +189,8 @@ export class ApplicationSyncService {
       name,
       description: manifest.application.description,
       version: packageJson.version,
-      serverlessFunctionLayerId,
-      defaultServerlessFunctionRoleId: null,
+      logicFunctionLayerId,
+      defaultLogicFunctionRoleId: null,
     });
   }
 
@@ -207,7 +203,7 @@ export class ApplicationSyncService {
     workspaceId: string;
     applicationId: string;
   }) {
-    let defaultServerlessFunctionRoleId: string | null = null;
+    let defaultLogicFunctionRoleId: string | null = null;
 
     for (const role of manifest.roles ?? []) {
       let existingRole = await this.roleService.getRoleByUniversalIdentifier({
@@ -241,13 +237,13 @@ export class ApplicationSyncService {
         existingRole.universalIdentifier ===
         manifest.application.functionRoleUniversalIdentifier
       ) {
-        defaultServerlessFunctionRoleId = existingRole.id;
+        defaultLogicFunctionRoleId = existingRole.id;
       }
     }
 
-    if (isDefined(defaultServerlessFunctionRoleId)) {
+    if (isDefined(defaultLogicFunctionRoleId)) {
       await this.applicationService.update(applicationId, {
-        defaultServerlessFunctionRoleId: defaultServerlessFunctionRoleId,
+        defaultLogicFunctionRoleId: defaultLogicFunctionRoleId,
       });
     }
   }
@@ -853,538 +849,180 @@ export class ApplicationSyncService {
     }
   }
 
-  private async syncServerlessFunctions({
-    serverlessFunctionsToSync,
+  private async syncLogicFunctions({
+    logicFunctionsToSync,
     code,
     workspaceId,
     applicationId,
-    serverlessFunctionLayerId,
+    logicFunctionLayerId,
   }: {
-    serverlessFunctionsToSync: ServerlessFunctionManifest[];
+    logicFunctionsToSync: LogicFunctionManifest[];
     workspaceId: string;
     code: Sources;
     applicationId: string;
-    serverlessFunctionLayerId: string;
+    logicFunctionLayerId: string;
   }) {
-    const { flatServerlessFunctionMaps } =
+    const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatServerlessFunctionMaps'],
+          flatMapsKeys: ['flatLogicFunctionMaps'],
         },
       );
 
-    const applicationServerlessFunctions = Object.values(
-      flatServerlessFunctionMaps.byId,
+    const applicationLogicFunctions = Object.values(
+      flatLogicFunctionMaps.byId,
     ).filter(
-      (serverlessFunction) =>
-        isDefined(serverlessFunction) &&
-        serverlessFunction.applicationId === applicationId,
-    ) as FlatServerlessFunction[];
+      (logicFunction) =>
+        isDefined(logicFunction) &&
+        logicFunction.applicationId === applicationId,
+    ) as FlatLogicFunction[];
 
-    const serverlessFunctionsToSyncUniversalIdentifiers =
-      serverlessFunctionsToSync.map(
-        (serverlessFunction) => serverlessFunction.universalIdentifier,
+    const logicFunctionsToSyncUniversalIdentifiers = logicFunctionsToSync.map(
+      (logicFunction) => logicFunction.universalIdentifier,
+    );
+
+    const applicationLogicFunctionsUniversalIdentifiers =
+      applicationLogicFunctions.map(
+        (logicFunction) => logicFunction.universalIdentifier,
       );
 
-    const applicationServerlessFunctionsUniversalIdentifiers =
-      applicationServerlessFunctions.map(
-        (serverlessFunction) => serverlessFunction.universalIdentifier,
-      );
-
-    const serverlessFunctionsToDelete = applicationServerlessFunctions.filter(
-      (serverlessFunction) =>
-        isDefined(serverlessFunction.universalIdentifier) &&
-        !serverlessFunctionsToSyncUniversalIdentifiers.includes(
-          serverlessFunction.universalIdentifier,
+    const logicFunctionsToDelete = applicationLogicFunctions.filter(
+      (logicFunction) =>
+        isDefined(logicFunction.universalIdentifier) &&
+        !logicFunctionsToSyncUniversalIdentifiers.includes(
+          logicFunction.universalIdentifier,
         ),
     );
 
-    const serverlessFunctionsToUpdate = applicationServerlessFunctions.filter(
-      (serverlessFunction) =>
-        isDefined(serverlessFunction.universalIdentifier) &&
-        serverlessFunctionsToSyncUniversalIdentifiers.includes(
-          serverlessFunction.universalIdentifier,
+    const logicFunctionsToUpdate = applicationLogicFunctions.filter(
+      (logicFunction) =>
+        isDefined(logicFunction.universalIdentifier) &&
+        logicFunctionsToSyncUniversalIdentifiers.includes(
+          logicFunction.universalIdentifier,
         ),
     );
 
-    const serverlessFunctionsToCreate = serverlessFunctionsToSync.filter(
-      (serverlessFunctionToSync) =>
-        !applicationServerlessFunctionsUniversalIdentifiers.includes(
-          serverlessFunctionToSync.universalIdentifier,
+    const logicFunctionsToCreate = logicFunctionsToSync.filter(
+      (logicFunctionToSync) =>
+        !applicationLogicFunctionsUniversalIdentifiers.includes(
+          logicFunctionToSync.universalIdentifier,
         ),
     );
 
-    for (const serverlessFunctionToDelete of serverlessFunctionsToDelete) {
-      await this.serverlessFunctionV2Service.destroyOne({
-        destroyServerlessFunctionInput: { id: serverlessFunctionToDelete.id },
+    for (const logicFunctionToDelete of logicFunctionsToDelete) {
+      await this.logicFunctionV2Service.destroyOne({
+        destroyLogicFunctionInput: { id: logicFunctionToDelete.id },
         workspaceId,
         isSystemBuild: true,
       });
     }
 
-    for (const serverlessFunctionToUpdate of serverlessFunctionsToUpdate) {
-      const serverlessFunctionToSync = serverlessFunctionsToSync.find(
-        (serverlessFunction) =>
-          serverlessFunction.universalIdentifier ===
-          serverlessFunctionToUpdate.universalIdentifier,
+    for (const logicFunctionToUpdate of logicFunctionsToUpdate) {
+      const logicFunctionToSync = logicFunctionsToSync.find(
+        (logicFunction) =>
+          logicFunction.universalIdentifier ===
+          logicFunctionToUpdate.universalIdentifier,
       );
 
-      if (!serverlessFunctionToSync) {
+      if (!logicFunctionToSync) {
         throw new ApplicationException(
-          `Failed to find serverlessFunction to sync with universalIdentifier ${serverlessFunctionToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+          `Failed to find logicFunction to sync with universalIdentifier ${logicFunctionToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
         );
       }
 
       const name =
-        serverlessFunctionToSync.name ??
-        parse(serverlessFunctionToSync.handlerName).name;
+        logicFunctionToSync.name ?? parse(logicFunctionToSync.handlerName).name;
 
-      const updateServerlessFunctionInput = {
-        id: serverlessFunctionToUpdate.id,
+      const updateLogicFunctionInput = {
+        id: logicFunctionToUpdate.id,
         update: {
           name,
           code,
-          timeoutSeconds: serverlessFunctionToSync.timeoutSeconds,
-          sourceHandlerPath: serverlessFunctionToSync.sourceHandlerPath,
-          builtHandlerPath: serverlessFunctionToSync.builtHandlerPath,
-          handlerName: serverlessFunctionToSync.handlerName,
-          toolInputSchema: serverlessFunctionToSync.toolInputSchema,
-          isTool: serverlessFunctionToSync.isTool,
+          timeoutSeconds: logicFunctionToSync.timeoutSeconds,
+          sourceHandlerPath: logicFunctionToSync.sourceHandlerPath,
+          builtHandlerPath: logicFunctionToSync.builtHandlerPath,
+          handlerName: logicFunctionToSync.handlerName,
+          toolInputSchema: logicFunctionToSync.toolInputSchema,
+          isTool: logicFunctionToSync.isTool,
         },
       };
 
-      await this.serverlessFunctionV2Service.updateOne(
-        updateServerlessFunctionInput,
+      await this.logicFunctionV2Service.updateOne(
+        updateLogicFunctionInput,
         workspaceId,
       );
 
-      await this.syncDatabaseEventTriggersForServerlessFunction({
-        serverlessFunctionId: serverlessFunctionToUpdate.id,
-        triggersToSync: serverlessFunctionToSync.triggers || [],
-        workspaceId,
-        applicationId,
-      });
-
-      await this.syncCronTriggersForServerlessFunction({
-        serverlessFunctionId: serverlessFunctionToUpdate.id,
-        triggersToSync: serverlessFunctionToSync.triggers || [],
-        workspaceId,
-        applicationId,
-      });
-
-      await this.syncRouteTriggersForServerlessFunction({
-        serverlessFunctionId: serverlessFunctionToUpdate.id,
-        triggersToSync: serverlessFunctionToSync.triggers || [],
-        workspaceId,
-        applicationId,
-      });
+      // Trigger settings are now embedded in the logic function entity
+      // They are handled through the update input
     }
 
-    for (const serverlessFunctionToCreate of serverlessFunctionsToCreate) {
+    for (const logicFunctionToCreate of logicFunctionsToCreate) {
       const name =
-        serverlessFunctionToCreate.name ??
-        parse(serverlessFunctionToCreate.handlerName).name;
+        logicFunctionToCreate.name ??
+        parse(logicFunctionToCreate.handlerName).name;
 
-      const createServerlessFunctionInput = {
+      const createLogicFunctionInput = {
         name,
         code,
-        universalIdentifier: serverlessFunctionToCreate.universalIdentifier,
-        timeoutSeconds: serverlessFunctionToCreate.timeoutSeconds,
-        sourceHandlerPath: serverlessFunctionToCreate.sourceHandlerPath,
-        handlerName: serverlessFunctionToCreate.handlerName,
-        builtHandlerPath: serverlessFunctionToCreate.builtHandlerPath,
+        universalIdentifier: logicFunctionToCreate.universalIdentifier,
+        timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
+        sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
+        handlerName: logicFunctionToCreate.handlerName,
+        builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
         applicationId,
-        serverlessFunctionLayerId,
-        toolInputSchema: serverlessFunctionToCreate.toolInputSchema,
-        isTool: serverlessFunctionToCreate.isTool,
+        logicFunctionLayerId,
+        toolInputSchema: logicFunctionToCreate.toolInputSchema,
+        isTool: logicFunctionToCreate.isTool,
       };
 
-      const createdServerlessFunction =
-        await this.serverlessFunctionV2Service.createOne({
-          createServerlessFunctionInput,
-          workspaceId,
-          applicationId,
-        });
-
-      await this.syncDatabaseEventTriggersForServerlessFunction({
-        serverlessFunctionId: createdServerlessFunction.id,
-        triggersToSync: serverlessFunctionToCreate.triggers || [],
+      await this.logicFunctionV2Service.createOne({
+        createLogicFunctionInput,
         workspaceId,
         applicationId,
       });
 
-      await this.syncCronTriggersForServerlessFunction({
-        serverlessFunctionId: createdServerlessFunction.id,
-        triggersToSync: serverlessFunctionToCreate.triggers || [],
-        workspaceId,
-        applicationId,
-      });
-
-      await this.syncRouteTriggersForServerlessFunction({
-        serverlessFunctionId: createdServerlessFunction.id,
-        triggersToSync: serverlessFunctionToCreate.triggers || [],
-        workspaceId,
-        applicationId,
-      });
+      // Trigger settings are now embedded in the logic function entity
+      // They are handled through the create input
     }
   }
 
-  private async syncDatabaseEventTriggersForServerlessFunction({
-    serverlessFunctionId,
-    triggersToSync,
-    workspaceId,
-    applicationId,
-  }: {
-    serverlessFunctionId: string;
-    triggersToSync: ServerlessFunctionTriggerManifest[];
-    workspaceId: string;
-    applicationId: string;
-  }) {
-    const databaseEventTriggersToSync = triggersToSync.filter(
-      (trigger) => trigger.type === 'databaseEvent',
-    );
+  private extractTriggerSettingsFromManifest(
+    triggers: LogicFunctionTriggerManifest[] = [],
+  ): {
+    cronTriggerSettings: CronTriggerSettings | null;
+    databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;
+    httpRouteTriggerSettings: HttpRouteTriggerSettings | null;
+  } {
+    let cronTriggerSettings: CronTriggerSettings | null = null;
+    let databaseEventTriggerSettings: DatabaseEventTriggerSettings | null =
+      null;
+    let httpRouteTriggerSettings: HttpRouteTriggerSettings | null = null;
 
-    const { flatDatabaseEventTriggerMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatDatabaseEventTriggerMaps'],
-        },
-      );
-
-    const existingDatabaseEventTriggers = Object.values(
-      flatDatabaseEventTriggerMaps.byId,
-    ).filter(
-      (trigger) =>
-        isDefined(trigger) &&
-        trigger.serverlessFunctionId === serverlessFunctionId,
-    ) as FlatDatabaseEventTrigger[];
-
-    const triggersToSyncUniversalIdentifiers = databaseEventTriggersToSync.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const existingTriggersUniversalIdentifiers =
-      existingDatabaseEventTriggers.map(
-        (trigger) => trigger.universalIdentifier,
-      );
-
-    const triggersToDelete = existingDatabaseEventTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        !triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToUpdate = existingDatabaseEventTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToCreate = databaseEventTriggersToSync.filter(
-      (triggerToSync) =>
-        !existingTriggersUniversalIdentifiers.includes(
-          triggerToSync.universalIdentifier,
-        ),
-    );
-
-    for (const triggerToDelete of triggersToDelete) {
-      await this.databaseEventTriggerV2Service.destroyOne({
-        destroyDatabaseEventTriggerInput: { id: triggerToDelete.id },
-        workspaceId,
-      });
-    }
-
-    for (const triggerToUpdate of triggersToUpdate) {
-      const triggerToSync = databaseEventTriggersToSync.find(
-        (trigger) =>
-          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
-      );
-
-      if (!triggerToSync || triggerToSync.type !== 'databaseEvent') {
-        throw new ApplicationException(
-          `Failed to find database event trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
+    for (const trigger of triggers) {
+      if (trigger.type === 'cron') {
+        cronTriggerSettings = { pattern: trigger.pattern };
+      } else if (trigger.type === 'databaseEvent') {
+        databaseEventTriggerSettings = {
+          eventName: trigger.eventName,
+          updatedFields: trigger.updatedFields,
+        };
+      } else if (trigger.type === 'route') {
+        httpRouteTriggerSettings = {
+          path: trigger.path,
+          httpMethod: trigger.httpMethod as HTTPMethod,
+          isAuthRequired: trigger.isAuthRequired,
+          forwardedRequestHeaders: trigger.forwardedRequestHeaders,
+        };
       }
-
-      const updateDatabaseEventTriggerInput = {
-        id: triggerToUpdate.id,
-        update: {
-          settings: {
-            eventName: triggerToSync.eventName,
-            updatedFields: triggerToSync.updatedFields,
-          },
-        },
-      };
-
-      await this.databaseEventTriggerV2Service.updateOne(
-        updateDatabaseEventTriggerInput,
-        workspaceId,
-      );
     }
 
-    for (const triggerToCreate of triggersToCreate) {
-      if (triggerToCreate.type !== 'databaseEvent') {
-        continue;
-      }
-
-      const createDatabaseEventTriggerInput = {
-        settings: {
-          eventName: triggerToCreate.eventName,
-          updatedFields: triggerToCreate.updatedFields,
-        },
-        universalIdentifier: triggerToCreate.universalIdentifier,
-        serverlessFunctionId,
-      };
-
-      await this.databaseEventTriggerV2Service.createOne(
-        createDatabaseEventTriggerInput,
-        workspaceId,
-        applicationId,
-      );
-    }
-  }
-
-  private async syncCronTriggersForServerlessFunction({
-    serverlessFunctionId,
-    triggersToSync,
-    workspaceId,
-    applicationId,
-  }: {
-    serverlessFunctionId: string;
-    triggersToSync: ServerlessFunctionTriggerManifest[];
-    workspaceId: string;
-    applicationId: string;
-  }) {
-    const cronTriggersToSync = triggersToSync.filter(
-      (trigger) => trigger.type === 'cron',
-    );
-
-    const { flatCronTriggerMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatCronTriggerMaps'],
-        },
-      );
-
-    const existingCronTriggers = Object.values(flatCronTriggerMaps.byId).filter(
-      (trigger) =>
-        isDefined(trigger) &&
-        trigger.serverlessFunctionId === serverlessFunctionId,
-    ) as FlatCronTrigger[];
-
-    const triggersToSyncUniversalIdentifiers = cronTriggersToSync.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const existingTriggersUniversalIdentifiers = existingCronTriggers.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const triggersToDelete = existingCronTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        !triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToUpdate = existingCronTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToCreate = cronTriggersToSync.filter(
-      (triggerToSync) =>
-        !existingTriggersUniversalIdentifiers.includes(
-          triggerToSync.universalIdentifier,
-        ),
-    );
-
-    for (const triggerToDelete of triggersToDelete) {
-      await this.cronTriggerV2Service.destroyOne({
-        destroyCronTriggerInput: { id: triggerToDelete.id },
-        workspaceId,
-      });
-    }
-
-    for (const triggerToUpdate of triggersToUpdate) {
-      const triggerToSync = cronTriggersToSync.find(
-        (trigger) =>
-          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
-      );
-
-      if (!triggerToSync || triggerToSync.type !== 'cron') {
-        throw new ApplicationException(
-          `Failed to find cron trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      const updateCronTriggerInput = {
-        id: triggerToUpdate.id,
-        update: {
-          settings: {
-            pattern: triggerToSync.pattern,
-          },
-        },
-      };
-
-      await this.cronTriggerV2Service.updateOne(
-        updateCronTriggerInput,
-        workspaceId,
-      );
-    }
-
-    for (const triggerToCreate of triggersToCreate) {
-      if (triggerToCreate.type !== 'cron') {
-        continue;
-      }
-
-      const createCronTriggerInput = {
-        settings: {
-          pattern: triggerToCreate.pattern,
-        },
-        universalIdentifier: triggerToCreate.universalIdentifier,
-        serverlessFunctionId,
-      };
-
-      await this.cronTriggerV2Service.createOne(
-        createCronTriggerInput,
-        workspaceId,
-        applicationId,
-      );
-    }
-  }
-
-  private async syncRouteTriggersForServerlessFunction({
-    serverlessFunctionId,
-    triggersToSync,
-    workspaceId,
-    applicationId,
-  }: {
-    serverlessFunctionId: string;
-    triggersToSync: ServerlessFunctionTriggerManifest[];
-    workspaceId: string;
-    applicationId: string;
-  }) {
-    const routeTriggersToSync = triggersToSync.filter(
-      (trigger) => trigger.type === 'route',
-    );
-
-    const { flatRouteTriggerMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRouteTriggerMaps'],
-        },
-      );
-
-    const existingRouteTriggers = Object.values(
-      flatRouteTriggerMaps.byId,
-    ).filter(
-      (trigger) =>
-        isDefined(trigger) &&
-        trigger.serverlessFunctionId === serverlessFunctionId,
-    ) as FlatRouteTrigger[];
-
-    const triggersToSyncUniversalIdentifiers = routeTriggersToSync.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const existingTriggersUniversalIdentifiers = existingRouteTriggers.map(
-      (trigger) => trigger.universalIdentifier,
-    );
-
-    const triggersToDelete = existingRouteTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        !triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToUpdate = existingRouteTriggers.filter(
-      (trigger) =>
-        isDefined(trigger.universalIdentifier) &&
-        triggersToSyncUniversalIdentifiers.includes(
-          trigger.universalIdentifier,
-        ),
-    );
-
-    const triggersToCreate = routeTriggersToSync.filter(
-      (triggerToSync) =>
-        !existingTriggersUniversalIdentifiers.includes(
-          triggerToSync.universalIdentifier,
-        ),
-    );
-
-    for (const triggerToDelete of triggersToDelete) {
-      await this.routeTriggerV2Service.destroyOne({
-        destroyRouteTriggerInput: { id: triggerToDelete.id },
-        workspaceId,
-      });
-    }
-
-    for (const triggerToUpdate of triggersToUpdate) {
-      const triggerToSync = routeTriggersToSync.find(
-        (trigger) =>
-          trigger.universalIdentifier === triggerToUpdate.universalIdentifier,
-      );
-
-      if (!triggerToSync || triggerToSync.type !== 'route') {
-        throw new ApplicationException(
-          `Failed to find route trigger to sync with universalIdentifier ${triggerToUpdate.universalIdentifier}`,
-          ApplicationExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      const updateRouteTriggerInput = {
-        id: triggerToUpdate.id,
-        update: {
-          path: triggerToSync.path,
-          httpMethod: triggerToSync.httpMethod as HTTPMethod,
-          isAuthRequired: triggerToSync.isAuthRequired,
-          forwardedRequestHeaders: triggerToSync.forwardedRequestHeaders ?? [],
-        },
-      };
-
-      await this.routeTriggerV2Service.updateOne(
-        updateRouteTriggerInput,
-        workspaceId,
-      );
-    }
-
-    for (const triggerToCreate of triggersToCreate) {
-      if (triggerToCreate.type !== 'route') {
-        continue;
-      }
-
-      const createRouteTriggerInput = {
-        path: triggerToCreate.path,
-        httpMethod: triggerToCreate.httpMethod as HTTPMethod,
-        isAuthRequired: triggerToCreate.isAuthRequired,
-        forwardedRequestHeaders: triggerToCreate.forwardedRequestHeaders ?? [],
-        serverlessFunctionId,
-      };
-
-      await this.routeTriggerV2Service.createOne(
-        createRouteTriggerInput,
-        workspaceId,
-        applicationId,
-      );
-    }
+    return {
+      cronTriggerSettings,
+      databaseEventTriggerSettings,
+      httpRouteTriggerSettings,
+    };
   }
 
   public async uninstallApplication({

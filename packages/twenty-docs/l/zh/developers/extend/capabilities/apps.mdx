@@ -50,15 +50,12 @@ yarn app:dev
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn app:create-entity
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
 yarn app:generate
 
-# Run a one‑time sync (instead of watch mode)
-yarn app:sync
-
-# Watch your application's functions logs
+# Watch your application's function logs
 yarn function:logs
 
 # Execute a function by name
@@ -68,7 +65,7 @@ yarn function:execute -n my-function -p '{"name": "test"}'
 yarn app:uninstall
 
 # Display commands' help
-yarn app:help
+yarn help
 ```
 
 另请参阅：[create-twenty-app](https://www.npmjs.com/package/create-twenty-app) 和 [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) 的 CLI 参考页面。
@@ -97,22 +94,23 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    app/
-      application.config.ts     # 必需 - 主应用程序配置
-      default-function.role.ts  # 用于无服务器函数的默认角色
-      // 你的实体 (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # 可选 - 处理器实现与实用工具
+    application.config.ts          # Required - main application configuration
+    default-function.role.ts       # Default role for serverless functions
+    hello-world.function.ts        # Example serverless function
+    hello-world.front-component.tsx # Example front component
+    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### 约定优于配置
 
 应用采用**约定优于配置**的方式，根据文件后缀检测实体。 这使得可以在 `src/app/` 文件夹内灵活组织：
 
-| 文件后缀            | 实体类型     |
-| --------------- | -------- |
-| `*.object.ts`   | 自定义对象定义  |
-| `*.function.ts` | 无服务器函数定义 |
-| `*.role.ts`     | 角色定义     |
+| 文件后缀                    | 实体类型                        |
+| ----------------------- | --------------------------- |
+| `*.object.ts`           | 自定义对象定义                     |
+| `*.function.ts`         | 无服务器函数定义                    |
+| `*.front-component.tsx` | Front component definitions |
+| `*.role.ts`             | 角色定义                        |
 
 ### 支持的文件夹组织方式
 
@@ -121,12 +119,14 @@ my-twenty-app/
 **传统（按类型）：**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── objects/
 │   └── postCard.object.ts
 ├── functions/
 │   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
 └── roles/
     └── admin.role.ts
 ```
@@ -134,44 +134,45 @@ src/app/
 **基于特性：**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 └── post-card/
     ├── postCard.object.ts
     ├── createPostCard.function.ts
+    ├── card.front-component.tsx
     └── postCardAdmin.role.ts
 ```
 
 **扁平：**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── postCard.object.ts
 ├── createPostCard.function.ts
+├── card.front-component.tsx
 └── admin.role.ts
 ```
 
 总体来说：
 
-* **package.json**：声明应用名称、版本、运行时（Node 24+、Yarn 4），并添加 `twenty-sdk` 以及 `dev`、`sync`、`generate`、`create-entity`、`logs`、`uninstall`、`auth` 等脚本，这些脚本会委托给本地的 `twenty` CLI。
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
 * **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
 * **.nvmrc**：固定项目期望的 Node.js 版本。
 * **eslint.config.mjs** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
 * **README.md**：应用根目录中的简短 README，包含基本说明。
-* **src/app/**：你以代码形式定义应用的主要位置：
+* **src/**: The main place where you define your application-as-code:
   * `application.config.ts`：应用的全局配置（元数据和运行时关联）。 参见下方“应用配置”。
   * `*.role.ts`：你的无服务器函数所使用的角色定义。 参见下方“默认函数角色”。
   * `*.object.ts`：自定义对象定义。
   * `*.function.ts`：无服务器函数定义。
-* **src/utils/**：可选文件夹，用于处理程序实现和实用工具。
+  * `*.front-component.tsx`: Front component definitions.
 
 后续命令将添加更多文件和文件夹：
 
 * `yarn app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
-* `yarn app:create-entity` 将为你的自定义对象、函数或角色在 `src/app/` 下添加实体定义文件。
-  l
+* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
 
 ## 身份验证
 
@@ -302,62 +303,11 @@ export default defineObject({
 * `universalIdentifier` 必须在各次部署间保持唯一且稳定。
 * 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
 * `fields` 数组是可选的——你可以定义没有自定义字段的对象。
-* 你可以使用 `yarn app:create-entity` 脚手架创建新对象，它会引导你完成命名、字段和关系。
+* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
 
 <Note>
   **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加 `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` 等标准字段。 你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
 </Note>
-
-<Accordion title="替代方案：基于装饰器的语法">
-  你也可以使用 TypeScript 装饰器来定义对象。 该方式使用基于类的语法以及 `@Object`、`@Field`、`@Relation` 装饰器：
-
-  ```typescript
-  import {
-    type AddressField,
-    Field,
-    FieldType,
-    type FullNameField,
-    Object,
-    OnDeleteAction,
-    Relation,
-    RelationType,
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  } from 'twenty-sdk';
-  import { type Note } from '../../generated';
-
-  @Object({
-    universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-    nameSingular: 'postCard',
-    namePlural: 'postCards',
-    labelSingular: 'Post card',
-    labelPlural: 'Post cards',
-    description: 'A post card object',
-    icon: 'IconMail',
-  })
-  export class PostCard {
-    @Field({
-      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-      type: FieldType.TEXT,
-      label: 'Content',
-      description: "Postcard's content",
-      icon: 'IconAbc',
-    })
-    content: string;
-
-    @Relation({
-      universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-      type: RelationType.ONE_TO_MANY,
-      label: 'Notes',
-      icon: 'IconComment',
-      inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-      onDelete: OnDeleteAction.CASCADE,
-    })
-    notes: Note[];
-  }
-  ```
-
-  注意：装饰器方式需要在 TypeScript 配置中启用 `experimentalDecorators`。
-</Accordion>
 
 ### 应用配置（application.config.ts）
 
@@ -469,14 +419,9 @@ export default defineRole({
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '../../generated';
+import Twenty, { type Person } from '~/generated';
 
-const handler = async (
-  params:
-    | RoutePayload
-    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
-    | CronPayload,
-) => {
+const handler = async (params: RoutePayload) => {
   const client = new Twenty(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
@@ -507,18 +452,18 @@ export default defineFunction({
       isAuthRequired: false,
     },
     // Cron trigger (CRON pattern)
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *',
-    },
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
     // Database event trigger
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.updated',
-      updatedFields: ['name'],
-    },
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
   ],
 });
 ```
@@ -633,7 +578,7 @@ const handler = async (event: RoutePayload) => {
 
 你可以通过两种方式创建新函数：
 
-* **脚手架生成**：运行 `yarn app:create-entity` 并选择添加新函数的选项。 这将生成一个包含处理程序和配置的入门文件。
+* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. 这将生成一个包含处理程序和配置的入门文件。
 * **手动**：创建一个新的 `*.function.ts` 文件，并使用 `defineFunction()`，遵循相同的模式。
 
 ### 生成的类型化客户端
@@ -641,13 +586,13 @@ const handler = async (event: RoutePayload) => {
 运行 yarn app:generate，根据你的工作空间模式在 generated/ 中创建本地类型化客户端。 在你的函数中使用它：
 
 ```typescript
-import Twenty from './generated';
+import Twenty from '~/generated';
 
 const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-客户端会通过 `yarn app:generate` 重新生成。 在更改对象并执行 `yarn app:sync` 之后，或在接入新工作空间时，请重新运行。
+客户端会通过 `yarn app:generate` 重新生成。 Re-run after changing your objects or when onboarding to a new workspace.
 
 #### 无服务器函数中的运行时凭据
 
@@ -679,25 +624,29 @@ yarn add -D twenty-sdk
 ```json filename="package.json"
 {
   "scripts": {
-    "auth": "twenty auth login",
-    "generate": "twenty app generate",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "logs": "twenty app logs",
-    "create-entity": "twenty app add",
-    "help": "twenty --help"
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
   }
 }
 ```
 
-现在你可以通过 Yarn 运行相同的命令，例如 `yarn app:dev`、`yarn app:sync` 等。
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
 
 ## 故障排除
 
 * 身份验证错误：运行 `yarn auth:login`，并确保你的 API 密钥具有所需权限。
 * 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* 类型或客户端缺失/过期：运行 `yarn app:generate`，然后运行 `yarn app:dev`。
+* Types or client missing/outdated: run `yarn app:generate`.
 * 开发模式未同步：确保 `yarn app:dev` 正在运行，并且你的环境不会忽略变更。
 
 Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

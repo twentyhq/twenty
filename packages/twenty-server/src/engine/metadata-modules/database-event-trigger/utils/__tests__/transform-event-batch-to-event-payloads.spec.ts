@@ -1,24 +1,21 @@
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
 import { transformEventBatchToEventPayloads } from 'src/engine/metadata-modules/database-event-trigger/utils/transform-event-batch-to-event-payloads';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-const createMockDatabaseEventListener = (
-  overrides: Partial<DatabaseEventTriggerEntity> = {},
-): DatabaseEventTriggerEntity =>
+const createMockLogicFunction = (
+  overrides: Partial<LogicFunctionEntity> = {},
+): LogicFunctionEntity =>
   ({
-    id: 'listener-1',
+    id: 'function-1',
     workspaceId: 'workspace-1',
-    settings: {
+    databaseEventTriggerSettings: {
       eventName: 'company.updated',
     },
-    serverlessFunction: {
-      id: 'function-1',
-    },
     ...overrides,
-  }) as DatabaseEventTriggerEntity;
+  }) as LogicFunctionEntity;
 
 const createMockEvent = (
   overrides: Partial<ObjectRecordEvent> = {},
@@ -46,18 +43,18 @@ const createMockWorkspaceEventBatch = (
 
 describe('transformEventBatchToEventPayloads', () => {
   describe('basic transformation', () => {
-    it('should transform a single event batch with a single listener', () => {
+    it('should transform a single event batch with a single logic function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
-      const databaseEventListeners = [createMockDatabaseEventListener()];
+      const logicFunctions = [createMockLogicFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
-        serverlessFunctionId: 'function-1',
+        logicFunctionId: 'function-1',
         workspaceId: 'workspace-1',
         payload: expect.objectContaining({
           name: 'company.updated',
@@ -75,11 +72,11 @@ describe('transformEventBatchToEventPayloads', () => {
           createMockEvent({ recordId: 'record-3' }),
         ],
       });
-      const databaseEventListeners = [createMockDatabaseEventListener()];
+      const logicFunctions = [createMockLogicFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(3);
@@ -88,26 +85,24 @@ describe('transformEventBatchToEventPayloads', () => {
       ).toEqual(['record-1', 'record-2', 'record-3']);
     });
 
-    it('should create payloads for each listener', () => {
+    it('should create payloads for each logic function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          id: 'listener-1',
-          serverlessFunction: { id: 'function-1' },
-        } as Partial<DatabaseEventTriggerEntity>),
-        createMockDatabaseEventListener({
-          id: 'listener-2',
-          serverlessFunction: { id: 'function-2' },
-        } as Partial<DatabaseEventTriggerEntity>),
+      const logicFunctions = [
+        createMockLogicFunction({
+          id: 'function-1',
+        }),
+        createMockLogicFunction({
+          id: 'function-2',
+        }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
-      expect(result.map((r) => r.serverlessFunctionId)).toEqual([
+      expect(result.map((r) => r.logicFunctionId)).toEqual([
         'function-1',
         'function-2',
       ]);
@@ -129,15 +124,15 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: { eventName: 'company.updated' },
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: { eventName: 'company.updated' },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -157,15 +152,18 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: { eventName: 'company.updated', updatedFields: [] },
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            updatedFields: [],
+          },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -189,15 +187,18 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: { eventName: 'company.updated', updatedFields: ['name'] },
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            updatedFields: ['name'],
+          },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -224,9 +225,9 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: {
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: ['name', 'address'],
           },
@@ -235,7 +236,7 @@ describe('transformEventBatchToEventPayloads', () => {
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
@@ -258,21 +259,24 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          settings: { eventName: 'company.updated', updatedFields: ['phone'] },
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            updatedFields: ['phone'],
+          },
         }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(0);
     });
 
-    it('should handle different updatedFields filters per listener', () => {
+    it('should handle different updatedFields filters per logic function', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         name: 'company.updated',
         events: [
@@ -286,34 +290,35 @@ describe('transformEventBatchToEventPayloads', () => {
           }),
         ],
       });
-      const databaseEventListeners = [
-        createMockDatabaseEventListener({
-          id: 'listener-1',
-          settings: { eventName: 'company.updated', updatedFields: ['name'] },
-          serverlessFunction: { id: 'function-1' },
-        } as Partial<DatabaseEventTriggerEntity>),
-        createMockDatabaseEventListener({
-          id: 'listener-2',
-          settings: {
+      const logicFunctions = [
+        createMockLogicFunction({
+          id: 'function-1',
+          databaseEventTriggerSettings: {
+            eventName: 'company.updated',
+            updatedFields: ['name'],
+          },
+        }),
+        createMockLogicFunction({
+          id: 'function-2',
+          databaseEventTriggerSettings: {
             eventName: 'company.updated',
             updatedFields: ['address'],
           },
-          serverlessFunction: { id: 'function-2' },
-        } as Partial<DatabaseEventTriggerEntity>),
+        }),
       ];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(2);
 
       const function1Payloads = result.filter(
-        (r) => r.serverlessFunctionId === 'function-1',
+        (r) => r.logicFunctionId === 'function-1',
       );
       const function2Payloads = result.filter(
-        (r) => r.serverlessFunctionId === 'function-2',
+        (r) => r.logicFunctionId === 'function-2',
       );
 
       expect(function1Payloads).toHaveLength(1);
@@ -329,12 +334,12 @@ describe('transformEventBatchToEventPayloads', () => {
   });
 
   describe('edge cases', () => {
-    it('should return empty array when no listeners provided', () => {
+    it('should return empty array when no logic functions provided', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners: [],
+        logicFunctions: [],
       });
 
       expect(result).toHaveLength(0);
@@ -344,11 +349,11 @@ describe('transformEventBatchToEventPayloads', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         events: [],
       });
-      const databaseEventListeners = [createMockDatabaseEventListener()];
+      const logicFunctions = [createMockLogicFunction()];
 
       const result = transformEventBatchToEventPayloads({
         workspaceEventBatch,
-        databaseEventListeners,
+        logicFunctions,
       });
 
       expect(result).toHaveLength(0);

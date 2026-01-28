@@ -16,9 +16,9 @@ describe('shouldSkipStepExecution', () => {
     type: WorkflowActionType.CODE,
     settings: {
       input: {
-        serverlessFunctionId: 'mock-function-id',
-        serverlessFunctionVersion: 'mock-function-version',
-        serverlessFunctionInput: {},
+        logicFunctionId: 'mock-function-id',
+        logicFunctionVersion: 'mock-function-version',
+        logicFunctionInput: {},
       },
       errorHandlingOptions: {
         continueOnFailure: { value: false },

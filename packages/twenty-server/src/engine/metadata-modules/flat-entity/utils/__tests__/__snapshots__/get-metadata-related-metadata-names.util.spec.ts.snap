@@ -1,22 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `
 [
   "objectMetadata",
-]
-`;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for cronTrigger 1`] = `
-[
-  "serverlessFunction",
-]
-`;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for databaseEventTrigger 1`] = `
-[
-  "serverlessFunction",
 ]
 `;
 
@@ -37,6 +25,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "objectMetadata",
 ]
 `;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for logicFunction 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for navigationMenuItem 1`] = `
 [
@@ -89,12 +79,6 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for routeTrigger 1`] = `
-[
-  "serverlessFunction",
-]
-`;
-
 exports[`getMetadataRelatedMetadataNames should return related metadata names for rowLevelPermissionPredicate 1`] = `
 [
   "role",
@@ -110,14 +94,6 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "role",
   "rowLevelPermissionPredicateGroup",
   "rowLevelPermissionPredicate",
-]
-`;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for serverlessFunction 1`] = `
-[
-  "cronTrigger",
-  "databaseEventTrigger",
-  "routeTrigger",
 ]
 `;
 

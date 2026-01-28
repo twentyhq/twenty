@@ -186,11 +186,10 @@ export enum AggregateOperations {
 export enum AllMetadataName {
   agent = 'agent',
   commandMenuItem = 'commandMenuItem',
-  cronTrigger = 'cronTrigger',
-  databaseEventTrigger = 'databaseEventTrigger',
   fieldMetadata = 'fieldMetadata',
   frontComponent = 'frontComponent',
   index = 'index',
+  logicFunction = 'logicFunction',
   navigationMenuItem = 'navigationMenuItem',
   objectMetadata = 'objectMetadata',
   pageLayout = 'pageLayout',
@@ -198,10 +197,8 @@ export enum AllMetadataName {
   pageLayoutWidget = 'pageLayoutWidget',
   role = 'role',
   roleTarget = 'roleTarget',
-  routeTrigger = 'routeTrigger',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
-  serverlessFunction = 'serverlessFunction',
   skill = 'skill',
   view = 'view',
   viewField = 'viewField',
@@ -273,13 +270,13 @@ export type Application = {
   agents: Array<Agent>;
   applicationVariables: Array<ApplicationVariable>;
   canBeUninstalled: Scalars['Boolean'];
-  defaultServerlessFunctionRole?: Maybe<Role>;
-  defaultServerlessFunctionRoleId?: Maybe<Scalars['String']>;
+  defaultLogicFunctionRole?: Maybe<Role>;
+  defaultLogicFunctionRoleId?: Maybe<Scalars['String']>;
   description: Scalars['String'];
   id: Scalars['UUID'];
+  logicFunctions: Array<LogicFunction>;
   name: Scalars['String'];
   objects: Array<Object>;
-  serverlessFunctions: Array<ServerlessFunction>;
   universalIdentifier: Scalars['String'];
   version: Scalars['String'];
 };
@@ -741,11 +738,11 @@ export enum ConfigVariablesGroup {
   GOOGLE_AUTH = 'GOOGLE_AUTH',
   LLM = 'LLM',
   LOGGING = 'LOGGING',
+  LOGIC_FUNCTION_CONFIG = 'LOGIC_FUNCTION_CONFIG',
   METERING = 'METERING',
   MICROSOFT_AUTH = 'MICROSOFT_AUTH',
   OTHER = 'OTHER',
   RATE_LIMITING = 'RATE_LIMITING',
-  SERVERLESS_CONFIG = 'SERVERLESS_CONFIG',
   SERVER_CONFIG = 'SERVER_CONFIG',
   SSL = 'SSL',
   STORAGE_CONFIG = 'STORAGE_CONFIG',
@@ -932,16 +929,6 @@ export type CreateCommandMenuItemInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
-export type CreateCronTriggerInput = {
-  serverlessFunctionId: Scalars['String'];
-  settings: Scalars['JSON'];
-};
-
-export type CreateDatabaseEventTriggerInput = {
-  serverlessFunctionId: Scalars['String'];
-  settings: Scalars['JSON'];
-};
-
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -974,6 +961,18 @@ export type CreateFieldInput = {
 export type CreateFrontComponentInput = {
   id?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
+};
+
+export type CreateLogicFunctionInput = {
+  builtHandlerPath?: InputMaybe<Scalars['String']>;
+  code?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CreateNavigationMenuItemInput = {
@@ -1051,27 +1050,6 @@ export type CreateRoleInput = {
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
-};
-
-export type CreateRouteTriggerInput = {
-  /** List of HTTP header names to forward to the serverless function event */
-  forwardedRequestHeaders?: Array<Scalars['String']>;
-  httpMethod?: HttpMethod;
-  isAuthRequired?: Scalars['Boolean'];
-  path: Scalars['String'];
-  serverlessFunctionId: Scalars['String'];
-};
-
-export type CreateServerlessFunctionInput = {
-  builtHandlerPath?: InputMaybe<Scalars['String']>;
-  code?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CreateSkillInput = {
@@ -1183,18 +1161,6 @@ export type CreateWorkflowVersionStepInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
-export type CronTrigger = {
-  __typename?: 'CronTrigger';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  settings: Scalars['JSON'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type CronTriggerIdInput = {
-  id: Scalars['String'];
-};
-
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -1215,18 +1181,6 @@ export enum DatabaseEventAction {
   UPDATED = 'UPDATED',
   UPSERTED = 'UPSERTED'
 }
-
-export type DatabaseEventTrigger = {
-  __typename?: 'DatabaseEventTrigger';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  settings: Scalars['JSON'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type DatabaseEventTriggerIdInput = {
-  id: Scalars['String'];
-};
 
 export type DateTimeFilter = {
   eq?: InputMaybe<Scalars['DateTime']>;
@@ -1424,12 +1378,12 @@ export type EventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
-export type ExecuteServerlessFunctionInput = {
-  /** Id of the serverless function to execute */
+export type ExecuteLogicFunctionInput = {
+  /** Id of the logic function to execute */
   id: Scalars['UUID'];
   /** Payload in JSON format */
   payload: Scalars['JSON'];
-  /** Version of the serverless function to execute */
+  /** Version of the logic function to execute */
   version?: Scalars['String'];
 };
 
@@ -1598,10 +1552,10 @@ export enum FileFolder {
   BuiltFunction = 'BuiltFunction',
   File = 'File',
   FilesField = 'FilesField',
+  LogicFunction = 'LogicFunction',
+  LogicFunctionToDelete = 'LogicFunctionToDelete',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
-  ServerlessFunction = 'ServerlessFunction',
-  ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
   Source = 'Source',
   TemporaryFilesField = 'TemporaryFilesField',
   WorkspaceLogo = 'WorkspaceLogo'
@@ -1682,7 +1636,7 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetServerlessFunctionSourceCodeInput = {
+export type GetLogicFunctionSourceCodeInput = {
   /** The id of the function. */
   id: Scalars['ID'];
   /** The version of the function */
@@ -1714,14 +1668,6 @@ export type GridPositionInput = {
   row: Scalars['Float'];
   rowSpan: Scalars['Float'];
 };
-
-export enum HttpMethod {
-  DELETE = 'DELETE',
-  GET = 'GET',
-  PATCH = 'PATCH',
-  POST = 'POST',
-  PUT = 'PUT'
-}
 
 export enum HealthIndicatorId {
   app = 'app',
@@ -1964,6 +1910,77 @@ export type Location = {
   lng?: Maybe<Scalars['Float']>;
 };
 
+export type LogicFunction = {
+  __typename?: 'LogicFunction';
+  applicationId?: Maybe<Scalars['UUID']>;
+  builtHandlerPath: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  cronTriggerSettings?: Maybe<Scalars['JSON']>;
+  databaseEventTriggerSettings?: Maybe<Scalars['JSON']>;
+  description?: Maybe<Scalars['String']>;
+  handlerName: Scalars['String'];
+  httpRouteTriggerSettings?: Maybe<Scalars['JSON']>;
+  id: Scalars['UUID'];
+  isTool: Scalars['Boolean'];
+  latestVersion?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  publishedVersions: Array<Scalars['String']>;
+  runtime: Scalars['String'];
+  sourceHandlerPath: Scalars['String'];
+  timeoutSeconds: Scalars['Float'];
+  toolInputSchema?: Maybe<Scalars['JSON']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type LogicFunctionExecutionResult = {
+  __typename?: 'LogicFunctionExecutionResult';
+  /** Execution result in JSON format */
+  data?: Maybe<Scalars['JSON']>;
+  /** Execution duration in milliseconds */
+  duration: Scalars['Float'];
+  /** Execution error in JSON format */
+  error?: Maybe<Scalars['JSON']>;
+  /** Execution Logs */
+  logs: Scalars['String'];
+  /** Execution status */
+  status: LogicFunctionExecutionStatus;
+};
+
+/** Status of the logic function execution */
+export enum LogicFunctionExecutionStatus {
+  ERROR = 'ERROR',
+  IDLE = 'IDLE',
+  SUCCESS = 'SUCCESS'
+}
+
+export type LogicFunctionIdInput = {
+  /** The id of the function. */
+  id: Scalars['ID'];
+};
+
+export type LogicFunctionLayer = {
+  __typename?: 'LogicFunctionLayer';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type LogicFunctionLogs = {
+  __typename?: 'LogicFunctionLogs';
+  /** Execution Logs */
+  logs: Scalars['String'];
+};
+
+export type LogicFunctionLogsInput = {
+  applicationId?: InputMaybe<Scalars['UUID']>;
+  applicationUniversalIdentifier?: InputMaybe<Scalars['UUID']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
+};
+
 export type LoginTokenOutput = {
   __typename?: 'LoginTokenOutput';
   loginToken: AuthToken;
@@ -2021,14 +2038,11 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
-  createOneCronTrigger: CronTrigger;
-  createOneDatabaseEventTrigger: DatabaseEventTrigger;
   createOneField: Field;
+  createOneLogicFunction: LogicFunction;
+  createOneLogicFunctionLayer: LogicFunctionLayer;
   createOneObject: Object;
   createOneRole: Role;
-  createOneRouteTrigger: RouteTrigger;
-  createOneServerlessFunction: ServerlessFunction;
-  createOneServerlessFunctionLayer: ServerlessFunctionLayer;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
@@ -2056,13 +2070,10 @@ export type Mutation = {
   deleteJobs: DeleteJobsResponse;
   deleteNavigationMenuItem: NavigationMenuItem;
   deleteOneAgent: Agent;
-  deleteOneCronTrigger: CronTrigger;
-  deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
+  deleteOneLogicFunction: LogicFunction;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
-  deleteOneRouteTrigger: RouteTrigger;
-  deleteOneServerlessFunction: ServerlessFunction;
   deletePublicDomain: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteSkill: Skill;
@@ -2092,7 +2103,7 @@ export type Mutation = {
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
   evaluateAgentTurn: AgentTurnEvaluation;
-  executeOneServerlessFunction: ServerlessFunctionExecutionResult;
+  executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientTokenOutput;
   getAuthTokensFromLoginToken: AuthTokens;
@@ -2103,7 +2114,7 @@ export type Mutation = {
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   installApplication: Scalars['Boolean'];
-  publishServerlessFunction: ServerlessFunction;
+  publishLogicFunction: LogicFunction;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
@@ -2145,13 +2156,10 @@ export type Mutation = {
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
-  updateOneCronTrigger: CronTrigger;
-  updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
+  updateOneLogicFunction: LogicFunction;
   updateOneObject: Object;
   updateOneRole: Role;
-  updateOneRouteTrigger: RouteTrigger;
-  updateOneServerlessFunction: ServerlessFunction;
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
@@ -2353,18 +2361,19 @@ export type MutationCreateOneAppTokenArgs = {
 };
 
 
-export type MutationCreateOneCronTriggerArgs = {
-  input: CreateCronTriggerInput;
-};
-
-
-export type MutationCreateOneDatabaseEventTriggerArgs = {
-  input: CreateDatabaseEventTriggerInput;
-};
-
-
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
+};
+
+
+export type MutationCreateOneLogicFunctionArgs = {
+  input: CreateLogicFunctionInput;
+};
+
+
+export type MutationCreateOneLogicFunctionLayerArgs = {
+  packageJson: Scalars['JSON'];
+  yarnLock: Scalars['String'];
 };
 
 
@@ -2375,22 +2384,6 @@ export type MutationCreateOneObjectArgs = {
 
 export type MutationCreateOneRoleArgs = {
   createRoleInput: CreateRoleInput;
-};
-
-
-export type MutationCreateOneRouteTriggerArgs = {
-  input: CreateRouteTriggerInput;
-};
-
-
-export type MutationCreateOneServerlessFunctionArgs = {
-  input: CreateServerlessFunctionInput;
-};
-
-
-export type MutationCreateOneServerlessFunctionLayerArgs = {
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
 };
 
 
@@ -2525,18 +2518,13 @@ export type MutationDeleteOneAgentArgs = {
 };
 
 
-export type MutationDeleteOneCronTriggerArgs = {
-  input: CronTriggerIdInput;
-};
-
-
-export type MutationDeleteOneDatabaseEventTriggerArgs = {
-  input: DatabaseEventTriggerIdInput;
-};
-
-
 export type MutationDeleteOneFieldArgs = {
   input: DeleteOneFieldInput;
+};
+
+
+export type MutationDeleteOneLogicFunctionArgs = {
+  input: LogicFunctionIdInput;
 };
 
 
@@ -2547,16 +2535,6 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationDeleteOneRoleArgs = {
   roleId: Scalars['UUID'];
-};
-
-
-export type MutationDeleteOneRouteTriggerArgs = {
-  input: RouteTriggerIdInput;
-};
-
-
-export type MutationDeleteOneServerlessFunctionArgs = {
-  input: ServerlessFunctionIdInput;
 };
 
 
@@ -2686,8 +2664,8 @@ export type MutationEvaluateAgentTurnArgs = {
 };
 
 
-export type MutationExecuteOneServerlessFunctionArgs = {
-  input: ExecuteServerlessFunctionInput;
+export type MutationExecuteOneLogicFunctionArgs = {
+  input: ExecuteLogicFunctionInput;
 };
 
 
@@ -2743,8 +2721,8 @@ export type MutationInstallApplicationArgs = {
 };
 
 
-export type MutationPublishServerlessFunctionArgs = {
-  input: PublishServerlessFunctionInput;
+export type MutationPublishLogicFunctionArgs = {
+  input: PublishLogicFunctionInput;
 };
 
 
@@ -2960,18 +2938,13 @@ export type MutationUpdateOneApplicationVariableArgs = {
 };
 
 
-export type MutationUpdateOneCronTriggerArgs = {
-  input: UpdateCronTriggerInput;
-};
-
-
-export type MutationUpdateOneDatabaseEventTriggerArgs = {
-  input: UpdateDatabaseEventTriggerInput;
-};
-
-
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
+};
+
+
+export type MutationUpdateOneLogicFunctionArgs = {
+  input: UpdateLogicFunctionInput;
 };
 
 
@@ -2982,16 +2955,6 @@ export type MutationUpdateOneObjectArgs = {
 
 export type MutationUpdateOneRoleArgs = {
   updateRoleInput: UpdateRoleInput;
-};
-
-
-export type MutationUpdateOneRouteTriggerArgs = {
-  input: UpdateRouteTriggerInput;
-};
-
-
-export type MutationUpdateOneServerlessFunctionArgs = {
-  input: UpdateServerlessFunctionInput;
 };
 
 
@@ -3558,7 +3521,7 @@ export type PublicWorkspaceDataOutput = {
   workspaceUrls: WorkspaceUrls;
 };
 
-export type PublishServerlessFunctionInput = {
+export type PublishLogicFunctionInput = {
   /** The id of the function. */
   id: Scalars['ID'];
 };
@@ -3583,17 +3546,11 @@ export type Query = {
   fields: FieldConnection;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
-  findManyCronTriggers: Array<CronTrigger>;
-  findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
+  findManyLogicFunctions: Array<LogicFunction>;
   findManyPublicDomains: Array<PublicDomain>;
-  findManyRouteTriggers: Array<RouteTrigger>;
-  findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneApplication: Application;
-  findOneCronTrigger: CronTrigger;
-  findOneDatabaseEventTrigger: DatabaseEventTrigger;
-  findOneRouteTrigger: RouteTrigger;
-  findOneServerlessFunction: ServerlessFunction;
+  findOneLogicFunction: LogicFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
@@ -3620,6 +3577,7 @@ export type Query = {
   getEmailingDomains: Array<EmailingDomain>;
   getFrontComponentCode: FrontComponentCode;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -3633,7 +3591,6 @@ export type Query = {
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
-  getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
@@ -3728,23 +3685,8 @@ export type QueryFindOneApplicationArgs = {
 };
 
 
-export type QueryFindOneCronTriggerArgs = {
-  input: CronTriggerIdInput;
-};
-
-
-export type QueryFindOneDatabaseEventTriggerArgs = {
-  input: DatabaseEventTriggerIdInput;
-};
-
-
-export type QueryFindOneRouteTriggerArgs = {
-  input: RouteTriggerIdInput;
-};
-
-
-export type QueryFindOneServerlessFunctionArgs = {
-  input: ServerlessFunctionIdInput;
+export type QueryFindOneLogicFunctionArgs = {
+  input: LogicFunctionIdInput;
 };
 
 
@@ -3773,7 +3715,7 @@ export type QueryGetAutoCompleteAddressArgs = {
 
 
 export type QueryGetAvailablePackagesArgs = {
-  input: ServerlessFunctionIdInput;
+  input: LogicFunctionIdInput;
 };
 
 
@@ -3857,6 +3799,11 @@ export type QueryGetIndicatorHealthStatusArgs = {
 };
 
 
+export type QueryGetLogicFunctionSourceCodeArgs = {
+  input: GetLogicFunctionSourceCodeInput;
+};
+
+
 export type QueryGetPageLayoutArgs = {
   id: Scalars['String'];
 };
@@ -3903,11 +3850,6 @@ export type QueryGetQueueJobsArgs = {
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
-};
-
-
-export type QueryGetServerlessFunctionSourceCodeArgs = {
-  input: GetServerlessFunctionSourceCodeInput;
 };
 
 
@@ -4158,22 +4100,6 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
-export type RouteTrigger = {
-  __typename?: 'RouteTrigger';
-  createdAt: Scalars['DateTime'];
-  /** List of HTTP header names to forward to the serverless function event */
-  forwardedRequestHeaders: Array<Scalars['String']>;
-  httpMethod: HttpMethod;
-  id: Scalars['ID'];
-  isAuthRequired: Scalars['Boolean'];
-  path: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type RouteTriggerIdInput = {
-  id: Scalars['String'];
-};
-
 export type RowLevelPermissionPredicate = {
   __typename?: 'RowLevelPermissionPredicate';
   fieldMetadataId: Scalars['String'];
@@ -4325,77 +4251,6 @@ export type Sentry = {
   release?: Maybe<Scalars['String']>;
 };
 
-export type ServerlessFunction = {
-  __typename?: 'ServerlessFunction';
-  applicationId?: Maybe<Scalars['UUID']>;
-  builtHandlerPath: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  cronTriggers?: Maybe<Array<CronTrigger>>;
-  databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
-  description?: Maybe<Scalars['String']>;
-  handlerName: Scalars['String'];
-  id: Scalars['UUID'];
-  isTool: Scalars['Boolean'];
-  latestVersion?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  publishedVersions: Array<Scalars['String']>;
-  routeTriggers?: Maybe<Array<RouteTrigger>>;
-  runtime: Scalars['String'];
-  sourceHandlerPath: Scalars['String'];
-  timeoutSeconds: Scalars['Float'];
-  toolInputSchema?: Maybe<Scalars['JSON']>;
-  universalIdentifier?: Maybe<Scalars['UUID']>;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type ServerlessFunctionExecutionResult = {
-  __typename?: 'ServerlessFunctionExecutionResult';
-  /** Execution result in JSON format */
-  data?: Maybe<Scalars['JSON']>;
-  /** Execution duration in milliseconds */
-  duration: Scalars['Float'];
-  /** Execution error in JSON format */
-  error?: Maybe<Scalars['JSON']>;
-  /** Execution Logs */
-  logs: Scalars['String'];
-  /** Execution status */
-  status: ServerlessFunctionExecutionStatus;
-};
-
-/** Status of the serverless function execution */
-export enum ServerlessFunctionExecutionStatus {
-  ERROR = 'ERROR',
-  IDLE = 'IDLE',
-  SUCCESS = 'SUCCESS'
-}
-
-export type ServerlessFunctionIdInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
-};
-
-export type ServerlessFunctionLayer = {
-  __typename?: 'ServerlessFunctionLayer';
-  applicationId?: Maybe<Scalars['UUID']>;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type ServerlessFunctionLogs = {
-  __typename?: 'ServerlessFunctionLogs';
-  /** Execution Logs */
-  logs: Scalars['String'];
-};
-
-export type ServerlessFunctionLogsInput = {
-  applicationId?: InputMaybe<Scalars['UUID']>;
-  applicationUniversalIdentifier?: InputMaybe<Scalars['UUID']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  name?: InputMaybe<Scalars['String']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']>;
-};
-
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
@@ -4474,9 +4329,14 @@ export type SubmitFormStepInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  logicFunctionLogs: LogicFunctionLogs;
   onDbEvent: OnDbEvent;
   onEventSubscription?: Maybe<EventSubscription>;
-  serverlessFunctionLogs: ServerlessFunctionLogs;
+};
+
+
+export type SubscriptionLogicFunctionLogsArgs = {
+  input: LogicFunctionLogsInput;
 };
 
 
@@ -4487,11 +4347,6 @@ export type SubscriptionOnDbEventArgs = {
 
 export type SubscriptionOnEventSubscriptionArgs = {
   eventStreamId: Scalars['String'];
-};
-
-
-export type SubscriptionServerlessFunctionLogsArgs = {
-  input: ServerlessFunctionLogsInput;
 };
 
 export enum SubscriptionInterval {
@@ -4715,28 +4570,6 @@ export type UpdateCommandMenuItemInput = {
   label?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateCronTriggerInput = {
-  /** The id of the cron trigger to update */
-  id: Scalars['String'];
-  /** The cron trigger updates */
-  update: UpdateCronTriggerInputUpdates;
-};
-
-export type UpdateCronTriggerInputUpdates = {
-  settings: Scalars['JSON'];
-};
-
-export type UpdateDatabaseEventTriggerInput = {
-  /** The id of the database event trigger to update */
-  id: Scalars['String'];
-  /** The database event trigger updates */
-  update: UpdateDatabaseEventTriggerInputUpdates;
-};
-
-export type UpdateDatabaseEventTriggerInputUpdates = {
-  settings: Scalars['JSON'];
-};
-
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -4768,6 +4601,24 @@ export type UpdateFrontComponentInputUpdates = {
 export type UpdateLabPublicFeatureFlagInput = {
   publicFeatureFlag: Scalars['String'];
   value: Scalars['Boolean'];
+};
+
+export type UpdateLogicFunctionInput = {
+  /** Id of the logic function to update */
+  id: Scalars['UUID'];
+  /** The logic function updates */
+  update: UpdateLogicFunctionInputUpdates;
+};
+
+export type UpdateLogicFunctionInputUpdates = {
+  code: Scalars['JSON'];
+  description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateNavigationMenuItemInput = {
@@ -4872,39 +4723,6 @@ export type UpdateRolePayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   label?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateRouteTriggerInput = {
-  /** The id of the route to update */
-  id: Scalars['String'];
-  /** The route updates */
-  update: UpdateRouteTriggerInputUpdates;
-};
-
-export type UpdateRouteTriggerInputUpdates = {
-  /** List of HTTP header names to forward to the serverless function event */
-  forwardedRequestHeaders?: Array<Scalars['String']>;
-  httpMethod: HttpMethod;
-  isAuthRequired: Scalars['Boolean'];
-  path: Scalars['String'];
-};
-
-export type UpdateServerlessFunctionInput = {
-  /** Id of the serverless function to update */
-  id: Scalars['UUID'];
-  /** The serverless function updates */
-  update: UpdateServerlessFunctionInputUpdates;
-};
-
-export type UpdateServerlessFunctionInputUpdates = {
-  code: Scalars['JSON'];
-  description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateSkillInput = {
@@ -5738,7 +5556,7 @@ export type UpdateOneApplicationVariableMutationVariables = Exact<{
 
 export type UpdateOneApplicationVariableMutation = { __typename?: 'Mutation', updateOneApplicationVariable: boolean };
 
-export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> };
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5750,7 +5568,7 @@ export type FindOneApplicationQueryVariables = Exact<{
 }>;
 
 
-export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, serverlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> } };
+export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -6457,6 +6275,69 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean } };
 
+export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
+
+export type CreateOneLogicFunctionItemMutationVariables = Exact<{
+  input: CreateLogicFunctionInput;
+}>;
+
+
+export type CreateOneLogicFunctionItemMutation = { __typename?: 'Mutation', createOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type DeleteOneLogicFunctionMutationVariables = Exact<{
+  input: LogicFunctionIdInput;
+}>;
+
+
+export type DeleteOneLogicFunctionMutation = { __typename?: 'Mutation', deleteOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type ExecuteOneLogicFunctionMutationVariables = Exact<{
+  input: ExecuteLogicFunctionInput;
+}>;
+
+
+export type ExecuteOneLogicFunctionMutation = { __typename?: 'Mutation', executeOneLogicFunction: { __typename?: 'LogicFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: LogicFunctionExecutionStatus, error?: any | null } };
+
+export type PublishOneLogicFunctionMutationVariables = Exact<{
+  input: PublishLogicFunctionInput;
+}>;
+
+
+export type PublishOneLogicFunctionMutation = { __typename?: 'Mutation', publishLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type UpdateOneLogicFunctionMutationVariables = Exact<{
+  input: UpdateLogicFunctionInput;
+}>;
+
+
+export type UpdateOneLogicFunctionMutation = { __typename?: 'Mutation', updateOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type FindManyAvailablePackagesQueryVariables = Exact<{
+  input: LogicFunctionIdInput;
+}>;
+
+
+export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailablePackages: any };
+
+export type GetManyLogicFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+
+export type GetOneLogicFunctionQueryVariables = Exact<{
+  input: LogicFunctionIdInput;
+}>;
+
+
+export type GetOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type FindOneLogicFunctionSourceCodeQueryVariables = Exact<{
+  input: GetLogicFunctionSourceCodeInput;
+}>;
+
+
+export type FindOneLogicFunctionSourceCodeQuery = { __typename?: 'Query', getLogicFunctionSourceCode?: any | null };
+
 export type UploadWorkspaceMemberProfilePictureMutationVariables = Exact<{
   file: Scalars['Upload'];
 }>;
@@ -6606,69 +6487,6 @@ export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never
 
 
 export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
-
-export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null };
-
-export type CreateOneServerlessFunctionItemMutationVariables = Exact<{
-  input: CreateServerlessFunctionInput;
-}>;
-
-
-export type CreateOneServerlessFunctionItemMutation = { __typename?: 'Mutation', createOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
-
-export type DeleteOneServerlessFunctionMutationVariables = Exact<{
-  input: ServerlessFunctionIdInput;
-}>;
-
-
-export type DeleteOneServerlessFunctionMutation = { __typename?: 'Mutation', deleteOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
-
-export type ExecuteOneServerlessFunctionMutationVariables = Exact<{
-  input: ExecuteServerlessFunctionInput;
-}>;
-
-
-export type ExecuteOneServerlessFunctionMutation = { __typename?: 'Mutation', executeOneServerlessFunction: { __typename?: 'ServerlessFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: ServerlessFunctionExecutionStatus, error?: any | null } };
-
-export type PublishOneServerlessFunctionMutationVariables = Exact<{
-  input: PublishServerlessFunctionInput;
-}>;
-
-
-export type PublishOneServerlessFunctionMutation = { __typename?: 'Mutation', publishServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
-
-export type UpdateOneServerlessFunctionMutationVariables = Exact<{
-  input: UpdateServerlessFunctionInput;
-}>;
-
-
-export type UpdateOneServerlessFunctionMutation = { __typename?: 'Mutation', updateOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
-
-export type FindManyAvailablePackagesQueryVariables = Exact<{
-  input: ServerlessFunctionIdInput;
-}>;
-
-
-export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailablePackages: any };
-
-export type GetManyServerlessFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetManyServerlessFunctionsQuery = { __typename?: 'Query', findManyServerlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null }> };
-
-export type GetOneServerlessFunctionQueryVariables = Exact<{
-  input: ServerlessFunctionIdInput;
-}>;
-
-
-export type GetOneServerlessFunctionQuery = { __typename?: 'Query', findOneServerlessFunction: { __typename?: 'ServerlessFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string, cronTriggers?: Array<{ __typename?: 'CronTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, databaseEventTriggers?: Array<{ __typename?: 'DatabaseEventTrigger', id: string, settings: any, createdAt: string, updatedAt: string }> | null, routeTriggers?: Array<{ __typename?: 'RouteTrigger', id: string, path: string, isAuthRequired: boolean, httpMethod: HttpMethod, forwardedRequestHeaders: Array<string>, createdAt: string, updatedAt: string }> | null } };
-
-export type FindOneServerlessFunctionSourceCodeQueryVariables = Exact<{
-  input: GetServerlessFunctionSourceCodeInput;
-}>;
-
-
-export type FindOneServerlessFunctionSourceCodeQuery = { __typename?: 'Query', getServerlessFunctionSourceCode?: any | null };
 
 export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables = Exact<{
   otp: Scalars['String'];
@@ -7318,8 +7136,8 @@ export const ObjectMetadataFieldsFragmentDoc = gql`
   }
 }
     `;
-export const ServerlessFunctionFieldsFragmentDoc = gql`
-    fragment ServerlessFunctionFields on ServerlessFunction {
+export const LogicFunctionFieldsFragmentDoc = gql`
+    fragment LogicFunctionFields on LogicFunction {
   id
   name
   description
@@ -7330,27 +7148,6 @@ export const ServerlessFunctionFieldsFragmentDoc = gql`
   sourceHandlerPath
   builtHandlerPath
   handlerName
-  cronTriggers {
-    id
-    settings
-    createdAt
-    updatedAt
-  }
-  databaseEventTriggers {
-    id
-    settings
-    createdAt
-    updatedAt
-  }
-  routeTriggers {
-    id
-    path
-    isAuthRequired
-    httpMethod
-    forwardedRequestHeaders
-    createdAt
-    updatedAt
-  }
   toolInputSchema
   isTool
   applicationId
@@ -7379,13 +7176,13 @@ export const ApplicationFieldsFragmentDoc = gql`
   objects {
     ...ObjectMetadataFields
   }
-  serverlessFunctions {
-    ...ServerlessFunctionFields
+  logicFunctions {
+    ...LogicFunctionFields
   }
 }
     ${AgentFieldsFragmentDoc}
 ${ObjectMetadataFieldsFragmentDoc}
-${ServerlessFunctionFieldsFragmentDoc}`;
+${LogicFunctionFieldsFragmentDoc}`;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -12601,6 +12398,310 @@ export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.Mutat
 export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
+export const CreateOneLogicFunctionItemDocument = gql`
+    mutation CreateOneLogicFunctionItem($input: CreateLogicFunctionInput!) {
+  createOneLogicFunction(input: $input) {
+    ...LogicFunctionFields
+  }
+}
+    ${LogicFunctionFieldsFragmentDoc}`;
+export type CreateOneLogicFunctionItemMutationFn = Apollo.MutationFunction<CreateOneLogicFunctionItemMutation, CreateOneLogicFunctionItemMutationVariables>;
+
+/**
+ * __useCreateOneLogicFunctionItemMutation__
+ *
+ * To run a mutation, you first call `useCreateOneLogicFunctionItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOneLogicFunctionItemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOneLogicFunctionItemMutation, { data, loading, error }] = useCreateOneLogicFunctionItemMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateOneLogicFunctionItemMutation(baseOptions?: Apollo.MutationHookOptions<CreateOneLogicFunctionItemMutation, CreateOneLogicFunctionItemMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOneLogicFunctionItemMutation, CreateOneLogicFunctionItemMutationVariables>(CreateOneLogicFunctionItemDocument, options);
+      }
+export type CreateOneLogicFunctionItemMutationHookResult = ReturnType<typeof useCreateOneLogicFunctionItemMutation>;
+export type CreateOneLogicFunctionItemMutationResult = Apollo.MutationResult<CreateOneLogicFunctionItemMutation>;
+export type CreateOneLogicFunctionItemMutationOptions = Apollo.BaseMutationOptions<CreateOneLogicFunctionItemMutation, CreateOneLogicFunctionItemMutationVariables>;
+export const DeleteOneLogicFunctionDocument = gql`
+    mutation DeleteOneLogicFunction($input: LogicFunctionIdInput!) {
+  deleteOneLogicFunction(input: $input) {
+    ...LogicFunctionFields
+  }
+}
+    ${LogicFunctionFieldsFragmentDoc}`;
+export type DeleteOneLogicFunctionMutationFn = Apollo.MutationFunction<DeleteOneLogicFunctionMutation, DeleteOneLogicFunctionMutationVariables>;
+
+/**
+ * __useDeleteOneLogicFunctionMutation__
+ *
+ * To run a mutation, you first call `useDeleteOneLogicFunctionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteOneLogicFunctionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteOneLogicFunctionMutation, { data, loading, error }] = useDeleteOneLogicFunctionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteOneLogicFunctionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOneLogicFunctionMutation, DeleteOneLogicFunctionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteOneLogicFunctionMutation, DeleteOneLogicFunctionMutationVariables>(DeleteOneLogicFunctionDocument, options);
+      }
+export type DeleteOneLogicFunctionMutationHookResult = ReturnType<typeof useDeleteOneLogicFunctionMutation>;
+export type DeleteOneLogicFunctionMutationResult = Apollo.MutationResult<DeleteOneLogicFunctionMutation>;
+export type DeleteOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<DeleteOneLogicFunctionMutation, DeleteOneLogicFunctionMutationVariables>;
+export const ExecuteOneLogicFunctionDocument = gql`
+    mutation ExecuteOneLogicFunction($input: ExecuteLogicFunctionInput!) {
+  executeOneLogicFunction(input: $input) {
+    data
+    logs
+    duration
+    status
+    error
+  }
+}
+    `;
+export type ExecuteOneLogicFunctionMutationFn = Apollo.MutationFunction<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>;
+
+/**
+ * __useExecuteOneLogicFunctionMutation__
+ *
+ * To run a mutation, you first call `useExecuteOneLogicFunctionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useExecuteOneLogicFunctionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [executeOneLogicFunctionMutation, { data, loading, error }] = useExecuteOneLogicFunctionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useExecuteOneLogicFunctionMutation(baseOptions?: Apollo.MutationHookOptions<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>(ExecuteOneLogicFunctionDocument, options);
+      }
+export type ExecuteOneLogicFunctionMutationHookResult = ReturnType<typeof useExecuteOneLogicFunctionMutation>;
+export type ExecuteOneLogicFunctionMutationResult = Apollo.MutationResult<ExecuteOneLogicFunctionMutation>;
+export type ExecuteOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>;
+export const PublishOneLogicFunctionDocument = gql`
+    mutation PublishOneLogicFunction($input: PublishLogicFunctionInput!) {
+  publishLogicFunction(input: $input) {
+    ...LogicFunctionFields
+  }
+}
+    ${LogicFunctionFieldsFragmentDoc}`;
+export type PublishOneLogicFunctionMutationFn = Apollo.MutationFunction<PublishOneLogicFunctionMutation, PublishOneLogicFunctionMutationVariables>;
+
+/**
+ * __usePublishOneLogicFunctionMutation__
+ *
+ * To run a mutation, you first call `usePublishOneLogicFunctionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePublishOneLogicFunctionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [publishOneLogicFunctionMutation, { data, loading, error }] = usePublishOneLogicFunctionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function usePublishOneLogicFunctionMutation(baseOptions?: Apollo.MutationHookOptions<PublishOneLogicFunctionMutation, PublishOneLogicFunctionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PublishOneLogicFunctionMutation, PublishOneLogicFunctionMutationVariables>(PublishOneLogicFunctionDocument, options);
+      }
+export type PublishOneLogicFunctionMutationHookResult = ReturnType<typeof usePublishOneLogicFunctionMutation>;
+export type PublishOneLogicFunctionMutationResult = Apollo.MutationResult<PublishOneLogicFunctionMutation>;
+export type PublishOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<PublishOneLogicFunctionMutation, PublishOneLogicFunctionMutationVariables>;
+export const UpdateOneLogicFunctionDocument = gql`
+    mutation UpdateOneLogicFunction($input: UpdateLogicFunctionInput!) {
+  updateOneLogicFunction(input: $input) {
+    ...LogicFunctionFields
+  }
+}
+    ${LogicFunctionFieldsFragmentDoc}`;
+export type UpdateOneLogicFunctionMutationFn = Apollo.MutationFunction<UpdateOneLogicFunctionMutation, UpdateOneLogicFunctionMutationVariables>;
+
+/**
+ * __useUpdateOneLogicFunctionMutation__
+ *
+ * To run a mutation, you first call `useUpdateOneLogicFunctionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOneLogicFunctionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOneLogicFunctionMutation, { data, loading, error }] = useUpdateOneLogicFunctionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateOneLogicFunctionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneLogicFunctionMutation, UpdateOneLogicFunctionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOneLogicFunctionMutation, UpdateOneLogicFunctionMutationVariables>(UpdateOneLogicFunctionDocument, options);
+      }
+export type UpdateOneLogicFunctionMutationHookResult = ReturnType<typeof useUpdateOneLogicFunctionMutation>;
+export type UpdateOneLogicFunctionMutationResult = Apollo.MutationResult<UpdateOneLogicFunctionMutation>;
+export type UpdateOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<UpdateOneLogicFunctionMutation, UpdateOneLogicFunctionMutationVariables>;
+export const FindManyAvailablePackagesDocument = gql`
+    query FindManyAvailablePackages($input: LogicFunctionIdInput!) {
+  getAvailablePackages(input: $input)
+}
+    `;
+
+/**
+ * __useFindManyAvailablePackagesQuery__
+ *
+ * To run a query within a React component, call `useFindManyAvailablePackagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindManyAvailablePackagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindManyAvailablePackagesQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFindManyAvailablePackagesQuery(baseOptions: Apollo.QueryHookOptions<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>(FindManyAvailablePackagesDocument, options);
+      }
+export function useFindManyAvailablePackagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>(FindManyAvailablePackagesDocument, options);
+        }
+export type FindManyAvailablePackagesQueryHookResult = ReturnType<typeof useFindManyAvailablePackagesQuery>;
+export type FindManyAvailablePackagesLazyQueryHookResult = ReturnType<typeof useFindManyAvailablePackagesLazyQuery>;
+export type FindManyAvailablePackagesQueryResult = Apollo.QueryResult<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>;
+export const GetManyLogicFunctionsDocument = gql`
+    query GetManyLogicFunctions {
+  findManyLogicFunctions {
+    ...LogicFunctionFields
+  }
+}
+    ${LogicFunctionFieldsFragmentDoc}`;
+
+/**
+ * __useGetManyLogicFunctionsQuery__
+ *
+ * To run a query within a React component, call `useGetManyLogicFunctionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetManyLogicFunctionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetManyLogicFunctionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetManyLogicFunctionsQuery(baseOptions?: Apollo.QueryHookOptions<GetManyLogicFunctionsQuery, GetManyLogicFunctionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetManyLogicFunctionsQuery, GetManyLogicFunctionsQueryVariables>(GetManyLogicFunctionsDocument, options);
+      }
+export function useGetManyLogicFunctionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetManyLogicFunctionsQuery, GetManyLogicFunctionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetManyLogicFunctionsQuery, GetManyLogicFunctionsQueryVariables>(GetManyLogicFunctionsDocument, options);
+        }
+export type GetManyLogicFunctionsQueryHookResult = ReturnType<typeof useGetManyLogicFunctionsQuery>;
+export type GetManyLogicFunctionsLazyQueryHookResult = ReturnType<typeof useGetManyLogicFunctionsLazyQuery>;
+export type GetManyLogicFunctionsQueryResult = Apollo.QueryResult<GetManyLogicFunctionsQuery, GetManyLogicFunctionsQueryVariables>;
+export const GetOneLogicFunctionDocument = gql`
+    query GetOneLogicFunction($input: LogicFunctionIdInput!) {
+  findOneLogicFunction(input: $input) {
+    ...LogicFunctionFields
+  }
+}
+    ${LogicFunctionFieldsFragmentDoc}`;
+
+/**
+ * __useGetOneLogicFunctionQuery__
+ *
+ * To run a query within a React component, call `useGetOneLogicFunctionQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetOneLogicFunctionQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetOneLogicFunctionQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetOneLogicFunctionQuery(baseOptions: Apollo.QueryHookOptions<GetOneLogicFunctionQuery, GetOneLogicFunctionQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOneLogicFunctionQuery, GetOneLogicFunctionQueryVariables>(GetOneLogicFunctionDocument, options);
+      }
+export function useGetOneLogicFunctionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOneLogicFunctionQuery, GetOneLogicFunctionQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOneLogicFunctionQuery, GetOneLogicFunctionQueryVariables>(GetOneLogicFunctionDocument, options);
+        }
+export type GetOneLogicFunctionQueryHookResult = ReturnType<typeof useGetOneLogicFunctionQuery>;
+export type GetOneLogicFunctionLazyQueryHookResult = ReturnType<typeof useGetOneLogicFunctionLazyQuery>;
+export type GetOneLogicFunctionQueryResult = Apollo.QueryResult<GetOneLogicFunctionQuery, GetOneLogicFunctionQueryVariables>;
+export const FindOneLogicFunctionSourceCodeDocument = gql`
+    query FindOneLogicFunctionSourceCode($input: GetLogicFunctionSourceCodeInput!) {
+  getLogicFunctionSourceCode(input: $input)
+}
+    `;
+
+/**
+ * __useFindOneLogicFunctionSourceCodeQuery__
+ *
+ * To run a query within a React component, call `useFindOneLogicFunctionSourceCodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneLogicFunctionSourceCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindOneLogicFunctionSourceCodeQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFindOneLogicFunctionSourceCodeQuery(baseOptions: Apollo.QueryHookOptions<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>(FindOneLogicFunctionSourceCodeDocument, options);
+      }
+export function useFindOneLogicFunctionSourceCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>(FindOneLogicFunctionSourceCodeDocument, options);
+        }
+export type FindOneLogicFunctionSourceCodeQueryHookResult = ReturnType<typeof useFindOneLogicFunctionSourceCodeQuery>;
+export type FindOneLogicFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useFindOneLogicFunctionSourceCodeLazyQuery>;
+export type FindOneLogicFunctionSourceCodeQueryResult = Apollo.QueryResult<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>;
 export const UploadWorkspaceMemberProfilePictureDocument = gql`
     mutation UploadWorkspaceMemberProfilePicture($file: Upload!) {
   uploadWorkspaceMemberProfilePicture(file: $file) {
@@ -13338,310 +13439,6 @@ export function useGetSsoIdentityProvidersLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetSsoIdentityProvidersQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersQuery>;
 export type GetSsoIdentityProvidersLazyQueryHookResult = ReturnType<typeof useGetSsoIdentityProvidersLazyQuery>;
 export type GetSsoIdentityProvidersQueryResult = Apollo.QueryResult<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>;
-export const CreateOneServerlessFunctionItemDocument = gql`
-    mutation CreateOneServerlessFunctionItem($input: CreateServerlessFunctionInput!) {
-  createOneServerlessFunction(input: $input) {
-    ...ServerlessFunctionFields
-  }
-}
-    ${ServerlessFunctionFieldsFragmentDoc}`;
-export type CreateOneServerlessFunctionItemMutationFn = Apollo.MutationFunction<CreateOneServerlessFunctionItemMutation, CreateOneServerlessFunctionItemMutationVariables>;
-
-/**
- * __useCreateOneServerlessFunctionItemMutation__
- *
- * To run a mutation, you first call `useCreateOneServerlessFunctionItemMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateOneServerlessFunctionItemMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createOneServerlessFunctionItemMutation, { data, loading, error }] = useCreateOneServerlessFunctionItemMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateOneServerlessFunctionItemMutation(baseOptions?: Apollo.MutationHookOptions<CreateOneServerlessFunctionItemMutation, CreateOneServerlessFunctionItemMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateOneServerlessFunctionItemMutation, CreateOneServerlessFunctionItemMutationVariables>(CreateOneServerlessFunctionItemDocument, options);
-      }
-export type CreateOneServerlessFunctionItemMutationHookResult = ReturnType<typeof useCreateOneServerlessFunctionItemMutation>;
-export type CreateOneServerlessFunctionItemMutationResult = Apollo.MutationResult<CreateOneServerlessFunctionItemMutation>;
-export type CreateOneServerlessFunctionItemMutationOptions = Apollo.BaseMutationOptions<CreateOneServerlessFunctionItemMutation, CreateOneServerlessFunctionItemMutationVariables>;
-export const DeleteOneServerlessFunctionDocument = gql`
-    mutation DeleteOneServerlessFunction($input: ServerlessFunctionIdInput!) {
-  deleteOneServerlessFunction(input: $input) {
-    ...ServerlessFunctionFields
-  }
-}
-    ${ServerlessFunctionFieldsFragmentDoc}`;
-export type DeleteOneServerlessFunctionMutationFn = Apollo.MutationFunction<DeleteOneServerlessFunctionMutation, DeleteOneServerlessFunctionMutationVariables>;
-
-/**
- * __useDeleteOneServerlessFunctionMutation__
- *
- * To run a mutation, you first call `useDeleteOneServerlessFunctionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteOneServerlessFunctionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteOneServerlessFunctionMutation, { data, loading, error }] = useDeleteOneServerlessFunctionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDeleteOneServerlessFunctionMutation(baseOptions?: Apollo.MutationHookOptions<DeleteOneServerlessFunctionMutation, DeleteOneServerlessFunctionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteOneServerlessFunctionMutation, DeleteOneServerlessFunctionMutationVariables>(DeleteOneServerlessFunctionDocument, options);
-      }
-export type DeleteOneServerlessFunctionMutationHookResult = ReturnType<typeof useDeleteOneServerlessFunctionMutation>;
-export type DeleteOneServerlessFunctionMutationResult = Apollo.MutationResult<DeleteOneServerlessFunctionMutation>;
-export type DeleteOneServerlessFunctionMutationOptions = Apollo.BaseMutationOptions<DeleteOneServerlessFunctionMutation, DeleteOneServerlessFunctionMutationVariables>;
-export const ExecuteOneServerlessFunctionDocument = gql`
-    mutation ExecuteOneServerlessFunction($input: ExecuteServerlessFunctionInput!) {
-  executeOneServerlessFunction(input: $input) {
-    data
-    logs
-    duration
-    status
-    error
-  }
-}
-    `;
-export type ExecuteOneServerlessFunctionMutationFn = Apollo.MutationFunction<ExecuteOneServerlessFunctionMutation, ExecuteOneServerlessFunctionMutationVariables>;
-
-/**
- * __useExecuteOneServerlessFunctionMutation__
- *
- * To run a mutation, you first call `useExecuteOneServerlessFunctionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useExecuteOneServerlessFunctionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [executeOneServerlessFunctionMutation, { data, loading, error }] = useExecuteOneServerlessFunctionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useExecuteOneServerlessFunctionMutation(baseOptions?: Apollo.MutationHookOptions<ExecuteOneServerlessFunctionMutation, ExecuteOneServerlessFunctionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ExecuteOneServerlessFunctionMutation, ExecuteOneServerlessFunctionMutationVariables>(ExecuteOneServerlessFunctionDocument, options);
-      }
-export type ExecuteOneServerlessFunctionMutationHookResult = ReturnType<typeof useExecuteOneServerlessFunctionMutation>;
-export type ExecuteOneServerlessFunctionMutationResult = Apollo.MutationResult<ExecuteOneServerlessFunctionMutation>;
-export type ExecuteOneServerlessFunctionMutationOptions = Apollo.BaseMutationOptions<ExecuteOneServerlessFunctionMutation, ExecuteOneServerlessFunctionMutationVariables>;
-export const PublishOneServerlessFunctionDocument = gql`
-    mutation PublishOneServerlessFunction($input: PublishServerlessFunctionInput!) {
-  publishServerlessFunction(input: $input) {
-    ...ServerlessFunctionFields
-  }
-}
-    ${ServerlessFunctionFieldsFragmentDoc}`;
-export type PublishOneServerlessFunctionMutationFn = Apollo.MutationFunction<PublishOneServerlessFunctionMutation, PublishOneServerlessFunctionMutationVariables>;
-
-/**
- * __usePublishOneServerlessFunctionMutation__
- *
- * To run a mutation, you first call `usePublishOneServerlessFunctionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePublishOneServerlessFunctionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [publishOneServerlessFunctionMutation, { data, loading, error }] = usePublishOneServerlessFunctionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function usePublishOneServerlessFunctionMutation(baseOptions?: Apollo.MutationHookOptions<PublishOneServerlessFunctionMutation, PublishOneServerlessFunctionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<PublishOneServerlessFunctionMutation, PublishOneServerlessFunctionMutationVariables>(PublishOneServerlessFunctionDocument, options);
-      }
-export type PublishOneServerlessFunctionMutationHookResult = ReturnType<typeof usePublishOneServerlessFunctionMutation>;
-export type PublishOneServerlessFunctionMutationResult = Apollo.MutationResult<PublishOneServerlessFunctionMutation>;
-export type PublishOneServerlessFunctionMutationOptions = Apollo.BaseMutationOptions<PublishOneServerlessFunctionMutation, PublishOneServerlessFunctionMutationVariables>;
-export const UpdateOneServerlessFunctionDocument = gql`
-    mutation UpdateOneServerlessFunction($input: UpdateServerlessFunctionInput!) {
-  updateOneServerlessFunction(input: $input) {
-    ...ServerlessFunctionFields
-  }
-}
-    ${ServerlessFunctionFieldsFragmentDoc}`;
-export type UpdateOneServerlessFunctionMutationFn = Apollo.MutationFunction<UpdateOneServerlessFunctionMutation, UpdateOneServerlessFunctionMutationVariables>;
-
-/**
- * __useUpdateOneServerlessFunctionMutation__
- *
- * To run a mutation, you first call `useUpdateOneServerlessFunctionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateOneServerlessFunctionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateOneServerlessFunctionMutation, { data, loading, error }] = useUpdateOneServerlessFunctionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateOneServerlessFunctionMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneServerlessFunctionMutation, UpdateOneServerlessFunctionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateOneServerlessFunctionMutation, UpdateOneServerlessFunctionMutationVariables>(UpdateOneServerlessFunctionDocument, options);
-      }
-export type UpdateOneServerlessFunctionMutationHookResult = ReturnType<typeof useUpdateOneServerlessFunctionMutation>;
-export type UpdateOneServerlessFunctionMutationResult = Apollo.MutationResult<UpdateOneServerlessFunctionMutation>;
-export type UpdateOneServerlessFunctionMutationOptions = Apollo.BaseMutationOptions<UpdateOneServerlessFunctionMutation, UpdateOneServerlessFunctionMutationVariables>;
-export const FindManyAvailablePackagesDocument = gql`
-    query FindManyAvailablePackages($input: ServerlessFunctionIdInput!) {
-  getAvailablePackages(input: $input)
-}
-    `;
-
-/**
- * __useFindManyAvailablePackagesQuery__
- *
- * To run a query within a React component, call `useFindManyAvailablePackagesQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyAvailablePackagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindManyAvailablePackagesQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useFindManyAvailablePackagesQuery(baseOptions: Apollo.QueryHookOptions<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>(FindManyAvailablePackagesDocument, options);
-      }
-export function useFindManyAvailablePackagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>(FindManyAvailablePackagesDocument, options);
-        }
-export type FindManyAvailablePackagesQueryHookResult = ReturnType<typeof useFindManyAvailablePackagesQuery>;
-export type FindManyAvailablePackagesLazyQueryHookResult = ReturnType<typeof useFindManyAvailablePackagesLazyQuery>;
-export type FindManyAvailablePackagesQueryResult = Apollo.QueryResult<FindManyAvailablePackagesQuery, FindManyAvailablePackagesQueryVariables>;
-export const GetManyServerlessFunctionsDocument = gql`
-    query GetManyServerlessFunctions {
-  findManyServerlessFunctions {
-    ...ServerlessFunctionFields
-  }
-}
-    ${ServerlessFunctionFieldsFragmentDoc}`;
-
-/**
- * __useGetManyServerlessFunctionsQuery__
- *
- * To run a query within a React component, call `useGetManyServerlessFunctionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetManyServerlessFunctionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetManyServerlessFunctionsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetManyServerlessFunctionsQuery(baseOptions?: Apollo.QueryHookOptions<GetManyServerlessFunctionsQuery, GetManyServerlessFunctionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetManyServerlessFunctionsQuery, GetManyServerlessFunctionsQueryVariables>(GetManyServerlessFunctionsDocument, options);
-      }
-export function useGetManyServerlessFunctionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetManyServerlessFunctionsQuery, GetManyServerlessFunctionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetManyServerlessFunctionsQuery, GetManyServerlessFunctionsQueryVariables>(GetManyServerlessFunctionsDocument, options);
-        }
-export type GetManyServerlessFunctionsQueryHookResult = ReturnType<typeof useGetManyServerlessFunctionsQuery>;
-export type GetManyServerlessFunctionsLazyQueryHookResult = ReturnType<typeof useGetManyServerlessFunctionsLazyQuery>;
-export type GetManyServerlessFunctionsQueryResult = Apollo.QueryResult<GetManyServerlessFunctionsQuery, GetManyServerlessFunctionsQueryVariables>;
-export const GetOneServerlessFunctionDocument = gql`
-    query GetOneServerlessFunction($input: ServerlessFunctionIdInput!) {
-  findOneServerlessFunction(input: $input) {
-    ...ServerlessFunctionFields
-  }
-}
-    ${ServerlessFunctionFieldsFragmentDoc}`;
-
-/**
- * __useGetOneServerlessFunctionQuery__
- *
- * To run a query within a React component, call `useGetOneServerlessFunctionQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetOneServerlessFunctionQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetOneServerlessFunctionQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useGetOneServerlessFunctionQuery(baseOptions: Apollo.QueryHookOptions<GetOneServerlessFunctionQuery, GetOneServerlessFunctionQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetOneServerlessFunctionQuery, GetOneServerlessFunctionQueryVariables>(GetOneServerlessFunctionDocument, options);
-      }
-export function useGetOneServerlessFunctionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOneServerlessFunctionQuery, GetOneServerlessFunctionQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetOneServerlessFunctionQuery, GetOneServerlessFunctionQueryVariables>(GetOneServerlessFunctionDocument, options);
-        }
-export type GetOneServerlessFunctionQueryHookResult = ReturnType<typeof useGetOneServerlessFunctionQuery>;
-export type GetOneServerlessFunctionLazyQueryHookResult = ReturnType<typeof useGetOneServerlessFunctionLazyQuery>;
-export type GetOneServerlessFunctionQueryResult = Apollo.QueryResult<GetOneServerlessFunctionQuery, GetOneServerlessFunctionQueryVariables>;
-export const FindOneServerlessFunctionSourceCodeDocument = gql`
-    query FindOneServerlessFunctionSourceCode($input: GetServerlessFunctionSourceCodeInput!) {
-  getServerlessFunctionSourceCode(input: $input)
-}
-    `;
-
-/**
- * __useFindOneServerlessFunctionSourceCodeQuery__
- *
- * To run a query within a React component, call `useFindOneServerlessFunctionSourceCodeQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneServerlessFunctionSourceCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindOneServerlessFunctionSourceCodeQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useFindOneServerlessFunctionSourceCodeQuery(baseOptions: Apollo.QueryHookOptions<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>(FindOneServerlessFunctionSourceCodeDocument, options);
-      }
-export function useFindOneServerlessFunctionSourceCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>(FindOneServerlessFunctionSourceCodeDocument, options);
-        }
-export type FindOneServerlessFunctionSourceCodeQueryHookResult = ReturnType<typeof useFindOneServerlessFunctionSourceCodeQuery>;
-export type FindOneServerlessFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useFindOneServerlessFunctionSourceCodeLazyQuery>;
-export type FindOneServerlessFunctionSourceCodeQueryResult = Apollo.QueryResult<FindOneServerlessFunctionSourceCodeQuery, FindOneServerlessFunctionSourceCodeQueryVariables>;
 export const VerifyTwoFactorAuthenticationMethodForAuthenticatedUserDocument = gql`
     mutation verifyTwoFactorAuthenticationMethodForAuthenticatedUser($otp: String!) {
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: $otp) {

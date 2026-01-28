@@ -37,7 +37,7 @@ export class FunctionExecuteCommand {
         process.exit(1);
       }
 
-      const functionsResult = await this.apiService.findServerlessFunctions();
+      const functionsResult = await this.apiService.findLogicFunctions();
       if (!functionsResult.success) {
         console.error(
           chalk.red('Failed to fetch functions:'),
@@ -92,7 +92,7 @@ export class FunctionExecuteCommand {
       console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}`));
       console.log('');
 
-      const result = await this.apiService.executeServerlessFunction({
+      const result = await this.apiService.executeLogicFunction({
         functionId: targetFunction.id,
         payload: parsedPayload,
         version: 'draft',

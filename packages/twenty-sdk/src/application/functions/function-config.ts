@@ -1,12 +1,12 @@
 import {
-  type ServerlessFunctionManifest,
-  type ServerlessFunctionTriggerManifest,
+  type LogicFunctionManifest,
+  type LogicFunctionTriggerManifest,
 } from 'twenty-shared/application';
 
 export type FunctionHandler = (...args: any[]) => any | Promise<any>;
 
 export type FunctionConfig = Omit<
-  ServerlessFunctionManifest,
+  LogicFunctionManifest,
   | 'sourceHandlerPath'
   | 'builtHandlerPath'
   | 'builtHandlerChecksum'
@@ -16,5 +16,5 @@ export type FunctionConfig = Omit<
   description?: string;
   timeoutSeconds?: number;
   handler: FunctionHandler;
-  triggers?: ServerlessFunctionTriggerManifest[];
+  triggers?: LogicFunctionTriggerManifest[];
 };
