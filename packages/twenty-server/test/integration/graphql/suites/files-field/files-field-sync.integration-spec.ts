@@ -127,7 +127,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     fileId: string,
   ): Promise<boolean> => {
     const result = await global.testDataSource.query(
-      'SELECT info FROM core."file" WHERE id = $1',
+      'SELECT settings FROM core."file" WHERE id = $1',
       [fileId],
     );
 
@@ -140,7 +140,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
 
   const checkFileIsTemporary = async (fileId: string): Promise<boolean> => {
     const result = await global.testDataSource.query(
-      'SELECT info FROM core."file" WHERE id = $1',
+      'SELECT settings FROM core."file" WHERE id = $1',
       [fileId],
     );
 

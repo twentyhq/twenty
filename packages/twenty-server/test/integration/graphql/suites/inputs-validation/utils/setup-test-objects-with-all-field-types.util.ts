@@ -207,14 +207,12 @@ export const setupTestObjectsWithAllFieldTypes = async (
           arrayField: ['test'],
           ...(withFilesField && uploadedFileId
             ? {
-                filesField: {
-                  addFiles: [
-                    {
-                      fileId: uploadedFileId,
-                      label: 'Document.pdf',
-                    },
-                  ],
-                },
+                filesField: [
+                  {
+                    fileId: uploadedFileId,
+                    label: 'Document.pdf',
+                  },
+                ],
               }
             : {}),
         },

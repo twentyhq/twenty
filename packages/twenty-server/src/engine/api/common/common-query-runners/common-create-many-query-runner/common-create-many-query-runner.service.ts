@@ -45,10 +45,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   CreateManyQueryArgs,
   ObjectRecord[]
 > {
-  constructor() {
-    super();
-  }
-
   protected readonly operationName = CommonQueryNames.CREATE_MANY;
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
