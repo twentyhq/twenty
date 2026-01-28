@@ -5369,6 +5369,11 @@ msgstr "응답을 받지 못했습니다"
 msgid "Failed to impersonate user. {errorMessage}"
 msgstr "사용자 가장에 실패했습니다. {errorMessage}"
 
+#. js-lingui-id: BTjpvA
+#: src/modules/front-components/components/FrontComponentRenderer.tsx
+msgid "Failed to load front component: {errorMessage}"
+msgstr ""
+
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
 msgid "Failed to load webhook"

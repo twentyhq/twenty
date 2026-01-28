@@ -1557,11 +1557,6 @@ export type FrontComponent = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type FrontComponentCode = {
-  __typename?: 'FrontComponentCode';
-  sourceCode: Scalars['String'];
-};
-
 export type FrontComponentConfiguration = {
   __typename?: 'FrontComponentConfiguration';
   configurationType: WidgetConfigurationType;

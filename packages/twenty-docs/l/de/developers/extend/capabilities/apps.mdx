@@ -9,12 +9,12 @@ description: Twenty-Anpassungen als Code erstellen und verwalten.
 
 ## Was sind Apps?
 
-Mit Apps können Sie Twenty-Anpassungen **als Code** erstellen und verwalten. Anstatt alles über die UI zu konfigurieren, definieren Sie Ihr Datenmodell und serverlose Funktionen im Code — das beschleunigt Entwicklung, Wartung und Rollout auf mehrere Workspaces.
+Mit Apps können Sie Twenty-Anpassungen **als Code** erstellen und verwalten. Anstatt alles über die UI zu konfigurieren, definieren Sie Ihr Datenmodell und Logikfunktionen im Code — das beschleunigt Entwicklung, Wartung und den Rollout auf mehrere Workspaces.
 
 **Was Sie heute tun können:**
 
 * Benutzerdefinierte Objekte und Felder als Code definieren (verwaltetes Datenmodell)
-* Serverlose Funktionen mit benutzerdefinierten Triggern erstellen
+* Logikfunktionen mit benutzerdefinierten Triggern erstellen
 * Dieselbe App in mehreren Workspaces bereitstellen
 
 **Bald verfügbar:**
@@ -156,23 +156,23 @@ src/
 
 Auf hoher Ebene:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
+* **package.json**: Deklariert den App-Namen, die Version, Engines (Node 24+, Yarn 4) und fügt `twenty-sdk` sowie Skripte wie `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` und `auth:login` hinzu, die an die lokale `twenty`-CLI delegieren.
 * **.gitignore**: Ignoriert übliche Artefakte wie `node_modules`, `.yarn`, `generated/` (typisierter Client), `dist/`, `build/`, Coverage-Ordner, Logdateien und `.env*`-Dateien.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Fixieren und konfigurieren die vom Projekt verwendete Yarn-4-Toolchain.
 * **.nvmrc**: Legt die vom Projekt erwartete Node.js-Version fest.
 * **eslint.config.mjs** und **tsconfig.json**: Stellen Linting und TypeScript-Konfiguration für die TypeScript-Quellen Ihrer App bereit.
 * **README.md**: Ein kurzes README im App-Root mit grundlegenden Anweisungen.
-* **src/**: The main place where you define your application-as-code:
+* **src/**: Der Hauptort, an dem Sie Ihre Anwendung als Code definieren:
   * `application.config.ts`: Globale Konfiguration für Ihre App (Metadaten und Laufzeit-Anbindung). Siehe unten „Anwendungskonfiguration“.
-  * `*.role.ts`: Rollendefinitionen, die von Ihren serverlosen Funktionen verwendet werden. Siehe unten „Standard-Funktionsrolle“.
+  * `*.role.ts`: Rollendefinitionen, die von Ihren Logikfunktionen verwendet werden. Siehe unten „Standard-Funktionsrolle“.
   * `*.object.ts`: Benutzerdefinierte Objektdefinitionen.
-  * `*.function.ts`: Definitionen serverloser Funktionen.
-  * `*.front-component.tsx`: Front component definitions.
+  * `*.function.ts`: Definitionen von Logikfunktionen.
+  * `*.front-component.tsx`: Front-Komponenten-Definitionen.
 
 Spätere Befehle fügen weitere Dateien und Ordner hinzu:
 
 * `yarn app:generate` erstellt einen `generated/`-Ordner (typisierter Twenty-Client + Workspace-Typen).
-* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn entity:add` fügt unter `src/` Entitätsdefinitionsdateien für Ihre benutzerdefinierten Objekte, Funktionen, Front-Komponenten oder Rollen hinzu.
 
 ## Authentifizierung
 
@@ -219,7 +219,7 @@ Das SDK stellt vier Hilfsfunktionen mit eingebauter Validierung bereit, um Ihre 
 | ------------------ | ---------------------------------------------------- |
 | `defineApp()`      | Anwendungsmetadaten konfigurieren                    |
 | `defineObject()`   | Benutzerdefinierte Objekte mit Feldern definieren    |
-| `defineFunction()` | Serverlose Funktionen mit Handlern definieren        |
+| `defineFunction()` | Logikfunktionen mit Handlern definieren              |
 | `defineRole()`     | Rollenberechtigungen und Objektzugriff konfigurieren |
 
 Diese Funktionen validieren Ihre Konfiguration zur Laufzeit und bieten bessere IDE-Autovervollständigung sowie Typsicherheit.
@@ -303,7 +303,7 @@ Hauptpunkte:
 * Der `universalIdentifier` muss eindeutig und über Deployments hinweg stabil sein.
 * Jedes Feld benötigt `name`, `type`, `label` und einen eigenen stabilen `universalIdentifier`.
 * Das Array `fields` ist optional — Sie können Objekte ohne benutzerdefinierte Felder definieren.
-* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
+* Sie können mit `yarn entity:add` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen.
 
 <Note>
   **Basisfelder werden automatisch erstellt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, fügt Twenty automatisch Standardfelder wie `name`, `createdAt`, `updatedAt`, `createdBy`, `position` und `deletedAt` hinzu. Sie müssen diese nicht in Ihrem `fields`-Array definieren — fügen Sie nur Ihre benutzerdefinierten Felder hinzu.
@@ -349,7 +349,7 @@ Notizen:
 
 #### Rollen und Berechtigungen
 
-Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `functionRoleUniversalIdentifier` in `application.config.ts` legt die Standardrolle fest, die von den serverlosen Funktionen Ihrer App verwendet wird.
+Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `functionRoleUniversalIdentifier` in `application.config.ts` legt die Standardrolle fest, die von den Logikfunktionen Ihrer App verwendet wird.
 
 * Der zur Laufzeit als `TWENTY_API_KEY` injizierte API-Schlüssel wird von dieser Standard-Funktionsrolle abgeleitet.
 * Der typisierte Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
@@ -411,7 +411,7 @@ Notizen:
 * `permissionFlags` steuern den Zugriff auf Funktionen auf Plattformebene. Halten Sie sie minimal; fügen Sie nur hinzu, was Sie benötigen.
 * Ein funktionierendes Beispiel finden Sie in der Hello-World-App: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Konfiguration serverloser Funktionen und Einstiegspunkt
+### Konfiguration von Logikfunktionen und Einstiegspunkt
 
 Jede Funktionsdatei verwendet `defineFunction()`, um eine Konfiguration mit einem Handler und optionalen Triggern zu exportieren. Verwenden Sie die Dateiendung `*.function.ts` für die automatische Erkennung.
 
@@ -510,7 +510,7 @@ Notizen:
   **So migrieren Sie bestehende Funktionen:** Aktualisieren Sie Ihren Handler, sodass er nicht mehr direkt aus dem params-Objekt destrukturiert, sondern aus `event.body`, `event.queryStringParameters` oder `event.pathParameters`.
 </Warning>
 
-Wenn ein Routen-Trigger Ihre Funktion aufruft, erhält sie ein `RoutePayload`-Objekt, das dem AWS-HTTP-API-v2-Format entspricht. Importieren Sie den Typ aus `twenty-sdk`:
+Wenn ein Routen-Trigger Ihre Logikfunktion aufruft, erhält sie ein `RoutePayload`-Objekt, das dem AWS HTTP API v2-Format entspricht. Importieren Sie den Typ aus `twenty-sdk`:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -540,7 +540,7 @@ Der Typ `RoutePayload` hat die folgende Struktur:
 
 ### Weiterleiten von HTTP-Headern
 
-Standardmäßig werden HTTP-Header von eingehenden Anfragen aus Sicherheitsgründen nicht an Ihre serverlose Funktion weitergegeben. Um auf bestimmte Header zuzugreifen, listen Sie diese explizit im Array `forwardedRequestHeaders` auf:
+Standardmäßig werden HTTP-Header von eingehenden Anfragen aus Sicherheitsgründen nicht an Ihre Logikfunktion weitergegeben. Um auf bestimmte Header zuzugreifen, listen Sie diese explizit im Array `forwardedRequestHeaders` auf:
 
 ```typescript
 export default defineFunction({
@@ -578,7 +578,7 @@ const handler = async (event: RoutePayload) => {
 
 Sie können neue Funktionen auf zwei Arten erstellen:
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. Dadurch wird eine Starterdatei mit Handler und Konfiguration erzeugt.
+* **Generiert**: Führen Sie `yarn entity:add` aus und wählen Sie die Option zum Hinzufügen einer neuen Funktion. Dadurch wird eine Starterdatei mit Handler und Konfiguration erzeugt.
 * **Manuell**: Erstellen Sie eine neue `*.function.ts`-Datei und verwenden Sie `defineFunction()` nach demselben Muster.
 
 ### Generierter typisierter Client
@@ -592,9 +592,9 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Der Client wird durch `yarn app:generate` erneut generiert. Re-run after changing your objects or when onboarding to a new workspace.
+Der Client wird durch `yarn app:generate` erneut generiert. Führen Sie ihn nach Änderungen an Ihren Objekten oder beim Onboarding in einen neuen Workspace erneut aus.
 
-#### Laufzeit-Anmeldedaten in serverlosen Funktionen
+#### Laufzeit-Anmeldedaten in Logikfunktionen
 
 Wenn Ihre Funktion auf Twenty läuft, injiziert die Plattform vor der Ausführung Ihres Codes Anmeldedaten als Umgebungsvariablen:
 
@@ -604,7 +604,7 @@ Wenn Ihre Funktion auf Twenty läuft, injiziert die Plattform vor der Ausführun
 Notizen:
 
 * Sie müssen dem generierten Client weder URL noch API-Schlüssel übergeben. Er liest `TWENTY_API_URL` und `TWENTY_API_KEY` zur Laufzeit aus process.env.
-* Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application.config.ts` über `functionRoleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den serverlosen Funktionen Ihrer Anwendung verwendet wird.
+* Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application.config.ts` über `functionRoleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
 * Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `functionRoleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
 
 ### Hello-World-Beispiel
@@ -640,13 +640,13 @@ Fügen Sie dann Skripte wie diese hinzu:
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
+Jetzt können Sie dieselben Befehle über Yarn ausführen, z. B. `yarn app:dev`, `yarn app:generate` usw.
 
 ## Fehlerbehebung
 
 * Authentifizierungsfehler: Führen Sie `yarn auth:login` aus und stellen Sie sicher, dass Ihr API-Schlüssel die erforderlichen Berechtigungen hat.
 * Verbindung zum Server nicht möglich: Überprüfen Sie die API-URL und dass der Twenty-Server erreichbar ist.
-* Types or client missing/outdated: run `yarn app:generate`.
+* Typen oder Client fehlen/veraltet: Führen Sie `yarn app:generate` aus.
 * Dev-Modus synchronisiert nicht: Stellen Sie sicher, dass `yarn app:dev` läuft und dass Änderungen von Ihrer Umgebung nicht ignoriert werden.
 
 Discord-Hilfekanal: https://discord.com/channels/1130383047699738754/1130386664812982322
