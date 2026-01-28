@@ -11,6 +11,7 @@ import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/w
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
+import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/utils/build-pending-activation-user-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 
 @Injectable()
@@ -56,6 +57,14 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
         user: req.user,
         workspaceMemberId: req.workspaceMemberId,
         workspaceMember: req.workspaceMember,
+      });
+    }
+
+    if (isDefined(req.userWorkspaceId) && isDefined(req.user)) {
+      return buildPendingActivationUserAuthContext({
+        workspace: req.workspace!,
+        userWorkspaceId: req.userWorkspaceId,
+        user: req.user,
       });
     }
 

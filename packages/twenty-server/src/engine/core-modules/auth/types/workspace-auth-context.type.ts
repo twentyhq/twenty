@@ -4,7 +4,8 @@ export type WorkspaceAuthContextType =
   | 'system'
   | 'user'
   | 'apiKey'
-  | 'application';
+  | 'application'
+  | 'pendingActivationUser';
 
 interface BaseWorkspaceAuthContext {
   type: WorkspaceAuthContextType;
@@ -35,8 +36,16 @@ export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'system';
 }
 
+export interface PendingActivationUserWorkspaceAuthContext
+  extends BaseWorkspaceAuthContext {
+  type: 'pendingActivationUser';
+  userWorkspaceId: NonNullable<AuthContext['userWorkspaceId']>;
+  user: NonNullable<AuthContext['user']>;
+}
+
 export type WorkspaceAuthContext =
   | ApiKeyWorkspaceAuthContext
   | UserWorkspaceAuthContext
   | ApplicationWorkspaceAuthContext
-  | SystemWorkspaceAuthContext;
+  | SystemWorkspaceAuthContext
+  | PendingActivationUserWorkspaceAuthContext;
