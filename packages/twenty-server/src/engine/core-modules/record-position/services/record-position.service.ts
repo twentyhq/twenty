@@ -163,7 +163,6 @@ export class RecordPositionService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const repository = await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
@@ -179,6 +178,7 @@ export class RecordPositionService {
 
         return record ? { id: record.id, position: record.position } : null;
       },
+      authContext,
     );
   }
 
@@ -190,22 +190,19 @@ export class RecordPositionService {
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const repository = await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          objectMetadata.nameSingular,
-          {
-            shouldBypassPermissionChecks: true,
-          },
-        );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository = await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        objectMetadata.nameSingular,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
 
-        await repository.update(recordId, {
-          position: positionValue,
-        });
-      },
-    );
+      await repository.update(recordId, {
+        position: positionValue,
+      });
+    }, authContext);
   }
 
   private async findMinPosition(
@@ -216,7 +213,6 @@ export class RecordPositionService {
 
     const result =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const repository = await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,
@@ -228,6 +224,7 @@ export class RecordPositionService {
 
           return await repository.minimum('position');
         },
+        authContext,
       );
 
     return sanitizeNumber(result);
@@ -241,7 +238,6 @@ export class RecordPositionService {
 
     const result =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const repository = await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,
@@ -253,6 +249,7 @@ export class RecordPositionService {
 
           return await repository.maximum('position');
         },
+        authContext,
       );
 
     return sanitizeNumber(result);

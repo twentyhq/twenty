@@ -41,7 +41,6 @@ export class ConnectedAccountDeleteOnePreQueryHook
 
     const messageChannels =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext as WorkspaceAuthContext,
         async () => {
           const messageChannelRepository =
             await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
@@ -53,6 +52,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
             connectedAccountId,
           });
         },
+        authContext as WorkspaceAuthContext,
       );
 
     const objectMetadataEntity =

@@ -41,6 +41,10 @@ export class CalendarFetchEventsService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
+    this.logger.log(
+      `WorkspaceId: ${workspaceId}, CalendarChannelId: ${calendarChannel.id} - Fetching calendar events`,
+    );
+
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       [calendarChannel.id],
       workspaceId,
@@ -48,68 +52,51 @@ export class CalendarFetchEventsService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        try {
-          const { accessToken, refreshToken } =
-            await this.calendarAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-              {
-                connectedAccount,
-                workspaceId,
-                calendarChannelId: calendarChannel.id,
-              },
-            );
-
-          const connectedAccountWithFreshTokens = {
-            ...connectedAccount,
-            accessToken,
-            refreshToken,
-          };
-
-          if (!isDefined(calendarChannel.syncCursor)) {
-            throw new CalendarEventImportDriverException(
-              'Sync cursor is required',
-              CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-            );
-          }
-
-          const getCalendarEventsResponse =
-            await this.getCalendarEventsService.getCalendarEvents(
-              connectedAccountWithFreshTokens,
-              calendarChannel.syncCursor,
-            );
-
-          const hasFullEvents = getCalendarEventsResponse.fullEvents;
-
-          const calendarEvents = hasFullEvents
-            ? getCalendarEventsResponse.calendarEvents
-            : null;
-          const calendarEventIds = getCalendarEventsResponse.calendarEventIds;
-          const nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
-
-          const calendarChannelRepository =
-            await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      try {
+        const { accessToken, refreshToken } =
+          await this.calendarAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+            {
+              connectedAccount,
               workspaceId,
-              'calendarChannel',
-            );
+              calendarChannelId: calendarChannel.id,
+            },
+          );
 
-          if (!calendarEvents || calendarEvents?.length === 0) {
-            await calendarChannelRepository.update(
-              {
-                id: calendarChannel.id,
-              },
-              {
-                syncCursor: nextSyncCursor,
-              },
-            );
+        const connectedAccountWithFreshTokens = {
+          ...connectedAccount,
+          accessToken,
+          refreshToken,
+        };
 
-            await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
-              [calendarChannel.id],
-              workspaceId,
-            );
-          }
+        if (!isDefined(calendarChannel.syncCursor)) {
+          throw new CalendarEventImportDriverException(
+            'Sync cursor is required',
+            CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+          );
+        }
 
+        const getCalendarEventsResponse =
+          await this.getCalendarEventsService.getCalendarEvents(
+            connectedAccountWithFreshTokens,
+            calendarChannel.syncCursor,
+          );
+
+        const hasFullEvents = getCalendarEventsResponse.fullEvents;
+
+        const calendarEvents = hasFullEvents
+          ? getCalendarEventsResponse.calendarEvents
+          : null;
+        const calendarEventIds = getCalendarEventsResponse.calendarEventIds;
+        const nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
+
+        const calendarChannelRepository =
+          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+            workspaceId,
+            'calendarChannel',
+          );
+
+        if (!calendarEvents || calendarEvents?.length === 0) {
           await calendarChannelRepository.update(
             {
               id: calendarChannel.id,
@@ -119,42 +106,55 @@ export class CalendarFetchEventsService {
             },
           );
 
-          if (hasFullEvents && calendarEvents) {
-            await this.calendarEventsImportService.processCalendarEventsImport(
-              calendarChannel,
-              connectedAccount,
-              workspaceId,
-              calendarEvents,
-            );
-          } else if (!hasFullEvents && calendarEventIds) {
-            await this.cacheStorage.setAdd(
-              `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
-              calendarEventIds,
-            );
-
-            await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
-              [calendarChannel.id],
-              workspaceId,
-            );
-          } else {
-            throw new CalendarEventImportDriverException(
-              "Expected 'calendarEvents' or 'calendarEventIds' to be present",
-              CalendarEventImportDriverExceptionCode.UNKNOWN,
-            );
-          }
-        } catch (error) {
-          this.logger.log(
-            `Calendar event fetch error for workspace ${workspaceId} and calendar channel ${calendarChannel.id}`,
-          );
-          this.logger.error(error);
-          await this.calendarEventImportErrorHandlerService.handleDriverException(
-            error,
-            CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH,
-            calendarChannel,
+          await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
+            [calendarChannel.id],
             workspaceId,
           );
         }
-      },
-    );
+
+        await calendarChannelRepository.update(
+          {
+            id: calendarChannel.id,
+          },
+          {
+            syncCursor: nextSyncCursor,
+          },
+        );
+
+        if (hasFullEvents && calendarEvents) {
+          await this.calendarEventsImportService.processCalendarEventsImport(
+            calendarChannel,
+            connectedAccount,
+            workspaceId,
+            calendarEvents,
+          );
+        } else if (!hasFullEvents && calendarEventIds) {
+          await this.cacheStorage.setAdd(
+            `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
+            calendarEventIds,
+          );
+
+          await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
+            [calendarChannel.id],
+            workspaceId,
+          );
+        } else {
+          throw new CalendarEventImportDriverException(
+            "Expected 'calendarEvents' or 'calendarEventIds' to be present",
+            CalendarEventImportDriverExceptionCode.UNKNOWN,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `WorkspaceId: ${workspaceId}, CalendarChannelId: ${calendarChannel.id} - Calendar event fetch error: ${error.message}`,
+        );
+        await this.calendarEventImportErrorHandlerService.handleDriverException(
+          error,
+          CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH,
+          calendarChannel,
+          workspaceId,
+        );
+      }
+    }, authContext);
   }
 }

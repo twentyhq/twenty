@@ -36,37 +36,34 @@ export class WorkflowCreateManyPostQueryHook
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspace.id,
-            'workflowVersion',
-          );
-
-        const position = await this.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflowVersion',
-          },
-          workspaceId: workspace.id,
-        });
-
-        const workflowVersionsToCreate = payload.map((workflow) => ({
-          workflowId: workflow.id,
-          status: WorkflowVersionStatus.DRAFT,
-          name: 'v1',
-          position,
-        }));
-
-        await Promise.all(
-          workflowVersionsToCreate.map((workflowVersion) => {
-            return workflowVersionRepository.insert(workflowVersion);
-          }),
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspace.id,
+          'workflowVersion',
         );
-      },
-    );
+
+      const position = await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId: workspace.id,
+      });
+
+      const workflowVersionsToCreate = payload.map((workflow) => ({
+        workflowId: workflow.id,
+        status: WorkflowVersionStatus.DRAFT,
+        name: 'v1',
+        position,
+      }));
+
+      await Promise.all(
+        workflowVersionsToCreate.map((workflowVersion) => {
+          return workflowVersionRepository.insert(workflowVersion);
+        }),
+      );
+    }, authContext as WorkspaceAuthContext);
   }
 }

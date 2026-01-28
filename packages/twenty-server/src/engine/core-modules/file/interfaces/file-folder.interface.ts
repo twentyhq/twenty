@@ -24,10 +24,10 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.PersonPicture]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.ServerlessFunction]: {
+  [FileFolder.LogicFunction]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.ServerlessFunctionToDelete]: {
+  [FileFolder.LogicFunctionToDelete]: {
     ignoreExpirationToken: false,
   },
   [FileFolder.File]: {

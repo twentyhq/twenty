@@ -17,14 +17,20 @@ const CREATE_WEBHOOK_MUTATION = gql`
 `;
 
 const DELETE_WEBHOOK_MUTATION = gql`
-  mutation DeleteWebhook($input: DeleteWebhookInput!) {
-    deleteWebhook(input: $input)
+  mutation DeleteWebhook($id: UUID!) {
+    deleteWebhook(id: $id) {
+      id
+      targetUrl
+      operations
+      description
+      secret
+    }
   }
 `;
 
 const GET_WEBHOOK_QUERY = gql`
-  query GetWebhook($input: GetWebhookInput!) {
-    webhook(input: $input) {
+  query GetWebhook($id: UUID!) {
+    webhook(id: $id) {
       id
       targetUrl
       operations
@@ -81,14 +87,14 @@ export const createWebhook = (input: WebhookInput) => {
 export const deleteWebhook = (id: string) => {
   return makeMetadataAPIRequest({
     query: DELETE_WEBHOOK_MUTATION,
-    variables: { input: { id } },
+    variables: { id },
   });
 };
 
 export const getWebhook = (id: string) => {
   return makeMetadataAPIRequest({
     query: GET_WEBHOOK_QUERY,
-    variables: { input: { id } },
+    variables: { id },
   });
 };
 

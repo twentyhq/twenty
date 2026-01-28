@@ -8,10 +8,7 @@ export const ALL_METADATA_NAME = {
   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup',
   viewFilterGroup: 'viewFilterGroup',
   index: 'index',
-  serverlessFunction: 'serverlessFunction',
-  cronTrigger: 'cronTrigger',
-  databaseEventTrigger: 'databaseEventTrigger',
-  routeTrigger: 'routeTrigger',
+  logicFunction: 'logicFunction',
   viewFilter: 'viewFilter',
   role: 'role',
   roleTarget: 'roleTarget',
@@ -23,4 +20,5 @@ export const ALL_METADATA_NAME = {
   commandMenuItem: 'commandMenuItem',
   navigationMenuItem: 'navigationMenuItem',
   frontComponent: 'frontComponent',
+  webhook: 'webhook',
 } as const;

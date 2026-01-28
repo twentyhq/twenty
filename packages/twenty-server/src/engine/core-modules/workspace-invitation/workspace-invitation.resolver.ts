@@ -60,7 +60,6 @@ export class WorkspaceInvitationResolver {
 
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -75,6 +74,7 @@ export class WorkspaceInvitationResolver {
             },
           });
         },
+        authContext,
       );
 
     return this.workspaceInvitationService.resendWorkspaceInvitation(
@@ -100,7 +100,6 @@ export class WorkspaceInvitationResolver {
 
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -115,6 +114,7 @@ export class WorkspaceInvitationResolver {
             },
           });
         },
+        authContext,
       );
 
     return await this.workspaceInvitationService.sendInvitations(

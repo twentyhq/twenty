@@ -292,19 +292,19 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **환경 전용 모드:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`로 설정한 경우, `.env` 파일에 이러한 변수를 추가하세요.
 </Warning>
 
-## 서버리스 함수
+## 로직 함수
 
-Twenty는 워크플로 및 사용자 지정 로직을 위해 서버리스 함수를 지원합니다. `SERVERLESS_TYPE` 환경 변수를 통해 실행 환경을 구성합니다.
+Twenty는 워크플로 및 사용자 지정 로직을 위해 로직 함수를 지원합니다. `SERVERLESS_TYPE` 환경 변수를 통해 실행 환경을 구성합니다.
 
 <Warning>
-  **보안 공지:** 로컬 서버리스 드라이버 (`SERVERLESS_TYPE=LOCAL`)는 샌드박싱 없이 호스트의 Node.js 프로세스에서 코드를 직접 실행합니다. 개발 환경에서 신뢰할 수 있는 코드에만 사용해야 합니다. 신뢰할 수 없는 코드를 처리하는 프로덕션 배포의 경우 `SERVERLESS_TYPE=LAMBDA` 또는 `SERVERLESS_TYPE=DISABLED` 사용을 강력히 권장합니다.
+  **보안 공지:** 로컬 드라이버 (`SERVERLESS_TYPE=LOCAL`)는 샌드박싱 없이 호스트의 Node.js 프로세스에서 코드를 직접 실행합니다. 개발 환경에서 신뢰할 수 있는 코드에만 사용해야 합니다. 신뢰할 수 없는 코드를 처리하는 프로덕션 배포의 경우 `SERVERLESS_TYPE=LAMBDA` 또는 `SERVERLESS_TYPE=DISABLED` 사용을 강력히 권장합니다.
 </Warning>
 
 ### 사용 가능한 드라이버
 
 | 드라이버   | 환경 변수                      | 사용 사례                     | 보안 수준           |
 | ------ | -------------------------- | ------------------------- | --------------- |
-| 비활성화   | `SERVERLESS_TYPE=DISABLED` | 서버리스 함수를 완전히 비활성화         | 해당 없음           |
+| 비활성화   | `SERVERLESS_TYPE=DISABLED` | 로직 함수를 완전히 비활성화           | 해당 없음           |
 | 로컬     | `SERVERLESS_TYPE=LOCAL`    | 개발 및 신뢰할 수 있는 환경          | 낮음 (샌드박싱 없음)    |
 | Lambda | `SERVERLESS_TYPE=LAMBDA`   | 신뢰할 수 없는 코드를 처리하는 프로덕션 환경 | 높음 (하드웨어 수준 격리) |
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**서버리스 함수를 비활성화하려면:**
+**로직 함수를 비활성화하려면:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  `SERVERLESS_TYPE=DISABLED`를 사용하는 경우 서버리스 함수를 실행하려는 모든 시도는 오류를 반환합니다. 서버리스 함수 기능 없이 Twenty를 실행하려는 경우 유용합니다.
+  `SERVERLESS_TYPE=DISABLED`를 사용하는 경우 로직 함수를 실행하려는 모든 시도는 오류를 반환합니다. 로직 함수 기능 없이 Twenty를 실행하려는 경우 유용합니다.
 </Note>

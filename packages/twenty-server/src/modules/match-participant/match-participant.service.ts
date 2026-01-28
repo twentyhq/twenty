@@ -210,36 +210,32 @@ export class MatchParticipantService<
   }: MatchParticipantsForWorkspaceMembersArgs) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const participantRepository = await this.getParticipantRepository(
-          workspaceId,
-          objectMetadataName,
-        );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const participantRepository = await this.getParticipantRepository(
+        workspaceId,
+        objectMetadataName,
+      );
 
-        const participants = await participantRepository.find({
-          where: {
-            workspaceMemberId: In(participantMatching.workspaceMemberIds),
-          },
-        });
+      const participants = await participantRepository.find({
+        where: {
+          workspaceMemberId: In(participantMatching.workspaceMemberIds),
+        },
+      });
 
-        const tobeRematchedParticipants = participants.map((participant) => {
-          return {
-            ...participant,
-            workspaceMemberId: null,
-          };
-        });
+      const tobeRematchedParticipants = participants.map((participant) => {
+        return {
+          ...participant,
+          workspaceMemberId: null,
+        };
+      });
 
-        await this.matchParticipants({
-          matchWith: 'workspaceMemberOnly',
-          participants:
-            tobeRematchedParticipants as ParticipantWorkspaceEntity[],
-          objectMetadataName,
-          workspaceId,
-        });
-      },
-    );
+      await this.matchParticipants({
+        matchWith: 'workspaceMemberOnly',
+        participants: tobeRematchedParticipants as ParticipantWorkspaceEntity[],
+        objectMetadataName,
+        workspaceId,
+      });
+    }, authContext);
   }
 
   public async matchParticipantsForPeople({
@@ -249,56 +245,53 @@ export class MatchParticipantService<
   }: MatchParticipantsForPeopleArgs) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const participantRepository = await this.getParticipantRepository(
-          workspaceId,
-          objectMetadataName,
-        );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const participantRepository = await this.getParticipantRepository(
+        workspaceId,
+        objectMetadataName,
+      );
 
-        let participantsMatchingPersonEmails: ParticipantWorkspaceEntity[] = [];
-        let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];
+      let participantsMatchingPersonEmails: ParticipantWorkspaceEntity[] = [];
+      let participantsMatchingPersonId: ParticipantWorkspaceEntity[] = [];
 
-        if (participantMatching.personIds.length > 0) {
-          participantsMatchingPersonId = (await participantRepository.find({
-            where: {
-              personId: In(participantMatching.personIds),
-            },
-          })) as ParticipantWorkspaceEntity[];
-        }
-
-        if (participantMatching.personEmails.length > 0) {
-          participantsMatchingPersonEmails = (await participantRepository.find({
-            where: {
-              handle: In(participantMatching.personEmails),
-            },
-          })) as ParticipantWorkspaceEntity[];
-        }
-
-        const uniqueParticipants = [
-          ...new Set([
-            ...participantsMatchingPersonId,
-            ...participantsMatchingPersonEmails,
-          ]),
-        ];
-
-        const tobeRematchedParticipants = uniqueParticipants.map(
-          (participant) => {
-            return {
-              ...participant,
-              personId: null,
-            };
+      if (participantMatching.personIds.length > 0) {
+        participantsMatchingPersonId = (await participantRepository.find({
+          where: {
+            personId: In(participantMatching.personIds),
           },
-        );
+        })) as ParticipantWorkspaceEntity[];
+      }
 
-        await this.matchParticipants({
-          matchWith: 'personOnly',
-          participants: tobeRematchedParticipants,
-          objectMetadataName,
-          workspaceId,
-        });
-      },
-    );
+      if (participantMatching.personEmails.length > 0) {
+        participantsMatchingPersonEmails = (await participantRepository.find({
+          where: {
+            handle: In(participantMatching.personEmails),
+          },
+        })) as ParticipantWorkspaceEntity[];
+      }
+
+      const uniqueParticipants = [
+        ...new Set([
+          ...participantsMatchingPersonId,
+          ...participantsMatchingPersonEmails,
+        ]),
+      ];
+
+      const tobeRematchedParticipants = uniqueParticipants.map(
+        (participant) => {
+          return {
+            ...participant,
+            personId: null,
+          };
+        },
+      );
+
+      await this.matchParticipants({
+        matchWith: 'personOnly',
+        participants: tobeRematchedParticipants,
+        objectMetadataName,
+        workspaceId,
+      });
+    }, authContext);
   }
 }

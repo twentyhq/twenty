@@ -51,7 +51,6 @@ export class CreateCompanyAndPersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -144,6 +143,7 @@ export class CreateCompanyAndPersonService {
 
         return { ...createdPeople, ...restoredPeople };
       },
+      authContext,
     );
   }
 
@@ -160,32 +160,29 @@ export class CreateCompanyAndPersonService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        if (!connectedAccount.accountOwner) {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              WorkspaceMemberWorkspaceEntity,
-            );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      if (!connectedAccount.accountOwner) {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            WorkspaceMemberWorkspaceEntity,
+          );
 
-          const workspaceMember = await workspaceMemberRepository.findOne({
-            where: {
-              id: connectedAccount.accountOwnerId,
-            },
-          });
+        const workspaceMember = await workspaceMemberRepository.findOne({
+          where: {
+            id: connectedAccount.accountOwnerId,
+          },
+        });
 
-          if (!workspaceMember) {
-            throw new Error(
-              `Workspace member with id ${connectedAccount.accountOwnerId} not found in workspace ${workspaceId}`,
-            );
-          }
-
-          connectedAccount.accountOwner = workspaceMember;
+        if (!workspaceMember) {
+          throw new Error(
+            `Workspace member with id ${connectedAccount.accountOwnerId} not found in workspace ${workspaceId}`,
+          );
         }
-      },
-    );
+
+        connectedAccount.accountOwner = workspaceMember;
+      }
+    }, authContext);
 
     for (const contactsBatch of contactsBatches) {
       try {

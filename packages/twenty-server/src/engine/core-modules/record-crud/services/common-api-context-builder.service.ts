@@ -122,10 +122,8 @@ export class CommonApiContextBuilderService {
         authContext.apiKey.id,
         workspaceId,
       );
-    } else if (
-      isDefined(authContext.application?.defaultServerlessFunctionRoleId)
-    ) {
-      roleId = authContext.application.defaultServerlessFunctionRoleId;
+    } else if (isDefined(authContext.application?.defaultLogicFunctionRoleId)) {
+      roleId = authContext.application.defaultLogicFunctionRoleId;
     } else if (isDefined(authContext.userWorkspaceId)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({

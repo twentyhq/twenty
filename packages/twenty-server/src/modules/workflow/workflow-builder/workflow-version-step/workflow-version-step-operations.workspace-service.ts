@@ -15,14 +15,14 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { SEED_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/seed-project-input-schema';
+import { SEED_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function-executor/drivers/constants/seed-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -62,7 +62,7 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly logicFunctionService: LogicFunctionService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleTargetEntity)
@@ -84,13 +84,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.CODE: {
         if (
-          !(await this.serverlessFunctionService.hasServerlessFunctionPublishedVersion(
-            step.settings.input.serverlessFunctionId,
+          !(await this.logicFunctionService.hasLogicFunctionPublishedVersion(
+            step.settings.input.logicFunctionId,
             workspaceId,
           ))
         ) {
-          await this.serverlessFunctionService.deleteOneServerlessFunction({
-            id: step.settings.input.serverlessFunctionId,
+          await this.logicFunctionService.deleteOneLogicFunction({
+            id: step.settings.input.logicFunctionId,
             workspaceId,
             softDelete: false,
           });
@@ -154,16 +154,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (type) {
       case WorkflowActionType.CODE: {
-        const newServerlessFunction =
-          await this.serverlessFunctionService.createOneServerlessFunction(
+        const newLogicFunction =
+          await this.logicFunctionService.createOneLogicFunction(
             {
-              name: 'A Serverless Function Code Workflow Step',
+              name: 'A Logic Function Code Workflow Step',
               description: '',
             },
             workspaceId,
           );
 
-        if (!isDefined(newServerlessFunction)) {
+        if (!isDefined(newLogicFunction)) {
           throw new WorkflowVersionStepException(
             'Fail to create Code Step',
             WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
@@ -173,7 +173,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'Code - Serverless Function',
+            name: 'Code - Logic Function',
             type: WorkflowActionType.CODE,
             settings: {
               ...BASE_STEP_DEFINITION,
@@ -187,9 +187,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 _outputSchemaType: 'LINK',
               },
               input: {
-                serverlessFunctionId: newServerlessFunction.id,
-                serverlessFunctionVersion: 'draft',
-                serverlessFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
+                logicFunctionId: newLogicFunction.id,
+                logicFunctionVersion: 'draft',
+                logicFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
               },
             },
           },
@@ -533,7 +533,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const responseKeys = Object.keys(response);
 
@@ -598,6 +597,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           return acc;
         }, {});
       },
+      authContext,
     );
   }
 
@@ -615,10 +615,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        const newServerlessFunction =
-          await this.serverlessFunctionService.duplicateServerlessFunction({
-            id: step.settings.input.serverlessFunctionId,
-            version: step.settings.input.serverlessFunctionVersion,
+        const newLogicFunction =
+          await this.logicFunctionService.duplicateLogicFunction({
+            id: step.settings.input.logicFunctionId,
+            version: step.settings.input.logicFunctionVersion,
             workspaceId,
           });
 
@@ -631,8 +631,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             ...step.settings,
             input: {
               ...step.settings.input,
-              serverlessFunctionId: newServerlessFunction.id,
-              serverlessFunctionVersion: 'draft',
+              logicFunctionId: newLogicFunction.id,
+              logicFunctionVersion: 'draft',
             },
           },
         };
@@ -727,7 +727,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -777,6 +776,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         return emptyNodeStep;
       },
+      authContext,
     );
   }
 
@@ -797,7 +797,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -878,6 +877,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           branches,
         };
       },
+      authContext,
     );
   }
 
@@ -890,9 +890,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }): Promise<WorkflowAction> {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.createDraftFromPublishedVersion({
-          id: step.settings.input.serverlessFunctionId,
-          version: step.settings.input.serverlessFunctionVersion,
+        await this.logicFunctionService.createDraftFromPublishedVersion({
+          id: step.settings.input.logicFunctionId,
+          version: step.settings.input.logicFunctionVersion,
           workspaceId,
         });
 
@@ -902,7 +902,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             ...step.settings,
             input: {
               ...step.settings.input,
-              serverlessFunctionVersion: 'draft',
+              logicFunctionVersion: 'draft',
             },
           },
         };
