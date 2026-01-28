@@ -15,7 +15,9 @@ describe('GmailMessagesImportErrorHandler', () => {
     const error = getGmailApiError({ code: 400 });
 
     expect(() => handler.handleError(error, messageExternalId)).toThrow(
-      expect.objectContaining({ code: MessageImportDriverExceptionCode.UNKNOWN }),
+      expect.objectContaining({
+        code: MessageImportDriverExceptionCode.UNKNOWN,
+      }),
     );
   });
 
