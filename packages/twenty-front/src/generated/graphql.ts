@@ -186,11 +186,10 @@ export enum AggregateOperations {
 export enum AllMetadataName {
   agent = 'agent',
   commandMenuItem = 'commandMenuItem',
-  cronTrigger = 'cronTrigger',
-  databaseEventTrigger = 'databaseEventTrigger',
   fieldMetadata = 'fieldMetadata',
   frontComponent = 'frontComponent',
   index = 'index',
+  logicFunction = 'logicFunction',
   navigationMenuItem = 'navigationMenuItem',
   objectMetadata = 'objectMetadata',
   pageLayout = 'pageLayout',
@@ -198,10 +197,8 @@ export enum AllMetadataName {
   pageLayoutWidget = 'pageLayoutWidget',
   role = 'role',
   roleTarget = 'roleTarget',
-  routeTrigger = 'routeTrigger',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
-  serverlessFunction = 'serverlessFunction',
   skill = 'skill',
   view = 'view',
   viewField = 'viewField',
@@ -273,13 +270,13 @@ export type Application = {
   agents: Array<Agent>;
   applicationVariables: Array<ApplicationVariable>;
   canBeUninstalled: Scalars['Boolean'];
-  defaultServerlessFunctionRole?: Maybe<Role>;
-  defaultServerlessFunctionRoleId?: Maybe<Scalars['String']>;
+  defaultLogicFunctionRole?: Maybe<Role>;
+  defaultLogicFunctionRoleId?: Maybe<Scalars['String']>;
   description: Scalars['String'];
   id: Scalars['UUID'];
+  logicFunctions: Array<LogicFunction>;
   name: Scalars['String'];
   objects: Array<Object>;
-  serverlessFunctions: Array<ServerlessFunction>;
   universalIdentifier: Scalars['String'];
   version: Scalars['String'];
 };
@@ -741,11 +738,11 @@ export enum ConfigVariablesGroup {
   GOOGLE_AUTH = 'GOOGLE_AUTH',
   LLM = 'LLM',
   LOGGING = 'LOGGING',
+  LOGIC_FUNCTION_CONFIG = 'LOGIC_FUNCTION_CONFIG',
   METERING = 'METERING',
   MICROSOFT_AUTH = 'MICROSOFT_AUTH',
   OTHER = 'OTHER',
   RATE_LIMITING = 'RATE_LIMITING',
-  SERVERLESS_CONFIG = 'SERVERLESS_CONFIG',
   SERVER_CONFIG = 'SERVER_CONFIG',
   SSL = 'SSL',
   STORAGE_CONFIG = 'STORAGE_CONFIG',
@@ -928,16 +925,6 @@ export type CreateCommandMenuItemInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
-export type CreateCronTriggerInput = {
-  serverlessFunctionId: Scalars['String'];
-  settings: Scalars['JSON'];
-};
-
-export type CreateDatabaseEventTriggerInput = {
-  serverlessFunctionId: Scalars['String'];
-  settings: Scalars['JSON'];
-};
-
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -965,6 +952,18 @@ export type CreateFieldInput = {
   relationCreationPayload?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
   type: FieldMetadataType;
+};
+
+export type CreateLogicFunctionInput = {
+  builtHandlerPath?: InputMaybe<Scalars['String']>;
+  code?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CreateObjectInput = {
@@ -1027,27 +1026,6 @@ export type CreateRoleInput = {
   icon?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   label: Scalars['String'];
-};
-
-export type CreateRouteTriggerInput = {
-  /** List of HTTP header names to forward to the serverless function event */
-  forwardedRequestHeaders?: Array<Scalars['String']>;
-  httpMethod?: HttpMethod;
-  isAuthRequired?: Scalars['Boolean'];
-  path: Scalars['String'];
-  serverlessFunctionId: Scalars['String'];
-};
-
-export type CreateServerlessFunctionInput = {
-  builtHandlerPath?: InputMaybe<Scalars['String']>;
-  code?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CreateViewFieldInput = {
@@ -1150,18 +1128,6 @@ export type CreateWorkflowVersionStepInput = {
   workflowVersionId: Scalars['UUID'];
 };
 
-export type CronTrigger = {
-  __typename?: 'CronTrigger';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  settings: Scalars['JSON'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type CronTriggerIdInput = {
-  id: Scalars['String'];
-};
-
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -1182,18 +1148,6 @@ export enum DatabaseEventAction {
   UPDATED = 'UPDATED',
   UPSERTED = 'UPSERTED'
 }
-
-export type DatabaseEventTrigger = {
-  __typename?: 'DatabaseEventTrigger';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  settings: Scalars['JSON'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type DatabaseEventTriggerIdInput = {
-  id: Scalars['String'];
-};
 
 export type DateTimeFilter = {
   eq?: InputMaybe<Scalars['DateTime']>;
@@ -1391,12 +1345,12 @@ export type EventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
-export type ExecuteServerlessFunctionInput = {
-  /** Id of the serverless function to execute */
+export type ExecuteLogicFunctionInput = {
+  /** Id of the logic function to execute */
   id: Scalars['UUID'];
   /** Payload in JSON format */
   payload: Scalars['JSON'];
-  /** Version of the serverless function to execute */
+  /** Version of the logic function to execute */
   version?: Scalars['String'];
 };
 
@@ -1565,10 +1519,10 @@ export enum FileFolder {
   BuiltFunction = 'BuiltFunction',
   File = 'File',
   FilesField = 'FilesField',
+  LogicFunction = 'LogicFunction',
+  LogicFunctionToDelete = 'LogicFunctionToDelete',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
-  ServerlessFunction = 'ServerlessFunction',
-  ServerlessFunctionToDelete = 'ServerlessFunctionToDelete',
   Source = 'Source',
   TemporaryFilesField = 'TemporaryFilesField',
   WorkspaceLogo = 'WorkspaceLogo'
@@ -1649,7 +1603,7 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetServerlessFunctionSourceCodeInput = {
+export type GetLogicFunctionSourceCodeInput = {
   /** The id of the function. */
   id: Scalars['ID'];
   /** The version of the function */
@@ -1681,14 +1635,6 @@ export type GridPositionInput = {
   row: Scalars['Float'];
   rowSpan: Scalars['Float'];
 };
-
-export enum HttpMethod {
-  DELETE = 'DELETE',
-  GET = 'GET',
-  PATCH = 'PATCH',
-  POST = 'POST',
-  PUT = 'PUT'
-}
 
 export enum HealthIndicatorId {
   app = 'app',
@@ -1931,6 +1877,77 @@ export type Location = {
   lng?: Maybe<Scalars['Float']>;
 };
 
+export type LogicFunction = {
+  __typename?: 'LogicFunction';
+  applicationId?: Maybe<Scalars['UUID']>;
+  builtHandlerPath: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  cronTriggerSettings?: Maybe<Scalars['JSON']>;
+  databaseEventTriggerSettings?: Maybe<Scalars['JSON']>;
+  description?: Maybe<Scalars['String']>;
+  handlerName: Scalars['String'];
+  httpRouteTriggerSettings?: Maybe<Scalars['JSON']>;
+  id: Scalars['UUID'];
+  isTool: Scalars['Boolean'];
+  latestVersion?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  publishedVersions: Array<Scalars['String']>;
+  runtime: Scalars['String'];
+  sourceHandlerPath: Scalars['String'];
+  timeoutSeconds: Scalars['Float'];
+  toolInputSchema?: Maybe<Scalars['JSON']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type LogicFunctionExecutionResult = {
+  __typename?: 'LogicFunctionExecutionResult';
+  /** Execution result in JSON format */
+  data?: Maybe<Scalars['JSON']>;
+  /** Execution duration in milliseconds */
+  duration: Scalars['Float'];
+  /** Execution error in JSON format */
+  error?: Maybe<Scalars['JSON']>;
+  /** Execution Logs */
+  logs: Scalars['String'];
+  /** Execution status */
+  status: LogicFunctionExecutionStatus;
+};
+
+/** Status of the logic function execution */
+export enum LogicFunctionExecutionStatus {
+  ERROR = 'ERROR',
+  IDLE = 'IDLE',
+  SUCCESS = 'SUCCESS'
+}
+
+export type LogicFunctionIdInput = {
+  /** The id of the function. */
+  id: Scalars['ID'];
+};
+
+export type LogicFunctionLayer = {
+  __typename?: 'LogicFunctionLayer';
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type LogicFunctionLogs = {
+  __typename?: 'LogicFunctionLogs';
+  /** Execution Logs */
+  logs: Scalars['String'];
+};
+
+export type LogicFunctionLogsInput = {
+  applicationId?: InputMaybe<Scalars['UUID']>;
+  applicationUniversalIdentifier?: InputMaybe<Scalars['UUID']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
+};
+
 export type LoginTokenOutput = {
   __typename?: 'LoginTokenOutput';
   loginToken: AuthToken;
@@ -1984,14 +2001,11 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
-  createOneCronTrigger: CronTrigger;
-  createOneDatabaseEventTrigger: DatabaseEventTrigger;
   createOneField: Field;
+  createOneLogicFunction: LogicFunction;
+  createOneLogicFunctionLayer: LogicFunctionLayer;
   createOneObject: Object;
   createOneRole: Role;
-  createOneRouteTrigger: RouteTrigger;
-  createOneServerlessFunction: ServerlessFunction;
-  createOneServerlessFunctionLayer: ServerlessFunctionLayer;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
   createPageLayoutWidget: PageLayoutWidget;
@@ -2015,13 +2029,10 @@ export type Mutation = {
   deleteFile: File;
   deleteJobs: DeleteJobsResponse;
   deleteOneAgent: Agent;
-  deleteOneCronTrigger: CronTrigger;
-  deleteOneDatabaseEventTrigger: DatabaseEventTrigger;
   deleteOneField: Field;
+  deleteOneLogicFunction: LogicFunction;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
-  deleteOneRouteTrigger: RouteTrigger;
-  deleteOneServerlessFunction: ServerlessFunction;
   deletePublicDomain: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
@@ -2049,7 +2060,7 @@ export type Mutation = {
   emailPasswordResetLink: EmailPasswordResetLinkOutput;
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
-  executeOneServerlessFunction: ServerlessFunctionExecutionResult;
+  executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientTokenOutput;
   getAuthTokensFromLoginToken: AuthTokens;
@@ -2060,7 +2071,7 @@ export type Mutation = {
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   installApplication: Scalars['Boolean'];
-  publishServerlessFunction: ServerlessFunction;
+  publishLogicFunction: LogicFunction;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
@@ -2099,13 +2110,10 @@ export type Mutation = {
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
-  updateOneCronTrigger: CronTrigger;
-  updateOneDatabaseEventTrigger: DatabaseEventTrigger;
   updateOneField: Field;
+  updateOneLogicFunction: LogicFunction;
   updateOneObject: Object;
   updateOneRole: Role;
-  updateOneRouteTrigger: RouteTrigger;
-  updateOneServerlessFunction: ServerlessFunction;
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
   updatePageLayoutWidget: PageLayoutWidget;
@@ -2286,18 +2294,19 @@ export type MutationCreateOneAgentArgs = {
 };
 
 
-export type MutationCreateOneCronTriggerArgs = {
-  input: CreateCronTriggerInput;
-};
-
-
-export type MutationCreateOneDatabaseEventTriggerArgs = {
-  input: CreateDatabaseEventTriggerInput;
-};
-
-
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
+};
+
+
+export type MutationCreateOneLogicFunctionArgs = {
+  input: CreateLogicFunctionInput;
+};
+
+
+export type MutationCreateOneLogicFunctionLayerArgs = {
+  packageJson: Scalars['JSON'];
+  yarnLock: Scalars['String'];
 };
 
 
@@ -2308,22 +2317,6 @@ export type MutationCreateOneObjectArgs = {
 
 export type MutationCreateOneRoleArgs = {
   createRoleInput: CreateRoleInput;
-};
-
-
-export type MutationCreateOneRouteTriggerArgs = {
-  input: CreateRouteTriggerInput;
-};
-
-
-export type MutationCreateOneServerlessFunctionArgs = {
-  input: CreateServerlessFunctionInput;
-};
-
-
-export type MutationCreateOneServerlessFunctionLayerArgs = {
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
 };
 
 
@@ -2438,18 +2431,13 @@ export type MutationDeleteOneAgentArgs = {
 };
 
 
-export type MutationDeleteOneCronTriggerArgs = {
-  input: CronTriggerIdInput;
-};
-
-
-export type MutationDeleteOneDatabaseEventTriggerArgs = {
-  input: DatabaseEventTriggerIdInput;
-};
-
-
 export type MutationDeleteOneFieldArgs = {
   input: DeleteOneFieldInput;
+};
+
+
+export type MutationDeleteOneLogicFunctionArgs = {
+  input: LogicFunctionIdInput;
 };
 
 
@@ -2460,16 +2448,6 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationDeleteOneRoleArgs = {
   roleId: Scalars['UUID'];
-};
-
-
-export type MutationDeleteOneRouteTriggerArgs = {
-  input: RouteTriggerIdInput;
-};
-
-
-export type MutationDeleteOneServerlessFunctionArgs = {
-  input: ServerlessFunctionIdInput;
 };
 
 
@@ -2589,8 +2567,8 @@ export type MutationEmailPasswordResetLinkArgs = {
 };
 
 
-export type MutationExecuteOneServerlessFunctionArgs = {
-  input: ExecuteServerlessFunctionInput;
+export type MutationExecuteOneLogicFunctionArgs = {
+  input: ExecuteLogicFunctionInput;
 };
 
 
@@ -2646,8 +2624,8 @@ export type MutationInstallApplicationArgs = {
 };
 
 
-export type MutationPublishServerlessFunctionArgs = {
-  input: PublishServerlessFunctionInput;
+export type MutationPublishLogicFunctionArgs = {
+  input: PublishLogicFunctionInput;
 };
 
 
@@ -2847,18 +2825,13 @@ export type MutationUpdateOneApplicationVariableArgs = {
 };
 
 
-export type MutationUpdateOneCronTriggerArgs = {
-  input: UpdateCronTriggerInput;
-};
-
-
-export type MutationUpdateOneDatabaseEventTriggerArgs = {
-  input: UpdateDatabaseEventTriggerInput;
-};
-
-
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
+};
+
+
+export type MutationUpdateOneLogicFunctionArgs = {
+  input: UpdateLogicFunctionInput;
 };
 
 
@@ -2869,16 +2842,6 @@ export type MutationUpdateOneObjectArgs = {
 
 export type MutationUpdateOneRoleArgs = {
   updateRoleInput: UpdateRoleInput;
-};
-
-
-export type MutationUpdateOneRouteTriggerArgs = {
-  input: UpdateRouteTriggerInput;
-};
-
-
-export type MutationUpdateOneServerlessFunctionArgs = {
-  input: UpdateServerlessFunctionInput;
 };
 
 
@@ -3440,7 +3403,7 @@ export type PublicWorkspaceDataOutput = {
   workspaceUrls: WorkspaceUrls;
 };
 
-export type PublishServerlessFunctionInput = {
+export type PublishLogicFunctionInput = {
   /** The id of the function. */
   id: Scalars['ID'];
 };
@@ -3461,17 +3424,11 @@ export type Query = {
   fields: FieldConnection;
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
-  findManyCronTriggers: Array<CronTrigger>;
-  findManyDatabaseEventTriggers: Array<DatabaseEventTrigger>;
+  findManyLogicFunctions: Array<LogicFunction>;
   findManyPublicDomains: Array<PublicDomain>;
-  findManyRouteTriggers: Array<RouteTrigger>;
-  findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneApplication: Application;
-  findOneCronTrigger: CronTrigger;
-  findOneDatabaseEventTrigger: DatabaseEventTrigger;
-  findOneRouteTrigger: RouteTrigger;
-  findOneServerlessFunction: ServerlessFunction;
+  findOneLogicFunction: LogicFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAddressDetails: PlaceDetailsResult;
@@ -3495,6 +3452,7 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -3508,7 +3466,6 @@ export type Query = {
   getQueueMetrics: QueueMetricsData;
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
-  getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
@@ -3573,23 +3530,8 @@ export type QueryFindOneApplicationArgs = {
 };
 
 
-export type QueryFindOneCronTriggerArgs = {
-  input: CronTriggerIdInput;
-};
-
-
-export type QueryFindOneDatabaseEventTriggerArgs = {
-  input: DatabaseEventTriggerIdInput;
-};
-
-
-export type QueryFindOneRouteTriggerArgs = {
-  input: RouteTriggerIdInput;
-};
-
-
-export type QueryFindOneServerlessFunctionArgs = {
-  input: ServerlessFunctionIdInput;
+export type QueryFindOneLogicFunctionArgs = {
+  input: LogicFunctionIdInput;
 };
 
 
@@ -3613,7 +3555,7 @@ export type QueryGetAutoCompleteAddressArgs = {
 
 
 export type QueryGetAvailablePackagesArgs = {
-  input: ServerlessFunctionIdInput;
+  input: LogicFunctionIdInput;
 };
 
 
@@ -3692,6 +3634,11 @@ export type QueryGetIndicatorHealthStatusArgs = {
 };
 
 
+export type QueryGetLogicFunctionSourceCodeArgs = {
+  input: GetLogicFunctionSourceCodeInput;
+};
+
+
 export type QueryGetPageLayoutArgs = {
   id: Scalars['String'];
 };
@@ -3738,11 +3685,6 @@ export type QueryGetQueueJobsArgs = {
 export type QueryGetQueueMetricsArgs = {
   queueName: Scalars['String'];
   timeRange?: InputMaybe<QueueMetricsTimeRange>;
-};
-
-
-export type QueryGetServerlessFunctionSourceCodeArgs = {
-  input: GetServerlessFunctionSourceCodeInput;
 };
 
 
@@ -3961,22 +3903,6 @@ export type Role = {
   workspaceMembers: Array<WorkspaceMember>;
 };
 
-export type RouteTrigger = {
-  __typename?: 'RouteTrigger';
-  createdAt: Scalars['DateTime'];
-  /** List of HTTP header names to forward to the serverless function event */
-  forwardedRequestHeaders: Array<Scalars['String']>;
-  httpMethod: HttpMethod;
-  id: Scalars['ID'];
-  isAuthRequired: Scalars['Boolean'];
-  path: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type RouteTriggerIdInput = {
-  id: Scalars['String'];
-};
-
 export type RowLevelPermissionPredicate = {
   __typename?: 'RowLevelPermissionPredicate';
   fieldMetadataId: Scalars['String'];
@@ -4128,77 +4054,6 @@ export type Sentry = {
   release?: Maybe<Scalars['String']>;
 };
 
-export type ServerlessFunction = {
-  __typename?: 'ServerlessFunction';
-  applicationId?: Maybe<Scalars['UUID']>;
-  builtHandlerPath: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  cronTriggers?: Maybe<Array<CronTrigger>>;
-  databaseEventTriggers?: Maybe<Array<DatabaseEventTrigger>>;
-  description?: Maybe<Scalars['String']>;
-  handlerName: Scalars['String'];
-  id: Scalars['UUID'];
-  isTool: Scalars['Boolean'];
-  latestVersion?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  publishedVersions: Array<Scalars['String']>;
-  routeTriggers?: Maybe<Array<RouteTrigger>>;
-  runtime: Scalars['String'];
-  sourceHandlerPath: Scalars['String'];
-  timeoutSeconds: Scalars['Float'];
-  toolInputSchema?: Maybe<Scalars['JSON']>;
-  universalIdentifier?: Maybe<Scalars['UUID']>;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type ServerlessFunctionExecutionResult = {
-  __typename?: 'ServerlessFunctionExecutionResult';
-  /** Execution result in JSON format */
-  data?: Maybe<Scalars['JSON']>;
-  /** Execution duration in milliseconds */
-  duration: Scalars['Float'];
-  /** Execution error in JSON format */
-  error?: Maybe<Scalars['JSON']>;
-  /** Execution Logs */
-  logs: Scalars['String'];
-  /** Execution status */
-  status: ServerlessFunctionExecutionStatus;
-};
-
-/** Status of the serverless function execution */
-export enum ServerlessFunctionExecutionStatus {
-  ERROR = 'ERROR',
-  IDLE = 'IDLE',
-  SUCCESS = 'SUCCESS'
-}
-
-export type ServerlessFunctionIdInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
-};
-
-export type ServerlessFunctionLayer = {
-  __typename?: 'ServerlessFunctionLayer';
-  applicationId?: Maybe<Scalars['UUID']>;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type ServerlessFunctionLogs = {
-  __typename?: 'ServerlessFunctionLogs';
-  /** Execution Logs */
-  logs: Scalars['String'];
-};
-
-export type ServerlessFunctionLogsInput = {
-  applicationId?: InputMaybe<Scalars['UUID']>;
-  applicationUniversalIdentifier?: InputMaybe<Scalars['UUID']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  name?: InputMaybe<Scalars['String']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']>;
-};
-
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
@@ -4277,9 +4132,14 @@ export type SubmitFormStepInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  logicFunctionLogs: LogicFunctionLogs;
   onDbEvent: OnDbEvent;
   onEventSubscription?: Maybe<EventSubscription>;
-  serverlessFunctionLogs: ServerlessFunctionLogs;
+};
+
+
+export type SubscriptionLogicFunctionLogsArgs = {
+  input: LogicFunctionLogsInput;
 };
 
 
@@ -4290,11 +4150,6 @@ export type SubscriptionOnDbEventArgs = {
 
 export type SubscriptionOnEventSubscriptionArgs = {
   eventStreamId: Scalars['String'];
-};
-
-
-export type SubscriptionServerlessFunctionLogsArgs = {
-  input: ServerlessFunctionLogsInput;
 };
 
 export enum SubscriptionInterval {
@@ -4518,28 +4373,6 @@ export type UpdateCommandMenuItemInput = {
   label?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateCronTriggerInput = {
-  /** The id of the cron trigger to update */
-  id: Scalars['String'];
-  /** The cron trigger updates */
-  update: UpdateCronTriggerInputUpdates;
-};
-
-export type UpdateCronTriggerInputUpdates = {
-  settings: Scalars['JSON'];
-};
-
-export type UpdateDatabaseEventTriggerInput = {
-  /** The id of the database event trigger to update */
-  id: Scalars['String'];
-  /** The database event trigger updates */
-  update: UpdateDatabaseEventTriggerInputUpdates;
-};
-
-export type UpdateDatabaseEventTriggerInputUpdates = {
-  settings: Scalars['JSON'];
-};
-
 export type UpdateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
@@ -4560,6 +4393,24 @@ export type UpdateFieldInput = {
 export type UpdateLabPublicFeatureFlagInput = {
   publicFeatureFlag: Scalars['String'];
   value: Scalars['Boolean'];
+};
+
+export type UpdateLogicFunctionInput = {
+  /** Id of the logic function to update */
+  id: Scalars['UUID'];
+  /** The logic function updates */
+  update: UpdateLogicFunctionInputUpdates;
+};
+
+export type UpdateLogicFunctionInputUpdates = {
+  code: Scalars['JSON'];
+  description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateObjectPayload = {
@@ -4651,39 +4502,6 @@ export type UpdateRolePayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
   label?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateRouteTriggerInput = {
-  /** The id of the route to update */
-  id: Scalars['String'];
-  /** The route updates */
-  update: UpdateRouteTriggerInputUpdates;
-};
-
-export type UpdateRouteTriggerInputUpdates = {
-  /** List of HTTP header names to forward to the serverless function event */
-  forwardedRequestHeaders?: Array<Scalars['String']>;
-  httpMethod: HttpMethod;
-  isAuthRequired: Scalars['Boolean'];
-  path: Scalars['String'];
-};
-
-export type UpdateServerlessFunctionInput = {
-  /** Id of the serverless function to update */
-  id: Scalars['UUID'];
-  /** The serverless function updates */
-  update: UpdateServerlessFunctionInputUpdates;
-};
-
-export type UpdateServerlessFunctionInputUpdates = {
-  code: Scalars['JSON'];
-  description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateViewFieldInput = {

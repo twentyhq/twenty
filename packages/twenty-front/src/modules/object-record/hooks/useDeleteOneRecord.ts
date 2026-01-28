@@ -168,6 +168,7 @@ export const useDeleteOneRecord = ({
         objectMetadataItem,
         operation: {
           type: 'delete-one',
+          deletedRecordId: idToDelete,
         },
       });
 

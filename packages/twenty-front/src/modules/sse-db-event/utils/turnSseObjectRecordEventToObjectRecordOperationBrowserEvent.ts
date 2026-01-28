@@ -77,12 +77,21 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         if (hasSingleEvent) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
-            operation: { type: 'restore-one' },
+            operation: {
+              type: 'restore-one',
+              restoredRecord:
+                objectRecordEventsForThisEventType[0].properties.after,
+            },
           });
         } else {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
-            operation: { type: 'restore-many' },
+            operation: {
+              type: 'restore-many',
+              restoredRecords: objectRecordEventsForThisEventType.map(
+                (event) => event.properties.after,
+              ),
+            },
           });
         }
         break;
@@ -124,12 +133,21 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
         if (hasSingleEvent) {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
-            operation: { type: 'delete-one' },
+            operation: {
+              type: 'delete-one',
+              deletedRecordId:
+                objectRecordEventsForThisEventType[0].properties.before.id,
+            },
           });
         } else {
           objectRecordOperationBrowserEvents.push({
             objectMetadataItem,
-            operation: { type: 'delete-many' },
+            operation: {
+              type: 'delete-many',
+              deletedRecordIds: objectRecordEventsForThisEventType.map(
+                (event) => event.properties.before.id,
+              ),
+            },
           });
         }
         break;

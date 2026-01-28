@@ -1,5 +1,3 @@
-import { type FlatCronTrigger } from 'src/engine/metadata-modules/cron-trigger/types/flat-cron-trigger.type';
-import { type FlatDatabaseEventTrigger } from 'src/engine/metadata-modules/database-event-trigger/types/flat-database-event-trigger.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
@@ -21,10 +19,9 @@ import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filte
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
-import { type FlatRouteTrigger } from 'src/engine/metadata-modules/route-trigger/types/flat-route-trigger.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import {
   type CreateAgentAction,
   type DeleteAgentAction,
@@ -35,16 +32,6 @@ import {
   type DeleteCommandMenuItemAction,
   type UpdateCommandMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
-import {
-  type CreateCronTriggerAction,
-  type DeleteCronTriggerAction,
-  type UpdateCronTriggerAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/cron-trigger/types/workspace-migration-cron-trigger-action.type';
-import {
-  type CreateDatabaseEventTriggerAction,
-  type DeleteDatabaseEventTriggerAction,
-  type UpdateDatabaseEventTriggerAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/database-event-trigger/types/workspace-migration-database-event-trigger-action.type';
 import {
   type CreateFieldAction,
   type DeleteFieldAction,
@@ -96,11 +83,6 @@ import {
   type UpdateRoleAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
 import {
-  type CreateRouteTriggerAction,
-  type DeleteRouteTriggerAction,
-  type UpdateRouteTriggerAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/route-trigger/types/workspace-migration-route-trigger-action.type';
-import {
   type CreateRowLevelPermissionPredicateGroupAction,
   type DeleteRowLevelPermissionPredicateGroupAction,
   type UpdateRowLevelPermissionPredicateGroupAction,
@@ -111,10 +93,10 @@ import {
   type UpdateRowLevelPermissionPredicateAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import {
-  type CreateServerlessFunctionAction,
-  type DeleteServerlessFunctionAction,
-  type UpdateServerlessFunctionAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/serverless-function/types/workspace-migration-serverless-function-action.type';
+  type CreateLogicFunctionAction,
+  type DeleteLogicFunctionAction,
+  type UpdateLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   type CreateSkillAction,
   type DeleteSkillAction,
@@ -233,41 +215,14 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatIndexMetadata;
     entity: MetadataEntity<'index'>;
   };
-  serverlessFunction: {
+  logicFunction: {
     actions: {
-      create: CreateServerlessFunctionAction;
-      update: UpdateServerlessFunctionAction;
-      delete: DeleteServerlessFunctionAction;
+      create: CreateLogicFunctionAction;
+      update: UpdateLogicFunctionAction;
+      delete: DeleteLogicFunctionAction;
     };
-    flatEntity: FlatServerlessFunction;
-    entity: MetadataEntity<'serverlessFunction'>;
-  };
-  cronTrigger: {
-    actions: {
-      create: CreateCronTriggerAction;
-      update: UpdateCronTriggerAction;
-      delete: DeleteCronTriggerAction;
-    };
-    flatEntity: FlatCronTrigger;
-    entity: MetadataEntity<'cronTrigger'>;
-  };
-  databaseEventTrigger: {
-    actions: {
-      create: CreateDatabaseEventTriggerAction;
-      update: UpdateDatabaseEventTriggerAction;
-      delete: DeleteDatabaseEventTriggerAction;
-    };
-    flatEntity: FlatDatabaseEventTrigger;
-    entity: MetadataEntity<'databaseEventTrigger'>;
-  };
-  routeTrigger: {
-    actions: {
-      create: CreateRouteTriggerAction;
-      update: UpdateRouteTriggerAction;
-      delete: DeleteRouteTriggerAction;
-    };
-    flatEntity: FlatRouteTrigger;
-    entity: MetadataEntity<'routeTrigger'>;
+    flatEntity: FlatLogicFunction;
+    entity: MetadataEntity<'logicFunction'>;
   };
   viewFilter: {
     actions: {

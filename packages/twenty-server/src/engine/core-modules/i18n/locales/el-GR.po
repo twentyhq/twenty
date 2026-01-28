@@ -60,7 +60,7 @@ msgid "A front component with this name already exists."
 msgstr ""
 
 #. js-lingui-id: +aAI33
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "A function with this name already exists."
 msgstr "Υπάρχει ήδη συνάρτηση με αυτό το όνομα."
 
@@ -846,34 +846,6 @@ msgstr "Δημιουργήθηκαν μεταδεδομένα πεδίου, δε
 msgid "Cron pattern '{pattern}' is invalid"
 msgstr "Το μοτίβο Cron '{pattern}' δεν είναι έγκυρο"
 
-#. js-lingui-id: GuyjcQ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger already exists"
-msgstr "Η σκανδάλη Cron υπάρχει ήδη"
-
-#. js-lingui-id: MAPqJt
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
-msgid "Cron trigger already exists."
-msgstr "Η σκανδάλη Cron υπάρχει ήδη."
-
-#. js-lingui-id: Ej90Yp
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger not found"
-msgstr "Η σκανδάλη Cron δεν βρέθηκε"
-
-#. js-lingui-id: 4bnTs7
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
-msgid "Cron trigger not found."
-msgstr "Η σκανδάλη Cron δεν βρέθηκε."
-
-#. js-lingui-id: vz7B0E
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger with same id already exists"
-msgstr "Η σκανδάλη Cron με το ίδιο αναγνωριστικό υπάρχει ήδη"
-
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Custom domain not found."
@@ -908,34 +880,6 @@ msgstr "Ασυμφωνία έκδοσης δεδομένων. Ανανεώστε
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
 msgstr "Η διαμόρφωση βάσης δεδομένων είναι απενεργοποιημένη."
-
-#. js-lingui-id: K2CQHf
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger already exists"
-msgstr "Η σκανδάλη συμβάντος βάσης δεδομένων υπάρχει ήδη"
-
-#. js-lingui-id: RjLvqZ
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Database event trigger already exists."
-msgstr "Η σκανδάλη συμβάντος βάσης δεδομένων υπάρχει ήδη."
-
-#. js-lingui-id: iS6kjG
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger not found"
-msgstr "Η ενεργοποίηση γεγονότος βάση δεδομένων δεν βρέθηκε"
-
-#. js-lingui-id: mVe3iD
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Database event trigger not found."
-msgstr "Η σκανδάλη συμβάντος βάσης δεδομένων δεν βρέθηκε."
-
-#. js-lingui-id: 0vtv+s
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger with same id already exists"
-msgstr "Η ενεργοποίηση γεγονότος βάση δεδομένων με το ίδιο αναγνωριστικό υπάρχει ήδη"
 
 #. js-lingui-id: r6zgGo
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -1109,7 +1053,7 @@ msgid "Failed to create evaluation. Please try again."
 msgstr "Αποτυχία δημιουργίας αξιολόγησης. Παρακαλώ δοκιμάστε ξανά."
 
 #. js-lingui-id: M1ZSSL
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to create function."
 msgstr "Αποτυχία δημιουργίας συνάρτησης."
 
@@ -1428,37 +1372,37 @@ msgid "Front component not found."
 msgstr ""
 
 #. js-lingui-id: pouguB
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function code is unchanged."
 msgstr "Ο κώδικας της συνάρτησης δεν έχει αλλάξει."
 
 #. js-lingui-id: Ho3UAo
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function execution limit reached."
 msgstr "Έχει επιτευχθεί το όριο εκτελέσεων της συνάρτησης."
 
 #. js-lingui-id: mdxF/u
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function execution timed out."
 msgstr "Η εκτέλεση της συνάρτησης έληξε λόγω χρονικού ορίου."
 
 #. js-lingui-id: IsdR/t
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function is currently building."
 msgstr "Η συνάρτηση βρίσκεται σε διαδικασία δημιουργίας."
 
 #. js-lingui-id: GhVI/u
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function is not ready."
 msgstr "Η συνάρτηση δεν είναι έτοιμη."
 
 #. js-lingui-id: 2ACKTg
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "Η συνάρτηση δεν βρέθηκε."
 
 #. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function version not found."
 msgstr "Η έκδοση της συνάρτησης δεν βρέθηκε."
 
@@ -1686,11 +1630,6 @@ msgstr "Ο κωδικός χώρας {countryCode} δεν είναι έγκυρ�
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
 msgstr "Μη έγκυρη μορφή δεδομένων."
-
-#. js-lingui-id: 4xhvWm
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Invalid database event trigger."
-msgstr "Μη έγκυρη σκανδάλη συμβάντος βάσης δεδομένων."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2323,6 +2262,40 @@ msgstr ""
 #. js-lingui-id: qBrKIA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
+msgstr ""
+
+#. js-lingui-id: V5AXjr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+msgid "Logic function already exists"
+msgstr ""
+
+#. js-lingui-id: mZvaAV
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Logic function execution failed."
+msgstr ""
+
+#. js-lingui-id: 6fc1FV
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Logic function execution is disabled."
+msgstr ""
+
+#. js-lingui-id: hk3cgp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+msgid "Logic function not found"
+msgstr ""
+
+#. js-lingui-id: 6Rq45N
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Logic function not found."
+msgstr ""
+
+#. js-lingui-id: 31hiGK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+msgid "Logic function with same id already exists"
 msgstr ""
 
 #. js-lingui-id: hg6l4j
@@ -3267,48 +3240,20 @@ msgstr ""
 msgid "Roles and permissions configuration not found."
 msgstr "Δεν βρέθηκαν ρυθμίσεις ρόλων και δικαιωμάτων."
 
-#. js-lingui-id: MFW30/
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route already exists"
-msgstr "Η διαδρομή υπάρχει ήδη"
-
 #. js-lingui-id: AcyaP/
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route already exists."
 msgstr "Η διαδρομή υπάρχει ήδη."
-
-#. js-lingui-id: ldQZkA
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route not found"
-msgstr "Η διαδρομή δεν βρέθηκε"
 
 #. js-lingui-id: F35apa
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route not found."
 msgstr "Η διαδρομή δεν βρέθηκε."
 
-#. js-lingui-id: NCQS+K
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route path already exists"
-msgstr "Η οδική πορεία υπάρχει ήδη"
-
 #. js-lingui-id: mF5BSU
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route path already exists."
 msgstr "Η διαδρομή υπάρχει ήδη."
-
-#. js-lingui-id: v5H7VS
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route with same id already exists"
-msgstr "Η διαδρομή με το ίδιο αναγνωριστικό υπάρχει ήδη"
-
-#. js-lingui-id: c10Yre
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route with same path already exists"
-msgstr "Η διαδρομή με το ίδιο μονοπάτι υπάρχει ήδη"
 
 #. js-lingui-id: RwBHMj
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -3384,54 +3329,6 @@ msgstr "Διάνυσμα Αναζήτησης"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
 msgstr "Σεπτέμβριος"
-
-#. js-lingui-id: F3+i2a
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-msgid "Serverless function already exists"
-msgstr "Η λειτουργία χωρίς διακομιστή υπάρχει ήδη"
-
-#. js-lingui-id: qqeQGz
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
-msgid "Serverless function execution failed."
-msgstr "Η εκτέλεση της λειτουργίας χωρίς διακομιστή απέτυχε."
-
-#. js-lingui-id: y8i9sW
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
-msgid "Serverless function execution is disabled."
-msgstr ""
-
-#. js-lingui-id: MSgd2w
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Serverless function not found"
-msgstr "Η λειτουργία χωρίς διακομιστή δεν βρέθηκε"
-
-#. js-lingui-id: 4oHY1L
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
-#: src/engine/core-modules/application/application.exception.ts
-msgid "Serverless function not found."
-msgstr "Η λειτουργία χωρίς διακομιστή δεν βρέθηκε."
-
-#. js-lingui-id: zoBkIJ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-msgid "Serverless function with same id already exists"
-msgstr "Η λειτουργία χωρίς διακομιστή με το ίδιο αναγνωριστικό υπάρχει ήδη"
 
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts

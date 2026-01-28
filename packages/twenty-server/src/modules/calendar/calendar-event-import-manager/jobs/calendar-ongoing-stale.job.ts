@@ -54,10 +54,7 @@ export class CalendarOngoingStaleJob {
       });
 
       for (const calendarChannel of calendarChannels) {
-        if (
-          calendarChannel.syncStageStartedAt &&
-          isSyncStale(calendarChannel.syncStageStartedAt)
-        ) {
+        if (isSyncStale(calendarChannel.syncStageStartedAt)) {
           await this.calendarChannelSyncStatusService.resetSyncStageStartedAt(
             [calendarChannel.id],
             workspaceId,

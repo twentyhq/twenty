@@ -60,7 +60,7 @@ msgid "A front component with this name already exists."
 msgstr ""
 
 #. js-lingui-id: +aAI33
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "A function with this name already exists."
 msgstr "Uma função com este nome já existe."
 
@@ -846,34 +846,6 @@ msgstr "Metadados de campo criado, metadados do objeto pai não encontrados"
 msgid "Cron pattern '{pattern}' is invalid"
 msgstr "Padrão Cron '{pattern}' é inválido"
 
-#. js-lingui-id: GuyjcQ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger already exists"
-msgstr "Gatilho de cron já existe"
-
-#. js-lingui-id: MAPqJt
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
-msgid "Cron trigger already exists."
-msgstr "Gatilho de cron já existe."
-
-#. js-lingui-id: Ej90Yp
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger not found"
-msgstr "Gatilho de cron não encontrado"
-
-#. js-lingui-id: 4bnTs7
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
-msgid "Cron trigger not found."
-msgstr "Gatilho de cron não encontrado."
-
-#. js-lingui-id: vz7B0E
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Cron trigger with same id already exists"
-msgstr "Gatilho de cron com o mesmo ID já existe"
-
 #. js-lingui-id: 8vxOU0
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Custom domain not found."
@@ -908,34 +880,6 @@ msgstr "Incompatibilidade de versão dos dados. Atualize e tente novamente."
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "Database configuration is disabled."
 msgstr "A configuração do banco de dados está desativada."
-
-#. js-lingui-id: K2CQHf
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger already exists"
-msgstr "Gatilho de evento do banco de dados já existe"
-
-#. js-lingui-id: RjLvqZ
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Database event trigger already exists."
-msgstr "Gatilho de evento do banco de dados já existe."
-
-#. js-lingui-id: iS6kjG
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger not found"
-msgstr "Evento de banco de dados não encontrado"
-
-#. js-lingui-id: mVe3iD
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Database event trigger not found."
-msgstr "Gatilho de evento do banco de dados não encontrado."
-
-#. js-lingui-id: 0vtv+s
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-msgid "Database event trigger with same id already exists"
-msgstr "Disparador de evento de banco de dados com o mesmo ID já existe"
 
 #. js-lingui-id: r6zgGo
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -1109,7 +1053,7 @@ msgid "Failed to create evaluation. Please try again."
 msgstr "Falha ao criar avaliação. Por favor, tente novamente."
 
 #. js-lingui-id: M1ZSSL
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to create function."
 msgstr "Falha ao criar função."
 
@@ -1428,37 +1372,37 @@ msgid "Front component not found."
 msgstr ""
 
 #. js-lingui-id: pouguB
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function code is unchanged."
 msgstr "O código da função não foi alterado."
 
 #. js-lingui-id: Ho3UAo
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function execution limit reached."
 msgstr "Limite de execução da função alcançado."
 
 #. js-lingui-id: mdxF/u
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function execution timed out."
 msgstr "Tempo de execução da função esgotado."
 
 #. js-lingui-id: IsdR/t
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function is currently building."
 msgstr "A função está sendo compilada."
 
 #. js-lingui-id: GhVI/u
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function is not ready."
 msgstr "A função não está pronta."
 
 #. js-lingui-id: 2ACKTg
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "Função não encontrada."
 
 #. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function version not found."
 msgstr "Versão da função não encontrada."
 
@@ -1686,11 +1630,6 @@ msgstr "Código de país {countryCode} inválido"
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid data format."
 msgstr "Formato de dados inválido."
-
-#. js-lingui-id: 4xhvWm
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-msgid "Invalid database event trigger."
-msgstr "Gatilho de evento de banco de dados inválido."
 
 #. js-lingui-id: 4EtFrA
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2323,6 +2262,40 @@ msgstr ""
 #. js-lingui-id: qBrKIA
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
 msgid "Layout is required for bar chart widget \"{widgetTitle}\""
+msgstr ""
+
+#. js-lingui-id: V5AXjr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+msgid "Logic function already exists"
+msgstr ""
+
+#. js-lingui-id: mZvaAV
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+msgid "Logic function execution failed."
+msgstr ""
+
+#. js-lingui-id: 6fc1FV
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Logic function execution is disabled."
+msgstr ""
+
+#. js-lingui-id: hk3cgp
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+msgid "Logic function not found"
+msgstr ""
+
+#. js-lingui-id: 6Rq45N
+#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
+msgid "Logic function not found."
+msgstr ""
+
+#. js-lingui-id: 31hiGK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+msgid "Logic function with same id already exists"
 msgstr ""
 
 #. js-lingui-id: hg6l4j
@@ -3267,48 +3240,20 @@ msgstr ""
 msgid "Roles and permissions configuration not found."
 msgstr "Configuração de funções e permissões não encontrada."
 
-#. js-lingui-id: MFW30/
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route already exists"
-msgstr "A rota já existe"
-
 #. js-lingui-id: AcyaP/
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route already exists."
 msgstr "A rota já existe."
-
-#. js-lingui-id: ldQZkA
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route not found"
-msgstr "Rota não encontrada"
 
 #. js-lingui-id: F35apa
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route not found."
 msgstr "Rota não encontrada."
 
-#. js-lingui-id: NCQS+K
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route path already exists"
-msgstr "Caminho da rota já existe"
-
 #. js-lingui-id: mF5BSU
 #: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 msgid "Route path already exists."
 msgstr "Caminho de rota já existe."
-
-#. js-lingui-id: v5H7VS
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route with same id already exists"
-msgstr "Rota com o mesmo ID já existe"
-
-#. js-lingui-id: c10Yre
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-msgid "Route with same path already exists"
-msgstr "Rota com o mesmo caminho já existe"
 
 #. js-lingui-id: RwBHMj
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -3384,54 +3329,6 @@ msgstr "Vetor de pesquisa"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
 msgstr "Setembro"
-
-#. js-lingui-id: F3+i2a
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-msgid "Serverless function already exists"
-msgstr "Função serverless já existe"
-
-#. js-lingui-id: qqeQGz
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
-msgid "Serverless function execution failed."
-msgstr "A execução da função serverless falhou."
-
-#. js-lingui-id: y8i9sW
-#: src/engine/metadata-modules/serverless-function/serverless-function.exception.ts
-msgid "Serverless function execution is disabled."
-msgstr ""
-
-#. js-lingui-id: MSgd2w
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-route-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-database-event-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-cron-trigger-validator.service.ts
-msgid "Serverless function not found"
-msgstr "Função serverless não encontrada"
-
-#. js-lingui-id: 4oHY1L
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
-#: src/engine/metadata-modules/database-event-trigger/exceptions/database-event-trigger.exception.ts
-#: src/engine/metadata-modules/cron-trigger/exceptions/cron-trigger.exception.ts
-#: src/engine/core-modules/application/application.exception.ts
-msgid "Serverless function not found."
-msgstr "Função serverless não encontrada."
-
-#. js-lingui-id: zoBkIJ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-serverless-function-validator.service.ts
-msgid "Serverless function with same id already exists"
-msgstr "Função serverless com o mesmo ID já existe"
 
 #. js-lingui-id: e1k+No
 #: src/engine/core-modules/auth/auth.exception.ts

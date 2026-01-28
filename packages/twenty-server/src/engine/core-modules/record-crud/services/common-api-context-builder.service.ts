@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { getAllSelectableFields } from 'src/engine/api/rest/core/rest-to-common-args-handlers/utils/get-all-selectable-fields.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   RecordCrudException,
   RecordCrudExceptionCode,
@@ -126,9 +126,9 @@ export class CommonApiContextBuilderService {
       );
     } else if (
       isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultServerlessFunctionRoleId)
+      isDefined(authContext.application.defaultLogicFunctionRoleId)
     ) {
-      roleId = authContext.application.defaultServerlessFunctionRoleId;
+      roleId = authContext.application.defaultLogicFunctionRoleId;
     } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({

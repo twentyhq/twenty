@@ -8,7 +8,7 @@ enum SettingsPathPrefixes {
   Objects = `${AppBasePath.Settings}/${SettingsPath.Objects}`,
   Members = `${AppBasePath.Settings}/${SettingsPath.WorkspaceMembersPage}`,
   ApiWebhooks = `${AppBasePath.Settings}/${SettingsPath.ApiWebhooks}`,
-  ServerlessFunctions = `${AppBasePath.Settings}/${SettingsPath.ServerlessFunctions}`,
+  LogicFunctions = `${AppBasePath.Settings}/${SettingsPath.LogicFunctions}`,
   Integration = `${AppBasePath.Settings}/${SettingsPath.Integrations}`,
   General = `${AppBasePath.Settings}/${SettingsPath.Workspace}`,
 }
@@ -47,7 +47,7 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return t`Data model - Settings`;
     case SettingsPathPrefixes.ApiWebhooks:
       return t`API Keys - Settings`;
-    case SettingsPathPrefixes.ServerlessFunctions:
+    case SettingsPathPrefixes.LogicFunctions:
       return t`Functions - Settings`;
     case SettingsPathPrefixes.Integration:
       return t`Integrations - Settings`;

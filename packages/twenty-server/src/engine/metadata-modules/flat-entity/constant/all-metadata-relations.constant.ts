@@ -261,51 +261,11 @@ export const ALL_METADATA_RELATIONS = {
       indexFieldMetadatas: null,
     },
   },
-  serverlessFunction: {
+  logicFunction: {
     manyToOne: {
       workspace: null,
       application: null,
-      serverlessFunctionLayer: null,
-    },
-    oneToMany: {
-      cronTriggers: { metadataName: 'cronTrigger' },
-      databaseEventTriggers: { metadataName: 'databaseEventTrigger' },
-      routeTriggers: { metadataName: 'routeTrigger' },
-    },
-  },
-  cronTrigger: {
-    manyToOne: {
-      serverlessFunction: {
-        metadataName: 'serverlessFunction',
-        flatEntityForeignKeyAggregator: 'cronTriggerIds',
-        foreignKey: 'serverlessFunctionId',
-      },
-      workspace: null,
-      application: null,
-    },
-    oneToMany: {},
-  },
-  databaseEventTrigger: {
-    manyToOne: {
-      serverlessFunction: {
-        metadataName: 'serverlessFunction',
-        flatEntityForeignKeyAggregator: 'databaseEventTriggerIds',
-        foreignKey: 'serverlessFunctionId',
-      },
-      workspace: null,
-      application: null,
-    },
-    oneToMany: {},
-  },
-  routeTrigger: {
-    manyToOne: {
-      serverlessFunction: {
-        metadataName: 'serverlessFunction',
-        flatEntityForeignKeyAggregator: 'routeTriggerIds',
-        foreignKey: 'serverlessFunctionId',
-      },
-      workspace: null,
-      application: null,
+      logicFunctionLayer: null,
     },
     oneToMany: {},
   },

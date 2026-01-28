@@ -98,10 +98,10 @@ export class WorkflowExecutionContextService {
 
     // Use the application's role if set, otherwise fall back to admin role
     // In the future we should probably assign the Admin role to the Standard Application
-    let roleId = application.defaultServerlessFunctionRoleId;
+    let roleId = application.defaultLogicFunctionRoleId;
 
     if (!isDefined(roleId)) {
-      // Fallback: Look up admin role for existing workspaces without defaultServerlessFunctionRoleId
+      // Fallback: Look up admin role for existing workspaces without defaultLogicFunctionRoleId
       const adminRole = await this.roleService.getRoleByUniversalIdentifier({
         universalIdentifier: ADMIN_ROLE.standardId,
         workspaceId,
@@ -118,7 +118,7 @@ export class WorkflowExecutionContextService {
       workspace,
       application: {
         ...application,
-        defaultServerlessFunctionRoleId: roleId,
+        defaultLogicFunctionRoleId: roleId,
       },
     });
 
