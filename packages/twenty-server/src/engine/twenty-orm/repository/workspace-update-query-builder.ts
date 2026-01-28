@@ -172,7 +172,7 @@ export class WorkspaceUpdateQueryBuilder<
         : (this.expressionMap.valuesSet ?? {});
 
       filesFieldDiffByEntityIndex =
-        await this.filesFieldSync.prepareFilesFieldSyncBeforeUpdateOne(
+        this.filesFieldSync.prepareFilesFieldSyncBeforeUpdateOne(
           updatePayload,
           mainAliasTarget,
           formattedBefore,
@@ -365,7 +365,7 @@ export class WorkspaceUpdateQueryBuilder<
       const entities = this.manyInputs.map((input) => input.partialEntity);
 
       filesFieldDiffByEntityIndex =
-        await this.filesFieldSync.prepareFilesFieldSyncBeforeUpdate(
+        this.filesFieldSync.prepareFilesFieldSyncBeforeUpdate(
           entities,
           mainAliasTarget,
           formattedBefore,

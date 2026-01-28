@@ -1,7 +1,10 @@
 import path from 'path';
 
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type FieldMetadataSettingsMapping,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   In,
@@ -51,11 +54,11 @@ export class FilesFieldSync {
       internalContext.coreDataSource.getRepository(FileEntity);
   }
 
-  async prepareFilesFieldSyncBeforeUpdate<Entity extends ObjectLiteral>(
+  prepareFilesFieldSyncBeforeUpdate<Entity extends ObjectLiteral>(
     entities: QueryDeepPartialEntity<Entity>[],
     target: EntityTarget<Entity>,
     existingRecords: ObjectLiteral[],
-  ): Promise<FilesFieldDiffByEntityIndex | null> {
+  ): FilesFieldDiffByEntityIndex | null {
     const objectMetadata = getObjectMetadataFromEntityTarget(
       target,
       this.internalContext,
@@ -89,6 +92,20 @@ export class FilesFieldSync {
           continue;
         }
 
+        const filesFieldMaxNumberOfValues = (
+          filesField.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES]
+        ).maxNumberOfValues;
+
+        if (newFilesValue.length > filesFieldMaxNumberOfValues) {
+          throw new TwentyORMException(
+            `Max number of files is ${filesFieldMaxNumberOfValues}`,
+            TwentyORMExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`Max number of files is ${filesFieldMaxNumberOfValues}`,
+            },
+          );
+        }
+
         const existingFilesValue = (existingRecord?.[filesField.name] ??
           []) as FileItem[];
 
@@ -115,11 +132,11 @@ export class FilesFieldSync {
       : null;
   }
 
-  async prepareFilesFieldSyncBeforeUpdateOne<Entity extends ObjectLiteral>(
+  prepareFilesFieldSyncBeforeUpdateOne<Entity extends ObjectLiteral>(
     updatePayload: QueryDeepPartialEntity<Entity>,
     target: EntityTarget<Entity>,
     existingRecords: ObjectLiteral[],
-  ): Promise<FilesFieldDiffByEntityIndex | null> {
+  ): FilesFieldDiffByEntityIndex | null {
     const objectMetadata = getObjectMetadataFromEntityTarget(
       target,
       this.internalContext,
@@ -142,6 +159,20 @@ export class FilesFieldSync {
 
       if (!isDefined(newFilesValue)) {
         continue;
+      }
+
+      const filesFieldMaxNumberOfValues = (
+        filesField.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES]
+      ).maxNumberOfValues;
+
+      if (newFilesValue.length > filesFieldMaxNumberOfValues) {
+        throw new TwentyORMException(
+          `Max number of files is ${filesFieldMaxNumberOfValues}`,
+          TwentyORMExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`Max number of files is ${filesFieldMaxNumberOfValues}`,
+          },
+        );
       }
 
       if (existingRecords.length !== 1) {
@@ -180,10 +211,10 @@ export class FilesFieldSync {
       : null;
   }
 
-  async prepareFilesFieldSyncBeforeInsert<Entity extends ObjectLiteral>(
+  prepareFilesFieldSyncBeforeInsert<Entity extends ObjectLiteral>(
     entities: QueryDeepPartialEntity<Entity>[],
     target: EntityTarget<Entity>,
-  ): Promise<FilesFieldDiffByEntityIndex | null> {
+  ): FilesFieldDiffByEntityIndex | null {
     const objectMetadata = getObjectMetadataFromEntityTarget(
       target,
       this.internalContext,
@@ -209,9 +240,85 @@ export class FilesFieldSync {
           continue;
         }
 
+        const filesFieldMaxNumberOfValues = (
+          filesField.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES]
+        ).maxNumberOfValues;
+
+        if (newFilesValue.length > filesFieldMaxNumberOfValues) {
+          throw new TwentyORMException(
+            `Max number of files is ${filesFieldMaxNumberOfValues}`,
+            TwentyORMExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`Max number of files is ${filesFieldMaxNumberOfValues}`,
+            },
+          );
+        }
+
         const diff = this.computeFilesFieldDiff([], newFilesValue);
 
         if (diff.toAdd.length > 0) {
+          if (!filesFieldDiffByEntityIndex[index]) {
+            filesFieldDiffByEntityIndex[index] = {};
+          }
+          filesFieldDiffByEntityIndex[index][filesField.name] = diff;
+        }
+      }
+    });
+
+    return Object.keys(filesFieldDiffByEntityIndex).length > 0
+      ? filesFieldDiffByEntityIndex
+      : null;
+  }
+
+  prepareFilesFieldSyncBeforeUpsert<Entity extends ObjectLiteral>(
+    entities: QueryDeepPartialEntity<Entity>[],
+    target: EntityTarget<Entity>,
+    existingRecordsMapById: Record<string, ObjectLiteral>,
+  ): FilesFieldDiffByEntityIndex | null {
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      target,
+      this.internalContext,
+    );
+
+    const filesFields = this.getFilesFields(objectMetadata.id);
+
+    if (filesFields.length === 0) {
+      return null;
+    }
+
+    const filesFieldDiffByEntityIndex: FilesFieldDiffByEntityIndex = {};
+
+    entities.forEach((entity, index) => {
+      const entityWithId = entity as { id?: string };
+      const existingRecord = isDefined(entityWithId.id)
+        ? existingRecordsMapById[entityWithId.id]
+        : undefined;
+
+      for (const filesField of filesFields) {
+        const entityAny = entity as Record<string, unknown>;
+        const newFilesValue = entityAny[filesField.name] as
+          | FileItem[]
+          | null
+          | undefined;
+
+        if (!isDefined(newFilesValue)) {
+          continue;
+        }
+
+        const existingFilesValue = existingRecord
+          ? ((existingRecord[filesField.name] ?? []) as FileItem[])
+          : [];
+
+        const diff = this.computeFilesFieldDiff(
+          existingFilesValue,
+          newFilesValue,
+        );
+
+        if (
+          diff.toAdd.length > 0 ||
+          diff.toUpdate.length > 0 ||
+          diff.toRemove.length > 0
+        ) {
           if (!filesFieldDiffByEntityIndex[index]) {
             filesFieldDiffByEntityIndex[index] = {};
           }
