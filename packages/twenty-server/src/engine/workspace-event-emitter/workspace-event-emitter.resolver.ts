@@ -99,7 +99,7 @@ export class WorkspaceEventEmitterResolver {
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
 
-    await this.eventStreamService.createEventStream({
+    await this.eventStreamService.createEventStreamIfItDoesNotExist({
       workspaceId: workspace.id,
       eventStreamChannelId,
       authContext: {
@@ -143,10 +143,21 @@ export class WorkspaceEventEmitterResolver {
   async addQueryToEventStream(
     @Args('input') input: AddQuerySubscriptionInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
+
+    await this.eventStreamService.createEventStreamIfItDoesNotExist({
+      workspaceId: workspace.id,
+      eventStreamChannelId,
+      authContext: {
+        userId: user?.id,
+        userWorkspaceId,
+        apiKeyId: apiKey?.id,
+      },
+    });
 
     const isAuthorized = await this.eventStreamService.isAuthorized({
       workspaceId: workspace.id,
@@ -178,10 +189,21 @@ export class WorkspaceEventEmitterResolver {
   async removeQueryFromEventStream(
     @Args('input') input: RemoveQueryFromEventStreamInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
     @AuthApiKey() apiKey: ApiKeyEntity | undefined,
   ): Promise<boolean> {
     const eventStreamChannelId = eventStreamIdToChannelId(input.eventStreamId);
+
+    await this.eventStreamService.createEventStreamIfItDoesNotExist({
+      workspaceId: workspace.id,
+      eventStreamChannelId,
+      authContext: {
+        userId: user?.id,
+        userWorkspaceId,
+        apiKeyId: apiKey?.id,
+      },
+    });
 
     const isAuthorized = await this.eventStreamService.isAuthorized({
       workspaceId: workspace.id,
