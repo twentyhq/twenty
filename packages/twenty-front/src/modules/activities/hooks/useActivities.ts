@@ -6,9 +6,9 @@ import { type Task } from '@/activities/types/Task';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilCallback } from 'recoil';
+import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useActivities = <T extends Task | Note>({
@@ -50,9 +50,11 @@ export const useActivities = <T extends Task | Note>({
     limit,
   });
 
-  const activities = activityTargets.map((activityTarget) => {
-    return activityTarget[objectNameSingular];
-  }) as T[];
+  const activities = activityTargets
+    .map((activityTarget) => {
+      return activityTarget[objectNameSingular];
+    })
+    .filter(isDefined) as T[];
 
   const fetchMoreActivities = async () => {
     const result = await fetchMoreActivityTargets();
@@ -69,9 +71,11 @@ export const useActivities = <T extends Task | Note>({
 
     updateActivitiesInStore(activityTargets);
 
-    return activityTargets.map((activityTarget) => {
-      return activityTarget[objectNameSingular];
-    }) as T[];
+    return activityTargets
+      .map((activityTarget) => {
+        return activityTarget[objectNameSingular];
+      })
+      .filter(isDefined) as T[];
   };
 
   return {
