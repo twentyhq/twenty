@@ -49,22 +49,22 @@ yarn app:dev
 Odtud můžete:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Přidejte do vaší aplikace novou entitu (s průvodcem)
 yarn entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Vygenerujte typovaného klienta Twenty a typy entit pracovního prostoru
 yarn app:generate
 
-# Watch your application's function logs
+# Sledujte logy funkcí vaší aplikace
 yarn function:logs
 
-# Execute a function by name
+# Spusťte funkci podle názvu
 yarn function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Odinstalujte aplikaci z aktuálního pracovního prostoru
 yarn app:uninstall
 
-# Display commands' help
+# Zobrazte nápovědu k příkazům
 yarn help
 ```
 
@@ -105,12 +105,12 @@ my-twenty-app/
 
 Aplikace používají přístup **konvence před konfigurací**, kde jsou entity detekovány podle přípony souboru. To umožňuje flexibilní organizaci ve složce `src/app/`:
 
-| Přípona souboru         | Typ entity                  |
-| ----------------------- | --------------------------- |
-| `*.object.ts`           | Definice vlastních objektů  |
-| `*.function.ts`         | Definice serverless funkcí  |
-| `*.front-component.tsx` | Front component definitions |
-| `*.role.ts`             | Definice rolí               |
+| Přípona souboru         | Typ entity                       |
+| ----------------------- | -------------------------------- |
+| `*.object.ts`           | Definice vlastních objektů       |
+| `*.function.ts`         | Definice serverless funkcí       |
+| `*.front-component.tsx` | Definice frontendových komponent |
+| `*.role.ts`             | Definice rolí                    |
 
 ### Podporované uspořádání složek
 

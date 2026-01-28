@@ -49,22 +49,22 @@ yarn app:dev
 Отсюда вы можете:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Добавить новую сущность в ваше приложение (с мастером)
 yarn entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Сгенерировать типизированный клиент Twenty и типы сущностей рабочего пространства
 yarn app:generate
 
-# Watch your application's function logs
+# Просматривать логи функций вашего приложения
 yarn function:logs
 
-# Execute a function by name
+# Выполнить функцию по имени
 yarn function:execute -n my-function -p '{"name": "test"}'
 
-# Uninstall the application from the current workspace
+# Удалить приложение из текущего рабочего пространства
 yarn app:uninstall
 
-# Display commands' help
+# Показать справку по командам
 yarn help
 ```
 
@@ -109,7 +109,7 @@ my-twenty-app/
 | ----------------------- | ------------------------------------- |
 | `*.object.ts`           | Определения пользовательских объектов |
 | `*.function.ts`         | Определения бессерверных функций      |
-| `*.front-component.tsx` | Front component definitions           |
+| `*.front-component.tsx` | Определения компонентов фронтенда     |
 | `*.role.ts`             | Определения ролей                     |
 
 ### Поддерживаемые способы организации папок

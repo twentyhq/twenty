@@ -49,22 +49,22 @@ yarn app:dev
 A partir daqui você pode:
 
 ```bash filename="Terminal"
-# Add a new entity to your application (guided)
+# Adicionar uma nova entidade à sua aplicação (assistido)
 yarn entity:add
 
-# Generate a typed Twenty client and workspace entity types
+# Gerar um cliente Twenty tipado e tipos de entidades do espaço de trabalho
 yarn app:generate
 
-# Watch your application's function logs
+# Acompanhar os logs das funções da sua aplicação
 yarn function:logs
 
-# Execute a function by name
-yarn function:execute -n my-function -p '{"name": "test"}'
+# Executar uma função pelo nome
+yarn function:execute -n my-function -p '{\"name\": \"test\"}'
 
-# Uninstall the application from the current workspace
+# Desinstalar a aplicação do espaço de trabalho atual
 yarn app:uninstall
 
-# Display commands' help
+# Exibir a ajuda dos comandos
 yarn help
 ```
 
@@ -94,23 +94,23 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Obrigatório - configuração principal da aplicação
+    default-function.role.ts       # Papel padrão para funções serverless
+    hello-world.function.ts        # Exemplo de função serverless
+    hello-world.front-component.tsx # Exemplo de componente de front-end
+    // suas entidades (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Convenção sobre configuração
 
 Os aplicativos usam uma abordagem de **convenção sobre configuração** em que as entidades são detectadas pelo sufixo do arquivo. Isso permite organização flexível dentro da pasta `src/app/`:
 
-| Sufixo de arquivo       | Tipo de entidade                     |
-| ----------------------- | ------------------------------------ |
-| `*.object.ts`           | Definições de objetos personalizados |
-| `*.function.ts`         | Definições de funções serverless     |
-| `*.front-component.tsx` | Front component definitions          |
-| `*.role.ts`             | Definições de papéis                 |
+| Sufixo de arquivo       | Tipo de entidade                       |
+| ----------------------- | -------------------------------------- |
+| `*.object.ts`           | Definições de objetos personalizados   |
+| `*.function.ts`         | Definições de funções serverless       |
+| `*.front-component.tsx` | Definições de componentes de front-end |
+| `*.role.ts`             | Definições de papéis                   |
 
 ### Organizações de pastas suportadas
 
