@@ -9,12 +9,12 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 
 ## 什么是应用？
 
-应用使你能够**以代码的形式**构建和管理 Twenty 自定义项。 无需通过 UI 配置所有内容，你可以在代码中定义数据模型和无服务器函数——从而更快地构建、维护，并推广到多个工作空间。
+应用使你能够**以代码的形式**构建和管理 Twenty 自定义项。 无需通过 UI 配置所有内容，你可以在代码中定义数据模型和逻辑函数——从而更快地构建、维护，并推广到多个工作空间。
 
 **你现在可以做什么:**
 
 * 以代码定义自定义对象和字段（受管理的数据模型）
-* 构建带有自定义触发器的无服务器函数
+* 构建带有自定义触发器的逻辑函数
 * 将同一个应用部署到多个工作空间
 
 **即将推出:**
@@ -59,7 +59,7 @@ yarn app:generate
 yarn function:logs
 
 # Execute a function by name
-yarn function:execute -n my-function -p '{"name": "test"}'
+yarn function:execute -n my-function -p '{\"name\": \"test\"}'
 
 # Uninstall the application from the current workspace
 yarn app:uninstall
@@ -94,23 +94,23 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # 必需 - 主应用程序配置
+    default-function.role.ts       # 用于无服务器函数的默认角色
+    hello-world.function.ts        # 示例无服务器函数
+    hello-world.front-component.tsx # 示例前端组件
+    // 你的实体 (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### 约定优于配置
 
 应用采用**约定优于配置**的方式，根据文件后缀检测实体。 这使得可以在 `src/app/` 文件夹内灵活组织：
 
-| 文件后缀                    | 实体类型                        |
-| ----------------------- | --------------------------- |
-| `*.object.ts`           | 自定义对象定义                     |
-| `*.function.ts`         | 无服务器函数定义                    |
-| `*.front-component.tsx` | Front component definitions |
-| `*.role.ts`             | 角色定义                        |
+| 文件后缀                    | 实体类型     |
+| ----------------------- | -------- |
+| `*.object.ts`           | 自定义对象定义  |
+| `*.function.ts`         | 无服务器函数定义 |
+| `*.front-component.tsx` | 前端组件定义   |
+| `*.role.ts`             | 角色定义     |
 
 ### 支持的文件夹组织方式
 
@@ -156,23 +156,23 @@ src/
 
 总体来说：
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
+* **package.json**：声明应用名称、版本、运行时（Node 24+、Yarn 4），并添加 `twenty-sdk`，以及诸如 `app:dev`、`app:generate`、`entity:add`、`function:logs`、`function:execute`、`app:uninstall` 和 `auth:login` 等脚本，这些脚本会委托给本地的 `twenty` CLI。
 * **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
 * **.nvmrc**：固定项目期望的 Node.js 版本。
 * **eslint.config.mjs** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
 * **README.md**：应用根目录中的简短 README，包含基本说明。
-* **src/**: The main place where you define your application-as-code:
+* **src/**：你以代码形式定义应用的主要位置：
   * `application.config.ts`：应用的全局配置（元数据和运行时关联）。 参见下方“应用配置”。
-  * `*.role.ts`：你的无服务器函数所使用的角色定义。 参见下方“默认函数角色”。
+  * `*.role.ts`：你的逻辑函数所使用的角色定义。 参见下方“默认函数角色”。
   * `*.object.ts`：自定义对象定义。
-  * `*.function.ts`：无服务器函数定义。
-  * `*.front-component.tsx`: Front component definitions.
+  * `*.function.ts`：逻辑函数定义。
+  * `*.front-component.tsx`：前端组件定义。
 
 后续命令将添加更多文件和文件夹：
 
 * `yarn app:generate` 将创建一个 `generated/` 文件夹（类型化 Twenty 客户端 + 工作空间类型）。
-* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn entity:add` 会在 `src/` 下为你的自定义对象、函数、前端组件或角色添加实体定义文件。
 
 ## 身份验证
 
@@ -215,12 +215,12 @@ twenty-sdk 提供你在应用中使用的类型化构件和辅助函数。 以�
 
 该 SDK 提供四个带内置校验的辅助函数，用于定义你的应用实体：
 
-| 函数                 | 目的             |
-| ------------------ | -------------- |
-| `defineApp()`      | 配置应用元数据        |
-| `defineObject()`   | 定义带字段的自定义对象    |
-| `defineFunction()` | 定义带处理程序的无服务器函数 |
-| `defineRole()`     | 配置角色权限和对象访问    |
+| 函数                 | 目的           |
+| ------------------ | ------------ |
+| `defineApp()`      | 配置应用元数据      |
+| `defineObject()`   | 定义带字段的自定义对象  |
+| `defineFunction()` | 定义带处理程序的逻辑函数 |
+| `defineRole()`     | 配置角色权限和对象访问  |
 
 这些函数会在运行时校验你的配置，并提供更好的 IDE 自动补全和类型安全。
 
@@ -303,7 +303,7 @@ export default defineObject({
 * `universalIdentifier` 必须在各次部署间保持唯一且稳定。
 * 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
 * `fields` 数组是可选的——你可以定义没有自定义字段的对象。
-* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
+* 你可以使用 `yarn entity:add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
 
 <Note>
   **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加 `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` 等标准字段。 你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
@@ -349,7 +349,7 @@ export default defineApp({
 
 #### 角色和权限
 
-应用可以定义角色，以封装对工作空间对象与操作的权限。 `application.config.ts` 中的 `functionRoleUniversalIdentifier` 字段指定你的应用无服务器函数所使用的默认角色。
+应用可以定义角色，以封装对工作空间对象与操作的权限。 `application.config.ts` 中的 `functionRoleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
 
 * 作为 `TWENTY_API_KEY` 注入的运行时 API 密钥源自该默认函数角色。
 * 类型化客户端将受限于该角色授予的权限。
@@ -411,7 +411,7 @@ export default defineRole({
 * `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化；仅添加所需项。
 * 在 Hello World 应用中查看可运行示例：[`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。
 
-### 无服务器函数的配置与入口点
+### 逻辑函数的配置与入口点
 
 每个函数文件都使用 `defineFunction()` 导出包含处理程序和可选触发器的配置。 使用 `*.function.ts` 文件后缀以便自动检测。
 
@@ -510,7 +510,7 @@ export default defineFunction({
   **迁移现有函数：** 将处理程序更新为从 `event.body`、`event.queryStringParameters` 或 `event.pathParameters` 解构，而不是直接从参数对象解构。
 </Warning>
 
-当路由触发器调用你的函数时，它会接收一个遵循 AWS HTTP API v2 格式的 `RoutePayload` 对象。 从 `twenty-sdk` 导入该类型：
+当路由触发器调用你的逻辑函数时，它会接收一个遵循 AWS HTTP API v2 格式的 `RoutePayload` 对象。 从 `twenty-sdk` 导入该类型：
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -540,7 +540,7 @@ const handler = async (event: RoutePayload) => {
 
 ### 转发 HTTP 请求头
 
-出于安全原因，默认不会将传入请求的 HTTP 请求头传递给你的无服务器函数。 如需访问特定请求头，请在 `forwardedRequestHeaders` 数组中显式列出：
+出于安全原因，默认**不会**将传入请求的 HTTP 请求头传递给你的逻辑函数。 如需访问特定请求头，请在 `forwardedRequestHeaders` 数组中显式列出：
 
 ```typescript
 export default defineFunction({
@@ -578,7 +578,7 @@ const handler = async (event: RoutePayload) => {
 
 你可以通过两种方式创建新函数：
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. 这将生成一个包含处理程序和配置的入门文件。
+* **脚手架生成**：运行 `yarn entity:add` 并选择添加新函数的选项。 这将生成一个包含处理程序和配置的入门文件。
 * **手动**：创建一个新的 `*.function.ts` 文件，并使用 `defineFunction()`，遵循相同的模式。
 
 ### 生成的类型化客户端
@@ -592,9 +592,9 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-客户端会通过 `yarn app:generate` 重新生成。 Re-run after changing your objects or when onboarding to a new workspace.
+客户端会通过 `yarn app:generate` 重新生成。 在更改对象之后或接入新工作空间时，请重新运行。
 
-#### 无服务器函数中的运行时凭据
+#### 逻辑函数中的运行时凭据
 
 当你的函数在 Twenty 上运行时，平台会在代码执行前将凭据作为环境变量注入：
 
@@ -604,7 +604,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 备注:
 
 * 你无需向生成的客户端传递 URL 或 API 密钥。 它会在运行时从 process.env 读取 `TWENTY_API_URL` 和 `TWENTY_API_KEY`。
-* API 密钥的权限由 `application.config.ts` 中通过 `functionRoleUniversalIdentifier` 引用的角色决定。 这是你的应用无服务器函数使用的默认角色。
+* API 密钥的权限由 `application.config.ts` 中通过 `functionRoleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
 * 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `functionRoleUniversalIdentifier` 指向该角色的通用标识符。
 
 ### Hello World 示例
@@ -640,13 +640,13 @@ yarn add -D twenty-sdk
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
+现在你可以通过 Yarn 运行相同的命令，例如 `yarn app:dev`、`yarn app:generate` 等。
 
 ## 故障排除
 
 * 身份验证错误：运行 `yarn auth:login`，并确保你的 API 密钥具有所需权限。
 * 无法连接到服务器：请验证 API URL，并确保 Twenty 服务器可达。
-* Types or client missing/outdated: run `yarn app:generate`.
+* 类型或客户端缺失/过期：运行 `yarn app:generate`。
 * 开发模式未同步：确保 `yarn app:dev` 正在运行，并且你的环境不会忽略变更。
 
 Discord 帮助频道：https://discord.com/channels/1130383047699738754/1130386664812982322

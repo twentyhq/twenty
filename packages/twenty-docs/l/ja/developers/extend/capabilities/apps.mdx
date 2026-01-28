@@ -9,12 +9,12 @@ description: Twenty のカスタマイズをコードとして構築・管理し
 
 ## Apps とは？
 
-Apps を使うと、Twenty のカスタマイズを**コードとして**構築・管理できます。 すべてを UI から設定する代わりに、データモデルやサーバーレス関数をコードで定義できます。これにより、構築と保守が高速になり、複数のワークスペースへの展開も容易になります。
+Apps を使うと、Twenty のカスタマイズを**コードとして**構築・管理できます。 Instead of configuring everything through the UI, you define your data model and logic functions in code — making it faster to build, maintain, and roll out to multiple workspaces.
 
 **現在できること:**
 
 * カスタムオブジェクトとフィールドをコードとして定義（管理されたデータモデル）
-* カスタムトリガー付きのサーバーレス関数を作成
+* Build logic functions with custom triggers
 * 同じアプリを複数のワークスペースにデプロイ
 
 **近日公開:**
@@ -164,9 +164,9 @@ src/
 * **README.md**: アプリのルートにある、基本的な手順を記した短い README。
 * **src/**: The main place where you define your application-as-code:
   * `application.config.ts`: アプリのグローバル設定（メタデータとランタイムの接続）。 「アプリケーション設定」を参照してください。
-  * `*.role.ts`: サーバーレス関数で使用するロール定義。 「デフォルトの関数ロール」を参照してください。
+  * `*.role.ts`: Role definitions used by your logic functions. 「デフォルトの関数ロール」を参照してください。
   * `*.object.ts`: カスタムオブジェクトの定義。
-  * `*.function.ts`: サーバーレス関数の定義。
+  * `*.function.ts`: Logic function definitions.
   * `*.front-component.tsx`: Front component definitions.
 
 後続のコマンドにより、さらにファイルやフォルダーが追加されます：
@@ -215,12 +215,12 @@ twenty-sdk は、アプリ内で使用する型付きのビルディングブロ
 
 この SDK は、アプリのエンティティを定義するための組み込み検証付きヘルパー関数を 4 つ提供します：
 
-| 関数                 | 目的                    |
-| ------------------ | --------------------- |
-| `defineApp()`      | アプリケーションのメタデータを構成     |
-| `defineObject()`   | フィールド付きのカスタムオブジェクトを定義 |
-| `defineFunction()` | ハンドラー付きのサーバーレス関数を定義   |
-| `defineRole()`     | ロールの権限とオブジェクトアクセスを構成  |
+| 関数                 | 目的                                   |
+| ------------------ | ------------------------------------ |
+| `defineApp()`      | アプリケーションのメタデータを構成                    |
+| `defineObject()`   | フィールド付きのカスタムオブジェクトを定義                |
+| `defineFunction()` | Define logic functions with handlers |
+| `defineRole()`     | ロールの権限とオブジェクトアクセスを構成                 |
 
 これらの関数は実行時に設定を検証し、IDE の補完と型安全性を向上させます。
 
@@ -349,7 +349,7 @@ export default defineApp({
 
 #### ロールと権限
 
-アプリケーションは、ワークスペース内のオブジェクトやアクションに対する権限をカプセル化するロールを定義できます。 `application.config.ts` の `functionRoleUniversalIdentifier` フィールドは、アプリのサーバーレス関数で使用されるデフォルトのロールを指定します。
+アプリケーションは、ワークスペース内のオブジェクトやアクションに対する権限をカプセル化するロールを定義できます。 The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * `TWENTY_API_KEY` として注入される実行時の API キーは、このデフォルトの関数ロールから派生します。
 * 型付きクライアントの権限は、そのロールに付与された権限に制限されます。
@@ -411,7 +411,7 @@ export default defineRole({
 * `permissionFlags` はプラットフォームレベルの機能へのアクセスを制御します。 最小限に保ち、必要なものだけを追加してください。
 * 動作例は Hello World アプリにあります: [packages/twenty-apps/hello-world/src/roles/function-role.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。
 
-### サーバーレス関数の設定とエントリポイント
+### Logic function config and entrypoint
 
 各関数ファイルは、ハンドラーと任意のトリガーを含む設定を `defineFunction()` でエクスポートします。 自動検出のために `*.function.ts` のファイルサフィックスを使用します。
 
@@ -510,7 +510,7 @@ export default defineFunction({
   **既存の関数を移行するには：** ハンドラーで、params オブジェクトから直接ではなく、`event.body`、`event.queryStringParameters`、または `event.pathParameters` から分割代入するように更新してください。
 </Warning>
 
-ルートトリガーが関数を呼び出すと、AWS HTTP API v2 形式に準拠した `RoutePayload` オブジェクトを受け取ります。 型を `twenty-sdk` からインポートします:
+When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. 型を `twenty-sdk` からインポートします:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -540,7 +540,7 @@ const handler = async (event: RoutePayload) => {
 
 ### HTTP ヘッダーの転送
 
-デフォルトでは、セキュリティ上の理由から、受信リクエストの HTTP ヘッダーはサーバーレス関数に**渡されません**。 特定のヘッダーにアクセスするには、`forwardedRequestHeaders` 配列に明示的に列挙してください:
+By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons. 特定のヘッダーにアクセスするには、`forwardedRequestHeaders` 配列に明示的に列挙してください:
 
 ```typescript
 export default defineFunction({
@@ -594,7 +594,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 
 このクライアントは `yarn app:generate` によって再生成されます。 Re-run after changing your objects or when onboarding to a new workspace.
 
-#### サーバーレス関数における実行時認証情報
+#### Runtime credentials in logic functions
 
 関数が Twenty 上で実行されると、コードが実行される前に、プラットフォームが認証情報を環境変数として注入します：
 
@@ -604,7 +604,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 ノート:
 
 * 生成されたクライアントに URL や API キーを渡す必要はありません。 実行時に process.env から `TWENTY_API_URL` と `TWENTY_API_KEY` を読み取ります。
-* API キーの権限は、`application.config.ts` で `functionRoleUniversalIdentifier` によって参照されるロールによって決まります。 これは、アプリケーションのサーバーレス関数で使用されるデフォルトのロールです。
+* API キーの権限は、`application.config.ts` で `functionRoleUniversalIdentifier` によって参照されるロールによって決まります。 This is the default role used by logic functions of your application.
 * アプリケーションは、最小権限の原則に従うロールを定義できます。 関数に必要な権限のみを付与し、`functionRoleUniversalIdentifier` をそのロールのユニバーサル識別子に指定してください。
 
 ### Hello World の例
