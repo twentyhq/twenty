@@ -4,7 +4,6 @@ import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-typ
 
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useContext, useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 type RecordTitleCellTextFieldInputProps = {
@@ -16,8 +15,7 @@ export const RecordTitleCellTextFieldInput = ({
   instanceId,
   sizeVariant,
 }: RecordTitleCellTextFieldInputProps) => {
-  const { fieldDefinition, draftValue, setDraftValue, fieldValue } =
-    useTextField();
+  const { fieldDefinition, draftValue, setDraftValue } = useTextField();
 
   const wrapperRef = useRef<HTMLInputElement>(null);
 
