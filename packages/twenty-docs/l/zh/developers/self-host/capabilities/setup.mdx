@@ -292,21 +292,21 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
 </Warning>
 
-## Logic Functions
+## 逻辑函数
 
-Twenty supports logic functions for workflows and custom logic. 执行环境通过 `SERVERLESS_TYPE` 环境变量进行配置。
+Twenty 支持用于工作流和自定义逻辑的逻辑函数。 执行环境通过 `SERVERLESS_TYPE` 环境变量进行配置。
 
 <Warning>
-  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，我们强烈建议使用 `SERVERLESS_TYPE=LAMBDA` 或 `SERVERLESS_TYPE=DISABLED`。
+  \*\*安全提示：\*\*本地驱动（`SERVERLESS_TYPE=LOCAL`）在没有沙箱的情况下，在主机上的 Node.js 进程中直接运行代码。 它应仅在开发环境中用于可信代码。 对于在生产环境中处理不受信任代码的部署，我们强烈建议使用 `SERVERLESS_TYPE=LAMBDA` 或 `SERVERLESS_TYPE=DISABLED`。
 </Warning>
 
 ### 可用驱动
 
-| 驱动     | 环境变量                       | 用例                               | 安全级别     |
-| ------ | -------------------------- | -------------------------------- | -------- |
-| 禁用     | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | 不适用      |
-| 本地     | `SERVERLESS_TYPE=LOCAL`    | 开发和可信环境                          | 低（无沙箱）   |
-| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 生产环境（处理不受信任代码）                   | 高（硬件级隔离） |
+| 驱动     | 环境变量                       | 用例             | 安全级别     |
+| ------ | -------------------------- | -------------- | -------- |
+| 禁用     | `SERVERLESS_TYPE=DISABLED` | 完全禁用逻辑函数       | 不适用      |
+| 本地     | `SERVERLESS_TYPE=LOCAL`    | 开发和可信环境        | 低（无沙箱）   |
+| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 生产环境（处理不受信任代码） | 高（硬件级隔离） |
 
 ### 推荐配置
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**To disable logic functions:**
+**要禁用逻辑函数：**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
+  使用 `SERVERLESS_TYPE=DISABLED` 时，任何尝试执行逻辑函数的操作都会返回错误。 如果你想在不启用逻辑函数能力的情况下运行 Twenty，这将很有用。
 </Note>

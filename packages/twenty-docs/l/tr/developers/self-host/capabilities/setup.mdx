@@ -292,21 +292,21 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
-## Logic Functions
+## Mantıksal işlevler
 
-Twenty supports logic functions for workflows and custom logic. Yürütme ortamı, `SERVERLESS_TYPE` ortam değişkeni aracılığıyla yapılandırılır.
+Twenty, iş akışları ve özel mantık için mantıksal işlevleri destekler. Yürütme ortamı, `SERVERLESS_TYPE` ortam değişkeni aracılığıyla yapılandırılır.
 
 <Warning>
-  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
+  **Güvenlik Notu:** Yerel sürücü (`SERVERLESS_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
 </Warning>
 
 ### Kullanılabilir Sürücüler
 
-| Sürücü     | Ortam Değişkeni            | Kullanım alanı                   | Güvenlik Düzeyi                      |
-| ---------- | -------------------------- | -------------------------------- | ------------------------------------ |
-| Devre dışı | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | Uygulanamaz                          |
-| Yerel      | `SERVERLESS_TYPE=LOCAL`    | Geliştirme ve güvenilir ortamlar | Düşük (sandbox yok)                  |
-| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Güvenilmeyen kodla üretim        | Yüksek (donanım düzeyinde izolasyon) |
+| Sürücü     | Ortam Değişkeni            | Kullanım alanı                                 | Güvenlik Düzeyi                      |
+| ---------- | -------------------------- | ---------------------------------------------- | ------------------------------------ |
+| Devre dışı | `SERVERLESS_TYPE=DISABLED` | Mantıksal işlevleri tamamen devre dışı bırakın | Uygulanamaz                          |
+| Yerel      | `SERVERLESS_TYPE=LOCAL`    | Geliştirme ve güvenilir ortamlar               | Düşük (sandbox yok)                  |
+| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Güvenilmeyen kodla üretim                      | Yüksek (donanım düzeyinde izolasyon) |
 
 ### Önerilen Yapılandırma
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**To disable logic functions:**
+**Mantıksal işlevleri devre dışı bırakmak için:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
+  `SERVERLESS_TYPE=DISABLED` kullanıldığında, bir mantıksal işlevi yürütmeye yönelik herhangi bir girişim bir hata döndürür. Bu, Twenty'yi mantıksal işlev yetenekleri olmadan çalıştırmak istiyorsanız kullanışlıdır.
 </Note>
