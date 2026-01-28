@@ -55,7 +55,10 @@ export const RecordTitleCellTextFieldInput = ({
     if (!isDefined(draftValue) && isDefined(fieldValue) && fieldValue !== '') {
       setDraftValue(fieldValue);
     }
-    if (isDefined(draftValue)) {
+
+    const valueToSelect = isDefined(draftValue) ? draftValue : fieldValue;
+
+    if (isDefined(valueToSelect) && valueToSelect !== '') {
       event.target.select();
     }
   };
