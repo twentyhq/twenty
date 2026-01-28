@@ -25,7 +25,6 @@ export type WidgetCardHeaderProps = {
   actions?: WidgetAction[];
   className?: string;
   isResizing?: boolean;
-  /** Controls whether the widget can be reordered (shows the drag grip). Defaults to true. */
   isReorderEnabled?: boolean;
 };
 
