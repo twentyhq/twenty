@@ -68,7 +68,8 @@ const buildBars = ({
   includeZeroValues,
   getDimensions,
 }: BuildBarsParams): BarPosition[] => {
-  const { isVertical, dataLength, keysLength, categoryStep, outerPadding } = ctx;
+  const { isVertical, dataLength, keysLength, categoryStep, outerPadding } =
+    ctx;
   const bars: BarPosition[] = [];
 
   for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {

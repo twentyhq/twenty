@@ -56,7 +56,8 @@ export const getGroupedBarDimensions = ({
   const barStart = Math.min(zeroPixel, valuePixel);
   const barLength = Math.abs(valuePixel - zeroPixel);
 
-  const categoryPosition = categoryStart + groupCenteringOffset + keyIndex * barStride;
+  const categoryPosition =
+    categoryStart + groupCenteringOffset + keyIndex * barStride;
 
   if (isVertical) {
     return {
