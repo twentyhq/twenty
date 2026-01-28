@@ -256,7 +256,7 @@ export class FileUploadService {
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
       fileId,
-      info: {
+      settings: {
         isTemporaryFile: true,
         toDelete: false,
       },

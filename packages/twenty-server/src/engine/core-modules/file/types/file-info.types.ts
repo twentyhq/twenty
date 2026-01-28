@@ -1,6 +1,8 @@
-export type FilesFieldFileInfo = {
+export type FileFieldSettings = {
   isTemporaryFile: boolean;
   toDelete: boolean;
 };
 
-export type FileInfo = FilesFieldFileInfo;
+export type FileSettings = FileFieldSettings;
+
+export type FileInfo = FileFieldSettings;

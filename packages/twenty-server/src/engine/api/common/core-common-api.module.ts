@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CommonArgsProcessors } from 'src/engine/api/common/common-args-processors/common-args-processors';
-import { FilesFieldSyncService } from 'src/engine/api/common/common-args-processors/data-arg-processor/services/files-field-sync.service';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
@@ -51,7 +50,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ProcessNestedRelationsV2Helper,
     ...CommonArgsProcessors,
     ProcessAggregateHelper,
-    FilesFieldSyncService,
     ...CommonQueryRunners,
     CommonResultGettersService,
     GroupByWithRecordsService,

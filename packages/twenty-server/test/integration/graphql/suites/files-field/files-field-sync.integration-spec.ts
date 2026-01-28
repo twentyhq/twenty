@@ -135,7 +135,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
       return false;
     }
 
-    return result[0].info.isTemporaryFile === false;
+    return result[0].settings.isTemporaryFile === false;
   };
 
   const checkFileIsTemporary = async (fileId: string): Promise<boolean> => {
@@ -148,7 +148,7 @@ describe('fileFieldSync - FILES field <> files sync', () => {
       return false;
     }
 
-    return result[0].info.isTemporaryFile === true;
+    return result[0].settings.isTemporaryFile === true;
   };
 
   beforeAll(async () => {

@@ -8,8 +8,8 @@ import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runne
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import {
-    FilesFieldDeletionJob,
-    FilesFieldDeletionJobData,
+  FilesFieldDeletionJob,
+  FilesFieldDeletionJobData,
 } from 'src/engine/core-modules/file/files-field/jobs/files-field-deletion.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';

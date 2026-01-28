@@ -162,13 +162,14 @@ export class WorkspaceInsertQueryBuilder<
       );
 
       let filesFieldFileIds = null;
+      let fileIdToApplicationId = new Map<string, string>();
 
       const entities = Array.isArray(this.expressionMap.valuesSet)
         ? this.expressionMap.valuesSet
         : [this.expressionMap.valuesSet];
 
       const filesFieldDiffByEntityIndex =
-        this.filesFieldSync.prepareFilesFieldSyncBeforeInsert(
+        this.filesFieldSync.computeFilesFieldDiffBeforeInsert(
           entities as QueryDeepPartialEntityWithNestedRelationFields<T>[],
           mainAliasTarget,
         );
@@ -179,9 +180,11 @@ export class WorkspaceInsertQueryBuilder<
             entities as QueryDeepPartialEntityWithNestedRelationFields<T>[],
           filesFieldDiffByEntityIndex,
           workspaceId: this.internalContext.workspaceId,
+          target: mainAliasTarget,
         });
 
         filesFieldFileIds = result.fileIds;
+        fileIdToApplicationId = result.fileIdToApplicationId;
 
         this.expressionMap.valuesSet = Array.isArray(
           this.expressionMap.valuesSet,
@@ -217,7 +220,10 @@ export class WorkspaceInsertQueryBuilder<
       const result = await super.execute();
 
       if (isDefined(filesFieldFileIds)) {
-        await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
+        await this.filesFieldSync.updateFileEntityRecords(
+          filesFieldFileIds,
+          fileIdToApplicationId,
+        );
       }
       const eventSelectQueryBuilder = (
         this.connection.manager as WorkspaceEntityManager

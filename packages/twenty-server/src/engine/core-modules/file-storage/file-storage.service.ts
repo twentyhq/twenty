@@ -51,7 +51,7 @@ export class FileStorageService {
     applicationUniversalIdentifier,
     workspaceId,
     fileId,
-    info,
+    settings,
   }: {
     sourceFile: string | Buffer | Uint8Array;
     destinationPath: string;
@@ -60,7 +60,7 @@ export class FileStorageService {
     applicationUniversalIdentifier: string;
     workspaceId: string;
     fileId?: string;
-    info: FileInfo;
+    settings: FileInfo;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
@@ -88,7 +88,7 @@ export class FileStorageService {
         typeof sourceFile === 'string'
           ? Buffer.byteLength(sourceFile)
           : sourceFile.length,
-      info,
+      settings,
     });
 
     return fileEntity;
