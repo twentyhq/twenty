@@ -6,7 +6,6 @@ const StyledWidgetCardContent = styled.div<{
   variant: WidgetCardVariant;
   hasHeader: boolean;
   isEditable: boolean;
-  onClick?: () => void;
 }>`
   box-sizing: border-box;
   display: grid;

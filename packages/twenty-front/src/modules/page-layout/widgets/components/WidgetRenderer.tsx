@@ -169,7 +169,6 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           variant={variant}
           hasHeader={showHeader}
           isEditable={isPageLayoutInEditMode}
-          onClick={isPageLayoutInEditMode ? handleClick : undefined}
         >
           {hasAccess ? (
             <ErrorBoundary
