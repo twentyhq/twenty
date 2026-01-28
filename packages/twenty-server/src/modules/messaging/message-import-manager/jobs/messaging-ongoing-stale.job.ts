@@ -54,10 +54,7 @@ export class MessagingOngoingStaleJob {
       });
 
       for (const messageChannel of messageChannels) {
-        if (
-          messageChannel.syncStageStartedAt &&
-          isSyncStale(messageChannel.syncStageStartedAt)
-        ) {
+        if (isSyncStale(messageChannel.syncStageStartedAt)) {
           await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
             [messageChannel.id],
             workspaceId,

@@ -6,9 +6,9 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { IconCode, OverflowingTextWithTooltip } from 'twenty-ui/display';
 
-import { type ServerlessFunction } from '~/generated-metadata/graphql';
+import { type LogicFunction } from '~/generated-metadata/graphql';
 
-type ToolWithApplicationId = ServerlessFunction & {
+type ToolWithApplicationId = LogicFunction & {
   applicationId?: string | null;
 };
 

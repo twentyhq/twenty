@@ -1,5 +1,5 @@
 import { glob } from 'fast-glob';
-import { type ServerlessFunctionManifest } from 'twenty-shared/application';
+import { type LogicFunctionManifest } from 'twenty-shared/application';
 
 import { manifestExtractFromFileServer } from '@/cli/utilities/build/manifest/manifest-extract-from-file-server';
 import { type ValidationError } from '@/cli/utilities/build/manifest/manifest-types';
@@ -11,18 +11,18 @@ import {
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
 
 type ExtractedFunctionManifest = Omit<
-  ServerlessFunctionManifest,
+  LogicFunctionManifest,
   'sourceHandlerPath' | 'builtHandlerPath' | 'builtHandlerChecksum'
 > & {
   handler: string;
 };
 
 export class FunctionEntityBuilder
-  implements ManifestEntityBuilder<ServerlessFunctionManifest>
+  implements ManifestEntityBuilder<LogicFunctionManifest>
 {
   async build(
     appPath: string,
-  ): Promise<EntityBuildResult<ServerlessFunctionManifest>> {
+  ): Promise<EntityBuildResult<LogicFunctionManifest>> {
     const functionFiles = await glob(['**/*.function.ts'], {
       cwd: appPath,
       ignore: [
@@ -33,7 +33,7 @@ export class FunctionEntityBuilder
       ],
     });
 
-    const manifests: ServerlessFunctionManifest[] = [];
+    const manifests: LogicFunctionManifest[] = [];
 
     for (const filePath of functionFiles) {
       try {
@@ -76,7 +76,7 @@ export class FunctionEntityBuilder
   }
 
   validate(
-    functions: ServerlessFunctionManifest[],
+    functions: LogicFunctionManifest[],
     errors: ValidationError[],
   ): void {
     for (const fn of functions) {

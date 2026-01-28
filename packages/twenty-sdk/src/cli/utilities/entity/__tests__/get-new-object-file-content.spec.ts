@@ -1,8 +1,8 @@
-import { getNewObjectFileContent } from '@/cli/utilities/entity/entity-object-template';
+import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 
 describe('getNewObjectFileContent', () => {
   it('should return proper object file using defineObject', () => {
-    const result = getNewObjectFileContent({
+    const result = getObjectBaseFile({
       data: {
         nameSingular: 'company',
         namePlural: 'companies',
@@ -28,7 +28,7 @@ describe('getNewObjectFileContent', () => {
   });
 
   it('should generate unique UUIDs for each object', () => {
-    const result1 = getNewObjectFileContent({
+    const result1 = getObjectBaseFile({
       data: {
         nameSingular: 'company',
         namePlural: 'companies',
@@ -38,7 +38,7 @@ describe('getNewObjectFileContent', () => {
       name: 'company',
     });
 
-    const result2 = getNewObjectFileContent({
+    const result2 = getObjectBaseFile({
       data: {
         nameSingular: 'person',
         namePlural: 'people',

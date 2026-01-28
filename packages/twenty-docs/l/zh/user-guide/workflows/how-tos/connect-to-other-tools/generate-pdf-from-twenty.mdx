@@ -7,7 +7,7 @@ description: 创建一个工作流，用于生成 PDF（例如报价单）并将
 
 ## 概览
 
-此工作流使用 **手动触发器**，因此用户可以按需为任何选定的记录生成 PDF。 一个 **无服务器函数** 负责：
+此工作流使用 **手动触发器**，因此用户可以按需为任何选定的记录生成 PDF。 A **Logic Function** handles:
 
 1. 从 URL（来自 PDF 生成服务）下载 PDF
 2. 将文件上传到 Twenty
@@ -17,7 +17,7 @@ description: 创建一个工作流，用于生成 PDF（例如报价单）并将
 
 设置工作流之前：
 
-1. **创建 API 密钥**：前往 **设置 → APIs** 并创建一个新的 API 密钥。 您将需要在无服务器函数中使用此令牌。
+1. **创建 API 密钥**：前往 **设置 → APIs** 并创建一个新的 API 密钥。 You'll need this token for the logic function.
 2. **设置 PDF 生成服务**（可选）：如果您想动态生成 PDF（例如报价单），可使用 Carbone、PDFMonkey 或 DocuSeal 等服务来创建 PDF 并获取下载 URL。
 
 ## 分步设置
@@ -32,9 +32,9 @@ description: 创建一个工作流，用于生成 PDF（例如报价单）并将
   使用手动触发器，用户在选择记录后可通过右上角出现的按钮运行此工作流，以生成并附加 PDF。
 </Tip>
 
-### 步骤 2：添加无服务器函数
+### Step 2: Add a Logic Function
 
-1. 添加 **无服务器函数** 操作
+1. Add a **Code** action (logic function)
 2. 使用下面的代码创建一个新函数
 3. 配置输入参数
 
@@ -45,10 +45,10 @@ description: 创建一个工作流，用于生成 PDF（例如报价单）并将
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  如果要附加到其他对象（联系人、商机等），请相应重命名参数（例如，`personId`、`opportunityId`），并更新无服务器函数。
+  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
 </Note>
 
-#### 无服务器函数代码
+#### Logic Function Code
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ export const main = async (
 如果使用 PDF 生成服务，您可以：
 
 1. 首先创建一个 HTTP 请求操作以生成 PDF
-2. 将返回的 PDF URL 作为参数传递给无服务器函数
+2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ export const main = async (
 * **DocuSeal** - 文档自动化平台
 * **Documint** - API 优先的文档生成
 
-每个服务都提供一个返回 PDF URL 的 API，您随后可以将其传递给无服务器函数。
+Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
 
 ## 故障排除
 
@@ -224,5 +224,5 @@ export const main = async (
 ## 相关内容
 
 * [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
-* [无服务器函数](/l/zh/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Logic Functions](/l/zh/user-guide/workflows/capabilities/workflow-actions#code)
 * [从 Twenty 生成报价单或发票](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

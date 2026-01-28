@@ -23,7 +23,7 @@ import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handle
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
-import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
+import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.interface';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-typeorm-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
@@ -446,87 +446,98 @@ export class ConfigVariables {
   STORAGE_S3_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
-    description: 'Type of serverless execution (local or Lambda)',
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
-    options: Object.values(ServerlessDriverType),
+    options: Object.values(LogicFunctionExecutorDriverType),
     isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.LOCAL;
+  LOGIC_FUNCTION_TYPE: LogicFunctionExecutorDriverType =
+    LogicFunctionExecutorDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description:
-      'Configure whether console logs from serverless functions are displayed in the terminal',
+      'Configure whether console logs from logic functions are displayed in the terminal',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  SERVERLESS_LOGS_ENABLED: false;
+  LOGIC_FUNCTION_LOGS_ENABLED: false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
-    description: 'Throttle limit for serverless function execution',
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description: 'Throttle limit for logic function execution',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT = 1000;
+  LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT = 1000;
 
   // milliseconds
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
-    description: 'Time-to-live for serverless function execution throttle',
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description: 'Time-to-live for logic function execution throttle',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 60_000;
+  LOGIC_FUNCTION_EXEC_THROTTLE_TTL = 60_000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Region for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
   @IsAWSRegion()
-  SERVERLESS_LAMBDA_REGION: AwsRegion;
+  LOGIC_FUNCTION_LAMBDA_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'IAM role for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
-  SERVERLESS_LAMBDA_ROLE: string;
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
+  LOGIC_FUNCTION_LAMBDA_ROLE: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Role to assume when hosting lambdas in dedicated AWS account',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
   @IsOptional()
-  SERVERLESS_LAMBDA_SUBHOSTING_ROLE?: string;
+  LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     isSensitive: true,
     description: 'Access key ID for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
   @IsOptional()
-  SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
+  LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     isSensitive: true,
     description: 'Secret access key for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
   @IsOptional()
-  SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
+  LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
