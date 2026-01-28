@@ -201,19 +201,13 @@ export function formatResult<T>(
       continue;
     }
 
-    if (typeof rawUpdatedDateTime === 'string') {
+    if (
+      typeof rawUpdatedDateTime === 'string' ||
+      rawUpdatedDateTime instanceof Date ||
+      isPlainObject(rawUpdatedDateTime)
+    ) {
       // @ts-expect-error legacy noImplicitAny
       newData[dateTimeField.name] = rawUpdatedDateTime;
-    } else if (rawUpdatedDateTime instanceof Date) {
-      const dateIsoString = rawUpdatedDateTime.toISOString();
-
-      // @ts-expect-error legacy noImplicitAny
-      newData[dateTimeField.name] = dateIsoString;
-    } else if (isPlainObject(rawUpdatedDateTime)) {
-      const plainObjectValue = rawUpdatedDateTime;
-
-      // @ts-expect-error legacy noImplicitAny
-      newData[dateTimeField.name] = plainObjectValue;
     } else {
       const stringifiedUnknownValue = stringifySafely(rawUpdatedDateTime);
 

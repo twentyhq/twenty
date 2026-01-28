@@ -363,8 +363,8 @@ export class NavigationMenuItemService {
       );
     }
 
-    if (isDefined(authContext.application?.defaultServerlessFunctionRoleId)) {
-      return authContext.application.defaultServerlessFunctionRoleId;
+    if (isDefined(authContext.application?.defaultLogicFunctionRoleId)) {
+      return authContext.application.defaultLogicFunctionRoleId;
     }
 
     if (isDefined(authContext.userWorkspaceId)) {
@@ -427,7 +427,6 @@ export class NavigationMenuItemService {
 
       const record =
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          authContext,
           async () => {
             const repository =
               await this.globalWorkspaceOrmManager.getRepository(
@@ -462,6 +461,7 @@ export class NavigationMenuItemService {
 
             return formattedRecord;
           },
+          authContext,
         );
 
       if (!isDefined(record)) {

@@ -50,15 +50,12 @@ yarn app:dev
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn app:create-entity
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
 yarn app:generate
 
-# Run a one‑time sync (instead of watch mode)
-yarn app:sync
-
-# Watch your application's functions logs
+# Watch your application's function logs
 yarn function:logs
 
 # Execute a function by name
@@ -68,7 +65,7 @@ yarn function:execute -n my-function -p '{"name": "test"}'
 yarn app:uninstall
 
 # Display commands' help
-yarn app:help
+yarn help
 ```
 
 راجع أيضًا: صفحات مرجع CLI لـ [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) و[twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -97,22 +94,23 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    app/
-      application.config.ts     # مطلوب - التكوين الرئيسي للتطبيق
-      default-function.role.ts  # الدور الافتراضي للوظائف بدون خادم
-      // الكيانات الخاصة بك (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # اختياري - تنفيذات المُعالِجات والأدوات المساعدة
+    application.config.ts          # Required - main application configuration
+    default-function.role.ts       # Default role for serverless functions
+    hello-world.function.ts        # Example serverless function
+    hello-world.front-component.tsx # Example front component
+    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### الاتفاقية فوق التهيئة
 
 تستخدم التطبيقات نهج **الاتفاقية فوق التهيئة** حيث تُكتشف الكيانات عبر لاحقة اسم الملف. يتيح ذلك تنظيمًا مرنًا داخل مجلد `src/app/`:
 
-| لاحقة الملف     | نوع الكيان             |
-| --------------- | ---------------------- |
-| `*.object.ts`   | تعريفات كائنات مخصصة   |
-| `*.function.ts` | تعريفات وظائف بلا خادم |
-| `*.role.ts`     | تعريفات الأدوار        |
+| لاحقة الملف             | نوع الكيان                  |
+| ----------------------- | --------------------------- |
+| `*.object.ts`           | تعريفات كائنات مخصصة        |
+| `*.function.ts`         | تعريفات وظائف بلا خادم      |
+| `*.front-component.tsx` | Front component definitions |
+| `*.role.ts`             | تعريفات الأدوار             |
 
 ### طرق تنظيم المجلدات المدعومة
 
@@ -121,12 +119,14 @@ my-twenty-app/
 **تقليدي (حسب النوع):**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── objects/
 │   └── postCard.object.ts
 ├── functions/
 │   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
 └── roles/
     └── admin.role.ts
 ```
@@ -134,44 +134,45 @@ src/app/
 **حسب الميزة:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 └── post-card/
     ├── postCard.object.ts
     ├── createPostCard.function.ts
+    ├── card.front-component.tsx
     └── postCardAdmin.role.ts
 ```
 
 **مسطح:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── postCard.object.ts
 ├── createPostCard.function.ts
+├── card.front-component.tsx
 └── admin.role.ts
 ```
 
 بشكل عام:
 
-* **package.json**: يصرّح باسم التطبيق والإصدار والمحرّكات (Node 24+، Yarn 4)، ويضيف `twenty-sdk` فضلًا عن نصوص مثل `dev` و`sync` و`generate` و`create-entity` و`logs` و`uninstall` و`auth` التي تفوِّض إلى `twenty` CLI المحلي.
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
 * **.gitignore**: يتجاهل العناصر الشائعة مثل `node_modules` و`.yarn` و`generated/` (عميل مضبوط الأنواع) و`dist/` و`build/` ومجلدات التغطية وملفات السجلات وملفات `.env*`.
 * **yarn.lock**، **.yarnrc.yml**، **.yarn/**: تقوم بقفل وتكوين حزمة أدوات Yarn 4 المستخدمة في المشروع.
 * **.nvmrc**: يثبّت إصدار Node.js المتوقع للمشروع.
 * **eslint.config.mjs** و**tsconfig.json**: يقدّمان إعدادات الفحص والتهيئة لـ TypeScript لمصادر TypeScript في تطبيقك.
 * **README.md**: ملف README قصير في جذر التطبيق يتضمن تعليمات أساسية.
-* **src/app/**: المكان الرئيسي حيث تعرّف تطبيقك ككود:
+* **src/**: The main place where you define your application-as-code:
   * `application.config.ts`: التكوين العام لتطبيقك (بيانات وصفية وربط وقت التشغيل). انظر "تكوين التطبيق" أدناه.
   * `*.role.ts`: تعريفات الأدوار المستخدمة بواسطة وظائفك بلا خادم. انظر "الدور الافتراضي للوظيفة" أدناه.
   * `*.object.ts`: تعريفات كائنات مخصصة.
   * `*.function.ts`: تعريفات وظائف بلا خادم.
-* **src/utils/**: مجلد اختياري لتنفيذات المعالجات والأدوات المساعدة.
+  * `*.front-component.tsx`: Front component definitions.
 
 ستضيف الأوامر اللاحقة مزيدًا من الملفات والمجلدات:
 
 * `yarn app:generate` سيُنشئ مجلدًا `generated/` (عميل Twenty مضبوط الأنواع + أنواع مساحة العمل).
-* `yarn app:create-entity` سيضيف ملفات تعريف الكيانات تحت `src/app/` لكائناتك المخصصة أو الوظائف أو الأدوار.
-  l
+* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
 
 ## المصادقة
 
@@ -302,62 +303,11 @@ export default defineObject({
 * `universalIdentifier` يجب أن يكون فريدًا وثابتًا عبر عمليات النشر.
 * يتطلب كل حقل `name` و`type` و`label` ومعرّف `universalIdentifier` ثابتًا خاصًا به.
 * المصفوفة `fields` اختيارية — يمكنك تعريف كائنات بدون حقول مخصصة.
-* يمكنك إنشاء كائنات جديدة باستخدام `yarn app:create-entity`، والذي يرشدك خلال التسمية والحقول والعلاقات.
+* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
 
 <Note>
   **يتم إنشاء الحقول الأساسية تلقائيًا.** عند تعريف كائن مخصص، يضيف Twenty تلقائيًا حقولًا قياسية مثل `name` و`createdAt` و`updatedAt` و`createdBy` و`position` و`deletedAt`. لا تحتاج إلى تعريف هذه في مصفوفة `fields` — أضف فقط حقولك المخصصة.
 </Note>
-
-<Accordion title="بديل: صياغة قائمة على المزيّنات">
-  يمكنك أيضًا تعريف كائنات باستخدام مزيّنات TypeScript. يستخدم هذا النهج صياغة معتمدة على الأصناف مع مزيّنات `@Object` و`@Field` و`@Relation`:
-
-  ```typescript
-  import {
-    type AddressField,
-    Field,
-    FieldType,
-    type FullNameField,
-    Object,
-    OnDeleteAction,
-    Relation,
-    RelationType,
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  } from 'twenty-sdk';
-  import { type Note } from '../../generated';
-
-  @Object({
-    universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-    nameSingular: 'postCard',
-    namePlural: 'postCards',
-    labelSingular: 'Post card',
-    labelPlural: 'Post cards',
-    description: 'A post card object',
-    icon: 'IconMail',
-  })
-  export class PostCard {
-    @Field({
-      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-      type: FieldType.TEXT,
-      label: 'Content',
-      description: "Postcard's content",
-      icon: 'IconAbc',
-    })
-    content: string;
-
-    @Relation({
-      universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-      type: RelationType.ONE_TO_MANY,
-      label: 'Notes',
-      icon: 'IconComment',
-      inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-      onDelete: OnDeleteAction.CASCADE,
-    })
-    notes: Note[];
-  }
-  ```
-
-  ملاحظة: يتطلب نهج المزيّنات `experimentalDecorators` في تهيئة TypeScript لديك.
-</Accordion>
 
 ### تكوين التطبيق (application.config.ts)
 
@@ -469,14 +419,9 @@ export default defineRole({
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '../../generated';
+import Twenty, { type Person } from '~/generated';
 
-const handler = async (
-  params:
-    | RoutePayload
-    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
-    | CronPayload,
-) => {
+const handler = async (params: RoutePayload) => {
   const client = new Twenty(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
@@ -507,18 +452,18 @@ export default defineFunction({
       isAuthRequired: false,
     },
     // Cron trigger (CRON pattern)
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *',
-    },
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
     // Database event trigger
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.updated',
-      updatedFields: ['name'],
-    },
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
   ],
 });
 ```
@@ -633,7 +578,7 @@ const handler = async (event: RoutePayload) => {
 
 يمكنك إنشاء وظائف جديدة بطريقتين:
 
-* **مُنشأ بالقالب**: شغّل `yarn app:create-entity` واختر خيار إضافة وظيفة جديدة. يُولّد هذا ملفًا مبدئيًا مع معالج وتكوين.
+* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. يُولّد هذا ملفًا مبدئيًا مع معالج وتكوين.
 * **يدوي**: أنشئ ملفًا جديدًا `*.function.ts` واستخدم `defineFunction()` مع اتباع النمط نفسه.
 
 ### عميل مُولَّد مضبوط الأنواع
@@ -641,13 +586,13 @@ const handler = async (event: RoutePayload) => {
 شغّل yarn app:generate لإنشاء عميل محلي مضبوط الأنواع في generated/ استنادًا إلى مخطط مساحة العمل لديك. استخدمه في وظائفك:
 
 ```typescript
-import Twenty from './generated';
+import Twenty from '~/generated';
 
 const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-يُعاد توليد العميل بواسطة `yarn app:generate`. أعِد تشغيله بعد تغيير كائناتك وتشغيل `yarn app:sync` أو عند الانضمام إلى مساحة عمل جديدة.
+يُعاد توليد العميل بواسطة `yarn app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
 
 #### بيانات الاعتماد في وقت التشغيل في الوظائف بلا خادم
 
@@ -679,25 +624,29 @@ yarn add -D twenty-sdk
 ```json filename="package.json"
 {
   "scripts": {
-    "auth": "twenty auth login",
-    "generate": "twenty app generate",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "logs": "twenty app logs",
-    "create-entity": "twenty app add",
-    "help": "twenty --help"
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
   }
 }
 ```
 
-يمكنك الآن تشغيل الأوامر نفسها عبر Yarn، مثل `yarn app:dev` و`yarn app:sync`، إلخ.
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
 
 ## استكشاف الأخطاء وإصلاحها
 
 * أخطاء المصادقة: شغّل `yarn auth:login` وتأكد من أن مفتاح واجهة برمجة التطبيقات لديك يمتلك الأذونات المطلوبة.
 * يتعذّر الاتصال بالخادم: تحقق من عنوان URL لواجهة البرمجة وأن خادم Twenty قابل للوصول.
-* الأنواع أو العميل مفقود/قديم: شغّل `yarn app:generate` ثم `yarn app:dev`.
+* Types or client missing/outdated: run `yarn app:generate`.
 * وضع التطوير لا يزامن: تأكد من أن `yarn app:dev` قيد التشغيل وأن التغييرات ليست متجاهلة من بيئتك.
 
 قناة المساعدة على Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

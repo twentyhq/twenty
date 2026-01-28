@@ -41,24 +41,21 @@ export class TwentyStandardApplicationService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const favoriteRepository =
-          await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-            workspaceId,
-            'favorite',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const favoriteRepository =
+        await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
+          workspaceId,
+          'favorite',
+        );
 
-        const favoriteCount = await favoriteRepository.count();
-        const favoriteToCreate = flatViews.map((flatView, index) => ({
-          viewId: flatView.id,
-          position: favoriteCount + index,
-        }));
+      const favoriteCount = await favoriteRepository.count();
+      const favoriteToCreate = flatViews.map((flatView, index) => ({
+        viewId: flatView.id,
+        position: favoriteCount + index,
+      }));
 
-        await favoriteRepository.insert(favoriteToCreate);
-      },
-    );
+      await favoriteRepository.insert(favoriteToCreate);
+    }, authContext);
   }
 
   private async createManyNavigationMenuItem({

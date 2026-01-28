@@ -50,7 +50,6 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
         const authContext = buildSystemAuthContext(activeWorkspace.id);
 
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          authContext,
           async () => {
             const messageChannelRepository =
               await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
@@ -76,6 +75,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
               });
             }
           },
+          authContext,
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

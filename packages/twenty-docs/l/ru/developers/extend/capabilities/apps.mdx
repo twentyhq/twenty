@@ -50,13 +50,10 @@ yarn app:dev
 
 ```bash filename="Terminal"
 # Добавить новую сущность в ваше приложение (с мастером)
-yarn app:create-entity
+yarn entity:add
 
 # Сгенерировать типизированный клиент Twenty и типы сущностей рабочего пространства
 yarn app:generate
-
-# Выполнить разовую синхронизацию (вместо watch‑режима)
-yarn app:sync
 
 # Просматривать логи функций вашего приложения
 yarn function:logs
@@ -68,7 +65,7 @@ yarn function:execute -n my-function -p '{"name": "test"}'
 yarn app:uninstall
 
 # Показать справку по командам
-yarn app:help
+yarn help
 ```
 
 Смотрите также: страницы справки CLI для [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) и [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk).
@@ -97,22 +94,23 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+    application.config.ts          # Required - main application configuration
+    default-function.role.ts       # Default role for serverless functions
+    hello-world.function.ts        # Example serverless function
+    hello-world.front-component.tsx # Example front component
+    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Соглашения важнее конфигурации
 
 Приложения используют подход **соглашения важнее конфигурации**, при котором сущности определяются по суффиксу файла. Это позволяет гибко организовать структуру в папке `src/app/`:
 
-| Суффикс файла   | Тип сущности                          |
-| --------------- | ------------------------------------- |
-| `*.object.ts`   | Определения пользовательских объектов |
-| `*.function.ts` | Определения бессерверных функций      |
-| `*.role.ts`     | Определения ролей                     |
+| Суффикс файла           | Тип сущности                          |
+| ----------------------- | ------------------------------------- |
+| `*.object.ts`           | Определения пользовательских объектов |
+| `*.function.ts`         | Определения бессерверных функций      |
+| `*.front-component.tsx` | Определения компонентов фронтенда     |
+| `*.role.ts`             | Определения ролей                     |
 
 ### Поддерживаемые способы организации папок
 
@@ -121,12 +119,14 @@ my-twenty-app/
 **Традиционный (по типам):**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── objects/
 │   └── postCard.object.ts
 ├── functions/
 │   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
 └── roles/
     └── admin.role.ts
 ```
@@ -134,44 +134,45 @@ src/app/
 **По функциональности:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 └── post-card/
     ├── postCard.object.ts
     ├── createPostCard.function.ts
+    ├── card.front-component.tsx
     └── postCardAdmin.role.ts
 ```
 
 **Плоский:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── postCard.object.ts
 ├── createPostCard.function.ts
+├── card.front-component.tsx
 └── admin.role.ts
 ```
 
 В общих чертах:
 
-* **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипты вроде `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall` и `auth`, которые делегируют выполнение локальному CLI `twenty`.
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
 * **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `generated/` (типизированный клиент), `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Фиксируют и настраивают используемый в проекте инструментарий Yarn 4.
 * **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
 * **eslint.config.mjs** и **tsconfig.json**: Обеспечивают линтинг и конфигурацию TypeScript для исходников вашего приложения на TypeScript.
 * **README.md**: Короткий README в корне приложения с базовыми инструкциями.
-* **src/app/**: Основное место, где вы определяете приложение как код:
+* **src/**: The main place where you define your application-as-code:
   * `application.config.ts`: Глобальная конфигурация вашего приложения (метаданные и параметры выполнения). См. раздел «Конфигурация приложения» ниже.
   * `*.role.ts`: Определения ролей, используемых вашими бессерверными функциями. См. раздел «Роль функции по умолчанию» ниже.
   * `*.object.ts`: Определения пользовательских объектов.
   * `*.function.ts`: Определения бессерверных функций.
-* **src/utils/**: Необязательная папка для реализаций обработчиков и утилит.
+  * `*.front-component.tsx`: Front component definitions.
 
 Позднее команды добавят больше файлов и папок:
 
 * `yarn app:generate` создаст папку `generated/` (типизированный клиент Twenty + типы рабочего пространства).
-* `yarn app:create-entity` добавит файлы определений сущностей в `src/app/` для ваших пользовательских объектов, функций или ролей.
-  l
+* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
 
 ## Аутентификация
 
@@ -302,62 +303,11 @@ export default defineObject({
 * `universalIdentifier` должен быть уникальным и стабильным между развёртываниями.
 * Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
 * Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
-* Вы можете сгенерировать новые объекты с помощью `yarn app:create-entity`, который проведёт вас через выбор именования, полей и связей.
+* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
 
 <Note>
   **Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля, такие как `name`, `createdAt`, `updatedAt`, `createdBy`, `position` и `deletedAt`. Вам не нужно определять их в массиве `fields` — добавляйте только свои пользовательские поля.
 </Note>
-
-<Accordion title="Альтернатива: синтаксис на декораторах">
-  Вы также можете определять объекты с помощью декораторов TypeScript. Этот подход использует классовый синтаксис с декораторами `@Object`, `@Field` и `@Relation`:
-
-  ```typescript
-  import {
-    type AddressField,
-    Field,
-    FieldType,
-    type FullNameField,
-    Object,
-    OnDeleteAction,
-    Relation,
-    RelationType,
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  } from 'twenty-sdk';
-  import { type Note } from '../../generated';
-
-  @Object({
-    universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-    nameSingular: 'postCard',
-    namePlural: 'postCards',
-    labelSingular: 'Post card',
-    labelPlural: 'Post cards',
-    description: 'A post card object',
-    icon: 'IconMail',
-  })
-  export class PostCard {
-    @Field({
-      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-      type: FieldType.TEXT,
-      label: 'Content',
-      description: "Postcard's content",
-      icon: 'IconAbc',
-    })
-    content: string;
-
-    @Relation({
-      universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-      type: RelationType.ONE_TO_MANY,
-      label: 'Notes',
-      icon: 'IconComment',
-      inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-      onDelete: OnDeleteAction.CASCADE,
-    })
-    notes: Note[];
-  }
-  ```
-
-  Примечание: подход с декораторами требует `experimentalDecorators` в конфигурации TypeScript.
-</Accordion>
 
 ### Конфигурация приложения (application.config.ts)
 
@@ -469,14 +419,9 @@ export default defineRole({
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '../../generated';
+import Twenty, { type Person } from '~/generated';
 
-const handler = async (
-  params:
-    | RoutePayload
-    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
-    | CronPayload,
-) => {
+const handler = async (params: RoutePayload) => {
   const client = new Twenty(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
@@ -507,18 +452,18 @@ export default defineFunction({
       isAuthRequired: false,
     },
     // Cron trigger (CRON pattern)
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *',
-    },
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
     // Database event trigger
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.updated',
-      updatedFields: ['name'],
-    },
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
   ],
 });
 ```
@@ -633,7 +578,7 @@ const handler = async (event: RoutePayload) => {
 
 Вы можете создать новые функции двумя способами:
 
-* **Сгенерировано**: Запустите `yarn app:create-entity` и выберите опцию добавления новой функции. Это создаёт стартовый файл с обработчиком и конфигурацией.
+* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. Это создаёт стартовый файл с обработчиком и конфигурацией.
 * **Вручную**: Создайте новый файл `*.function.ts` и используйте `defineFunction()`, следуя тому же шаблону.
 
 ### Сгенерированный типизированный клиент
@@ -641,13 +586,13 @@ const handler = async (event: RoutePayload) => {
 Запустите yarn app:generate, чтобы создать локальный типизированный клиент в generated/ на основе схемы вашего рабочего пространства. Используйте его в своих функциях:
 
 ```typescript
-import Twenty from './generated';
+import Twenty from '~/generated';
 
 const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Клиент повторно генерируется командой `yarn app:generate`. Запускайте повторно после изменения ваших объектов и `yarn app:sync` или при подключении к новому рабочему пространству.
+Клиент повторно генерируется командой `yarn app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
 
 #### Учётные данные времени выполнения в бессерверных функциях
 
@@ -679,25 +624,29 @@ yarn add -D twenty-sdk
 ```json filename="package.json"
 {
   "scripts": {
-    "auth": "twenty auth login",
-    "generate": "twenty app generate",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "logs": "twenty app logs",
-    "create-entity": "twenty app add",
-    "help": "twenty --help"
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
   }
 }
 ```
 
-Теперь вы можете запускать те же команды через Yarn, например, `yarn app:dev`, `yarn app:sync` и т. д.
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
 
 ## Устранение неполадок
 
 * Ошибки аутентификации: выполните `yarn auth:login` и убедитесь, что у вашего ключа API есть необходимые права.
 * Не удаётся подключиться к серверу: проверьте URL API и доступность сервера Twenty.
-* Отсутствующие/устаревшие типы или клиент: выполните `yarn app:generate`, затем `yarn app:dev`.
+* Types or client missing/outdated: run `yarn app:generate`.
 * Режим разработки не синхронизируется: убедитесь, что запущен `yarn app:dev`, и что ваша среда не игнорирует изменения.
 
 Канал помощи в Discord: https://discord.com/channels/1130383047699738754/1130386664812982322

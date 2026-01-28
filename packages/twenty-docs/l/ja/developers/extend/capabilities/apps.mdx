@@ -50,25 +50,22 @@ yarn app:dev
 
 ```bash filename="Terminal"
 # アプリケーションに新しいエンティティを追加（ガイド付き）
-yarn app:create-entity
+yarn entity:add
 
 # 型付きの Twenty クライアントとワークスペースのエンティティ型を生成
 yarn app:generate
-
-# 1回限りの同期を実行（ウォッチモードの代わり）
-yarn app:sync
 
 # アプリケーションの関数のログを監視
 yarn function:logs
 
 # 名前で関数を実行
-yarn function:execute -n my-function -p '{\"name\": \"test\"}'
+yarn function:execute -n my-function -p '{"name": "test"}'
 
 # 現在のワークスペースからアプリケーションをアンインストール
 yarn app:uninstall
 
 # コマンドのヘルプを表示
-yarn app:help
+yarn help},{
 ```
 
 参考: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) および [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) の CLI リファレンスページをご覧ください。
@@ -97,22 +94,23 @@ my-twenty-app/
   tsconfig.json
   README.md
   src/
-    app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+    application.config.ts          # Required - main application configuration
+    default-function.role.ts       # Default role for serverless functions
+    hello-world.function.ts        # Example serverless function
+    hello-world.front-component.tsx # Example front component
+    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### コンベンション優先
 
 アプリケーションは **コンベンション優先（設定より規約）** のアプローチを採用し、エンティティはファイルのサフィックスで検出されます。 これにより、`src/app/` フォルダー内を柔軟に構成できます：
 
-| ファイルサフィックス      | エンティティタイプ     |
-| --------------- | ------------- |
-| `*.object.ts`   | カスタムオブジェクトの定義 |
-| `*.function.ts` | サーバーレス関数の定義   |
-| `*.role.ts`     | ロールの定義        |
+| ファイルサフィックス              | エンティティタイプ         |
+| ----------------------- | ----------------- |
+| `*.object.ts`           | カスタムオブジェクトの定義     |
+| `*.function.ts`         | サーバーレス関数の定義       |
+| `*.front-component.tsx` | フロントエンドコンポーネントの定義 |
+| `*.role.ts`             | ロールの定義            |
 
 ### サポートされるフォルダー構成
 
@@ -121,12 +119,14 @@ my-twenty-app/
 **従来型（タイプ別）:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── objects/
 │   └── postCard.object.ts
 ├── functions/
 │   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
 └── roles/
     └── admin.role.ts
 ```
@@ -134,44 +134,45 @@ src/app/
 **機能単位:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 └── post-card/
     ├── postCard.object.ts
     ├── createPostCard.function.ts
+    ├── card.front-component.tsx
     └── postCardAdmin.role.ts
 ```
 
 **フラット:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── postCard.object.ts
 ├── createPostCard.function.ts
+├── card.front-component.tsx
 └── admin.role.ts
 ```
 
 概要：
 
-* **package.json**: アプリ名、バージョン、エンジン（Node 24+、Yarn 4）を宣言し、`twenty-sdk` と、`dev`、`sync`、`generate`、`create-entity`、`logs`、`uninstall`、`auth` などのスクリプトを追加します。これらはローカルの `twenty` CLI に委譲されます。
+* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
 * **.gitignore**: `node_modules`、`.yarn`、`generated/`（型付きクライアント）、`dist/`、`build/`、カバレッジ用フォルダー、ログファイル、`.env*` ファイルなどの一般的な生成物を無視します。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**: プロジェクトで使用する Yarn 4 ツールチェーンをロックおよび構成します。
 * **.nvmrc**: プロジェクトで想定する Node.js バージョンを固定します。
 * **eslint.config.mjs** と **tsconfig.json**: アプリの TypeScript ソース向けの Lint と TypeScript 設定を提供します。
 * **README.md**: アプリのルートにある、基本的な手順を記した短い README。
-* **src/app/**: アプリケーションをコードとして定義する主な場所：
+* **src/**: The main place where you define your application-as-code:
   * `application.config.ts`: アプリのグローバル設定（メタデータとランタイムの接続）。 「アプリケーション設定」を参照してください。
   * `*.role.ts`: サーバーレス関数で使用するロール定義。 「デフォルトの関数ロール」を参照してください。
   * `*.object.ts`: カスタムオブジェクトの定義。
   * `*.function.ts`: サーバーレス関数の定義。
-* **src/utils/**: ハンドラーの実装やユーティリティ用の任意フォルダー。
+  * `*.front-component.tsx`: Front component definitions.
 
 後続のコマンドにより、さらにファイルやフォルダーが追加されます：
 
 * `yarn app:generate` は `generated/` フォルダー（型付きの Twenty クライアント + ワークスペースの型）を作成します。
-* `yarn app:create-entity` は、カスタムオブジェクト、関数、ロール用のエンティティ定義ファイルを `src/app/` 配下に追加します。
-  l
+* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
 
 ## 認証
 
@@ -302,62 +303,11 @@ export default defineObject({
 * `universalIdentifier` は、デプロイをまたいで一意かつ安定している必要があります。
 * 各フィールドには、`name`、`type`、`label`、および自身の安定した `universalIdentifier` が必要です。
 * `fields` 配列は任意です。カスタムフィールドなしでオブジェクトを定義できます。
-* `yarn app:create-entity` を使用すれば、新しいオブジェクトをスキャフォルドできます。名前、フィールド、リレーションシップの設定がガイドされます。
+* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
 
 <Note>
   **ベースフィールドは自動作成されます。** カスタムオブジェクトを定義すると、Twenty は `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` などの標準フィールドを自動的に追加します。 これらを `fields` 配列で定義する必要はありません。カスタムフィールドのみを追加してください。
 </Note>
-
-<Accordion title="代替: デコレーター ベースの構文">
-  TypeScript のデコレーターを使ってオブジェクトを定義することもできます。 この方法では、`@Object`、`@Field`、`@Relation` デコレーターを用いたクラスベースの構文を使用します：
-
-  ```typescript
-  import {
-    type AddressField,
-    Field,
-    FieldType,
-    type FullNameField,
-    Object,
-    OnDeleteAction,
-    Relation,
-    RelationType,
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  } from 'twenty-sdk';
-  import { type Note } from '../../generated';
-
-  @Object({
-    universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-    nameSingular: 'postCard',
-    namePlural: 'postCards',
-    labelSingular: 'Post card',
-    labelPlural: 'Post cards',
-    description: 'A post card object',
-    icon: 'IconMail',
-  })
-  export class PostCard {
-    @Field({
-      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-      type: FieldType.TEXT,
-      label: 'Content',
-      description: "Postcard's content",
-      icon: 'IconAbc',
-    })
-    content: string;
-
-    @Relation({
-      universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-      type: RelationType.ONE_TO_MANY,
-      label: 'Notes',
-      icon: 'IconComment',
-      inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-      onDelete: OnDeleteAction.CASCADE,
-    })
-    notes: Note[];
-  }
-  ```
-
-  注記: デコレーター方式では、TypeScript 設定で `experimentalDecorators` が必要です。
-</Accordion>
 
 ### アプリケーション設定（application.config.ts）
 
@@ -469,14 +419,9 @@ export default defineRole({
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '../../generated';
+import Twenty, { type Person } from '~/generated';
 
-const handler = async (
-  params:
-    | RoutePayload
-    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
-    | CronPayload,
-) => {
+const handler = async (params: RoutePayload) => {
   const client = new Twenty(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
@@ -507,18 +452,18 @@ export default defineFunction({
       isAuthRequired: false,
     },
     // Cron trigger (CRON pattern)
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *',
-    },
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
     // Database event trigger
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.updated',
-      updatedFields: ['name'],
-    },
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
   ],
 });
 ```
@@ -633,7 +578,7 @@ const handler = async (event: RoutePayload) => {
 
 新しい関数は次の 2 通りで作成できます：
 
-* **スキャフォルド**: `yarn app:create-entity` を実行し、新しい関数を追加するオプションを選択します。 これにより、ハンドラーと設定を備えたスターターファイルが生成されます。
+* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. これにより、ハンドラーと設定を備えたスターターファイルが生成されます。
 * **手動**: 新しい `*.function.ts` ファイルを作成し、同じパターンで `defineFunction()` を使用します。
 
 ### 生成された型付きクライアント
@@ -641,13 +586,13 @@ const handler = async (event: RoutePayload) => {
 ワークスペースのスキーマに基づき、generated/ にローカルの型付きクライアントを作成するには yarn app:generate を実行します。 関数内で使用します：
 
 ```typescript
-import Twenty from './generated';
+import Twenty from '~/generated';
 
 const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-このクライアントは `yarn app:generate` によって再生成されます。 オブジェクトを変更して `yarn app:sync` した後、または新しいワークスペースにオンボードする際には再実行してください。
+このクライアントは `yarn app:generate` によって再生成されます。 Re-run after changing your objects or when onboarding to a new workspace.
 
 #### サーバーレス関数における実行時認証情報
 
@@ -679,25 +624,29 @@ yarn add -D twenty-sdk
 ```json filename="package.json"
 {
   "scripts": {
-    "auth": "twenty auth login",
-    "generate": "twenty app generate",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "logs": "twenty app logs",
-    "create-entity": "twenty app add",
-    "help": "twenty --help"
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
   }
 }
 ```
 
-これで Yarn 経由で同じコマンド（例：`yarn app:dev`、`yarn app:sync` など）を実行できます。
+Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
 
 ## トラブルシューティング
 
 * 認証エラー: `yarn auth:login` を実行し、API キーに必要な権限があることを確認してください。
 * サーバーに接続できません: API URL と、Twenty サーバーに到達可能であることを確認してください。
-* 型やクライアントがない／古い: `yarn app:generate` を実行してから `yarn app:dev` を実行してください。
+* Types or client missing/outdated: run `yarn app:generate`.
 * 開発モードで同期されない: `yarn app:dev` が実行中であり、環境によって変更が無視されていないことを確認してください。
 
 Discord ヘルプチャンネル: https://discord.com/channels/1130383047699738754/1130386664812982322

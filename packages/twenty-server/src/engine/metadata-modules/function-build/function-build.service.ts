@@ -7,47 +7,47 @@ import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/serverless/drivers/utils/lambda-build-directory-manager';
-import { getServerlessFolderOrThrow } from 'src/engine/core-modules/serverless/utils/get-serverless-folder-or-throw.utils';
-import { type FlatServerlessFunction } from 'src/engine/metadata-modules/serverless-function/types/flat-serverless-function.type';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
+import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 @Injectable()
 export class FunctionBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   async isBuilt({
-    flatServerlessFunction,
+    flatLogicFunction,
     version,
   }: {
-    flatServerlessFunction: FlatServerlessFunction;
+    flatLogicFunction: FlatLogicFunction;
     version: string;
   }): Promise<boolean> {
-    const folderPath = getServerlessFolderOrThrow({
-      flatServerlessFunction,
+    const folderPath = getLogicFunctionFolderOrThrow({
+      flatLogicFunction,
       version,
     });
 
     return await this.fileStorageService.checkFileExists({
       folderPath,
-      filename: flatServerlessFunction.builtHandlerPath,
+      filename: flatLogicFunction.builtHandlerPath,
     });
   }
 
   async buildAndUpload({
-    flatServerlessFunction,
+    flatLogicFunction,
     version,
   }: {
-    flatServerlessFunction: FlatServerlessFunction;
+    flatLogicFunction: FlatLogicFunction;
     version: string;
   }): Promise<void> {
-    const sourceFolderPath = getServerlessFolderOrThrow({
-      flatServerlessFunction,
+    const sourceFolderPath = getLogicFunctionFolderOrThrow({
+      flatLogicFunction,
       version,
-      fileFolder: FileFolder.ServerlessFunction,
+      fileFolder: FileFolder.LogicFunction,
     });
 
-    const builtFolderPath = getServerlessFolderOrThrow({
-      flatServerlessFunction,
+    const builtFolderPath = getLogicFunctionFolderOrThrow({
+      flatLogicFunction,
       version,
       fileFolder: FileFolder.BuiltFunction,
     });
@@ -64,15 +64,15 @@ export class FunctionBuildService {
 
       const builtBundleFilePath = await this.buildInMemory({
         sourceTemporaryDir,
-        sourceHandlerPath: flatServerlessFunction.sourceHandlerPath,
-        builtHandlerPath: flatServerlessFunction.builtHandlerPath,
+        sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+        builtHandlerPath: flatLogicFunction.builtHandlerPath,
       });
 
       const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
 
       await this.fileStorageService.write({
         file: builtFile,
-        name: flatServerlessFunction.builtHandlerPath,
+        name: flatLogicFunction.builtHandlerPath,
         mimeType: 'application/javascript',
         folder: builtFolderPath,
       });
