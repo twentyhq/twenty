@@ -173,29 +173,14 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     const folderIdMapping = new Map<string, string>();
     const flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[] = [];
 
-    const fallbackUserWorkspaceId = await this.getFallbackUserWorkspaceId(
-      workspaceId,
-      authContext,
-    );
-
     for (const favoriteFolder of favoriteFolders) {
-      let userWorkspaceId = await this.getUserWorkspaceIdFromFavoriteFolder(
-        favoriteFolder.id,
-        workspaceId,
-        authContext,
-      );
-
-      if (!isDefined(userWorkspaceId) && isDefined(fallbackUserWorkspaceId)) {
-        userWorkspaceId = fallbackUserWorkspaceId;
-      }
-
       const existingFolder = Object.values(
         existingFlatNavigationMenuItemMaps.byId,
       ).find(
         (item) =>
           isDefined(item) &&
           item.workspaceId === workspaceId &&
-          item.userWorkspaceId === userWorkspaceId &&
+          !isDefined(item.userWorkspaceId) &&
           item.name === favoriteFolder.name &&
           !isDefined(item.targetRecordId) &&
           !isDefined(item.targetObjectMetadataId) &&
@@ -221,7 +206,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       const folderToCreate = {
         id: newId,
         universalIdentifier: newId,
-        userWorkspaceId,
+        userWorkspaceId: null,
         targetRecordId: null,
         targetObjectMetadataId: null,
         viewId: null,
@@ -463,98 +448,6 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     }
 
     return migratedFavoriteIds;
-  }
-
-  private async getUserWorkspaceIdFromFavoriteFolder(
-    favoriteFolderId: string,
-    workspaceId: string,
-    authContext: ReturnType<typeof buildSystemAuthContext>,
-  ): Promise<string | null> {
-    const favoriteRepository =
-      await this.twentyORMGlobalManager.getRepository<FavoriteWorkspaceEntity>(
-        workspaceId,
-        'favorite',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const firstFavorite = await favoriteRepository.findOne({
-      where: { favoriteFolderId },
-      order: { position: 'ASC' },
-    });
-
-    if (!isDefined(firstFavorite)) {
-      return null;
-    }
-
-    if (!isDefined(firstFavorite.forWorkspaceMemberId)) {
-      return null;
-    }
-
-    const userWorkspaceId = await this.getUserWorkspaceIdFromWorkspaceMemberId(
-      firstFavorite.forWorkspaceMemberId,
-      workspaceId,
-      authContext,
-    );
-
-    return userWorkspaceId;
-  }
-
-  private async getFallbackUserWorkspaceId(
-    workspaceId: string,
-    authContext: ReturnType<typeof buildSystemAuthContext>,
-  ): Promise<string | null> {
-    const favoriteRepository =
-      await this.twentyORMGlobalManager.getRepository<FavoriteWorkspaceEntity>(
-        workspaceId,
-        'favorite',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const allFavorites = await favoriteRepository.find({
-      order: { position: 'ASC' },
-    });
-
-    const firstUserLevelFavorite = allFavorites.find((favorite) =>
-      isDefined(favorite.forWorkspaceMemberId),
-    );
-
-    if (isDefined(firstUserLevelFavorite)) {
-      const userWorkspaceId =
-        await this.getUserWorkspaceIdFromWorkspaceMemberId(
-          firstUserLevelFavorite.forWorkspaceMemberId,
-          workspaceId,
-          authContext,
-        );
-
-      return userWorkspaceId;
-    }
-
-    // If no user-level favorites exist, get the first workspace member as fallback
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const workspaceMembers = await workspaceMemberRepository.find({
-      order: { createdAt: 'ASC' },
-      take: 1,
-    });
-
-    if (workspaceMembers.length === 0) {
-      return null;
-    }
-
-    const firstWorkspaceMember = workspaceMembers[0];
-
-    const userWorkspaceId = await this.getUserWorkspaceIdFromWorkspaceMemberId(
-      firstWorkspaceMember.id,
-      workspaceId,
-      authContext,
-    );
-
-    return userWorkspaceId;
   }
 
   private async getUserWorkspaceIdFromWorkspaceMemberId(
