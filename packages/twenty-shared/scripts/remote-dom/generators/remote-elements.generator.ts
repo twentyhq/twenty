@@ -181,10 +181,11 @@ const generateElementDefinition = (
       ? TYPE_NAMES.COMMON_PROPERTIES
       : TYPE_NAMES.EMPTY_RECORD;
 
-  const eventsType =
-    hasEvents && useSharedEvents
+  const eventsType = hasEvents
+    ? useSharedEvents
       ? TYPE_NAMES.COMMON_EVENTS
-      : TYPE_NAMES.EMPTY_RECORD;
+      : `{ ${component.events.map((event) => `${event}(event: RemoteEvent): void`).join('; ')} }`
+    : TYPE_NAMES.EMPTY_RECORD;
 
   sourceFile.addVariableStatement({
     isExported: true,
