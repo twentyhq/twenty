@@ -282,27 +282,6 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions, { shouldDirty: true });
   };
 
-  const handleToggleBulkInput = () => {
-    const currentOptions = getValues('options');
-    if (!isBulkInputMode) {
-      // Switching to bulk mode - populate textarea with current options
-      setBulkInputText(convertOptionsToBulkText(currentOptions));
-    } else {
-      // Switching to single mode - parse textarea and update options
-      const newOptions = convertBulkTextToOptions(
-        bulkInputText,
-        currentOptions,
-      );
-      setFormValue('options', newOptions, { shouldDirty: true });
-    }
-
-    setIsBulkInputMode((prevState) => !prevState);
-  };
-
-  const handleBulkInputChange = (value: string) => {
-    setBulkInputText(value);
-  };
-
   const theme = useTheme();
 
   return (
@@ -329,7 +308,13 @@ export const SettingsDataModelFieldSelectForm = ({
                         : t`Switch to bulk mode`
                     }
                     Icon={IconList}
-                    onClick={handleToggleBulkInput}
+                    onClick={() => {
+                      if (!isBulkInputMode) {
+                        setBulkInputText(convertOptionsToBulkText(options));
+                      }
+
+                      setIsBulkInputMode((currInputMode) => !currInputMode);
+                    }}
                     isActive={isBulkInputMode}
                   />
                 </StyledToggleContainer>
@@ -341,7 +326,19 @@ export const SettingsDataModelFieldSelectForm = ({
                     textAreaId="bulk-options-input"
                     placeholder={t`Enter one option per line`}
                     value={bulkInputText}
-                    onChange={handleBulkInputChange}
+                    onChange={(nextOptionAsText) => {
+                      if (disabled) {
+                        return;
+                      }
+
+                      const nextOptions = convertBulkTextToOptions(
+                        nextOptionAsText,
+                        options,
+                      );
+
+                      onChange(nextOptions);
+                      setBulkInputText(nextOptionAsText);
+                    }}
                     minRows={5}
                     maxRows={15}
                     disabled={disabled}
