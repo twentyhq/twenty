@@ -57,6 +57,7 @@ export const CommandMenuWorkflowEditStepTypeContent = () => {
         ? {
             ...existingStep,
             type: selection.type,
+            name: selection.name,
             settings: {
               ...existingStep.settings,
               input: {
