@@ -17,11 +17,5 @@ export const getTimeBlocks = (timeFormat: TimeFormat) => {
       to: 59,
       maxLength: 2,
     },
-    ...(isHour12 && {
-      aa: {
-        mask: IMask.MaskedEnum,
-        enum: ['AM', 'PM'],
-      },
-    }),
   };
 };
