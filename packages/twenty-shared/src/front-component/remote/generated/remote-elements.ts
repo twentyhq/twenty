@@ -14,7 +14,7 @@ import {
   type RemoteEvent,
 } from '@remote-dom/core/elements';
 
-export type HtmlDivProperties = {
+export type HtmlCommonProperties = {
   id?: string;
   className?: string;
   style?: string;
@@ -25,334 +25,82 @@ export type HtmlDivProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-export type HtmlSpanProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlCommonEvents = {
+  click(event: RemoteEvent): void;
+  dblclick(event: RemoteEvent): void;
+  mousedown(event: RemoteEvent): void;
+  mouseup(event: RemoteEvent): void;
+  mouseover(event: RemoteEvent): void;
+  mouseout(event: RemoteEvent): void;
+  mouseenter(event: RemoteEvent): void;
+  mouseleave(event: RemoteEvent): void;
+  keydown(event: RemoteEvent): void;
+  keyup(event: RemoteEvent): void;
+  keypress(event: RemoteEvent): void;
+  focus(event: RemoteEvent): void;
+  blur(event: RemoteEvent): void;
+  change(event: RemoteEvent): void;
+  input(event: RemoteEvent): void;
+  submit(event: RemoteEvent): void;
+  scroll(event: RemoteEvent): void;
+  wheel(event: RemoteEvent): void;
+  contextmenu(event: RemoteEvent): void;
+  drag(event: RemoteEvent): void;
 };
-export type HtmlSectionProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+
+const HTML_COMMON_EVENTS_ARRAY = [
+  'click',
+  'dblclick',
+  'mousedown',
+  'mouseup',
+  'mouseover',
+  'mouseout',
+  'mouseenter',
+  'mouseleave',
+  'keydown',
+  'keyup',
+  'keypress',
+  'focus',
+  'blur',
+  'change',
+  'input',
+  'submit',
+  'scroll',
+  'wheel',
+  'contextmenu',
+  'drag',
+] as const;
+const HTML_COMMON_PROPERTIES_CONFIG = {
+  id: { type: String },
+  className: { type: String },
+  style: { type: String },
+  title: { type: String },
+  tabIndex: { type: Number },
+  role: { type: String },
+  'aria-label': { type: String },
+  'aria-hidden': { type: Boolean },
+  'data-testid': { type: String },
 };
-export type HtmlArticleProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlHeaderProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlFooterProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlMainProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlNavProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlAsideProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlPProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlH1Properties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlH2Properties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlH3Properties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlH4Properties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlH5Properties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlH6Properties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlStrongProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlEmProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlSmallProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlCodeProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlPreProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlBlockquoteProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlAProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+
+export type HtmlAProperties = HtmlCommonProperties & {
   href?: string;
   target?: string;
   rel?: string;
 };
-export type HtmlImgProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlImgProperties = HtmlCommonProperties & {
   src?: string;
   alt?: string;
   width?: number;
   height?: number;
 };
-export type HtmlUlProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlOlProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlLiProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlFormProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlFormProperties = HtmlCommonProperties & {
   action?: string;
   method?: string;
 };
-export type HtmlLabelProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlLabelProperties = HtmlCommonProperties & {
   htmlFor?: string;
 };
-export type HtmlInputProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlInputProperties = HtmlCommonProperties & {
   type?: string;
   name?: string;
   value?: string;
@@ -361,16 +109,7 @@ export type HtmlInputProperties = {
   checked?: boolean;
   readOnly?: boolean;
 };
-export type HtmlTextareaProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlTextareaProperties = HtmlCommonProperties & {
   name?: string;
   value?: string;
   placeholder?: string;
@@ -379,1968 +118,317 @@ export type HtmlTextareaProperties = {
   rows?: number;
   cols?: number;
 };
-export type HtmlSelectProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlSelectProperties = HtmlCommonProperties & {
   name?: string;
   value?: string;
   disabled?: boolean;
   multiple?: boolean;
 };
-export type HtmlOptionProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlOptionProperties = HtmlCommonProperties & {
   value?: string;
   disabled?: boolean;
   selected?: boolean;
 };
-export type HtmlButtonProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlButtonProperties = HtmlCommonProperties & {
   type?: string;
   disabled?: boolean;
 };
-export type HtmlTableProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlTheadProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlTbodyProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlTfootProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlTrProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlThProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlThProperties = HtmlCommonProperties & {
   colSpan?: number;
   rowSpan?: number;
 };
-export type HtmlTdProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
+export type HtmlTdProperties = HtmlCommonProperties & {
   colSpan?: number;
   rowSpan?: number;
-};
-export type HtmlBrProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
-};
-export type HtmlHrProperties = {
-  id?: string;
-  className?: string;
-  style?: string;
-  title?: string;
-  tabIndex?: number;
-  role?: string;
-  'aria-label'?: string;
-  'aria-hidden'?: boolean;
-  'data-testid'?: string;
 };
 
 export const HtmlDivElement = createRemoteElement<
-  HtmlDivProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlSpanElement = createRemoteElement<
-  HtmlSpanProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlSectionElement = createRemoteElement<
-  HtmlSectionProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlArticleElement = createRemoteElement<
-  HtmlArticleProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlHeaderElement = createRemoteElement<
-  HtmlHeaderProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlFooterElement = createRemoteElement<
-  HtmlFooterProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlMainElement = createRemoteElement<
-  HtmlMainProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlNavElement = createRemoteElement<
-  HtmlNavProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlAsideElement = createRemoteElement<
-  HtmlAsideProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlPElement = createRemoteElement<
-  HtmlPProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlH1Element = createRemoteElement<
-  HtmlH1Properties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlH2Element = createRemoteElement<
-  HtmlH2Properties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlH3Element = createRemoteElement<
-  HtmlH3Properties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlH4Element = createRemoteElement<
-  HtmlH4Properties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlH5Element = createRemoteElement<
-  HtmlH5Properties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlH6Element = createRemoteElement<
-  HtmlH6Properties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlStrongElement = createRemoteElement<
-  HtmlStrongProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlEmElement = createRemoteElement<
-  HtmlEmProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlSmallElement = createRemoteElement<
-  HtmlSmallProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlCodeElement = createRemoteElement<
-  HtmlCodeProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlPreElement = createRemoteElement<
-  HtmlPreProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlBlockquoteElement = createRemoteElement<
-  HtmlBlockquoteProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlAElement = createRemoteElement<
   HtmlAProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     href: { type: String },
     target: { type: String },
     rel: { type: String },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlImgElement = createRemoteElement<
   HtmlImgProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     src: { type: String },
     alt: { type: String },
     width: { type: Number },
     height: { type: Number },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlUlElement = createRemoteElement<
-  HtmlUlProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlOlElement = createRemoteElement<
-  HtmlOlProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlLiElement = createRemoteElement<
-  HtmlLiProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlFormElement = createRemoteElement<
   HtmlFormProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     action: { type: String },
     method: { type: String },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlLabelElement = createRemoteElement<
   HtmlLabelProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     htmlFor: { type: String },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlInputElement = createRemoteElement<
   HtmlInputProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     type: { type: String },
     name: { type: String },
     value: { type: String },
@@ -2349,66 +437,16 @@ export const HtmlInputElement = createRemoteElement<
     checked: { type: Boolean },
     readOnly: { type: Boolean },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlTextareaElement = createRemoteElement<
   HtmlTextareaProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     name: { type: String },
     value: { type: String },
     placeholder: { type: String },
@@ -2417,773 +455,138 @@ export const HtmlTextareaElement = createRemoteElement<
     rows: { type: Number },
     cols: { type: Number },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlSelectElement = createRemoteElement<
   HtmlSelectProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     name: { type: String },
     value: { type: String },
     disabled: { type: Boolean },
     multiple: { type: Boolean },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlOptionElement = createRemoteElement<
   HtmlOptionProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     value: { type: String },
     disabled: { type: Boolean },
     selected: { type: Boolean },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlButtonElement = createRemoteElement<
   HtmlButtonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     type: { type: String },
     disabled: { type: Boolean },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlTableElement = createRemoteElement<
-  HtmlTableProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlTheadElement = createRemoteElement<
-  HtmlTheadProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlTbodyElement = createRemoteElement<
-  HtmlTbodyProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlTfootElement = createRemoteElement<
-  HtmlTfootProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlTrElement = createRemoteElement<
-  HtmlTrProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlThElement = createRemoteElement<
   HtmlThProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     colSpan: { type: Number },
     rowSpan: { type: Number },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlTdElement = createRemoteElement<
   HtmlTdProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
   properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
+    ...HTML_COMMON_PROPERTIES_CONFIG,
     colSpan: { type: Number },
     rowSpan: { type: Number },
   },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlBrElement = createRemoteElement<
-  HtmlBrProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 export const HtmlHrElement = createRemoteElement<
-  HtmlHrProperties,
+  HtmlCommonProperties,
   Record<string, never>,
   Record<string, never>,
-  {
-    click(event: RemoteEvent): void;
-    dblclick(event: RemoteEvent): void;
-    mousedown(event: RemoteEvent): void;
-    mouseup(event: RemoteEvent): void;
-    mouseover(event: RemoteEvent): void;
-    mouseout(event: RemoteEvent): void;
-    mouseenter(event: RemoteEvent): void;
-    mouseleave(event: RemoteEvent): void;
-    keydown(event: RemoteEvent): void;
-    keyup(event: RemoteEvent): void;
-    keypress(event: RemoteEvent): void;
-    focus(event: RemoteEvent): void;
-    blur(event: RemoteEvent): void;
-    change(event: RemoteEvent): void;
-    input(event: RemoteEvent): void;
-    submit(event: RemoteEvent): void;
-    scroll(event: RemoteEvent): void;
-    wheel(event: RemoteEvent): void;
-    contextmenu(event: RemoteEvent): void;
-    drag(event: RemoteEvent): void;
-  }
+  HtmlCommonEvents
 >({
-  properties: {
-    id: { type: String },
-    className: { type: String },
-    style: { type: String },
-    title: { type: String },
-    tabIndex: { type: Number },
-    role: { type: String },
-    'aria-label': { type: String },
-    'aria-hidden': { type: Boolean },
-    'data-testid': { type: String },
-  },
-  events: [
-    'click',
-    'dblclick',
-    'mousedown',
-    'mouseup',
-    'mouseover',
-    'mouseout',
-    'mouseenter',
-    'mouseleave',
-    'keydown',
-    'keyup',
-    'keypress',
-    'focus',
-    'blur',
-    'change',
-    'input',
-    'submit',
-    'scroll',
-    'wheel',
-    'contextmenu',
-    'drag',
-  ],
+  properties: HTML_COMMON_PROPERTIES_CONFIG,
+  events: [...HTML_COMMON_EVENTS_ARRAY],
 });
 customElements.define('html-div', HtmlDivElement);
 customElements.define('html-span', HtmlSpanElement);

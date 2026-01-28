@@ -120,7 +120,12 @@ const main = (): void => {
   );
 
   console.log('\nRemote files:');
-  const remoteElements = generateRemoteElements(project, htmlElements);
+  const remoteElements = generateRemoteElements(
+    project,
+    htmlElements,
+    HTML_COMMON_PROPERTIES,
+    COMMON_HTML_EVENTS,
+  );
   writeGeneratedFile(
     REMOTE_GENERATED_DIR,
     'remote-elements.ts',
