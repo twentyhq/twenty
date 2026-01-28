@@ -15,11 +15,11 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TASK_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Command({
   name: 'upgrade:1-16:update-task-on-delete-action',
@@ -35,7 +35,7 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
     super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
@@ -168,19 +168,44 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
         onDelete: RelationOnDeleteAction.CASCADE,
       };
 
+      const updatedTaskField = {
+        ...taskField,
+        settings: updatedSettings,
+        updatedAt: new Date().toISOString(),
+      };
+
       this.logger.log(
-        `[Step 4/4] Calling fieldMetadataService.updateOneField for field ${taskField.id} in workspace ${workspaceId}`,
+        `[Step 4/4] Calling validateBuildAndRunWorkspaceMigration for field ${taskField.id} in workspace ${workspaceId}`,
       );
 
       try {
-        await this.fieldMetadataService.updateOneField({
-          updateFieldInput: {
-            id: taskField.id,
-            settings: updatedSettings,
-          },
-          workspaceId,
-          isSystemBuild: true,
-        });
+        const validateAndBuildResult =
+          await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+            {
+              allFlatEntityOperationByMetadataName: {
+                fieldMetadata: {
+                  flatEntityToCreate: [],
+                  flatEntityToDelete: [],
+                  flatEntityToUpdate: [updatedTaskField],
+                },
+              },
+              workspaceId,
+              isSystemBuild: true,
+            },
+          );
+        this.logger.error(
+          `[Step 4/4] Validation result: ${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        );
+
+        if (isDefined(validateAndBuildResult)) {
+          this.logger.error(
+            `[Step 4/4] Failed to update task relation onDelete in workspace ${workspaceId}`,
+          );
+
+          throw new Error(
+            `Failed to update task relation onDelete in workspace ${workspaceId}`,
+          );
+        }
 
         this.logger.log(
           `[Step 4/4] Successfully updated task relation onDelete to CASCADE in workspace ${workspaceId}`,
