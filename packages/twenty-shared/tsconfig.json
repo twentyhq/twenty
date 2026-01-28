@@ -18,6 +18,7 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    "scripts/**/*.ts",
     "**/__mocks__/**/*",
     "jest.config.mjs"
   ],

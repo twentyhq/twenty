@@ -8,7 +8,6 @@
  */
 
 import { createRemoteComponent } from '@remote-dom/react';
-
 import {
   HtmlDivElement,
   HtmlSpanElement,
@@ -55,10 +54,6 @@ import {
   HtmlHrElement,
 } from './remote-elements';
 
-// =============================================================================
-// HTML Element Remote Components
-// =============================================================================
-
 export const HtmlDiv = createRemoteComponent('html-div', HtmlDivElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -83,7 +78,6 @@ export const HtmlDiv = createRemoteComponent('html-div', HtmlDivElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlSpan = createRemoteComponent('html-span', HtmlSpanElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -108,7 +102,6 @@ export const HtmlSpan = createRemoteComponent('html-span', HtmlSpanElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlSection = createRemoteComponent(
   'html-section',
   HtmlSectionElement,
@@ -137,7 +130,6 @@ export const HtmlSection = createRemoteComponent(
     },
   },
 );
-
 export const HtmlArticle = createRemoteComponent(
   'html-article',
   HtmlArticleElement,
@@ -166,7 +158,6 @@ export const HtmlArticle = createRemoteComponent(
     },
   },
 );
-
 export const HtmlHeader = createRemoteComponent(
   'html-header',
   HtmlHeaderElement,
@@ -195,7 +186,6 @@ export const HtmlHeader = createRemoteComponent(
     },
   },
 );
-
 export const HtmlFooter = createRemoteComponent(
   'html-footer',
   HtmlFooterElement,
@@ -224,7 +214,6 @@ export const HtmlFooter = createRemoteComponent(
     },
   },
 );
-
 export const HtmlMain = createRemoteComponent('html-main', HtmlMainElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -249,7 +238,6 @@ export const HtmlMain = createRemoteComponent('html-main', HtmlMainElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlNav = createRemoteComponent('html-nav', HtmlNavElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -274,7 +262,6 @@ export const HtmlNav = createRemoteComponent('html-nav', HtmlNavElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlAside = createRemoteComponent('html-aside', HtmlAsideElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -299,7 +286,6 @@ export const HtmlAside = createRemoteComponent('html-aside', HtmlAsideElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlP = createRemoteComponent('html-p', HtmlPElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -324,7 +310,6 @@ export const HtmlP = createRemoteComponent('html-p', HtmlPElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlH1 = createRemoteComponent('html-h1', HtmlH1Element, {
   eventProps: {
     onClick: { event: 'click' },
@@ -349,7 +334,6 @@ export const HtmlH1 = createRemoteComponent('html-h1', HtmlH1Element, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlH2 = createRemoteComponent('html-h2', HtmlH2Element, {
   eventProps: {
     onClick: { event: 'click' },
@@ -374,7 +358,6 @@ export const HtmlH2 = createRemoteComponent('html-h2', HtmlH2Element, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlH3 = createRemoteComponent('html-h3', HtmlH3Element, {
   eventProps: {
     onClick: { event: 'click' },
@@ -399,7 +382,6 @@ export const HtmlH3 = createRemoteComponent('html-h3', HtmlH3Element, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlH4 = createRemoteComponent('html-h4', HtmlH4Element, {
   eventProps: {
     onClick: { event: 'click' },
@@ -424,7 +406,6 @@ export const HtmlH4 = createRemoteComponent('html-h4', HtmlH4Element, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlH5 = createRemoteComponent('html-h5', HtmlH5Element, {
   eventProps: {
     onClick: { event: 'click' },
@@ -449,7 +430,6 @@ export const HtmlH5 = createRemoteComponent('html-h5', HtmlH5Element, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlH6 = createRemoteComponent('html-h6', HtmlH6Element, {
   eventProps: {
     onClick: { event: 'click' },
@@ -474,7 +454,6 @@ export const HtmlH6 = createRemoteComponent('html-h6', HtmlH6Element, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlStrong = createRemoteComponent(
   'html-strong',
   HtmlStrongElement,
@@ -503,7 +482,6 @@ export const HtmlStrong = createRemoteComponent(
     },
   },
 );
-
 export const HtmlEm = createRemoteComponent('html-em', HtmlEmElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -528,7 +506,6 @@ export const HtmlEm = createRemoteComponent('html-em', HtmlEmElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlSmall = createRemoteComponent('html-small', HtmlSmallElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -553,7 +530,6 @@ export const HtmlSmall = createRemoteComponent('html-small', HtmlSmallElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlCode = createRemoteComponent('html-code', HtmlCodeElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -578,7 +554,6 @@ export const HtmlCode = createRemoteComponent('html-code', HtmlCodeElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlPre = createRemoteComponent('html-pre', HtmlPreElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -603,7 +578,6 @@ export const HtmlPre = createRemoteComponent('html-pre', HtmlPreElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlBlockquote = createRemoteComponent(
   'html-blockquote',
   HtmlBlockquoteElement,
@@ -632,7 +606,6 @@ export const HtmlBlockquote = createRemoteComponent(
     },
   },
 );
-
 export const HtmlA = createRemoteComponent('html-a', HtmlAElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -657,7 +630,6 @@ export const HtmlA = createRemoteComponent('html-a', HtmlAElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlImg = createRemoteComponent('html-img', HtmlImgElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -682,7 +654,6 @@ export const HtmlImg = createRemoteComponent('html-img', HtmlImgElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlUl = createRemoteComponent('html-ul', HtmlUlElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -707,7 +678,6 @@ export const HtmlUl = createRemoteComponent('html-ul', HtmlUlElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlOl = createRemoteComponent('html-ol', HtmlOlElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -732,7 +702,6 @@ export const HtmlOl = createRemoteComponent('html-ol', HtmlOlElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlLi = createRemoteComponent('html-li', HtmlLiElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -757,7 +726,6 @@ export const HtmlLi = createRemoteComponent('html-li', HtmlLiElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlForm = createRemoteComponent('html-form', HtmlFormElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -782,7 +750,6 @@ export const HtmlForm = createRemoteComponent('html-form', HtmlFormElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlLabel = createRemoteComponent('html-label', HtmlLabelElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -807,7 +774,6 @@ export const HtmlLabel = createRemoteComponent('html-label', HtmlLabelElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlInput = createRemoteComponent('html-input', HtmlInputElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -832,7 +798,6 @@ export const HtmlInput = createRemoteComponent('html-input', HtmlInputElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlTextarea = createRemoteComponent(
   'html-textarea',
   HtmlTextareaElement,
@@ -861,7 +826,6 @@ export const HtmlTextarea = createRemoteComponent(
     },
   },
 );
-
 export const HtmlSelect = createRemoteComponent(
   'html-select',
   HtmlSelectElement,
@@ -890,7 +854,6 @@ export const HtmlSelect = createRemoteComponent(
     },
   },
 );
-
 export const HtmlOption = createRemoteComponent(
   'html-option',
   HtmlOptionElement,
@@ -919,7 +882,6 @@ export const HtmlOption = createRemoteComponent(
     },
   },
 );
-
 export const HtmlButton = createRemoteComponent(
   'html-button',
   HtmlButtonElement,
@@ -948,7 +910,6 @@ export const HtmlButton = createRemoteComponent(
     },
   },
 );
-
 export const HtmlTable = createRemoteComponent('html-table', HtmlTableElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -973,7 +934,6 @@ export const HtmlTable = createRemoteComponent('html-table', HtmlTableElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlThead = createRemoteComponent('html-thead', HtmlTheadElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -998,7 +958,6 @@ export const HtmlThead = createRemoteComponent('html-thead', HtmlTheadElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlTbody = createRemoteComponent('html-tbody', HtmlTbodyElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -1023,7 +982,6 @@ export const HtmlTbody = createRemoteComponent('html-tbody', HtmlTbodyElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlTfoot = createRemoteComponent('html-tfoot', HtmlTfootElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -1048,7 +1006,6 @@ export const HtmlTfoot = createRemoteComponent('html-tfoot', HtmlTfootElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlTr = createRemoteComponent('html-tr', HtmlTrElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -1073,7 +1030,6 @@ export const HtmlTr = createRemoteComponent('html-tr', HtmlTrElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlTh = createRemoteComponent('html-th', HtmlThElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -1098,7 +1054,6 @@ export const HtmlTh = createRemoteComponent('html-th', HtmlThElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlTd = createRemoteComponent('html-td', HtmlTdElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -1123,7 +1078,6 @@ export const HtmlTd = createRemoteComponent('html-td', HtmlTdElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlBr = createRemoteComponent('html-br', HtmlBrElement, {
   eventProps: {
     onClick: { event: 'click' },
@@ -1148,7 +1102,6 @@ export const HtmlBr = createRemoteComponent('html-br', HtmlBrElement, {
     onDrag: { event: 'drag' },
   },
 });
-
 export const HtmlHr = createRemoteComponent('html-hr', HtmlHrElement, {
   eventProps: {
     onClick: { event: 'click' },

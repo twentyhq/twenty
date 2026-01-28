@@ -14,10 +14,6 @@ import {
   type RemoteEvent,
 } from '@remote-dom/core/elements';
 
-// =============================================================================
-// HTML Element Property Types
-// =============================================================================
-
 export type HtmlDivProperties = {
   id?: string;
   className?: string;
@@ -29,7 +25,6 @@ export type HtmlDivProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlSpanProperties = {
   id?: string;
   className?: string;
@@ -41,7 +36,6 @@ export type HtmlSpanProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlSectionProperties = {
   id?: string;
   className?: string;
@@ -53,7 +47,6 @@ export type HtmlSectionProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlArticleProperties = {
   id?: string;
   className?: string;
@@ -65,7 +58,6 @@ export type HtmlArticleProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlHeaderProperties = {
   id?: string;
   className?: string;
@@ -77,7 +69,6 @@ export type HtmlHeaderProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlFooterProperties = {
   id?: string;
   className?: string;
@@ -89,7 +80,6 @@ export type HtmlFooterProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlMainProperties = {
   id?: string;
   className?: string;
@@ -101,7 +91,6 @@ export type HtmlMainProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlNavProperties = {
   id?: string;
   className?: string;
@@ -113,7 +102,6 @@ export type HtmlNavProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlAsideProperties = {
   id?: string;
   className?: string;
@@ -125,7 +113,6 @@ export type HtmlAsideProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlPProperties = {
   id?: string;
   className?: string;
@@ -137,7 +124,6 @@ export type HtmlPProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlH1Properties = {
   id?: string;
   className?: string;
@@ -149,7 +135,6 @@ export type HtmlH1Properties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlH2Properties = {
   id?: string;
   className?: string;
@@ -161,7 +146,6 @@ export type HtmlH2Properties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlH3Properties = {
   id?: string;
   className?: string;
@@ -173,7 +157,6 @@ export type HtmlH3Properties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlH4Properties = {
   id?: string;
   className?: string;
@@ -185,7 +168,6 @@ export type HtmlH4Properties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlH5Properties = {
   id?: string;
   className?: string;
@@ -197,7 +179,6 @@ export type HtmlH5Properties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlH6Properties = {
   id?: string;
   className?: string;
@@ -209,7 +190,6 @@ export type HtmlH6Properties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlStrongProperties = {
   id?: string;
   className?: string;
@@ -221,7 +201,6 @@ export type HtmlStrongProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlEmProperties = {
   id?: string;
   className?: string;
@@ -233,7 +212,6 @@ export type HtmlEmProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlSmallProperties = {
   id?: string;
   className?: string;
@@ -245,7 +223,6 @@ export type HtmlSmallProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlCodeProperties = {
   id?: string;
   className?: string;
@@ -257,7 +234,6 @@ export type HtmlCodeProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlPreProperties = {
   id?: string;
   className?: string;
@@ -269,7 +245,6 @@ export type HtmlPreProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlBlockquoteProperties = {
   id?: string;
   className?: string;
@@ -281,7 +256,6 @@ export type HtmlBlockquoteProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlAProperties = {
   id?: string;
   className?: string;
@@ -296,7 +270,6 @@ export type HtmlAProperties = {
   target?: string;
   rel?: string;
 };
-
 export type HtmlImgProperties = {
   id?: string;
   className?: string;
@@ -312,7 +285,6 @@ export type HtmlImgProperties = {
   width?: number;
   height?: number;
 };
-
 export type HtmlUlProperties = {
   id?: string;
   className?: string;
@@ -324,7 +296,6 @@ export type HtmlUlProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlOlProperties = {
   id?: string;
   className?: string;
@@ -336,7 +307,6 @@ export type HtmlOlProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlLiProperties = {
   id?: string;
   className?: string;
@@ -348,7 +318,6 @@ export type HtmlLiProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlFormProperties = {
   id?: string;
   className?: string;
@@ -362,7 +331,6 @@ export type HtmlFormProperties = {
   action?: string;
   method?: string;
 };
-
 export type HtmlLabelProperties = {
   id?: string;
   className?: string;
@@ -375,7 +343,6 @@ export type HtmlLabelProperties = {
   'data-testid'?: string;
   htmlFor?: string;
 };
-
 export type HtmlInputProperties = {
   id?: string;
   className?: string;
@@ -394,7 +361,6 @@ export type HtmlInputProperties = {
   checked?: boolean;
   readOnly?: boolean;
 };
-
 export type HtmlTextareaProperties = {
   id?: string;
   className?: string;
@@ -413,7 +379,6 @@ export type HtmlTextareaProperties = {
   rows?: number;
   cols?: number;
 };
-
 export type HtmlSelectProperties = {
   id?: string;
   className?: string;
@@ -429,7 +394,6 @@ export type HtmlSelectProperties = {
   disabled?: boolean;
   multiple?: boolean;
 };
-
 export type HtmlOptionProperties = {
   id?: string;
   className?: string;
@@ -444,7 +408,6 @@ export type HtmlOptionProperties = {
   disabled?: boolean;
   selected?: boolean;
 };
-
 export type HtmlButtonProperties = {
   id?: string;
   className?: string;
@@ -458,7 +421,6 @@ export type HtmlButtonProperties = {
   type?: string;
   disabled?: boolean;
 };
-
 export type HtmlTableProperties = {
   id?: string;
   className?: string;
@@ -470,7 +432,6 @@ export type HtmlTableProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlTheadProperties = {
   id?: string;
   className?: string;
@@ -482,7 +443,6 @@ export type HtmlTheadProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlTbodyProperties = {
   id?: string;
   className?: string;
@@ -494,7 +454,6 @@ export type HtmlTbodyProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlTfootProperties = {
   id?: string;
   className?: string;
@@ -506,7 +465,6 @@ export type HtmlTfootProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlTrProperties = {
   id?: string;
   className?: string;
@@ -518,7 +476,6 @@ export type HtmlTrProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlThProperties = {
   id?: string;
   className?: string;
@@ -532,7 +489,6 @@ export type HtmlThProperties = {
   colSpan?: number;
   rowSpan?: number;
 };
-
 export type HtmlTdProperties = {
   id?: string;
   className?: string;
@@ -546,7 +502,6 @@ export type HtmlTdProperties = {
   colSpan?: number;
   rowSpan?: number;
 };
-
 export type HtmlBrProperties = {
   id?: string;
   className?: string;
@@ -558,7 +513,6 @@ export type HtmlBrProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
 export type HtmlHrProperties = {
   id?: string;
   className?: string;
@@ -570,10 +524,6 @@ export type HtmlHrProperties = {
   'aria-hidden'?: boolean;
   'data-testid'?: string;
 };
-
-// =============================================================================
-// HTML Element Definitions
-// =============================================================================
 
 export const HtmlDivElement = createRemoteElement<
   HtmlDivProperties,
@@ -636,7 +586,6 @@ export const HtmlDivElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlSpanElement = createRemoteElement<
   HtmlSpanProperties,
   Record<string, never>,
@@ -698,7 +647,6 @@ export const HtmlSpanElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlSectionElement = createRemoteElement<
   HtmlSectionProperties,
   Record<string, never>,
@@ -760,7 +708,6 @@ export const HtmlSectionElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlArticleElement = createRemoteElement<
   HtmlArticleProperties,
   Record<string, never>,
@@ -822,7 +769,6 @@ export const HtmlArticleElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlHeaderElement = createRemoteElement<
   HtmlHeaderProperties,
   Record<string, never>,
@@ -884,7 +830,6 @@ export const HtmlHeaderElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlFooterElement = createRemoteElement<
   HtmlFooterProperties,
   Record<string, never>,
@@ -946,7 +891,6 @@ export const HtmlFooterElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlMainElement = createRemoteElement<
   HtmlMainProperties,
   Record<string, never>,
@@ -1008,7 +952,6 @@ export const HtmlMainElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlNavElement = createRemoteElement<
   HtmlNavProperties,
   Record<string, never>,
@@ -1070,7 +1013,6 @@ export const HtmlNavElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlAsideElement = createRemoteElement<
   HtmlAsideProperties,
   Record<string, never>,
@@ -1132,7 +1074,6 @@ export const HtmlAsideElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlPElement = createRemoteElement<
   HtmlPProperties,
   Record<string, never>,
@@ -1194,7 +1135,6 @@ export const HtmlPElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlH1Element = createRemoteElement<
   HtmlH1Properties,
   Record<string, never>,
@@ -1256,7 +1196,6 @@ export const HtmlH1Element = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlH2Element = createRemoteElement<
   HtmlH2Properties,
   Record<string, never>,
@@ -1318,7 +1257,6 @@ export const HtmlH2Element = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlH3Element = createRemoteElement<
   HtmlH3Properties,
   Record<string, never>,
@@ -1380,7 +1318,6 @@ export const HtmlH3Element = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlH4Element = createRemoteElement<
   HtmlH4Properties,
   Record<string, never>,
@@ -1442,7 +1379,6 @@ export const HtmlH4Element = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlH5Element = createRemoteElement<
   HtmlH5Properties,
   Record<string, never>,
@@ -1504,7 +1440,6 @@ export const HtmlH5Element = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlH6Element = createRemoteElement<
   HtmlH6Properties,
   Record<string, never>,
@@ -1566,7 +1501,6 @@ export const HtmlH6Element = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlStrongElement = createRemoteElement<
   HtmlStrongProperties,
   Record<string, never>,
@@ -1628,7 +1562,6 @@ export const HtmlStrongElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlEmElement = createRemoteElement<
   HtmlEmProperties,
   Record<string, never>,
@@ -1690,7 +1623,6 @@ export const HtmlEmElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlSmallElement = createRemoteElement<
   HtmlSmallProperties,
   Record<string, never>,
@@ -1752,7 +1684,6 @@ export const HtmlSmallElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlCodeElement = createRemoteElement<
   HtmlCodeProperties,
   Record<string, never>,
@@ -1814,7 +1745,6 @@ export const HtmlCodeElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlPreElement = createRemoteElement<
   HtmlPreProperties,
   Record<string, never>,
@@ -1876,7 +1806,6 @@ export const HtmlPreElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlBlockquoteElement = createRemoteElement<
   HtmlBlockquoteProperties,
   Record<string, never>,
@@ -1938,7 +1867,6 @@ export const HtmlBlockquoteElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlAElement = createRemoteElement<
   HtmlAProperties,
   Record<string, never>,
@@ -2003,7 +1931,6 @@ export const HtmlAElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlImgElement = createRemoteElement<
   HtmlImgProperties,
   Record<string, never>,
@@ -2069,7 +1996,6 @@ export const HtmlImgElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlUlElement = createRemoteElement<
   HtmlUlProperties,
   Record<string, never>,
@@ -2131,7 +2057,6 @@ export const HtmlUlElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlOlElement = createRemoteElement<
   HtmlOlProperties,
   Record<string, never>,
@@ -2193,7 +2118,6 @@ export const HtmlOlElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlLiElement = createRemoteElement<
   HtmlLiProperties,
   Record<string, never>,
@@ -2255,7 +2179,6 @@ export const HtmlLiElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlFormElement = createRemoteElement<
   HtmlFormProperties,
   Record<string, never>,
@@ -2319,7 +2242,6 @@ export const HtmlFormElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlLabelElement = createRemoteElement<
   HtmlLabelProperties,
   Record<string, never>,
@@ -2382,7 +2304,6 @@ export const HtmlLabelElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlInputElement = createRemoteElement<
   HtmlInputProperties,
   Record<string, never>,
@@ -2451,7 +2372,6 @@ export const HtmlInputElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlTextareaElement = createRemoteElement<
   HtmlTextareaProperties,
   Record<string, never>,
@@ -2520,7 +2440,6 @@ export const HtmlTextareaElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlSelectElement = createRemoteElement<
   HtmlSelectProperties,
   Record<string, never>,
@@ -2586,7 +2505,6 @@ export const HtmlSelectElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlOptionElement = createRemoteElement<
   HtmlOptionProperties,
   Record<string, never>,
@@ -2651,7 +2569,6 @@ export const HtmlOptionElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlButtonElement = createRemoteElement<
   HtmlButtonProperties,
   Record<string, never>,
@@ -2715,7 +2632,6 @@ export const HtmlButtonElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlTableElement = createRemoteElement<
   HtmlTableProperties,
   Record<string, never>,
@@ -2777,7 +2693,6 @@ export const HtmlTableElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlTheadElement = createRemoteElement<
   HtmlTheadProperties,
   Record<string, never>,
@@ -2839,7 +2754,6 @@ export const HtmlTheadElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlTbodyElement = createRemoteElement<
   HtmlTbodyProperties,
   Record<string, never>,
@@ -2901,7 +2815,6 @@ export const HtmlTbodyElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlTfootElement = createRemoteElement<
   HtmlTfootProperties,
   Record<string, never>,
@@ -2963,7 +2876,6 @@ export const HtmlTfootElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlTrElement = createRemoteElement<
   HtmlTrProperties,
   Record<string, never>,
@@ -3025,7 +2937,6 @@ export const HtmlTrElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlThElement = createRemoteElement<
   HtmlThProperties,
   Record<string, never>,
@@ -3089,7 +3000,6 @@ export const HtmlThElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlTdElement = createRemoteElement<
   HtmlTdProperties,
   Record<string, never>,
@@ -3153,7 +3063,6 @@ export const HtmlTdElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlBrElement = createRemoteElement<
   HtmlBrProperties,
   Record<string, never>,
@@ -3215,7 +3124,6 @@ export const HtmlBrElement = createRemoteElement<
     'drag',
   ],
 });
-
 export const HtmlHrElement = createRemoteElement<
   HtmlHrProperties,
   Record<string, never>,
@@ -3277,11 +3185,6 @@ export const HtmlHrElement = createRemoteElement<
     'drag',
   ],
 });
-
-// =============================================================================
-// Register All Elements
-// =============================================================================
-
 customElements.define('html-div', HtmlDivElement);
 customElements.define('html-span', HtmlSpanElement);
 customElements.define('html-section', HtmlSectionElement);
@@ -3325,16 +3228,12 @@ customElements.define('html-th', HtmlThElement);
 customElements.define('html-td', HtmlTdElement);
 customElements.define('html-br', HtmlBrElement);
 customElements.define('html-hr', HtmlHrElement);
-
-// Core elements
 customElements.define('remote-root', RemoteRootElement);
 customElements.define('remote-fragment', RemoteFragmentElement);
 
 export { RemoteRootElement, RemoteFragmentElement };
-
 declare global {
   interface HTMLElementTagNameMap {
-    // HTML Elements
     'html-div': InstanceType<typeof HtmlDivElement>;
     'html-span': InstanceType<typeof HtmlSpanElement>;
     'html-section': InstanceType<typeof HtmlSectionElement>;
@@ -3378,7 +3277,6 @@ declare global {
     'html-td': InstanceType<typeof HtmlTdElement>;
     'html-br': InstanceType<typeof HtmlBrElement>;
     'html-hr': InstanceType<typeof HtmlHrElement>;
-    // Core
     'remote-root': InstanceType<typeof RemoteRootElement>;
     'remote-fragment': InstanceType<typeof RemoteFragmentElement>;
   }

@@ -12,15 +12,8 @@ import {
   RemoteFragmentRenderer,
   createRemoteComponentRenderer,
 } from '@remote-dom/react/host';
-
-// =============================================================================
-// HTML Element Wrapper Components
-// =============================================================================
-
-// Filter out remote-dom internal props that shouldn't be passed to DOM elements
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
-// Map event names to proper React camelCase
 const EVENT_NAME_MAP: Record<string, string> = {
   onclick: 'onClick',
   ondblclick: 'onDoubleClick',
@@ -44,7 +37,6 @@ const EVENT_NAME_MAP: Record<string, string> = {
   ondrag: 'onDrag',
 };
 
-// Convert CSS string to React style object
 const parseStyle = (
   styleString: string | undefined,
 ): React.CSSProperties | undefined => {
@@ -62,7 +54,6 @@ const parseStyle = (
     const property = declaration.slice(0, colonIndex).trim();
     const value = declaration.slice(colonIndex + 1).trim();
 
-    // Convert kebab-case to camelCase
     const camelProperty = property.replace(/-([a-z])/g, (_, letter: string) =>
       letter.toUpperCase(),
     );
@@ -72,10 +63,8 @@ const parseStyle = (
   return style;
 };
 
-// Wrap event handlers to prevent passing non-serializable event objects
 const wrapEventHandler = (handler: () => void) => {
   return (_event: unknown) => {
-    // Call handler without the event - it can't be serialized to the worker
     handler();
   };
 };
@@ -88,9 +77,7 @@ const filterProps = (props: Record<string, unknown>) => {
     if (key === 'style') {
       filtered.style = parseStyle(value as string | undefined);
     } else {
-      // Normalize event handler names to React camelCase
       const normalizedKey = EVENT_NAME_MAP[key.toLowerCase()] || key;
-      // Wrap event handlers to prevent passing non-serializable events
       if (normalizedKey.startsWith('on') && typeof value === 'function') {
         filtered[normalizedKey] = wrapEventHandler(value as () => void);
       } else {
@@ -100,317 +87,268 @@ const filterProps = (props: Record<string, unknown>) => {
   }
   return filtered;
 };
-
 const HtmlDivWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('div', filterProps(props), children);
 };
-
 const HtmlSpanWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('span', filterProps(props), children);
 };
-
 const HtmlSectionWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('section', filterProps(props), children);
 };
-
 const HtmlArticleWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('article', filterProps(props), children);
 };
-
 const HtmlHeaderWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('header', filterProps(props), children);
 };
-
 const HtmlFooterWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('footer', filterProps(props), children);
 };
-
 const HtmlMainWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('main', filterProps(props), children);
 };
-
 const HtmlNavWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('nav', filterProps(props), children);
 };
-
 const HtmlAsideWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('aside', filterProps(props), children);
 };
-
 const HtmlPWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('p', filterProps(props), children);
 };
-
 const HtmlH1Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h1', filterProps(props), children);
 };
-
 const HtmlH2Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h2', filterProps(props), children);
 };
-
 const HtmlH3Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h3', filterProps(props), children);
 };
-
 const HtmlH4Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h4', filterProps(props), children);
 };
-
 const HtmlH5Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h5', filterProps(props), children);
 };
-
 const HtmlH6Wrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('h6', filterProps(props), children);
 };
-
 const HtmlStrongWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('strong', filterProps(props), children);
 };
-
 const HtmlEmWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('em', filterProps(props), children);
 };
-
 const HtmlSmallWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('small', filterProps(props), children);
 };
-
 const HtmlCodeWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('code', filterProps(props), children);
 };
-
 const HtmlPreWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('pre', filterProps(props), children);
 };
-
 const HtmlBlockquoteWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('blockquote', filterProps(props), children);
 };
-
 const HtmlAWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('a', filterProps(props), children);
 };
-
 const HtmlImgWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('img', filterProps(props), children);
 };
-
 const HtmlUlWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('ul', filterProps(props), children);
 };
-
 const HtmlOlWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('ol', filterProps(props), children);
 };
-
 const HtmlLiWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('li', filterProps(props), children);
 };
-
 const HtmlFormWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('form', filterProps(props), children);
 };
-
 const HtmlLabelWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('label', filterProps(props), children);
 };
-
 const HtmlInputWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('input', filterProps(props), children);
 };
-
 const HtmlTextareaWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('textarea', filterProps(props), children);
 };
-
 const HtmlSelectWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('select', filterProps(props), children);
 };
-
 const HtmlOptionWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('option', filterProps(props), children);
 };
-
 const HtmlButtonWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('button', filterProps(props), children);
 };
-
 const HtmlTableWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('table', filterProps(props), children);
 };
-
 const HtmlTheadWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('thead', filterProps(props), children);
 };
-
 const HtmlTbodyWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('tbody', filterProps(props), children);
 };
-
 const HtmlTfootWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('tfoot', filterProps(props), children);
 };
-
 const HtmlTrWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('tr', filterProps(props), children);
 };
-
 const HtmlThWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('th', filterProps(props), children);
 };
-
 const HtmlTdWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('td', filterProps(props), children);
 };
-
 const HtmlBrWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('br', filterProps(props), children);
 };
-
 const HtmlHrWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('hr', filterProps(props), children);
 };
-
-// =============================================================================
-// Component Registry
-// =============================================================================
-
 export const componentRegistry = new Map<
   string,
   ReturnType<typeof createRemoteComponentRenderer>
 >([
-  // HTML Elements
   ['html-div', createRemoteComponentRenderer(HtmlDivWrapper)],
   ['html-span', createRemoteComponentRenderer(HtmlSpanWrapper)],
   ['html-section', createRemoteComponentRenderer(HtmlSectionWrapper)],
@@ -454,6 +392,5 @@ export const componentRegistry = new Map<
   ['html-td', createRemoteComponentRenderer(HtmlTdWrapper)],
   ['html-br', createRemoteComponentRenderer(HtmlBrWrapper)],
   ['html-hr', createRemoteComponentRenderer(HtmlHrWrapper)],
-  // Core
   ['remote-fragment', RemoteFragmentRenderer],
 ]);
