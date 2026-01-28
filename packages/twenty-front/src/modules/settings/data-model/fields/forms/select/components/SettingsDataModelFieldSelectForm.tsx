@@ -22,6 +22,11 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -29,9 +34,16 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconList, IconPlus, IconPoint } from 'twenty-ui/display';
-import { LightButton } from 'twenty-ui/input';
+import {
+  IconDotsVertical,
+  IconPencil,
+  IconPlus,
+  IconPoint,
+  IconTrash,
+} from 'twenty-ui/display';
+import { LightButton, LightIconButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
+import { MenuItem } from 'twenty-ui/navigation';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
@@ -65,9 +77,6 @@ const StyledOptionsLabel = styled.div<{
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
-  margin-top: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
   margin-left: ${({ theme, isAdvancedModeEnabled }) =>
     theme.spacing(isAdvancedModeEnabled ? 10 : 0)};
 `;
@@ -114,17 +123,12 @@ const StyledButton = styled(LightButton)`
   width: 100%;
 `;
 
-const StyledToggleContainer = styled.div`
+const StyledOptionsHeaderContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledToggleButton = styled(LightButton)<{ isActive: boolean }>`
-  background-color: ${({ theme, isActive }) =>
-    isActive ? theme.background.transparent.light : 'transparent'};
-  color: ${({ theme }) => theme.font.color.secondary};
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledTextAreaContainer = styled.div`
@@ -166,6 +170,10 @@ export const SettingsDataModelFieldSelectForm = ({
   const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
   const [isBulkInputMode, setIsBulkInputMode] = useState(false);
   const [bulkInputText, setBulkInputText] = useState('');
+
+  const OPTIONS_DROPDOWN_ID =
+    'settings-data-model-field-select-options-dropdown';
+  const { closeDropdown: closeOptionsDropdown } = useCloseDropdown();
 
   useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
@@ -299,26 +307,72 @@ export const SettingsDataModelFieldSelectForm = ({
         render={({ field: { onChange, value: options } }) => (
           <>
             <StyledContainer>
-              {!disabled && (
-                <StyledToggleContainer>
-                  <StyledToggleButton
-                    title={
-                      isBulkInputMode
-                        ? t`Back to single mode`
-                        : t`Switch to bulk mode`
+              <StyledOptionsHeaderContainer>
+                <StyledLabelContainer>
+                  <AdvancedSettingsWrapper animationDimension="width" hideDot>
+                    <StyledApiKeyContainer>
+                      <StyledIconContainer>
+                        <StyledIconPoint
+                          size={12}
+                          color={theme.color.yellow}
+                          fill={theme.color.yellow}
+                        />
+                      </StyledIconContainer>
+                      <StyledApiKey>{t`API values`}</StyledApiKey>
+                    </StyledApiKeyContainer>
+                  </AdvancedSettingsWrapper>
+                  <StyledOptionsLabel
+                    isAdvancedModeEnabled={isAdvancedModeEnabled}
+                  >
+                    {t`Options`}
+                  </StyledOptionsLabel>
+                </StyledLabelContainer>
+                {!disabled && (
+                  <Dropdown
+                    dropdownId={OPTIONS_DROPDOWN_ID}
+                    clickableComponent={
+                      <LightIconButton
+                        Icon={IconDotsVertical}
+                        accent="tertiary"
+                      />
                     }
-                    Icon={IconList}
-                    onClick={() => {
-                      if (!isBulkInputMode) {
-                        setBulkInputText(convertOptionsToBulkText(options));
-                      }
-
-                      setIsBulkInputMode((currInputMode) => !currInputMode);
-                    }}
-                    isActive={isBulkInputMode}
+                    dropdownComponents={
+                      <DropdownContent
+                        widthInPixels={GenericDropdownContentWidth.Narrow}
+                      >
+                        <DropdownMenuItemsContainer>
+                          <MenuItem
+                            text={
+                              isBulkInputMode ? t`Single edit` : t`Bulk edit`
+                            }
+                            LeftIcon={IconPencil}
+                            onClick={() => {
+                              if (!isBulkInputMode) {
+                                setBulkInputText(
+                                  convertOptionsToBulkText(options),
+                                );
+                              }
+                              setIsBulkInputMode(
+                                (currInputMode) => !currInputMode,
+                              );
+                              closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
+                            }}
+                          />
+                          <MenuItem
+                            text={t`Remove all`}
+                            accent="danger"
+                            LeftIcon={IconTrash}
+                            onClick={() => {
+                              onChange([]);
+                              closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
+                            }}
+                          />
+                        </DropdownMenuItemsContainer>
+                      </DropdownContent>
+                    }
                   />
-                </StyledToggleContainer>
-              )}
+                )}
+              </StyledOptionsHeaderContainer>
 
               {isBulkInputMode ? (
                 <StyledTextAreaContainer>
@@ -349,25 +403,6 @@ export const SettingsDataModelFieldSelectForm = ({
                 </StyledTextAreaContainer>
               ) : (
                 <>
-                  <StyledLabelContainer>
-                    <AdvancedSettingsWrapper animationDimension="width" hideDot>
-                      <StyledApiKeyContainer>
-                        <StyledIconContainer>
-                          <StyledIconPoint
-                            size={12}
-                            color={theme.color.yellow}
-                            fill={theme.color.yellow}
-                          />
-                        </StyledIconContainer>
-                        <StyledApiKey>{t`API values`}</StyledApiKey>
-                      </StyledApiKeyContainer>
-                    </AdvancedSettingsWrapper>
-                    <StyledOptionsLabel
-                      isAdvancedModeEnabled={isAdvancedModeEnabled}
-                    >
-                      {t`Options`}
-                    </StyledOptionsLabel>
-                  </StyledLabelContainer>
                   <DraggableList
                     onDragEnd={(result) =>
                       !disabled
