@@ -9,8 +9,6 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilCallback } from 'recoil';
 
 export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
-  console.log('pageLayoutIdFromProps', pageLayoutIdFromProps, new Error());
-
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
     PageLayoutComponentInstanceContext,
     pageLayoutIdFromProps,
