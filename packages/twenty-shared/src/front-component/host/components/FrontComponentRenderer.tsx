@@ -4,7 +4,6 @@ import {
 } from '@remote-dom/react/host';
 import React, { useState } from 'react';
 import { isDefined } from '../../../utils/validation/isDefined';
-import { FRONT_COMPONENT_WORKER_URL } from '../../constants/FrontComponentWorkerUrl';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 
@@ -22,7 +21,6 @@ export const FrontComponentRenderer = ({
   return (
     <>
       <FrontComponentWorkerEffect
-        workerUrl={FRONT_COMPONENT_WORKER_URL}
         componentUrl={componentUrl}
         setReceiver={setReceiver}
         onError={onError}

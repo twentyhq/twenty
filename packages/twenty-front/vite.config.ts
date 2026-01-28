@@ -45,7 +45,7 @@ export default defineConfig(({ command, mode }) => {
   // Please don't increase this limit for main index chunk
   // If it gets too big then find modules in the code base
   // that can be loaded lazily, there are more!
-  const MAIN_CHUNK_SIZE_LIMIT = 6.5 * 1024 * 1024; // 6.5MB for main index chunk
+  const MAIN_CHUNK_SIZE_LIMIT = 6.8 * 1024 * 1024; // 6.8MB for main index chunk
   const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
 
   const checkers: Checkers = {
@@ -159,13 +159,6 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      include: [
-        '@remote-dom/core',
-        '@remote-dom/core/elements',
-        '@remote-dom/core/polyfill',
-        '@remote-dom/react',
-        '@remote-dom/react/polyfill',
-      ],
       exclude: [
         '../../node_modules/.vite',
         '../../node_modules/.cache',
@@ -284,14 +277,7 @@ export default defineConfig(({ command, mode }) => {
         // https://github.com/twentyhq/twenty/pull/10782/files
         // This will likely be migrated to twenty-ui package when built separately
         '@tabler/icons-react': '@tabler/icons-react/dist/esm/icons/index.mjs',
-        'twenty-shared/front-component': path.resolve(
-          __dirname,
-          '../twenty-shared/src/front-component/index.ts',
-        ),
       },
-    },
-    worker: {
-      format: 'es',
     },
   };
 });

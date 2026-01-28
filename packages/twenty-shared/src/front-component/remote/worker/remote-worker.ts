@@ -9,9 +9,14 @@ import {
   type RemoteConnection,
   type RemoteRootElement,
 } from '@remote-dom/core/elements';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
+import * as RemoteComponents from '../generated/remote-components';
+
+(globalThis as Record<string, unknown>).React = React;
+(globalThis as Record<string, unknown>).RemoteComponents = RemoteComponents;
 
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
@@ -22,7 +27,7 @@ const render: WorkerExports['render'] = async (
   root.connect(batchedConnection);
   document.body.append(root);
 
-  // TODO: Add a way to verify the component URL is valid (signed URL, content hash, etc.)
+  /* @vite-ignore */
   const componentModule = await import(renderContext.componentUrl);
 
   const reactRoot = createRoot(root);
