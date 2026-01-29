@@ -1,21 +1,16 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import DOMPurify from 'dompurify';
 import FileType from 'file-type';
 import sharp from 'sharp';
 import { FileFolder } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { settings } from 'src/engine/constants/settings';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignedFile = { path: string; token: string };
@@ -32,8 +27,6 @@ export class FileUploadService {
     private readonly fileStorage: FileStorageService,
     private readonly fileService: FileService,
     private readonly httpService: HttpService,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
   private async _uploadFile({
@@ -215,51 +208,5 @@ export class FileUploadService {
 
   private getWorkspaceFolderName(workspaceId: string, fileFolder: FileFolder) {
     return `workspace-${workspaceId}/${fileFolder}`;
-  }
-
-  async uploadFilesFieldFile({
-    file,
-    filename,
-    declaredMimeType,
-    workspaceId,
-    applicationId,
-  }: {
-    file: Buffer;
-    filename: string;
-    declaredMimeType: string | undefined;
-    workspaceId: string;
-    applicationId: string;
-  }): Promise<FileEntity> {
-    const { mimeType, ext } = await extractFileInfo({
-      file,
-      declaredMimeType,
-      filename,
-    });
-
-    const sanitizedFile = this._sanitizeFile({ file, ext, mimeType });
-
-    const fileId = v4();
-    const name = `${fileId}${ext ? `.${ext}` : ''}`;
-
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        id: applicationId,
-        workspaceId,
-      },
-    });
-
-    return await this.fileStorage.write_v2({
-      sourceFile: sanitizedFile,
-      destinationPath: name,
-      mimeType,
-      fileFolder: FileFolder.FilesField,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-      fileId,
-      settings: {
-        isTemporaryFile: true,
-        toDelete: false,
-      },
-    });
   }
 }

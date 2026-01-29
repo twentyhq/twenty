@@ -57,6 +57,12 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
   personId?: string;
 };
 
+export type FilesFieldTokenJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.FILE;
+  workspaceId: string;
+  fileId: string;
+};
+
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.LOGIN;
   workspaceId: string;
@@ -127,4 +133,5 @@ export type JwtPayload =
   | TransientTokenJwtPayload
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
+  | FilesFieldTokenJwtPayload
   | PostgresProxyTokenJwtPayload;

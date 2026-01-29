@@ -15,6 +15,7 @@ const FileObjectType = new GraphQLObjectType({
     extension: { type: GraphQLString },
     //TODO: Will be made non-nullable in a future PR
     // extension: { type: new GraphQLNonNull(GraphQLString) },
+    token: { type: new GraphQLNonNull(GraphQLString) },
   },
 });
 
