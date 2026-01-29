@@ -45,6 +45,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
 
       for (const updateEvent of updateEvents) {
         const updatedRecord = updateEvent.properties.after;
+        const updatedFieldNames = updateEvent.properties.updatedFields ?? [];
 
         if (!isDefined(updatedRecord)) {
           continue;
@@ -111,6 +112,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           objectMetadataItems,
           objectPermissionsByObjectMetadataId,
           upsertRecordsInStore,
+          updatedFieldNames,
         });
       }
 
