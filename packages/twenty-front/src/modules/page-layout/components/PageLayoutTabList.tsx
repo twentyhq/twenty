@@ -350,6 +350,7 @@ export const PageLayoutTabList = ({
                   onSelect={handleSelectTabFromDropdown}
                   visibleTabCount={visibleTabCount}
                   onClose={closeOverflowDropdown}
+                  pageLayoutType={pageLayoutType}
                 />
               )}
 
