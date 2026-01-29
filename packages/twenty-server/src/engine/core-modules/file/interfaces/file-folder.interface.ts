@@ -1,6 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { FileFolder } from 'twenty-shared/types';
+import { type KebabCase } from 'type-fest';
 
 registerEnumType(FileFolder, {
   name: 'FileFolder',
@@ -49,4 +50,4 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   },
 };
 
-export type AllowedFolders = `${FileFolder}`;
+export type AllowedFolders = KebabCase<keyof typeof FileFolder>;
