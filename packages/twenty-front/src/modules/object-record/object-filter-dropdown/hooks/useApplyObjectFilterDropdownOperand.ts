@@ -125,6 +125,11 @@ export const useApplyObjectFilterDropdownOperand = () => {
             newOperand,
             userTimezone,
           );
+          // eslint-disable-next-line no-console
+          console.log(
+            'Sanity Check - Converted to PlainDate:',
+            recordFilterToUpsert.value,
+          );
         } else if (filterValueIsEmpty || isStillRelativeFilterValue.success) {
           const zonedDateToUse = Temporal.Now.zonedDateTimeISO(userTimezone);
 

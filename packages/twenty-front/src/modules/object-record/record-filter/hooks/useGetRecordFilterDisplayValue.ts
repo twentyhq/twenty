@@ -94,6 +94,12 @@ export const useGetRecordFilterDisplayValue = () => {
             return '';
           }
 
+          // eslint-disable-next-line no-console
+          console.log(
+            'Sanity Check - DATE_TIME IS Value (Should be PlainDate YYYY-MM-DD):',
+            recordFilter.value,
+          );
+
           const zonedDateTime = Temporal.PlainDate.from(
             recordFilter.value,
           ).toZonedDateTime(userTimezone);
