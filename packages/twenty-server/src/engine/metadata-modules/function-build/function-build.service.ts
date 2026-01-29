@@ -80,6 +80,10 @@ export class FunctionBuildService {
         resourcePath: flatLogicFunction.builtHandlerPath,
         sourceFile: builtFile,
         mimeType: 'application/javascript',
+        settings: {
+          isTemporaryFile: false,
+          toDelete: false,
+        },
       });
     } finally {
       await lambdaBuildDirectoryManager.clean();
