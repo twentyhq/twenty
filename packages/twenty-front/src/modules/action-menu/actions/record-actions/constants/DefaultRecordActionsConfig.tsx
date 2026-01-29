@@ -765,9 +765,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       selectedRecord,
       objectPermissions,
       objectMetadataItem,
-      featureFlags,
+      isFeatureFlagEnabled,
     }) =>
-      featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED] &&
+      isFeatureFlagEnabled(
+        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+      ) &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&
@@ -791,9 +793,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       selectedRecord,
       objectPermissions,
       objectMetadataItem,
-      featureFlags,
+      isFeatureFlagEnabled,
     }) =>
-      featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED] &&
+      isFeatureFlagEnabled(
+        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+      ) &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&
@@ -816,9 +820,11 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       selectedRecord,
       objectPermissions,
       objectMetadataItem,
-      featureFlags,
+      isFeatureFlagEnabled,
     }) =>
-      featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED] &&
+      isFeatureFlagEnabled(
+        FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+      ) &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&

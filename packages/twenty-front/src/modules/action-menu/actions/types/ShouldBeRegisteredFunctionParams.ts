@@ -29,5 +29,5 @@ export type ShouldBeRegisteredFunctionParams = {
     objectMetadataItemNameSingular: string,
   ) => boolean;
   forceRegisteredActionsByKey: Record<string, boolean | undefined>;
-  featureFlags: Record<FeatureFlagKey, boolean>;
+  isFeatureFlagEnabled: (featureFlagKey: FeatureFlagKey) => boolean;
 };

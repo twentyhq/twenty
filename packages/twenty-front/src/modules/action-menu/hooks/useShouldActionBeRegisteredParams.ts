@@ -2,6 +2,7 @@ import { forceRegisteredActionsByKeyState } from '@/action-menu/actions/states/f
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -15,7 +16,6 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -136,7 +136,15 @@ export const useShouldActionBeRegisteredParams = ({
     forceRegisteredActionsByKeyState,
   );
 
-  const featureFlags = useFeatureFlagsMap();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
+    const featureFlag = currentWorkspace?.featureFlags?.find(
+      (flag) => flag.key === featureFlagKey,
+    );
+
+    return featureFlag?.value === true;
+  };
 
   return {
     objectMetadataItem,
@@ -153,6 +161,6 @@ export const useShouldActionBeRegisteredParams = ({
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
     forceRegisteredActionsByKey,
-    featureFlags,
+    isFeatureFlagEnabled,
   };
 };
