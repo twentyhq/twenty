@@ -6,7 +6,6 @@ import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadat
 import { type ExtractEntityRelatedEntityProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-related-entity-properties.type';
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type AllJsonbPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-by-metadata-name.constant';
 import { ExtractJsonbPropertiesWithSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties-with-serialized-relation.type';
@@ -36,10 +35,6 @@ export type UniversalFlatEntityExtraProperties<
       TEntity[P]
     >;
   };
-
-type toto = ExtractJsonbPropertiesWithSerializedRelation<ObjectMetadataEntity>;
-type titi = FormatRecordSerializedRelationProperties<ObjectMetadataEntity>
-
 
 export type UniversalFlatEntityFrom<
   TEntity extends SyncableEntity,
