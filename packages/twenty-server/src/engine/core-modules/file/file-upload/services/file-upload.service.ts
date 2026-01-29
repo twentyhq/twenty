@@ -1,13 +1,16 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import DOMPurify from 'dompurify';
 import FileType from 'file-type';
 import sharp from 'sharp';
 import { FileFolder } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { settings } from 'src/engine/constants/settings';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -29,6 +32,8 @@ export class FileUploadService {
     private readonly fileStorage: FileStorageService,
     private readonly fileService: FileService,
     private readonly httpService: HttpService,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
   private async _uploadFile({
@@ -236,12 +241,19 @@ export class FileUploadService {
     const fileId = v4();
     const name = `${fileId}${ext ? `.${ext}` : ''}`;
 
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        id: applicationId,
+        workspaceId,
+      },
+    });
+
     return await this.fileStorage.write_v2({
       sourceFile: sanitizedFile,
       destinationPath: name,
       mimeType,
       fileFolder: FileFolder.FilesField,
-      applicationId,
+      applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
       fileId,
     });
