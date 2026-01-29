@@ -45,9 +45,6 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.FilesField]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.TemporaryFilesField]: {
-    ignoreExpirationToken: false,
-  },
 };
 
 export type AllowedFolders = KebabCase<keyof typeof FileFolder>;

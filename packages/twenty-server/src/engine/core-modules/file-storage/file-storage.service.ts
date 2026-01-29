@@ -7,11 +7,12 @@ import { type Readable } from 'stream';
 
 import { isObject } from '@sniptt/guards';
 import { FileFolder, Sources } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 
 export type ResourceIdentifier = {
   workspaceId: string;
@@ -67,10 +68,12 @@ export class FileStorageService {
     workspaceId,
     resourcePath,
     fileId,
+    settings,
   }: ResourceIdentifier & {
     sourceFile: string | Buffer | Uint8Array;
     mimeType: string | undefined;
     fileId?: string;
+    settings: FileSettings;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
@@ -103,6 +106,7 @@ export class FileStorageService {
         typeof sourceFile === 'string'
           ? Buffer.byteLength(sourceFile)
           : sourceFile.length,
+      settings,
     });
 
     return fileEntity;
@@ -236,6 +240,32 @@ export class FileStorageService {
     return driver.delete({ folderPath: onStoragePath });
   }
 
+  async deleteByFileId({
+    fileId,
+    workspaceId,
+    fileFolder,
+  }: {
+    fileId: string;
+    workspaceId: string;
+    fileFolder: FileFolder;
+  }): Promise<void> {
+    const file = await this.fileRepository.findOneOrFail({
+      where: {
+        id: fileId,
+        workspaceId,
+        path: Like(`${fileFolder}/%`),
+      },
+    });
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    await driver.delete({
+      folderPath: `${file.workspaceId}/${file.applicationId}`,
+      filename: file.path,
+    });
+
+    await this.fileRepository.delete(fileId);
+  }
+
   /**
    * @deprecated Use copy_v2 instead
    */
@@ -260,6 +290,50 @@ export class FileStorageService {
     return driver.copy({
       from: { folderPath: this.buildOnStoragePath(from) },
       to: { folderPath: this.buildOnStoragePath(to) },
+    });
+  }
+
+  async moveFile({
+    from,
+    to,
+    workspaceId,
+  }: {
+    from: {
+      applicationId: string;
+      fileFolder: FileFolder;
+      destinationPath: string;
+    };
+    to: {
+      applicationId: string;
+      fileFolder: FileFolder;
+      destinationPath: string;
+    };
+    workspaceId: string;
+  }): Promise<void> {
+    const file = await this.fileRepository.findOneOrFail({
+      where: {
+        workspaceId,
+        applicationId: from.applicationId,
+        path: `${from.fileFolder}/${from.destinationPath}`,
+      },
+    });
+
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    await driver.move({
+      from: {
+        folderPath: `${file.workspaceId}/${from.applicationId}/${from.fileFolder}`,
+        filename: from.destinationPath,
+      },
+      to: {
+        folderPath: `${file.workspaceId}/${to.applicationId}/${to.fileFolder}`,
+        filename: to.destinationPath,
+      },
+    });
+
+    await this.fileRepository.update(file.id, {
+      applicationId: to.applicationId,
+      path: `${to.fileFolder}/${to.destinationPath}`,
     });
   }
 

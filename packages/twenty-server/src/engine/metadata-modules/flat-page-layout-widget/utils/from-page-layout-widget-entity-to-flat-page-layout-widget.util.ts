@@ -87,6 +87,8 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
       objectMetadataUniversalIdentifier,
       gridPosition: pageLayoutWidgetEntityWithoutRelations.gridPosition,
       configuration: configurationWithUniversalIdentifiers,
+      conditionalDisplay:
+        pageLayoutWidgetEntityWithoutRelations.conditionalDisplay,
     },
   };
 };

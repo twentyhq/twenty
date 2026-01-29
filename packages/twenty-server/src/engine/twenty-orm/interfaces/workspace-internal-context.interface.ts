@@ -1,3 +1,5 @@
+import { type DataSource } from 'typeorm';
+
 import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -18,4 +20,5 @@ export interface WorkspaceInternalContext {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   userWorkspaceRoleMap: Record<string, string>;
   eventEmitterService: WorkspaceEventEmitter;
+  coreDataSource: DataSource;
 }

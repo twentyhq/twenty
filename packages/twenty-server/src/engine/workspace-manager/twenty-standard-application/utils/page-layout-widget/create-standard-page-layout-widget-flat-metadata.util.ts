@@ -87,5 +87,6 @@ export const createStandardPageLayoutWidgetFlatMetadata = <
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    conditionalDisplay: null,
   };
 };
