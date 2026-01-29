@@ -1,7 +1,7 @@
-import { Action } from '@/action-menu/actions/components/Action';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { CommandMenuItemFrontComponentDisplay } from '@/command-menu-item/components/CommandMenuItemFrontComponentDisplay';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -52,11 +52,11 @@ const buildActionFromItem = (
     Icon,
     shouldBeRegistered: () => true,
     component: (
-      <Action
-        onClick={() => {
-          // TODO: Load FrontComponent by frontComponentId
-        }}
-        closeSidePanelOnCommandMenuListActionExecution={false}
+      <CommandMenuItemFrontComponentDisplay
+        frontComponentId={item.frontComponentId}
+        displayLabel={displayLabel}
+        itemKey={`command-menu-item-front-component-${item.id}`}
+        Icon={Icon}
       />
     ),
   };
