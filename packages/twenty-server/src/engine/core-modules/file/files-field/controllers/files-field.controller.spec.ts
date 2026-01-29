@@ -3,9 +3,9 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { Readable } from 'stream';
 
-import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
-import { FilesFieldGuard } from 'src/engine/core-modules/file/files-field/guards/files-field.guard';
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
+import { FilesFieldGuard } from 'src/engine/core-modules/file/files-field/guards/files-field.guard';
+import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 
 import { FilesFieldController } from './files-field.controller';
 
@@ -47,7 +47,9 @@ describe('FilesFieldController', () => {
     mockStream.push(null);
     mockStream.pipe = jest.fn();
 
-    jest.spyOn(filesFieldService, 'getFileStream').mockResolvedValue(mockStream);
+    jest
+      .spyOn(filesFieldService, 'getFileStream')
+      .mockResolvedValue(mockStream);
 
     const fileId = 'test-file-id';
     const workspaceId = 'workspace-id';
@@ -78,10 +80,13 @@ describe('FilesFieldController', () => {
       if (event === 'error') {
         errorHandler.mockImplementation(handler);
       }
+
       return mockStream;
     });
 
-    jest.spyOn(filesFieldService, 'getFileStream').mockResolvedValue(mockStream);
+    jest
+      .spyOn(filesFieldService, 'getFileStream')
+      .mockResolvedValue(mockStream);
 
     const fileId = 'test-file-id';
     const workspaceId = 'workspace-id';

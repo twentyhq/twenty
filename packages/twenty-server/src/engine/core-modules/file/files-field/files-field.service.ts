@@ -7,7 +7,6 @@ import { msg } from '@lingui/core/macro';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { Omit } from 'zod/v4/core/util.cjs';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
