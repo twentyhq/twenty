@@ -12,12 +12,7 @@ export type CreateFieldAction = Omit<
 };
 
 export type UpdateFieldAction =
-  BaseUpdateWorkspaceMigrationAction<'fieldMetadata'> & {
-    objectMetadataId: string;
-  };
+  BaseUpdateWorkspaceMigrationAction<'fieldMetadata'>;
 
 export type DeleteFieldAction =
-  BaseDeleteWorkspaceMigrationAction<'fieldMetadata'> & {
-    // Remove this
-    objectMetadataId: string;
-  };
+  BaseDeleteWorkspaceMigrationAction<'fieldMetadata'>;
