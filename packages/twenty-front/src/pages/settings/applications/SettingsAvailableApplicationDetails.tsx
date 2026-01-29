@@ -1,4 +1,6 @@
+import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -24,6 +26,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { PermissionFlagType } from '~/generated/graphql';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
 
 const AVAILABLE_APPLICATION_DETAIL_ID = 'available-application-detail';
@@ -249,10 +252,20 @@ export const SettingsAvailableApplicationDetails = () => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
 
   const { data: marketplaceApps } = useMarketplaceApps();
+  const { install, isLoading: isInstalling } = useInstallMarketplaceApp();
+  const canInstallMarketplaceApps = useHasPermissionFlag(
+    PermissionFlagType.MARKETPLACE_APPS,
+  );
 
   const application = useMemo(() => {
     return marketplaceApps?.find((app) => app.id === availableApplicationId);
   }, [availableApplicationId, marketplaceApps]);
+
+  const handleInstall = async () => {
+    if (isDefined(application)) {
+      await install();
+    }
+  };
 
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
@@ -452,12 +465,16 @@ export const SettingsAvailableApplicationDetails = () => {
               </StyledAppDescription>
             </StyledHeaderInfo>
           </StyledHeaderLeft>
-          <Button
-            Icon={IconDownload}
-            title={t`Install`}
-            variant="primary"
-            accent="blue"
-          />
+          {canInstallMarketplaceApps && (
+            <Button
+              Icon={IconDownload}
+              title={t`Install`}
+              variant="primary"
+              accent="blue"
+              onClick={handleInstall}
+              disabled={isInstalling}
+            />
+          )}
         </StyledHeader>
 
         <TabList

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 
 export const FIND_MANY_MARKETPLACE_APPS = gql`
   query FindManyMarketplaceApps {

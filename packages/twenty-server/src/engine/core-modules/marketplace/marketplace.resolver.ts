@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Query, Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -22,10 +22,10 @@ export class MarketplaceResolver {
     return this.marketplaceService.findAllMarketplaceApps();
   }
 
-  @Query(() => Boolean)
+  @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
   async installMarketplaceApp(): Promise<boolean> {
-    // To implement
+    // TODO: Implement actual installation logic
     return true;
   }
 }
