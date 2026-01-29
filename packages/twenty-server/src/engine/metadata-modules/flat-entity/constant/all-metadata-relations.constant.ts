@@ -85,6 +85,11 @@ export const ALL_METADATA_RELATIONS = {
         flatEntityForeignKeyAggregator: null,
         foreignKey: 'availabilityObjectMetadataId',
       },
+      frontComponent: {
+        metadataName: 'frontComponent',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'frontComponentId',
+      },
     },
     oneToMany: {},
   },

@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -24,6 +25,10 @@ export enum CommandMenuItemAvailabilityType {
   'workflowVersionId',
   'workspaceId',
 ])
+@Index('IDX_COMMAND_MENU_ITEM_FRONT_COMPONENT_ID_WORKSPACE_ID', [
+  'frontComponentId',
+  'workspaceId',
+])
 @Index('IDX_COMMAND_MENU_ITEM_AVAILABILITY_OBJECT_METADATA_ID', [
   'availabilityObjectMetadataId',
 ])
@@ -34,8 +39,18 @@ export class CommandMenuItemEntity
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workflowVersionId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  workflowVersionId: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  frontComponentId: string | null;
+
+  @ManyToOne(() => FrontComponentEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'frontComponentId' })
+  frontComponent: Relation<FrontComponentEntity> | null;
 
   @Column({ nullable: false })
   label: string;
