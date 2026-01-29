@@ -25,18 +25,27 @@ type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   frontComponentId: string;
 };
 
-const buildActionFromItem = (
-  item: CommandMenuItemWithFrontComponent,
-  scope: ActionScope,
-  index: number,
-  isPinned: boolean,
-  getIcon: ReturnType<typeof useIcons>['getIcon'],
+type BuildActionFromItemParams = {
+  item: CommandMenuItemWithFrontComponent;
+  scope: ActionScope;
+  index: number;
+  isPinned: boolean;
+  getIcon: ReturnType<typeof useIcons>['getIcon'];
   openFrontComponentInCommandMenu: (params: {
     frontComponentId: string;
     pageTitle: string;
     pageIcon: IconComponent;
-  }) => void,
-) => {
+  }) => void;
+};
+
+const buildActionFromItem = ({
+  item,
+  scope,
+  index,
+  isPinned,
+  getIcon,
+  openFrontComponentInCommandMenu,
+}: BuildActionFromItemParams) => {
   const displayLabel =
     item.frontComponent?.name ?? item.label ?? t`Front Component`;
 
@@ -126,25 +135,25 @@ export const useCommandMenuItemFrontComponentActions = () => {
   });
 
   const globalActions = globalItems.map((item, index) =>
-    buildActionFromItem(
+    buildActionFromItem({
       item,
-      ActionScope.Global,
+      scope: ActionScope.Global,
       index,
-      !isPageInEditMode && item.isPinned,
+      isPinned: !isPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
-    ),
+    }),
   );
 
   const recordScopedActions = recordScopedItems.map((item, index) =>
-    buildActionFromItem(
+    buildActionFromItem({
       item,
-      ActionScope.RecordSelection,
+      scope: ActionScope.RecordSelection,
       index,
-      !isPageInEditMode && item.isPinned,
+      isPinned: !isPageInEditMode && item.isPinned,
       getIcon,
       openFrontComponentInCommandMenu,
-    ),
+    }),
   );
 
   return [...globalActions, ...recordScopedActions];
