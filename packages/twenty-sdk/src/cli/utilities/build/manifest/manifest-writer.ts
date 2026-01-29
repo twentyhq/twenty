@@ -1,7 +1,9 @@
 import * as fs from 'fs-extra';
 import path from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import {
+  type ApplicationManifest,
+  OUTPUT_DIR,
+} from 'twenty-shared/application';
 
 export const writeManifestToOutput = async (
   appPath: string,

@@ -10,6 +10,13 @@ import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-bu
 
 const MAX_EVENT_NUMBER = 200;
 
+const FILE_STATUS_TRANSITION_MATRIX: Record<FileStatus, FileStatus[]> = {
+  pending: ['building', 'uploading', 'success'],
+  building: ['pending', 'uploading', 'success'],
+  uploading: ['pending', 'success'],
+  success: ['pending', 'building', 'uploading'],
+};
+
 export class DevUiStateManager {
   private state: DevUiState;
   private eventIdCounter = 0;
@@ -75,14 +82,17 @@ export class DevUiStateManager {
   updateManifestState({
     manifestStatus,
     appName,
+    error,
   }: {
     manifestStatus?: ManifestStatus;
     appName?: string;
+    error?: string;
   }): void {
     this.state = {
       ...this.state,
       ...(manifestStatus ? { manifestStatus } : {}),
       ...(appName ? { appName } : {}),
+      ...(error ? { error } : {}),
     };
 
     this.notify();
@@ -102,6 +112,8 @@ export class DevUiStateManager {
         return SyncableEntity.FrontComponent;
       case 'roles':
         return SyncableEntity.Role;
+      case 'assets':
+        return SyncableEntity.PublicAsset;
       default:
         return;
     }
@@ -164,11 +176,27 @@ export class DevUiStateManager {
   updateFileStatus(filePath: string, status: FileStatus): void {
     const entities = new Map(this.state.entities);
 
-    entities.set(filePath, {
-      name: filePath,
-      path: filePath,
-      status: status,
-    });
+    const entity = entities.get(filePath);
+
+    if (
+      entity?.status &&
+      !FILE_STATUS_TRANSITION_MATRIX[entity.status].find(
+        (nextStatus) => nextStatus === status,
+      )
+    ) {
+      return;
+    }
+
+    entities.set(
+      filePath,
+      entity
+        ? { ...entity, status }
+        : {
+            name: filePath,
+            path: filePath,
+            status,
+          },
+    );
 
     this.state = { ...this.state, entities };
 

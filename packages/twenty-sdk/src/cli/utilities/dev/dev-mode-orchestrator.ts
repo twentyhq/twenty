@@ -10,7 +10,6 @@ import { type FileFolder } from 'twenty-shared/types';
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 import type { Location } from 'esbuild';
 import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
-import { relative } from 'path';
 import { type EventName } from 'chokidar/handler.js';
 
 export type DevModeOrchestratorOptions = {
@@ -42,8 +41,8 @@ export class DevModeOrchestrator {
   private syncTimer: NodeJS.Timeout | null = null;
   private isSyncing = false;
   private uiStateManager: DevUiStateManager;
-  private serverChecked = false;
-  private serverCheckedLogged = false;
+  private serverReady = false;
+  private serverErrorLogged = false;
 
   private handleManifestBuilt: (
     result: ManifestBuildResult,
@@ -57,41 +56,59 @@ export class DevModeOrchestrator {
   }
 
   private async checkServer(): Promise<void> {
-    this.serverChecked = await this.apiService.validateAuth();
+    const validateAuth = await this.apiService.validateAuth();
 
-    if (!this.serverChecked && !this.serverCheckedLogged) {
-      this.uiStateManager.addEvent({
-        message:
-          'Please check your server is up and your credentials are correct: "yarn auth:login"',
-        status: 'error',
-      });
-      this.uiStateManager.updateManifestState({
-        manifestStatus: 'error',
-      });
-      this.serverCheckedLogged = true;
+    if (!validateAuth.serverUp) {
+      if (!this.serverErrorLogged) {
+        this.uiStateManager.addEvent({
+          message: 'Cannot reach server',
+          status: 'error',
+        });
+        this.uiStateManager.updateManifestState({
+          manifestStatus: 'error',
+          error: 'Cannot connect to Twenty server. Is it running?',
+        });
+        this.serverErrorLogged = true;
+      }
+      return;
     }
+    if (!validateAuth.authValid) {
+      if (!this.serverErrorLogged) {
+        this.uiStateManager.addEvent({
+          message: 'Authentication failed',
+          status: 'error',
+        });
+        this.uiStateManager.updateManifestState({
+          manifestStatus: 'error',
+          error:
+            'Cannot authenticate. Check your credentials are correct with "yarn auth:login"',
+        });
+        this.serverErrorLogged = true;
+      }
+      return;
+    }
+    this.serverErrorLogged = false;
+    this.serverReady = true;
   }
 
   async handleChangeDetected(sourcePath: string, event: EventName) {
-    if (!this.serverChecked) {
+    if (!this.serverReady) {
       await this.checkServer();
     }
 
-    if (!this.serverChecked) {
+    if (!this.serverReady) {
       return;
     }
 
-    const normalizedSourcePath = this.normalizeFilePath(sourcePath);
-
     this.uiStateManager.addEvent({
-      message: `Change detected: ${normalizedSourcePath}`,
+      message: `Change detected: ${sourcePath}`,
       status: 'info',
     });
 
     if (event === 'unlink') {
-      this.uiStateManager.removeEntity(normalizedSourcePath);
+      this.uiStateManager.removeEntity(sourcePath);
     } else {
-      this.uiStateManager.updateFileStatus(normalizedSourcePath, 'building');
+      this.uiStateManager.updateFileStatus(sourcePath, 'building');
     }
 
     this.scheduleSync();
@@ -140,10 +157,6 @@ export class DevModeOrchestrator {
     }
 
     this.scheduleSync();
-  }
-
-  private normalizeFilePath(filePath: string): string {
-    return relative(this.appPath, filePath);
   }
 
   private uploadFile(
@@ -295,6 +308,7 @@ export class DevModeOrchestrator {
         manifest: result.manifest,
         builtFileInfos: this.builtFileInfos,
       });
+
       this.uiStateManager.addEvent({
         message: 'Manifest checksums set',
         status: 'info',
@@ -311,9 +325,11 @@ export class DevModeOrchestrator {
         message: 'Syncing manifest',
         status: 'info',
       });
+
       this.uiStateManager.updateManifestState({
         manifestStatus: 'syncing',
       });
+
       const syncResult = await this.apiService.syncApplication(manifest);
 
       this.uiStateManager.updateAllFilesStatus('success');

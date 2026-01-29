@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
+import { ASSETS_DIR } from 'twenty-shared/application';
 
 const APP_FOLDER = 'src';
 
@@ -20,6 +21,8 @@ export const copyBaseApplicationProject = async ({
   await createPackageJson({ appName, appDirectory });
 
   await createGitignore(appDirectory);
+
+  await createPublicAssetDirectory(appDirectory);
 
   await createYarnLock(appDirectory);
 
@@ -45,6 +48,10 @@ export const copyBaseApplicationProject = async ({
     description: appDescription,
     appDirectory: appFolderPath,
   });
+};
+
+const createPublicAssetDirectory = async (appDirectory: string) => {
+  await fs.ensureDir(join(appDirectory, ASSETS_DIR));
 };
 
 const createYarnLock = async (appDirectory: string) => {
