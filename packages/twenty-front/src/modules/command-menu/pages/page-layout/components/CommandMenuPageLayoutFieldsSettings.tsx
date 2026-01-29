@@ -1,10 +1,9 @@
 import { WidgetSettingsFooter } from '@/command-menu/pages/page-layout/components/WidgetSettingsFooter';
+import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
-import { useRecordPageLayoutId } from '@/page-layout/hooks/useRecordPageLayoutId';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,8 +23,8 @@ const StyledContainer = styled.div`
 `;
 
 export const CommandMenuPageLayoutFieldsSettings = () => {
-  const targetRecord = useTargetRecord();
-  const { pageLayoutId } = useRecordPageLayoutId(targetRecord);
+  const { pageLayoutId } =
+    usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
