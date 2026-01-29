@@ -83,18 +83,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        if (
-          !(await this.logicFunctionService.hasLogicFunctionPublishedVersion(
-            step.settings.input.logicFunctionId,
-            workspaceId,
-          ))
-        ) {
-          await this.logicFunctionService.deleteOneLogicFunction({
-            id: step.settings.input.logicFunctionId,
-            workspaceId,
-            softDelete: false,
-          });
-        }
+        await this.logicFunctionService.deleteOneLogicFunction({
+          id: step.settings.input.logicFunctionId,
+          workspaceId,
+          softDelete: false,
+        });
         break;
       }
       case WorkflowActionType.AI_AGENT: {
@@ -188,7 +181,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               },
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionVersion: 'draft',
                 logicFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
               },
             },
@@ -618,7 +610,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const newLogicFunction =
           await this.logicFunctionService.duplicateLogicFunction({
             id: step.settings.input.logicFunctionId,
-            version: step.settings.input.logicFunctionVersion,
             workspaceId,
           });
 
@@ -632,7 +623,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             input: {
               ...step.settings.input,
               logicFunctionId: newLogicFunction.id,
-              logicFunctionVersion: 'draft',
             },
           },
         };
@@ -883,33 +873,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
   async createDraftStep({
     step,
-    workspaceId,
   }: {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
-    switch (step.type) {
-      case WorkflowActionType.CODE: {
-        await this.logicFunctionService.createDraftFromPublishedVersion({
-          id: step.settings.input.logicFunctionId,
-          version: step.settings.input.logicFunctionVersion,
-          workspaceId,
-        });
-
-        return {
-          ...step,
-          settings: {
-            ...step.settings,
-            input: {
-              ...step.settings.input,
-              logicFunctionVersion: 'draft',
-            },
-          },
-        };
-      }
-      default: {
-        return step;
-      }
-    }
+    return step;
   }
 }

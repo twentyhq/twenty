@@ -26,7 +26,6 @@ export const WorkflowReadonlyActionLogicFunction = ({
   action,
 }: WorkflowReadonlyActionLogicFunctionProps) => {
   const logicFunctionId = action.settings.input.logicFunctionId;
-  const logicFunctionVersion = action.settings.input.logicFunctionVersion;
 
   const { availablePackages } = useGetAvailablePackages({
     id: logicFunctionId,
@@ -34,7 +33,6 @@ export const WorkflowReadonlyActionLogicFunction = ({
 
   const { formValues, loading } = useLogicFunctionUpdateFormState({
     logicFunctionId,
-    logicFunctionVersion,
   });
 
   const handleEditorDidMount = async (

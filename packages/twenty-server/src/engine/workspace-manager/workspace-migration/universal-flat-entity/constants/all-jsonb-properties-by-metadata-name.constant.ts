@@ -28,7 +28,6 @@ export const ALL_JSONB_PROPERTIES_BY_METADATA_NAME = {
     cronTriggerSettings: 'cronTriggerSettings',
     databaseEventTriggerSettings: 'databaseEventTriggerSettings',
     httpRouteTriggerSettings: 'httpRouteTriggerSettings',
-    publishedVersions: 'publishedVersions',
     toolInputSchema: 'toolInputSchema',
   },
   webhook: {},

@@ -150,7 +150,6 @@ export class RouteTriggerService {
       id: logicFunction.id,
       workspaceId: logicFunction.workspaceId,
       payload: event,
-      version: 'draft',
     });
 
     if (!isDefined(result)) {

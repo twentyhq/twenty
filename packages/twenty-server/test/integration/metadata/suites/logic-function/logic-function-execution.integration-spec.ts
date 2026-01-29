@@ -66,7 +66,7 @@ describe('Logic Function Execution', () => {
       expectToFail: false,
     });
 
-    expect(publishData?.publishLogicFunction?.latestVersion).toBeDefined();
+    expect(publishData?.publishLogicFunction?.id).toBeDefined();
 
     // Execute with the default template's expected params: { a: string, b: number }
     const { data: executeData } = await executeLogicFunction({
