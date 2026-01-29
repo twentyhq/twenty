@@ -25,8 +25,8 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowEditActionLogicFunctionFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunctionFields';
-import { WorkflowLogicFunctionCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowLogicFunctionCodeEditor';
+import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
+import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
 import {
   type LogicFunctionTestData,
@@ -77,7 +77,7 @@ const StyledFullScreenCodeEditorContainer = styled.div`
   min-height: 0;
 `;
 
-type WorkflowEditActionLogicFunctionProps = {
+type WorkflowEditActionCodeProps = {
   action: WorkflowCodeAction;
   actionOptions:
     | {
@@ -93,10 +93,10 @@ type LogicFunctionInputFormData = {
   [field: string]: string | LogicFunctionInputFormData;
 };
 
-export const WorkflowEditActionLogicFunction = ({
+export const WorkflowEditActionCode = ({
   action,
   actionOptions,
-}: WorkflowEditActionLogicFunctionProps) => {
+}: WorkflowEditActionCodeProps) => {
   const { t } = useLingui();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const isMobile = useIsMobile();
@@ -391,7 +391,7 @@ export const WorkflowEditActionLogicFunction = ({
 
   const fullScreenOverlay = renderFullScreenModal(
     <div data-globally-prevent-click-outside="true">
-      <WorkflowEditActionLogicFunctionFields
+      <WorkflowEditActionCodeFields
         functionInput={functionInput}
         VariablePicker={WorkflowVariablePicker}
         onInputChange={handleInputChange}
@@ -428,13 +428,13 @@ export const WorkflowEditActionLogicFunction = ({
         <WorkflowStepBody>
           {activeTabId === WorkflowLogicFunctionTabId.CODE && (
             <>
-              <WorkflowEditActionLogicFunctionFields
+              <WorkflowEditActionCodeFields
                 functionInput={functionInput}
                 VariablePicker={WorkflowVariablePicker}
                 onInputChange={handleInputChange}
                 readonly={actionOptions.readonly}
               />
-              <WorkflowLogicFunctionCodeEditor
+              <WorkflowCodeEditor
                 value={indexFileContent}
                 onChange={handleCodeChange}
                 onMount={handleEditorDidMount}
@@ -452,7 +452,7 @@ export const WorkflowEditActionLogicFunction = ({
           )}
           {activeTabId === WorkflowLogicFunctionTabId.TEST && (
             <>
-              <WorkflowEditActionLogicFunctionFields
+              <WorkflowEditActionCodeFields
                 functionInput={logicFunctionTestData.input}
                 onInputChange={handleTestInputChange}
                 readonly={actionOptions.readonly}

@@ -24,7 +24,7 @@ const StyledFullScreenButtonContainer = styled.div`
   z-index: 1;
 `;
 
-type WorkflowLogicFunctionCodeEditorProps = {
+type WorkflowCodeEditorProps = {
   value?: string;
   onChange: (value: string) => void;
   onMount: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void;
@@ -34,7 +34,7 @@ type WorkflowLogicFunctionCodeEditorProps = {
   onEnterFullScreen?: () => void;
 };
 
-export const WorkflowLogicFunctionCodeEditor = ({
+export const WorkflowCodeEditor = ({
   value,
   onChange,
   onMount,
@@ -42,7 +42,7 @@ export const WorkflowLogicFunctionCodeEditor = ({
   readonly = false,
   fullScreenMode = false,
   onEnterFullScreen,
-}: WorkflowLogicFunctionCodeEditorProps) => {
+}: WorkflowCodeEditorProps) => {
   const { t } = useLingui();
 
   return (

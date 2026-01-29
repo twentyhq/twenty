@@ -1,5 +1,5 @@
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { WorkflowEditActionLogicFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction';
+import { WorkflowEditActionCode } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { fn } from 'storybook/test';
@@ -75,9 +75,9 @@ const CONFIGURED_ACTION: WorkflowCodeAction = {
   },
 };
 
-const meta: Meta<typeof WorkflowEditActionLogicFunction> = {
+const meta: Meta<typeof WorkflowEditActionCode> = {
   title: 'Modules/Workflow/Actions/Code/EditAction',
-  component: WorkflowEditActionLogicFunction,
+  component: WorkflowEditActionCode,
   parameters: {
     msw: {
       handlers: [
@@ -138,7 +138,7 @@ const meta: Meta<typeof WorkflowEditActionLogicFunction> = {
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowEditActionLogicFunction>;
+type Story = StoryObj<typeof WorkflowEditActionCode>;
 
 export const Default: Story = {
   args: {

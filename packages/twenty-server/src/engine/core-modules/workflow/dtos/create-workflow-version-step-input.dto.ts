@@ -51,4 +51,16 @@ export class CreateWorkflowVersionStepInput {
     nullable: true,
   })
   id?: string;
+
+  @Field(() => String, {
+    description: 'Step name',
+    nullable: true,
+  })
+  name?: string;
+
+  @Field(() => UUIDScalarType, {
+    description: 'Logic function ID',
+    nullable: true,
+  })
+  logicFunctionId?: string;
 }

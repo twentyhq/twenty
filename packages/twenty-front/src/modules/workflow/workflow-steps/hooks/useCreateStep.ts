@@ -36,6 +36,8 @@ export const useCreateStep = () => {
     connectionOptions,
     shouldSelectNode = true,
     workflowVersionId: providedWorkflowVersionId,
+    logicFunctionId,
+    name,
   }: {
     newStepType: WorkflowActionType;
     parentStepId: string | undefined;
@@ -44,6 +46,8 @@ export const useCreateStep = () => {
     connectionOptions?: WorkflowStepConnectionOptions;
     shouldSelectNode?: boolean;
     workflowVersionId?: string;
+    logicFunctionId?: string;
+    name?: string;
   }) => {
     if (isLoading === true) {
       return;
@@ -65,6 +69,8 @@ export const useCreateStep = () => {
           nextStepId,
           position,
           parentStepConnectionOptions: connectionOptions,
+          logicFunctionId,
+          name,
         })
       )?.data?.createWorkflowVersionStep;
 
