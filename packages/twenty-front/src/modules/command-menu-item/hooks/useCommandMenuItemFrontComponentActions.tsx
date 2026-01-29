@@ -47,7 +47,7 @@ const buildActionFromItem = ({
   openFrontComponentInCommandMenu,
 }: BuildActionFromItemParams) => {
   const displayLabel =
-    item.frontComponent?.name ?? item.label ?? t`Front Component`;
+    item.label ?? item.frontComponent?.name ?? t`Front Component`;
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
