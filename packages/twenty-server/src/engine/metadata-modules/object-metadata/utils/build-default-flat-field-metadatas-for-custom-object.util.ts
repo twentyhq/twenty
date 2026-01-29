@@ -15,7 +15,13 @@ import {
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
   flatObjectMetadata: NonNullableRequired<
-    Pick<FlatObjectMetadata, 'id' | 'applicationId' | 'universalIdentifier'>
+    Pick<
+      FlatObjectMetadata,
+      | 'id'
+      | 'applicationId'
+      | 'universalIdentifier'
+      | 'applicationUniversalIdentifier'
+    >
   >;
   skipNameField?: boolean;
 };
@@ -29,6 +35,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   flatObjectMetadata: {
     id: objectMetadataId,
     applicationId,
+    applicationUniversalIdentifier,
     universalIdentifier: objectMetadataUniversalIdentifier,
   },
   skipNameField = false,
@@ -69,7 +76,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
-    applicationUniversalIdentifier: applicationId,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
@@ -119,7 +126,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           settings: null,
           morphId: null,
           applicationId,
-          applicationUniversalIdentifier: applicationId,
+          applicationUniversalIdentifier,
           objectMetadataUniversalIdentifier,
           relationTargetObjectMetadataUniversalIdentifier: null,
           relationTargetFieldMetadataUniversalIdentifier: null,
@@ -166,7 +173,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
-    applicationUniversalIdentifier: applicationId,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
@@ -213,7 +220,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
-    applicationUniversalIdentifier: applicationId,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
@@ -260,7 +267,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
-    applicationUniversalIdentifier: applicationId,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
@@ -306,7 +313,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
-    applicationUniversalIdentifier: applicationId,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
@@ -352,7 +359,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
-    applicationUniversalIdentifier: applicationId,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
@@ -399,7 +406,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
-    applicationUniversalIdentifier: applicationId,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
@@ -451,7 +458,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     },
     morphId: null,
     applicationId,
-    applicationUniversalIdentifier: applicationId,
+    applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,

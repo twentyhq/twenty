@@ -57,6 +57,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
         flatObjectMetadata: {
           id: objectMetadataId,
           applicationId: flatApplication.id,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
           universalIdentifier,
         },
         workspaceId,
