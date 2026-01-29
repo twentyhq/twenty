@@ -52,7 +52,7 @@ export const rule = createRule<[], 'restApiMethodsShouldBeGuarded'>({
   meta: {
     docs: {
       description:
-        'REST API endpoints should have authentication guards (UserAuthGuard, WorkspaceAuthGuard, FilePathGuard, FileIdGuard, or FilesFieldGuard) or be explicitly marked as public (PublicEndpointGuard) and permission guards (SettingsPermissionsGuard or CustomPermissionGuard) to maintain our security model.',
+        'REST API endpoints should have authentication guards (UserAuthGuard, WorkspaceAuthGuard, FilePathGuard, or FilesFieldGuard) or be explicitly marked as public (PublicEndpointGuard) and permission guards (SettingsPermissionsGuard or CustomPermissionGuard) to maintain our security model.',
     },
     messages: {
       restApiMethodsShouldBeGuarded:
