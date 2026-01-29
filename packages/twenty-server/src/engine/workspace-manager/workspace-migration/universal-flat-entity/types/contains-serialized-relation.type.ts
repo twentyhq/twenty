@@ -1,7 +1,7 @@
 import {
-  IsEmptyObject,
-  IsNever,
-  IsSerializedRelation,
+  type IsEmptyObject,
+  type IsNever,
+  type IsSerializedRelation,
 } from 'twenty-shared/types';
 
 type ContainsSerializedRelationInner<T> = T extends unknown

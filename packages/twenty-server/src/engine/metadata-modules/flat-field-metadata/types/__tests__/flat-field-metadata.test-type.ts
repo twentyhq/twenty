@@ -74,7 +74,7 @@ type FlatTransformationAssertions = [
 
 // Any narrowed flatFieldMetadata type should be assignable to non narrowed flatFieldMetadata
 type AbstractFlatFieldMetadata = FlatFieldMetadata<FieldMetadataType>;
-// eslint-disable-next-line unused-imports/no-unused-vars
+
 const _assertion: Record<string, AbstractFlatFieldMetadata> = {
   // Primitive types
   uuid: {} as FlatFieldMetadata<FieldMetadataType.UUID>,
