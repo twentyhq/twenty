@@ -62,7 +62,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     const createdAt = new Date().toISOString();
 
     // Use nameField.id if it exists, otherwise use idField.id (for junction tables without name)
-    const nameField = defaultFlatFieldForCustomObjectMaps.fields.nameField
+    const nameField = defaultFlatFieldForCustomObjectMaps.fields.nameField;
     const labelIdentifierFieldMetadataId =
       nameField?.id ?? defaultFlatFieldForCustomObjectMaps.fields.idField.id;
 

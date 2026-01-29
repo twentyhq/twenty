@@ -4,8 +4,7 @@ import {
 } from 'twenty-shared/types';
 
 export type ContainsSerializedRelation<T> = T extends unknown
-  ?
-    IsSerializedRelation<T> extends true
+  ? IsSerializedRelation<T> extends true
     ? true
     : // Check arrays first to avoid T[keyof T] issues with branded arrays
       T extends readonly (infer U)[]
@@ -18,6 +17,5 @@ export type ContainsSerializedRelation<T> = T extends unknown
             ? true
             : false
           : false
-        :
-          true
+        : true
   : never;

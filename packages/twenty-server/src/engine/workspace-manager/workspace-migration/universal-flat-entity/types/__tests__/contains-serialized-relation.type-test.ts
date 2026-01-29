@@ -30,7 +30,10 @@ type BasicAssertions = [
   // Object with SerializedRelation property returns true
   Expect<
     Equal<
-      ContainsSerializedRelation<{ name: string; targetId: SerializedRelation }>,
+      ContainsSerializedRelation<{
+        name: string;
+        targetId: SerializedRelation;
+      }>,
       true
     >
   >,
@@ -80,17 +83,16 @@ type ArrayAssertions = [
   // Array of objects with SerializedRelation returns true
   Expect<
     Equal<
-      ContainsSerializedRelation<{ id: string; targetId: SerializedRelation }[]>,
+      ContainsSerializedRelation<
+        { id: string; targetId: SerializedRelation }[]
+      >,
       true
     >
   >,
 
   // Array of plain objects returns false
   Expect<
-    Equal<
-      ContainsSerializedRelation<{ name: string; count: number }[]>,
-      false
-    >
+    Equal<ContainsSerializedRelation<{ name: string; count: number }[]>, false>
   >,
 
   // 2D array of SerializedRelation returns true
@@ -158,7 +160,10 @@ type UnionAssertions = [
   // Object with optional SerializedRelation returns true
   Expect<
     Equal<
-      ContainsSerializedRelation<{ name: string; targetId?: SerializedRelation }>,
+      ContainsSerializedRelation<{
+        name: string;
+        targetId?: SerializedRelation;
+      }>,
       true
     >
   >,
