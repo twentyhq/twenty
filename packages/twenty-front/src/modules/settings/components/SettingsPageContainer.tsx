@@ -10,13 +10,20 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
+  fullWidth?: boolean;
+  maxWidth?: number;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
+  max-width: ${({ maxWidth }) =>
+    isDefined(maxWidth) ? maxWidth + 'px' : 'none'};
   overflow: auto;
   padding: ${({ theme }) => theme.spacing(6, 8, 8)};
-  width: ${({ width }) => {
+  width: ${({ width, fullWidth, maxWidth }) => {
+    if (fullWidth || isDefined(maxWidth)) {
+      return '100%';
+    }
     if (isDefined(width)) {
       return width + 'px';
     }
@@ -28,11 +35,17 @@ const StyledSettingsPageContainer = styled.div<{
   padding-bottom: ${({ theme }) => theme.spacing(20)};
 `;
 
+type SettingsPageContainerProps = {
+  children: ReactNode;
+  width?: number | 'full';
+  maxWidth?: number;
+};
+
 export const SettingsPageContainer = ({
   children,
-}: {
-  children: ReactNode;
-}) => {
+  width,
+  maxWidth,
+}: SettingsPageContainerProps) => {
   const location = useLocation();
   const settingsPath = useMemo(() => {
     const sortedPaths = Object.values(SettingsPath).sort(
@@ -50,9 +63,18 @@ export const SettingsPageContainer = ({
 
   useScrollRestoration(componentInstanceId);
 
+  const isFullWidth = width === 'full';
+  const containerWidth = isFullWidth ? undefined : width;
+
   return (
     <ScrollWrapper componentInstanceId={componentInstanceId}>
-      <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
+      <StyledSettingsPageContainer
+        width={containerWidth}
+        fullWidth={isFullWidth}
+        maxWidth={maxWidth}
+      >
+        {children}
+      </StyledSettingsPageContainer>
     </ScrollWrapper>
   );
 };

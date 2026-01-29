@@ -1378,6 +1378,7 @@ export enum FeatureFlagKey {
   IS_FILES_FIELD_ENABLED = 'IS_FILES_FIELD_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
+  IS_MARKETPLACE_ENABLED = 'IS_MARKETPLACE_ENABLED',
   IS_NAVIGATION_MENU_ITEM_ENABLED = 'IS_NAVIGATION_MENU_ITEM_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
@@ -1951,6 +1952,22 @@ export type LogicFunctionLogsInput = {
 export type LoginTokenOutput = {
   __typename?: 'LoginTokenOutput';
   loginToken: AuthToken;
+};
+
+export type MarketplaceApp = {
+  __typename?: 'MarketplaceApp';
+  aboutDescription: Scalars['String'];
+  author: Scalars['String'];
+  category: Scalars['String'];
+  description: Scalars['String'];
+  icon: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
+  providers: Array<Scalars['String']>;
+  screenshots: Array<Scalars['String']>;
+  termsUrl?: Maybe<Scalars['String']>;
+  version: Scalars['String'];
+  websiteUrl?: Maybe<Scalars['String']>;
 };
 
 export enum MessageChannelVisibility {
@@ -3425,6 +3442,7 @@ export type Query = {
   findManyAgents: Array<Agent>;
   findManyApplications: Array<Application>;
   findManyLogicFunctions: Array<LogicFunction>;
+  findManyMarketplaceApps: Array<MarketplaceApp>;
   findManyPublicDomains: Array<PublicDomain>;
   findOneAgent: Agent;
   findOneApplication: Application;

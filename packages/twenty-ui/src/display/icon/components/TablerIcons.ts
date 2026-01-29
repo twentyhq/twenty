@@ -89,6 +89,8 @@ export {
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,
+  IconColumns,
+  IconCommand,
   IconMessageCircle as IconComment,
   IconCopy,
   IconCopyPlus,
@@ -221,6 +223,7 @@ export {
   IconLayersLinked,
   IconLayout,
   IconLayoutDashboard,
+  IconLayoutGrid,
   IconLayoutKanban,
   IconLayoutList,
   IconLayoutNavbar,
@@ -390,7 +393,7 @@ export {
   IconWand,
   IconWebhook,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';
