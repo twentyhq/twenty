@@ -76,6 +76,15 @@ export const ObjectFilterDropdownFilterInput = ({
       </>
     );
   } else if (filterType === 'DATE_TIME') {
+    if (selectedOperandInDropdown === ViewFilterOperand.IS) {
+      return (
+        <>
+          <ObjectFilterDropdownInnerSelectOperandDropdown />
+          <DropdownMenuSeparator />
+          <ObjectFilterDropdownDateInput />
+        </>
+      );
+    }
     return (
       <>
         <ObjectFilterDropdownInnerSelectOperandDropdown />

@@ -87,7 +87,34 @@ export const useGetRecordFilterDisplayValue = () => {
       }
     } else if (recordFilter.type === 'DATE_TIME') {
       switch (recordFilter.operand) {
-        case RecordFilterOperand.IS:
+        case RecordFilterOperand.IS: {
+          if (!isNonEmptyString(recordFilter.value)) {
+            return '';
+          }
+
+          const isPlainDate = /^\d{4}-\d{2}-\d{2}$/.test(recordFilter.value);
+
+          if (isPlainDate) {
+            const zonedDateTime = Temporal.PlainDate.from(
+              recordFilter.value,
+            ).toZonedDateTime(userTimezone);
+            const { displayValue } = getDateFilterDisplayValue(zonedDateTime);
+            return `${displayValue}`;
+          } else {
+            const isValidInstant =
+              /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$/.test(
+                recordFilter.value,
+              );
+            if (!isValidInstant) {
+              return '';
+            }
+            const zonedDateTime = Temporal.Instant.from(
+              recordFilter.value,
+            ).toZonedDateTimeISO(userTimezone);
+            const { displayValue } = getDateFilterDisplayValue(zonedDateTime);
+            return `${displayValue}`;
+          }
+        }
         case RecordFilterOperand.IS_AFTER:
         case RecordFilterOperand.IS_BEFORE: {
           if (!isNonEmptyString(recordFilter.value)) {

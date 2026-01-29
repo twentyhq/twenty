@@ -44,6 +44,14 @@ export const useGetInitialFilterValue = () => {
             alreadyExistingZonedDateTime ??
             Temporal.Now.zonedDateTimeISO(userTimezone);
 
+          if (newOperand === RecordFilterOperand.IS) {
+            const value = referenceDate.toInstant().toString();
+
+            const { displayValue } = getDateFilterDisplayValue(referenceDate);
+
+            return { value, displayValue };
+          }
+
           const value = referenceDate.toInstant().toString();
 
           const { displayValue } = getDateTimeFilterDisplayValue(referenceDate);
