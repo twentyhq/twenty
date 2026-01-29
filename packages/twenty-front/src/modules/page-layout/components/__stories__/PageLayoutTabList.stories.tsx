@@ -11,6 +11,7 @@ import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabL
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
+import { PageLayoutType } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.strong};
@@ -163,6 +164,7 @@ const PageLayoutTabListPlayground = ({
         onAddTab={isReorderEnabled ? handleAddTab : undefined}
         isReorderEnabled={isReorderEnabled}
         onReorder={isReorderEnabled ? handleReorder : undefined}
+        pageLayoutType={PageLayoutType.DASHBOARD}
       />
     </StyledContainer>
   );

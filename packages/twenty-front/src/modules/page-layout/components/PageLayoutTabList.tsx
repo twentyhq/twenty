@@ -37,10 +37,12 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutTabListCurrentDragDroppableIdComponentState } from '@/page-layout/states/pageLayoutTabListCurrentDragDroppableIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type PageLayoutType } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -75,6 +77,7 @@ type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
   onAddTab?: () => void;
   onReorder?: (result: DropResult, provided: ResponderProvided) => boolean;
   behaveAsLinks: boolean;
+  pageLayoutType: PageLayoutType | null;
 };
 
 export const PageLayoutTabList = ({
@@ -88,6 +91,7 @@ export const PageLayoutTabList = ({
   onAddTab,
   isReorderEnabled,
   onReorder,
+  pageLayoutType,
 }: PageLayoutTabListProps) => {
   const { getIcon } = useIcons();
 
@@ -229,17 +233,22 @@ export const PageLayoutTabList = ({
 
   const handleSelectTab = useCallback(
     (tabId: string) => {
-      if (isPageLayoutInEditMode && activeTabId === tabId) {
+      const shouldOpenSettings =
+        isPageLayoutInEditMode &&
+        shouldEnableTabEditingFeatures(pageLayoutType);
+
+      if (shouldOpenSettings === true && activeTabId === tabId) {
         openTabSettings(tabId);
         return;
       }
-      if (isPageLayoutInEditMode && isTabSettingsOpen) {
+      if (shouldOpenSettings === true && isTabSettingsOpen === true) {
         openTabSettings(tabId);
       }
       selectTab(tabId);
     },
     [
       isPageLayoutInEditMode,
+      pageLayoutType,
       activeTabId,
       isTabSettingsOpen,
       openTabSettings,
@@ -249,18 +258,23 @@ export const PageLayoutTabList = ({
 
   const handleSelectTabFromDropdown = useCallback(
     (tabId: string) => {
-      if (isPageLayoutInEditMode && activeTabId === tabId) {
+      const shouldOpenSettings =
+        isPageLayoutInEditMode &&
+        shouldEnableTabEditingFeatures(pageLayoutType);
+
+      if (shouldOpenSettings === true && activeTabId === tabId) {
         openTabSettings(tabId);
         closeOverflowDropdown();
         return;
       }
-      if (isPageLayoutInEditMode && isTabSettingsOpen) {
+      if (shouldOpenSettings === true && isTabSettingsOpen === true) {
         openTabSettings(tabId);
       }
       selectTabFromDropdown(tabId);
     },
     [
       isPageLayoutInEditMode,
+      pageLayoutType,
       activeTabId,
       isTabSettingsOpen,
       openTabSettings,

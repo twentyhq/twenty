@@ -14,6 +14,7 @@ import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
+import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -66,16 +67,18 @@ export const PageLayoutRendererContent = () => {
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  const handleAddTab = isPageLayoutInEditMode
-    ? () => {
-        const newTabId = createPageLayoutTab(t`Untitled`);
-        setTabSettingsOpenTabId(newTabId);
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
-          focusTitleInput: true,
-        });
-      }
-    : undefined;
+  const handleAddTab =
+    isPageLayoutInEditMode &&
+    shouldEnableTabEditingFeatures(currentPageLayout?.type ?? null)
+      ? () => {
+          const newTabId = createPageLayoutTab(t`Untitled`);
+          setTabSettingsOpenTabId(newTabId);
+          navigatePageLayoutCommandMenu({
+            commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+            focusTitleInput: true,
+          });
+        }
+      : undefined;
 
   const isMobile = useIsMobile();
 
@@ -125,6 +128,7 @@ export const PageLayoutRendererContent = () => {
             onAddTab={handleAddTab}
             isReorderEnabled={isPageLayoutInEditMode}
             onReorder={isPageLayoutInEditMode ? reorderTabs : undefined}
+            pageLayoutType={currentPageLayout.type}
           />
         )}
 
