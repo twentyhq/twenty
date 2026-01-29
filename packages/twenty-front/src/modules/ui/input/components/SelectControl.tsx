@@ -1,5 +1,6 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { css, useTheme } from '@emotion/react';
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
@@ -53,7 +54,10 @@ export const StyledControlContainer = styled.div<{
   text-align: left;
 `;
 
-export const StyledSelectControlIconChevronDown = styled(IconChevronDown)<{
+export const StyledSelectControlIconChevronDown = styled(IconChevronDown, {
+  shouldForwardProp: (prop) =>
+    isPropValid(prop) && prop !== 'disabled',
+})<{
   disabled?: boolean;
 }>`
   color: ${({ disabled, theme }) =>

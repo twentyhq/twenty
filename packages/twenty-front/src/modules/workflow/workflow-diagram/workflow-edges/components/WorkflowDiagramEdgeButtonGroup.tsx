@@ -1,9 +1,13 @@
+import { css } from '@emotion/react';
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
 
-const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
+const StyledIconButtonGroup = styled(IconButtonGroup, {
+  shouldForwardProp: (prop) =>
+    isPropValid(prop) && prop !== 'selected',
+})<{ selected?: boolean }>`
   pointer-events: all;
 
   ${({ selected, theme }) => {

@@ -1,3 +1,4 @@
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { IconChevronDown } from 'twenty-ui/display';
 
@@ -29,7 +30,10 @@ export const StyledLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-export const StyledIconChevronDown = styled(IconChevronDown)<{
+export const StyledIconChevronDown = styled(IconChevronDown, {
+  shouldForwardProp: (prop) =>
+    isPropValid(prop) && prop !== 'disabled',
+})<{
   disabled?: boolean;
 }>`
   align-items: center;
