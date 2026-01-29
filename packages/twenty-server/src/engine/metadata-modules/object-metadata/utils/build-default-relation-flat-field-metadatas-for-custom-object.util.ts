@@ -2,6 +2,7 @@ import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -53,7 +54,7 @@ export type BuildDefaultRelationFieldsForCustomObjectArgs = {
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   workspaceId: string;
   sourceFlatObjectMetadata: FlatObjectMetadata;
-  workspaceCustomApplicationId: string;
+  flatApplication: FlatApplication;
 };
 
 type SourceAndTargetFlatFieldMetadatasRecord = {
@@ -71,7 +72,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,
   workspaceId,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: BuildDefaultRelationFieldsForCustomObjectArgs): SourceAndTargetFlatFieldMetadatasRecord => {
   const objectIdByNameSingular = Object.values(
     existingFlatObjectMetadataMaps.byId,
@@ -156,7 +157,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
               ? FieldMetadataType.MORPH_RELATION
               : FieldMetadataType.RELATION,
             workspaceId,
-            workspaceCustomApplicationId,
+            flatApplication,
             sourceFlatObjectMetadataJoinColumnName: joinColumnName,
             morphId,
             targetFieldName: fieldName,

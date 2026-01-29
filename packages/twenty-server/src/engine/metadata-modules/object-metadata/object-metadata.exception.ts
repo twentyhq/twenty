@@ -10,6 +10,7 @@ export enum ObjectMetadataExceptionCode {
   INVALID_OBJECT_INPUT = 'INVALID_OBJECT_INPUT',
   OBJECT_MUTATION_NOT_ALLOWED = 'OBJECT_MUTATION_NOT_ALLOWED',
   OBJECT_ALREADY_EXISTS = 'OBJECT_ALREADY_EXISTS',
+  APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
   MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD = 'MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD',
   INVALID_ORM_OUTPUT = 'INVALID_ORM_OUTPUT',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
@@ -28,6 +29,8 @@ const getObjectMetadataExceptionUserFriendlyMessage = (
       return msg`This object cannot be modified.`;
     case ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS:
       return msg`An object with this name already exists.`;
+    case ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND:
+      return msg`Application not found.`;
     case ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD:
       return msg`Custom object is missing a label identifier field.`;
     case ObjectMetadataExceptionCode.INVALID_ORM_OUTPUT:

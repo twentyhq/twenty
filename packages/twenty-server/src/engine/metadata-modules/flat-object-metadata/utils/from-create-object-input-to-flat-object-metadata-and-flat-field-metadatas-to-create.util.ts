@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -19,14 +20,14 @@ type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs 
   {
     createObjectInput: CreateObjectInput;
     workspaceId: string;
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
     existingFeatureFlagsMap: FeatureFlagMap;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,
     workspaceId,
-    workspaceCustomApplicationId,
+    flatApplication,
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     existingFeatureFlagsMap,
   }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
@@ -54,7 +55,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           id: objectMetadataId,
-          applicationId: workspaceCustomApplicationId,
+          applicationId: flatApplication.id,
         },
         workspaceId,
         skipNameField: createObjectInput.skipNameField,
@@ -98,11 +99,11 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       shortcut: createObjectInput.shortcut ?? null,
       standardId: createObjectInput.standardId ?? null,
       standardOverrides: null,
-      applicationId: workspaceCustomApplicationId,
+      applicationId: flatApplication.id,
       universalIdentifier,
       targetTableName: 'DEPRECATED',
       workspaceId,
-      applicationUniversalIdentifier: workspaceCustomApplicationId,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
       fieldUniversalIdentifiers: [],
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
@@ -117,7 +118,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       existingFlatObjectMetadataMaps,
       sourceFlatObjectMetadata: flatObjectMetadataToCreate,
       workspaceId,
-      workspaceCustomApplicationId,
+      flatApplication,
       existingFeatureFlagsMap,
     });
 
