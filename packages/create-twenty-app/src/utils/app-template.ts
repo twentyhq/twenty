@@ -71,7 +71,11 @@ generated
 
 # dev
 /dist/
-.twenty
+
+.twenty/*
+!.twenty/output/
+.twenty/output/*
+!.twenty/output/manifest.json
 
 # production
 /build
