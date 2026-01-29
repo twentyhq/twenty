@@ -1,6 +1,6 @@
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { jsxTransformPluginToRemoteDomWorkerFormat } from '@/cli/utilities/build/common/jsx-transform-plugin-to-remote-dom-worker-format';
+import { jsxTransformPluginToRemoteDomWorkerFormat } from '@/cli/utilities/build/common/front-component-build/jsx-transform-plugin-to-remote-dom-worker-format';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
