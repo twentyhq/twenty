@@ -4561,6 +4561,7 @@ export type UpdateCommandMenuItemInput = {
   id: Scalars['UUID'];
   isPinned?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<Scalars['String']>;
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateFieldInput = {
