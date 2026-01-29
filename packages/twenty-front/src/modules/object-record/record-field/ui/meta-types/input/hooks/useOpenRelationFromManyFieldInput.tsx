@@ -40,14 +40,15 @@ export const useOpenRelationFromManyFieldInput = () => {
           prefix,
         });
 
-        const fieldValue = snapshot
-          .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
-            recordStoreFamilySelector({
-              recordId,
-              fieldName,
-            }),
-          )
-          .getValue();
+        const fieldValue =
+          snapshot
+            .getLoadable<FieldRelationValue<FieldRelationFromManyValue>>(
+              recordStoreFamilySelector({
+                recordId,
+                fieldName,
+              }),
+            )
+            .getValue() ?? [];
 
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)

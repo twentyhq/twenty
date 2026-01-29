@@ -226,12 +226,19 @@ describe('WorkspaceEntityManager', () => {
         IS_NAVIGATION_MENU_ITEM_ENABLED: false,
         IS_FILES_FIELD_ENABLED: false,
         IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED: false,
+        IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
         emitDatabaseBatchEvent: jest.fn(),
         emitCustomBatchEvent: jest.fn(),
+      } as any,
+      coreDataSource: {
+        getRepository: jest.fn(() => ({
+          find: jest.fn(),
+          softDelete: jest.fn(),
+        })),
       } as any,
     } as WorkspaceInternalContext;
 
@@ -249,6 +256,7 @@ describe('WorkspaceEntityManager', () => {
       },
       permissionsPerRoleId: {},
       eventEmitterService: mockInternalContext.eventEmitterService,
+      coreDataSource: mockInternalContext.coreDataSource,
     } as GlobalWorkspaceDataSource;
 
     mockPermissionOptions = {
@@ -304,6 +312,7 @@ describe('WorkspaceEntityManager', () => {
         findColumnWithPropertyPath: jest.fn(),
       }),
       eventEmitterService: mockInternalContext.eventEmitterService,
+      coreDataSource: mockInternalContext.coreDataSource,
       createQueryBuilder: jest.fn().mockReturnValue({
         delete: jest.fn().mockReturnThis(),
         from: jest.fn().mockReturnThis(),

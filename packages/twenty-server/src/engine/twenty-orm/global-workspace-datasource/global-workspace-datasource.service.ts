@@ -3,8 +3,10 @@ import {
   OnApplicationShutdown,
   OnModuleInit,
 } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
@@ -21,6 +23,8 @@ export class GlobalWorkspaceDataSourceService
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -49,6 +53,7 @@ export class GlobalWorkspaceDataSourceService
         },
       },
       this.workspaceEventEmitter,
+      this.coreDataSource,
     );
 
     await this.globalWorkspaceDataSource.initialize();
@@ -83,6 +88,7 @@ export class GlobalWorkspaceDataSourceService
           },
         },
         this.workspaceEventEmitter,
+        this.coreDataSource,
       );
       await this.globalWorkspaceDataSourceReplica.initialize();
     }

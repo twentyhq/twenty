@@ -21,7 +21,6 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
             type: 'update',
             metadataName: 'fieldMetadata',
             entityId: 'search-vector-field-1',
-            objectMetadataId: 'object-1',
             updates: [
               {
                 property: 'label',
@@ -34,7 +33,6 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
             type: 'update',
             metadataName: 'fieldMetadata',
             entityId: 'regular-field-1',
-            objectMetadataId: 'object-1',
             updates: [
               {
                 property: 'label',
@@ -47,7 +45,6 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
             type: 'update',
             metadataName: 'fieldMetadata',
             entityId: 'regular-field-2',
-            objectMetadataId: 'object-1',
             updates: [
               {
                 property: 'label',
