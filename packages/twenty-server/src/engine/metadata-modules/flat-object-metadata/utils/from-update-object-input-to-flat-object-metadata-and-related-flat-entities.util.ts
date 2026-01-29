@@ -2,6 +2,7 @@ import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -22,6 +23,7 @@ import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   updateObjectInput: UpdateOneObjectInput;
+  locale?: keyof typeof APP_LOCALES;
 } & Pick<
   AllFlatEntityMaps,
   | 'flatIndexMaps'
@@ -39,6 +41,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     flatFieldMetadataMaps,
     flatViewFieldMaps,
     flatViewMaps,
+    locale,
   }: FromUpdateObjectInputToFlatObjectMetadataArgs): FlatObjectMetadataUpdateSideEffects & {
     flatObjectMetadataToUpdate: FlatObjectMetadata;
   } => {
@@ -65,6 +68,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       sanitizeRawUpdateObjectInput({
         existingFlatObjectMetadata,
         rawUpdateObjectInput,
+        locale,
       });
 
     const toFlatObjectMetadata = {

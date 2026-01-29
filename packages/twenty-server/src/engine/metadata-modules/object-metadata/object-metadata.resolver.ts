@@ -163,6 +163,7 @@ export class ObjectMetadataResolver {
         await this.objectMetadataService.updateOneObject({
           updateObjectInput,
           workspaceId,
+          locale: context.req.locale,
         });
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
