@@ -19,8 +19,7 @@ const StyledTitleLabel = styled.div`
 `;
 
 const StyledChevronIcon = styled(IconChevronDown, {
-  shouldForwardProp: (prop) =>
-    isPropValid(prop) && prop !== 'isExpanded',
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isExpanded',
 })<{ isExpanded: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   transform: ${({ isExpanded }) =>

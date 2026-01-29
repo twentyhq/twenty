@@ -5,8 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui/display';
 
 const StyledBanner = styled(Banner, {
-  shouldForwardProp: (prop) =>
-    isPropValid(prop) && prop !== 'allMatched',
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'allMatched',
 })<{ allMatched: boolean }>`
   background: ${({ allMatched, theme }) =>
     allMatched ? theme.accent.secondary : theme.background.transparent.light};
@@ -15,8 +14,7 @@ const StyledBanner = styled(Banner, {
 `;
 
 const StyledText = styled('div', {
-  shouldForwardProp: (prop) =>
-    isPropValid(prop) && prop !== 'allMatched',
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'allMatched',
 })<{ allMatched: boolean }>`
   color: ${({ allMatched, theme }) =>
     allMatched ? theme.color.blue : theme.font.color.secondary};
