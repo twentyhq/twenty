@@ -1,7 +1,8 @@
+import { Action } from '@/action-menu/actions/components/Action';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { CommandMenuItemFrontComponentDisplay } from '@/command-menu-item/components/CommandMenuItemFrontComponentDisplay';
+import { useOpenFrontComponentInCommandMenu } from '@/command-menu/hooks/useOpenFrontComponentInCommandMenu';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -35,6 +36,11 @@ const buildActionFromItem = (
   index: number,
   isPinned: boolean,
   getIcon: GetIcon,
+  openFrontComponentInCommandMenu: (params: {
+    frontComponentId: string;
+    pageTitle: string;
+    pageIcon: IconComponent;
+  }) => void,
 ) => {
   const displayLabel =
     item.frontComponent?.name ?? item.label ?? t`Front Component`;
@@ -52,11 +58,15 @@ const buildActionFromItem = (
     Icon,
     shouldBeRegistered: () => true,
     component: (
-      <CommandMenuItemFrontComponentDisplay
-        frontComponentId={item.frontComponentId}
-        displayLabel={displayLabel}
-        itemKey={`command-menu-item-front-component-${item.id}`}
-        Icon={Icon}
+      <Action
+        onClick={() =>
+          openFrontComponentInCommandMenu({
+            frontComponentId: item.frontComponentId,
+            pageTitle: displayLabel,
+            pageIcon: Icon,
+          })
+        }
+        closeSidePanelOnCommandMenuListActionExecution={false}
       />
     ),
   };
@@ -64,6 +74,8 @@ const buildActionFromItem = (
 
 export const useCommandMenuItemFrontComponentActions = () => {
   const { getIcon } = useIcons();
+  const { openFrontComponentInCommandMenu } =
+    useOpenFrontComponentInCommandMenu();
 
   const isPageInEditMode = useRecoilComponentValue(
     contextStoreIsPageInEditModeComponentState,
@@ -125,6 +137,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       index,
       !isPageInEditMode && item.isPinned,
       getIcon,
+      openFrontComponentInCommandMenu,
     ),
   );
 
@@ -135,6 +148,7 @@ export const useCommandMenuItemFrontComponentActions = () => {
       index,
       !isPageInEditMode && item.isPinned,
       getIcon,
+      openFrontComponentInCommandMenu,
     ),
   );
 
