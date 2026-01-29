@@ -1,11 +1,15 @@
-import { SettingsSearchInput } from '@/settings/components/SettingsSearchInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
 import { type AvailableApplication } from '~/pages/settings/applications/types/availableApplication';
+
+const StyledSearchInputContainer = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+`;
 
 const StyledCardsGrid = styled.div`
   display: grid;
@@ -52,12 +56,13 @@ export const SettingsApplicationsAvailableTab = () => {
 
   return (
     <Section>
-      <SettingsSearchInput
-        instanceId="available-apps-search"
-        placeholder={t`Search an application`}
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-      />
+      <StyledSearchInputContainer>
+        <SearchInput
+          placeholder={t`Search an application`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      </StyledSearchInputContainer>
 
       {filteredApplications.length === 0 ? (
         <StyledEmptyState>{t`No applications available`}</StyledEmptyState>
