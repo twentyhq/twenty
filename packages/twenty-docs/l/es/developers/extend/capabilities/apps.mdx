@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Carpeta de recursos públicos (imágenes, fuentes, etc.)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Requerido - configuración principal de la aplicación
+    default-function.role.ts       # Rol predeterminado para funciones sin servidor
+    hello-world.function.ts        # Ejemplo de función sin servidor
+    hello-world.front-component.tsx # Ejemplo de componente frontal
+    // tus entidades (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Convención sobre configuración
@@ -162,6 +163,7 @@ A grandes rasgos:
 * **.nvmrc**: Fija la versión de Node.js esperada por el proyecto.
 * **eslint.config.mjs** y **tsconfig.json**: Proporcionan linting y configuración de TypeScript para las fuentes de TypeScript de tu aplicación.
 * **README.md**: Un README breve en la raíz de la aplicación con instrucciones básicas.
+* **public/**: Una carpeta para almacenar recursos públicos (imágenes, fuentes, archivos estáticos) que se servirán con tu aplicación. Los archivos colocados aquí se cargan durante la sincronización y son accesibles en tiempo de ejecución.
 * **src/**: El lugar principal donde defines tu aplicación como código:
   * `application.config.ts`: Configuración global de tu aplicación (metadatos y vinculación en tiempo de ejecución). Consulta "Configuración de la aplicación" más abajo.
   * `*.role.ts`: Definiciones de roles usadas por tus funciones de lógica. Consulta "Rol de función predeterminado" más abajo.

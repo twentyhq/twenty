@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Dossier de ressources publiques (images, polices, etc.)
   src/
     application.config.ts          # Obligatoire - configuration principale de l'application
     default-function.role.ts       # Rôle par défaut pour les fonctions serverless
@@ -162,6 +163,7 @@ Dans les grandes lignes :
 * **.nvmrc** : Fige la version de Node.js attendue par le projet.
 * **eslint.config.mjs** et **tsconfig.json** : Fournissent la configuration de linting et TypeScript pour les sources TypeScript de votre application.
 * **README.md** : Un bref README à la racine de l’application avec des instructions de base.
+* **public/**: Un dossier pour stocker des ressources publiques (images, polices, fichiers statiques) qui seront servies avec votre application. Les fichiers placés ici sont téléversés lors de la synchronisation et accessibles à l'exécution.
 * **src/** : L’endroit principal où vous définissez votre application sous forme de code :
   * `application.config.ts` : Configuration globale de votre application (métadonnées et liaisons d’exécution). Voir « Configuration de l’application » ci-dessous.
   * `*.role.ts` : Définitions de rôles utilisées par vos fonctions logiques. Voir « Rôle de fonction par défaut » ci-dessous.

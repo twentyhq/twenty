@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Povinné – hlavní konfigurace aplikace
+    default-function.role.ts       # Výchozí role pro bezserverové funkce
+    hello-world.function.ts        # Ukázková bezserverová funkce
+    hello-world.front-component.tsx # Ukázková front-endová komponenta
+    // vaše entity (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Konvence před konfigurací
@@ -162,6 +163,7 @@ V kostce:
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
 * **eslint.config.mjs** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
 * **README.md**: Krátké README v kořeni aplikace se základními pokyny.
+* **public/**: Složka pro ukládání veřejných prostředků (obrázky, písma, statické soubory), které bude vaše aplikace poskytovat. Soubory umístěné zde se během synchronizace nahrají a jsou za běhu dostupné.
 * **src/**: Hlavní místo, kde definujete svou aplikaci jako kód:
   * `application.config.ts`: Globální konfigurace vaší aplikace (metadata a napojení za běhu). Viz „Konfigurace aplikace“ níže.
   * `*.role.ts`: Definice rolí používané vašimi logickými funkcemi. Viz „Výchozí role funkce“ níže.
