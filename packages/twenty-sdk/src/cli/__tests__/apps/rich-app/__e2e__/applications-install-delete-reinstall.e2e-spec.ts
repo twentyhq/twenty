@@ -1,7 +1,7 @@
 import { getTestedApplicationPath } from '@/cli/__tests__/e2e/utils/get-tested-application-path.util';
 import { runAppDev } from '@/cli/__tests__/integration/utils/run-app-dev.util';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 import { AppUninstallCommand } from '@/cli/commands/app/app-uninstall';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { inspect } from 'util';

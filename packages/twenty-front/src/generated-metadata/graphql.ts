@@ -1547,7 +1547,6 @@ export type File = {
 
 export enum FileFolder {
   AgentChat = 'AgentChat',
-  Asset = 'Asset',
   Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
   BuiltFunction = 'BuiltFunction',
@@ -1557,6 +1556,7 @@ export enum FileFolder {
   LogicFunctionToDelete = 'LogicFunctionToDelete',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
+  PublicAsset = 'PublicAsset',
   Source = 'Source',
   TemporaryFilesField = 'TemporaryFilesField',
   WorkspaceLogo = 'WorkspaceLogo'
@@ -1589,11 +1589,6 @@ export type FrontComponent = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type FrontComponentCode = {
-  __typename?: 'FrontComponentCode';
-  sourceCode: Scalars['String'];
 };
 
 export type FrontComponentConfiguration = {
@@ -3576,7 +3571,6 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
-  getFrontComponentCode: FrontComponentCode;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -3787,11 +3781,6 @@ export type QueryGetCoreViewsArgs = {
 
 export type QueryGetDatabaseConfigVariableArgs = {
   key: Scalars['String'];
-};
-
-
-export type QueryGetFrontComponentCodeArgs = {
-  id: Scalars['UUID'];
 };
 
 
@@ -5976,13 +5965,6 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]
 
 
 export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
-
-export type GetFrontComponentCodeQueryVariables = Exact<{
-  id: Scalars['UUID'];
-}>;
-
-
-export type GetFrontComponentCodeQuery = { __typename?: 'Query', getFrontComponentCode: { __typename?: 'FrontComponentCode', sourceCode: string } };
 
 export type BarChartDataQueryVariables = Exact<{
   input: BarChartDataInput;
@@ -10754,41 +10736,6 @@ export function useSkipSyncEmailOnboardingStepMutation(baseOptions?: Apollo.Muta
 export type SkipSyncEmailOnboardingStepMutationHookResult = ReturnType<typeof useSkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationResult = Apollo.MutationResult<SkipSyncEmailOnboardingStepMutation>;
 export type SkipSyncEmailOnboardingStepMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailOnboardingStepMutation, SkipSyncEmailOnboardingStepMutationVariables>;
-export const GetFrontComponentCodeDocument = gql`
-    query GetFrontComponentCode($id: UUID!) {
-  getFrontComponentCode(id: $id) {
-    sourceCode
-  }
-}
-    `;
-
-/**
- * __useGetFrontComponentCodeQuery__
- *
- * To run a query within a React component, call `useGetFrontComponentCodeQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetFrontComponentCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetFrontComponentCodeQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetFrontComponentCodeQuery(baseOptions: Apollo.QueryHookOptions<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>(GetFrontComponentCodeDocument, options);
-      }
-export function useGetFrontComponentCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>(GetFrontComponentCodeDocument, options);
-        }
-export type GetFrontComponentCodeQueryHookResult = ReturnType<typeof useGetFrontComponentCodeQuery>;
-export type GetFrontComponentCodeLazyQueryHookResult = ReturnType<typeof useGetFrontComponentCodeLazyQuery>;
-export type GetFrontComponentCodeQueryResult = Apollo.QueryResult<GetFrontComponentCodeQuery, GetFrontComponentCodeQueryVariables>;
 export const BarChartDataDocument = gql`
     query BarChartData($input: BarChartDataInput!) {
   barChartData(input: $input) {

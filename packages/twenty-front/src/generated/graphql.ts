@@ -1514,7 +1514,6 @@ export type File = {
 
 export enum FileFolder {
   AgentChat = 'AgentChat',
-  Asset = 'Asset',
   Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
   BuiltFunction = 'BuiltFunction',
@@ -1524,6 +1523,7 @@ export enum FileFolder {
   LogicFunctionToDelete = 'LogicFunctionToDelete',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
+  PublicAsset = 'PublicAsset',
   Source = 'Source',
   TemporaryFilesField = 'TemporaryFilesField',
   WorkspaceLogo = 'WorkspaceLogo'
@@ -1556,11 +1556,6 @@ export type FrontComponent = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type FrontComponentCode = {
-  __typename?: 'FrontComponentCode';
-  sourceCode: Scalars['String'];
 };
 
 export type FrontComponentConfiguration = {

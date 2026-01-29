@@ -9,7 +9,7 @@ export enum FileFolder {
   AgentChat = 'agent-chat',
   BuiltFunction = 'built-function',
   BuiltFrontComponent = 'built-front-component',
-  Asset = 'asset',
+  PublicAsset = 'public-asset',
   Source = 'source',
   TemporaryFilesField = 'temporary-files-field',
   FilesField = 'files-field',

@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 
 export const defineEntitiesTests = (appPath: string): void => {
   const outputDir = join(appPath, OUTPUT_DIR);
@@ -11,6 +11,8 @@ export const defineEntitiesTests = (appPath: string): void => {
 
       expect(sortedFiles).toEqual([
         'manifest.json',
+        'public',
+        'public/favicon.png',
         'src',
         'src/components',
         'src/components/card.front-component.mjs',
