@@ -16,7 +16,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import { ExecuteLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
 import { GetLogicFunctionSourceCodeInput } from 'src/engine/metadata-modules/logic-function/dtos/get-logic-function-source-code.input';
-import { PublishLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/publish-logic-function.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionIdInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-id.input';
 import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.dto';
@@ -204,29 +203,6 @@ export class LogicFunctionResolver {
         id,
         workspaceId,
         payload,
-      });
-    } catch (error) {
-      return logicFunctionGraphQLApiExceptionHandler(error);
-    }
-  }
-
-  @Mutation(() => LogicFunctionDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
-  async publishLogicFunction(
-    @Args('input') input: PublishLogicFunctionInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<LogicFunctionDTO> {
-    try {
-      const { id } = input;
-
-      const flatLogicFunction =
-        await this.logicFunctionService.publishOneLogicFunctionOrFail(
-          id,
-          workspaceId,
-        );
-
-      return fromFlatLogicFunctionToLogicFunctionDto({
-        flatLogicFunction,
       });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);

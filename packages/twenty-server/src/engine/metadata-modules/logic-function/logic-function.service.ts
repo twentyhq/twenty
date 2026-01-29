@@ -260,24 +260,6 @@ export class LogicFunctionService {
     return resultLogicFunction;
   }
 
-  async publishOneLogicFunctionOrFail(
-    id: string,
-    workspaceId: string,
-  ): Promise<FlatLogicFunction> {
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    return findFlatLogicFunctionOrThrow({
-      id,
-      flatLogicFunctionMaps,
-    });
-  }
-
   async deleteOneLogicFunction({
     id,
     workspaceId,
