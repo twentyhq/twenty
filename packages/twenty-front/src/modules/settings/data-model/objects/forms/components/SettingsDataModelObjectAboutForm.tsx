@@ -134,8 +134,14 @@ export const SettingsDataModelObjectAboutForm = ({
         : t`Input must be in camel case and cannot start with a number`
       : t`Can't change API names for standard objects`;
 
+  const containsNonAscii = (str: string) => /[^\x00-\x7F]/.test(str);
+
   const fillLabelPlural = (labelSingular: string | undefined) => {
     if (!isDefined(labelSingular)) return;
+
+    if (containsNonAscii(labelSingular)) {
+      return;
+    }
 
     const labelPluralFromSingularLabel = plural(labelSingular);
     setValue('labelPlural', labelPluralFromSingularLabel, {
