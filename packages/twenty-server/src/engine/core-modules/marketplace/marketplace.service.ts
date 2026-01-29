@@ -18,12 +18,40 @@ const GITHUB_RAW_BASE_URL =
 const GITHUB_API_BASE_URL =
   'https://api.github.com/repos/twentyhq/twenty/contents/packages/twenty-apps';
 
+const CACHE_TTL_MS = 5 * 60 * 1000;
+
 @Injectable()
 export class MarketplaceService {
   private readonly logger = new Logger(MarketplaceService.name);
 
+  private cachedApps: MarketplaceAppDTO[] | null = null;
+  private cacheTimestamp: number | null = null;
+
   async findAllMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
+    if (this.isCacheValid()) {
+      return this.cachedApps as MarketplaceAppDTO[];
+    }
+
+    const apps = await this.fetchAllMarketplaceApps();
+
+    this.cachedApps = apps;
+    this.cacheTimestamp = Date.now();
+
+    return apps;
+  }
+
+  private isCacheValid(): boolean {
+    if (this.cachedApps === null || this.cacheTimestamp === null) {
+      return false;
+    }
+
+    return Date.now() - this.cacheTimestamp < CACHE_TTL_MS;
+  }
+
+  private async fetchAllMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
     const apps: MarketplaceAppDTO[] = [];
+
+    apps.push(this.loadMockApp());
 
     try {
       const appDirs = await this.getAppDirectoriesFromGitHub();
@@ -68,6 +96,33 @@ export class MarketplaceService {
     }
 
     return apps;
+  }
+
+  private loadMockApp(): MarketplaceAppDTO {
+    // SVG logo as data URL
+    const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#1a2744"><ellipse cx="38" cy="20" rx="28" ry="10"/><rect x="10" y="20" width="56" height="50"/><ellipse cx="38" cy="70" rx="28" ry="10"/><ellipse cx="38" cy="35" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="38" cy="52" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><circle cx="72" cy="62" r="22" fill="#1a2744"/><circle cx="72" cy="62" r="18" fill="#fff"/><path d="M72 50 L72 74 M62 58 L72 48 L82 58" stroke="#1a2744" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+    const logoDataUrl = `data:image/svg+xml,${encodeURIComponent(logoSvg)}`;
+
+    return {
+      id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+      name: 'Data Enrichment',
+      description: 'Enrich your data easily. Choose your provider.',
+      icon: 'IconSparkles',
+      version: '1.0.0',
+      author: 'Cosmos Labs',
+      category: 'Data',
+      logo: logoDataUrl,
+      screenshots: [
+        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+1',
+        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+2',
+        'https://placehold.co/800x400/f5f5f5/666?text=Screenshot+3',
+      ],
+      aboutDescription:
+        'Enhance your workspace with automated data intelligence. This app monitors your new records and automatically populates missing details such as job titles, company size, social profiles, and industry insights.',
+      providers: ['Clearbit', 'Apollo', 'Hunter.io'],
+      websiteUrl: 'https://google.com',
+      termsUrl: 'https://google.com',
+    };
   }
 
   private async getAppDirectoriesFromGitHub(): Promise<string[]> {
