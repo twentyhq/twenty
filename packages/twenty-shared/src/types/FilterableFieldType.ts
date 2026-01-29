@@ -22,6 +22,7 @@ export const FILTERABLE_FIELD_TYPES = [
   'RAW_JSON',
   'BOOLEAN',
   'UUID',
+  'FILES',
 ] as const;
 
 type FilterableFieldTypeBaseLiteral = (typeof FILTERABLE_FIELD_TYPES)[number];

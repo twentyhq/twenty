@@ -84,6 +84,11 @@ export const FILTER_OPERANDS_MAP = {
     RecordFilterOperand.DOES_NOT_CONTAIN,
     ...emptyOperands,
   ],
+  FILES: [
+    RecordFilterOperand.CONTAINS,
+    RecordFilterOperand.DOES_NOT_CONTAIN,
+    ...emptyOperands,
+  ],
   DATE_TIME: [
     RecordFilterOperand.IS,
     RecordFilterOperand.IS_RELATIVE,
@@ -212,6 +217,8 @@ export const getRecordFilterOperands = ({
       return FILTER_OPERANDS_MAP.TS_VECTOR;
     case 'UUID':
       return FILTER_OPERANDS_MAP.UUID;
+    case 'FILES':
+      return FILTER_OPERANDS_MAP.FILES;
     default:
       assertUnreachable(filterType, `Unknown filter type ${filterType}`);
   }

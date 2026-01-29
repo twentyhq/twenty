@@ -5,6 +5,7 @@ import { FormCurrencyFieldInput } from '@/object-record/record-field/ui/form-typ
 import { FormDateFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateFieldInput';
 import { FormDateTimeFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateTimeFieldInput';
 import { FormEmailsFieldInput } from '@/object-record/record-field/ui/form-types/components/FormEmailsFieldInput';
+import { FormFilesFieldInput } from '@/object-record/record-field/ui/form-types/components/FormFilesFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/ui/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
@@ -22,6 +23,7 @@ import {
   type FieldAddressValue,
   type FieldArrayValue,
   type FieldEmailsValue,
+  type FieldFilesValue,
   type FieldFullNameValue,
   type FieldLinksValue,
   type FieldMetadata,
@@ -39,6 +41,7 @@ import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/isFieldDateTime';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
+import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
@@ -149,6 +152,14 @@ export const FormFieldInput = ({
     <FormPhoneFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldPhonesValue | undefined}
+      onChange={onChange}
+      VariablePicker={VariablePicker}
+      readonly={readonly}
+    />
+  ) : isFieldFiles(field) ? (
+    <FormFilesFieldInput
+      label={field.label}
+      defaultValue={defaultValue as FieldFilesValue | undefined}
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
