@@ -115,10 +115,8 @@ export class CommonResultGettersService {
 
     const { fieldIdByName } = fieldMaps;
 
-    let handlers: QueryResultGetterHandlerInterface[] = [];
-
-    handlers.push(this.getObjectHandler(flatObjectMetadata.nameSingular));
-    handlers.push(
+    const handlers = [
+      this.getObjectHandler(flatObjectMetadata.nameSingular),
       ...Object.keys(record)
         .map(
           (recordFieldName) =>
@@ -127,7 +125,7 @@ export class CommonResultGettersService {
         .filter(isDefined)
         .map((fieldMetadata) => this.fieldHandlers.get(fieldMetadata.type))
         .filter(isDefined),
-    );
+    ];
 
     const relationFields = Object.keys(record)
       .map(
