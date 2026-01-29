@@ -20,9 +20,9 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function-executor/drivers/utils/build-env-var';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
-import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionLayerService } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.service';
@@ -69,24 +69,8 @@ export class LogicFunctionService {
   ) {}
 
   async getLogicFunctionSourceCode(workspaceId: string, id: string) {
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id,
-      flatLogicFunctionMaps,
-    });
-
     try {
-      const folderPath = getLogicFunctionFolderOrThrow({
-        flatLogicFunction,
-        fileFolder: FileFolder.Source,
-      });
+      const folderPath = `workspace-${workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${id}`;
 
       return await this.fileStorageService.readFolder(folderPath);
     } catch (error) {
@@ -583,16 +567,10 @@ export class LogicFunctionService {
 
     await this.fileStorageService.copy({
       from: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction: flatLogicFunctionToDuplicate,
-          fileFolder: FileFolder.Source,
-        }),
+        folderPath: `workspace-${workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunctionToDuplicate.id}`,
       },
       to: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction: newFlatLogicFunction,
-          fileFolder: FileFolder.Source,
-        }),
+        folderPath: `workspace-${workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${newFlatLogicFunction.id}`,
       },
     });
 

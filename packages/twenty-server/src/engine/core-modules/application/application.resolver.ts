@@ -178,7 +178,7 @@ export class ApplicationResolver {
       dirname,
     );
 
-    await this.fileStorageService.write({
+    await this.fileStorageService.writeFile({
       file: buffer,
       name: filename,
       folder: folderPath,

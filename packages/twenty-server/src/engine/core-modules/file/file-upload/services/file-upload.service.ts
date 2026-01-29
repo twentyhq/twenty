@@ -47,7 +47,7 @@ export class FileUploadService {
     mimeType: string | undefined;
     folder: string;
   }) {
-    await this.fileStorage.write({
+    await this.fileStorage.writeFile({
       file,
       name: filename,
       mimeType,
@@ -248,9 +248,9 @@ export class FileUploadService {
       },
     });
 
-    return await this.fileStorage.write_v2({
+    return await this.fileStorage.writeFile_v2({
       sourceFile: sanitizedFile,
-      destinationPath: name,
+      resourcePath: name,
       mimeType,
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,

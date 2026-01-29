@@ -35,7 +35,6 @@ import {
   LambdaBuildDirectoryManager,
   NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
-import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
 import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -327,16 +326,12 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     const startTime = Date.now();
 
-    const builtHandlerFolderPath = getLogicFunctionFolderOrThrow({
-      flatLogicFunction,
-      fileFolder: FileFolder.BuiltLogicFunction,
-    });
+    const builtHandlerFolderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.BuiltLogicFunction}/${flatLogicFunction.id}`;
 
     const compiledCode = (
       await streamToBuffer(
-        await this.fileStorageService.read({
-          folderPath: builtHandlerFolderPath,
-          filename: flatLogicFunction.builtHandlerPath,
+        await this.fileStorageService.readFile({
+          filePath: `${builtHandlerFolderPath}/${flatLogicFunction.builtHandlerPath}`,
         }),
       )
     ).toString('utf-8');

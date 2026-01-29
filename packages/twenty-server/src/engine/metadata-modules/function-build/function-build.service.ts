@@ -8,7 +8,7 @@ import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
-import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
+import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 @Injectable()
@@ -20,14 +20,10 @@ export class FunctionBuildService {
   }: {
     flatLogicFunction: FlatLogicFunction;
   }): Promise<boolean> {
-    const folderPath = getLogicFunctionFolderOrThrow({
-      flatLogicFunction,
-      fileFolder: FileFolder.BuiltLogicFunction,
-    });
+    const folderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.BuiltLogicFunction}/${flatLogicFunction.id}`;
 
     return await this.fileStorageService.checkFileExists({
-      folderPath,
-      filename: flatLogicFunction.builtHandlerPath,
+      filePath: `${folderPath}/${flatLogicFunction.builtHandlerPath}`,
     });
   }
 
@@ -36,22 +32,14 @@ export class FunctionBuildService {
   }: {
     flatLogicFunction: FlatLogicFunction;
   }): Promise<void> {
-    const sourceFolderPath = getLogicFunctionFolderOrThrow({
-      flatLogicFunction,
-      fileFolder: FileFolder.Source,
-    });
-
-    const builtFolderPath = getLogicFunctionFolderOrThrow({
-      flatLogicFunction,
-      fileFolder: FileFolder.BuiltLogicFunction,
-    });
-
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     try {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
-      await this.fileStorageService.download({
+      const sourceFolderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunction.id}`;
+
+      await this.fileStorageService.copy({
         from: { folderPath: sourceFolderPath },
         to: { folderPath: sourceTemporaryDir },
       });
@@ -64,7 +52,9 @@ export class FunctionBuildService {
 
       const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
 
-      await this.fileStorageService.write({
+      const builtFolderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.BuiltLogicFunction}/${flatLogicFunction.id}`;
+
+      await this.fileStorageService.writeFile({
         file: builtFile,
         name: flatLogicFunction.builtHandlerPath,
         mimeType: 'application/javascript',

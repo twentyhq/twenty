@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { join } from 'path';
-
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,7 +7,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getSeedProjectFiles } from 'src/engine/core-modules/logic-function-executor/drivers/utils/get-seed-project-files';
-import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
+import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { CreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -48,23 +46,20 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }
 
   private async buildAndSaveLogicFunction(logicFunction: FlatLogicFunction) {
-    const sourceFileFolder = getLogicFunctionFolderOrThrow({
-      flatLogicFunction: logicFunction,
-      fileFolder: FileFolder.Source,
-    });
+    const sourceFolderPath = `workspace-${logicFunction.workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${logicFunction.id}`;
 
     if (isDefined(logicFunction?.code)) {
       await this.fileStorageService.writeFolder(
         logicFunction.code,
-        sourceFileFolder,
+        sourceFolderPath,
       );
     } else {
       for (const file of await getSeedProjectFiles) {
-        await this.fileStorageService.write({
+        await this.fileStorageService.writeFile({
           file: file.content,
           name: file.name,
           mimeType: 'application/typescript',
-          folder: join(sourceFileFolder, file.path),
+          folder: `${sourceFolderPath}/${file.path}`,
         });
       }
     }
@@ -78,11 +73,8 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   ): Promise<void> {
     const { action } = context;
 
-    await this.fileStorageService.delete({
-      folderPath: getLogicFunctionFolderOrThrow({
-        flatLogicFunction: action.flatEntity,
-        fileFolder: FileFolder.Source,
-      }),
-    });
+    const sourceFolderPath = `workspace-${action.flatEntity.workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${action.flatEntity.id}`;
+
+    await this.fileStorageService.delete({ folderPath: sourceFolderPath });
   }
 }

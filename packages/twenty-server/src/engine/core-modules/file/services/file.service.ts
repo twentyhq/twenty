@@ -33,9 +33,8 @@ export class FileService {
   ): Promise<Readable> {
     const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
 
-    return await this.fileStorageService.read({
-      folderPath: workspaceFolderPath,
-      filename,
+    return await this.fileStorageService.readFile({
+      filePath: `${workspaceFolderPath}/${filename}`,
     });
   }
 
@@ -96,7 +95,9 @@ export class FileService {
     const workspaceFolderPath = `workspace-${workspaceId}`;
 
     const isWorkspaceFolderFound =
-      await this.fileStorageService.checkFolderExists(workspaceFolderPath);
+      await this.fileStorageService.checkFolderExists({
+        folderPath: workspaceFolderPath,
+      });
 
     if (!isWorkspaceFolderFound) {
       return;

@@ -7,8 +7,8 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
-import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { UpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
@@ -80,12 +80,9 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     flatLogicFunction: FlatLogicFunction;
     code: Sources;
   }) {
-    const fileFolder = getLogicFunctionFolderOrThrow({
-      flatLogicFunction,
-      fileFolder: FileFolder.Source,
-    });
+    const sourceFolderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunction.id}`;
 
-    await this.fileStorageService.writeFolder(code, fileFolder);
+    await this.fileStorageService.writeFolder(code, sourceFolderPath);
 
     await this.functionBuildService.buildAndUpload({
       flatLogicFunction,
