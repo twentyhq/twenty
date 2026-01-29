@@ -1,10 +1,9 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import {
   type FieldsConfiguration,
   type FieldsConfigurationSection,
 } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationSectionEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationSectionEditor';
-import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import styled from '@emotion/styled';
 import {
@@ -38,10 +37,7 @@ export const FieldsConfigurationEditor = ({
   configuration,
   onChange,
 }: FieldsConfigurationEditorProps) => {
-  const targetRecord = useTargetRecord();
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   // Unified drag handler for both sections and fields
   const handleDragEnd: OnDragEndResponder = useCallback(
