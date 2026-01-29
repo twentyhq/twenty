@@ -1,21 +1,24 @@
 import {
-  type ExtractSerializedRelationProperties,
-  type IsSerializedRelation,
+  IsEmptyObject,
+  IsNever,
+  IsSerializedRelation,
 } from 'twenty-shared/types';
 
-export type ContainsSerializedRelation<T> = T extends unknown
-  ? IsSerializedRelation<T> extends true
-    ? true
-    : // Check arrays first to avoid T[keyof T] issues with branded arrays
-      T extends readonly (infer U)[]
-      ? ContainsSerializedRelation<U>
-      : // Check if T has any direct SerializedRelation properties
-        [ExtractSerializedRelationProperties<T>] extends [never]
-        ? // No direct SerializedRelation, recurse into nested object structures
-          T extends object
-          ? true extends ContainsSerializedRelation<T[keyof T]>
-            ? true
+type ContainsSerializedRelationInner<T> = T extends unknown
+  ? IsNever<T> extends true
+    ? false
+    : unknown extends T
+      ? false
+      : IsSerializedRelation<T> extends true
+        ? true
+        : T extends readonly (infer U)[]
+          ? ContainsSerializedRelationInner<U>
+          : T extends object
+            ? IsEmptyObject<T> extends true
+              ? false
+              : ContainsSerializedRelationInner<T[keyof T]>
             : false
-          : false
-        : true
   : never;
+
+export type ContainsSerializedRelation<T> =
+  true extends ContainsSerializedRelationInner<T> ? true : false;

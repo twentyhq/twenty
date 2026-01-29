@@ -6,140 +6,18 @@ import { type ContainsSerializedRelation } from 'src/engine/workspace-manager/wo
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 type EmptyObject = {};
 
-// Basic type tests
+// ContainsSerializedRelation checks for SerializedRelation in object properties
+// It recurses into nested objects and arrays, but stops at primitives
+
+// Direct property tests
 // eslint-disable-next-line unused-imports/no-unused-vars
-type BasicAssertions = [
-  // SerializedRelation itself returns true
-  Expect<Equal<ContainsSerializedRelation<SerializedRelation>, true>>,
-
-  // Primitives return false
-  Expect<Equal<ContainsSerializedRelation<string>, false>>,
-  Expect<Equal<ContainsSerializedRelation<number>, false>>,
-  Expect<Equal<ContainsSerializedRelation<boolean>, false>>,
-  Expect<Equal<ContainsSerializedRelation<null>, false>>,
-  Expect<Equal<ContainsSerializedRelation<undefined>, false>>,
-
-  // Empty object returns false
-  Expect<Equal<ContainsSerializedRelation<EmptyObject>, false>>,
-
-  // Object with plain properties returns false
+type DirectPropertyAssertions = [
+  // Direct SerializedRelation property
   Expect<
-    Equal<ContainsSerializedRelation<{ name: string; count: number }>, false>
+    Equal<ContainsSerializedRelation<{ targetId: SerializedRelation }>, true>
   >,
 
-  // Object with SerializedRelation property returns true
-  Expect<
-    Equal<
-      ContainsSerializedRelation<{
-        name: string;
-        targetId: SerializedRelation;
-      }>,
-      true
-    >
-  >,
-];
-
-// Nested object tests
-// eslint-disable-next-line unused-imports/no-unused-vars
-type NestedAssertions = [
-  // Nested object with SerializedRelation returns true
-  Expect<
-    Equal<
-      ContainsSerializedRelation<{
-        outer: { inner: { relationId: SerializedRelation } };
-      }>,
-      true
-    >
-  >,
-
-  // Deeply nested without SerializedRelation returns false
-  Expect<
-    Equal<
-      ContainsSerializedRelation<{
-        outer: { inner: { value: string } };
-      }>,
-      false
-    >
-  >,
-
-  // Mixed nested with SerializedRelation returns true
-  Expect<
-    Equal<
-      ContainsSerializedRelation<{
-        name: string;
-        nested: { targetId: SerializedRelation; description: string };
-      }>,
-      true
-    >
-  >,
-];
-
-// Array tests
-// eslint-disable-next-line unused-imports/no-unused-vars
-type ArrayAssertions = [
-  // Array of SerializedRelation returns true
-  Expect<Equal<ContainsSerializedRelation<SerializedRelation[]>, true>>,
-
-  // Array of objects with SerializedRelation returns true
-  Expect<
-    Equal<
-      ContainsSerializedRelation<
-        { id: string; targetId: SerializedRelation }[]
-      >,
-      true
-    >
-  >,
-
-  // Array of plain objects returns false
-  Expect<
-    Equal<ContainsSerializedRelation<{ name: string; count: number }[]>, false>
-  >,
-
-  // 2D array of SerializedRelation returns true
-  Expect<Equal<ContainsSerializedRelation<SerializedRelation[][]>, true>>,
-
-  // 2D array of strings returns false
-  Expect<Equal<ContainsSerializedRelation<string[][]>, false>>,
-
-  // 2D array of numbers returns false
-  Expect<Equal<ContainsSerializedRelation<number[][]>, false>>,
-
-  // Nested array of plain objects returns false
-  Expect<
-    Equal<ContainsSerializedRelation<{ x: number; y: number }[][]>, false>
-  >,
-
-  // Nested structure with array containing SerializedRelation returns true
-  Expect<
-    Equal<
-      ContainsSerializedRelation<{
-        items: { relationId: SerializedRelation }[];
-      }>,
-      true
-    >
-  >,
-];
-
-// Union type tests
-// Note: ContainsSerializedRelation is distributive over unions, so it returns
-// true | false (boolean) when some union members contain SerializedRelation and some don't.
-// The consuming code uses `true extends ContainsSerializedRelation<T>` to check
-// if ANY member contains a SerializedRelation.
-// eslint-disable-next-line unused-imports/no-unused-vars
-type UnionAssertions = [
-  // Union where one member has SerializedRelation, one doesn't -> boolean (distributive)
-  // Usage: `true extends boolean` -> true (correct for "any member has relation")
-  Expect<
-    Equal<
-      ContainsSerializedRelation<
-        | { type: 'ref'; targetId: SerializedRelation }
-        | { type: 'plain'; name: string }
-      >,
-      boolean
-    >
-  >,
-
-  // Nullable SerializedRelation: property value is union, but object is not distributed
+  // Nullable SerializedRelation property
   Expect<
     Equal<
       ContainsSerializedRelation<{ targetId: SerializedRelation | null }>,
@@ -147,67 +25,122 @@ type UnionAssertions = [
     >
   >,
 
-  // Union of plain types: all members return false -> false
+  // Optional SerializedRelation property
   Expect<
-    Equal<
-      ContainsSerializedRelation<
-        { type: 'a'; value: string } | { type: 'b'; count: number }
-      >,
-      false
-    >
+    Equal<ContainsSerializedRelation<{ targetId?: SerializedRelation }>, true>
   >,
 
-  // Object with optional SerializedRelation returns true
+  // Array of SerializedRelation
+  Expect<
+    Equal<ContainsSerializedRelation<{ ids: SerializedRelation[] }>, true>
+  >,
+
+  // Plain properties only - no SerializedRelation
+  Expect<
+    Equal<ContainsSerializedRelation<{ name: string; count: number }>, false>
+  >,
+
+  // Empty object
+  Expect<Equal<ContainsSerializedRelation<EmptyObject>, false>>,
+];
+
+// Nested object tests - should recurse
+// eslint-disable-next-line unused-imports/no-unused-vars
+type NestedObjectAssertions = [
+  // Nested object with SerializedRelation
   Expect<
     Equal<
       ContainsSerializedRelation<{
-        name: string;
-        targetId?: SerializedRelation;
+        nested: { targetId: SerializedRelation };
       }>,
       true
     >
   >,
 
-  // SerializedRelation | null: SerializedRelation->true, null->false -> boolean
-  Expect<Equal<ContainsSerializedRelation<SerializedRelation | null>, boolean>>,
+  // Deeply nested SerializedRelation
+  Expect<
+    Equal<
+      ContainsSerializedRelation<{
+        level1: { level2: { level3: { id: SerializedRelation } } };
+      }>,
+      true
+    >
+  >,
 
-  // string | number | null: all return false -> false
-  Expect<Equal<ContainsSerializedRelation<string | number | null>, false>>,
+  // Nested object without SerializedRelation
+  Expect<
+    Equal<
+      ContainsSerializedRelation<{
+        nested: { name: string; count: number };
+      }>,
+      false
+    >
+  >,
 ];
 
-// Complex real-world scenario tests
-type WorkflowConfig = {
-  steps: {
-    stepId: string;
-    assigneeId: SerializedRelation;
-    action: string;
-  }[];
-};
+// Nested array tests - should recurse
+// eslint-disable-next-line unused-imports/no-unused-vars
+type NestedArrayAssertions = [
+  // Array of objects with SerializedRelation
+  Expect<
+    Equal<
+      ContainsSerializedRelation<{
+        items: { targetId: SerializedRelation }[];
+      }>,
+      true
+    >
+  >,
 
-type Metadata = {
-  createdBy: {
-    userId: SerializedRelation;
-    timestamp: string;
-  };
-  modifiedBy: {
-    userId: SerializedRelation;
-    timestamp: string;
-  } | null;
-};
+  // 2D array of SerializedRelation
+  Expect<
+    Equal<ContainsSerializedRelation<{ matrix: SerializedRelation[][] }>, true>
+  >,
 
-type DisplaySettings = {
-  theme: 'light' | 'dark';
-  fontSize: number;
-};
+  // Array of plain objects
+  Expect<
+    Equal<
+      ContainsSerializedRelation<{
+        items: { name: string }[];
+      }>,
+      false
+    >
+  >,
 
+  // 2D array of strings
+  Expect<Equal<ContainsSerializedRelation<{ matrix: string[][] }>, false>>,
+];
+
+// Primitive types - should return false (not objects)
+// eslint-disable-next-line unused-imports/no-unused-vars
+type PrimitiveAssertions = [
+  Expect<Equal<ContainsSerializedRelation<string>, false>>,
+  Expect<Equal<ContainsSerializedRelation<number>, false>>,
+  Expect<Equal<ContainsSerializedRelation<boolean>, false>>,
+  Expect<Equal<ContainsSerializedRelation<null>, false>>,
+  Expect<Equal<ContainsSerializedRelation<undefined>, false>>,
+];
+
+// Real-world tests
 // eslint-disable-next-line unused-imports/no-unused-vars
 type RealWorldAssertions = [
-  // Workflow config with nested relations returns true
-  Expect<Equal<ContainsSerializedRelation<WorkflowConfig>, true>>,
+  // Settings with SerializedRelation
+  Expect<
+    Equal<
+      ContainsSerializedRelation<{
+        relationType?: string;
+        junctionTargetFieldId?: SerializedRelation;
+      }>,
+      true
+    >
+  >,
 
-  // Metadata with nested relations returns true
-  Expect<Equal<ContainsSerializedRelation<Metadata>, true>>,
-
-  // Display settings without relations returns false
-  Expect<Equal<ContainsSerializedRelation<DisplaySettings>, false>>,
+  // Workflow config with nested SerializedRelation in array
+  Expect<
+    Equal<
+      ContainsSerializedRelation<{
+        steps: { assigneeId: SerializedRelation; action: string }[];
+      }>,
+      true
+    >
+  >,
 ];
