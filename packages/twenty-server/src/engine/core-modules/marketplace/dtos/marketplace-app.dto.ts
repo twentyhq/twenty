@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   IsArray,
@@ -7,21 +7,6 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-
-@ObjectType('MarketplaceAppContent')
-export class MarketplaceAppContentDTO {
-  @Field(() => Int)
-  objects: number;
-
-  @Field(() => Int)
-  fields: number;
-
-  @Field(() => Int)
-  widgets: number;
-
-  @Field(() => Int)
-  commands: number;
-}
 
 @ObjectType('MarketplaceApp')
 export class MarketplaceAppDTO {

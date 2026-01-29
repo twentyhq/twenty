@@ -429,21 +429,12 @@ export const SettingsAvailableApplicationDetails = () => {
                 <StyledLogoImage
                   src={application.logoPath}
                   alt={application.name}
-                  onError={(event) => {
-                    event.currentTarget.style.display = 'none';
-                    const placeholder = event.currentTarget
-                      .nextSibling as HTMLElement;
-                    if (isDefined(placeholder)) {
-                      placeholder.style.display = 'flex';
-                    }
-                  }}
                 />
-              ) : null}
-              <StyledLogoPlaceholder
-                style={{ display: application.logoPath ? 'none' : 'flex' }}
-              >
-                {getInitials(application.name)}
-              </StyledLogoPlaceholder>
+              ) : (
+                <StyledLogoPlaceholder>
+                  {getInitials(application.name)}
+                </StyledLogoPlaceholder>
+              )}
             </StyledLogo>
             <StyledHeaderInfo>
               <StyledAppName>{application.name}</StyledAppName>

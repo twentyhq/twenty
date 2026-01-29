@@ -10,20 +10,13 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
-  fullWidth?: boolean;
-  maxWidth?: number;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
-  max-width: ${({ maxWidth }) =>
-    isDefined(maxWidth) ? maxWidth + 'px' : 'none'};
   overflow: auto;
   padding: ${({ theme }) => theme.spacing(6, 8, 8)};
-  width: ${({ width, fullWidth, maxWidth }) => {
-    if (fullWidth || isDefined(maxWidth)) {
-      return '100%';
-    }
+  width: ${({ width }) => {
     if (isDefined(width)) {
       return width + 'px';
     }
@@ -38,13 +31,11 @@ const StyledSettingsPageContainer = styled.div<{
 type SettingsPageContainerProps = {
   children: ReactNode;
   width?: number | 'full';
-  maxWidth?: number;
 };
 
 export const SettingsPageContainer = ({
   children,
   width,
-  maxWidth,
 }: SettingsPageContainerProps) => {
   const location = useLocation();
   const settingsPath = useMemo(() => {
@@ -68,11 +59,7 @@ export const SettingsPageContainer = ({
 
   return (
     <ScrollWrapper componentInstanceId={componentInstanceId}>
-      <StyledSettingsPageContainer
-        width={containerWidth}
-        fullWidth={isFullWidth}
-        maxWidth={maxWidth}
-      >
+      <StyledSettingsPageContainer width={containerWidth}>
         {children}
       </StyledSettingsPageContainer>
     </ScrollWrapper>

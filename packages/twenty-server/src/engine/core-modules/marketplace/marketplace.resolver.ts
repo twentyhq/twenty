@@ -25,7 +25,7 @@ export class MarketplaceResolver {
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
   async installMarketplaceApp(): Promise<boolean> {
-    // TODO: Implement actual installation logic
+    // TODO
     return true;
   }
 }

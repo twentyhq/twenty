@@ -6,7 +6,6 @@ import { IconFilter, IconSearch } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
-import { AVAILABLE_APPLICATIONS } from '~/pages/settings/applications/constants/availableApplications';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
 import { type AvailableApplication } from '~/pages/settings/applications/types/availableApplication';
 
@@ -43,7 +42,7 @@ export const SettingsApplicationsAvailableTab = () => {
 
   const { data: marketplaceApps, isLoading } = useMarketplaceApps();
 
-  const applications = marketplaceApps ?? AVAILABLE_APPLICATIONS;
+  const applications = marketplaceApps;
 
   const filteredApplications = useMemo(() => {
     return applications.filter(

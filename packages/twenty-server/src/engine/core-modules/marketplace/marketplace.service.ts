@@ -18,7 +18,7 @@ const GITHUB_RAW_BASE_URL =
 const GITHUB_API_BASE_URL =
   'https://api.github.com/repos/twentyhq/twenty/contents/packages/twenty-apps';
 
-const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_TTL_MS = 60 * 60 * 1000;
 
 @Injectable()
 export class MarketplaceService {

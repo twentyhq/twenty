@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { type AvailableApplication } from '~/pages/settings/applications/types/availableApplication';
 
@@ -75,6 +75,8 @@ const StyledDescription = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   display: -webkit-box;
   font-size: ${({ theme }) => theme.font.size.sm};
+  line-height: 1.5;
+  min-height: calc(${({ theme }) => theme.font.size.sm} * 1.5 * 2);
   overflow: hidden;
   text-overflow: ellipsis;
 `;
@@ -105,21 +107,12 @@ export const SettingsAvailableApplicationCard = ({
               <StyledLogoImage
                 src={application.logoPath}
                 alt={application.name}
-                onError={(event) => {
-                  event.currentTarget.style.display = 'none';
-                  const placeholder = event.currentTarget
-                    .nextSibling as HTMLElement;
-                  if (isDefined(placeholder)) {
-                    placeholder.style.display = 'flex';
-                  }
-                }}
               />
-            ) : null}
-            <StyledLogoPlaceholder
-              style={{ display: application.logoPath ? 'none' : 'flex' }}
-            >
-              {getInitials(application.name)}
-            </StyledLogoPlaceholder>
+            ) : (
+              <StyledLogoPlaceholder>
+                {getInitials(application.name)}
+              </StyledLogoPlaceholder>
+            )}
           </StyledLogo>
           <StyledInfo>
             <StyledName>{application.name}</StyledName>
