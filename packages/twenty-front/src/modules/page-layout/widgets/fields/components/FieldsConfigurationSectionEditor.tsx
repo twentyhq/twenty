@@ -5,9 +5,8 @@ import {
 } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationFieldEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationFieldEditor';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import styled from '@emotion/styled';
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { Droppable } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
 import { useCallback, useState } from 'react';
 import {
@@ -112,40 +111,6 @@ export const FieldsConfigurationSectionEditor = ({
     [section, onSectionChange],
   );
 
-  const handleFieldDragEnd: OnDragEndResponder = useCallback(
-    (result) => {
-      if (!result.destination) {
-        return;
-      }
-
-      const sourceIndex = result.source.index;
-      const destinationIndex = result.destination.index;
-
-      if (sourceIndex === destinationIndex) {
-        return;
-      }
-
-      const sortedFields = [...section.fields].sort(
-        (a, b) => a.position - b.position,
-      );
-
-      const reorderedFields = [...sortedFields];
-      const [removed] = reorderedFields.splice(sourceIndex, 1);
-      reorderedFields.splice(destinationIndex, 0, removed);
-
-      const updatedFields = reorderedFields.map((field, idx) => ({
-        ...field,
-        position: idx,
-      }));
-
-      onSectionChange({
-        ...section,
-        fields: updatedFields,
-      });
-    },
-    [section, onSectionChange],
-  );
-
   const handleFieldChange = useCallback(
     (fieldMetadataId: string, updatedField: FieldsConfigurationFieldItem) => {
       const updatedFields = section.fields.map((field) =>
@@ -170,12 +135,10 @@ export const FieldsConfigurationSectionEditor = ({
         return;
       }
 
-      // Toggle visibility using conditional display
-      // If field has conditionalDisplay, remove it (make visible)
-      // If field doesn't have conditionalDisplay, add a "false" rule (make hidden)
+      // Toggle visibility flag (default is visible)
       const updatedField: FieldsConfigurationFieldItem = {
         ...field,
-        conditionalDisplay: field.conditionalDisplay ? undefined : false,
+        isVisible: field.isVisible === false ? true : false,
       };
 
       handleFieldChange(fieldMetadataId, updatedField);
@@ -218,33 +181,41 @@ export const FieldsConfigurationSectionEditor = ({
           {sortedFields.length === 0 ? (
             <StyledEmptyState>{t`No fields in this section`}</StyledEmptyState>
           ) : (
-            <DraggableList
-              onDragEnd={handleFieldDragEnd}
-              draggableItems={sortedFields.map((field, fieldIndex) => {
-                const fieldMetadata = objectMetadataItem.fields.find(
-                  (f) => f.id === field.fieldMetadataId,
-                );
+            <Droppable droppableId={section.id}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  // eslint-disable-next-line react/jsx-props-no-spreading
+                  {...provided.droppableProps}
+                >
+                  {sortedFields.map((field, fieldIndex) => {
+                    const fieldMetadata = objectMetadataItem.fields.find(
+                      (f) => f.id === field.fieldMetadataId,
+                    );
 
-                if (!fieldMetadata) {
-                  return null;
-                }
+                    if (!fieldMetadata) {
+                      return null;
+                    }
 
-                return (
-                  <FieldsConfigurationFieldEditor
-                    key={field.fieldMetadataId}
-                    field={field}
-                    fieldMetadata={fieldMetadata}
-                    index={fieldIndex}
-                    onFieldChange={(updatedField) =>
-                      handleFieldChange(field.fieldMetadataId, updatedField)
-                    }
-                    onToggleVisibility={() =>
-                      handleToggleFieldVisibility(field.fieldMetadataId)
-                    }
-                  />
-                );
-              })}
-            />
+                    return (
+                      <FieldsConfigurationFieldEditor
+                        key={field.fieldMetadataId}
+                        field={field}
+                        fieldMetadata={fieldMetadata}
+                        index={fieldIndex}
+                        onFieldChange={(updatedField) =>
+                          handleFieldChange(field.fieldMetadataId, updatedField)
+                        }
+                        onToggleVisibility={() =>
+                          handleToggleFieldVisibility(field.fieldMetadataId)
+                        }
+                      />
+                    );
+                  })}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
           )}
         </StyledFieldsContainer>
       )}

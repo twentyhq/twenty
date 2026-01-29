@@ -4,6 +4,7 @@ export type FieldsConfigurationFieldItem = {
   fieldMetadataId: string;
   position: number;
   conditionalDisplay?: RulesLogic;
+  isVisible?: boolean;
 };
 
 export type FieldsConfigurationSection = {

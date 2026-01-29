@@ -64,7 +64,8 @@ export const FieldsConfigurationFieldEditor = ({
   index,
   onToggleVisibility,
 }: FieldsConfigurationFieldEditorProps) => {
-  const isVisible = !field.conditionalDisplay;
+  // Field is visible by default (isVisible !== false)
+  const isVisible = field.isVisible !== false;
 
   const fieldContent = (
     <StyledFieldContainer>

@@ -7,7 +7,7 @@ import { FieldsConfigurationSectionEditor } from '@/page-layout/widgets/fields/c
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import styled from '@emotion/styled';
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { DragDropContext, type OnDragEndResponder } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 
@@ -39,7 +39,8 @@ export const FieldsConfigurationEditor = ({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const handleDragEnd: OnDragEndResponder = useCallback(
+  // Handle section reordering
+  const handleSectionDragEnd: OnDragEndResponder = useCallback(
     (result) => {
       if (!result.destination) {
         return;
@@ -64,6 +65,96 @@ export const FieldsConfigurationEditor = ({
         ...section,
         position: index,
       }));
+
+      onChange({
+        ...configuration,
+        sections: updatedSections,
+      });
+    },
+    [configuration, onChange],
+  );
+
+  // Handle field dragging within and between sections
+  const handleFieldDragEnd: OnDragEndResponder = useCallback(
+    (result) => {
+      if (!result.destination) {
+        return;
+      }
+
+      const sourceSectionId = result.source.droppableId;
+      const destinationSectionId = result.destination.droppableId;
+      const sourceIndex = result.source.index;
+      const destinationIndex = result.destination.index;
+
+      // If dropped in the same location, do nothing
+      if (
+        sourceSectionId === destinationSectionId &&
+        sourceIndex === destinationIndex
+      ) {
+        return;
+      }
+
+      const sourceSection = configuration.sections.find(
+        (s) => s.id === sourceSectionId,
+      );
+      const destinationSection = configuration.sections.find(
+        (s) => s.id === destinationSectionId,
+      );
+
+      if (!sourceSection || !destinationSection) {
+        return;
+      }
+
+      // Sort fields by position
+      const sourceSortedFields = [...sourceSection.fields].sort(
+        (a, b) => a.position - b.position,
+      );
+
+      // Get the field being moved
+      const [movedField] = sourceSortedFields.splice(sourceIndex, 1);
+
+      let updatedSections: FieldsConfigurationSection[];
+
+      if (sourceSectionId === destinationSectionId) {
+        // Moving within the same section
+        sourceSortedFields.splice(destinationIndex, 0, movedField);
+
+        const reorderedFields = sourceSortedFields.map((field, idx) => ({
+          ...field,
+          position: idx,
+        }));
+
+        updatedSections = configuration.sections.map((section) =>
+          section.id === sourceSectionId
+            ? { ...section, fields: reorderedFields }
+            : section,
+        );
+      } else {
+        // Moving between sections
+        const destSortedFields = [...destinationSection.fields].sort(
+          (a, b) => a.position - b.position,
+        );
+        destSortedFields.splice(destinationIndex, 0, movedField);
+
+        const reorderedSourceFields = sourceSortedFields.map((field, idx) => ({
+          ...field,
+          position: idx,
+        }));
+        const reorderedDestFields = destSortedFields.map((field, idx) => ({
+          ...field,
+          position: idx,
+        }));
+
+        updatedSections = configuration.sections.map((section) => {
+          if (section.id === sourceSectionId) {
+            return { ...section, fields: reorderedSourceFields };
+          }
+          if (section.id === destinationSectionId) {
+            return { ...section, fields: reorderedDestFields };
+          }
+          return section;
+        });
+      }
 
       onChange({
         ...configuration,
@@ -118,21 +209,23 @@ export const FieldsConfigurationEditor = ({
 
   return (
     <StyledContainer>
-      <DraggableList
-        onDragEnd={handleDragEnd}
-        draggableItems={sortedSections.map((section, index) => (
-          <FieldsConfigurationSectionEditor
-            key={section.id}
-            section={section}
-            index={index}
-            objectMetadataItem={objectMetadataItem}
-            onSectionChange={(updatedSection) =>
-              handleSectionChange(section.id, updatedSection)
-            }
-            onDeleteSection={() => handleDeleteSection(section.id)}
-          />
-        ))}
-      />
+      <DragDropContext onDragEnd={handleFieldDragEnd}>
+        <DraggableList
+          onDragEnd={handleSectionDragEnd}
+          draggableItems={sortedSections.map((section, index) => (
+            <FieldsConfigurationSectionEditor
+              key={section.id}
+              section={section}
+              index={index}
+              objectMetadataItem={objectMetadataItem}
+              onSectionChange={(updatedSection) =>
+                handleSectionChange(section.id, updatedSection)
+              }
+              onDeleteSection={() => handleDeleteSection(section.id)}
+            />
+          ))}
+        />
+      </DragDropContext>
     </StyledContainer>
   );
 };
