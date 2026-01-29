@@ -2,7 +2,7 @@ import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,
-  RelationType,
+  RelationType
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -26,32 +26,18 @@ type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
   junctionTargetFieldUniversalIdentifier?: string;
 };
 
-type RelationSettings = {
-  relationType: RelationType;
-  onDelete?: RelationOnDeleteAction;
-  joinColumnName?: string;
-  junctionTargetFieldId?: string;
-};
-
-type RelationUniversalSettings = {
-  relationType: RelationType;
-  onDelete?: RelationOnDeleteAction;
-  joinColumnName?: string;
-  junctionTargetFieldUniversalIdentifier?: string;
-};
-
 const computeFieldMetadataRelationSettingsForRelationType = ({
   relationType,
   joinColumnName,
   junctionTargetFieldId,
   junctionTargetFieldUniversalIdentifier,
-}: ComputeFieldMetadataRelationSettingsForRelationTypeArgs): {
-  settings: RelationSettings;
-  universalSettings: RelationUniversalSettings;
-} => {
+}: ComputeFieldMetadataRelationSettingsForRelationTypeArgs): Pick<
+  FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
+  'settings' | 'universalSettings'
+> => {
   if (relationType === RelationType.MANY_TO_ONE) {
     const settings = {
-      relationType: RelationType.MANY_TO_ONE as const,
+      relationType: RelationType.MANY_TO_ONE,
       onDelete: RelationOnDeleteAction.SET_NULL,
       joinColumnName,
     };
@@ -61,11 +47,11 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 
   return {
     settings: {
-      relationType: RelationType.ONE_TO_MANY as const,
+      relationType: RelationType.ONE_TO_MANY,
       ...(junctionTargetFieldId && { junctionTargetFieldId }),
     },
     universalSettings: {
-      relationType: RelationType.ONE_TO_MANY as const,
+      relationType: RelationType.ONE_TO_MANY,
       ...(junctionTargetFieldUniversalIdentifier && {
         junctionTargetFieldUniversalIdentifier,
       }),
