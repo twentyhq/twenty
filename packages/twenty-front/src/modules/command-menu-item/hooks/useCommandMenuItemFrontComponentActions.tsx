@@ -25,17 +25,12 @@ type CommandMenuItemWithFrontComponent = CommandMenuItemFieldsFragment & {
   frontComponentId: string;
 };
 
-type GetIcon = (
-  iconKey: string | null | undefined,
-  fallback: string,
-) => IconComponent;
-
 const buildActionFromItem = (
   item: CommandMenuItemWithFrontComponent,
   scope: ActionScope,
   index: number,
   isPinned: boolean,
-  getIcon: GetIcon,
+  getIcon: ReturnType<typeof useIcons>['getIcon'],
   openFrontComponentInCommandMenu: (params: {
     frontComponentId: string;
     pageTitle: string;
