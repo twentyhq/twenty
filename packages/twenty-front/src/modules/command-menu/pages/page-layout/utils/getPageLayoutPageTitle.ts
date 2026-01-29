@@ -17,6 +17,8 @@ export const getPageLayoutPageTitle = (page: PageLayoutCommandMenuPage) => {
       return t`Tab Settings`;
     case CommandMenuPages.PageLayoutFieldsSettings:
       return t`Fields Settings`;
+    case CommandMenuPages.PageLayoutFieldsLayout:
+      return t`Layout`;
     default:
       assertUnreachable(page);
   }

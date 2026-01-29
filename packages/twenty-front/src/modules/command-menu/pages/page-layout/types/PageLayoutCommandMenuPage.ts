@@ -6,4 +6,5 @@ export type PageLayoutCommandMenuPage =
   | CommandMenuPages.PageLayoutIframeSettings
   | CommandMenuPages.PageLayoutGraphFilter
   | CommandMenuPages.PageLayoutTabSettings
-  | CommandMenuPages.PageLayoutFieldsSettings;
+  | CommandMenuPages.PageLayoutFieldsSettings
+  | CommandMenuPages.PageLayoutFieldsLayout;

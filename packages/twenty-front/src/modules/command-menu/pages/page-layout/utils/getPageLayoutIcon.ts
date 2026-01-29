@@ -6,6 +6,7 @@ import {
   IconChartPie,
   IconFilter,
   IconFrame,
+  IconLayoutSidebarRight,
   IconList,
 } from 'twenty-ui/display';
 
@@ -23,6 +24,8 @@ export const getPageLayoutIcon = (page: PageLayoutCommandMenuPage) => {
       return IconAppWindow;
     case CommandMenuPages.PageLayoutFieldsSettings:
       return IconList;
+    case CommandMenuPages.PageLayoutFieldsLayout:
+      return IconLayoutSidebarRight;
     default:
       assertUnreachable(page);
   }
