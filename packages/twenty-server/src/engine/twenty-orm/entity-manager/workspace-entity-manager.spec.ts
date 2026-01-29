@@ -226,6 +226,7 @@ describe('WorkspaceEntityManager', () => {
         IS_NAVIGATION_MENU_ITEM_ENABLED: false,
         IS_FILES_FIELD_ENABLED: false,
         IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED: false,
+        IS_MARKETPLACE_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
