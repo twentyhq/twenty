@@ -18,16 +18,7 @@ import { fieldEntityBuilder } from '@/cli/utilities/build/manifest/entities/fiel
 import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
 
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
-
-export type EntityFilePaths = {
-  application: string[];
-  objects: string[];
-  objectExtensions: string[];
-  logicFunctions: string[];
-  frontComponents: string[];
-  roles: string[];
-  assets: string[];
-};
+import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
 const loadSources = async (appPath: string): Promise<Sources> => {
   const sources: Sources = {};
@@ -61,11 +52,10 @@ const loadSources = async (appPath: string): Promise<Sources> => {
 export const EMPTY_FILE_PATHS: EntityFilePaths = {
   application: [],
   objects: [],
-  objectExtensions: [],
+  fields: [],
   logicFunctions: [],
   frontComponents: [],
   roles: [],
-  assets: [],
 };
 
 export type ManifestBuildResult = {
@@ -197,11 +187,10 @@ export const runManifestBuild = async (
     const filePaths: EntityFilePaths = {
       application: applicationBuildResult.filePaths,
       objects: objectBuildResult.filePaths,
-      objectExtensions: objectExtensionBuildResult.filePaths,
+      fields: objectExtensionBuildResult.filePaths,
       logicFunctions: functionBuildResult.filePaths,
       frontComponents: frontComponentBuildResult.filePaths,
       roles: roleBuildResult.filePaths,
-      assets: assetBuildResult.filePaths,
     };
 
     const manifest: ApplicationManifest = {

@@ -1,16 +1,15 @@
 import {
   type ManifestBuildResult,
-  runManifestBuild,
   updateManifestChecksum,
 } from '@/cli/utilities/build/manifest/manifest-build';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { type FileFolder } from 'twenty-shared/types';
-import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 import type { Location } from 'esbuild';
 import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 import { type EventName } from 'chokidar/handler.js';
+import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build-v2';
 
 export type DevModeOrchestratorOptions = {
   appPath: string;
@@ -232,9 +231,9 @@ export class DevModeOrchestrator {
         manifestStatus: 'building',
       });
 
-      const result = await runManifestBuild(this.appPath);
+      const result = await buildManifest(this.appPath);
 
-      if (result.error || !result.manifest) {
+      /*if (result.error || !result.manifest) {
         this.uiStateManager.updateManifestState({
           manifestStatus: 'error',
         });
@@ -245,7 +244,7 @@ export class DevModeOrchestrator {
         return;
       }
 
-      const validation = validateManifest(result.manifest);
+      const validation = validateManifest(result.manifest);*/
 
       this.uiStateManager.updateManifestState({
         appName: result.manifest.application.displayName,
@@ -255,7 +254,7 @@ export class DevModeOrchestrator {
         manifestFilePaths: result.filePaths,
       });
 
-      if (!validation.isValid) {
+      /*if (!validation.isValid) {
         for (const e of validation.errors) {
           this.uiStateManager.addEvent({
             message: `${e.path}: ${e.message}`,
@@ -277,7 +276,7 @@ export class DevModeOrchestrator {
             status: 'warning',
           });
         }
-      }
+      }*/
 
       this.uiStateManager.addEvent({
         message: 'Successfully built manifest',

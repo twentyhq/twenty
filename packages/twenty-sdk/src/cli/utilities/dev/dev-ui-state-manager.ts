@@ -6,7 +6,7 @@ import {
   type UiEvent,
   type DevUiState,
 } from '@/cli/utilities/dev/dev-ui-state';
-import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-build';
+import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
 const MAX_EVENT_NUMBER = 200;
 

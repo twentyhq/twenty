@@ -7,8 +7,6 @@ import {
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import path, { join } from 'path';
-
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
@@ -164,33 +162,16 @@ export class ApplicationResolver {
       );
     }
 
-    const stream = createReadStream();
-    const buffer = await streamToBuffer(stream);
+    const buffer = await streamToBuffer(createReadStream());
 
-    const dirname = path.dirname(filePath);
-
-    const filename = path.basename(filePath);
-
-    const folderPath = join(
-      `workspace-${workspaceId}`,
-      applicationUniversalIdentifier,
-      fileFolder,
-      dirname,
-    );
-
-    await this.fileStorageService.write({
-      file: buffer,
-      name: filename,
-      folder: folderPath,
+    return await this.fileStorageService.write_v2({
+      sourceFile: buffer,
+      destinationPath: filePath,
       mimeType: mimetype,
-    });
-
-    const createdFile = this.fileRepository.create({
-      path: join(folderPath, filename),
-      size: buffer.length,
+      fileFolder,
+      applicationUniversalIdentifier,
       workspaceId,
+      settings: { isTemporaryFile: false, toDelete: false },
     });
-
-    return await this.fileRepository.save(createdFile);
   }
 }

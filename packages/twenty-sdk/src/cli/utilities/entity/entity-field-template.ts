@@ -18,8 +18,7 @@ export const getFieldBaseFile = ({
     ? `\n  description: '${data.description}',`
     : '';
 
-  return `import { defineField } from 'twenty-sdk';
-import { FieldMetadataType } from 'twenty-shared/types';
+  return `import { defineField, FieldType } from 'twenty-sdk';
 
 export default defineField({
   universalIdentifier: '${universalIdentifier}',
