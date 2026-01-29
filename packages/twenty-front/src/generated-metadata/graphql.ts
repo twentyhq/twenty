@@ -3367,7 +3367,7 @@ export type PageLayoutTab = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
-  layoutMode: PageLayoutTabLayoutMode;
+  layoutMode?: Maybe<PageLayoutTabLayoutMode>;
   pageLayoutId: Scalars['UUID'];
   position: Scalars['Float'];
   title: Scalars['String'];

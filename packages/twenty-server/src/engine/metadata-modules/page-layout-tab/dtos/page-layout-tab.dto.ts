@@ -31,7 +31,7 @@ export class PageLayoutTabDTO {
   icon?: string | null;
 
   @Field(() => PageLayoutTabLayoutMode, {
-    nullable: false,
+    nullable: true, // Not nullable in the database, but we need to make it nullable here until the frontend consumes the new type
     defaultValue: PageLayoutTabLayoutMode.GRID,
   })
   layoutMode: PageLayoutTabLayoutMode;
