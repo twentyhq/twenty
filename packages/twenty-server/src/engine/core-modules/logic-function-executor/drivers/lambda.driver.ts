@@ -328,7 +328,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
         await this.fileStorageService.readFile_v2({
           workspaceId: flatLogicFunction.workspaceId,
           applicationUniversalIdentifier,
-          fileFolder: FileFolder.Source,
+          fileFolder: FileFolder.BuiltLogicFunction,
           resourcePath: flatLogicFunction.builtHandlerPath,
         }),
       )

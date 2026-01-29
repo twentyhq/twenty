@@ -88,7 +88,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
       await this.fileStorageService.downloadFolder_v2({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
+        fileFolder: FileFolder.BuiltLogicFunction,
         resourcePath: baseFolderPath,
         localPath: sourceTemporaryDir,
       });

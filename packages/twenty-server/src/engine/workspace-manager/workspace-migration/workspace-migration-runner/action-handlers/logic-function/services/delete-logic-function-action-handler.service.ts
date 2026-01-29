@@ -41,13 +41,18 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       workspaceId,
     });
 
-    // Both source and built files are in the same base folder
-    const baseFolderPath = getLogicFunctionBaseFolderPath(
+    const sourceBaseFolderPath = getLogicFunctionBaseFolderPath(
       flatLogicFunction.sourceHandlerPath,
     );
-    const folderPath = `workspace-${workspaceId}/${FileFolder.Source}/${baseFolderPath}`;
+    const builtBaseFolderPath = getLogicFunctionBaseFolderPath(
+      flatLogicFunction.builtHandlerPath,
+    );
 
-    await this.fileStorageService.delete({ folderPath });
+    const sourceFolderPath = `workspace-${workspaceId}/${FileFolder.Source}/${sourceBaseFolderPath}`;
+    const builtFolderPath = `workspace-${workspaceId}/${FileFolder.BuiltLogicFunction}/${builtBaseFolderPath}`;
+
+    await this.fileStorageService.delete({ folderPath: sourceFolderPath });
+    await this.fileStorageService.delete({ folderPath: builtFolderPath });
   }
 
   async rollbackForMetadata(): Promise<void> {

@@ -30,7 +30,7 @@ export class FunctionBuildService {
     return await this.fileStorageService.checkFileExists_v2({
       workspaceId: flatLogicFunction.workspaceId,
       applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
+      fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: flatLogicFunction.builtHandlerPath,
     });
   }
@@ -76,7 +76,7 @@ export class FunctionBuildService {
       await this.fileStorageService.writeFile_v2({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
+        fileFolder: FileFolder.BuiltLogicFunction,
         resourcePath: flatLogicFunction.builtHandlerPath,
         sourceFile: builtFile,
         mimeType: 'application/javascript',
