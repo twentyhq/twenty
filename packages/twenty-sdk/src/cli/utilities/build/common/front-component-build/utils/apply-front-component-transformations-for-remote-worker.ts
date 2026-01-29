@@ -4,10 +4,13 @@ import { replaceHtmlTagsWithRemoteComponents } from './replace-html-tags-with-re
 import { replaceReactImportsWithGlobalThisAssignments } from './replace-react-imports-with-global-this-assignments';
 import { unwrapDefineFrontComponentToDirectExport } from './unwrap-define-front-component-to-direct-export';
 
-export const applyFrontComponentTransformationsForRemoteWorker = async (
-  sourceFilePath: string,
-  sourceCode: string,
-): Promise<string> => {
+export const applyFrontComponentTransformationsForRemoteWorker = async ({
+  sourceFilePath,
+  sourceCode,
+}: {
+  sourceFilePath: string;
+  sourceCode: string;
+}): Promise<string> => {
   const sourceWithRemoteComponents =
     replaceHtmlTagsWithRemoteComponents(sourceCode);
 

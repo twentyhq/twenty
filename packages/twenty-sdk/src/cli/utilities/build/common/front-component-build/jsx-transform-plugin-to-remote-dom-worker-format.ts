@@ -18,10 +18,10 @@ export const jsxTransformPluginToRemoteDomWorkerFormat: esbuild.Plugin = {
           );
 
           const transformedContents =
-            await applyFrontComponentTransformationsForRemoteWorker(
-              loadArgs.path,
-              frontComponentSourceCode,
-            );
+            await applyFrontComponentTransformationsForRemoteWorker({
+              sourceFilePath: loadArgs.path,
+              sourceCode: frontComponentSourceCode,
+            });
 
           return { contents: transformedContents, loader: 'js' };
         } catch (transformError) {
