@@ -65,17 +65,20 @@ export const fromRoleEntityToFlatRole = ({
     ),
     rowLevelPermissionPredicateGroupIds:
       roleEntity.rowLevelPermissionPredicateGroups.map(({ id }) => id),
-    applicationUniversalIdentifier,
-    roleTargetUniversalIdentifiers: roleEntity.roleTargets.map(
-      ({ universalIdentifier }) => universalIdentifier,
-    ),
-    rowLevelPermissionPredicateUniversalIdentifiers:
-      roleEntity.rowLevelPermissionPredicates.map(
+    __universal: {
+      universalIdentifier: roleEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      roleTargetUniversalIdentifiers: roleEntity.roleTargets.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
-    rowLevelPermissionPredicateGroupUniversalIdentifiers:
-      roleEntity.rowLevelPermissionPredicateGroups.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
+      rowLevelPermissionPredicateUniversalIdentifiers:
+        roleEntity.rowLevelPermissionPredicates.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ),
+      rowLevelPermissionPredicateGroupUniversalIdentifiers:
+        roleEntity.rowLevelPermissionPredicateGroups.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ),
+    },
   };
 };

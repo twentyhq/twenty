@@ -44,7 +44,10 @@ export const fromRoleTargetEntityToFlatRoleTarget = ({
     universalIdentifier: roleTargetEntity.universalIdentifier,
     createdAt: roleTargetEntity.createdAt.toISOString(),
     updatedAt: roleTargetEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
-    roleUniversalIdentifier,
+    __universal: {
+      universalIdentifier: roleTargetEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      roleUniversalIdentifier,
+    },
   };
 };

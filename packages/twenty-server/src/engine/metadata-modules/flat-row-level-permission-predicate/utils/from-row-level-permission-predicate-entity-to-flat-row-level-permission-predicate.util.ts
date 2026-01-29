@@ -120,11 +120,15 @@ export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredic
         rowLevelPermissionPredicateEntity.deletedAt?.toISOString() ?? null,
       universalIdentifier:
         rowLevelPermissionPredicateEntityWithoutRelations.universalIdentifier,
-      applicationUniversalIdentifier,
-      fieldMetadataUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      roleUniversalIdentifier,
-      workspaceMemberFieldMetadataUniversalIdentifier,
-      rowLevelPermissionPredicateGroupUniversalIdentifier,
+      __universal: {
+        universalIdentifier:
+          rowLevelPermissionPredicateEntity.universalIdentifier,
+        applicationUniversalIdentifier,
+        fieldMetadataUniversalIdentifier,
+        objectMetadataUniversalIdentifier,
+        roleUniversalIdentifier,
+        workspaceMemberFieldMetadataUniversalIdentifier,
+        rowLevelPermissionPredicateGroupUniversalIdentifier,
+      },
     };
   };

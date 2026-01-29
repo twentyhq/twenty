@@ -40,6 +40,9 @@ export const transformAgentEntityToFlatAgent = ({
     applicationId: agentEntity.applicationId,
     modelConfiguration: agentEntity.modelConfiguration,
     evaluationInputs: agentEntity.evaluationInputs,
-    applicationUniversalIdentifier,
+    __universal: {
+      universalIdentifier: agentEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+    },
   };
 };

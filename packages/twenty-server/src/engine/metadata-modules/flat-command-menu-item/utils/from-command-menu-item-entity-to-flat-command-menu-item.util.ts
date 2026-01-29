@@ -54,7 +54,10 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     applicationId: commandMenuItemEntity.applicationId,
     createdAt: commandMenuItemEntity.createdAt.toISOString(),
     updatedAt: commandMenuItemEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
-    availabilityObjectMetadataUniversalIdentifier,
+    __universal: {
+      universalIdentifier: commandMenuItemEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      availabilityObjectMetadataUniversalIdentifier,
+    },
   };
 };

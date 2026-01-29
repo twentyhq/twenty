@@ -73,16 +73,19 @@ export const fromViewFilterGroupEntityToFlatViewFilterGroup = ({
     viewFilterIds: viewFilterGroupEntity.viewFilters?.map(({ id }) => id) ?? [],
     childViewFilterGroupIds:
       viewFilterGroupEntity.childViewFilterGroups?.map(({ id }) => id) ?? [],
-    applicationUniversalIdentifier,
-    parentViewFilterGroupUniversalIdentifier,
-    viewUniversalIdentifier,
-    viewFilterUniversalIdentifiers:
-      viewFilterGroupEntity.viewFilters?.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ) ?? [],
-    childViewFilterGroupUniversalIdentifiers:
-      viewFilterGroupEntity.childViewFilterGroups?.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ) ?? [],
+    __universal: {
+      universalIdentifier: viewFilterGroupEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      parentViewFilterGroupUniversalIdentifier,
+      viewUniversalIdentifier,
+      viewFilterUniversalIdentifiers:
+        viewFilterGroupEntity.viewFilters?.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ) ?? [],
+      childViewFilterGroupUniversalIdentifiers:
+        viewFilterGroupEntity.childViewFilterGroups?.map(
+          ({ universalIdentifier }) => universalIdentifier,
+        ) ?? [],
+    },
   };
 };

@@ -34,6 +34,9 @@ export const fromLogicFunctionEntityToFlatLogicFunction = ({
     createdAt: logicFunctionEntity.createdAt.toISOString(),
     updatedAt: logicFunctionEntity.updatedAt.toISOString(),
     deletedAt: logicFunctionEntity.deletedAt?.toISOString() ?? null,
-    applicationUniversalIdentifier,
+    __universal: {
+      universalIdentifier: logicFunctionEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+    },
   };
 };

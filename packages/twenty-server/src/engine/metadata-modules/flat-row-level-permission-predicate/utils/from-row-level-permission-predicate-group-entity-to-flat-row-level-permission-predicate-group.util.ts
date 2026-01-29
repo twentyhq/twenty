@@ -106,17 +106,21 @@ export const fromRowLevelPermissionPredicateGroupEntityToFlatRowLevelPermissionP
         rowLevelPermissionPredicateGroupEntity.rowLevelPermissionPredicates ??
         []
       ).map(({ id }) => id),
-      applicationUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      roleUniversalIdentifier,
-      parentRowLevelPermissionPredicateGroupUniversalIdentifier,
-      childRowLevelPermissionPredicateGroupUniversalIdentifiers: (
-        rowLevelPermissionPredicateGroupEntity.childRowLevelPermissionPredicateGroups ??
-        []
-      ).map(({ universalIdentifier }) => universalIdentifier),
-      rowLevelPermissionPredicateUniversalIdentifiers: (
-        rowLevelPermissionPredicateGroupEntity.rowLevelPermissionPredicates ??
-        []
-      ).map(({ universalIdentifier }) => universalIdentifier),
+      __universal: {
+        universalIdentifier:
+          rowLevelPermissionPredicateGroupEntity.universalIdentifier,
+        applicationUniversalIdentifier,
+        objectMetadataUniversalIdentifier,
+        roleUniversalIdentifier,
+        parentRowLevelPermissionPredicateGroupUniversalIdentifier,
+        childRowLevelPermissionPredicateGroupUniversalIdentifiers: (
+          rowLevelPermissionPredicateGroupEntity.childRowLevelPermissionPredicateGroups ??
+          []
+        ).map(({ universalIdentifier }) => universalIdentifier),
+        rowLevelPermissionPredicateUniversalIdentifiers: (
+          rowLevelPermissionPredicateGroupEntity.rowLevelPermissionPredicates ??
+          []
+        ).map(({ universalIdentifier }) => universalIdentifier),
+      },
     };
   };

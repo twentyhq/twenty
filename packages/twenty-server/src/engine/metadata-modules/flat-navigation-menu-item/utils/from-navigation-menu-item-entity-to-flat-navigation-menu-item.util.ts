@@ -87,9 +87,12 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
     applicationId: navigationMenuItemEntity.applicationId,
     createdAt: navigationMenuItemEntity.createdAt.toISOString(),
     updatedAt: navigationMenuItemEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
-    targetObjectMetadataUniversalIdentifier,
-    folderUniversalIdentifier,
-    viewUniversalIdentifier,
+    __universal: {
+      universalIdentifier: navigationMenuItemEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      targetObjectMetadataUniversalIdentifier,
+      folderUniversalIdentifier,
+      viewUniversalIdentifier,
+    },
   };
 };

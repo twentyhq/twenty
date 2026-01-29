@@ -70,11 +70,14 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
     tabIds: pageLayoutEntity.tabs.map((tab) => tab.id),
     defaultTabToFocusOnMobileAndSidePanelId:
       pageLayoutEntity.defaultTabToFocusOnMobileAndSidePanelId,
-    applicationUniversalIdentifier,
-    objectMetadataUniversalIdentifier,
-    tabUniversalIdentifiers: pageLayoutEntity.tabs.map(
-      (tab) => tab.universalIdentifier,
-    ),
-    defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
+    __universal: {
+      universalIdentifier: pageLayoutEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      objectMetadataUniversalIdentifier,
+      tabUniversalIdentifiers: pageLayoutEntity.tabs.map(
+        (tab) => tab.universalIdentifier,
+      ),
+      defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
+    },
   };
 };

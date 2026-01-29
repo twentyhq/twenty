@@ -31,6 +31,9 @@ export const fromFrontComponentEntityToFlatFrontComponent = ({
     applicationId: frontComponentEntity.applicationId,
     createdAt: frontComponentEntity.createdAt.toISOString(),
     updatedAt: frontComponentEntity.updatedAt.toISOString(),
-    applicationUniversalIdentifier,
+    __universal: {
+      universalIdentifier: frontComponentEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+    },
   };
 };
