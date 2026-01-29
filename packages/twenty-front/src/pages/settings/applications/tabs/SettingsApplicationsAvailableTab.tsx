@@ -21,17 +21,6 @@ const StyledSearchInput = styled(SettingsTextInput)`
   flex: 1;
 `;
 
-const StyledCategorySection = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledCategoryTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
-`;
-
 const StyledCardsGrid = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(3)};
@@ -67,26 +56,7 @@ export const SettingsApplicationsAvailableTab = () => {
     );
   }, [applications, searchTerm]);
 
-  const applicationsByCategory = useMemo(() => {
-    return filteredApplications.reduce(
-      (
-        acc: Record<string, AvailableApplication[]>,
-        application: AvailableApplication,
-      ) => {
-        const category = application.category;
-        if (!acc[category]) {
-          acc[category] = [];
-        }
-        acc[category].push(application);
-        return acc;
-      },
-      {} as Record<string, AvailableApplication[]>,
-    );
-  }, [filteredApplications]);
-
-  const categories = Object.keys(applicationsByCategory);
-
-  if (isLoading) {
+  if (isLoading === true) {
     return (
       <Section>
         <StyledEmptyState>{t`Loading applications...`}</StyledEmptyState>
@@ -107,24 +77,17 @@ export const SettingsApplicationsAvailableTab = () => {
         <LightIconButton Icon={IconFilter} accent="tertiary" />
       </StyledSearchContainer>
 
-      {categories.length === 0 ? (
+      {filteredApplications.length === 0 ? (
         <StyledEmptyState>{t`No applications available`}</StyledEmptyState>
       ) : (
-        categories.map((category) => (
-          <StyledCategorySection key={category}>
-            <StyledCategoryTitle>{category}</StyledCategoryTitle>
-            <StyledCardsGrid>
-              {applicationsByCategory[category].map(
-                (application: AvailableApplication) => (
-                  <SettingsAvailableApplicationCard
-                    key={application.id}
-                    application={application}
-                  />
-                ),
-              )}
-            </StyledCardsGrid>
-          </StyledCategorySection>
-        ))
+        <StyledCardsGrid>
+          {filteredApplications.map((application: AvailableApplication) => (
+            <SettingsAvailableApplicationCard
+              key={application.id}
+              application={application}
+            />
+          ))}
+        </StyledCardsGrid>
       )}
     </Section>
   );

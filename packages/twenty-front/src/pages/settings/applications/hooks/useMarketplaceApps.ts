@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+import isEmpty from 'lodash.isempty';
 import { useFindManyMarketplaceAppsQuery } from '~/generated/graphql';
 import { type AvailableApplication } from '~/pages/settings/applications/types/availableApplication';
 
@@ -5,7 +7,7 @@ import { type AvailableApplication } from '~/pages/settings/applications/types/a
 // eslint-disable-next-line twenty/no-hardcoded-colors
 const DATA_ENRICHMENT_LOGO_SVG = `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#1a2744"><ellipse cx="38" cy="20" rx="28" ry="10"/><rect x="10" y="20" width="56" height="50"/><ellipse cx="38" cy="70" rx="28" ry="10"/><ellipse cx="38" cy="35" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="38" cy="52" rx="28" ry="10" fill="none" stroke="#fff" stroke-width="3"/><circle cx="72" cy="62" r="22" fill="#1a2744"/><circle cx="72" cy="62" r="18" fill="#fff"/><path d="M72 50 L72 74 M62 58 L72 48 L82 58" stroke="#1a2744" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`)}`;
 
-const MOCK_MARKETPLACE_APP: AvailableApplication = {
+const MOCKED_MARKETPLACE_APP: AvailableApplication = {
   id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'Data Enrichment',
   description: 'Enrich your data easily. Choose your provider.',
@@ -41,7 +43,9 @@ export const useMarketplaceApps = () => {
     data?.findManyMarketplaceApps.map((app) => ({
       id: app.id,
       name: app.name,
-      description: app.description,
+      description: isEmpty(app.description)
+        ? t`This app has no description for now.` // TODO decide design
+        : app.description,
       author: app.author,
       logoPath: app.logo ?? '',
       category: app.category,
@@ -60,7 +64,7 @@ export const useMarketplaceApps = () => {
     })) ?? [];
 
   const marketplaceApps: AvailableApplication[] = [
-    MOCK_MARKETPLACE_APP,
+    MOCKED_MARKETPLACE_APP,
     ...apiApps,
   ];
 
