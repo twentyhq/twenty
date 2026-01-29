@@ -8,7 +8,7 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type AllJsonbPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-by-metadata-name.constant';
-import { ExtractJsonbPropertiesWithSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties-with-serialized-relation.type';
+import { type ContainsSerializedRelation } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/contains-serialized-relation.type';
 import { type FormatRecordSerializedRelationProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/format-record-serialized-relation-properties.type';
 
 export type UniversalSyncableFlatEntity = Omit<
@@ -30,10 +30,13 @@ export type UniversalFlatEntityExtraProperties<
   > & {
     applicationUniversalIdentifier: string;
   } & {
-    [P in ExtractJsonbPropertiesWithSerializedRelation<TEntity> &
-      string as `universal${Capitalize<P>}`]: FormatRecordSerializedRelationProperties<
-      TEntity[P]
-    >;
+    [P in AllJsonbPropertiesForMetadataName<TMetadataName> &
+      keyof TEntity &
+      string as true extends ContainsSerializedRelation<NonNullable<TEntity[P]>>
+      ? `universal${Capitalize<P>}`
+      : P]: true extends ContainsSerializedRelation<NonNullable<TEntity[P]>>
+      ? FormatRecordSerializedRelationProperties<TEntity[P]>
+      : null;
   };
 
 export type UniversalFlatEntityFrom<

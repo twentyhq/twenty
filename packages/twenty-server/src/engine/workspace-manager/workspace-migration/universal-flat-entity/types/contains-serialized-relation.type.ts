@@ -3,9 +3,7 @@ import {
   type IsSerializedRelation,
 } from 'twenty-shared/types';
 
-import { type ExtractJsonbProperties } from './extract-jsonb-properties.type';
-
-type ContainsSerializedRelation<T> = T extends unknown
+export type ContainsSerializedRelation<T> = T extends unknown
   ?
     IsSerializedRelation<T> extends true
     ? true
@@ -20,14 +18,6 @@ type ContainsSerializedRelation<T> = T extends unknown
             ? true
             : false
           : false
-        : // Has at least one direct SerializedRelation property
+        :
           true
   : never;
-
-export type ExtractJsonbPropertiesWithSerializedRelation<T> = {
-  [P in ExtractJsonbProperties<T>]: true extends ContainsSerializedRelation<
-    NonNullable<T[P]>
-  >
-    ? P
-    : never;
-}[ExtractJsonbProperties<T>];
