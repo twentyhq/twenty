@@ -62,11 +62,14 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     const createdAt = new Date().toISOString();
 
     // Use nameField.id if it exists, otherwise use idField.id (for junction tables without name)
-    const nameField = defaultFlatFieldForCustomObjectMaps.fields.nameField as
-      | FlatFieldMetadata
-      | undefined;
+    const nameField = defaultFlatFieldForCustomObjectMaps.fields.nameField
     const labelIdentifierFieldMetadataId =
       nameField?.id ?? defaultFlatFieldForCustomObjectMaps.fields.idField.id;
+
+    const universalIdentifier = createObjectInput.universalIdentifier ?? v4();
+    const labelIdentifierFieldMetadataUniversalIdentifier =
+      nameField?.universalIdentifier ??
+      defaultFlatFieldForCustomObjectMaps.fields.idField.universalIdentifier;
 
     const flatObjectMetadataToCreate: FlatObjectMetadata = {
       fieldIds: [],
@@ -96,9 +99,15 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       standardId: createObjectInput.standardId ?? null,
       standardOverrides: null,
       applicationId: workspaceCustomApplicationId,
-      universalIdentifier: createObjectInput.universalIdentifier ?? v4(),
+      universalIdentifier,
       targetTableName: 'DEPRECATED',
       workspaceId,
+      applicationUniversalIdentifier: workspaceCustomApplicationId,
+      fieldUniversalIdentifiers: [],
+      viewUniversalIdentifiers: [],
+      indexMetadataUniversalIdentifiers: [],
+      labelIdentifierFieldMetadataUniversalIdentifier,
+      imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
 
     const {
