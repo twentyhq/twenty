@@ -1,6 +1,6 @@
 import type * as esbuild from 'esbuild';
 import * as fs from 'fs/promises';
-import { HTML_TAG_TO_REMOTE_COMPONENT } from 'twenty-shared/front-component';
+import { HTML_TAG_TO_REMOTE_COMPONENT } from 'twenty-shared/front-component-constants';
 
 const REMOTE_COMPONENTS_PREFIX = 'RemoteComponents';
 
