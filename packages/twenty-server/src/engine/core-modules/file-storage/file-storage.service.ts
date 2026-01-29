@@ -181,6 +181,21 @@ export class FileStorageService {
     return sources;
   }
 
+  async readFolder_v2(params: ResourceIdentifier): Promise<Sources> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+    const tempDir = `/tmp/twenty-read-folder-${Date.now()}`;
+
+    await mkdir(tempDir, { recursive: true });
+
+    await driver.downloadFolder({
+      onStoragePath,
+      localPath: tempDir,
+    });
+
+    return this.readLocalFolderToSources(tempDir);
+  }
+
   uploadFolder_v2(
     params: ResourceIdentifier & { localPath: string },
   ): Promise<void> {

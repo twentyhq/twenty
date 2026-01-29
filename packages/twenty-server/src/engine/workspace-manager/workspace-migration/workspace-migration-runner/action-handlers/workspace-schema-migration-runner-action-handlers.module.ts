@@ -73,7 +73,7 @@ import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationEntity], 'core'),
+    TypeOrmModule.forFeature([ApplicationEntity]),
     WorkspaceSchemaManagerModule,
     FunctionBuildModule,
   ],

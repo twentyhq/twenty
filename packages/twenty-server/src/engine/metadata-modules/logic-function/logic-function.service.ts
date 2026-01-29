@@ -70,9 +70,37 @@ export class LogicFunctionService {
 
   async getLogicFunctionSourceCode(workspaceId: string, id: string) {
     try {
-      const folderPath = `workspace-${workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${id}`;
+      const { flatLogicFunctionMaps, flatApplicationMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatLogicFunctionMaps',
+          'flatApplicationMaps',
+        ]);
 
-      return await this.fileStorageService.readFolder(folderPath);
+      const flatLogicFunction = findFlatLogicFunctionOrThrow({
+        id,
+        flatLogicFunctionMaps,
+      });
+
+      const applicationUniversalIdentifier = isDefined(
+        flatLogicFunction.applicationId,
+      )
+        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+            ?.universalIdentifier
+        : undefined;
+
+      if (!isDefined(applicationUniversalIdentifier)) {
+        throw new LogicFunctionException(
+          `Application universal identifier not found for logic function ${id}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      return await this.fileStorageService.readFolder_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: `${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${id}`,
+      });
     } catch (error) {
       if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
         return;
