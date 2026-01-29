@@ -150,7 +150,8 @@ export const usePageLayoutHeaderInfo = ({
       };
     }
 
-    case CommandMenuPages.PageLayoutFieldsSettings: {
+    case CommandMenuPages.PageLayoutFieldsSettings:
+    case CommandMenuPages.PageLayoutFieldsLayout: {
       if (!isDefined(pageLayoutEditingWidgetId)) {
         return null;
       }
