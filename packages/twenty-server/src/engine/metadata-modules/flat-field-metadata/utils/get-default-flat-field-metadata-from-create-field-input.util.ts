@@ -1,7 +1,7 @@
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';

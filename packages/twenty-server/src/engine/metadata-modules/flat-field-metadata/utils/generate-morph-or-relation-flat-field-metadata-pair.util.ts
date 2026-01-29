@@ -170,7 +170,8 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     relationTargetObjectMetadataId: targetFlatObjectMetadata.id,
     relationTargetObjectMetadataUniversalIdentifier:
       targetFlatObjectMetadata.universalIdentifier,
-    relationTargetFieldMetadataUniversalIdentifier: targetFieldUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier:
+      targetFieldUniversalIdentifier,
   };
 
   const targetCreateFieldInput: CreateFieldInput = {
@@ -228,7 +229,8 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
     relationTargetObjectMetadataUniversalIdentifier:
       sourceFlatObjectMetadata.universalIdentifier,
-    relationTargetFieldMetadataUniversalIdentifier: sourceFieldUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier:
+      sourceFieldUniversalIdentifier,
   };
 
   const indexMetadata: FlatIndexMetadata = generateIndexForFlatFieldMetadata({
