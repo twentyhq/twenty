@@ -1,3 +1,4 @@
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -36,5 +37,7 @@ export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
     universalIdentifier: pageLayoutTabId,
     applicationId: workspaceCustomApplicationId,
     widgetIds: [],
+    icon: null,
+    layoutMode: PageLayoutTabLayoutMode.GRID,
   };
 };

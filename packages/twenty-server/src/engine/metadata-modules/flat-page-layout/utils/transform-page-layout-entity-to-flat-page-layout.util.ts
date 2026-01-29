@@ -11,6 +11,7 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
   entity: pageLayoutEntity,
   applicationIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
+  pageLayoutTabIdToUniversalIdentifierMap,
 }: FromEntityToFlatEntityArgs<'pageLayout'>): FlatPageLayout => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(pageLayoutEntity.applicationId);
@@ -38,6 +39,23 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
     }
   }
 
+  let defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier: string | null =
+    null;
+
+  if (isDefined(pageLayoutEntity.defaultTabToFocusOnMobileAndSidePanelId)) {
+    defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier =
+      pageLayoutTabIdToUniversalIdentifierMap.get(
+        pageLayoutEntity.defaultTabToFocusOnMobileAndSidePanelId,
+      ) ?? null;
+
+    if (!isDefined(defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `PageLayoutTab with id ${pageLayoutEntity.defaultTabToFocusOnMobileAndSidePanelId} not found for pageLayout ${pageLayoutEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
   return {
     createdAt: pageLayoutEntity.createdAt.toISOString(),
     deletedAt: pageLayoutEntity.deletedAt?.toISOString() ?? null,
@@ -50,6 +68,8 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
     universalIdentifier: pageLayoutEntity.universalIdentifier,
     applicationId: pageLayoutEntity.applicationId,
     tabIds: pageLayoutEntity.tabs.map((tab) => tab.id),
+    defaultTabToFocusOnMobileAndSidePanelId:
+      pageLayoutEntity.defaultTabToFocusOnMobileAndSidePanelId,
     __universal: {
       universalIdentifier: pageLayoutEntity.universalIdentifier,
       applicationUniversalIdentifier,
@@ -57,6 +77,7 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
       tabUniversalIdentifiers: pageLayoutEntity.tabs.map(
         (tab) => tab.universalIdentifier,
       ),
+      defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
     },
   };
 };

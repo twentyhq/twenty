@@ -42,6 +42,7 @@ export const ALL_JSONB_PROPERTIES_BY_METADATA_NAME = {
   pageLayoutWidget: {
     gridPosition: 'gridPosition',
     configuration: 'configuration',
+    conditionalDisplay: 'conditionalDisplay',
   },
   commandMenuItem: {},
   navigationMenuItem: {},

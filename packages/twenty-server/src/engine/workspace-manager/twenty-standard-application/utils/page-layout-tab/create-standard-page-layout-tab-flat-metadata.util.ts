@@ -1,4 +1,5 @@
 import { isDefined } from 'class-validator';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
@@ -64,5 +65,7 @@ export const createStandardPageLayoutTabFlatMetadata = <
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    icon: null,
+    layoutMode: PageLayoutTabLayoutMode.GRID,
   };
 };

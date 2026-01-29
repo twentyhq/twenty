@@ -62,6 +62,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   pageLayout: {
     objectMetadata: true,
+    pageLayoutTab: true,
   },
   pageLayoutTab: {
     pageLayout: true,

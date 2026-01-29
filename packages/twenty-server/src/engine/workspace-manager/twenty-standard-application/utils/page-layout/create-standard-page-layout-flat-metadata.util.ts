@@ -41,5 +41,6 @@ export const createStandardPageLayoutFlatMetadata = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    defaultTabToFocusOnMobileAndSidePanelId: null,
   };
 };

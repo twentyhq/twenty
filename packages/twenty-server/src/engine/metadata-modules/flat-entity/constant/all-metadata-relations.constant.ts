@@ -306,6 +306,11 @@ export const ALL_METADATA_RELATIONS = {
         foreignKey: 'objectMetadataId',
       },
       application: null,
+      defaultTabToFocusOnMobileAndSidePanel: {
+        metadataName: 'pageLayoutTab',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'defaultTabToFocusOnMobileAndSidePanelId',
+      },
     },
     oneToMany: {
       tabs: { metadataName: 'pageLayoutTab' },
