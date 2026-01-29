@@ -1,5 +1,5 @@
 import type * as esbuild from 'esbuild';
-import * as fs from 'fs/promises';
+import * as fs from 'fs';
 import { HTML_TAG_TO_REMOTE_COMPONENT } from 'twenty-shared/front-component-constants';
 
 const REMOTE_COMPONENTS_PREFIX = 'RemoteComponents';
@@ -27,7 +27,7 @@ export const jsxTransformPlugin: esbuild.Plugin = {
     build.onLoad(
       { filter: /\.front-component\.tsx$/ },
       async (args): Promise<esbuild.OnLoadResult> => {
-        const source = await fs.readFile(args.path, 'utf8');
+        const source = fs.readFileSync(args.path, 'utf8');
         const transformedSource = transformJsxToRemoteComponents(source);
 
         return {
