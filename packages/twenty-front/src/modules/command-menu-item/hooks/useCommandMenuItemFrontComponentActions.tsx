@@ -8,7 +8,6 @@ import { contextStoreIsPageInEditModeComponentState } from '@/context-store/stat
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
@@ -46,8 +45,7 @@ const buildActionFromItem = ({
   getIcon,
   openFrontComponentInCommandMenu,
 }: BuildActionFromItemParams) => {
-  const displayLabel =
-    item.label ?? item.frontComponent?.name ?? t`Front Component`;
+  const displayLabel = item.label;
 
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
