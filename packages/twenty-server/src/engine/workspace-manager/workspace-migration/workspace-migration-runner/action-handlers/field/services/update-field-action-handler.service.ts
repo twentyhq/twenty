@@ -97,19 +97,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    const objectMetadataUniversalIdentifier =
-      currentFlatFieldMetadata.__universal?.objectMetadataUniversalIdentifier;
-
-    if (!isDefined(objectMetadataUniversalIdentifier)) {
-      throw new WorkspaceMigrationActionExecutionException({
-        message: `objectMetadataUniversalIdentifier is not defined for field metadata ${entityId}`,
-        code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
-      });
-    }
-
     const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier: objectMetadataUniversalIdentifier,
+      universalIdentifier:
+        currentFlatFieldMetadata.objectMetadataUniversalIdentifier,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({

@@ -45,8 +45,16 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     applicationId: faker.string.uuid(),
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    __universal: {} as any,
+    applicationUniversalIdentifier: faker.string.uuid(),
+    objectMetadataUniversalIdentifier: faker.string.uuid(),
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
     ...overrides,
   };
 };
