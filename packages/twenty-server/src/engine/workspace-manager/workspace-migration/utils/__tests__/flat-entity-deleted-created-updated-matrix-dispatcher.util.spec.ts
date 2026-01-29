@@ -30,8 +30,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             applicationId: 'application-id-1',
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
           }),
         ],
         metadataName: 'fieldMetadata',
@@ -54,8 +56,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             applicationId: 'application-id-1',
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
           }),
         ],
         to: [],
@@ -80,8 +84,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
             isActive: false,
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
           }),
         ],
         to: [
@@ -95,8 +101,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
             isActive: true,
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
           }),
         ],
         metadataName: 'fieldMetadata',
@@ -119,8 +127,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             applicationId: 'application-id-1',
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
             isActive: true,
           }),
           getFlatFieldMetadataMock({
@@ -132,8 +142,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             applicationId: 'application-id-1',
             createdAt: '2024-01-01T00:00:00.000Z',
             updatedAt: '2024-01-01T00:00:00.000Z',
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
           }),
         ],
         to: [
@@ -145,8 +157,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             workspaceId: 'workspace-id-1',
             applicationId: 'application-id-1',
             createdAt: '2024-01-01T00:00:00.000Z',
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
             updatedAt: '2024-01-01T00:00:00.000Z',
             isActive: false,
           }),
@@ -158,8 +172,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             workspaceId: 'workspace-id-1',
             applicationId: 'application-id-1',
             createdAt: '2024-01-01T00:00:00.000Z',
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
             updatedAt: '2024-01-01T00:00:00.000Z',
           }),
         ],
@@ -183,8 +199,10 @@ describe('flatEntityDeletedCreatedUpdatedMatrixDispatcher', () => {
             workspaceId: 'workspace-id-1',
             applicationId: 'application-id-1',
             createdAt: '2024-01-01T00:00:00.000Z',
-            applicationUniversalIdentifier: 'application-universal-identifier-1',
-            objectMetadataUniversalIdentifier: 'object-metadata-universal-identifier-1',
+            applicationUniversalIdentifier:
+              'application-universal-identifier-1',
+            objectMetadataUniversalIdentifier:
+              'object-metadata-universal-identifier-1',
             updatedAt: '2024-01-01T00:00:00.000Z',
           }),
         ],
