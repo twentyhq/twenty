@@ -115,7 +115,7 @@ export const MetadataProviderEffect = () => {
     if (isDefined(logicFunctionsData?.findManyLogicFunctions)) {
       setLogicFunctions(logicFunctionsData.findManyLogicFunctions);
     }
-  }, [logicFunctionsData, setLogicFunctions]);
+  }, [logicFunctionsData?.findManyLogicFunctions, setLogicFunctions]);
 
   useEffect(() => {
     if (!userQueryLoading) {
