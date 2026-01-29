@@ -73,12 +73,17 @@ const StyledContainer = styled(CardContent)`
 
 const StyledOptionsLabel = styled.div<{
   isAdvancedModeEnabled: boolean;
+  isBulkInputMode: boolean;
 }>`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-left: ${({ theme, isAdvancedModeEnabled }) =>
-    theme.spacing(isAdvancedModeEnabled ? 10 : 0)};
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+  margin-left: ${({ theme, isAdvancedModeEnabled, isBulkInputMode }) =>
+    theme.spacing(isAdvancedModeEnabled && !isBulkInputMode ? 10 : 0)};
+};
 `;
 
 const StyledApiKeyContainer = styled.div`
@@ -94,14 +99,18 @@ const StyledApiKey = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
   margin-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+
   white-space: nowrap;
 `;
 
 const StyledLabelContainer = styled.div`
+  align-items: center;
   display: flex;
+  width: 100%;
 `;
 
 const StyledIconContainer = styled.div`
+  align-items: center;
   border-right: 1px solid ${({ theme }) => theme.color.yellow};
   display: flex;
 
@@ -129,6 +138,7 @@ const StyledOptionsHeaderContainer = styled.div`
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
   margin-top: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 const StyledTextAreaContainer = styled.div`
@@ -309,20 +319,23 @@ export const SettingsDataModelFieldSelectForm = ({
             <StyledContainer>
               <StyledOptionsHeaderContainer>
                 <StyledLabelContainer>
-                  <AdvancedSettingsWrapper animationDimension="width" hideDot>
-                    <StyledApiKeyContainer>
-                      <StyledIconContainer>
-                        <StyledIconPoint
-                          size={12}
-                          color={theme.color.yellow}
-                          fill={theme.color.yellow}
-                        />
-                      </StyledIconContainer>
-                      <StyledApiKey>{t`API values`}</StyledApiKey>
-                    </StyledApiKeyContainer>
-                  </AdvancedSettingsWrapper>
+                  {!isBulkInputMode && (
+                    <AdvancedSettingsWrapper animationDimension="width" hideDot>
+                      <StyledApiKeyContainer>
+                        <StyledIconContainer>
+                          <StyledIconPoint
+                            size={12}
+                            color={theme.color.yellow}
+                            fill={theme.color.yellow}
+                          />
+                        </StyledIconContainer>
+                        <StyledApiKey>{t`API values`}</StyledApiKey>
+                      </StyledApiKeyContainer>
+                    </AdvancedSettingsWrapper>
+                  )}
                   <StyledOptionsLabel
                     isAdvancedModeEnabled={isAdvancedModeEnabled}
+                    isBulkInputMode={isBulkInputMode}
                   >
                     {t`Options`}
                   </StyledOptionsLabel>
@@ -353,7 +366,7 @@ export const SettingsDataModelFieldSelectForm = ({
                                 );
                               }
                               setIsBulkInputMode(
-                                (currInputMode) => !currInputMode,
+                                (currentInputMode) => !currentInputMode,
                               );
                               closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                             }}
