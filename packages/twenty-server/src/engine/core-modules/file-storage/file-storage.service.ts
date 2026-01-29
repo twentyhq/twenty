@@ -4,10 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type Readable } from 'stream';
 
 import { FileFolder, Sources } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 
 @Injectable()
 //TODO: Implement storage driver interface when removing v1
@@ -47,6 +48,7 @@ export class FileStorageService {
     applicationId,
     workspaceId,
     fileId,
+    settings,
   }: {
     sourceFile: string | Buffer | Uint8Array;
     destinationPath: string;
@@ -55,6 +57,7 @@ export class FileStorageService {
     applicationId: string;
     workspaceId: string;
     fileId?: string;
+    settings: FileSettings;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
@@ -75,6 +78,7 @@ export class FileStorageService {
         typeof sourceFile === 'string'
           ? Buffer.byteLength(sourceFile)
           : sourceFile.length,
+      settings,
     });
 
     return fileEntity;
@@ -126,6 +130,32 @@ export class FileStorageService {
     return driver.delete(params);
   }
 
+  async deleteByFileId({
+    fileId,
+    workspaceId,
+    fileFolder,
+  }: {
+    fileId: string;
+    workspaceId: string;
+    fileFolder: FileFolder;
+  }): Promise<void> {
+    const file = await this.fileRepository.findOneOrFail({
+      where: {
+        id: fileId,
+        workspaceId,
+        path: Like(`${fileFolder}/%`),
+      },
+    });
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    await driver.delete({
+      folderPath: `${file.workspaceId}/${file.applicationId}`,
+      filename: file.path,
+    });
+
+    await this.fileRepository.delete(fileId);
+  }
+
   move(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
@@ -142,6 +172,50 @@ export class FileStorageService {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     return driver.copy(params);
+  }
+
+  async moveFile({
+    from,
+    to,
+    workspaceId,
+  }: {
+    from: {
+      applicationId: string;
+      fileFolder: FileFolder;
+      destinationPath: string;
+    };
+    to: {
+      applicationId: string;
+      fileFolder: FileFolder;
+      destinationPath: string;
+    };
+    workspaceId: string;
+  }): Promise<void> {
+    const file = await this.fileRepository.findOneOrFail({
+      where: {
+        workspaceId,
+        applicationId: from.applicationId,
+        path: `${from.fileFolder}/${from.destinationPath}`,
+      },
+    });
+
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    await driver.move({
+      from: {
+        folderPath: `${file.workspaceId}/${from.applicationId}/${from.fileFolder}`,
+        filename: from.destinationPath,
+      },
+      to: {
+        folderPath: `${file.workspaceId}/${to.applicationId}/${to.fileFolder}`,
+        filename: to.destinationPath,
+      },
+    });
+
+    await this.fileRepository.update(file.id, {
+      applicationId: to.applicationId,
+      path: `${to.fileFolder}/${to.destinationPath}`,
+    });
   }
 
   download(params: {

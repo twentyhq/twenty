@@ -1,4 +1,4 @@
-import { formatConnectRecordNotFoundErrorMessage } from 'src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util';
+import { formatConnectRecordNotFoundErrorMessage } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util';
 
 describe('formatConnectRecordNotFoundErrorMessage', () => {
   it('should format the error message correctly', () => {
