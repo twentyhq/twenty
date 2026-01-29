@@ -1,4 +1,4 @@
-import { transformJsxToRemoteComponents } from '@/cli/utilities/build/common/jsx-transform-plugin';
+import { transformJsxToRemoteComponents } from '@/cli/utilities/build/common/jsx-transform-plugin-to-remote-dom-worker-format';
 
 describe('transformJsxToRemoteComponents', () => {
   describe('basic tag transformations', () => {

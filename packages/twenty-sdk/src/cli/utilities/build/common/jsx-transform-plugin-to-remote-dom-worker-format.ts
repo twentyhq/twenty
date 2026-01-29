@@ -7,7 +7,7 @@ const REMOTE_COMPONENTS_PREFIX = 'RemoteComponents';
 const REACT_JSX_IMPORT_PATTERN =
   /import\s*\{([^}]+)\}\s*from\s*['"]react\/jsx-runtime['"];?/g;
 
-export const transformReactImportsToGlobalThis = (source: string): string => {
+const transformReactImportsToGlobalThis = (source: string): string => {
   return source.replace(REACT_JSX_IMPORT_PATTERN, (_match, imports: string) => {
     const importNames = imports.split(',').map((name) => name.trim());
     const assignments = importNames
@@ -38,7 +38,7 @@ const DEFINE_IMPORT_PATTERN =
 const DEFINE_EXPORT_PATTERN =
   /export\s+default\s+defineFrontComponent\s*\(\s*\{[^}]*component\s*:\s*(\w+)[^}]*\}\s*\)\s*;?/s;
 
-export const transformJsxToRemoteComponents = (source: string): string => {
+const transformJsxToRemoteComponents = (source: string): string => {
   return source.replace(TAG_PATTERN, (match, prefix, tagName) => {
     const componentName = HTML_TAG_TO_REMOTE_COMPONENT[tagName];
     if (componentName) {
@@ -48,7 +48,7 @@ export const transformJsxToRemoteComponents = (source: string): string => {
   });
 };
 
-export const transformDefineFrontComponent = (source: string): string => {
+const transformDefineFrontComponent = (source: string): string => {
   let transformed = source.replace(DEFINE_IMPORT_PATTERN, '');
 
   const match = transformed.match(DEFINE_EXPORT_PATTERN);
@@ -73,8 +73,8 @@ export const transformDefineFrontComponent = (source: string): string => {
   return transformed;
 };
 
-export const jsxTransformPlugin: esbuild.Plugin = {
-  name: 'jsx-transform-remote-components',
+export const jsxTransformPluginToRemoteDomWorkerFormat: esbuild.Plugin = {
+  name: 'jsx-transform-plugin-to-remote-dom-worker-format',
   setup: (build) => {
     build.onLoad(
       { filter: /\.front-component\.tsx$/ },
