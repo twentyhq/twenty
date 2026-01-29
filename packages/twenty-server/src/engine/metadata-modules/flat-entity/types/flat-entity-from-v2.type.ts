@@ -7,6 +7,9 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
+/**
+ * Currently under migration but aims to replace FlatEntity afterwards
+ */
 export type FlatEntityFromV2<
   TEntity,
   // Required to be passed for narrowed type
