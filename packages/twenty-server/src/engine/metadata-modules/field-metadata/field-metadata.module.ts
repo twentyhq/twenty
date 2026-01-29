@@ -34,6 +34,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CreateFieldInput } from './dtos/create-field.input';
 import { UpdateFieldInput } from './dtos/update-field.input';
 
@@ -62,6 +63,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         FlatFieldMetadataModule,
         IndexMetadataModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
+        WorkspaceCacheModule,
       ],
       services: [FieldMetadataService],
       resolvers: [
