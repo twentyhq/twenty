@@ -129,10 +129,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
         fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(
           ({ universalIdentifier }) => universalIdentifier,
         ) ?? [],
-      settings: settingsWithUniversalIdentifiers,
-      defaultValue: fieldMetadataWithoutRelations.defaultValue,
-      options: fieldMetadataWithoutRelations.options,
-      standardOverrides: fieldMetadataWithoutRelations.standardOverrides,
+      universalSettings: settingsWithUniversalIdentifiers,
     },
   };
 };
