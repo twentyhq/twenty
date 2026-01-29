@@ -33,9 +33,6 @@ type SettingsRolePermissionsObjectLevelTableRowProps = {
   fromAgentId?: string;
 };
 
-/**
- * Renders a clickable table row representing object-level permissions for a single object type.
- */
 export const SettingsRolePermissionsObjectLevelTableRow = ({
   objectMetadataItem,
   roleId,

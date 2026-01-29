@@ -10,7 +10,7 @@ export const getRoleWithRemovedObjectPermission = (
       draftRole.objectPermissions?.filter(
         (permission) => permission.objectMetadataId !== objectMetadataId,
       ) ?? [];
-
+    //! logic for removing fieldPermissions here but not working
     draftRole.fieldPermissions =
       draftRole.fieldPermissions?.filter(
         (permission) => permission.objectMetadataId !== objectMetadataId,
