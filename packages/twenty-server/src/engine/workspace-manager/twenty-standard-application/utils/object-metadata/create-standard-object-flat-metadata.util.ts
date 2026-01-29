@@ -52,42 +52,61 @@ export const createStandardObjectFlatMetadata = <
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
   now,
-}: CreateStandardObjectArgs<O>): FlatObjectMetadata => ({
-  universalIdentifier,
-  standardId: universalIdentifier,
-  applicationId: twentyStandardApplicationId,
-  workspaceId,
-  nameSingular,
-  namePlural,
-  labelSingular,
-  labelPlural,
-  description,
-  icon,
-  isCustom: false,
-  isRemote: false,
-  isActive: true,
-  isSystem,
-  isSearchable,
-  isAuditLogged,
-  isUIReadOnly,
-  isLabelSyncedWithName: false,
-  standardOverrides: null,
-  duplicateCriteria,
-  shortcut,
-  labelIdentifierFieldMetadataId:
+}: CreateStandardObjectArgs<O>): FlatObjectMetadata => {
+  const labelIdentifierFieldMetadataUniversalIdentifier =
     standardObjectMetadataRelatedEntityIds[nameSingular].fields[
       labelIdentifierFieldMetadataName
-    ].id,
-  imageIdentifierFieldMetadataId: imageIdentifierFieldMetadataName
-    ? standardObjectMetadataRelatedEntityIds[nameSingular].fields[
-        imageIdentifierFieldMetadataName
-      ].id
-    : null,
-  targetTableName: 'DEPRECATED',
-  fieldIds: [],
-  indexMetadataIds: [],
-  viewIds: [],
-  createdAt: now,
-  updatedAt: now,
-  id: standardObjectMetadataRelatedEntityIds[nameSingular].id,
-});
+    ].universalIdentifier;
+  const imageIdentifierFieldMetadataUniversalIdentifier =
+    imageIdentifierFieldMetadataName
+      ? standardObjectMetadataRelatedEntityIds[nameSingular].fields[
+          imageIdentifierFieldMetadataName
+        ].universalIdentifier
+      : null;
+
+  return {
+    universalIdentifier,
+    standardId: universalIdentifier,
+    applicationId: twentyStandardApplicationId,
+    workspaceId,
+    nameSingular,
+    namePlural,
+    labelSingular,
+    labelPlural,
+    description,
+    icon,
+    isCustom: false,
+    isRemote: false,
+    isActive: true,
+    isSystem,
+    isSearchable,
+    isAuditLogged,
+    isUIReadOnly,
+    isLabelSyncedWithName: false,
+    standardOverrides: null,
+    duplicateCriteria,
+    shortcut,
+    labelIdentifierFieldMetadataId:
+      standardObjectMetadataRelatedEntityIds[nameSingular].fields[
+        labelIdentifierFieldMetadataName
+      ].id,
+    imageIdentifierFieldMetadataId: imageIdentifierFieldMetadataName
+      ? standardObjectMetadataRelatedEntityIds[nameSingular].fields[
+          imageIdentifierFieldMetadataName
+        ].id
+      : null,
+    targetTableName: 'DEPRECATED',
+    fieldIds: [],
+    indexMetadataIds: [],
+    viewIds: [],
+    createdAt: now,
+    updatedAt: now,
+    id: standardObjectMetadataRelatedEntityIds[nameSingular].id,
+    applicationUniversalIdentifier: twentyStandardApplicationId,
+    fieldUniversalIdentifiers: [],
+    viewUniversalIdentifiers: [],
+    indexMetadataUniversalIdentifiers: [],
+    labelIdentifierFieldMetadataUniversalIdentifier,
+    imageIdentifierFieldMetadataUniversalIdentifier,
+  };
+};

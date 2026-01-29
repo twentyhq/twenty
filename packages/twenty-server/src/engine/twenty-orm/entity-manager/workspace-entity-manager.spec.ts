@@ -123,6 +123,12 @@ describe('WorkspaceEntityManager', () => {
       duplicateCriteria: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      applicationUniversalIdentifier: 'test-application-id',
+      fieldUniversalIdentifiers: ['field-id'],
+      viewUniversalIdentifiers: [],
+      indexMetadataUniversalIdentifiers: [],
+      labelIdentifierFieldMetadataUniversalIdentifier: null,
+      imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
 
     (getObjectMetadataFromEntityTarget as jest.Mock).mockReturnValue(

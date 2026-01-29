@@ -76,24 +76,17 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = ({
     viewIds: objectMetadataEntity.views.map(({ id }) => id),
     indexMetadataIds: objectMetadataEntity.indexMetadatas.map(({ id }) => id),
     fieldIds: objectMetadataEntity.fields.map(({ id }) => id),
-    __universal: {
-      universalIdentifier:
-        objectMetadataEntityWithoutRelations.universalIdentifier,
-      applicationUniversalIdentifier,
-      labelIdentifierFieldMetadataUniversalIdentifier,
-      imageIdentifierFieldMetadataUniversalIdentifier,
-      fieldUniversalIdentifiers: objectMetadataEntity.fields.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
-      indexMetadataUniversalIdentifiers:
-        objectMetadataEntity.indexMetadatas.map(
-          ({ universalIdentifier }) => universalIdentifier,
-        ),
-      viewUniversalIdentifiers: objectMetadataEntity.views.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
-      standardOverrides: objectMetadataEntityWithoutRelations.standardOverrides,
-      duplicateCriteria: objectMetadataEntityWithoutRelations.duplicateCriteria,
-    },
+    applicationUniversalIdentifier,
+    labelIdentifierFieldMetadataUniversalIdentifier,
+    imageIdentifierFieldMetadataUniversalIdentifier,
+    fieldUniversalIdentifiers: objectMetadataEntity.fields.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    indexMetadataUniversalIdentifiers: objectMetadataEntity.indexMetadatas.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    viewUniversalIdentifiers: objectMetadataEntity.views.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
   };
 };
