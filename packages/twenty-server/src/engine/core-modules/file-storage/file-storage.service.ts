@@ -6,6 +6,7 @@ import { type Readable } from 'stream';
 import { FileFolder, Sources } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 
@@ -17,6 +18,8 @@ export class FileStorageService {
     private readonly fileStorageDriverFactory: FileStorageDriverFactory,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
   /**
@@ -44,7 +47,7 @@ export class FileStorageService {
     destinationPath,
     mimeType,
     fileFolder,
-    applicationId,
+    applicationUniversalIdentifier,
     workspaceId,
     fileId,
   }: {
@@ -52,14 +55,21 @@ export class FileStorageService {
     destinationPath: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
-    applicationId: string;
+    applicationUniversalIdentifier: string;
     workspaceId: string;
     fileId?: string;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      },
+    });
+
     const driverParams = {
-      filePath: `${workspaceId}/${applicationId}/${fileFolder}/${destinationPath}`,
+      filePath: `${workspaceId}/${applicationUniversalIdentifier}/${fileFolder}/${destinationPath}`,
       mimeType,
       sourceFile,
     };
@@ -69,7 +79,7 @@ export class FileStorageService {
     const fileEntity = await this.fileRepository.save({
       path: `${fileFolder}/${destinationPath}`,
       workspaceId,
-      applicationId,
+      applicationId: application.id,
       id: fileId,
       size:
         typeof sourceFile === 'string'
@@ -93,17 +103,17 @@ export class FileStorageService {
   read_v2({
     destinationPath,
     fileFolder,
-    applicationId,
+    applicationUniversalIdentifier,
     workspaceId,
   }: {
     destinationPath: string;
     fileFolder: FileFolder;
-    applicationId: string;
+    applicationUniversalIdentifier: string;
     workspaceId: string;
   }): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const folderPath = `${workspaceId}/${applicationId}/${fileFolder}/${destinationPath}`;
+    const folderPath = `${workspaceId}/${applicationUniversalIdentifier}/${fileFolder}/${destinationPath}`;
 
     return driver.read({ filePath: folderPath });
   }

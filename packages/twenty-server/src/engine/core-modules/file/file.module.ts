@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
@@ -21,7 +22,7 @@ import { FileService } from './services/file.service';
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([FileEntity, WorkspaceEntity]),
+    TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
     HttpModule,
     PermissionsModule,
   ],
