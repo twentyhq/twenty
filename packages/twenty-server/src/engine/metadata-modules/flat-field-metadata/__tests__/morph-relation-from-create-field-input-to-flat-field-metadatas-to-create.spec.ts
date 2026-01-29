@@ -7,7 +7,9 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   fromCreateFieldInputToFlatFieldMetadatasToCreate,
   type FromCreateFieldInputToFlatObjectMetadataArgs,
@@ -45,6 +47,9 @@ const flatObjectMetadataMaps = [
     flatEntityMaps: flatObjectMetadataMaps,
   });
 }, createEmptyFlatEntityMaps());
+
+const emptyFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
+  createEmptyFlatEntityMaps();
 
 type TestCase = EachTestingContext<{
   input: FromCreateFieldInputToFlatObjectMetadataArgs;
@@ -85,6 +90,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
             },
             workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps,
+            flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
           expected: 'success',
         },
@@ -131,6 +137,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
             },
             workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
           expected: 'fail',
         },
@@ -150,6 +157,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
             },
             workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
           expected: 'fail',
         },
@@ -183,6 +191,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
             },
             workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
           expected: 'fail',
         },
@@ -216,6 +225,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
             },
             workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
           expected: 'fail',
         },
@@ -242,6 +252,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
             },
             workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
           expected: 'fail',
         },
@@ -268,6 +279,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
             },
             workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
           expected: 'fail',
         },

@@ -9,6 +9,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -69,6 +70,13 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
   const commonTargetFieldName = initialTargetFieldMetadata.name;
   const commonObjectMetadataId = initialTargetFieldMetadata.objectMetadataId;
 
+  const { junctionTargetFieldId } = extractJunctionTargetSettingsFromSettings(
+    fieldMetadataToUpdate.settings,
+  );
+  const junctionTargetFlatFieldMetadata = isDefined(junctionTargetFieldId)
+    ? flatFieldMetadataMaps.byId[junctionTargetFieldId]
+    : undefined;
+
   morphRelationsUpdatePayload.forEach((morphRelationUpdatePayload) => {
     const { targetObjectMetadataId } = morphRelationUpdatePayload;
 
@@ -109,6 +117,7 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
           }),
         morphId: fieldMetadataToUpdate.morphId,
         targetFieldName: commonTargetFieldName,
+        junctionTargetFlatFieldMetadata,
       });
 
     flatFieldMetadatasToCreate.push(...flatFieldMetadatas);

@@ -313,9 +313,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
       'flatApplicationMaps',
     ]);
 
@@ -338,6 +340,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       allTranspiledTranspilationInputs.push(
         await fromCreateFieldInputToFlatFieldMetadatasToCreate({
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           createFieldInput,
           workspaceId,
           flatApplication: ownerFlatApplication,

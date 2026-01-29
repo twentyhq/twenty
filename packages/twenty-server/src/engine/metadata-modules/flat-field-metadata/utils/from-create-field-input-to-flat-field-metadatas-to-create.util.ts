@@ -27,12 +27,13 @@ export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
   workspaceId: string;
   flatApplication: FlatApplication;
-} & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
+} & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'>;
 
 export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   createFieldInput: rawCreateFieldInput,
   workspaceId,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+  flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
   flatApplication,
 }: FromCreateFieldInputToFlatObjectMetadataArgs): Promise<
   FieldInputTranspilationResult<{
@@ -91,6 +92,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
           type: createFieldInput.type,
         },
         existingFlatObjectMetadataMaps,
+        existingFlatFieldMetadataMaps,
         sourceFlatObjectMetadata: parentFlatObjectMetadata,
         workspaceId,
         flatApplication,
@@ -99,6 +101,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RELATION: {
       return await fromRelationCreateFieldInputToFlatFieldMetadatas({
         existingFlatObjectMetadataMaps,
+        existingFlatFieldMetadataMaps,
         sourceFlatObjectMetadata: parentFlatObjectMetadata,
         createFieldInput: {
           ...createFieldInput,

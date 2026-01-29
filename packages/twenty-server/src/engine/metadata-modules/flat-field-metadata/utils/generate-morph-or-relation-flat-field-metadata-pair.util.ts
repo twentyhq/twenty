@@ -2,7 +2,7 @@ import { computeMetadataNameFromLabel } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   RelationOnDeleteAction,
-  RelationType
+  RelationType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -11,7 +11,6 @@ import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadat
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -72,7 +71,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
   morphId?: string | null;
   flatApplication: FlatApplication;
   targetFieldName?: string;
-  junctionTargetFieldUniversalIdentifier?: string;
+  junctionTargetFlatFieldMetadata?: FlatFieldMetadata;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -90,15 +89,11 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
   targetFieldName,
-  junctionTargetFieldUniversalIdentifier,
+  junctionTargetFlatFieldMetadata,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   const sourceFlatFieldMetadataType = createFieldInput.type;
 
   const { relationCreationPayload } = createFieldInput;
-
-  const { junctionTargetFieldId } = extractJunctionTargetSettingsFromSettings(
-    createFieldInput.settings,
-  );
 
   const {
     settings: sourceFlatFieldMetadataSettings,
@@ -106,8 +101,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   } = computeFieldMetadataRelationSettingsForRelationType({
     joinColumnName: sourceFlatObjectMetadataJoinColumnName,
     relationType: relationCreationPayload.type,
-    junctionTargetFieldId,
-    junctionTargetFieldUniversalIdentifier,
+    junctionTargetFieldId: junctionTargetFlatFieldMetadata?.id,
+    junctionTargetFieldUniversalIdentifier:
+      junctionTargetFlatFieldMetadata?.universalIdentifier,
   });
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
