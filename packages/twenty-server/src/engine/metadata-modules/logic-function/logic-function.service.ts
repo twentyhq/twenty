@@ -604,6 +604,25 @@ export class LogicFunctionService {
     existingLogicFunction: FlatLogicFunction;
     workspaceId: string;
   }): Promise<FlatLogicFunction> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const existingApplicationUniversalIdentifier = isDefined(
+      existingLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[existingLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(existingApplicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${existingLogicFunction.id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
     const newFlatLogicFunction = await this.createOneLogicFunction(
       {
         name: existingLogicFunction.name,
@@ -615,6 +634,20 @@ export class LogicFunctionService {
       workspaceId,
     );
 
+    const newApplicationUniversalIdentifier = isDefined(
+      newFlatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[newFlatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(newApplicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${newFlatLogicFunction.id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
     const fromBaseFolderPath = getLogicFunctionBaseFolderPath(
       existingLogicFunction.sourceHandlerPath,
     );
@@ -622,12 +655,18 @@ export class LogicFunctionService {
       newFlatLogicFunction.sourceHandlerPath,
     );
 
-    await this.fileStorageService.copy({
+    await this.fileStorageService.copy_v2({
       from: {
-        folderPath: `workspace-${workspaceId}/${FileFolder.Source}/${fromBaseFolderPath}`,
+        workspaceId,
+        applicationUniversalIdentifier: existingApplicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: fromBaseFolderPath,
       },
       to: {
-        folderPath: `workspace-${workspaceId}/${FileFolder.Source}/${toBaseFolderPath}`,
+        workspaceId,
+        applicationUniversalIdentifier: newApplicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: toBaseFolderPath,
       },
     });
 
