@@ -43,9 +43,4 @@ export class UpdateCommandMenuItemInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   availabilityObjectMetadataId?: string;
-
-  @IsUUID()
-  @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
-  frontComponentId?: string;
 }
