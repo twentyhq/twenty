@@ -1,4 +1,5 @@
 import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
+import { useGetManyLogicFunctions } from '@/settings/logic-functions/hooks/useGetManyLogicFunctions';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
@@ -7,18 +8,39 @@ import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
+import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { IconFunction } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated/graphql';
+
+export type WorkflowActionSelection =
+  | { type: WorkflowActionType; logicFunctionId?: undefined; name?: undefined }
+  | { type: 'LOGIC_FUNCTION'; logicFunctionId: string; name: string };
 
 export const CommandMenuWorkflowSelectAction = ({
   onActionSelected,
 }: {
-  onActionSelected: (actionType: WorkflowActionType) => void;
+  onActionSelected: (selection: WorkflowActionSelection) => void;
 }) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const theme = useTheme();
 
   const { t } = useLingui();
+
+  const { logicFunctions } = useGetManyLogicFunctions();
+
+  const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
+
+  const handleActionClick = (actionType: WorkflowActionType) => {
+    onActionSelected({ type: actionType });
+  };
+
+  const handleFunctionClick = (logicFunctionId: string, name: string) => {
+    onActionSelected({ type: 'LOGIC_FUNCTION', logicFunctionId, name });
+  };
 
   return (
     <RightDrawerStepListContainer>
@@ -27,7 +49,7 @@ export const CommandMenuWorkflowSelectAction = ({
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={RECORD_ACTIONS}
-        onClick={onActionSelected}
+        onClick={handleActionClick}
       />
 
       {isAiEnabled && (
@@ -37,7 +59,7 @@ export const CommandMenuWorkflowSelectAction = ({
           </RightDrawerWorkflowSelectStepTitle>
           <WorkflowActionMenuItems
             actions={AI_ACTIONS}
-            onClick={onActionSelected}
+            onClick={handleActionClick}
           />
         </>
       )}
@@ -47,7 +69,7 @@ export const CommandMenuWorkflowSelectAction = ({
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={FLOW_ACTIONS}
-        onClick={onActionSelected}
+        onClick={handleActionClick}
       />
 
       <RightDrawerWorkflowSelectStepTitle>
@@ -55,7 +77,7 @@ export const CommandMenuWorkflowSelectAction = ({
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={CORE_ACTIONS}
-        onClick={onActionSelected}
+        onClick={handleActionClick}
       />
 
       <RightDrawerWorkflowSelectStepTitle>
@@ -63,8 +85,33 @@ export const CommandMenuWorkflowSelectAction = ({
       </RightDrawerWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
         actions={HUMAN_INPUT_ACTIONS}
-        onClick={onActionSelected}
+        onClick={handleActionClick}
       />
+
+      {toolFunctions.length > 0 && (
+        <>
+          <RightDrawerWorkflowSelectStepTitle>
+            {t`Applications`}
+          </RightDrawerWorkflowSelectStepTitle>
+          {toolFunctions.map((fn) => (
+            <MenuItem
+              key={fn.id}
+              withIconContainer={true}
+              LeftIcon={() => (
+                <IconFunction
+                  color={getActionIconColorOrThrow({
+                    theme,
+                    actionType: 'LOGIC_FUNCTION',
+                  })}
+                  size={16}
+                />
+              )}
+              text={fn.name}
+              onClick={() => handleFunctionClick(fn.id, fn.name)}
+            />
+          ))}
+        </>
+      )}
     </RightDrawerStepListContainer>
   );
 };

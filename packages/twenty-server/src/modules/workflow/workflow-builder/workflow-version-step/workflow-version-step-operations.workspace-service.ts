@@ -20,9 +20,9 @@ import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -135,12 +135,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workflowVersionId,
     position,
     id,
+    logicFunctionId,
+    name,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
     workflowVersionId: string;
     position?: WorkflowStepPositionInput;
     id?: string;
+    logicFunctionId?: string;
+    name?: string;
   }): Promise<{
     builtStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
@@ -190,6 +194,29 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 logicFunctionId: newLogicFunction.id,
                 logicFunctionVersion: 'draft',
                 logicFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.LOGIC_FUNCTION: {
+        if (!logicFunctionId) {
+          throw new WorkflowVersionStepException(
+            'Logic function ID is required for LOGIC_FUNCTION step',
+            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: name ?? 'Logic Function',
+            type: WorkflowActionType.LOGIC_FUNCTION,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                logicFunctionId,
+                logicFunctionInput: {},
               },
             },
           },
