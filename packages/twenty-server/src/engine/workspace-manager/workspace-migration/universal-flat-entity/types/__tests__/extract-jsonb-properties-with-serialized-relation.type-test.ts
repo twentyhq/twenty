@@ -62,6 +62,36 @@ type BasicAssertions = [
       never
     >
   >,
+
+  // JSONB with 2D string array (no SerializedRelation) should return never
+  Expect<
+    Equal<
+      ExtractJsonbPropertiesWithSerializedRelation<{
+        duplicateCriteria: JsonbProperty<string[][]>;
+      }>,
+      never
+    >
+  >,
+
+  // JSONB with 2D number array (no SerializedRelation) should return never
+  Expect<
+    Equal<
+      ExtractJsonbPropertiesWithSerializedRelation<{
+        matrix: JsonbProperty<number[][]>;
+      }>,
+      never
+    >
+  >,
+
+  // JSONB with nested array of plain objects should return never
+  Expect<
+    Equal<
+      ExtractJsonbPropertiesWithSerializedRelation<{
+        grid: JsonbProperty<{ x: number; y: number }[][]>;
+      }>,
+      never
+    >
+  >,
 ];
 
 // Nested object tests
@@ -143,7 +173,8 @@ type ArrayAssertions = [
 type UnionTestRecord = {
   // JSONB with union containing SerializedRelation (should be extracted)
   jsonbUnionWithRelation: JsonbProperty<
-    { type: 'ref'; targetId: SerializedRelation } | { type: 'plain'; name: string }
+    | { type: 'ref'; targetId: SerializedRelation }
+    | { type: 'plain'; name: string }
   >;
 
   // JSONB with nullable SerializedRelation (should be extracted)
