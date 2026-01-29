@@ -54,13 +54,11 @@ exports[`CommandMenuItem creation should fail when creating with missing workflo
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "WORKFLOW_OR_FRONT_COMPONENT_REQUIRED",
+    "userFriendlyMessage": "Either workflow version or front component is required.",
   },
-  "message": "Field "workflowVersionId" of required type "UUID!" was not provided.",
-  "name": "GraphQLError",
+  "message": "Exactly one of workflowVersionId or frontComponentId is required",
+  "name": "UserInputError",
 }
 `;
 
@@ -91,5 +89,17 @@ exports[`CommandMenuItem creation should fail when creating with invalid workflo
   },
   "message": "Invalid UUID",
   "name": "ValidationError",
+}
+`;
+
+exports[`CommandMenuItem creation should fail when creating with both workflowVersionId and frontComponentId 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_OR_FRONT_COMPONENT_REQUIRED",
+    "userFriendlyMessage": "Either workflow version or front component is required.",
+  },
+  "message": "Exactly one of workflowVersionId or frontComponentId is required",
+  "name": "UserInputError",
 }
 `;
