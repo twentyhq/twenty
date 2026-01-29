@@ -106,30 +106,27 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
       [],
     viewFieldIds: fieldMetadataEntity.viewFields.map(({ id }) => id),
     viewFilterIds: fieldMetadataEntity.viewFilters.map(({ id }) => id),
-    __universal: {
-      universalIdentifier: fieldMetadataWithoutRelations.universalIdentifier,
-      applicationUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      relationTargetObjectMetadataUniversalIdentifier,
-      relationTargetFieldMetadataUniversalIdentifier,
-      viewFieldUniversalIdentifiers: fieldMetadataEntity.viewFields.map(
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
+    viewFieldUniversalIdentifiers: fieldMetadataEntity.viewFields.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    viewFilterUniversalIdentifiers: fieldMetadataEntity.viewFilters.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    kanbanAggregateOperationViewUniversalIdentifiers:
+      fieldMetadataEntity.kanbanAggregateOperationViews.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
-      viewFilterUniversalIdentifiers: fieldMetadataEntity.viewFilters.map(
+    calendarViewUniversalIdentifiers: fieldMetadataEntity.calendarViews.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    mainGroupByFieldMetadataViewUniversalIdentifiers:
+      fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(
         ({ universalIdentifier }) => universalIdentifier,
-      ),
-      kanbanAggregateOperationViewUniversalIdentifiers:
-        fieldMetadataEntity.kanbanAggregateOperationViews.map(
-          ({ universalIdentifier }) => universalIdentifier,
-        ),
-      calendarViewUniversalIdentifiers: fieldMetadataEntity.calendarViews.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
-      mainGroupByFieldMetadataViewUniversalIdentifiers:
-        fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(
-          ({ universalIdentifier }) => universalIdentifier,
-        ) ?? [],
-      universalSettings: settingsWithUniversalIdentifiers,
-    },
+      ) ?? [],
+    universalSettings: settingsWithUniversalIdentifiers,
   };
 };

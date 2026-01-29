@@ -36,9 +36,6 @@ export const fromSkillEntityToFlatSkill = ({
     isActive: skillEntity.isActive,
     universalIdentifier: skillEntity.universalIdentifier,
     applicationId: skillEntity.applicationId,
-    __universal: {
-      universalIdentifier: skillEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
   };
 };

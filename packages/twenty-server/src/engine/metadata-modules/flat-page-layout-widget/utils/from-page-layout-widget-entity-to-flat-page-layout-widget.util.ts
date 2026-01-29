@@ -80,12 +80,9 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     universalIdentifier:
       pageLayoutWidgetEntityWithoutRelations.universalIdentifier,
     applicationId: pageLayoutWidgetEntityWithoutRelations.applicationId,
-    __universal: {
-      universalIdentifier: pageLayoutWidgetEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      pageLayoutTabUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      universalConfiguration: configurationWithUniversalIdentifiers,
-    },
+    applicationUniversalIdentifier,
+    pageLayoutTabUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    universalConfiguration: configurationWithUniversalIdentifiers,
   };
 };
