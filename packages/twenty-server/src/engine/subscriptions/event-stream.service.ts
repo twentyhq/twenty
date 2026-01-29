@@ -11,10 +11,6 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
-import {
-  EventStreamException,
-  EventStreamExceptionCode,
-} from 'src/engine/subscriptions/event-stream.exception';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
 
 @Injectable()
@@ -50,7 +46,7 @@ export class EventStreamService implements OnModuleInit {
     );
   }
 
-  async createEventStream({
+  async createEventStreamIfItDoesNotExist({
     workspaceId,
     eventStreamChannelId,
     authContext,
@@ -61,13 +57,11 @@ export class EventStreamService implements OnModuleInit {
   }): Promise<void> {
     const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
 
-    const existing = await this.cacheStorageService.get<EventStreamData>(key);
+    const existingEventStream =
+      await this.cacheStorageService.get<EventStreamData>(key);
 
-    if (isDefined(existing)) {
-      throw new EventStreamException(
-        'Event stream already exists',
-        EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS,
-      );
+    if (isDefined(existingEventStream)) {
+      return;
     }
 
     const streamData: EventStreamData = {
