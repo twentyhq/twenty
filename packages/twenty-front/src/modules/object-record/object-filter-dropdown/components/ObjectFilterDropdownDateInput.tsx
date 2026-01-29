@@ -12,7 +12,6 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Temporal } from 'temporal-polyfill';
 import { type FirstDayOfTheWeek, ViewFilterOperand } from 'twenty-shared/types';
 import {
   isDefined,
@@ -44,10 +43,7 @@ export const ObjectFilterDropdownDateInput = () => {
       return;
     }
 
-    const newFilterValue = Temporal.PlainDate.from(newPlainDate)
-      .toZonedDateTime(timeZone)
-      .toInstant()
-      .toString();
+    const newFilterValue = newPlainDate;
 
     // TODO: remove this and use getDisplayValue instead
     const formattedDate = formatDateString({
@@ -110,28 +106,10 @@ export const ObjectFilterDropdownDateInput = () => {
       ? resolvedValue
       : undefined;
 
-  let safePlainDateValue: string | undefined =
+  const safePlainDateValue: string | undefined =
     resolvedValue && typeof resolvedValue === 'string'
       ? resolvedValue
       : undefined;
-
-  if (isDefined(safePlainDateValue)) {
-    const isPlainDate = /^\d{4}-\d{2}-\d{2}$/.test(safePlainDateValue);
-
-    if (!isPlainDate) {
-      const isValidInstant =
-        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$/.test(
-          safePlainDateValue,
-        );
-
-      safePlainDateValue = isValidInstant
-        ? Temporal.Instant.from(safePlainDateValue)
-            .toZonedDateTimeISO(timeZone)
-            .toPlainDate()
-            .toString()
-        : undefined;
-    }
-  }
 
   return (
     <DatePicker

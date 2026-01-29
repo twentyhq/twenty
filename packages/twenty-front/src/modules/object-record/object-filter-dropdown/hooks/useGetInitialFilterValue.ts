@@ -1,9 +1,11 @@
+import { Temporal } from 'temporal-polyfill';
+
 import { useGetDateFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateFilterDisplayValue';
 import { useGetDateTimeFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateTimeFilterDisplayValue';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { Temporal } from 'temporal-polyfill';
+
 import { type FilterableAndTSVectorFieldType } from 'twenty-shared/types';
 
 const activeDatePickerOperands = [
@@ -45,7 +47,7 @@ export const useGetInitialFilterValue = () => {
             Temporal.Now.zonedDateTimeISO(userTimezone);
 
           if (newOperand === RecordFilterOperand.IS) {
-            const value = referenceDate.toInstant().toString();
+            const value = referenceDate.toPlainDate().toString();
 
             const { displayValue } = getDateFilterDisplayValue(referenceDate);
 

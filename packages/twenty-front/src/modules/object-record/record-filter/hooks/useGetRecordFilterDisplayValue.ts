@@ -1,3 +1,6 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { Temporal } from 'temporal-polyfill';
+
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { useGetDateFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateFilterDisplayValue';
 import { useGetDateTimeFilterDisplayValue } from '@/object-record/object-filter-dropdown/hooks/useGetDateTimeFilterDisplayValue';
@@ -7,8 +10,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
-import { isNonEmptyString } from '@sniptt/guards';
-import { Temporal } from 'temporal-polyfill';
+
 import { type Nullable } from 'twenty-shared/types';
 import {
   isDefined,
@@ -92,28 +94,11 @@ export const useGetRecordFilterDisplayValue = () => {
             return '';
           }
 
-          const isPlainDate = /^\d{4}-\d{2}-\d{2}$/.test(recordFilter.value);
-
-          if (isPlainDate) {
-            const zonedDateTime = Temporal.PlainDate.from(
-              recordFilter.value,
-            ).toZonedDateTime(userTimezone);
-            const { displayValue } = getDateFilterDisplayValue(zonedDateTime);
-            return `${displayValue}`;
-          } else {
-            const isValidInstant =
-              /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$/.test(
-                recordFilter.value,
-              );
-            if (!isValidInstant) {
-              return '';
-            }
-            const zonedDateTime = Temporal.Instant.from(
-              recordFilter.value,
-            ).toZonedDateTimeISO(userTimezone);
-            const { displayValue } = getDateFilterDisplayValue(zonedDateTime);
-            return `${displayValue}`;
-          }
+          const zonedDateTime = Temporal.PlainDate.from(
+            recordFilter.value,
+          ).toZonedDateTime(userTimezone);
+          const { displayValue } = getDateFilterDisplayValue(zonedDateTime);
+          return `${displayValue}`;
         }
         case RecordFilterOperand.IS_AFTER:
         case RecordFilterOperand.IS_BEFORE: {

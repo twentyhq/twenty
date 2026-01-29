@@ -14,14 +14,14 @@ import {
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
-import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
-import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { type ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type ViewQueryParams = {
   objectNameSingular: string;
@@ -63,29 +63,10 @@ export class ViewQueryParamsService {
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
-    let timeZone = 'UTC';
-
-    if (currentWorkspaceMemberId) {
-      try {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-          );
-
-        const workspaceMember = await workspaceMemberRepository.findOne({
-          where: {
-            id: currentWorkspaceMemberId,
-          },
-        });
-
-        if (workspaceMember?.timeZone) {
-          timeZone = workspaceMember.timeZone;
-        }
-      } catch {
-        timeZone = 'UTC';
-      }
-    }
+    const timeZone = await this.getWorkspaceMemberTimezoneIfAvailable(
+      workspaceId,
+      currentWorkspaceMemberId,
+    );
 
     const recordFilters: RecordFilter[] = (view.viewFilters ?? [])
       .map((viewFilter) => {
@@ -167,5 +148,30 @@ export class ViewQueryParamsService {
       viewName: view.name,
       viewType: view.type,
     };
+  }
+
+  private async getWorkspaceMemberTimezoneIfAvailable(
+    workspaceId: string,
+    currentWorkspaceMemberId?: string,
+  ): Promise<string> {
+    if (!currentWorkspaceMemberId) {
+      return 'UTC';
+    }
+
+    try {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          workspaceId,
+          'workspaceMember',
+        );
+
+      const workspaceMember = await workspaceMemberRepository.findOne({
+        where: { id: currentWorkspaceMemberId },
+      });
+
+      return workspaceMember?.timeZone ?? 'UTC';
+    } catch {
+      return 'UTC';
+    }
   }
 }
