@@ -28,15 +28,11 @@ const StyledSettingsPageContainer = styled.div<{
   padding-bottom: ${({ theme }) => theme.spacing(20)};
 `;
 
-type SettingsPageContainerProps = {
-  children: ReactNode;
-  width?: number | 'full';
-};
-
 export const SettingsPageContainer = ({
   children,
-  width,
-}: SettingsPageContainerProps) => {
+}: {
+  children: ReactNode;
+}) => {
   const location = useLocation();
   const settingsPath = useMemo(() => {
     const sortedPaths = Object.values(SettingsPath).sort(
@@ -54,14 +50,9 @@ export const SettingsPageContainer = ({
 
   useScrollRestoration(componentInstanceId);
 
-  const isFullWidth = width === 'full';
-  const containerWidth = isFullWidth ? undefined : width;
-
   return (
     <ScrollWrapper componentInstanceId={componentInstanceId}>
-      <StyledSettingsPageContainer width={containerWidth}>
-        {children}
-      </StyledSettingsPageContainer>
+      <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
     </ScrollWrapper>
   );
 };
