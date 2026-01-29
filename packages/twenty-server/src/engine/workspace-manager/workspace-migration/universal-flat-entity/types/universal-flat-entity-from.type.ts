@@ -52,6 +52,7 @@ export type UniversalFlatEntityFrom<
   | ExtractEntityRelatedEntityProperties<TEntity>
   | Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
+  | AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName>
 > &
   CastRecordTypeOrmDatePropertiesToString<TEntity> &
   UniversalFlatEntityExtraProperties<TEntity, TMetadataName>;
