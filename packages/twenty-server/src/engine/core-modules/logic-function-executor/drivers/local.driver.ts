@@ -6,6 +6,7 @@ import { FileFolder } from 'twenty-shared/types';
 
 import {
   type LogicFunctionExecutorDriver,
+  type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
 } from 'src/engine/core-modules/logic-function-executor/drivers/interfaces/logic-function-executor-driver.interface';
 
@@ -16,7 +17,6 @@ import { ConsoleListener } from 'src/engine/core-modules/logic-function-executor
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
 import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -64,14 +64,10 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
   async execute({
     flatLogicFunction,
     flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
     payload,
     env,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
-    payload: object;
-    env?: Record<string, string>;
-  }): Promise<LogicFunctionExecuteResult> {
+  }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.build(flatLogicFunctionLayer);
 
     const startTime = Date.now();
@@ -81,17 +77,12 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     try {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
-      const builtFolderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.BuiltLogicFunction}/${flatLogicFunction.id}`;
-
-      await this.fileStorageService.copy({
-        from: {
-          folderPath: builtFolderPath,
-          filename: flatLogicFunction.builtHandlerPath,
-        },
-        to: {
-          folderPath: sourceTemporaryDir,
-          filename: flatLogicFunction.builtHandlerPath,
-        },
+      await this.fileStorageService.downloadFolder_v2({
+        workspaceId: flatLogicFunction.workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.BuiltLogicFunction,
+        resourcePath: flatLogicFunction.id,
+        localPath: sourceTemporaryDir,
       });
 
       try {

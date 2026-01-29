@@ -24,6 +24,7 @@ import { FileFolder } from 'twenty-shared/types';
 
 import {
   type LogicFunctionExecutorDriver,
+  type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
 } from 'src/engine/core-modules/logic-function-executor/drivers/interfaces/logic-function-executor-driver.interface';
 
@@ -312,26 +313,23 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
   async execute({
     flatLogicFunction,
     flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
     payload,
     env,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
-    payload: object;
-    env?: Record<string, string>;
-  }): Promise<LogicFunctionExecuteResult> {
+  }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.build(flatLogicFunction, flatLogicFunctionLayer);
 
     await this.waitFunctionUpdates(flatLogicFunction);
 
     const startTime = Date.now();
 
-    const builtHandlerFolderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.BuiltLogicFunction}/${flatLogicFunction.id}`;
-
     const compiledCode = (
       await streamToBuffer(
-        await this.fileStorageService.readFile({
-          filePath: `${builtHandlerFolderPath}/${flatLogicFunction.builtHandlerPath}`,
+        await this.fileStorageService.readFile_v2({
+          workspaceId: flatLogicFunction.workspaceId,
+          applicationUniversalIdentifier,
+          fileFolder: FileFolder.BuiltLogicFunction,
+          resourcePath: `${flatLogicFunction.id}/${flatLogicFunction.builtHandlerPath}`,
         }),
       )
     ).toString('utf-8');

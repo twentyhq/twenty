@@ -11,37 +11,42 @@ import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-funct
 import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
+export type FunctionBuildParams = {
+  flatLogicFunction: FlatLogicFunction;
+  applicationUniversalIdentifier: string;
+};
+
 @Injectable()
 export class FunctionBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   async isBuilt({
     flatLogicFunction,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-  }): Promise<boolean> {
-    const folderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.BuiltLogicFunction}/${flatLogicFunction.id}`;
-
-    return await this.fileStorageService.checkFileExists({
-      filePath: `${folderPath}/${flatLogicFunction.builtHandlerPath}`,
+    applicationUniversalIdentifier,
+  }: FunctionBuildParams): Promise<boolean> {
+    return await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatLogicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: `${flatLogicFunction.id}/${flatLogicFunction.builtHandlerPath}`,
     });
   }
 
   async buildAndUpload({
     flatLogicFunction,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-  }): Promise<void> {
+    applicationUniversalIdentifier,
+  }: FunctionBuildParams): Promise<void> {
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     try {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
-      const sourceFolderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunction.id}`;
-
-      await this.fileStorageService.copy({
-        from: { folderPath: sourceFolderPath },
-        to: { folderPath: sourceTemporaryDir },
+      await this.fileStorageService.downloadFolder_v2({
+        workspaceId: flatLogicFunction.workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: `${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunction.id}`,
+        localPath: sourceTemporaryDir,
       });
 
       const builtBundleFilePath = await this.buildInMemory({
@@ -52,13 +57,13 @@ export class FunctionBuildService {
 
       const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
 
-      const builtFolderPath = `workspace-${flatLogicFunction.workspaceId}/${FileFolder.BuiltLogicFunction}/${flatLogicFunction.id}`;
-
-      await this.fileStorageService.writeFile({
-        file: builtFile,
-        name: flatLogicFunction.builtHandlerPath,
+      await this.fileStorageService.writeFile_v2({
+        workspaceId: flatLogicFunction.workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.BuiltLogicFunction,
+        resourcePath: `${flatLogicFunction.id}/${flatLogicFunction.builtHandlerPath}`,
+        sourceFile: builtFile,
         mimeType: 'application/javascript',
-        folder: builtFolderPath,
       });
     } finally {
       await lambdaBuildDirectoryManager.clean();

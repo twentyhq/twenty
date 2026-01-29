@@ -152,14 +152,30 @@ export class LogicFunctionService {
       ...buildEnvVar(flatApplicationVariables, this.secretEncryptionService),
     };
 
+    const applicationUniversalIdentifier = isDefined(
+      flatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(applicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${flatLogicFunction.id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
     // We keep that check to build functions
     if (
       !(await this.functionBuildService.isBuilt({
         flatLogicFunction,
+        applicationUniversalIdentifier,
       }))
     ) {
       await this.functionBuildService.buildAndUpload({
         flatLogicFunction,
+        applicationUniversalIdentifier,
       });
     }
 
@@ -168,6 +184,7 @@ export class LogicFunctionService {
         this.logicFunctionExecutorService.execute({
           flatLogicFunction,
           flatLogicFunctionLayer,
+          applicationUniversalIdentifier,
           payload,
           env: envVariables,
         }),
@@ -178,13 +195,6 @@ export class LogicFunctionService {
       /* eslint-disable no-console */
       console.log(resultLogicFunction.logs);
     }
-
-    const applicationUniversalIdentifier = isDefined(
-      flatLogicFunction.applicationId,
-    )
-      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          ?.universalIdentifier
-      : undefined;
 
     await this.subscriptionService.publish({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
