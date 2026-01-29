@@ -1,24 +1,11 @@
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { SettingsSearchInput } from '@/settings/components/SettingsSearchInput';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { IconFilter, IconSearch } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { useMarketplaceApps } from '~/pages/settings/applications/hooks/useMarketplaceApps';
 import { type AvailableApplication } from '~/pages/settings/applications/types/availableApplication';
-
-const StyledSearchContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledSearchInput = styled(SettingsTextInput)`
-  flex: 1;
-`;
 
 const StyledCardsGrid = styled.div`
   display: grid;
@@ -65,16 +52,12 @@ export const SettingsApplicationsAvailableTab = () => {
 
   return (
     <Section>
-      <StyledSearchContainer>
-        <StyledSearchInput
-          instanceId="available-apps-search"
-          LeftIcon={IconSearch}
-          placeholder={t`Search an application`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
-        <LightIconButton Icon={IconFilter} accent="tertiary" />
-      </StyledSearchContainer>
+      <SettingsSearchInput
+        instanceId="available-apps-search"
+        placeholder={t`Search an application`}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+      />
 
       {filteredApplications.length === 0 ? (
         <StyledEmptyState>{t`No applications available`}</StyledEmptyState>

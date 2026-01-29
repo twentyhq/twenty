@@ -9,10 +9,7 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { SettingsSearchInput } from '@/settings/components/SettingsSearchInput';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -25,14 +22,7 @@ import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconArchive,
-  IconChevronRight,
-  IconFilter,
-  IconSearch,
-  IconSettings,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
@@ -40,18 +30,6 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const StyledSearchAndFilterContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  align-items: center;
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledSearchInput = styled(SettingsTextInput)`
-  flex: 1;
-  width: 100%;
 `;
 
 export const SettingsObjectTable = ({
@@ -146,53 +124,35 @@ export const SettingsObjectTable = ({
   return (
     <>
       {withSearchBar && (
-        <StyledSearchAndFilterContainer>
-          <StyledSearchInput
-            instanceId="settings-objects-search"
-            LeftIcon={IconSearch}
-            placeholder={t`Search for an object...`}
-            value={searchTerm}
-            onChange={setSearchTerm}
-          />
-          <Dropdown
-            dropdownId="settings-objects-filter-dropdown"
-            dropdownPlacement="bottom-end"
-            dropdownOffset={{ x: 0, y: 8 }}
-            clickableComponent={
-              <Button
-                Icon={IconFilter}
-                size="medium"
-                variant="secondary"
-                accent="default"
-                ariaLabel={t`Filter`}
+        <SettingsSearchInput
+          instanceId="settings-objects-search"
+          placeholder={t`Search for an object...`}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          filterDropdownId="settings-objects-filter-dropdown"
+          filterDropdownContent={
+            <>
+              <MenuItemToggle
+                LeftIcon={IconArchive}
+                onToggleChange={() => setShowDeactivated(!showDeactivated)}
+                toggled={showDeactivated}
+                text={t`Deactivated`}
+                toggleSize="small"
               />
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItemToggle
-                    LeftIcon={IconArchive}
-                    onToggleChange={() => setShowDeactivated(!showDeactivated)}
-                    toggled={showDeactivated}
-                    text={t`Deactivated`}
-                    toggleSize="small"
-                  />
-                  {isAdvancedModeEnabled && (
-                    <MenuItemToggle
-                      LeftIcon={IconSettings}
-                      onToggleChange={() =>
-                        setShowSystemObjects(!showSystemObjects)
-                      }
-                      toggled={showSystemObjects}
-                      text={t`System objects`}
-                      toggleSize="small"
-                    />
-                  )}
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
-        </StyledSearchAndFilterContainer>
+              {isAdvancedModeEnabled && (
+                <MenuItemToggle
+                  LeftIcon={IconSettings}
+                  onToggleChange={() =>
+                    setShowSystemObjects(!showSystemObjects)
+                  }
+                  toggled={showSystemObjects}
+                  text={t`System objects`}
+                  toggleSize="small"
+                />
+              )}
+            </>
+          }
+        />
       )}
 
       <Table>
