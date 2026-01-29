@@ -69,12 +69,6 @@ export class LogicFunctionEntity
   @Column({ nullable: true, type: 'varchar' })
   description: string | null;
 
-  @Column({ nullable: true, type: 'varchar' })
-  latestVersion: string | null;
-
-  @Column({ nullable: false, type: 'jsonb', default: [] })
-  publishedVersions: JsonbProperty<string[]>;
-
   @Column({ nullable: false, default: LogicFunctionRuntime.NODE22 })
   runtime: LogicFunctionRuntime;
 

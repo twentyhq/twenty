@@ -37,7 +37,6 @@ export const fromLogicFunctionEntityToFlatLogicFunction = ({
     __universal: {
       universalIdentifier: logicFunctionEntity.universalIdentifier,
       applicationUniversalIdentifier,
-      publishedVersions: logicFunctionEntity.publishedVersions,
       toolInputSchema: logicFunctionEntity.toolInputSchema,
       cronTriggerSettings: logicFunctionEntity.cronTriggerSettings,
       databaseEventTriggerSettings:

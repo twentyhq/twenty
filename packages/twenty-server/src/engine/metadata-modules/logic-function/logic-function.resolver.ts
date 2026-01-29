@@ -120,7 +120,6 @@ export class LogicFunctionResolver {
       return await this.logicFunctionService.getLogicFunctionSourceCode(
         workspaceId,
         input.id,
-        input.version,
       );
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
@@ -199,13 +198,12 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
-      const { id, payload, version } = input;
+      const { id, payload } = input;
 
       return await this.logicFunctionService.executeOneLogicFunction({
         id,
         workspaceId,
         payload,
-        version,
       });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);

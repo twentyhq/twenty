@@ -99,7 +99,6 @@ describe('computeWorkflowVersionStepChanges', () => {
         settings: {
           input: {
             logicFunctionId: '',
-            logicFunctionVersion: '',
             logicFunctionInput: {},
           },
           errorHandlingOptions: {

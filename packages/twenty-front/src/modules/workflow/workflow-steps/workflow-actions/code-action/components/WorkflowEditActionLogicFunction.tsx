@@ -131,7 +131,6 @@ export const WorkflowEditActionLogicFunction = ({
   const { formValues, setFormValues, loading } =
     useLogicFunctionUpdateFormState({
       logicFunctionId,
-      logicFunctionVersion: 'draft',
     });
 
   const updateOutputSchemaFromTestResult = async (testResult: object) => {

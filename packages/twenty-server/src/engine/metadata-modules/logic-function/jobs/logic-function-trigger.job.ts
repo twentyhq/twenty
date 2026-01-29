@@ -27,7 +27,6 @@ export class LogicFunctionTriggerJob {
             id: logicFunctionPayload.logicFunctionId,
             workspaceId: logicFunctionPayload.workspaceId,
             payload: logicFunctionPayload.payload || {},
-            version: 'draft',
           }),
       ),
     );

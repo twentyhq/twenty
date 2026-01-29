@@ -8,11 +8,9 @@ import {
 
 export const useGetOneLogicFunctionSourceCode = ({
   id,
-  version,
   onCompleted,
 }: {
   id: string;
-  version: string;
   onCompleted?: (data: FindOneLogicFunctionSourceCodeQuery) => void;
 }) => {
   const apolloMetadataClient = useApolloCoreClient();
@@ -22,7 +20,7 @@ export const useGetOneLogicFunctionSourceCode = ({
   >(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE, {
     client: apolloMetadataClient ?? undefined,
     variables: {
-      input: { id, version },
+      input: { id },
     },
     onCompleted,
     fetchPolicy: 'network-only',

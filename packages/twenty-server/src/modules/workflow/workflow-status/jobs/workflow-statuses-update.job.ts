@@ -12,10 +12,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  WorkflowVersionStepException,
-  WorkflowVersionStepExceptionCode,
-} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -179,25 +175,10 @@ export class WorkflowStatusesUpdateJob {
         const newStep = { ...step };
 
         if (step.type === WorkflowActionType.CODE) {
-          const logicFunction =
-            await this.logicFunctionService.publishOneLogicFunctionOrFail(
-              step.settings.input.logicFunctionId,
-              workspaceId,
-            );
-
-          const newStepSettings = { ...step.settings };
-
-          if (!isDefined(logicFunction.latestVersion)) {
-            throw new WorkflowVersionStepException(
-              `Fail to publish logic function ${logicFunction.id}. Latest version is null`,
-              WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
-            );
-          }
-
-          newStepSettings.input.logicFunctionVersion =
-            logicFunction.latestVersion;
-
-          newStep.settings = newStepSettings;
+          await this.logicFunctionService.publishOneLogicFunctionOrFail(
+            step.settings.input.logicFunctionId,
+            workspaceId,
+          );
         }
 
         newSteps.push(newStep);
