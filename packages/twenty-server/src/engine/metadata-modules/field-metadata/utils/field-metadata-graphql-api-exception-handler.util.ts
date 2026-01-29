@@ -38,6 +38,7 @@ export const fieldMetadataGraphqlApiExceptionHandler = (
       case FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS:
         throw new ConflictError(error);
       case FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND:
+      case FieldMetadataExceptionCode.APPLICATION_NOT_FOUND:
       case FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR:
       case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_NOT_ENABLED:
       case FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED:

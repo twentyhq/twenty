@@ -168,6 +168,16 @@ describe('WorkspaceEntityManager', () => {
       relationTargetObjectMetadataId: null,
       morphId: null,
       applicationId: 'application-id',
+      applicationUniversalIdentifier: 'application-id',
+      objectMetadataUniversalIdentifier: 'test-entity-id',
+      relationTargetObjectMetadataUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      viewFilterUniversalIdentifiers: [],
+      viewFieldUniversalIdentifiers: [],
+      kanbanAggregateOperationViewUniversalIdentifiers: [],
+      calendarViewUniversalIdentifiers: [],
+      mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      universalSettings: null,
     };
 
     const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {

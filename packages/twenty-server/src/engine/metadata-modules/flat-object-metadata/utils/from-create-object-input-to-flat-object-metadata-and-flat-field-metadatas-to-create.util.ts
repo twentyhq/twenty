@@ -51,11 +51,13 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       );
 
     const objectMetadataId = v4();
+    const universalIdentifier = createObjectInput.universalIdentifier ?? v4();
     const defaultFlatFieldForCustomObjectMaps =
       buildDefaultFlatFieldMetadatasForCustomObject({
         flatObjectMetadata: {
           id: objectMetadataId,
           applicationId: flatApplication.id,
+          universalIdentifier,
         },
         workspaceId,
         skipNameField: createObjectInput.skipNameField,
@@ -66,8 +68,6 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     const nameField = defaultFlatFieldForCustomObjectMaps.fields.nameField;
     const labelIdentifierFieldMetadataId =
       nameField?.id ?? defaultFlatFieldForCustomObjectMaps.fields.idField.id;
-
-    const universalIdentifier = createObjectInput.universalIdentifier ?? v4();
     const labelIdentifierFieldMetadataUniversalIdentifier =
       nameField?.universalIdentifier ??
       defaultFlatFieldForCustomObjectMaps.fields.idField.universalIdentifier;
