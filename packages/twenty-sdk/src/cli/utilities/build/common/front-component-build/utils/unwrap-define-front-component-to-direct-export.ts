@@ -19,6 +19,7 @@ export const unwrapDefineFrontComponentToDirectExport = (
     const exportedComponentDeclarationPattern = new RegExp(
       `export\\s+(const|function)\\s+${wrappedComponentName}\\b`,
     );
+
     transformedSource = transformedSource.replace(
       exportedComponentDeclarationPattern,
       `$1 ${wrappedComponentName}`,

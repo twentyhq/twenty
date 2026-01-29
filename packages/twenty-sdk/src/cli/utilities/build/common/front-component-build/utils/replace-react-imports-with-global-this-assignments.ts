@@ -1,6 +1,6 @@
 import { REACT_JSX_RUNTIME_IMPORT_PATTERN } from '../constants/ReactJsxRuntimeImportPattern';
 import { REACT_NAMED_IMPORT_PATTERN } from '../constants/ReactNamedImportPattern';
-import { parseImportSpecifier } from './parse-import-specifier';
+import { extractNamesFromImportSpecifier } from './extract-names-from-import-specifier';
 
 export const replaceReactImportsWithGlobalThisAssignments = (
   sourceCode: string,
@@ -10,7 +10,7 @@ export const replaceReactImportsWithGlobalThisAssignments = (
     (_match, importSpecifiers: string) => {
       const parsedImportSpecifiers = importSpecifiers
         .split(',')
-        .map(parseImportSpecifier);
+        .map(extractNamesFromImportSpecifier);
 
       const globalThisAssignments = parsedImportSpecifiers
         .map(({ originalName, aliasName }) => {
@@ -35,7 +35,7 @@ export const replaceReactImportsWithGlobalThisAssignments = (
     (_match, importSpecifiers: string) => {
       const parsedImportSpecifiers = importSpecifiers
         .split(',')
-        .map(parseImportSpecifier);
+        .map(extractNamesFromImportSpecifier);
 
       const globalThisAssignments = parsedImportSpecifiers
         .map(
