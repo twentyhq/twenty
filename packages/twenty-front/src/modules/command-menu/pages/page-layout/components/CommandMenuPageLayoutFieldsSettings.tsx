@@ -61,7 +61,7 @@ export const CommandMenuPageLayoutFieldsSettings = () => {
           onChange={handleConfigurationChange}
         />
       </StyledContainer>
-      <WidgetSettingsFooter />
+      <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
     </StyledOuterContainer>
   );
 };

@@ -42,7 +42,7 @@ export const CommandMenuPageLayoutChartSettings = () => {
         value={{ instanceId: widgetInEditMode.id }}
       >
         <ChartSettings widget={widgetInEditMode} />
-        <WidgetSettingsFooter />
+        <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
       </WidgetComponentInstanceContext.Provider>
     </StyledContainer>
   );
