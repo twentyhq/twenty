@@ -1,19 +1,8 @@
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import {
-  OBJECT_METADATA_TRANSLATABLE_PROPERTIES,
-  type ObjectMetadataTranslatableProperty,
-} from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-translatable-properties.constant';
 import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { type ObjectMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-standard-overrides-properties.types';
-
-const isTranslatableProperty = (
-  property: ObjectMetadataStandardOverridesProperties,
-): property is ObjectMetadataTranslatableProperty => {
-  return OBJECT_METADATA_TRANSLATABLE_PROPERTIES.includes(
-    property as ObjectMetadataTranslatableProperty,
-  );
-};
+import { isObjectMetadataPropertyTranslatable } from 'src/engine/metadata-modules/object-metadata/utils/is-translatable-object-metadata-property.util';
 
 export const setStandardOverrideForLocale = ({
   overrides,
@@ -28,7 +17,7 @@ export const setStandardOverrideForLocale = ({
 }): ObjectStandardOverridesDTO => {
   const isSourceLocale = locale === SOURCE_LOCALE;
 
-  if (!isTranslatableProperty(property) || isSourceLocale) {
+  if (!isObjectMetadataPropertyTranslatable(property) || isSourceLocale) {
     return {
       ...overrides,
       [property]: value,

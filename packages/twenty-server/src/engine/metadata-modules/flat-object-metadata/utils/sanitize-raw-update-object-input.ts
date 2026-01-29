@@ -83,6 +83,7 @@ export const sanitizeRawUpdateObjectInput = ({
       standardOverrides = removeStandardOverride({
         overrides: standardOverrides,
         property,
+        locale: safeLocale,
       });
     } else {
       standardOverrides = setStandardOverrideForLocale({
