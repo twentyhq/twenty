@@ -8,6 +8,10 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type DeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import {
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
@@ -70,9 +74,10 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       fieldMetadata.__universal?.objectMetadataUniversalIdentifier;
 
     if (!isDefined(objectMetadataUniversalIdentifier)) {
-      throw new Error(
-        `objectMetadataUniversalIdentifier is not defined for field metadata ${universalIdentifier}`,
-      );
+      throw new WorkspaceMigrationActionExecutionException({
+        message: `objectMetadataUniversalIdentifier is not defined for field metadata ${universalIdentifier}`,
+        code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
+      });
     }
 
     const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({

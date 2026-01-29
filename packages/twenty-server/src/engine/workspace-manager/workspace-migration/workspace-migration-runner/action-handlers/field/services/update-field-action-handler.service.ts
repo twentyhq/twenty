@@ -100,7 +100,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const objectMetadataUniversalIdentifier =
       currentFlatFieldMetadata.__universal?.objectMetadataUniversalIdentifier;
 
-    if (!objectMetadataUniversalIdentifier) {
+    if (!isDefined(objectMetadataUniversalIdentifier)) {
       throw new WorkspaceMigrationActionExecutionException({
         message: `objectMetadataUniversalIdentifier is not defined for field metadata ${entityId}`,
         code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
