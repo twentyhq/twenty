@@ -89,6 +89,7 @@ export default defineConfig(() => {
           ...Object.keys((packageJson as any).dependencies || {}),
           'path',
           'fs',
+          'fs/promises',
           'url',
           'crypto',
           'stream',
