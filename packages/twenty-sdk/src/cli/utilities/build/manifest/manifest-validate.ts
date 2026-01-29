@@ -7,7 +7,7 @@ import {
 import { frontComponentEntityBuilder } from './entities/front-component';
 import { logicFunctionEntityBuilder } from '@/cli/utilities/build/manifest/entities/logic-function';
 import { objectEntityBuilder } from './entities/object';
-import { objectExtensionEntityBuilder } from './entities/object-extension';
+import { fieldEntityBuilder } from '@/cli/utilities/build/manifest/entities/field';
 import { roleEntityBuilder } from './entities/role';
 import {
   type ValidationError,
@@ -21,7 +21,7 @@ const collectAllDuplicates = (
   return [
     ...applicationEntityBuilder.findDuplicates(manifest),
     ...objectEntityBuilder.findDuplicates(manifest),
-    ...objectExtensionEntityBuilder.findDuplicates(manifest),
+    ...fieldEntityBuilder.findDuplicates(manifest),
     ...logicFunctionEntityBuilder.findDuplicates(manifest),
     ...roleEntityBuilder.findDuplicates(manifest),
     ...frontComponentEntityBuilder.findDuplicates(manifest),
@@ -36,10 +36,7 @@ export const validateManifest = (
 
   applicationEntityBuilder.validate([manifest.application], errors);
   objectEntityBuilder.validate(manifest.entities.objects, errors);
-  objectExtensionEntityBuilder.validate(
-    manifest.entities.objectExtensions,
-    errors,
-  );
+  fieldEntityBuilder.validate(manifest.entities.fields, errors);
   logicFunctionEntityBuilder.validate(manifest.entities.logicFunctions, errors);
   roleEntityBuilder.validate(manifest.entities.roles, errors);
   frontComponentEntityBuilder.validate(

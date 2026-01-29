@@ -1,16 +1,14 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  type FieldManifest,
-  type RelationFieldManifest,
-} from 'twenty-shared/application';
+
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ObjectFieldManifest } from 'twenty-shared/application';
 
 /**
  * Validates an array of fields and throws an error if any field is invalid.
  * This validation is shared between defineObject and extendObject.
  */
 export const validateFieldsOrThrow = (
-  fields: (FieldManifest | RelationFieldManifest)[] | undefined,
+  fields: ObjectFieldManifest[] | undefined,
 ): void => {
   if (!fields) {
     return;

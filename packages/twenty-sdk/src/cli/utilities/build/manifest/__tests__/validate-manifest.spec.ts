@@ -1,7 +1,7 @@
 import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 import {
   type Application,
-  type ObjectExtensionManifest,
+  type FieldManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -12,29 +12,27 @@ describe('validateManifest - objectExtensions', () => {
     roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
   };
 
-  const validObjectExtension: ObjectExtensionManifest = {
-    targetObject: {
-      nameSingular: 'company',
-    },
-    fields: [
-      {
-        universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
-        type: FieldMetadataType.NUMBER,
-        name: 'healthScore',
-        label: 'Health Score',
-      },
-    ],
+  const validField: FieldManifest = {
+    objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+
+    universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
+    type: FieldMetadataType.NUMBER,
+    name: 'healthScore',
+    label: 'Health Score',
   };
 
   describe('valid object extensions', () => {
     it('should pass validation with valid object extension by nameSingular', () => {
       const result = validateManifest({
         application: validApplication,
-        objects: [],
-        frontComponents: [],
-        objectExtensions: [validObjectExtension],
-        logicFunctions: [],
-        roles: [],
+        entities: {
+          objects: [],
+          frontComponents: [],
+          fields: [validField],
+          logicFunctions: [],
+          roles: [],
+        },
+        publicAssets: [],
       });
 
       expect(result.isValid).toBe(true);
@@ -42,27 +40,24 @@ describe('validateManifest - objectExtensions', () => {
     });
 
     it('should pass validation with valid object extension by universalIdentifier', () => {
-      const extensionByUuid: ObjectExtensionManifest = {
-        targetObject: {
-          universalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
-        },
-        fields: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440002',
-            type: FieldMetadataType.TEXT,
-            name: 'customNote',
-            label: 'Custom Note',
-          },
-        ],
+      const extensionByUuid: FieldManifest = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440002',
+        type: FieldMetadataType.TEXT,
+        name: 'customNote',
+        label: 'Custom Note',
       };
 
       const result = validateManifest({
         application: validApplication,
-        objects: [],
-        objectExtensions: [extensionByUuid],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
+        entities: {
+          objects: [],
+          fields: [extensionByUuid],
+          logicFunctions: [],
+          frontComponents: [],
+          roles: [],
+        },
+        publicAssets: [],
       });
 
       expect(result.isValid).toBe(true);
@@ -70,27 +65,24 @@ describe('validateManifest - objectExtensions', () => {
     });
 
     it('should pass validation with multiple object extensions', () => {
-      const anotherExtension: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'person',
-        },
-        fields: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440003',
-            type: FieldMetadataType.TEXT,
-            name: 'nickname',
-            label: 'Nickname',
-          },
-        ],
+      const anotherExtension: FieldManifest = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440003',
+        type: FieldMetadataType.TEXT,
+        name: 'nickname',
+        label: 'Nickname',
       };
 
       const result = validateManifest({
         application: validApplication,
-        objects: [],
-        objectExtensions: [validObjectExtension, anotherExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
+        entities: {
+          objects: [],
+          fields: [validField, anotherExtension],
+          logicFunctions: [],
+          frontComponents: [],
+          roles: [],
+        },
+        publicAssets: [],
       });
 
       expect(result.isValid).toBe(true);
@@ -98,36 +90,34 @@ describe('validateManifest - objectExtensions', () => {
     });
 
     it('should pass validation with SELECT field having options', () => {
-      const extensionWithSelect: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
-        },
-        fields: [
+      const extensionWithSelect: FieldManifest = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440004',
+        type: FieldMetadataType.SELECT,
+        name: 'status',
+        label: 'Status',
+        options: [
+          { value: 'active', label: 'Active', color: 'green', position: 0 },
           {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440004',
-            type: FieldMetadataType.SELECT,
-            name: 'status',
-            label: 'Status',
-            options: [
-              { value: 'active', label: 'Active', color: 'green', position: 0 },
-              {
-                value: 'inactive',
-                label: 'Inactive',
-                color: 'red',
-                position: 1,
-              },
-            ],
+            value: 'inactive',
+            label: 'Inactive',
+            color: 'red',
+            position: 1,
           },
         ],
       };
 
       const result = validateManifest({
         application: validApplication,
-        objects: [],
-        objectExtensions: [extensionWithSelect],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
+        entities: {
+          objects: [],
+          fields: [extensionWithSelect],
+          logicFunctions: [],
+          frontComponents: [],
+          roles: [],
+        },
+        publicAssets: [],
       });
 
       expect(result.isValid).toBe(true);
@@ -137,126 +127,21 @@ describe('validateManifest - objectExtensions', () => {
 
   describe('targetObject validation', () => {
     it('should fail when targetObject is missing', () => {
-      const invalidExtension = {
-        fields: validObjectExtension.fields,
-      } as ObjectExtensionManifest;
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: 'Object extension must have a targetObject',
-        }),
-      );
-    });
-
-    it('should fail when targetObject has neither nameSingular nor universalIdentifier', () => {
-      const invalidExtension: ObjectExtensionManifest = {
-        targetObject: {} as any,
-        fields: validObjectExtension.fields,
+      const invalidField = {
+        name: '',
+        label: '',
       };
 
       const result = validateManifest({
         application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message:
-            'Object extension targetObject must have either nameSingular or universalIdentifier',
-        }),
-      );
-    });
-
-    it('should fail when targetObject has both nameSingular and universalIdentifier', () => {
-      const invalidExtension: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
-          universalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
-        } as any,
-        fields: validObjectExtension.fields,
-      };
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message:
-            'Object extension targetObject cannot have both nameSingular and universalIdentifier',
-        }),
-      );
-    });
-  });
-
-  describe('fields validation', () => {
-    it('should fail when fields array is empty', () => {
-      const invalidExtension: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
+        entities: {
+          objects: [],
+          fields: [invalidField as any],
+          logicFunctions: [],
+          frontComponents: [],
+          roles: [],
         },
-        fields: [],
-      };
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: 'Object extension must have at least one field',
-        }),
-      );
-    });
-
-    it('should fail when field is missing universalIdentifier', () => {
-      const invalidExtension: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
-        },
-        fields: [
-          {
-            type: FieldMetadataType.NUMBER,
-            name: 'healthScore',
-            label: 'Health Score',
-          } as any,
-        ],
-      };
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
+        publicAssets: [],
       });
 
       expect(result.isValid).toBe(false);
@@ -266,166 +151,39 @@ describe('validateManifest - objectExtensions', () => {
         }),
       );
     });
-
-    it('should fail when field is missing type', () => {
-      const invalidExtension: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
-        },
-        fields: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
-            name: 'healthScore',
-            label: 'Health Score',
-          } as any,
-        ],
-      };
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: 'Field must have a type',
-        }),
-      );
-    });
-
-    it('should fail when field is missing label', () => {
-      const invalidExtension: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
-        },
-        fields: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
-            type: FieldMetadataType.NUMBER,
-            name: 'healthScore',
-          } as any,
-        ],
-      };
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: 'Field must have a label',
-        }),
-      );
-    });
-
-    it('should fail when SELECT field has no options', () => {
-      const invalidExtension: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
-        },
-        fields: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
-            type: FieldMetadataType.SELECT,
-            name: 'status',
-            label: 'Status',
-          } as any,
-        ],
-      };
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: 'SELECT/MULTI_SELECT field must have options',
-        }),
-      );
-    });
-
-    it('should fail when MULTI_SELECT field has empty options', () => {
-      const invalidExtension: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
-        },
-        fields: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
-            type: FieldMetadataType.MULTI_SELECT,
-            name: 'tags',
-            label: 'Tags',
-            options: [],
-          } as any,
-        ],
-      };
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        objectExtensions: [invalidExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: 'SELECT/MULTI_SELECT field must have options',
-        }),
-      );
-    });
   });
 
   describe('duplicate universalIdentifier detection', () => {
     it('should fail when extension field has duplicate universalIdentifier', () => {
       const duplicateId = '550e8400-e29b-41d4-a716-446655440001';
 
-      const extensionWithDuplicates: ObjectExtensionManifest = {
-        targetObject: {
-          nameSingular: 'company',
+      const fieldsWithDuplicates: FieldManifest[] = [
+        {
+          objectUniversalIdentifier: '91c5848c-36dc-4e7e-b9ee-aa78caeff5a8',
+          universalIdentifier: duplicateId,
+          type: FieldMetadataType.NUMBER,
+          name: 'field1',
+          label: 'Field 1',
         },
-        fields: [
-          {
-            universalIdentifier: duplicateId,
-            type: FieldMetadataType.NUMBER,
-            name: 'field1',
-            label: 'Field 1',
-          },
-          {
-            universalIdentifier: duplicateId, // Same ID!
-            type: FieldMetadataType.TEXT,
-            name: 'field2',
-            label: 'Field 2',
-          },
-        ],
-      };
+        {
+          objectUniversalIdentifier: '97931020-123c-435b-ad97-9e19a5b38f1f',
+          universalIdentifier: duplicateId,
+          type: FieldMetadataType.TEXT,
+          name: 'field2',
+          label: 'Field 2',
+        },
+      ];
 
       const result = validateManifest({
         application: validApplication,
-        objects: [],
-        objectExtensions: [extensionWithDuplicates],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
+        entities: {
+          objects: [],
+          fields: fieldsWithDuplicates,
+          logicFunctions: [],
+          frontComponents: [],
+          roles: [],
+        },
+        publicAssets: [],
       });
 
       expect(result.isValid).toBe(false);
@@ -441,39 +199,38 @@ describe('validateManifest - objectExtensions', () => {
 
       const result = validateManifest({
         application: validApplication,
-        objects: [
-          {
-            universalIdentifier: 'obj-uuid',
-            nameSingular: 'myObject',
-            namePlural: 'myObjects',
-            labelSingular: 'My Object',
-            labelPlural: 'My Objects',
-            fields: [
-              {
-                universalIdentifier: sharedId,
-                type: FieldMetadataType.TEXT,
-                name: 'existingField',
-                label: 'Existing Field',
-              },
-            ],
-          },
-        ],
-        objectExtensions: [
-          {
-            targetObject: { nameSingular: 'company' },
-            fields: [
-              {
-                universalIdentifier: sharedId, // Same as object field!
-                type: FieldMetadataType.NUMBER,
-                name: 'extensionField',
-                label: 'Extension Field',
-              },
-            ],
-          },
-        ],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
+        entities: {
+          objects: [
+            {
+              universalIdentifier: 'obj-uuid',
+              nameSingular: 'myObject',
+              namePlural: 'myObjects',
+              labelSingular: 'My Object',
+              labelPlural: 'My Objects',
+              fields: [
+                {
+                  universalIdentifier: sharedId,
+                  type: FieldMetadataType.TEXT,
+                  name: 'existingField',
+                  label: 'Existing Field',
+                },
+              ],
+            },
+          ],
+          fields: [
+            {
+              objectUniversalIdentifier: '91c5848c-36dc-4e7e-b9ee-aa78caeff5a8',
+              universalIdentifier: sharedId,
+              type: FieldMetadataType.NUMBER,
+              name: 'extensionField',
+              label: 'Extension Field',
+            },
+          ],
+          logicFunctions: [],
+          frontComponents: [],
+          roles: [],
+        },
+        publicAssets: [],
       });
 
       expect(result.isValid).toBe(false);

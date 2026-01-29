@@ -17,7 +17,11 @@ export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { SyncableEntity } from './enums/syncable-entities.enum';
-export type { FieldManifest } from './fieldManifestType';
+export type {
+  RegularFieldManifest,
+  RelationFieldManifest,
+  FieldManifest,
+} from './fieldManifestType';
 export type { FrontComponentManifest } from './frontComponentManifestType';
 export type {
   InputJsonSchema,
@@ -27,9 +31,8 @@ export type {
   RouteTrigger,
   LogicFunctionTriggerManifest,
 } from './logicFunctionManifestType';
-export type { ObjectExtensionManifest } from './objectExtensionManifestType';
+export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';
-export type { RelationFieldManifest } from './relationFieldManifestType';
 export type { RoleManifest } from './roleManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';

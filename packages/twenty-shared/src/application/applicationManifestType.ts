@@ -3,23 +3,23 @@ import {
   type Application,
   type ObjectManifest,
   type LogicFunctionManifest,
+  type AssetManifest,
+  type FrontComponentManifest,
+  type RoleManifest,
+  type FieldManifest,
 } from '@/application';
-import { type AssetManifest } from '@/application/assetManifestType';
-import { type FrontComponentManifest } from '@/application/frontComponentManifestType';
-import { type ObjectExtensionManifest } from '@/application/objectExtensionManifestType';
-import { type RoleManifest } from '@/application/roleManifestType';
 import { type Sources } from '@/types';
 
 export type ApplicationManifest = {
   application: Application;
   entities: {
     objects: ObjectManifest[];
-    objectExtensions: ObjectExtensionManifest[];
+    fields: FieldManifest[];
     logicFunctions: LogicFunctionManifest[];
     frontComponents: FrontComponentManifest[];
     roles: RoleManifest[];
-    publicAssets: AssetManifest[];
   };
+  publicAssets: AssetManifest[];
   sources: Sources;
   packageJson: PackageJson;
   yarnLock: string;

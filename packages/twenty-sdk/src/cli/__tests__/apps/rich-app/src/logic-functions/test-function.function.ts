@@ -1,11 +1,11 @@
-import { defineFunction } from '@/application/functions/define-function';
+import { defineLogicFunction } from '@/application';
 import { formatFarewell } from '../utils/greeting.util';
 
 const handler = () => {
   return formatFarewell('test');
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'test-function',
   timeoutSeconds: 2,

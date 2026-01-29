@@ -14,7 +14,7 @@ import { assetEntityBuilder } from '@/cli/utilities/build/manifest/entities/asse
 import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
 import { logicFunctionEntityBuilder } from '@/cli/utilities/build/manifest/entities/logic-function';
 import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
-import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/entities/object-extension';
+import { fieldEntityBuilder } from '@/cli/utilities/build/manifest/entities/field';
 import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
 
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
@@ -112,19 +112,16 @@ export const updateManifestChecksum = ({
     }
 
     if (fileFolder === FileFolder.PublicAsset) {
-      const assets = result.entities.publicAssets;
+      const assets = result.publicAssets;
       const assetIndex = assets.findIndex((a) => a.filePath === rootBuiltPath);
       if (assetIndex === -1) {
         continue;
       }
       result = {
         ...result,
-        entities: {
-          ...result.entities,
-          publicAssets: assets.map((asset, index) =>
-            index === assetIndex ? { ...asset, checksum } : asset,
-          ),
-        },
+        publicAssets: assets.map((asset, index) =>
+          index === assetIndex ? { ...asset, checksum } : asset,
+        ),
       };
       continue;
     }
@@ -181,7 +178,7 @@ export const runManifestBuild = async (
     ] = await Promise.all([
       applicationEntityBuilder.build(appPath),
       objectEntityBuilder.build(appPath),
-      objectExtensionEntityBuilder.build(appPath),
+      fieldEntityBuilder.build(appPath),
       logicFunctionEntityBuilder.build(appPath),
       frontComponentEntityBuilder.build(appPath),
       roleEntityBuilder.build(appPath),
@@ -211,12 +208,12 @@ export const runManifestBuild = async (
       application,
       entities: {
         objects: objectManifests,
-        objectExtensions: objectExtensionManifests,
+        fields: objectExtensionManifests,
         logicFunctions: functionManifests,
         frontComponents: frontComponentManifests,
         roles: roleManifests,
-        publicAssets: assetManifests,
       },
+      publicAssets: assetManifests,
       sources,
       packageJson,
       yarnLock,

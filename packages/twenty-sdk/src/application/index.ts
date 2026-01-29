@@ -19,11 +19,10 @@ export type {
   PhonesField,
   RichTextField,
 } from './fields/composite-fields';
+export { defineField } from './fields/define-field';
 export { FieldType } from './fields/field-type';
-export { Field } from './fields/field.decorator';
 export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
-export { Relation } from './fields/relation.decorator';
 export { defineFrontComponent } from './front-components/define-front-component';
 export type {
   FrontComponentType,
@@ -48,8 +47,6 @@ export type {
 } from './logic-functions/triggers/database-event-payload-type';
 export type { RoutePayload } from './logic-functions/triggers/route-payload-type';
 export { defineObject } from './objects/define-object';
-export { extendObject } from './objects/extend-object';
-export { Object } from './objects/object.decorator';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { validateFieldsOrThrow } from './objects/validate-fields';
 export { PermissionFlag } from './permission-flag-type';

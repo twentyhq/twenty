@@ -104,16 +104,14 @@ export class DevUiStateManager {
     switch (entityType) {
       case 'objects':
         return SyncableEntity.Object;
-      case 'objectExtensions':
-        return SyncableEntity.ObjectExtension;
+      case 'fields':
+        return SyncableEntity.Field;
       case 'logicFunctions':
-        return SyncableEntity.Function;
+        return SyncableEntity.LogicFunction;
       case 'frontComponents':
         return SyncableEntity.FrontComponent;
       case 'roles':
         return SyncableEntity.Role;
-      case 'assets':
-        return SyncableEntity.PublicAsset;
       default:
         return;
     }
