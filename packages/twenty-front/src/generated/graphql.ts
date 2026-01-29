@@ -4395,12 +4395,10 @@ export type UpdateApiKeyInput = {
 export type UpdateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
-  frontComponentId?: InputMaybe<Scalars['UUID']>;
   icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
   isPinned?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<Scalars['String']>;
-  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateFieldInput = {
