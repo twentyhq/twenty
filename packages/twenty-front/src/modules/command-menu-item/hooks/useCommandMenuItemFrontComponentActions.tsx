@@ -52,7 +52,7 @@ const buildActionFromItem = ({
   const Icon = getIcon(item.icon, COMMAND_MENU_DEFAULT_ICON);
 
   return {
-    type: ActionType.FrontComponent as const,
+    type: ActionType.FrontComponent,
     key: `command-menu-item-front-component-${item.id}`,
     scope,
     label: displayLabel,
