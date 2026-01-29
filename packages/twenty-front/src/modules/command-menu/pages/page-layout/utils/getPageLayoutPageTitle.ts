@@ -15,6 +15,8 @@ export const getPageLayoutPageTitle = (page: PageLayoutCommandMenuPage) => {
       return t`Configure filters`;
     case CommandMenuPages.PageLayoutTabSettings:
       return t`Tab Settings`;
+    case CommandMenuPages.PageLayoutFieldsSettings:
+      return t`Fields Settings`;
     default:
       assertUnreachable(page);
   }
