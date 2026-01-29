@@ -5,7 +5,7 @@ import {
   type ManifestWithoutSources,
 } from '@/cli/utilities/build/manifest/entities/entity-interface';
 import { frontComponentEntityBuilder } from './entities/front-component';
-import { functionEntityBuilder } from './entities/function';
+import { logicFunctionEntityBuilder } from '@/cli/utilities/build/manifest/entities/logic-function';
 import { objectEntityBuilder } from './entities/object';
 import { objectExtensionEntityBuilder } from './entities/object-extension';
 import { roleEntityBuilder } from './entities/role';
@@ -22,7 +22,7 @@ const collectAllDuplicates = (
     ...applicationEntityBuilder.findDuplicates(manifest),
     ...objectEntityBuilder.findDuplicates(manifest),
     ...objectExtensionEntityBuilder.findDuplicates(manifest),
-    ...functionEntityBuilder.findDuplicates(manifest),
+    ...logicFunctionEntityBuilder.findDuplicates(manifest),
     ...roleEntityBuilder.findDuplicates(manifest),
     ...frontComponentEntityBuilder.findDuplicates(manifest),
   ];
@@ -34,18 +34,18 @@ export const validateManifest = (
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
-  applicationEntityBuilder.validate(
-    manifest.application ? [manifest.application] : [],
-    errors,
-  );
-  objectEntityBuilder.validate(manifest.objects ?? [], errors);
+  applicationEntityBuilder.validate([manifest.application], errors);
+  objectEntityBuilder.validate(manifest.entities.objects, errors);
   objectExtensionEntityBuilder.validate(
-    manifest.objectExtensions ?? [],
+    manifest.entities.objectExtensions,
     errors,
   );
-  functionEntityBuilder.validate(manifest.functions ?? [], errors);
-  roleEntityBuilder.validate(manifest.roles ?? [], errors);
-  frontComponentEntityBuilder.validate(manifest.frontComponents ?? [], errors);
+  logicFunctionEntityBuilder.validate(manifest.entities.logicFunctions, errors);
+  roleEntityBuilder.validate(manifest.entities.roles, errors);
+  frontComponentEntityBuilder.validate(
+    manifest.entities.frontComponents,
+    errors,
+  );
 
   const duplicates = collectAllDuplicates(manifest);
   for (const dup of duplicates) {
@@ -55,15 +55,15 @@ export const validateManifest = (
     });
   }
 
-  if (!isNonEmptyArray(manifest.objects)) {
+  if (!isNonEmptyArray(manifest.entities.objects)) {
     warnings.push({
       message: 'No objects defined',
     });
   }
 
-  if (!isNonEmptyArray(manifest.functions)) {
+  if (!isNonEmptyArray(manifest.entities.logicFunctions)) {
     warnings.push({
-      message: 'No functions defined',
+      message: 'No logicFunctions defined',
     });
   }
 

@@ -82,26 +82,26 @@ export class ApplicationSyncService {
     });
 
     await this.syncObjects({
-      objectsToSync: manifest.objects,
+      objectsToSync: manifest.entities.objects,
       workspaceId,
       applicationId: application.id,
     });
 
     await this.syncRelations({
-      objectsToSync: manifest.objects,
+      objectsToSync: manifest.entities.objects,
       workspaceId,
       applicationId: application.id,
     });
 
-    if (manifest.objectExtensions && manifest.objectExtensions.length > 0) {
+    if (manifest.entities.objectExtensions.length > 0) {
       await this.syncObjectExtensionsOrThrow({
-        objectExtensionsToSync: manifest.objectExtensions,
+        objectExtensionsToSync: manifest.entities.objectExtensions,
         workspaceId,
         applicationId: application.id,
       });
     }
 
-    if (manifest.functions.length > 0) {
+    if (manifest.entities.logicFunctions.length > 0) {
       if (!isDefined(application.logicFunctionLayerId)) {
         throw new ApplicationException(
           `Failed to sync logic function, could not find a logic function layer.`,
@@ -110,7 +110,7 @@ export class ApplicationSyncService {
       }
 
       await this.syncLogicFunctions({
-        logicFunctionsToSync: manifest.functions,
+        logicFunctionsToSync: manifest.entities.logicFunctions,
         code: manifest.sources,
         workspaceId,
         applicationId: application.id,
@@ -148,13 +148,13 @@ export class ApplicationSyncService {
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
         logicFunctionLayerId: null,
-        defaultLogicFunctionRoleId: null,
+        defaultRoleId: null,
         workspaceId,
       }));
 
     let logicFunctionLayerId = application.logicFunctionLayerId;
 
-    if (manifest.functions.length > 0) {
+    if (manifest.entities.logicFunctions.length > 0) {
       if (!isDefined(logicFunctionLayerId)) {
         logicFunctionLayerId = (
           await this.logicFunctionLayerService.create(
@@ -190,7 +190,7 @@ export class ApplicationSyncService {
       description: manifest.application.description,
       version: packageJson.version,
       logicFunctionLayerId,
-      defaultLogicFunctionRoleId: null,
+      defaultRoleId: null,
     });
   }
 
@@ -203,9 +203,9 @@ export class ApplicationSyncService {
     workspaceId: string;
     applicationId: string;
   }) {
-    let defaultLogicFunctionRoleId: string | null = null;
+    let defaultRoleId: string | null = null;
 
-    for (const role of manifest.roles ?? []) {
+    for (const role of manifest.entities.roles) {
       let existingRole = await this.roleService.getRoleByUniversalIdentifier({
         universalIdentifier: role.universalIdentifier,
         workspaceId,
@@ -235,15 +235,15 @@ export class ApplicationSyncService {
 
       if (
         existingRole.universalIdentifier ===
-        manifest.application.functionRoleUniversalIdentifier
+        manifest.application.roleUniversalIdentifier
       ) {
-        defaultLogicFunctionRoleId = existingRole.id;
+        defaultRoleId = existingRole.id;
       }
     }
 
-    if (isDefined(defaultLogicFunctionRoleId)) {
+    if (isDefined(defaultRoleId)) {
       await this.applicationService.update(applicationId, {
-        defaultLogicFunctionRoleId: defaultLogicFunctionRoleId,
+        defaultRoleId: defaultRoleId,
       });
     }
   }

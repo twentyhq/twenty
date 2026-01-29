@@ -1,7 +1,7 @@
 import { AssetWatcher } from '@/cli/utilities/build/common/asset-watcher';
 import {
   createFrontComponentsWatcher,
-  createFunctionsWatcher,
+  createLogicFunctionsWatcher,
   type EsbuildWatcher,
 } from '@/cli/utilities/build/common/esbuild-watcher';
 import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
@@ -22,7 +22,7 @@ export class AppDevCommand {
   private appPath = '';
   private orchestrator: DevModeOrchestrator | null = null;
   private manifestWatcher: ManifestWatcher | null = null;
-  private functionsWatcher: EsbuildWatcher | null = null;
+  private logicFunctionsWatcher: EsbuildWatcher | null = null;
   private frontComponentsWatcher: EsbuildWatcher | null = null;
   private assetWatcher: AssetWatcher | null = null;
   private watchersStarted = false;
@@ -71,16 +71,16 @@ export class AppDevCommand {
   }
 
   private async handleWatcherRestarts(result: ManifestBuildResult) {
-    const { functions, frontComponents } = result.filePaths;
+    const { logicFunctions, frontComponents } = result.filePaths;
 
     if (!this.watchersStarted) {
       this.watchersStarted = true;
-      await this.startFileWatchers(functions, frontComponents);
+      await this.startFileWatchers(logicFunctions, frontComponents);
       return;
     }
 
-    if (this.functionsWatcher?.shouldRestart(functions)) {
-      await this.functionsWatcher.restart(functions);
+    if (this.logicFunctionsWatcher?.shouldRestart(logicFunctions)) {
+      await this.logicFunctionsWatcher.restart(logicFunctions);
     }
 
     if (this.frontComponentsWatcher?.shouldRestart(frontComponents)) {
@@ -89,18 +89,20 @@ export class AppDevCommand {
   }
 
   private async startFileWatchers(
-    functions: string[],
+    logicFunctions: string[],
     frontComponents: string[],
   ): Promise<void> {
     await Promise.all([
-      this.startFunctionsWatcher(functions),
+      this.startLogicFunctionsWatcher(logicFunctions),
       this.startFrontComponentsWatcher(frontComponents),
       this.startAssetWatcher(),
     ]);
   }
 
-  private async startFunctionsWatcher(sourcePaths: string[]): Promise<void> {
-    this.functionsWatcher = createFunctionsWatcher({
+  private async startLogicFunctionsWatcher(
+    sourcePaths: string[],
+  ): Promise<void> {
+    this.logicFunctionsWatcher = createLogicFunctionsWatcher({
       appPath: this.appPath,
       sourcePaths,
       handleBuildError: this.orchestrator!.handleFileBuildError.bind(
@@ -111,7 +113,7 @@ export class AppDevCommand {
       ),
     });
 
-    await this.functionsWatcher.start();
+    await this.logicFunctionsWatcher.start();
   }
 
   private async startFrontComponentsWatcher(
@@ -148,7 +150,7 @@ export class AppDevCommand {
 
       await Promise.all([
         this.manifestWatcher?.close(),
-        this.functionsWatcher?.close(),
+        this.logicFunctionsWatcher?.close(),
         this.frontComponentsWatcher?.close(),
         this.assetWatcher?.close(),
       ]);

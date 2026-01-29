@@ -367,9 +367,9 @@ export class NavigationMenuItemService {
 
     if (
       isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultLogicFunctionRoleId)
+      isDefined(authContext.application.defaultRoleId)
     ) {
-      return authContext.application.defaultLogicFunctionRoleId;
+      return authContext.application.defaultRoleId;
     }
 
     if (isUserAuthContext(authContext)) {

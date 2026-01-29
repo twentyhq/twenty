@@ -1,8 +1,8 @@
-import { getFunctionBaseFile } from '@/cli/utilities/entity/entity-function-template';
+import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
 
 describe('getFunctionBaseFile', () => {
   it('should render proper file using defineFunction', () => {
-    const result = getFunctionBaseFile({
+    const result = getLogicFunctionBaseFile({
       name: 'my-function',
       universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
     });
@@ -26,7 +26,7 @@ describe('getFunctionBaseFile', () => {
   });
 
   it('should generate unique UUID when not provided', () => {
-    const result = getFunctionBaseFile({
+    const result = getLogicFunctionBaseFile({
       name: 'auto-uuid-function',
     });
 
@@ -36,7 +36,7 @@ describe('getFunctionBaseFile', () => {
   });
 
   it('should use kebab-case for function name', () => {
-    const result = getFunctionBaseFile({
+    const result = getLogicFunctionBaseFile({
       name: 'my-awesome-function',
     });
 
@@ -45,7 +45,7 @@ describe('getFunctionBaseFile', () => {
   });
 
   it('should include trigger examples as comments', () => {
-    const result = getFunctionBaseFile({
+    const result = getLogicFunctionBaseFile({
       name: 'example-function',
     });
 

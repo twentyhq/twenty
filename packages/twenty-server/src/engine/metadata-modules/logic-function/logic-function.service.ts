@@ -49,7 +49,7 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
+import { LogicFunctionBuildService } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -58,7 +58,7 @@ export class LogicFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly functionBuildService: FunctionBuildService,
+    private readonly functionBuildService: LogicFunctionBuildService,
     private readonly logicFunctionLayerService: LogicFunctionLayerService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
@@ -331,13 +331,13 @@ export class LogicFunctionService {
     const draftBuiltFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction: existingFlatLogicFunction,
       version: 'draft',
-      fileFolder: FileFolder.BuiltFunction,
+      fileFolder: FileFolder.BuiltLogicFunction,
     });
 
     const newBuiltFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction: existingFlatLogicFunction,
       version: newVersion,
-      fileFolder: FileFolder.BuiltFunction,
+      fileFolder: FileFolder.BuiltLogicFunction,
     });
 
     await this.fileStorageService.copy({

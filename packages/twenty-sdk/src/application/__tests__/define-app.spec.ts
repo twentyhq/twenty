@@ -7,7 +7,7 @@ describe('defineApp', () => {
       displayName: 'My App',
       description: 'My app description',
       icon: 'IconWorld',
-      functionRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+      roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     };
 
     const result = defineApp(config);
@@ -28,14 +28,14 @@ describe('defineApp', () => {
           isSecret: true,
         },
       },
-      functionRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+      roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     };
 
     const result = defineApp(config);
 
     expect(result).toEqual(config);
     expect(result.applicationVariables).toBeDefined();
-    expect(result.functionRoleUniversalIdentifier).toBe(
+    expect(result.roleUniversalIdentifier).toBe(
       '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     );
   });

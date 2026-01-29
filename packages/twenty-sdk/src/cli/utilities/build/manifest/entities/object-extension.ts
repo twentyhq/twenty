@@ -132,8 +132,8 @@ export class ObjectExtensionEntityBuilder
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
-    const extensions = manifest.objectExtensions ?? [];
-    const objects = manifest.objects ?? [];
+    const extensions = manifest.entities.objectExtensions;
+    const objects = manifest.entities.objects;
 
     const objectFieldIds = new Map<string, string>();
     for (const obj of objects) {

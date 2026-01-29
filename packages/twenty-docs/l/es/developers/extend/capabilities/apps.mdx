@@ -339,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ Notas:
 
 * Los campos `universalIdentifier` son ID deterministas bajo tu control; genéralos una vez y mantenlos estables entre sincronizaciones.
 * Las `applicationVariables` se convierten en variables de entorno para tus funciones (por ejemplo, `DEFAULT_RECIPIENT_NAME` está disponible como `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` debe coincidir con el rol que defines en tu archivo `*.role.ts` (ver abajo).
+* `roleUniversalIdentifier` debe coincidir con el rol que defines en tu archivo `*.role.ts` (ver abajo).
 
 #### Roles y permisos
 
-Las aplicaciones pueden definir roles que encapsulan permisos sobre los objetos y acciones de tu espacio de trabajo. El campo `functionRoleUniversalIdentifier` en `application.config.ts` designa el rol predeterminado que usan las funciones de lógica de tu aplicación.
+Las aplicaciones pueden definir roles que encapsulan permisos sobre los objetos y acciones de tu espacio de trabajo. El campo `roleUniversalIdentifier` en `application.config.ts` designa el rol predeterminado que usan las funciones de lógica de tu aplicación.
 
 * La clave de API en tiempo de ejecución inyectada como `TWENTY_API_KEY` se deriva de este rol de función predeterminado.
 * El cliente tipado estará restringido a los permisos otorgados a ese rol.
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-El `universalIdentifier` de este rol se referencia luego en `application.config.ts` como `functionRoleUniversalIdentifier`. En otras palabras:
+El `universalIdentifier` de este rol se referencia luego en `application.config.ts` como `roleUniversalIdentifier`. En otras palabras:
 
 * **\*.role.ts** define lo que puede hacer el rol de función predeterminado.
 * **application.config.ts** apunta a ese rol para que tus funciones hereden sus permisos.
@@ -606,8 +606,8 @@ Cuando tu función se ejecuta en Twenty, la plataforma inyecta credenciales como
 Notas:
 
 * No necesitas pasar la URL ni la clave de API al cliente generado. Lee `TWENTY_API_URL` y `TWENTY_API_KEY` de process.env en tiempo de ejecución.
-* Los permisos de la clave de API están determinados por el rol referenciado en tu `application.config.ts` mediante `functionRoleUniversalIdentifier`. Este es el rol predeterminado que usan las funciones de lógica de tu aplicación.
-* Las aplicaciones pueden definir roles para seguir el principio de mínimo privilegio. Concede solo los permisos que necesitan tus funciones y después apunta `functionRoleUniversalIdentifier` al identificador universal de ese rol.
+* Los permisos de la clave de API están determinados por el rol referenciado en tu `application.config.ts` mediante `roleUniversalIdentifier`. Este es el rol predeterminado que usan las funciones de lógica de tu aplicación.
+* Las aplicaciones pueden definir roles para seguir el principio de mínimo privilegio. Concede solo los permisos que necesitan tus funciones y después apunta `roleUniversalIdentifier` al identificador universal de ese rol.
 
 ### Ejemplo Hello World
 

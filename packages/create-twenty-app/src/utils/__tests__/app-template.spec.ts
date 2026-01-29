@@ -139,7 +139,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it references the role
     expect(appConfigContent).toContain(
-      'functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER',
+      'roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER',
     );
   });
 

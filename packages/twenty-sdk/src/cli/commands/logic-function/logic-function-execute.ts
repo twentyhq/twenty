@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import { type ApplicationManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-export class FunctionExecuteCommand {
+export class LogicFunctionExecuteCommand {
   private apiService = new ApiService();
 
   async execute({
@@ -164,7 +164,7 @@ export class FunctionExecuteCommand {
     fn: { universalIdentifier: string; applicationId: string | null },
     manifest: ApplicationManifest,
   ): boolean {
-    return manifest.functions.some(
+    return manifest.entities.logicFunctions.some(
       (manifestFn) => manifestFn.universalIdentifier === fn.universalIdentifier,
     );
   }

@@ -339,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ export default defineApp({
 
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` должен соответствовать роли, которую вы определяете в файле `*.role.ts` (см. ниже).
+* `roleUniversalIdentifier` должен соответствовать роли, которую вы определяете в файле `*.role.ts` (см. ниже).
 
 #### Роли и разрешения
 
-Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `functionRoleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `roleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-`universalIdentifier` этой роли затем указывается в `application.config.ts` как `functionRoleUniversalIdentifier`. Иными словами:
+`universalIdentifier` этой роли затем указывается в `application.config.ts` как `roleUniversalIdentifier`. Иными словами:
 
 * **\*.role.ts** определяет, что может делать роль функции по умолчанию.
 * **application.config.ts** указывает на эту роль, чтобы ваши функции наследовали её права.
@@ -606,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 Заметки:
 
 * Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
-* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `functionRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
-* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `functionRoleUniversalIdentifier` универсальный идентификатор этой роли.
+* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `roleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
+* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `roleUniversalIdentifier` универсальный идентификатор этой роли.
 
 ### Пример Hello World
 

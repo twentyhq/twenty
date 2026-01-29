@@ -29,12 +29,12 @@ export type {
   FrontComponentType,
   FrontComponentConfig,
 } from './front-components/front-component-config';
-export { defineFunction } from './functions/define-function';
+export { defineLogicFunction } from './logic-functions/define-logic-function';
 export type {
-  FunctionHandler,
-  FunctionConfig,
-} from './functions/function-config';
-export type { CronPayload } from './functions/triggers/cron-payload-type';
+  LogicFunctionHandler,
+  LogicFunctionConfig,
+} from './logic-functions/logic-function-config';
+export type { CronPayload } from './logic-functions/triggers/cron-payload-type';
 export type {
   DatabaseEventPayload,
   ObjectRecordCreateEvent,
@@ -45,8 +45,8 @@ export type {
   ObjectRecordBaseEvent,
   ObjectRecordRestoreEvent,
   ObjectRecordUpsertEvent,
-} from './functions/triggers/database-event-payload-type';
-export type { RoutePayload } from './functions/triggers/route-payload-type';
+} from './logic-functions/triggers/database-event-payload-type';
+export type { RoutePayload } from './logic-functions/triggers/route-payload-type';
 export { defineObject } from './objects/define-object';
 export { extendObject } from './objects/extend-object';
 export { Object } from './objects/object.decorator';

@@ -1,6 +1,6 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
-import { getFunctionBaseFile } from '@/cli/utilities/entity/entity-function-template';
+import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
@@ -68,7 +68,7 @@ export class EntityAddCommand {
         // Use *.function.ts naming convention
         const functionFileName = `${kebabcase(entityName)}.function.ts`;
 
-        const decoratedLogicFunction = getFunctionBaseFile({
+        const decoratedLogicFunction = getLogicFunctionBaseFile({
           name: entityName,
         });
 

@@ -3,9 +3,9 @@ import {
   type LogicFunctionTriggerManifest,
 } from 'twenty-shared/application';
 
-export type FunctionHandler = (...args: any[]) => any | Promise<any>;
+export type LogicFunctionHandler = (...args: any[]) => any | Promise<any>;
 
-export type FunctionConfig = Omit<
+export type LogicFunctionConfig = Omit<
   LogicFunctionManifest,
   | 'sourceHandlerPath'
   | 'builtHandlerPath'
@@ -15,6 +15,6 @@ export type FunctionConfig = Omit<
   name?: string;
   description?: string;
   timeoutSeconds?: number;
-  handler: FunctionHandler;
+  handler: LogicFunctionHandler;
   triggers?: LogicFunctionTriggerManifest[];
 };

@@ -3,7 +3,7 @@ import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build'
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 
-export class FunctionLogsCommand {
+export class LogicFunctionLogsCommand {
   private apiService = new ApiService();
 
   async execute({

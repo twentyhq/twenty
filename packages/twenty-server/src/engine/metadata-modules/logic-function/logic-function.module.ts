@@ -14,7 +14,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/function-build.module';
+import { LogicFunctionBuildModule } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.module';
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
 import { LogicFunctionTriggerJob } from 'src/engine/metadata-modules/logic-function/jobs/logic-function-trigger.job';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -40,7 +40,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     PermissionsModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
-    FunctionBuildModule,
+    LogicFunctionBuildModule,
     LogicFunctionLayerModule,
     SubscriptionsModule,
     WorkspaceCacheModule,

@@ -12,7 +12,7 @@ import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-fun
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 @Injectable()
-export class FunctionBuildService {
+export class LogicFunctionBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   async isBuilt({
@@ -49,7 +49,7 @@ export class FunctionBuildService {
     const builtFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
       version,
-      fileFolder: FileFolder.BuiltFunction,
+      fileFolder: FileFolder.BuiltLogicFunction,
     });
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();

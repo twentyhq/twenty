@@ -106,7 +106,7 @@ export class DevUiStateManager {
         return SyncableEntity.Object;
       case 'objectExtensions':
         return SyncableEntity.ObjectExtension;
-      case 'functions':
+      case 'logicFunctions':
         return SyncableEntity.Function;
       case 'frontComponents':
         return SyncableEntity.FrontComponent;

@@ -47,7 +47,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     displayName: 'Root App',
     description: 'An app with all entities at root level',
     icon: 'IconFolder',
-    functionRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
+    roleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
   },
   objects: [
     {
@@ -68,7 +68,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
       ],
     },
   ],
-  functions: [
+  logicFunctions: [
     {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000010',
       name: 'my-function',

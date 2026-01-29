@@ -14,7 +14,7 @@ import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/ty
 import { UpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
-import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
+import { LogicFunctionBuildService } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.service';
 
 @Injectable()
 export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -24,7 +24,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly functionBuildService: FunctionBuildService,
+    private readonly functionBuildService: LogicFunctionBuildService,
   ) {
     super();
   }

@@ -339,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ Notițe:
 
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` trebuie să corespundă rolului pe care îl definiți în fișierul `*.role.ts` (vedeți mai jos).
+* `roleUniversalIdentifier` trebuie să corespundă rolului pe care îl definiți în fișierul `*.role.ts` (vedeți mai jos).
 
 #### Roluri și permisiuni
 
-Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `functionRoleUniversalIdentifier` din `application.config.ts` desemnează rolul implicit folosit de funcțiile de logică ale aplicației.
+Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `roleUniversalIdentifier` din `application.config.ts` desemnează rolul implicit folosit de funcțiile de logică ale aplicației.
 
 * Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
 * Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-`universalIdentifier` al acestui rol este apoi referențiat în `application.config.ts` ca `functionRoleUniversalIdentifier`. Cu alte cuvinte:
+`universalIdentifier` al acestui rol este apoi referențiat în `application.config.ts` ca `roleUniversalIdentifier`. Cu alte cuvinte:
 
 * **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
 * **application.config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
@@ -606,8 +606,8 @@ Când funcția rulează pe Twenty, platforma injectează acreditări ca variabil
 Notițe:
 
 * Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
-* Permisiunile cheii API sunt determinate de rolul referențiat în `application.config.ts` prin `functionRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
-* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `functionRoleUniversalIdentifier` la identificatorul universal al acelui rol.
+* Permisiunile cheii API sunt determinate de rolul referențiat în `application.config.ts` prin `roleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `roleUniversalIdentifier` la identificatorul universal al acelui rol.
 
 ### Exemplu Hello World
 

@@ -88,7 +88,7 @@ export class FrontComponentEntityBuilder
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const components = manifest.frontComponents ?? [];
+    const components = manifest.entities.frontComponents;
 
     for (const component of components) {
       if (component.universalIdentifier) {

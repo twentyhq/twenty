@@ -335,18 +335,18 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
 Notes:
 - `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-- `functionRoleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+- `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
 
 #### Roles and permissions
 
-Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 - The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
 - The typed client will be restricted to the permissions granted to that role.
@@ -396,7 +396,7 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `functionRoleUniversalIdentifier`. In other words:
+The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. In other words:
 
 - **\*.role.ts** defines what the default function role can do.
 - **application.config.ts** points to that role so your functions inherit its permissions.
@@ -592,8 +592,8 @@ When your function runs on Twenty, the platform injects credentials as environme
 
 Notes:
 - You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
-- The API key's permissions are determined by the role referenced in your `application.config.ts` via `functionRoleUniversalIdentifier`. This is the default role used by logic functions of your application.
-- Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `functionRoleUniversalIdentifier` to that role's universal identifier.
+- The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. This is the default role used by logic functions of your application.
+- Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
 
 
 ### Hello World example

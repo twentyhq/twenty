@@ -12,12 +12,14 @@ import { type Sources } from '@/types';
 
 export type ApplicationManifest = {
   application: Application;
-  objects: ObjectManifest[];
-  objectExtensions?: ObjectExtensionManifest[];
-  functions: LogicFunctionManifest[];
-  frontComponents: FrontComponentManifest[];
-  roles?: RoleManifest[];
-  publicAssets?: AssetManifest[];
+  entities: {
+    objects: ObjectManifest[];
+    objectExtensions: ObjectExtensionManifest[];
+    logicFunctions: LogicFunctionManifest[];
+    frontComponents: FrontComponentManifest[];
+    roles: RoleManifest[];
+    publicAssets: AssetManifest[];
+  };
   sources: Sources;
   packageJson: PackageJson;
   yarnLock: string;

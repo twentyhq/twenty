@@ -8,8 +8,8 @@ import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
 import { AuthStatusCommand } from './auth/auth-status';
-import { FunctionExecuteCommand } from './function/function-execute';
-import { FunctionLogsCommand } from './function/function-logs';
+import { LogicFunctionExecuteCommand } from './logic-function/logic-function-execute';
+import { LogicFunctionLogsCommand } from './logic-function/logic-function-logs';
 import { AuthSwitchCommand } from './auth/auth-switch';
 import {
   EntityAddCommand,
@@ -67,8 +67,8 @@ export const registerCommands = (program: Command): void => {
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
   const generateCommand = new AppGenerateCommand();
-  const logsCommand = new FunctionLogsCommand();
-  const executeCommand = new FunctionExecuteCommand();
+  const logsCommand = new LogicFunctionLogsCommand();
+  const executeCommand = new LogicFunctionExecuteCommand();
 
   program
     .command('app:dev [appPath]')

@@ -7,7 +7,7 @@ export enum FileFolder {
   LogicFunctionToDelete = 'logic-function-to-delete',
   File = 'file',
   AgentChat = 'agent-chat',
-  BuiltFunction = 'built-function',
+  BuiltLogicFunction = 'built-logic-function',
   BuiltFrontComponent = 'built-front-component',
   PublicAsset = 'public-asset',
   Source = 'source',

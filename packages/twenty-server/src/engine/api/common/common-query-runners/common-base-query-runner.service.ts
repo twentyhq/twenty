@@ -319,8 +319,8 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    if (isDefined(authContext.application?.defaultLogicFunctionRoleId)) {
-      return authContext.application?.defaultLogicFunctionRoleId;
+    if (isDefined(authContext.application?.defaultRoleId)) {
+      return authContext.application?.defaultRoleId;
     }
 
     if (!isDefined(authContext.userWorkspaceId)) {

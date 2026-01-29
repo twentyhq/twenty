@@ -19,7 +19,7 @@ export const getLogicFunctionFolderOrThrow = ({
   fileFolder?:
     | FileFolder.LogicFunction
     | FileFolder.LogicFunctionToDelete
-    | FileFolder.BuiltFunction;
+    | FileFolder.BuiltLogicFunction;
 }) => {
   if (version === 'latest' && !isDefined(flatLogicFunction.latestVersion)) {
     throw new LogicFunctionException(

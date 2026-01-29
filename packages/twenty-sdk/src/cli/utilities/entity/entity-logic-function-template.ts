@@ -1,7 +1,7 @@
 import kebabCase from 'lodash.kebabcase';
 import { v4 } from 'uuid';
 
-export const getFunctionBaseFile = ({
+export const getLogicFunctionBaseFile = ({
   name,
   universalIdentifier = v4(),
 }: {
@@ -11,9 +11,9 @@ export const getFunctionBaseFile = ({
   const kebabCaseName = kebabCase(name);
   const triggerUniversalIdentifier = v4();
 
-  return `import { defineFunction } from 'twenty-sdk';
+  return `import { defineLogicFunction } from 'twenty-sdk';
 
-// Handler function - rename and implement your logic
+// Logic function handler - rename and implement your logic
 const handler = async (params: {
   a: string;
   b: number;
@@ -26,10 +26,10 @@ const handler = async (params: {
   return { message };
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
-  description: 'Add a description for your function',
+  description: 'Add a description for your logic function',
   timeoutSeconds: 5,
   handler,
   triggers: [

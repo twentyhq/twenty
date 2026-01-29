@@ -339,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ export default defineApp({
 
 * `universalIdentifier` 字段是你拥有的确定性 ID；生成一次并在多次同步中保持稳定。
 * `applicationVariables` 会变成函数可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
-* `functionRoleUniversalIdentifier` 必须与在 `*.role.ts` 文件中定义的角色一致（见下文）。
+* `roleUniversalIdentifier` 必须与在 `*.role.ts` 文件中定义的角色一致（见下文）。
 
 #### 角色和权限
 
-应用可以定义角色，以封装对工作空间对象与操作的权限。 `application.config.ts` 中的 `functionRoleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
+应用可以定义角色，以封装对工作空间对象与操作的权限。 `application.config.ts` 中的 `roleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
 
 * 作为 `TWENTY_API_KEY` 注入的运行时 API 密钥源自该默认函数角色。
 * 类型化客户端将受限于该角色授予的权限。
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-随后，该角色的 `universalIdentifier` 会在 `application.config.ts` 中以 `functionRoleUniversalIdentifier` 引用。 换句话说：
+随后，该角色的 `universalIdentifier` 会在 `application.config.ts` 中以 `roleUniversalIdentifier` 引用。 换句话说：
 
 * **\*.role.ts** 定义默认函数角色可以执行的操作。
 * **application.config.ts** 指向该角色，使你的函数继承其权限。
@@ -606,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 备注:
 
 * 你无需向生成的客户端传递 URL 或 API 密钥。 它会在运行时从 process.env 读取 `TWENTY_API_URL` 和 `TWENTY_API_KEY`。
-* API 密钥的权限由 `application.config.ts` 中通过 `functionRoleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
-* 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `functionRoleUniversalIdentifier` 指向该角色的通用标识符。
+* API 密钥的权限由 `application.config.ts` 中通过 `roleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
+* 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `roleUniversalIdentifier` 指向该角色的通用标识符。
 
 ### Hello World 示例
 

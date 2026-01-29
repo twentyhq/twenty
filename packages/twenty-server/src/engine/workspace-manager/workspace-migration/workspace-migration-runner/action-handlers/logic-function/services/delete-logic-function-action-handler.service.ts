@@ -61,7 +61,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     await this.fileStorageService.delete({
       folderPath: getLogicFunctionFolderOrThrow({
         flatLogicFunction,
-        fileFolder: FileFolder.BuiltFunction,
+        fileFolder: FileFolder.BuiltLogicFunction,
       }),
     });
   }

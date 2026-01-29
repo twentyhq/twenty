@@ -24,7 +24,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     },
     description: 'A simple hello world app',
     displayName: 'Hello World',
-    functionRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+    roleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     icon: 'IconWorld',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   },
@@ -294,7 +294,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
       universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     },
   ],
-  functions: [
+  logicFunctions: [
     {
       builtHandlerChecksum: '[checksum]',
       builtHandlerPath: 'src/root.function.mjs',

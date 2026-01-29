@@ -271,7 +271,7 @@ export type Application = {
   applicationVariables: Array<ApplicationVariable>;
   canBeUninstalled: Scalars['Boolean'];
   defaultLogicFunctionRole?: Maybe<Role>;
-  defaultLogicFunctionRoleId?: Maybe<Scalars['String']>;
+  defaultRoleId?: Maybe<Scalars['String']>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   logicFunctions: Array<LogicFunction>;
@@ -1553,7 +1553,7 @@ export enum FileFolder {
   AgentChat = 'AgentChat',
   Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
-  BuiltFunction = 'BuiltFunction',
+  BuiltLogicFunction = 'BuiltLogicFunction',
   File = 'File',
   FilesField = 'FilesField',
   LogicFunction = 'LogicFunction',

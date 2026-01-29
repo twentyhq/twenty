@@ -1,9 +1,9 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 
-export const defineFunctionsTests = (appPath: string): void => {
-  describe('functions', () => {
-    it('should have built functions at root level', async () => {
+export const defineLogicFunctionsTests = (appPath: string): void => {
+  describe('logicFunctions', () => {
+    it('should have built logicFunctions at root level', async () => {
       const outputDir = join(appPath, '.twenty/output');
       const files = await fs.readdir(outputDir, { recursive: true });
       const functionFiles = files

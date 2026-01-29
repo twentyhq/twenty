@@ -12,7 +12,7 @@ import { FileFolder, type Sources } from 'twenty-shared/types';
 import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
 import { assetEntityBuilder } from '@/cli/utilities/build/manifest/entities/asset';
 import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
-import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
+import { logicFunctionEntityBuilder } from '@/cli/utilities/build/manifest/entities/logic-function';
 import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
 import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/entities/object-extension';
 import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
@@ -23,7 +23,7 @@ export type EntityFilePaths = {
   application: string[];
   objects: string[];
   objectExtensions: string[];
-  functions: string[];
+  logicFunctions: string[];
   frontComponents: string[];
   roles: string[];
   assets: string[];
@@ -62,7 +62,7 @@ export const EMPTY_FILE_PATHS: EntityFilePaths = {
   application: [],
   objects: [],
   objectExtensions: [],
-  functions: [],
+  logicFunctions: [],
   frontComponents: [],
   roles: [],
   assets: [],
@@ -92,9 +92,9 @@ export const updateManifestChecksum = ({
     { fileFolder, checksum },
   ] of builtFileInfos.entries()) {
     const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
-    if (fileFolder === FileFolder.BuiltFunction) {
-      const functions = result.functions ?? [];
-      const fnIndex = functions.findIndex(
+    if (fileFolder === FileFolder.BuiltLogicFunction) {
+      const logicFunctions = result.entities.logicFunctions;
+      const fnIndex = logicFunctions.findIndex(
         (f) => f.builtHandlerPath === rootBuiltPath,
       );
       if (fnIndex === -1) {
@@ -102,29 +102,35 @@ export const updateManifestChecksum = ({
       }
       result = {
         ...result,
-        functions: functions.map((fn, index) =>
-          index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
-        ),
+        entities: {
+          ...result.entities,
+          logicFunctions: logicFunctions.map((fn, index) =>
+            index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
+          ),
+        },
       };
     }
 
     if (fileFolder === FileFolder.PublicAsset) {
-      const assets = result.publicAssets ?? [];
+      const assets = result.entities.publicAssets;
       const assetIndex = assets.findIndex((a) => a.filePath === rootBuiltPath);
       if (assetIndex === -1) {
         continue;
       }
       result = {
         ...result,
-        publicAssets: assets.map((asset, index) =>
-          index === assetIndex ? { ...asset, checksum } : asset,
-        ),
+        entities: {
+          ...result.entities,
+          publicAssets: assets.map((asset, index) =>
+            index === assetIndex ? { ...asset, checksum } : asset,
+          ),
+        },
       };
       continue;
     }
 
     if (fileFolder === FileFolder.BuiltFrontComponent) {
-      const frontComponents = result.frontComponents ?? [];
+      const frontComponents = result.entities.frontComponents;
       const componentIndex =
         frontComponents.findIndex(
           (c) => c.builtComponentPath === rootBuiltPath,
@@ -134,11 +140,14 @@ export const updateManifestChecksum = ({
       }
       result = {
         ...result,
-        frontComponents: frontComponents.map((component, index) =>
-          index === componentIndex
-            ? { ...component, builtComponentChecksum: checksum }
-            : component,
-        ),
+        entities: {
+          ...result.entities,
+          frontComponents: frontComponents.map((component, index) =>
+            index === componentIndex
+              ? { ...component, builtComponentChecksum: checksum }
+              : component,
+          ),
+        },
       };
     }
   }
@@ -173,7 +182,7 @@ export const runManifestBuild = async (
       applicationEntityBuilder.build(appPath),
       objectEntityBuilder.build(appPath),
       objectExtensionEntityBuilder.build(appPath),
-      functionEntityBuilder.build(appPath),
+      logicFunctionEntityBuilder.build(appPath),
       frontComponentEntityBuilder.build(appPath),
       roleEntityBuilder.build(appPath),
       assetEntityBuilder.build(appPath),
@@ -192,7 +201,7 @@ export const runManifestBuild = async (
       application: applicationBuildResult.filePaths,
       objects: objectBuildResult.filePaths,
       objectExtensions: objectExtensionBuildResult.filePaths,
-      functions: functionBuildResult.filePaths,
+      logicFunctions: functionBuildResult.filePaths,
       frontComponents: frontComponentBuildResult.filePaths,
       roles: roleBuildResult.filePaths,
       assets: assetBuildResult.filePaths,
@@ -200,12 +209,14 @@ export const runManifestBuild = async (
 
     const manifest: ApplicationManifest = {
       application,
-      objects: objectManifests,
-      objectExtensions: objectExtensionManifests,
-      functions: functionManifests,
-      frontComponents: frontComponentManifests,
-      roles: roleManifests,
-      publicAssets: assetManifests,
+      entities: {
+        objects: objectManifests,
+        objectExtensions: objectExtensionManifests,
+        logicFunctions: functionManifests,
+        frontComponents: frontComponentManifests,
+        roles: roleManifests,
+        publicAssets: assetManifests,
+      },
       sources,
       packageJson,
       yarnLock,

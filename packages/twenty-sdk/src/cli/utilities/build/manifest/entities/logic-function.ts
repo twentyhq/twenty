@@ -17,7 +17,7 @@ type ExtractedFunctionManifest = Omit<
   handler: string;
 };
 
-export class FunctionEntityBuilder
+export class LogicFunctionEntityBuilder
   implements ManifestEntityBuilder<LogicFunctionManifest>
 {
   async build(
@@ -76,11 +76,11 @@ export class FunctionEntityBuilder
   }
 
   validate(
-    functions: LogicFunctionManifest[],
+    logicFunctions: LogicFunctionManifest[],
     errors: ValidationError[],
   ): void {
-    for (const fn of functions) {
-      const fnPath = `functions/${fn.name ?? fn.handlerName ?? 'unknown'}`;
+    for (const fn of logicFunctions) {
+      const fnPath = `logicFunctions/${fn.name ?? fn.handlerName ?? 'unknown'}`;
 
       if (!fn.universalIdentifier) {
         errors.push({
@@ -147,18 +147,18 @@ export class FunctionEntityBuilder
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const functions = manifest.functions ?? [];
+    const logicFunctions = manifest.entities.logicFunctions;
 
-    for (const fn of functions) {
+    for (const fn of logicFunctions) {
       if (fn.universalIdentifier) {
-        const location = `functions/${fn.name ?? fn.handlerName}`;
+        const location = `logicFunctions/${fn.name ?? fn.handlerName}`;
         const locations = seen.get(fn.universalIdentifier) ?? [];
         locations.push(location);
         seen.set(fn.universalIdentifier, locations);
       }
       for (const trigger of fn.triggers ?? []) {
         if (trigger.universalIdentifier) {
-          const location = `functions/${fn.name ?? fn.handlerName}.triggers.${trigger.type}`;
+          const location = `logicFunctions/${fn.name ?? fn.handlerName}.triggers.${trigger.type}`;
           const locations = seen.get(trigger.universalIdentifier) ?? [];
           locations.push(location);
           seen.set(trigger.universalIdentifier, locations);
@@ -172,4 +172,4 @@ export class FunctionEntityBuilder
   }
 }
 
-export const functionEntityBuilder = new FunctionEntityBuilder();
+export const logicFunctionEntityBuilder = new LogicFunctionEntityBuilder();

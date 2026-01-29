@@ -339,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ export default defineApp({
 
 * `universalIdentifier` 필드는 고유하고 결정적인 ID입니다. 한 번 생성한 후 동기화 전반에 걸쳐 안정적으로 유지하세요.
 * `applicationVariables`는 함수의 환경 변수가 됩니다(예: `DEFAULT_RECIPIENT_NAME`는 `process.env.DEFAULT_RECIPIENT_NAME`로 사용 가능).
-* `functionRoleUniversalIdentifier`는 `*.role.ts` 파일에서 정의한 역할과 일치해야 합니다(아래 참조).
+* `roleUniversalIdentifier`는 `*.role.ts` 파일에서 정의한 역할과 일치해야 합니다(아래 참조).
 
 #### 역할 및 권한
 
-애플리케이션은 워크스페이스의 객체와 작업에 대한 권한을 캡슐화하는 역할을 정의할 수 있습니다. `application.config.ts`의 `functionRoleUniversalIdentifier` 필드는 앱의 로직 함수가 사용하는 기본 역할을 지정합니다.
+애플리케이션은 워크스페이스의 객체와 작업에 대한 권한을 캡슐화하는 역할을 정의할 수 있습니다. `application.config.ts`의 `roleUniversalIdentifier` 필드는 앱의 로직 함수가 사용하는 기본 역할을 지정합니다.
 
 * `TWENTY_API_KEY`로 주입되는 런타임 API 키는 이 기본 함수 역할에서 파생됩니다.
 * 타입드 클라이언트는 해당 역할에 부여된 권한으로 제한됩니다.
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-이 역할의 `universalIdentifier`는 `application.config.ts`에서 `functionRoleUniversalIdentifier`로 참조됩니다. 다시 말해:
+이 역할의 `universalIdentifier`는 `application.config.ts`에서 `roleUniversalIdentifier`로 참조됩니다. 다시 말해:
 
 * **\*.role.ts**는 기본 함수 역할이 수행할 수 있는 작업을 정의합니다.
 * **application.config.ts**는 해당 역할을 가리키므로, 함수는 그 권한을 상속받습니다.
@@ -606,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 노트:
 
 * 생성된 클라이언트에 URL이나 API 키를 전달할 필요가 없습니다. 런타임에 process.env에서 `TWENTY_API_URL`과 `TWENTY_API_KEY`를 읽습니다.
-* API 키의 권한은 `application.config.ts`에서 `functionRoleUniversalIdentifier`를 통해 참조된 역할에 의해 결정됩니다. 이는 애플리케이션의 로직 함수에서 사용하는 기본 역할입니다.
-* 애플리케이션은 최소 권한 원칙을 따르도록 역할을 정의할 수 있습니다. 함수에 필요한 권한만 부여하고, `functionRoleUniversalIdentifier`를 해당 역할의 universal identifier로 지정하세요.
+* API 키의 권한은 `application.config.ts`에서 `roleUniversalIdentifier`를 통해 참조된 역할에 의해 결정됩니다. 이는 애플리케이션의 로직 함수에서 사용하는 기본 역할입니다.
+* 애플리케이션은 최소 권한 원칙을 따르도록 역할을 정의할 수 있습니다. 함수에 필요한 권한만 부여하고, `roleUniversalIdentifier`를 해당 역할의 universal identifier로 지정하세요.
 
 ### Hello World 예제
 

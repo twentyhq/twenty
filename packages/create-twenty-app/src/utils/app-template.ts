@@ -171,23 +171,24 @@ const createDefaultFunction = async ({
   const universalIdentifier = v4();
   const triggerUniversalIdentifier = v4();
 
-  const content = `import { defineFunction } from 'twenty-sdk';
+  const content = `import { defineLogicFunction } from 'twenty-sdk';
 
 const handler = async (): Promise<{ message: string }> => {
   return { message: 'Hello, World!' };
 };
 
-export default defineFunction({
+// Logic function handler - rename and implement your logic
+export default defineLogicFunction({
   universalIdentifier: '${universalIdentifier}',
-  name: 'hello-world-function',
-  description: 'A sample serverless function',
+  name: 'hello-world-logic-function',
+  description: 'A simple logic function',
   timeoutSeconds: 5,
   handler,
   triggers: [
     {
       universalIdentifier: '${triggerUniversalIdentifier}',
       type: 'route',
-      path: '/hello-world-function',
+      path: '/hello-world-logic-function',
       httpMethod: 'GET',
       isAuthRequired: false,
     },
@@ -195,7 +196,10 @@ export default defineFunction({
 });
 `;
 
-  await fs.writeFile(join(appDirectory, 'hello-world.function.ts'), content);
+  await fs.writeFile(
+    join(appDirectory, 'hello-world.logic-function.ts'),
+    content,
+  );
 };
 
 const createApplicationConfig = async ({
@@ -208,13 +212,13 @@ const createApplicationConfig = async ({
   appDirectory: string;
 }) => {
   const content = `import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-function.role';
+import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-logic-function.role';
 
 export default defineApp({
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
 });
 `;
 

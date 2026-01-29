@@ -1,32 +1,8 @@
-import { type FunctionConfig } from '@/application/functions/function-config';
+import { type LogicFunctionConfig } from '@/application/logic-functions/logic-function-config';
 
-/**
- * Define a logic function configuration with validation.
- *
- * @example
- * ```typescript
- * import { defineFunction } from 'twenty-sdk';
- * import { sendPostcard } from '../src/handlers/send-postcard';
- *
- * export const config = defineFunction({
- *   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
- *   name: 'Send Postcard',
- *   description: 'Send a postcard to a contact',
- *   timeoutSeconds: 30,
- *   handler: sendPostcard,
- *   triggers: [
- *     {
- *       universalIdentifier: 'c9f84c8d-...',
- *       type: 'route',
- *       path: '/postcards/send',
- *       httpMethod: 'POST',
- *       isAuthRequired: true,
- *     },
- *   ],
- * });
- * ```
- */
-export const defineFunction = <T extends FunctionConfig>(config: T): T => {
+export const defineLogicFunction = <T extends LogicFunctionConfig>(
+  config: T,
+): T => {
   if (!config.universalIdentifier) {
     throw new Error('Function must have a universalIdentifier');
   }

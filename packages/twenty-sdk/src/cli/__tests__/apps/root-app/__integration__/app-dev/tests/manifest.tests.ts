@@ -19,18 +19,21 @@ export const defineManifestTests = (appPath: string): void => {
       const manifest: ApplicationManifest = await fs.readJSON(manifestPath);
 
       expect(manifest.application).toEqual(EXPECTED_MANIFEST.application);
-      expect(manifest.objects).toEqual(EXPECTED_MANIFEST.objects);
-
-      expect(
-        normalizeManifestForComparison({ functions: manifest.functions })
-          .functions,
-      ).toEqual(
-        normalizeManifestForComparison({
-          functions: EXPECTED_MANIFEST.functions,
-        }).functions,
+      expect(manifest.entities.objects).toEqual(
+        EXPECTED_MANIFEST.entities.objects,
       );
 
-      for (const fn of manifest.functions) {
+      expect(
+        normalizeManifestForComparison({
+          logicFunctions: manifest.entities.logicFunctions,
+        }).logicFunctions,
+      ).toEqual(
+        normalizeManifestForComparison({
+          logicFunctions: EXPECTED_MANIFEST.entities.logicFunctions,
+        }).logicFunctions,
+      );
+
+      for (const fn of manifest.entities.logicFunctions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();
         expect(typeof fn.builtHandlerChecksum).toBe('string');
@@ -38,20 +41,20 @@ export const defineManifestTests = (appPath: string): void => {
 
       expect(
         normalizeManifestForComparison({
-          frontComponents: manifest.frontComponents,
+          frontComponents: manifest.entities.frontComponents,
         }).frontComponents,
       ).toEqual(
         normalizeManifestForComparison({
-          frontComponents: EXPECTED_MANIFEST.frontComponents,
+          frontComponents: EXPECTED_MANIFEST.entities.frontComponents,
         }).frontComponents,
       );
 
-      for (const component of manifest.frontComponents ?? []) {
+      for (const component of manifest.entities.frontComponents ?? []) {
         expect(component.builtComponentChecksum).toBeDefined();
         expect(component.builtComponentChecksum).not.toBeNull();
         expect(typeof component.builtComponentChecksum).toBe('string');
       }
-      expect(manifest.roles).toEqual(EXPECTED_MANIFEST.roles);
+      expect(manifest.entities.roles).toEqual(EXPECTED_MANIFEST.entities.roles);
     });
   });
 };
