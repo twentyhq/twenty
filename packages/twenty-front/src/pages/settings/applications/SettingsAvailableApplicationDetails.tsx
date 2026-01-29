@@ -177,15 +177,6 @@ const StyledScreenshotImage = styled.img`
   width: 100%;
 `;
 
-const StyledScreenshotPlaceholder = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  width: 100%;
-`;
-
 const StyledScreenshotThumbnails = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -293,35 +284,31 @@ export const SettingsAvailableApplicationDetails = () => {
       case 'about':
         return (
           <>
-            <StyledScreenshotsContainer>
-              {hasScreenshots ? (
-                <StyledScreenshotImage
-                  src={application.screenshots[selectedScreenshotIndex]}
-                  alt={`${application.name} screenshot ${selectedScreenshotIndex + 1}`}
-                />
-              ) : (
-                <StyledScreenshotPlaceholder>
-                  {t`No screenshots available`}
-                </StyledScreenshotPlaceholder>
-              )}
-            </StyledScreenshotsContainer>
             {hasScreenshots && (
-              <StyledScreenshotThumbnails>
-                {application.screenshots
-                  .slice(0, 6)
-                  .map((screenshot, index) => (
-                    <StyledThumbnail
-                      key={index}
-                      isSelected={index === selectedScreenshotIndex}
-                      onClick={() => setSelectedScreenshotIndex(index)}
-                    >
-                      <StyledThumbnailImage
-                        src={screenshot}
-                        alt={`${application.name} thumbnail ${index + 1}`}
-                      />
-                    </StyledThumbnail>
-                  ))}
-              </StyledScreenshotThumbnails>
+              <>
+                <StyledScreenshotsContainer>
+                  <StyledScreenshotImage
+                    src={application.screenshots[selectedScreenshotIndex]}
+                    alt={`${application.name} screenshot ${selectedScreenshotIndex + 1}`}
+                  />
+                </StyledScreenshotsContainer>
+                <StyledScreenshotThumbnails>
+                  {application.screenshots
+                    .slice(0, 6)
+                    .map((screenshot, index) => (
+                      <StyledThumbnail
+                        key={index}
+                        isSelected={index === selectedScreenshotIndex}
+                        onClick={() => setSelectedScreenshotIndex(index)}
+                      >
+                        <StyledThumbnailImage
+                          src={screenshot}
+                          alt={`${application.name} thumbnail ${index + 1}`}
+                        />
+                      </StyledThumbnail>
+                    ))}
+                </StyledScreenshotThumbnails>
+              </>
             )}
 
             <StyledContentContainer>
