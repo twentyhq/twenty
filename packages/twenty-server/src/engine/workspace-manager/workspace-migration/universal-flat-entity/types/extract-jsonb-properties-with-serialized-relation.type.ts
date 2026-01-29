@@ -9,18 +9,19 @@ type ContainsSerializedRelation<T> = T extends unknown
   ?
     IsSerializedRelation<T> extends true
     ? true
-    : // Check if T has any direct SerializedRelation properties (using existing utility)
-      [ExtractSerializedRelationProperties<T>] extends [never]
-      ? // No direct SerializedRelation, recurse into nested structures
-        T extends readonly (infer U)[]
-        ? ContainsSerializedRelation<U>
-        : T extends object
+    : // Check arrays first to avoid T[keyof T] issues with branded arrays
+      T extends readonly (infer U)[]
+      ? ContainsSerializedRelation<U>
+      : // Check if T has any direct SerializedRelation properties
+        [ExtractSerializedRelationProperties<T>] extends [never]
+        ? // No direct SerializedRelation, recurse into nested object structures
+          T extends object
           ? true extends ContainsSerializedRelation<T[keyof T]>
             ? true
             : false
           : false
-      : // Has at least one direct SerializedRelation property
-        true
+        : // Has at least one direct SerializedRelation property
+          true
   : never;
 
 export type ExtractJsonbPropertiesWithSerializedRelation<T> = {
