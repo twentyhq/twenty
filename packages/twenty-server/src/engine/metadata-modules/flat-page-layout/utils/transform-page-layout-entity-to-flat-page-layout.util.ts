@@ -47,6 +47,13 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
       pageLayoutTabIdToUniversalIdentifierMap.get(
         pageLayoutEntity.defaultTabToFocusOnMobileAndSidePanelId,
       ) ?? null;
+
+    if (!isDefined(defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `PageLayoutTab with id ${pageLayoutEntity.defaultTabToFocusOnMobileAndSidePanelId} not found for pageLayout ${pageLayoutEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
   }
 
   return {

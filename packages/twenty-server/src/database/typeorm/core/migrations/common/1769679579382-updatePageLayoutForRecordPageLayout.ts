@@ -1,14 +1,11 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class UpdatePageLayoutForRecordPageLayout1769435626574
+export class UpdatePageLayoutForRecordPageLayout1769679579382
   implements MigrationInterface
 {
-  name = 'UpdatePageLayoutForRecordPageLayout1769435626574';
+  name = 'UpdatePageLayoutForRecordPageLayout1769679579382';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."pageLayoutWidget" ADD "conditionalDisplay" jsonb`,
-    );
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayout" ADD "defaultTabToFocusOnMobileAndSidePanelId" uuid`,
     );
@@ -22,13 +19,19 @@ export class UpdatePageLayoutForRecordPageLayout1769435626574
       `ALTER TABLE "core"."pageLayoutTab" ADD "layoutMode" "core"."pageLayoutTab_layoutmode_enum" NOT NULL DEFAULT 'GRID'`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."pageLayout" ADD CONSTRAINT "FK_f48f2ddccb74426c3d1a150de85" FOREIGN KEY ("defaultTabToFocusOnMobileAndSidePanelId") REFERENCES "core"."pageLayoutTab"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."pageLayoutWidget" ADD "conditionalDisplay" jsonb`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."pageLayout" ADD CONSTRAINT "FK_747fbc25827bdcb9e35cc68a990" FOREIGN KEY ("defaultTabToFocusOnMobileAndSidePanelId") REFERENCES "core"."pageLayoutTab"("id") ON DELETE SET NULL ON UPDATE NO ACTION`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."pageLayout" DROP CONSTRAINT "FK_f48f2ddccb74426c3d1a150de85"`,
+      `ALTER TABLE "core"."pageLayout" DROP CONSTRAINT "FK_747fbc25827bdcb9e35cc68a990"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."pageLayoutWidget" DROP COLUMN "conditionalDisplay"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayoutTab" DROP COLUMN "layoutMode"`,
@@ -39,9 +42,6 @@ export class UpdatePageLayoutForRecordPageLayout1769435626574
     );
     await queryRunner.query(
       `ALTER TABLE "core"."pageLayout" DROP COLUMN "defaultTabToFocusOnMobileAndSidePanelId"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."pageLayoutWidget" DROP COLUMN "conditionalDisplay"`,
     );
   }
 }
