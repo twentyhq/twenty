@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { Readable } from 'stream';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -19,6 +20,10 @@ describe('FileStorageService', () => {
     save: jest.fn(),
   };
 
+  const mockApplicationRepository = {
+    findOneOrFail: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -30,6 +35,10 @@ describe('FileStorageService', () => {
         {
           provide: getRepositoryToken(FileEntity),
           useValue: mockFileRepository,
+        },
+        {
+          provide: getRepositoryToken(ApplicationEntity),
+          useValue: mockApplicationRepository,
         },
       ],
     }).compile();
