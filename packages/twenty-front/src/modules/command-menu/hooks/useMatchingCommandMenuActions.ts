@@ -18,6 +18,8 @@ export const useMatchingCommandMenuActions = ({
     actionGlobalActions,
     workflowRunRecordSelectionActions,
     workflowRunGlobalActions,
+    frontComponentGlobalActions,
+    frontComponentRecordSelectionActions,
     fallbackActions,
     createRelatedRecordActions,
   } = useCommandMenuActions();
@@ -41,6 +43,12 @@ export const useMatchingCommandMenuActions = ({
     workflowRunGlobalActions,
   );
 
+  const matchingFrontComponentGlobalActions =
+    filterActionsWithCommandMenuSearch(frontComponentGlobalActions);
+
+  const matchingFrontComponentRecordSelectionActions =
+    filterActionsWithCommandMenuSearch(frontComponentRecordSelectionActions);
+
   const matchingCreateRelatedRecordActions = filterActionsWithCommandMenuSearch(
     createRelatedRecordActions,
   );
@@ -48,8 +56,10 @@ export const useMatchingCommandMenuActions = ({
   const noResults =
     !matchingStandardActionRecordSelectionActions.length &&
     !matchingWorkflowRunRecordSelectionActions.length &&
+    !matchingFrontComponentRecordSelectionActions.length &&
     !matchingStandardActionGlobalActions.length &&
     !matchingWorkflowRunGlobalActions.length &&
+    !matchingFrontComponentGlobalActions.length &&
     !matchingStandardActionObjectActions.length &&
     !matchingNavigateActions.length &&
     !matchingCreateRelatedRecordActions.length;
@@ -59,8 +69,10 @@ export const useMatchingCommandMenuActions = ({
     matchingStandardActionRecordSelectionActions,
     matchingStandardActionObjectActions,
     matchingWorkflowRunRecordSelectionActions,
+    matchingFrontComponentRecordSelectionActions,
     matchingStandardActionGlobalActions,
     matchingWorkflowRunGlobalActions,
+    matchingFrontComponentGlobalActions,
     matchingNavigateActions,
     matchingCreateRelatedRecordActions,
     fallbackActions: noResults ? fallbackActions : [],
