@@ -907,7 +907,26 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId: string;
   }): Promise<WorkflowAction> {
     switch (step.type) {
-      case WorkflowActionType.CODE:
+      case WorkflowActionType.CODE: {
+        const newLogicFunction =
+          await this.logicFunctionService.createLogicFunctionFromExistingLogicFunctionById(
+            {
+              id: step.settings.input.logicFunctionId,
+              workspaceId,
+            },
+          );
+
+        return {
+          ...step,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              logicFunctionId: newLogicFunction.id,
+            },
+          },
+        };
+      }
       default: {
         return step;
       }

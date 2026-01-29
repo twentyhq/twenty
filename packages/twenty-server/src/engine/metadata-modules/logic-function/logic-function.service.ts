@@ -583,6 +583,19 @@ export class LogicFunctionService {
     id: string;
     workspaceId: string;
   }): Promise<FlatLogicFunction> {
+    return this.createLogicFunctionFromExistingLogicFunctionById({
+      id,
+      workspaceId,
+    });
+  }
+
+  async createLogicFunctionFromExistingLogicFunctionById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -591,24 +604,37 @@ export class LogicFunctionService {
         },
       );
 
-    const flatLogicFunctionToDuplicate = findFlatLogicFunctionOrThrow({
+    const existingLogicFunction = findFlatLogicFunctionOrThrow({
       id,
       flatLogicFunctionMaps,
     });
 
+    return this.createLogicFunctionFromExistingLogicFunction({
+      existingLogicFunction,
+      workspaceId,
+    });
+  }
+
+  async createLogicFunctionFromExistingLogicFunction({
+    existingLogicFunction,
+    workspaceId,
+  }: {
+    existingLogicFunction: FlatLogicFunction;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
     const newFlatLogicFunction = await this.createOneLogicFunction(
       {
-        name: flatLogicFunctionToDuplicate.name,
-        description: flatLogicFunctionToDuplicate.description ?? undefined,
-        timeoutSeconds: flatLogicFunctionToDuplicate.timeoutSeconds,
-        applicationId: flatLogicFunctionToDuplicate.applicationId ?? undefined,
-        logicFunctionLayerId: flatLogicFunctionToDuplicate.logicFunctionLayerId,
+        name: existingLogicFunction.name,
+        description: existingLogicFunction.description ?? undefined,
+        timeoutSeconds: existingLogicFunction.timeoutSeconds,
+        applicationId: existingLogicFunction.applicationId ?? undefined,
+        logicFunctionLayerId: existingLogicFunction.logicFunctionLayerId,
       },
       workspaceId,
     );
 
     const fromBaseFolderPath = getLogicFunctionBaseFolderPath(
-      flatLogicFunctionToDuplicate.sourceHandlerPath,
+      existingLogicFunction.sourceHandlerPath,
     );
     const toBaseFolderPath = getLogicFunctionBaseFolderPath(
       newFlatLogicFunction.sourceHandlerPath,
