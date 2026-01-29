@@ -39,5 +39,8 @@ export const usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord =
       targetObjectNameSingular: objectMetadataItem.nameSingular,
     });
 
-    return { pageLayoutId };
+    return {
+      pageLayoutId,
+      objectNameSingular: objectMetadataItem.nameSingular,
+    };
   };
