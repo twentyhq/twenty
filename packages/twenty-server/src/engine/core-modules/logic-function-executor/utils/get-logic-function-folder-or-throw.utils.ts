@@ -11,7 +11,7 @@ export const getLogicFunctionFolderOrThrow = ({
   fileFolder = FileFolder.Source,
 }: {
   flatLogicFunction: FlatLogicFunction;
-  fileFolder?: FileFolder.Source | FileFolder.BuiltFunction;
+  fileFolder?: FileFolder.Source | FileFolder.BuiltLogicFunction;
 }) => {
   if (fileFolder === FileFolder.Source) {
     return join(

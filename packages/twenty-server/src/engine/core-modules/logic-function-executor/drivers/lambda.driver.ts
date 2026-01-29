@@ -329,7 +329,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     const builtHandlerFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      fileFolder: FileFolder.BuiltFunction,
+      fileFolder: FileFolder.BuiltLogicFunction,
     });
 
     const compiledCode = (

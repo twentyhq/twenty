@@ -22,7 +22,7 @@ export class FunctionBuildService {
   }): Promise<boolean> {
     const folderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      fileFolder: FileFolder.BuiltFunction,
+      fileFolder: FileFolder.BuiltLogicFunction,
     });
 
     return await this.fileStorageService.checkFileExists({
@@ -43,7 +43,7 @@ export class FunctionBuildService {
 
     const builtFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      fileFolder: FileFolder.BuiltFunction,
+      fileFolder: FileFolder.BuiltLogicFunction,
     });
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();

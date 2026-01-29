@@ -151,7 +151,7 @@ export class ApplicationResolver {
     }: UploadApplicationFileInput,
   ): Promise<FileDTO> {
     const allowedApplicationFileFolders: FileFolder[] = [
-      FileFolder.BuiltFunction,
+      FileFolder.BuiltLogicFunction,
       FileFolder.BuiltFrontComponent,
       FileFolder.PublicAsset,
       FileFolder.Source,

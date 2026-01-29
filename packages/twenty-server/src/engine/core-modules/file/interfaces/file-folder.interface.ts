@@ -29,7 +29,7 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.AgentChat]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.BuiltFunction]: {
+  [FileFolder.BuiltLogicFunction]: {
     ignoreExpirationToken: false,
   },
   [FileFolder.BuiltFrontComponent]: {
