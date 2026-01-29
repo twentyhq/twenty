@@ -21,7 +21,7 @@ export const PageLayoutRenderer = ({
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
-  const layoutRenderingContext = useLayoutRenderingContext();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
 
   const onInitialized = (pageLayout: PageLayout) => {
     if (isPageLayoutEmpty(pageLayout)) {
@@ -32,7 +32,7 @@ export const PageLayoutRenderer = ({
   };
 
   // Include record ID in tab instance ID to prevent tab synchronization between different records
-  const recordId = layoutRenderingContext?.targetRecordIdentifier?.id;
+  const recordId = targetRecordIdentifier?.id;
   const tabListInstanceId = isDefined(recordId)
     ? `${getTabListInstanceIdFromPageLayoutId(pageLayoutId)}-${recordId}`
     : getTabListInstanceIdFromPageLayoutId(pageLayoutId);
