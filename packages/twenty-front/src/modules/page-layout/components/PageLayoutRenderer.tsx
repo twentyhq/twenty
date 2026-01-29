@@ -5,7 +5,9 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { isDefined } from 'twenty-shared/utils';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
@@ -19,6 +21,8 @@ export const PageLayoutRenderer = ({
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
+  const layoutRenderingContext = useLayoutRenderingContext();
+
   const onInitialized = (pageLayout: PageLayout) => {
     if (isPageLayoutEmpty(pageLayout)) {
       setIsPageLayoutInEditMode(true);
@@ -26,6 +30,12 @@ export const PageLayoutRenderer = ({
       setIsPageLayoutInEditMode(false);
     }
   };
+
+  // Include record ID in tab instance ID to prevent tab synchronization between different records
+  const recordId = layoutRenderingContext?.targetRecordIdentifier?.id;
+  const tabListInstanceId = isDefined(recordId)
+    ? `${getTabListInstanceIdFromPageLayoutId(pageLayoutId)}-${recordId}`
+    : getTabListInstanceIdFromPageLayoutId(pageLayoutId);
 
   return (
     <PageLayoutComponentInstanceContext.Provider
@@ -35,7 +45,7 @@ export const PageLayoutRenderer = ({
     >
       <TabListComponentInstanceContext.Provider
         value={{
-          instanceId: getTabListInstanceIdFromPageLayoutId(pageLayoutId),
+          instanceId: tabListInstanceId,
         }}
       >
         <PageLayoutInitializationQueryEffect
