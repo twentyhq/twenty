@@ -6,8 +6,8 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { DeleteLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
@@ -41,11 +41,13 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       workspaceId,
     });
 
-    const sourceFolderPath = `workspace-${workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunction.id}`;
-    const builtFolderPath = `workspace-${workspaceId}/${FileFolder.BuiltLogicFunction}/${flatLogicFunction.id}`;
+    // Both source and built files are in the same base folder
+    const baseFolderPath = getLogicFunctionBaseFolderPath(
+      flatLogicFunction.sourceHandlerPath,
+    );
+    const folderPath = `workspace-${workspaceId}/${FileFolder.Source}/${baseFolderPath}`;
 
-    await this.fileStorageService.delete({ folderPath: sourceFolderPath });
-    await this.fileStorageService.delete({ folderPath: builtFolderPath });
+    await this.fileStorageService.delete({ folderPath });
   }
 
   async rollbackForMetadata(): Promise<void> {

@@ -328,8 +328,8 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
         await this.fileStorageService.readFile_v2({
           workspaceId: flatLogicFunction.workspaceId,
           applicationUniversalIdentifier,
-          fileFolder: FileFolder.BuiltLogicFunction,
-          resourcePath: `${flatLogicFunction.id}/${flatLogicFunction.builtHandlerPath}`,
+          fileFolder: FileFolder.Source,
+          resourcePath: flatLogicFunction.builtHandlerPath,
         }),
       )
     ).toString('utf-8');

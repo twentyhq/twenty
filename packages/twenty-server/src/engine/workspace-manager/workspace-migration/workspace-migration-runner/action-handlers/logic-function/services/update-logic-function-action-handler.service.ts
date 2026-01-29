@@ -16,7 +16,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -141,11 +141,15 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 
       await this.writeSourcesToLocalFolder(code, sourceTemporaryDir);
 
+      const baseFolderPath = getLogicFunctionBaseFolderPath(
+        flatLogicFunction.sourceHandlerPath,
+      );
+
       await this.fileStorageService.uploadFolder_v2({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: `${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunction.id}`,
+        resourcePath: baseFolderPath,
         localPath: sourceTemporaryDir,
       });
     } finally {

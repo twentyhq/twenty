@@ -15,7 +15,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getSeedProjectFiles } from 'src/engine/core-modules/logic-function-executor/drivers/utils/get-seed-project-files';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
-import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -125,11 +125,15 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         }
       }
 
+      const baseFolderPath = getLogicFunctionBaseFolderPath(
+        logicFunction.sourceHandlerPath,
+      );
+
       await this.fileStorageService.uploadFolder_v2({
         workspaceId: logicFunction.workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: `${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${logicFunction.id}`,
+        resourcePath: baseFolderPath,
         localPath: sourceTemporaryDir,
       });
     } finally {
@@ -152,11 +156,15 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         action.flatEntity.applicationId,
       );
 
+    const baseFolderPath = getLogicFunctionBaseFolderPath(
+      action.flatEntity.sourceHandlerPath,
+    );
+
     await this.fileStorageService.delete_v2({
       workspaceId: action.flatEntity.workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
-      resourcePath: `${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${action.flatEntity.id}`,
+      resourcePath: baseFolderPath,
     });
   }
 }

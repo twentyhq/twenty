@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { join } from 'path';
+import { dirname, join } from 'path';
 import fs from 'fs/promises';
 
 import { build } from 'esbuild';
@@ -8,8 +8,11 @@ import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
-import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import {
+  getLogicFunctionBaseFolderPath,
+  getRelativePathFromBase,
+} from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 
 export type FunctionBuildParams = {
   flatLogicFunction: FlatLogicFunction;
@@ -27,8 +30,8 @@ export class FunctionBuildService {
     return await this.fileStorageService.checkFileExists_v2({
       workspaceId: flatLogicFunction.workspaceId,
       applicationUniversalIdentifier,
-      fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: `${flatLogicFunction.id}/${flatLogicFunction.builtHandlerPath}`,
+      fileFolder: FileFolder.Source,
+      resourcePath: flatLogicFunction.builtHandlerPath,
     });
   }
 
@@ -41,18 +44,31 @@ export class FunctionBuildService {
     try {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
+      const baseFolderPath = getLogicFunctionBaseFolderPath(
+        flatLogicFunction.sourceHandlerPath,
+      );
+
       await this.fileStorageService.downloadFolder_v2({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: `${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunction.id}`,
+        resourcePath: baseFolderPath,
         localPath: sourceTemporaryDir,
       });
 
+      const relativeSourcePath = getRelativePathFromBase(
+        flatLogicFunction.sourceHandlerPath,
+        baseFolderPath,
+      );
+      const relativeBuiltPath = getRelativePathFromBase(
+        flatLogicFunction.builtHandlerPath,
+        baseFolderPath,
+      );
+
       const builtBundleFilePath = await this.buildInMemory({
         sourceTemporaryDir,
-        sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-        builtHandlerPath: flatLogicFunction.builtHandlerPath,
+        sourceHandlerPath: relativeSourcePath,
+        builtHandlerPath: relativeBuiltPath,
       });
 
       const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
@@ -60,8 +76,8 @@ export class FunctionBuildService {
       await this.fileStorageService.writeFile_v2({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: `${flatLogicFunction.id}/${flatLogicFunction.builtHandlerPath}`,
+        fileFolder: FileFolder.Source,
+        resourcePath: flatLogicFunction.builtHandlerPath,
         sourceFile: builtFile,
         mimeType: 'application/javascript',
       });
@@ -81,6 +97,8 @@ export class FunctionBuildService {
   }): Promise<string> {
     const entryFilePath = join(sourceTemporaryDir, sourceHandlerPath);
     const builtBundleFilePath = join(sourceTemporaryDir, builtHandlerPath);
+
+    await fs.mkdir(dirname(builtBundleFilePath), { recursive: true });
 
     await build({
       entryPoints: [entryFilePath],

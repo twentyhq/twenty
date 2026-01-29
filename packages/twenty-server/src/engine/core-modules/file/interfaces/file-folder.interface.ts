@@ -30,9 +30,6 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.AgentChat]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.BuiltLogicFunction]: {
-    ignoreExpirationToken: false,
-  },
   [FileFolder.BuiltFrontComponent]: {
     ignoreExpirationToken: false,
   },

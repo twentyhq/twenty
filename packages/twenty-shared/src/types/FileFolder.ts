@@ -5,7 +5,6 @@ export enum FileFolder {
   PersonPicture = 'person-picture',
   File = 'file',
   AgentChat = 'agent-chat',
-  BuiltLogicFunction = 'built-logic-function',
   BuiltFrontComponent = 'built-front-component',
   PublicAsset = 'public-asset',
   Source = 'source',

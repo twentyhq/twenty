@@ -22,7 +22,7 @@ import { buildEnvVar } from 'src/engine/core-modules/logic-function-executor/dri
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { LOGIC_FUNCTION_CODE_SOURCE_PREFIX } from 'src/engine/metadata-modules/logic-function/constants/logic-function-code-source-prefix.constant';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionLayerService } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.service';
@@ -95,11 +95,15 @@ export class LogicFunctionService {
         );
       }
 
+      const baseFolderPath = getLogicFunctionBaseFolderPath(
+        flatLogicFunction.sourceHandlerPath,
+      );
+
       return await this.fileStorageService.readFolder_v2({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: `${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${id}`,
+        resourcePath: baseFolderPath,
       });
     } catch (error) {
       if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
@@ -603,12 +607,19 @@ export class LogicFunctionService {
       workspaceId,
     );
 
+    const fromBaseFolderPath = getLogicFunctionBaseFolderPath(
+      flatLogicFunctionToDuplicate.sourceHandlerPath,
+    );
+    const toBaseFolderPath = getLogicFunctionBaseFolderPath(
+      newFlatLogicFunction.sourceHandlerPath,
+    );
+
     await this.fileStorageService.copy({
       from: {
-        folderPath: `workspace-${workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${flatLogicFunctionToDuplicate.id}`,
+        folderPath: `workspace-${workspaceId}/${FileFolder.Source}/${fromBaseFolderPath}`,
       },
       to: {
-        folderPath: `workspace-${workspaceId}/${FileFolder.Source}/${LOGIC_FUNCTION_CODE_SOURCE_PREFIX}/${newFlatLogicFunction.id}`,
+        folderPath: `workspace-${workspaceId}/${FileFolder.Source}/${toBaseFolderPath}`,
       },
     });
 
