@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { join } from 'path';
 
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -47,15 +48,15 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }
 
   private async buildAndSaveLogicFunction(logicFunction: FlatLogicFunction) {
-    const draftFileFolder = getLogicFunctionFolderOrThrow({
+    const sourceFileFolder = getLogicFunctionFolderOrThrow({
       flatLogicFunction: logicFunction,
-      version: 'draft',
+      fileFolder: FileFolder.Source,
     });
 
     if (isDefined(logicFunction?.code)) {
       await this.fileStorageService.writeFolder(
         logicFunction.code,
-        draftFileFolder,
+        sourceFileFolder,
       );
     } else {
       for (const file of await getSeedProjectFiles) {
@@ -63,13 +64,12 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
           file: file.content,
           name: file.name,
           mimeType: 'application/typescript',
-          folder: join(draftFileFolder, file.path),
+          folder: join(sourceFileFolder, file.path),
         });
       }
     }
     await this.functionBuildService.buildAndUpload({
       flatLogicFunction: logicFunction,
-      version: 'draft',
     });
   }
 
@@ -81,6 +81,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     await this.fileStorageService.delete({
       folderPath: getLogicFunctionFolderOrThrow({
         flatLogicFunction: action.flatEntity,
+        fileFolder: FileFolder.Source,
       }),
     });
   }

@@ -67,7 +67,6 @@ export class LogicFunctionToolProvider implements ToolProvider {
               id: logicFunction.id,
               workspaceId: context.workspaceId,
               payload: actualParams,
-              version: logicFunction.latestVersion ?? 'draft',
             });
 
           if (result.error) {

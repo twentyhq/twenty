@@ -20,7 +20,7 @@ export const checkFilePath = (filePath: string): string => {
   }
 
   if (
-    folder !== kebabCase(FileFolder.LogicFunction) &&
+    folder !== kebabCase(FileFolder.Source) &&
     size &&
     // @ts-expect-error legacy noImplicitAny
     !settings.storage.imageCropSizes[folder]?.includes(size)

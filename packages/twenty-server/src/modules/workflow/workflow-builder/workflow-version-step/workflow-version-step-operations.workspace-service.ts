@@ -83,18 +83,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        if (
-          !(await this.logicFunctionService.hasLogicFunctionPublishedVersion(
-            step.settings.input.logicFunctionId,
-            workspaceId,
-          ))
-        ) {
-          await this.logicFunctionService.deleteOneLogicFunction({
-            id: step.settings.input.logicFunctionId,
-            workspaceId,
-            softDelete: false,
-          });
-        }
+        await this.logicFunctionService.deleteOneLogicFunction({
+          id: step.settings.input.logicFunctionId,
+          workspaceId,
+          softDelete: false,
+        });
         break;
       }
       case WorkflowActionType.AI_AGENT: {
@@ -645,7 +638,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const newLogicFunction =
           await this.logicFunctionService.duplicateLogicFunction({
             id: step.settings.input.logicFunctionId,
-            version: step.settings.input.logicFunctionVersion,
             workspaceId,
           });
 
@@ -659,7 +651,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             input: {
               ...step.settings.input,
               logicFunctionId: newLogicFunction.id,
-              logicFunctionVersion: 'draft',
             },
           },
         };
@@ -916,24 +907,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId: string;
   }): Promise<WorkflowAction> {
     switch (step.type) {
-      case WorkflowActionType.CODE: {
-        await this.logicFunctionService.createDraftFromPublishedVersion({
-          id: step.settings.input.logicFunctionId,
-          version: step.settings.input.logicFunctionVersion,
-          workspaceId,
-        });
-
-        return {
-          ...step,
-          settings: {
-            ...step.settings,
-            input: {
-              ...step.settings.input,
-              logicFunctionVersion: 'draft',
-            },
-          },
-        };
-      }
+      case WorkflowActionType.CODE:
       default: {
         return step;
       }

@@ -41,23 +41,13 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       workspaceId,
     });
 
-    // TODO: Should implement a cron task or a job to delete the files after a certain period of time
-    await this.fileStorageService.move({
-      from: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction,
-          fileFolder: FileFolder.LogicFunction,
-        }),
-      },
-      to: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction,
-          fileFolder: FileFolder.LogicFunctionToDelete,
-        }),
-      },
+    await this.fileStorageService.delete({
+      folderPath: getLogicFunctionFolderOrThrow({
+        flatLogicFunction,
+        fileFolder: FileFolder.Source,
+      }),
     });
 
-    // We can delete built code as it can be computed from source code if rollback occurs
     await this.fileStorageService.delete({
       folderPath: getLogicFunctionFolderOrThrow({
         flatLogicFunction,
@@ -66,33 +56,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     });
   }
 
-  async rollbackForMetadata(
-    context: Omit<
-      WorkspaceMigrationActionRunnerArgs<DeleteLogicFunctionAction>,
-      'queryRunner'
-    >,
-  ): Promise<void> {
-    const { action, allFlatEntityMaps } = context;
-    const { universalIdentifier } = action;
-
-    const flatLogicFunction = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
-      universalIdentifier,
-    });
-
-    await this.fileStorageService.move({
-      from: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction,
-          fileFolder: FileFolder.LogicFunctionToDelete,
-        }),
-      },
-      to: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction,
-          fileFolder: FileFolder.LogicFunction,
-        }),
-      },
-    });
+  async rollbackForMetadata(): Promise<void> {
+    // Source code and built files are deleted permanently - rollback rebuilds from entity code
   }
 }

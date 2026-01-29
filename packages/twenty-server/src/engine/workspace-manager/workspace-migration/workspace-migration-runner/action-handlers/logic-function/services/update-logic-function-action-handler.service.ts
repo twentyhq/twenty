@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Sources } from 'twenty-shared/types';
+import { FileFolder, type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -82,14 +82,13 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }) {
     const fileFolder = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      version: 'draft',
+      fileFolder: FileFolder.Source,
     });
 
     await this.fileStorageService.writeFolder(code, fileFolder);
 
     await this.functionBuildService.buildAndUpload({
       flatLogicFunction,
-      version: 'draft',
     });
   }
 }

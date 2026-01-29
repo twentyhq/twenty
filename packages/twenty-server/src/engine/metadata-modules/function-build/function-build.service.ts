@@ -17,14 +17,12 @@ export class FunctionBuildService {
 
   async isBuilt({
     flatLogicFunction,
-    version,
   }: {
     flatLogicFunction: FlatLogicFunction;
-    version: string;
   }): Promise<boolean> {
     const folderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      version,
+      fileFolder: FileFolder.BuiltFunction,
     });
 
     return await this.fileStorageService.checkFileExists({
@@ -35,20 +33,16 @@ export class FunctionBuildService {
 
   async buildAndUpload({
     flatLogicFunction,
-    version,
   }: {
     flatLogicFunction: FlatLogicFunction;
-    version: string;
   }): Promise<void> {
     const sourceFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      version,
-      fileFolder: FileFolder.LogicFunction,
+      fileFolder: FileFolder.Source,
     });
 
     const builtFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      version,
       fileFolder: FileFolder.BuiltFunction,
     });
 
