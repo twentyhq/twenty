@@ -73,6 +73,7 @@ import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
+import { MarketplaceModule } from './marketplace/marketplace.module';
 
 @Module({
   imports: [
@@ -158,6 +159,7 @@ import { FileModule } from './file/file.module';
     TrashCleanupModule,
     DashboardModule,
     RowLevelPermissionModule,
+    MarketplaceModule,
   ],
   exports: [
     AuditModule,
