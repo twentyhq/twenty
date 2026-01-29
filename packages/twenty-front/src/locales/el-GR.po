@@ -258,11 +258,6 @@ msgstr "{formattedCreatedRecordsProgress} από {formattedRecordsToImportCount}
 msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
 msgstr "{grantedBy, plural, one {Granted για {grantedBy} αντικείμενο} other {Granted για {grantedBy} αντικείμενα}}"
 
-#. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "{graphTypeLabel} Chart"
-msgstr "Διάγραμμα {graphTypeLabel}"
-
 #. js-lingui-id: LB2Hw6
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "{headersCount} headers received"
