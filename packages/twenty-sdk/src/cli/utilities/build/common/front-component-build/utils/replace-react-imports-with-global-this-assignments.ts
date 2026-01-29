@@ -14,13 +14,15 @@ export const replaceReactImportsWithGlobalThisAssignments = (
 
       const globalThisAssignments = parsedImportSpecifiers
         .map(({ originalName, aliasName }) => {
-          if (originalName === 'jsx' || originalName === 'jsxs') {
-            return `var ${aliasName} = globalThis.${originalName};`;
+          switch (originalName) {
+            case 'jsx':
+            case 'jsxs':
+              return `var ${aliasName} = globalThis.${originalName};`;
+            case 'Fragment':
+              return `var ${aliasName} = globalThis.React.Fragment;`;
+            default:
+              return `var ${aliasName} = globalThis.React.${originalName};`;
           }
-          if (originalName === 'Fragment') {
-            return `var ${aliasName} = globalThis.React.Fragment;`;
-          }
-          return `var ${aliasName} = globalThis.React.${originalName};`;
         })
         .join('\n');
 

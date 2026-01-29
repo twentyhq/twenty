@@ -1,5 +1,6 @@
 import { HTML_TAG_TO_REMOTE_COMPONENT } from 'twenty-shared/front-component-constants';
 
+import { isDefined } from 'twenty-shared/utils';
 import { HTML_TAG_TO_REMOTE_COMPONENT_PATTERN } from '../constants/HtmlTagToRemoteComponentPattern';
 import { REMOTE_COMPONENTS_GLOBAL_NAMESPACE } from '../constants/RemoteComponentsGlobalNamespace';
 
@@ -14,7 +15,7 @@ export const replaceHtmlTagsWithRemoteComponents = (
           htmlTagName as keyof typeof HTML_TAG_TO_REMOTE_COMPONENT
         ];
 
-      if (remoteComponentName) {
+      if (isDefined(remoteComponentName)) {
         return `${tagPrefix}${REMOTE_COMPONENTS_GLOBAL_NAMESPACE}.${remoteComponentName}`;
       }
 

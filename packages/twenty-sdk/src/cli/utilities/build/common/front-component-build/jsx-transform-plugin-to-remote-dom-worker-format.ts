@@ -16,6 +16,7 @@ export const jsxTransformPluginToRemoteDomWorkerFormat: esbuild.Plugin = {
             loadArgs.path,
             'utf8',
           );
+
           const transformedContents =
             await applyFrontComponentTransformationsForRemoteWorker(
               loadArgs.path,

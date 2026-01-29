@@ -10,6 +10,7 @@ export const applyFrontComponentTransformationsForRemoteWorker = async (
 ): Promise<string> => {
   const sourceWithRemoteComponents =
     replaceHtmlTagsWithRemoteComponents(sourceCode);
+
   const sourceWithUnwrappedFrontComponent =
     unwrapDefineFrontComponentToDirectExport(sourceWithRemoteComponents);
 
