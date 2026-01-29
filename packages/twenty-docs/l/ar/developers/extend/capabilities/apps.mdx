@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # مجلد الأصول العامة (صور، خطوط، إلخ)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # مطلوب - التكوين الرئيسي للتطبيق
+    default-function.role.ts       # الدور الافتراضي للوظائف بدون خادم
+    hello-world.function.ts        # مثال لوظيفة بدون خادم
+    hello-world.front-component.tsx # مثال لمكوّن الواجهة الأمامية
+    // كياناتك (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### الاتفاقية فوق التهيئة
@@ -162,6 +163,7 @@ src/
 * **.nvmrc**: يثبّت إصدار Node.js المتوقع للمشروع.
 * **eslint.config.mjs** و**tsconfig.json**: يقدّمان إعدادات الفحص والتهيئة لـ TypeScript لمصادر TypeScript في تطبيقك.
 * **README.md**: ملف README قصير في جذر التطبيق يتضمن تعليمات أساسية.
+* **public/**: مجلد لتخزين الأصول العامة (صور، خطوط، ملفات ثابتة) التي سيتم تقديمها مع تطبيقك. الملفات الموضوعة هنا تُرفع أثناء المزامنة وتكون متاحة أثناء وقت التشغيل.
 * **src/**: المكان الرئيسي حيث تعرّف تطبيقك ككود:
   * `application.config.ts`: التكوين العام لتطبيقك (بيانات وصفية وربط وقت التشغيل). انظر "تكوين التطبيق" أدناه.
   * `*.role.ts`: تعريفات الأدوار المستخدمة بواسطة وظائفك المنطقية. انظر "الدور الافتراضي للوظيفة" أدناه.

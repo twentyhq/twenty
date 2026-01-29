@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-    application.config.ts          # 必需 - 主应用程序配置
-    default-function.role.ts       # 用于无服务器函数的默认角色
-    hello-world.function.ts        # 示例无服务器函数
-    hello-world.front-component.tsx # 示例前端组件
-    // 你的实体 (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Required - main application configuration
+    default-function.role.ts       # Default role for serverless functions
+    hello-world.function.ts        # Example serverless function
+    hello-world.front-component.tsx # Example front component
+    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### 约定优于配置
@@ -162,6 +163,7 @@ src/
 * **.nvmrc**：固定项目期望的 Node.js 版本。
 * **eslint.config.mjs** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
 * **README.md**：应用根目录中的简短 README，包含基本说明。
+* **public/**: A folder for storing public assets (images, fonts, static files) that will be served with your application. Files placed here are uploaded during sync and accessible at runtime.
 * **src/**：你以代码形式定义应用的主要位置：
   * `application.config.ts`：应用的全局配置（元数据和运行时关联）。 参见下方“应用配置”。
   * `*.role.ts`：你的逻辑函数所使用的角色定义。 参见下方“默认函数角色”。
