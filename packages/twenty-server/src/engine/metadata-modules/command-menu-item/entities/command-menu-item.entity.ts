@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -32,6 +33,10 @@ export enum CommandMenuItemAvailabilityType {
 @Index('IDX_COMMAND_MENU_ITEM_AVAILABILITY_OBJECT_METADATA_ID', [
   'availabilityObjectMetadataId',
 ])
+@Check(
+  'CHK_command_menu_item_workflow_or_front_component',
+  '("workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("workflowVersionId" IS NULL AND "frontComponentId" IS NOT NULL)',
+)
 export class CommandMenuItemEntity
   extends SyncableEntity
   implements Required<CommandMenuItemEntity>
