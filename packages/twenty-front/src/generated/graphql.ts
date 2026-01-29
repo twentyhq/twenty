@@ -1529,7 +1529,6 @@ export enum FileFolder {
   ProfilePicture = 'ProfilePicture',
   PublicAsset = 'PublicAsset',
   Source = 'Source',
-  TemporaryFilesField = 'TemporaryFilesField',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 

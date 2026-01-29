@@ -50,8 +50,9 @@ import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
+import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
+import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { type GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
-import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
   type OperationType,
   validateOperationIsPermittedOrThrow,
@@ -111,6 +112,7 @@ export class WorkspaceEntityManager extends EntityManager {
       featureFlagsMap: context.featureFlagsMap,
       userWorkspaceRoleMap: context.userWorkspaceRoleMap,
       eventEmitterService: this.eventEmitterService,
+      coreDataSource: this.connection.coreDataSource,
     };
   }
 
@@ -1216,6 +1218,37 @@ export class WorkspaceEntityManager extends EntityManager {
         {} as Record<string, ObjectLiteral>,
       );
 
+      const filesFieldSync = new FilesFieldSync(this.internalContext);
+
+      let filesFieldDiffByEntityIndex = null;
+      let filesFieldFileIds = null;
+      let fileIdToApplicationId = new Map<string, string>();
+
+      filesFieldDiffByEntityIndex =
+        filesFieldSync.computeFilesFieldDiffBeforeUpsert(
+          entityWithConnectedRelations,
+          entityTarget,
+          beforeUpdateMapById,
+        );
+
+      if (isDefined(filesFieldDiffByEntityIndex)) {
+        const result = await filesFieldSync.enrichFilesFields({
+          entities: entityWithConnectedRelations,
+          filesFieldDiffByEntityIndex,
+          workspaceId: this.internalContext.workspaceId,
+          target: entityTarget,
+        });
+
+        filesFieldFileIds = result.fileIds;
+        fileIdToApplicationId = result.fileIdToApplicationId;
+
+        entityWithConnectedRelations.splice(
+          0,
+          entityWithConnectedRelations.length,
+          ...result.entities,
+        );
+      }
+
       const objectMetadataItem = getObjectMetadataFromEntityTarget(
         entityTarget,
         this.internalContext,
@@ -1250,6 +1283,13 @@ export class WorkspaceEntityManager extends EntityManager {
         .execute()
         .then(() => formattedEntityOrEntities as Entity[])
         .finally(() => queryRunnerForEntityPersistExecutor.release());
+
+      if (isDefined(filesFieldFileIds)) {
+        await filesFieldSync.updateFileEntityRecords(
+          filesFieldFileIds,
+          fileIdToApplicationId,
+        );
+      }
 
       const resultArray = Array.isArray(result) ? result : [result];
 
