@@ -143,6 +143,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     now,
     workspaceId,
     twentyStandardApplicationId,
+    standardObjectMetadataRelatedEntityIds,
     standardPageLayoutMetadataRelatedEntityIds,
   });
 
