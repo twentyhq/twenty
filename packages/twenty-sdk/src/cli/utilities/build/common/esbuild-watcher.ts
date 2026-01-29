@@ -38,6 +38,8 @@ export const FUNCTION_EXTERNAL_MODULES: string[] = [
 ];
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
+  'react/jsx-runtime',
+  'react',
   'react-dom',
   'twenty-sdk',
   'twenty-sdk/*',

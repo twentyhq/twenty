@@ -7,22 +7,40 @@ const REMOTE_COMPONENTS_PREFIX = 'RemoteComponents';
 const REACT_JSX_IMPORT_PATTERN =
   /import\s*\{([^}]+)\}\s*from\s*['"]react\/jsx-runtime['"];?/g;
 
+const REACT_IMPORT_PATTERN = /import\s*\{([^}]+)\}\s*from\s*['"]react['"];?/g;
+
 const transformReactImportsToGlobalThis = (source: string): string => {
-  return source.replace(REACT_JSX_IMPORT_PATTERN, (_match, imports: string) => {
-    const importNames = imports.split(',').map((name) => name.trim());
-    const assignments = importNames
-      .map((name) => {
-        if (name === 'jsx' || name === 'jsxs') {
-          return `var ${name} = globalThis.${name};`;
-        }
-        if (name === 'Fragment') {
-          return `var Fragment = globalThis.React.Fragment;`;
-        }
-        return `var ${name} = globalThis.React.${name};`;
-      })
-      .join('\n');
-    return assignments;
-  });
+  let transformed = source.replace(
+    REACT_JSX_IMPORT_PATTERN,
+    (_match, imports: string) => {
+      const importNames = imports.split(',').map((name) => name.trim());
+      const assignments = importNames
+        .map((name) => {
+          if (name === 'jsx' || name === 'jsxs') {
+            return `var ${name} = globalThis.${name};`;
+          }
+          if (name === 'Fragment') {
+            return `var Fragment = globalThis.React.Fragment;`;
+          }
+          return `var ${name} = globalThis.React.${name};`;
+        })
+        .join('\n');
+      return assignments;
+    },
+  );
+
+  transformed = transformed.replace(
+    REACT_IMPORT_PATTERN,
+    (_match, imports: string) => {
+      const importNames = imports.split(',').map((name) => name.trim());
+      const assignments = importNames
+        .map((name) => `var ${name} = globalThis.React.${name};`)
+        .join('\n');
+      return assignments;
+    },
+  );
+
+  return transformed;
 };
 
 const buildTagPattern = (): RegExp => {
