@@ -20,6 +20,7 @@ export type UniversalSyncableFlatEntity = Omit<
 
 export type UniversalFlatEntityExtraProperties<
   TEntity extends SyncableEntity,
+  // Required to be passed for narrowed type
   TMetadataName extends
     AllMetadataName = FromMetadataEntityToMetadataName<TEntity>,
 > = AddSuffixToEntityOneToManyProperties<TEntity, 'universalIdentifiers'> &

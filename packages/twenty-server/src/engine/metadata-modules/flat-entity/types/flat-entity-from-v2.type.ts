@@ -7,14 +7,7 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
-export type SyncableFlatEntity = Omit<
-  SyncableEntity,
-  'application' | 'workspace'
-> & {
-  id: string;
-};
-
-export type FlatEntityFrom<
+export type FlatEntityFromV2<
   TEntity,
   // Required to be passed for narrowed type
   TMetadataName extends AllMetadataName | undefined = undefined,
@@ -26,18 +19,11 @@ export type FlatEntityFrom<
   CastRecordTypeOrmDatePropertiesToString<TEntity> &
   AddSuffixToEntityOneToManyProperties<TEntity, 'ids'> &
   (TEntity extends SyncableEntity
-    ? {
-        /**
-         * /!\ Under migration the idea is at some point to replace FlatEntity by UniversalFlatEntity /!\
-         * Please avoid any usage or contact me ( prastoin ) before doing so
-         * TODO remove with FlatEntity once it has been fully migrated
-         */
-        __universal?: UniversalFlatEntityExtraProperties<
-          TEntity,
-          TMetadataName extends undefined
-            ? FromMetadataEntityToMetadataName<TEntity>
-            : TMetadataName
-        > & { universalIdentifier: string };
-      }
+    ? UniversalFlatEntityExtraProperties<
+        TEntity,
+        TMetadataName extends undefined
+          ? FromMetadataEntityToMetadataName<TEntity>
+          : TMetadataName
+      > & { universalIdentifier: string }
     : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       {});
