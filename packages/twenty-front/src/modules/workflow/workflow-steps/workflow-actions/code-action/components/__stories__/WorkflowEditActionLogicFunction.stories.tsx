@@ -20,7 +20,6 @@ const DEFAULT_ACTION: WorkflowCodeAction = {
   settings: {
     input: {
       logicFunctionId: '',
-      logicFunctionVersion: 'draft',
       logicFunctionInput: {},
     },
     outputSchema: {},
@@ -43,7 +42,6 @@ const CONFIGURED_ACTION: WorkflowCodeAction = {
   settings: {
     input: {
       logicFunctionId: 'test-function-id',
-      logicFunctionVersion: 'draft',
       logicFunctionInput: {
         name: 'John Doe',
         email: 'john@example.com',
@@ -208,7 +206,6 @@ export const EmptyFunction: Story = {
         ...DEFAULT_ACTION.settings,
         input: {
           logicFunctionId: '',
-          logicFunctionVersion: 'draft',
           logicFunctionInput: {},
         },
       },
