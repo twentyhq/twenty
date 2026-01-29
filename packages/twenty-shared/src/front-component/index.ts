@@ -7,4 +7,6 @@
  *                              |___/
  */
 
+export { HTML_TAG_TO_REMOTE_COMPONENT } from './constants/HtmlTagToRemoteComponent';
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
+

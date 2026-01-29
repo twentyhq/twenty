@@ -1,15 +1,16 @@
-import * as esbuild from 'esbuild';
-import path from 'path';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
+import { jsxTransformPlugin } from '@/cli/utilities/build/common/jsx-transform-plugin';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
-import { FileFolder } from 'twenty-shared/types';
+import * as esbuild from 'esbuild';
+import path from 'path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
 
 export const FUNCTION_EXTERNAL_MODULES: string[] = [
   'path',
@@ -225,5 +226,6 @@ export const createFrontComponentsWatcher = (
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
+      extraPlugins: [jsxTransformPlugin],
     },
   });

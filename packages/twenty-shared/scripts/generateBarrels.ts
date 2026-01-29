@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { globSync } from 'glob';
 // @ts-ignore
 import path from 'path';
-import { Options } from 'prettier';
+import { type Options } from 'prettier';
 import slash from 'slash';
 // @ts-ignore
 import ts from 'typescript';
@@ -108,7 +108,8 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
     ({ barrel: { moduleDirectory, moduleName }, allFileExports }) => {
       if (moduleName === 'front-component') {
         return {
-          content: `export { FrontComponentRenderer } from './host/components/FrontComponentRenderer'`,
+          content: `export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
+export { HTML_TAG_TO_REMOTE_COMPONENT } from './constants/HtmlTagToRemoteComponent';`,
           path: moduleDirectory,
           filename: INDEX_FILENAME,
         };
