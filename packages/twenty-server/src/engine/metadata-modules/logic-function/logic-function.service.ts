@@ -67,11 +67,7 @@ export class LogicFunctionService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  async getLogicFunctionSourceCode(
-    workspaceId: string,
-    id: string,
-    version: string,
-  ) {
+  async getLogicFunctionSourceCode(workspaceId: string, id: string) {
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -88,7 +84,6 @@ export class LogicFunctionService {
     try {
       const folderPath = getLogicFunctionFolderOrThrow({
         flatLogicFunction,
-        version,
       });
 
       return await this.fileStorageService.readFolder(folderPath);

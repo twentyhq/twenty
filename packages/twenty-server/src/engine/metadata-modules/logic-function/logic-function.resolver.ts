@@ -120,7 +120,6 @@ export class LogicFunctionResolver {
       return await this.logicFunctionService.getLogicFunctionSourceCode(
         workspaceId,
         input.id,
-        input.version,
       );
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
