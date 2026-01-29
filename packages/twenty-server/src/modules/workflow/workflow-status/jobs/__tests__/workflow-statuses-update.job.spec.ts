@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -52,11 +51,6 @@ describe('WorkflowStatusesUpdate', () => {
       .mockImplementation((fn: () => any, _authContext?: any) => fn()),
   };
 
-  const mockLogicFunctionService = {
-    publishOneLogicFunctionOrFail: jest.fn(),
-    findOneOrFail: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -64,10 +58,6 @@ describe('WorkflowStatusesUpdate', () => {
         {
           provide: GlobalWorkspaceOrmManager,
           useValue: mockGlobalWorkspaceOrmManager,
-        },
-        {
-          provide: LogicFunctionService,
-          useValue: mockLogicFunctionService,
         },
         {
           provide: getRepositoryToken(ObjectMetadataEntity),
@@ -227,11 +217,6 @@ describe('WorkflowStatusesUpdate', () => {
           ],
         };
 
-        const mockLogicFunction = {
-          id: 'logic-function-1',
-          latestVersion: 'v2',
-        };
-
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
         mockWorkflowVersionRepository.findOneOrFail.mockResolvedValue(
           mockWorkflowVersion,
@@ -239,12 +224,6 @@ describe('WorkflowStatusesUpdate', () => {
         mockWorkflowVersionRepository.find.mockResolvedValue([
           { status: WorkflowVersionStatus.ACTIVE },
         ]);
-        mockLogicFunctionService.findOneOrFail.mockResolvedValue(
-          mockLogicFunction,
-        );
-        mockLogicFunctionService.publishOneLogicFunctionOrFail.mockResolvedValue(
-          mockLogicFunction,
-        );
 
         await job.handle(event);
 
@@ -252,22 +231,6 @@ describe('WorkflowStatusesUpdate', () => {
         expect(
           mockWorkflowVersionRepository.findOneOrFail,
         ).toHaveBeenCalledTimes(1);
-        expect(
-          mockLogicFunctionService.publishOneLogicFunctionOrFail,
-        ).toHaveBeenCalledWith('logic-function-1', '1');
-        expect(mockWorkflowVersionRepository.update).toHaveBeenCalledWith('1', {
-          steps: [
-            {
-              type: 'CODE',
-              settings: {
-                input: {
-                  logicFunctionId: 'logic-function-1',
-                  logicFunctionVersion: 'v2',
-                },
-              },
-            },
-          ],
-        });
         expect(mockWorkflowRepository.update).toHaveBeenCalledWith(
           { id: '1' },
           { statuses: [WorkflowStatus.ACTIVE] },

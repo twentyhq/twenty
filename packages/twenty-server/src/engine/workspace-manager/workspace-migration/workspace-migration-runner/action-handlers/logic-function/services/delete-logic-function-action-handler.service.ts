@@ -55,7 +55,5 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     await this.fileStorageService.delete({ folderPath: builtFolderPath });
   }
 
-  async rollbackForMetadata(): Promise<void> {
-    // Source code and built files are deleted permanently - rollback rebuilds from entity code
-  }
+  async rollbackForMetadata(): Promise<void> {}
 }

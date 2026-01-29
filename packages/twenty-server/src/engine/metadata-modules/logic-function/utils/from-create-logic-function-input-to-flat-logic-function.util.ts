@@ -12,7 +12,6 @@ import {
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 
-// Base folder prefix for workflow logic functions
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
 export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
