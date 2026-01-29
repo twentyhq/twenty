@@ -66,20 +66,24 @@ export class ViewQueryParamsService {
     let timeZone = 'UTC';
 
     if (currentWorkspaceMemberId) {
-      const workspaceMemberRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
-          'workspaceMember',
-        );
+      try {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
+            'workspaceMember',
+          );
 
-      const workspaceMember = await workspaceMemberRepository.findOne({
-        where: {
-          id: currentWorkspaceMemberId,
-        },
-      });
+        const workspaceMember = await workspaceMemberRepository.findOne({
+          where: {
+            id: currentWorkspaceMemberId,
+          },
+        });
 
-      if (workspaceMember?.timeZone) {
-        timeZone = workspaceMember.timeZone;
+        if (workspaceMember?.timeZone) {
+          timeZone = workspaceMember.timeZone;
+        }
+      } catch {
+        timeZone = 'UTC';
       }
     }
 

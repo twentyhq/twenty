@@ -45,7 +45,7 @@ export const ObjectFilterDropdownDateInput = () => {
     }
 
     const newFilterValue = Temporal.PlainDate.from(newPlainDate)
-      .toZonedDateTime({ timeZone, plainTime: '00:00' })
+      .toZonedDateTime(timeZone)
       .toInstant()
       .toString();
 
