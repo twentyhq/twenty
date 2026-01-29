@@ -38,10 +38,7 @@ export const FUNCTION_EXTERNAL_MODULES: string[] = [
 ];
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
-  'react',
   'react-dom',
-  'react/jsx-runtime',
-  'react/jsx-dev-runtime',
   'twenty-sdk',
   'twenty-sdk/*',
   'twenty-shared',
@@ -225,7 +222,6 @@ export const createFrontComponentsWatcher = (
     config: {
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
-      jsx: 'automatic',
       extraPlugins: [jsxTransformPlugin],
     },
   });
