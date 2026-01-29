@@ -2,158 +2,192 @@ import * as esbuild from 'esbuild';
 import * as fs from 'fs';
 import { HTML_TAG_TO_REMOTE_COMPONENT } from 'twenty-shared/front-component-constants';
 
-const REMOTE_COMPONENTS_PREFIX = 'RemoteComponents';
+const REMOTE_COMPONENTS_GLOBAL_NAMESPACE = 'RemoteComponents';
 
-const REACT_JSX_IMPORT_PATTERN =
+const REACT_JSX_RUNTIME_IMPORT_PATTERN =
   /import\s*\{([^}]+)\}\s*from\s*['"]react\/jsx-runtime['"];?/g;
 
-const REACT_IMPORT_PATTERN = /import\s*\{([^}]+)\}\s*from\s*['"]react['"];?/g;
+const REACT_NAMED_IMPORT_PATTERN =
+  /import\s*\{([^}]+)\}\s*from\s*['"]react['"];?/g;
 
-type ParsedImport = {
-  original: string;
-  alias: string;
+type ParsedImportSpecifier = {
+  originalName: string;
+  aliasName: string;
 };
 
-const parseImportSpec = (importSpec: string): ParsedImport => {
-  const trimmed = importSpec.trim();
-  const aliasMatch = trimmed.match(/^(\w+)\s+as\s+(\w+)$/);
+const parseImportSpecifier = (
+  importSpecifier: string,
+): ParsedImportSpecifier => {
+  const trimmedSpecifier = importSpecifier.trim();
+  const aliasMatch = trimmedSpecifier.match(/^(\w+)\s+as\s+(\w+)$/);
 
   if (aliasMatch) {
-    return { original: aliasMatch[1], alias: aliasMatch[2] };
+    return { originalName: aliasMatch[1], aliasName: aliasMatch[2] };
   }
 
-  return { original: trimmed, alias: trimmed };
+  return { originalName: trimmedSpecifier, aliasName: trimmedSpecifier };
 };
 
-const transformReactImportsToGlobalThis = (source: string): string => {
-  let transformed = source.replace(
-    REACT_JSX_IMPORT_PATTERN,
-    (_match, imports: string) => {
-      const parsedImports = imports.split(',').map(parseImportSpec);
-      const assignments = parsedImports
-        .map(({ original, alias }) => {
-          if (original === 'jsx' || original === 'jsxs') {
-            return `var ${alias} = globalThis.${original};`;
+const replaceReactImportsWithGlobalThisAssignments = (
+  sourceCode: string,
+): string => {
+  let transformedSource = sourceCode.replace(
+    REACT_JSX_RUNTIME_IMPORT_PATTERN,
+    (_match, importSpecifiers: string) => {
+      const parsedImportSpecifiers = importSpecifiers
+        .split(',')
+        .map(parseImportSpecifier);
+      const globalThisAssignments = parsedImportSpecifiers
+        .map(({ originalName, aliasName }) => {
+          if (originalName === 'jsx' || originalName === 'jsxs') {
+            return `var ${aliasName} = globalThis.${originalName};`;
           }
-          if (original === 'Fragment') {
-            return `var ${alias} = globalThis.React.Fragment;`;
+          if (originalName === 'Fragment') {
+            return `var ${aliasName} = globalThis.React.Fragment;`;
           }
-          return `var ${alias} = globalThis.React.${original};`;
+          return `var ${aliasName} = globalThis.React.${originalName};`;
         })
         .join('\n');
-      return assignments;
+      return globalThisAssignments;
     },
   );
 
-  transformed = transformed.replace(
-    REACT_IMPORT_PATTERN,
-    (_match, imports: string) => {
-      const parsedImports = imports.split(',').map(parseImportSpec);
-      const assignments = parsedImports
+  transformedSource = transformedSource.replace(
+    REACT_NAMED_IMPORT_PATTERN,
+    (_match, importSpecifiers: string) => {
+      const parsedImportSpecifiers = importSpecifiers
+        .split(',')
+        .map(parseImportSpecifier);
+      const globalThisAssignments = parsedImportSpecifiers
         .map(
-          ({ original, alias }) =>
-            `var ${alias} = globalThis.React.${original};`,
+          ({ originalName, aliasName }) =>
+            `var ${aliasName} = globalThis.React.${originalName};`,
         )
         .join('\n');
-      return assignments;
+      return globalThisAssignments;
     },
   );
 
-  return transformed;
+  return transformedSource;
 };
 
-const buildTagPattern = (): RegExp => {
-  const tagNames = Object.keys(HTML_TAG_TO_REMOTE_COMPONENT).join('|');
-  return new RegExp(`(<\\/?)\\b(${tagNames})\\b(?=[\\s>\\/>])`, 'g');
+const buildHtmlTagToRemoteComponentPattern = (): RegExp => {
+  const supportedHtmlTagNames = Object.keys(HTML_TAG_TO_REMOTE_COMPONENT).join(
+    '|',
+  );
+  return new RegExp(
+    `(<\\/?)\\b(${supportedHtmlTagNames})\\b(?=[\\s>\\/>])`,
+    'g',
+  );
 };
 
-const TAG_PATTERN = buildTagPattern();
+const HTML_TAG_TO_REMOTE_COMPONENT_PATTERN =
+  buildHtmlTagToRemoteComponentPattern();
 
-const DEFINE_IMPORT_PATTERN =
+const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
   /import\s*\{\s*defineFrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
 
-const DEFINE_EXPORT_PATTERN =
+const DEFINE_FRONT_COMPONENT_EXPORT_PATTERN =
   /export\s+default\s+defineFrontComponent\s*\(\s*\{[^}]*component\s*:\s*(\w+)[^}]*\}\s*\)\s*;?/s;
 
-const transformJsxToRemoteComponents = (source: string): string => {
-  return source.replace(
-    TAG_PATTERN,
-    (match, prefix: string, tagName: string) => {
-      const componentName =
+const replaceHtmlTagsWithRemoteComponents = (sourceCode: string): string => {
+  return sourceCode.replace(
+    HTML_TAG_TO_REMOTE_COMPONENT_PATTERN,
+    (fullMatch, tagPrefix: string, htmlTagName: string) => {
+      const remoteComponentName =
         HTML_TAG_TO_REMOTE_COMPONENT[
-          tagName as keyof typeof HTML_TAG_TO_REMOTE_COMPONENT
+          htmlTagName as keyof typeof HTML_TAG_TO_REMOTE_COMPONENT
         ];
 
-      if (componentName) {
-        return `${prefix}${REMOTE_COMPONENTS_PREFIX}.${componentName}`;
+      if (remoteComponentName) {
+        return `${tagPrefix}${REMOTE_COMPONENTS_GLOBAL_NAMESPACE}.${remoteComponentName}`;
       }
 
-      return match;
+      return fullMatch;
     },
   );
 };
 
-const transformDefineFrontComponent = (source: string): string => {
-  let transformed = source.replace(DEFINE_IMPORT_PATTERN, '');
+const unwrapDefineFrontComponentToDirectExport = (
+  sourceCode: string,
+): string => {
+  let transformedSource = sourceCode.replace(
+    DEFINE_FRONT_COMPONENT_IMPORT_PATTERN,
+    '',
+  );
 
-  const match = transformed.match(DEFINE_EXPORT_PATTERN);
+  const defineFrontComponentMatch = transformedSource.match(
+    DEFINE_FRONT_COMPONENT_EXPORT_PATTERN,
+  );
 
-  if (match) {
-    const componentName = match[1];
+  if (defineFrontComponentMatch) {
+    const wrappedComponentName = defineFrontComponentMatch[1];
 
-    const componentExportPattern = new RegExp(
-      `export\\s+(const|function)\\s+${componentName}\\b`,
+    const exportedComponentDeclarationPattern = new RegExp(
+      `export\\s+(const|function)\\s+${wrappedComponentName}\\b`,
     );
-    transformed = transformed.replace(
-      componentExportPattern,
-      `$1 ${componentName}`,
+    transformedSource = transformedSource.replace(
+      exportedComponentDeclarationPattern,
+      `$1 ${wrappedComponentName}`,
     );
 
-    transformed = transformed.replace(
-      DEFINE_EXPORT_PATTERN,
-      `export default globalThis.jsx(${componentName}, {});`,
+    transformedSource = transformedSource.replace(
+      DEFINE_FRONT_COMPONENT_EXPORT_PATTERN,
+      `export default globalThis.jsx(${wrappedComponentName}, {});`,
     );
   }
 
-  return transformed;
+  return transformedSource;
 };
 
-const applyTransformations = async (
-  sourcePath: string,
-  source: string,
+const applyFrontComponentTransformationsForRemoteWorker = async (
+  sourceFilePath: string,
+  sourceCode: string,
 ): Promise<string> => {
-  const withRemoteComponents = transformJsxToRemoteComponents(source);
-  const withDefineFrontComponent =
-    transformDefineFrontComponent(withRemoteComponents);
+  const sourceWithRemoteComponents =
+    replaceHtmlTagsWithRemoteComponents(sourceCode);
+  const sourceWithUnwrappedFrontComponent =
+    unwrapDefineFrontComponentToDirectExport(sourceWithRemoteComponents);
 
-  const transformed = await esbuild.transform(withDefineFrontComponent, {
-    loader: 'tsx',
-    jsx: 'automatic',
-    sourcefile: sourcePath,
-  });
+  const esbuildTransformResult = await esbuild.transform(
+    sourceWithUnwrappedFrontComponent,
+    {
+      loader: 'tsx',
+      jsx: 'automatic',
+      sourcefile: sourceFilePath,
+    },
+  );
 
-  const withGlobalThis = transformReactImportsToGlobalThis(transformed.code);
+  const sourceWithGlobalThisReactImports =
+    replaceReactImportsWithGlobalThisAssignments(esbuildTransformResult.code);
 
-  return `var RemoteComponents = globalThis.RemoteComponents;\n${withGlobalThis}`;
+  return `var RemoteComponents = globalThis.RemoteComponents;\n${sourceWithGlobalThisReactImports}`;
 };
 
 export const jsxTransformPluginToRemoteDomWorkerFormat: esbuild.Plugin = {
   name: 'jsx-transform-plugin-to-remote-dom-worker-format',
-  setup: (build) => {
-    build.onLoad(
+  setup: (esbuildBuild) => {
+    esbuildBuild.onLoad(
       { filter: /\.front-component\.tsx$/ },
-      async (args): Promise<esbuild.OnLoadResult> => {
+      async (loadArgs): Promise<esbuild.OnLoadResult> => {
         try {
-          const source = fs.readFileSync(args.path, 'utf8');
-          const contents = await applyTransformations(args.path, source);
+          const frontComponentSourceCode = fs.readFileSync(
+            loadArgs.path,
+            'utf8',
+          );
+          const transformedContents =
+            await applyFrontComponentTransformationsForRemoteWorker(
+              loadArgs.path,
+              frontComponentSourceCode,
+            );
 
-          return { contents, loader: 'js' };
-        } catch (error) {
+          return { contents: transformedContents, loader: 'js' };
+        } catch (transformError) {
           return {
             errors: [
               {
-                text: `Failed to transform front component: ${error instanceof Error ? error.message : String(error)}`,
-                location: { file: args.path },
+                text: `Failed to transform front component: ${transformError instanceof Error ? transformError.message : String(transformError)}`,
+                location: { file: loadArgs.path },
               },
             ],
           };
