@@ -3,28 +3,28 @@ import { useLogicFunctionUpdateFormState } from '@/settings/logic-functions/hook
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 
 import { INDEX_FILE_NAME } from '@/logic-functions/constants/IndexFileName';
+import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { WorkflowEditActionLogicFunctionFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunctionFields';
+import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import styled from '@emotion/styled';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { CodeEditor } from 'twenty-ui/input';
-import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-type WorkflowReadonlyActionLogicFunctionProps = {
+type WorkflowReadonlyActionCodeProps = {
   action: WorkflowCodeAction;
 };
 
-export const WorkflowReadonlyActionLogicFunction = ({
+export const WorkflowReadonlyActionCode = ({
   action,
-}: WorkflowReadonlyActionLogicFunctionProps) => {
+}: WorkflowReadonlyActionCodeProps) => {
   const logicFunctionId = action.settings.input.logicFunctionId;
 
   const { availablePackages } = useGetAvailablePackages({
@@ -61,7 +61,7 @@ export const WorkflowReadonlyActionLogicFunction = ({
   return (
     <>
       <WorkflowStepBody>
-        <WorkflowEditActionLogicFunctionFields
+        <WorkflowEditActionCodeFields
           functionInput={action.settings.input.logicFunctionInput}
           readonly
         />

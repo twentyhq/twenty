@@ -1147,6 +1147,10 @@ export type CreateWorkflowVersionEdgeInput = {
 export type CreateWorkflowVersionStepInput = {
   /** Step ID */
   id?: InputMaybe<Scalars['String']>;
+  /** Logic function ID */
+  logicFunctionId?: InputMaybe<Scalars['UUID']>;
+  /** Step name */
+  name?: InputMaybe<Scalars['String']>;
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
@@ -5140,6 +5144,7 @@ export enum WorkflowActionType {
   HTTP_REQUEST = 'HTTP_REQUEST',
   IF_ELSE = 'IF_ELSE',
   ITERATOR = 'ITERATOR',
+  LOGIC_FUNCTION = 'LOGIC_FUNCTION',
   SEND_EMAIL = 'SEND_EMAIL',
   UPDATE_RECORD = 'UPDATE_RECORD',
   UPSERT_RECORD = 'UPSERT_RECORD'
