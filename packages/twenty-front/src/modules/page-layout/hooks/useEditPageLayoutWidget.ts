@@ -53,6 +53,15 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         return;
       }
 
+      if (widgetType === WidgetType.FIELDS) {
+        navigatePageLayoutCommandMenu({
+          commandMenuPage: CommandMenuPages.PageLayoutFieldsSettings,
+          pageTitle: t`Edit Fields`,
+          resetNavigationStack: true,
+        });
+        return;
+      }
+
       closeCommandMenu();
     },
     [

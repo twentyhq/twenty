@@ -4,6 +4,7 @@ import { CommandMenuAskAIPage } from '@/command-menu/pages/ask-ai/components/Com
 import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
 import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
 import { CommandMenuPageLayoutChartSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutChartSettings';
+import { CommandMenuPageLayoutFieldsSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings';
 import { CommandMenuPageLayoutGraphFilter } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter';
 import { CommandMenuPageLayoutIframeSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutIframeSettings';
 import { CommandMenuPageLayoutTabSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutTabSettings';
@@ -63,5 +64,9 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
   [
     CommandMenuPages.PageLayoutTabSettings,
     <CommandMenuPageLayoutTabSettings />,
+  ],
+  [
+    CommandMenuPages.PageLayoutFieldsSettings,
+    <CommandMenuPageLayoutFieldsSettings />,
   ],
 ]);
