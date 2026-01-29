@@ -15,6 +15,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -135,6 +136,8 @@ export const useShouldActionBeRegisteredParams = ({
     forceRegisteredActionsByKeyState,
   );
 
+  const featureFlags = useFeatureFlagsMap();
+
   return {
     objectMetadataItem,
     isFavorite,
@@ -150,5 +153,6 @@ export const useShouldActionBeRegisteredParams = ({
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
     forceRegisteredActionsByKey,
+    featureFlags,
   };
 };

@@ -5,14 +5,8 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStore';
 import { useSavePageLayout } from '@/page-layout/hooks/useSavePageLayout';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const SaveRecordPageLayoutSingleRecordAction = () => {
-  const isRecordPageLayoutEditingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-  );
-
   const recordId = useSelectedRecordIdOrThrow();
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
@@ -37,10 +31,6 @@ export const SaveRecordPageLayoutSingleRecordAction = () => {
       setIsPageLayoutInEditMode(false);
     }
   };
-
-  if (!isRecordPageLayoutEditingEnabled) {
-    return null;
-  }
 
   return <Action onClick={handleClick} />;
 };

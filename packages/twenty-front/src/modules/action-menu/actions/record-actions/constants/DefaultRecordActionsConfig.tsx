@@ -67,6 +67,7 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
   | NoSelectionRecordActionKeys
@@ -764,7 +765,9 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       selectedRecord,
       objectPermissions,
       objectMetadataItem,
+      featureFlags,
     }) =>
+      featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED] &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&
@@ -788,7 +791,9 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       selectedRecord,
       objectPermissions,
       objectMetadataItem,
+      featureFlags,
     }) =>
+      featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED] &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&
@@ -811,7 +816,9 @@ export const DEFAULT_RECORD_ACTIONS_CONFIG: Record<
       selectedRecord,
       objectPermissions,
       objectMetadataItem,
+      featureFlags,
     }) =>
+      featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED] &&
       isDefined(selectedRecord) &&
       !selectedRecord?.isRemote &&
       !isDefined(selectedRecord?.deletedAt) &&
