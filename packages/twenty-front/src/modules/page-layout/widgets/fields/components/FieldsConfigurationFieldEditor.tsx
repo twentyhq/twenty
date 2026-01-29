@@ -54,7 +54,6 @@ type FieldsConfigurationFieldEditorProps = {
   field: FieldsConfigurationFieldItem;
   fieldMetadata: FieldMetadataItem;
   index: number;
-  onFieldChange: (field: FieldsConfigurationFieldItem) => void;
   onToggleVisibility: () => void;
 };
 

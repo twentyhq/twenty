@@ -5,9 +5,13 @@ import {
 } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationSectionEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationSectionEditor';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import styled from '@emotion/styled';
-import { DragDropContext, type OnDragEndResponder } from '@hello-pangea/dnd';
+import {
+  DragDropContext,
+  Droppable,
+  type OnDragEndResponder,
+} from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 
@@ -39,52 +43,50 @@ export const FieldsConfigurationEditor = ({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  // Handle section reordering
-  const handleSectionDragEnd: OnDragEndResponder = useCallback(
+  // Unified drag handler for both sections and fields
+  const handleDragEnd: OnDragEndResponder = useCallback(
     (result) => {
       if (!result.destination) {
         return;
       }
 
-      const sourceIndex = result.source.index;
-      const destinationIndex = result.destination.index;
+      const { source, destination } = result;
 
-      if (sourceIndex === destinationIndex) {
+      // Check if we're dragging a section (droppableId will be 'sections')
+      if (source.droppableId === 'sections') {
+        // Section reordering
+        const sourceIndex = source.index;
+        const destinationIndex = destination.index;
+
+        if (sourceIndex === destinationIndex) {
+          return;
+        }
+
+        const sortedSections = [...configuration.sections].sort(
+          (a, b) => a.position - b.position,
+        );
+
+        const reorderedSections = [...sortedSections];
+        const [removed] = reorderedSections.splice(sourceIndex, 1);
+        reorderedSections.splice(destinationIndex, 0, removed);
+
+        const updatedSections = reorderedSections.map((section, index) => ({
+          ...section,
+          position: index,
+        }));
+
+        onChange({
+          ...configuration,
+          sections: updatedSections,
+        });
         return;
       }
 
-      const sortedSections = [...configuration.sections].sort(
-        (a, b) => a.position - b.position,
-      );
-
-      const reorderedSections = [...sortedSections];
-      const [removed] = reorderedSections.splice(sourceIndex, 1);
-      reorderedSections.splice(destinationIndex, 0, removed);
-
-      const updatedSections = reorderedSections.map((section, index) => ({
-        ...section,
-        position: index,
-      }));
-
-      onChange({
-        ...configuration,
-        sections: updatedSections,
-      });
-    },
-    [configuration, onChange],
-  );
-
-  // Handle field dragging within and between sections
-  const handleFieldDragEnd: OnDragEndResponder = useCallback(
-    (result) => {
-      if (!result.destination) {
-        return;
-      }
-
-      const sourceSectionId = result.source.droppableId;
-      const destinationSectionId = result.destination.droppableId;
-      const sourceIndex = result.source.index;
-      const destinationIndex = result.destination.index;
+      // Field dragging within or between sections
+      const sourceSectionId = source.droppableId;
+      const destinationSectionId = destination.droppableId;
+      const sourceIndex = source.index;
+      const destinationIndex = destination.index;
 
       // If dropped in the same location, do nothing
       if (
@@ -178,23 +180,6 @@ export const FieldsConfigurationEditor = ({
     [configuration, onChange],
   );
 
-  const handleDeleteSection = useCallback(
-    (sectionId: string) => {
-      const updatedSections = configuration.sections
-        .filter((section) => section.id !== sectionId)
-        .map((section, index) => ({
-          ...section,
-          position: index,
-        }));
-
-      onChange({
-        ...configuration,
-        sections: updatedSections,
-      });
-    },
-    [configuration, onChange],
-  );
-
   const sortedSections = [...configuration.sections].sort(
     (a, b) => a.position - b.position,
   );
@@ -208,24 +193,37 @@ export const FieldsConfigurationEditor = ({
   }
 
   return (
-    <StyledContainer>
-      <DragDropContext onDragEnd={handleFieldDragEnd}>
-        <DraggableList
-          onDragEnd={handleSectionDragEnd}
-          draggableItems={sortedSections.map((section, index) => (
-            <FieldsConfigurationSectionEditor
-              key={section.id}
-              section={section}
-              index={index}
-              objectMetadataItem={objectMetadataItem}
-              onSectionChange={(updatedSection) =>
-                handleSectionChange(section.id, updatedSection)
-              }
-              onDeleteSection={() => handleDeleteSection(section.id)}
-            />
-          ))}
-        />
-      </DragDropContext>
-    </StyledContainer>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <StyledContainer>
+        <Droppable droppableId="sections">
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...provided.droppableProps}
+            >
+              {sortedSections.map((section, index) => (
+                <DraggableItem
+                  key={section.id}
+                  draggableId={section.id}
+                  index={index}
+                  itemComponent={
+                    <FieldsConfigurationSectionEditor
+                      section={section}
+                      index={index}
+                      objectMetadataItem={objectMetadataItem}
+                      onSectionChange={(updatedSection) =>
+                        handleSectionChange(section.id, updatedSection)
+                      }
+                    />
+                  }
+                />
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </StyledContainer>
+    </DragDropContext>
   );
 };

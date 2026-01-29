@@ -90,7 +90,6 @@ type FieldsConfigurationSectionEditorProps = {
   index: number;
   objectMetadataItem: ObjectMetadataItem;
   onSectionChange: (section: FieldsConfigurationSection) => void;
-  onDeleteSection: () => void;
 };
 
 export const FieldsConfigurationSectionEditor = ({
@@ -135,10 +134,11 @@ export const FieldsConfigurationSectionEditor = ({
         return;
       }
 
-      // Toggle visibility flag (default is visible)
+      const currentlyVisible = field.isVisible !== false;
+
       const updatedField: FieldsConfigurationFieldItem = {
         ...field,
-        isVisible: field.isVisible === false ? true : false,
+        isVisible: !currentlyVisible,
       };
 
       handleFieldChange(fieldMetadataId, updatedField);
@@ -203,9 +203,6 @@ export const FieldsConfigurationSectionEditor = ({
                         field={field}
                         fieldMetadata={fieldMetadata}
                         index={fieldIndex}
-                        onFieldChange={(updatedField) =>
-                          handleFieldChange(field.fieldMetadataId, updatedField)
-                        }
                         onToggleVisibility={() =>
                           handleToggleFieldVisibility(field.fieldMetadataId)
                         }
