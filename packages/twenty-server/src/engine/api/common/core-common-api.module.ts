@@ -12,7 +12,6 @@ import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -32,7 +31,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceQueryHookModule,
     WorkspaceQueryRunnerModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([RoleTargetEntity, FileEntity]),
+    TypeOrmModule.forFeature([RoleTargetEntity]),
     UserRoleModule,
     ApiKeyModule,
     FileModule,

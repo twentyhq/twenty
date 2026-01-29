@@ -18,6 +18,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -38,27 +39,6 @@ export class FilesFieldService {
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
-  private _sanitizeFile({
-    file,
-    ext,
-    mimeType,
-  }: {
-    file: Buffer | Uint8Array | string;
-    ext: string;
-    mimeType: string | undefined;
-  }): Buffer | Uint8Array | string {
-    if (ext === 'svg' || mimeType === 'image/svg+xml') {
-      const { JSDOM } = require('jsdom');
-      const window = new JSDOM('').window;
-      const DOMPurify = require('dompurify');
-      const purify = DOMPurify(window);
-
-      return purify.sanitize(file.toString());
-    }
-
-    return file;
-  }
-
   async uploadFile({
     file,
     filename,
@@ -78,7 +58,7 @@ export class FilesFieldService {
       filename,
     });
 
-    const sanitizedFile = this._sanitizeFile({ file, ext, mimeType });
+    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
     const name = `${fileId}${ext ? `.${ext}` : ''}`;
