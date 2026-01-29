@@ -7,6 +7,7 @@ import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTab
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
+import { PageLayoutType } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -21,7 +22,7 @@ export const PageLayoutRenderer = ({
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
 
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
+  const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
 
   const onInitialized = (pageLayout: PageLayout) => {
     if (isPageLayoutEmpty(pageLayout)) {
@@ -32,7 +33,11 @@ export const PageLayoutRenderer = ({
   };
 
   // Include record ID in tab instance ID to prevent tab synchronization between different records
-  const recordId = targetRecordIdentifier?.id;
+  // Only for RECORD_PAGE layouts, as DASHBOARD layouts are standalone
+  const recordId =
+    layoutType === PageLayoutType.RECORD_PAGE
+      ? targetRecordIdentifier?.id
+      : undefined;
   const tabListInstanceId = isDefined(recordId)
     ? `${getTabListInstanceIdFromPageLayoutId(pageLayoutId)}-${recordId}`
     : getTabListInstanceIdFromPageLayoutId(pageLayoutId);
