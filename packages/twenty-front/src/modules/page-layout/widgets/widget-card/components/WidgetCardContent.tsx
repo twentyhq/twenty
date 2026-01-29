@@ -5,6 +5,7 @@ import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/Widg
 const StyledWidgetCardContent = styled.div<{
   variant: WidgetCardVariant;
   hasHeader: boolean;
+  isEditable: boolean;
 }>`
   box-sizing: border-box;
   display: grid;
@@ -20,14 +21,17 @@ const StyledWidgetCardContent = styled.div<{
       }
     `}
 
-  ${({ theme, variant }) => {
+  ${({ theme, variant, isEditable }) => {
     if (variant === 'dashboard') {
       return css`
         padding: ${theme.spacing(2)};
       `;
     }
 
-    if (variant === 'record-page') {
+    if (
+      variant === 'record-page' ||
+      (variant === 'side-column' && isEditable)
+    ) {
       return css`
         border: 1px solid ${theme.border.color.medium};
         border-radius: ${theme.border.radius.md};
