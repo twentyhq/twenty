@@ -150,7 +150,7 @@ export class FilesFieldService {
     });
   }
 
-  encodeFileToken(
+  signFileUrl(
     payloadToEncode: Omit<FilesFieldTokenJwtPayload, 'type' | 'sub'>,
   ) {
     const fileTokenExpiresIn = this.twentyConfigService.get(
@@ -168,9 +168,11 @@ export class FilesFieldService {
       payloadToEncode.workspaceId,
     );
 
-    return this.jwtWrapperService.sign(payload, {
+    const token = this.jwtWrapperService.sign(payload, {
       secret,
       expiresIn: fileTokenExpiresIn,
     });
+
+    return `${process.env.SERVER_URL}/files-field/${payloadToEncode.fileId}?token=${token}`;
   }
 }

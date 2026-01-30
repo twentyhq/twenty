@@ -42,7 +42,7 @@ export const typedTokenHelpers = {
           TSESTree.AST_NODE_TYPES.Identifier &&
         decorator.expression.callee.name === 'UseGuards'
       ) {
-        // Check the arguments for UserAuthGuard, WorkspaceAuthGuard, PublicEndpoint, FilePathGuard, FileIdGuard, or FilesFieldGuard
+        // Check the arguments for UserAuthGuard, WorkspaceAuthGuard, PublicEndpoint, FilePathGuard, or FilesFieldGuard
         return decorator.expression.arguments.some((arg) => {
           if (arg.type === TSESTree.AST_NODE_TYPES.Identifier) {
             return (

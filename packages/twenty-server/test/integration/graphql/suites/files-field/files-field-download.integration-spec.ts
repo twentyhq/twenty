@@ -43,7 +43,7 @@ const createRecordsQuery = gql`
         fileId
         label
         extension
-        token
+        url
       }
     }
   }
@@ -177,7 +177,7 @@ describe('files-field.controller - GET /files-field/:id', () => {
     );
   });
 
-  it('should download file successfully with valid token', async () => {
+  it('should download file successfully with valid url', async () => {
     const testFileContent = 'This is test file content for download';
     const textFile = await uploadFile(
       'download-test.txt',
@@ -209,15 +209,18 @@ describe('files-field.controller - GET /files-field/:id', () => {
 
     const createdRecord =
       createResponse.body.data.createFileDownloadTestObjects[0];
-    const fileToken = createdRecord.filesField[0].token;
+    const fileUrl = createdRecord.filesField[0].url;
     const fileId = createdRecord.filesField[0].fileId;
 
-    expect(fileToken).toBeDefined();
+    expect(fileUrl).toBeDefined();
     expect(fileId).toBe(textFile.id);
 
-    const downloadResponse = await request(global.app.getHttpServer())
-      .get(`/files-field/${fileId}`)
-      .query({ token: fileToken });
+    // Extract path from full URL (remove domain)
+    const urlPath = new URL(fileUrl).pathname + new URL(fileUrl).search;
+
+    const downloadResponse = await request(global.app.getHttpServer()).get(
+      urlPath,
+    );
 
     expect(downloadResponse.status).toBe(200);
     expect(downloadResponse.text).toBe(testFileContent);
@@ -230,7 +233,7 @@ describe('files-field.controller - GET /files-field/:id', () => {
     });
   });
 
-  it('should download image file successfully with valid token', async () => {
+  it('should download image file successfully with valid url', async () => {
     const imageContent = 'fake-png-image-binary-content';
     const imageFile = await uploadFile(
       'test-image.png',
@@ -262,15 +265,17 @@ describe('files-field.controller - GET /files-field/:id', () => {
 
     const createdRecord =
       createResponse.body.data.createFileDownloadTestObjects[0];
-    const fileToken = createdRecord.filesField[0].token;
-    const fileId = createdRecord.filesField[0].fileId;
+    const fileUrl = createdRecord.filesField[0].url;
 
-    expect(fileToken).toBeDefined();
+    expect(fileUrl).toBeDefined();
     expect(createdRecord.filesField[0].extension).toBe('.png');
 
-    const downloadResponse = await request(global.app.getHttpServer())
-      .get(`/files-field/${fileId}`)
-      .query({ token: fileToken });
+    // Extract path from full URL (remove domain)
+    const urlPath = new URL(fileUrl).pathname + new URL(fileUrl).search;
+
+    const downloadResponse = await request(global.app.getHttpServer()).get(
+      urlPath,
+    );
 
     expect(downloadResponse.status).toBe(200);
     expect(downloadResponse.text).toBe(imageContent);
@@ -328,7 +333,7 @@ describe('files-field.controller - GET /files-field/:id', () => {
     });
   });
 
-  it('should return 403 when token is invalid', async () => {
+  it('should return 403 when url is invalid', async () => {
     const textFile = await uploadFile(
       'invalid-token-test.txt',
       'content',

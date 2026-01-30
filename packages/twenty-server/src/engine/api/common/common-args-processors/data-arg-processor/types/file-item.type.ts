@@ -1,12 +1,12 @@
-export type FileItemInput = {
+export type FileInput = {
   fileId: string;
   label: string;
 };
 
-export type FileItemOutput = FileItemInput & {
+export type FileOutput = FileInput & {
   extension: string;
 };
 
-export type SignedFileItemOutput = FileItemOutput & {
-  token: string;
+export type SignedFileOutput = FileOutput & {
+  url: string;
 };
