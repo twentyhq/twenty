@@ -217,12 +217,12 @@ Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare 
 
 SDK-ul oferă patru funcții ajutătoare cu validare încorporată pentru definirea entităților aplicației:
 
-| Funcție            | Scop                                                     |
-| ------------------ | -------------------------------------------------------- |
-| `defineApplication()`      | Configurați metadatele aplicației                        |
-| `defineObject()`   | Definiți obiecte personalizate cu câmpuri                |
-| `defineFunction()` | Definiți funcții de logică cu handleri                   |
-| `defineRole()`     | Configurați permisiunile rolurilor și accesul la obiecte |
+| Funcție               | Scop                                                     |
+| --------------------- | -------------------------------------------------------- |
+| `defineApplication()` | Configurați metadatele aplicației                        |
+| `defineObject()`      | Definiți obiecte personalizate cu câmpuri                |
+| `defineFunction()`    | Definiți funcții de logică cu handleri                   |
+| `defineRole()`        | Configurați permisiunile rolurilor și accesul la obiecte |
 
 Aceste funcții validează configurația în timpul execuției și oferă o completare automată mai bună în IDE și siguranța tipurilor.
 
@@ -339,7 +339,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ Notițe:
 
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` trebuie să corespundă rolului pe care îl definiți în fișierul `*.role.ts` (vedeți mai jos).
+* `roleUniversalIdentifier` trebuie să corespundă rolului pe care îl definiți în fișierul `*.role.ts` (vedeți mai jos).
 
 #### Roluri și permisiuni
 
-Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `defaultRoleUniversalIdentifier` din `application.config.ts` desemnează rolul implicit folosit de funcțiile de logică ale aplicației.
+Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `roleUniversalIdentifier` din `application.config.ts` desemnează rolul implicit folosit de funcțiile de logică ale aplicației.
 
 * Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
 * Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-`universalIdentifier` al acestui rol este apoi referențiat în `application.config.ts` ca `defaultRoleUniversalIdentifier`. Cu alte cuvinte:
+The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. Cu alte cuvinte:
 
 * **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
 * **application.config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
@@ -606,8 +606,8 @@ Când funcția rulează pe Twenty, platforma injectează acreditări ca variabil
 Notițe:
 
 * Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
-* Permisiunile cheii API sunt determinate de rolul referențiat în `application.config.ts` prin `defaultRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
-* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `defaultRoleUniversalIdentifier` la identificatorul universal al acelui rol.
+* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
 
 ### Exemplu Hello World
 

@@ -217,12 +217,12 @@ twenty-sdk poskytuje typované stavební bloky a pomocné funkce, které použí
 
 SDK poskytuje čtyři pomocné funkce s vestavěnou validací pro definování entit vaší aplikace:
 
-| Funkce             | Účel                                             |
-| ------------------ | ------------------------------------------------ |
-| `defineApplication()`      | Konfigurace metadat aplikace                     |
-| `defineObject()`   | Definice vlastních objektů s poli                |
-| `defineFunction()` | Definice logických funkcí s obslužnými funkcemi  |
-| `defineRole()`     | Konfigurace oprávnění rolí a přístupu k objektům |
+| Funkce                | Účel                                             |
+| --------------------- | ------------------------------------------------ |
+| `defineApplication()` | Konfigurace metadat aplikace                     |
+| `defineObject()`      | Definice vlastních objektů s poli                |
+| `defineFunction()`    | Definice logických funkcí s obslužnými funkcemi  |
+| `defineRole()`        | Konfigurace oprávnění rolí a přístupu k objektům |
 
 Tyto funkce validují vaši konfiguraci za běhu a poskytují lepší automatické doplňování v IDE a lepší typovou bezpečnost.
 
@@ -319,7 +319,7 @@ Každá aplikace má jeden soubor `application.config.ts`, který popisuje:
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
 * **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
 
-K definování konfigurace aplikace použijte `defineApplication()`:
+Use `defineApplication()` to define your application configuration:
 
 ```typescript
 // src/app/application.config.ts
@@ -339,7 +339,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ Poznámky:
 
 * Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` se musí shodovat s rolí, kterou definujete ve svém souboru `*.role.ts` (viz níže).
+* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
 
 #### Role a oprávnění
 
-Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a akcím ve vašem pracovním prostoru. Pole `defaultRoleUniversalIdentifier` v `application.config.ts` určuje výchozí roli používanou logickými funkcemi vaší aplikace.
+Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a akcím ve vašem pracovním prostoru. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * Běhový klíč API vložený jako `TWENTY_API_KEY` je odvozen z této výchozí role funkcí.
 * Typovaný klient bude omezen oprávněními udělenými této roli.
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-Na `universalIdentifier` této role se poté odkazuje v `application.config.ts` jako na `defaultRoleUniversalIdentifier`. Jinými slovy:
+The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. Jinými slovy:
 
 * **\*.role.ts** definuje, co může výchozí role funkce dělat.
 * **application.config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
@@ -606,8 +606,8 @@ Když vaše funkce běží na Twenty, platforma před spuštěním kódu vloží
 Poznámky:
 
 * Není nutné předávat URL ani klíč API vygenerovanému klientovi. Za běhu čte `TWENTY_API_URL` a `TWENTY_API_KEY` z process.env.
-* Oprávnění API klíče jsou určena rolí odkazovanou v `application.config.ts` prostřednictvím `defaultRoleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
-* Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `defaultRoleUniversalIdentifier` na univerzální identifikátor této role.
+* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
+* Aplikace mohou definovat role podle principu nejmenších oprávnění. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
 
 ### Příklad Hello World
 
