@@ -10,6 +10,7 @@ import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
@@ -77,8 +78,14 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         }
 
         const computedOptimisticRecord = {
-          ...cachedRecord,
-          ...updatedRecord,
+          ...computeOptimisticRecordFromInput({
+            cache: apolloCoreClient.cache,
+            objectMetadataItem,
+            objectMetadataItems,
+            recordInput: updatedRecord,
+            objectPermissionsByObjectMetadataId,
+            currentWorkspaceMember: null,
+          }),
           id: updatedRecord.id,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
         };
