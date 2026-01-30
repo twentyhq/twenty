@@ -1,6 +1,7 @@
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
 import { jsxTransformToRemoteDomWorkerFormatPlugin } from '@/cli/utilities/build/common/front-component-build/jsx-transform-to-remote-dom-worker-format-plugin';
+import { reactGlobalsPlugin } from '@/cli/utilities/build/common/front-component-build/react-globals-plugin';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
@@ -37,9 +38,9 @@ export const FUNCTION_EXTERNAL_MODULES: string[] = [
   'twenty-shared/*',
 ];
 
+// React and react/jsx-runtime are handled by reactGlobalsPlugin (virtual modules)
+// to enable single-pass JSX compilation with full incremental build benefits
 export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
-  'react/jsx-runtime',
-  'react',
   'react-dom',
   'twenty-sdk',
   'twenty-sdk/*',
@@ -53,6 +54,7 @@ export type EsbuildWatcherConfig = {
   platform?: esbuild.Platform;
   jsx?: 'automatic';
   extraPlugins?: esbuild.Plugin[];
+  minify?: boolean;
 };
 
 export type EsbuildWatcherOptions = RestartableWatcherOptions & {
@@ -177,6 +179,7 @@ export class EsbuildWatcher implements RestartableWatcher {
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
+      minify: this.config.minify,
       plugins,
     });
 
@@ -224,6 +227,11 @@ export const createFrontComponentsWatcher = (
     config: {
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
-      extraPlugins: [jsxTransformToRemoteDomWorkerFormatPlugin],
+      jsx: 'automatic',
+      minify: true,
+      extraPlugins: [
+        reactGlobalsPlugin,
+        jsxTransformToRemoteDomWorkerFormatPlugin,
+      ],
     },
   });

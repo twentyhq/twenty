@@ -1,7 +1,8 @@
 import type * as esbuild from 'esbuild';
 import * as fs from 'fs';
 
-import { applyFrontComponentTransformationsForRemoteWorker } from './utils/apply-front-component-transformations-for-remote-worker';
+import { replaceHtmlTagsWithRemoteComponents } from './utils/replace-html-tags-with-remote-components';
+import { unwrapDefineFrontComponentToDirectExport } from './utils/unwrap-define-front-component-to-direct-export';
 
 export { replaceHtmlTagsWithRemoteComponents as transformJsxToRemoteComponents } from './utils/replace-html-tags-with-remote-components';
 
@@ -17,13 +18,17 @@ export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
             'utf8',
           );
 
-          const transformedContents =
-            await applyFrontComponentTransformationsForRemoteWorker({
-              sourceFilePath: loadArgs.path,
-              sourceCode: frontComponentSourceCode,
-            });
+          const sourceWithRemoteComponents =
+            replaceHtmlTagsWithRemoteComponents(frontComponentSourceCode);
 
-          return { contents: transformedContents, loader: 'js' };
+          const sourceWithUnwrappedFrontComponent =
+            unwrapDefineFrontComponentToDirectExport(
+              sourceWithRemoteComponents,
+            );
+
+          const transformedContents = `var RemoteComponents = globalThis.RemoteComponents;\n${sourceWithUnwrappedFrontComponent}`;
+
+          return { contents: transformedContents, loader: 'tsx' };
         } catch (transformError) {
           return {
             errors: [
