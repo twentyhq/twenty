@@ -4,6 +4,7 @@ import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 
+// TODO make field and object maps return
 export type AllFlatEntityMaps = {
   [P in keyof AllFlatEntityTypesByMetadataName as MetadataToFlatEntityMapsKey<P>]: FlatEntityMaps<
     MetadataFlatEntity<P>

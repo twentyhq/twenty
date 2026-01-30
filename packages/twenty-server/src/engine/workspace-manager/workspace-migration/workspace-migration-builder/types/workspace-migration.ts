@@ -5,4 +5,5 @@ export type WorkspaceMigration<
 > = {
   actions: TActions[];
   workspaceId: string;
+  applicationUniversalIdentifier: string;
 };

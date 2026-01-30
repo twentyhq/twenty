@@ -19,6 +19,7 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -148,10 +149,30 @@ export class WorkspaceMigrationRunnerService {
 
   run = async ({
     actions,
+    applicationUniversalIdentifier,
     workspaceId,
   }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const applicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
+    const flatApplication = isDefined(applicationId)
+      ? flatApplicationMaps.byId[applicationId]
+      : undefined;
+    if (!isDefined(applicationId) || !isDefined(flatApplication)) {
+      throw new WorkspaceMigrationRunnerException({
+        message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
+        code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
+      });
+    }
 
     const queryRunner = this.coreDataSource.createQueryRunner();
     const actionMetadataNames = [
@@ -187,6 +208,7 @@ export class WorkspaceMigrationRunnerService {
             {
               action,
               context: {
+                flatApplication,
                 action,
                 allFlatEntityMaps,
                 queryRunner,
@@ -228,6 +250,7 @@ export class WorkspaceMigrationRunnerService {
           {
             action: invertedAction,
             context: {
+              flatApplication,
               action: invertedAction,
               allFlatEntityMaps,
               workspaceId,
