@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 
 import type * as esbuild from 'esbuild';
 
@@ -52,13 +52,17 @@ const generateReactExports = (imports: Set<string>): string => {
 
 export const reactGlobalsPlugin: esbuild.Plugin = {
   name: 'react-globals',
-  setup: (build) => {
+  setup: async (build) => {
     const reactImportsByFile = new Map<string, Set<string>>();
 
-    build.onResolve({ filter: /^react(\/jsx-runtime)?$/ }, (args) => {
+    build.onStart(() => {
+      reactImportsByFile.clear();
+    });
+
+    build.onResolve({ filter: /^react(\/jsx-runtime)?$/ }, async (args) => {
       if (args.importer && !reactImportsByFile.has(args.importer)) {
         try {
-          const sourceContent = fs.readFileSync(args.importer, 'utf-8');
+          const sourceContent = await fs.readFile(args.importer, 'utf-8');
 
           reactImportsByFile.set(
             args.importer,
