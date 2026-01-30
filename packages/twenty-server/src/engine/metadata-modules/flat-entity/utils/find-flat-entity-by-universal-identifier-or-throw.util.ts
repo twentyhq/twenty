@@ -21,7 +21,7 @@ export const findFlatEntityByUniversalIdentifierOrThrow = <
 >({
   flatEntityMaps,
   universalIdentifier,
-}: FindFlatEntityByUniversalIdentifierOrThrowArgs<T>): T => {
+}: FindFlatEntityByUniversalIdentifierOrThrowArgs<T>): T & { id: string } => {
   const flatEntity = findFlatEntityByUniversalIdentifier({
     flatEntityMaps,
     universalIdentifier,
