@@ -17,18 +17,18 @@ const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,
   currentWorkspace: CurrentWorkspace | null,
   calendarBookingPageId: string | null,
+  isAccountSyncEnabled: boolean,
 ) => {
-  const permissionMap = usePermissionFlagMap();
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
     return OnboardingStatus.PROFILE_CREATION;
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
     if (currentWorkspace?.workspaceMembersCount === 1) {
-      if (permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS]) {
-        return OnboardingStatus.INVITE_TEAM;
+      if (isAccountSyncEnabled) {
+        return OnboardingStatus.SYNC_EMAIL;
       }
-      return OnboardingStatus.SYNC_EMAIL;
+      return OnboardingStatus.INVITE_TEAM;
     }
     return OnboardingStatus.COMPLETED;
   }
@@ -53,6 +53,9 @@ export const useSetNextOnboardingStatus = () => {
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const calendarBookingPageId = useRecoilValue(calendarBookingPageIdState);
+  const permissionMap = usePermissionFlagMap();
+  const isAccountSyncEnabled =
+    permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
 
   return useRecoilCallback(
     ({ set }) =>
@@ -61,6 +64,7 @@ export const useSetNextOnboardingStatus = () => {
           currentUser,
           currentWorkspace,
           calendarBookingPageId,
+          isAccountSyncEnabled,
         );
         set(currentUserState, (current) => {
           if (isDefined(current)) {
@@ -72,6 +76,11 @@ export const useSetNextOnboardingStatus = () => {
           return current;
         });
       },
-    [currentWorkspace, currentUser, calendarBookingPageId],
+    [
+      currentUser,
+      currentWorkspace,
+      calendarBookingPageId,
+      isAccountSyncEnabled,
+    ],
   );
 };
