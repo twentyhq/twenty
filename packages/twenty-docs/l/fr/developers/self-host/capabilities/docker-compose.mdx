@@ -1,102 +1,102 @@
 ---
-title: 1-Click w/ Docker Compose
+title: 1-Clic avec Docker Compose
 ---
 
 <Warning>
-  Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](/l/fr/developers/contribute/capabilities/local-setup).
+  Les conteneurs Docker sont destinés à l'hébergement en production ou à l'auto-hébergement, pour la contribution veuillez consulter le [Configuration Locale](/l/fr/developers/contribute/capabilities/local-setup).
 </Warning>
 
-## Overview
+## Vue d'ensemble
 
-This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. The aim is to make the process straightforward and prevent common pitfalls that could break your setup.
+Ce guide fournit des instructions pas-à-pas pour installer et configurer l'application Twenty à l'aide de Docker Compose. L'objectif est de simplifier le processus et d'éviter les erreurs courantes qui pourraient compromettre votre configuration.
 
-**Important:** Only modify settings explicitly mentioned in this guide. Altering other configurations may lead to issues.
+**Important :** Modifiez uniquement les paramètres explicitement mentionnés dans ce guide. Modifier d'autres configurations peut entraîner des problèmes.
 
-See docs [Setup Environment Variables](/l/fr/developers/self-host/capabilities/setup) for advanced configuration. All environment variables must be declared in the docker-compose.yml file at the server and / or worker level depending on the variable.
+Consultez les documents [Configurer les Variables d’Environnement](/l/fr/developers/self-host/capabilities/setup) pour la configuration avancée. Toutes les variables d'environnement doivent être déclarées dans le fichier docker-compose.yml au niveau du serveur et/ou du travailleur, selon la variable.
 
-## System Requirements
+## Exigences du Système
 
-* RAM: Ensure your environment has at least 2GB of RAM. Insufficient memory can cause processes to crash.
-* Docker & Docker Compose: Make sure both are installed and up-to-date.
+* RAM : Assurez-vous que votre environnement dispose d'au moins 2 Go de RAM. Une mémoire insuffisante peut provoquer des plantages des processus.
+* Docker & Docker Compose : Assurez-vous que les deux sont installés et à jour.
 
-## Option 1: One-line script
+## Option 1 : Script en une seule ligne
 
-Install the latest stable version of Twenty with a single command:
+Installez la dernière version stable de Twenty avec une seule commande :
 
 ```bash
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-To install a specific version or branch:
+Pour installer une version ou une branche spécifique :
 
 ```bash
 VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Replace x.y.z with the desired version number.
-* Replace branch-name with the name of the branch you want to install.
+* Remplacez x.y.z par le numéro de version désiré.
+* Remplacez nom-branche par le nom de la branche que vous souhaitez installer.
 
-## Option 2: Manual steps
+## Option 2 : Étapes manuelles
 
-Follow these steps for a manual setup.
+Suivez ces étapes pour une installation manuelle.
 
-### Step 1: Set Up the Environment File
+### Étape 1 : Configurez le Fichier Environnement
 
-1. **Create the .env File**
+1. **Créez le Fichier .env**
 
-   Copy the example environment file to a new .env file in your working directory:
+   Copiez le fichier d'exemple d'environnement vers un nouveau fichier .env dans votre répertoire de travail :
 
    ```bash
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Generate Secret Tokens**
+2. **Générez des Jetons Secrets**
 
-   Run the following command to generate a unique random string:
+   Exécutez la commande suivante pour générer une chaîne aléatoire unique :
 
    ```bash
    openssl rand -base64 32
    ```
 
-   **Important:** Keep this value secret / do not share it.
+   **Important :** Gardez cette valeur secrète / ne la partagez pas.
 
-3. **Update the `.env`**
+3. **Mettez à jour le `.env`**
 
-   Replace the placeholder value in your .env file with the generated token:
+   Remplacez la valeur de l'espace réservé dans votre fichier .env par le jeton généré :
 
    ```ini
    APP_SECRET=first_random_string
    ```
 
-4. **Set the Postgres Password**
+4. **Définissez le Mot de Passe de Postgres**
 
-   Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
+   Mettez à jour la valeur `PG_DATABASE_PASSWORD` dans le fichier .env avec un mot de passe fort sans caractères spéciaux.
 
    ```ini
    PG_DATABASE_PASSWORD=my_strong_password
    ```
 
-### Step 2: Obtain the Docker Compose File
+### Étape 2 : Obtenez le Fichier Docker Compose
 
-Download the `docker-compose.yml` file to your working directory:
+Téléchargez le fichier `docker-compose.yml` dans votre répertoire de travail :
 
 ```bash
 curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
 ```
 
-### Step 3: Launch the Application
+### Étape 3 : Lancer l'Application
 
-Start the Docker containers:
+Démarrez les conteneurs Docker :
 
 ```bash
 docker compose up -d
 ```
 
-### Step 4: Access the Application
+### Étape 4 : Accéder à l'Application
 
-If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+Si vous hébergez twentyCRM sur votre ordinateur, ouvrez votre navigateur et allez à [http://localhost:3000](http://localhost:3000).
 
-If you host it on a server, check that the server is running and that everything is ok with
+Si vous l'hébergez sur un serveur, vérifiez que le serveur fonctionne et que tout est en ordre avec
 
 ```bash
 curl http://localhost:3000
@@ -104,150 +104,150 @@ curl http://localhost:3000
 
 ## Configuration
 
-### Expose Twenty to External Access
+### Exposer Twenty à un Accès Externe
 
-By default, Twenty runs on `localhost` at port `3000`. To access it via an external domain or IP address, you need to configure the `SERVER_URL` in your `.env` file.
+Par défaut, Twenty fonctionne sur `localhost` au port `3000`. Pour y accéder via un domaine externe ou une adresse IP, vous devez configurer le `SERVER_URL` dans votre fichier `.env`.
 
-#### Understanding `SERVER_URL`
+#### Comprendre `SERVER_URL`
 
-* **Protocol:** Use `http` or `https` depending on your setup.
-  * Use `http` if you haven't set up SSL.
-  * Use `https` if you have SSL configured.
-* **Domain/IP:** This is the domain name or IP address where your application is accessible.
-* **Port:** Include the port number if you're not using the default ports (`80` for `http`, `443` for `https`).
+* **Protocole :** Utilisez `http` ou `https` selon votre configuration.
+  * Utilisez `http` si vous n'avez pas configuré SSL.
+  * Utilisez `https` si vous avez configuré SSL.
+* **Domaine/IP :** Il s'agit du nom de domaine ou de l'adresse IP où votre application est accessible.
+* **Port :** Incluez le numéro de port si vous n'utilisez pas les ports par défaut (`80` pour `http`, `443` pour `https`).
 
-### SSL Requirements
+### Exigences SSL
 
-SSL (HTTPS) is required for certain browser features to work properly. While these features might work during local development (as browsers treat localhost differently), a proper SSL setup is needed when hosting Twenty on a regular domain.
+Le SSL (HTTPS) est requis pour que certaines fonctionnalités des navigateurs fonctionnent correctement. Bien que ces fonctionnalités puissent fonctionner lors du développement local (car les navigateurs traitent localhost différemment), une configuration SSL appropriée est nécessaire lors de l'hébergement de Twenty sur un domaine régulier.
 
-For example, the clipboard API might require a secure context - some features like copy buttons throughout the application might not work without HTTPS enabled.
+Par exemple, l'API du presse-papiers pourrait nécessiter un contexte sécurisé - certaines fonctionnalités comme les boutons de copie dans toute l'application pourraient ne pas fonctionner sans HTTPS activé.
 
-We strongly recommend setting up Twenty behind a reverse proxy with SSL termination for optimal security and functionality.
+Nous vous recommandons vivement de mettre en place Twenty derrière un proxy inverse avec terminaison SSL pour une sécurité et une fonctionnalité optimales.
 
-#### Configuring `SERVER_URL`
+#### Configurer `SERVER_URL`
 
-1. **Determine Your Access URL**
-   * **Without Reverse Proxy (Direct Access):**
+1. **Déterminez Votre URL d'Accès**
+   * **Sans Proxy Inverse (Accès Direct):**
 
-     If you're accessing the application directly without a reverse proxy:
+     Si vous accédez directement à l'application sans un proxy inverse :
 
      ```ini
      SERVER_URL=http://your-domain-or-ip:3000
      ```
 
-   * **With Reverse Proxy (Standard Ports):**
+   * **Avec Proxy Inverse (Ports Standards):**
 
-     If you're using a reverse proxy like Nginx or Traefik and have SSL configured:
+     Si vous utilisez un proxy inverse comme Nginx ou Traefik et que vous avez SSL configuré :
 
      ```ini
      SERVER_URL=https://your-domain-or-ip
      ```
 
-   * **With Reverse Proxy (Custom Ports):**
+   * **Avec Proxy Inverse (Ports Personnalisés):**
 
-     If you're using non-standard ports:
+     Si vous utilisez des ports non standards :
 
      ```ini
      SERVER_URL=https://your-domain-or-ip:custom-port
      ```
 
-2. **Update the `.env` File**
+2. **Mettez à jour le Fichier `.env`**
 
-   Open your `.env` file and update the `SERVER_URL`:
+   Ouvrez votre fichier `.env` et mettez à jour le `SERVER_URL`:
 
    ```ini
    SERVER_URL=http(s)://your-domain-or-ip:your-port
    ```
 
-   **Examples:**
+   **Exemples :**
 
-   * Direct access without SSL:
+   * Accès direct sans SSL :
      ```ini
      SERVER_URL=http://123.45.67.89:3000
      ```
-   * Access via domain with SSL:
+   * Accès via domaine avec SSL :
      ```ini
      SERVER_URL=https://mytwentyapp.com
      ```
 
-3. **Restart the Application**
+3. **Redémarrez l'Application**
 
-   For changes to take effect, restart the Docker containers:
+   Pour que les changements prennent effet, redémarrez les conteneurs Docker :
 
    ```bash
    docker compose down
    docker compose up -d
    ```
 
-#### Considerations
+#### Considérations
 
-* **Reverse Proxy Configuration:**
+* **Configuration du Proxy Inverse :**
 
-  Ensure your reverse proxy forwards requests to the correct internal port (`3000` by default). Configure SSL termination and any necessary headers.
+  Assurez-vous que votre proxy inverse redirige les requêtes vers le port interne correct (`3000` par défaut). Configurez la terminaison SSL et tous les en-têtes nécessaires.
 
-* **Firewall Settings:**
+* **Paramètres de Pare-feu :**
 
-  Open necessary ports in your firewall to allow external access.
+  Ouvrez les ports nécessaires dans votre pare-feu pour permettre l'accès externe.
 
-* **Consistency:**
+* **Cohérence :**
 
-  The `SERVER_URL` must match how users access your application in their browsers.
+  Le `SERVER_URL` doit correspondre à la façon dont les utilisateurs accèdent à votre application dans leurs navigateurs.
 
-#### Persistence
+#### Persistance
 
-* **Data Volumes:**
+* **Volumes de Données :**
 
-  The Docker Compose configuration uses volumes to persist data for the database and server storage.
+  La configuration de Docker Compose utilise des volumes pour persister les données pour la base de données et le stockage du serveur.
 
-* **Stateless Environments:**
+* **Environnements sans État :**
 
-  If deploying to a stateless environment (e.g., certain cloud services), configure external storage to persist data.
+  Si vous déployez dans un environnement sans état (par exemple, certains services cloud), configurez un stockage externe pour persister les données.
 
-## Backup and Restore
+## Sauvegarde et restauration
 
-Regular backups protect your CRM data from loss.
+Des sauvegardes régulières protègent les données de votre CRM contre la perte.
 
-### Create a Database Backup
+### Créer une sauvegarde de la base de données
 
 ```bash
 docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
 ```
 
-### Automate Daily Backups
+### Automatiser les sauvegardes quotidiennes
 
-Add to your crontab (`crontab -e`):
+Ajoutez à votre crontab (`crontab -e`) :
 
 ```bash
 0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
 ```
 
-### Restore from Backup
+### Restaurer à partir d'une sauvegarde
 
-1. Stop the application:
+1. Arrêtez l'application :
 
 ```bash
 docker compose stop twenty-server twenty-front
 ```
 
-2. Restore the database:
+2. Restaurez la base de données :
 
 ```bash
 docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
 ```
 
-3. Restart services:
+3. Redémarrez les services :
 
 ```bash
 docker compose up -d
 ```
 
-### Backup Best Practices
+### Bonnes pratiques de sauvegarde
 
-* **Test restores regularly** — verify backups actually work
-* **Store backups off-site** — use cloud storage (S3, GCS, etc.)
-* **Encrypt sensitive data** — protect backups with encryption
-* **Retain multiple copies** — keep daily, weekly, and monthly backups
+* **Testez les restaurations régulièrement** — vérifiez que les sauvegardes fonctionnent réellement
+* **Stockez les sauvegardes hors site** — utilisez un stockage cloud (S3, GCS, etc.)
+* **Chiffrez les données sensibles** — protégez les sauvegardes à l'aide du chiffrement
+* **Conservez plusieurs copies** — gardez des sauvegardes quotidiennes, hebdomadaires et mensuelles
 
-## Troubleshooting
+## Résolution des problèmes
 
-If you encounter any problem, check [Troubleshooting](/l/fr/developers/self-host/capabilities/troubleshooting) for solutions.
+Si vous rencontrez un problème, consultez [Dépannage](/l/fr/developers/self-host/capabilities/troubleshooting) pour des solutions.

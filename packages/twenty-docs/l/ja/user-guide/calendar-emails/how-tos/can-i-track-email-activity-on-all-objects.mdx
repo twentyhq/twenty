@@ -1,35 +1,35 @@
 ---
-title: Can I Track Email Activity on All Objects?
-description: Understanding email activity tracking across different objects.
+title: すべてのオブジェクトでメールアクティビティを追跡できますか？
+description: 異なるオブジェクト間でのメールアクティビティの追跡について説明します。
 ---
 
-## Supported Objects
+## サポート対象のオブジェクト
 
-Email activity is currently available on **three standard objects**:
+メールアクティビティは現在、**3 つの標準オブジェクト**で利用できます:
 
-| Object            | What You See                                                     |
-| ----------------- | ---------------------------------------------------------------- |
-| **People**        | All emails exchanged with that specific contact                  |
-| **Companies**     | All emails with anyone from that company (based on email domain) |
-| **Opportunities** | Emails related to the company linked to the opportunity          |
+| オブジェクト  | 表示内容                              |
+| ------- | --------------------------------- |
+| **連絡先** | その特定の連絡先とやり取りしたすべてのメール            |
+| **会社**  | その会社に所属する相手とのすべてのメール（メールドメインに基づく） |
+| **商談**  | その商談にリンクされた会社に関連するメール             |
 
-## Why Only These Objects?
+## なぜこれらのオブジェクトだけなのですか？
 
-People, Companies, and Opportunities are the core relationship objects where email context adds the most value. Email threads are automatically linked based on:
+連絡先、会社、商談は、メールのコンテキストが最も価値を生む中核のリレーションシップオブジェクトです。 メールスレッドは以下に基づいて自動的にリンクされます:
 
-* **Email address** → matched to People records
-* **Email domain** → matched to Company records
-* **Company relation** → linked to Opportunities
+* **メールアドレス** → 連絡先レコードに照合
+* **メールドメイン** → 会社レコードに照合
+* **会社の関連付け** → 商談にリンク
 
-## Custom Objects
+## カスタムオブジェクト
 
-**Email tracking is not available on custom objects** at this time.
+**カスタムオブジェクトではメール追跡は利用できません**（現時点では）。
 
-If you need email context on a custom object, consider:
+カスタムオブジェクトでメールのコンテキストが必要な場合は、次を検討してください:
 
-* Using a relation field to link your custom object to People or Companies
-* Viewing email history on the linked People/Company record
+* 関連フィールドを使用して、カスタムオブジェクトを連絡先または会社にリンクする
+* リンクされた連絡先/会社レコードでメール履歴を閲覧する
 
-## Future Plans
+## 今後の計画
 
-Extending email visibility to custom objects is being considered. Share your use case on our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to help prioritize this feature.
+メールの可視性をカスタムオブジェクトへ拡張することを検討中です。 この機能の優先順位付けの参考になるよう、ユースケースを[GitHub のディスカッション](https://github.com/twentyhq/twenty/discussions)で共有してください。

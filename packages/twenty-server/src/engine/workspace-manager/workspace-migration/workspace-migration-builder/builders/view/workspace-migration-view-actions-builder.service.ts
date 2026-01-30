@@ -64,7 +64,7 @@ export class WorkspaceMigrationViewActionsBuilderService extends WorkspaceEntity
       action: {
         type: 'delete',
         metadataName: 'view',
-        entityId: flatViewToValidate.id,
+        universalIdentifier: flatViewToValidate.universalIdentifier,
       },
     };
   }

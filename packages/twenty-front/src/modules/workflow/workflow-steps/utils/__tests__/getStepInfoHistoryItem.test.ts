@@ -27,9 +27,8 @@ describe('getStepInfoHistoryItem', () => {
     nextStepIds: [],
     settings: {
       input: {
-        serverlessFunctionId: 'func',
-        serverlessFunctionVersion: '1.0.0',
-        serverlessFunctionInput: {},
+        logicFunctionId: 'func',
+        logicFunctionInput: {},
       },
       outputSchema: {},
       errorHandlingOptions: {

@@ -13,7 +13,10 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
+import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
@@ -51,9 +54,12 @@ export const useDestroyManyRecords = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
+  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  );
+  const { removeNavigationMenuItemsByTargetRecordIds } =
+    useRemoveNavigationMenuItemByTargetRecordId();
 
   const mutationResponseField = getDestroyManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -142,7 +148,13 @@ export const useDestroyManyRecords = ({
       }
     }
 
-    await refetchAggregateQueries();
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
+
+    if (isNavigationMenuItemEnabled) {
+      removeNavigationMenuItemsByTargetRecordIds(recordIdsToDestroy);
+    }
 
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,

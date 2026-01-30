@@ -1,8 +1,8 @@
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -36,37 +36,34 @@ export class WorkflowCreateManyPostQueryHook
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspace.id,
-            'workflowVersion',
-          );
-
-        const position = await this.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflowVersion',
-          },
-          workspaceId: workspace.id,
-        });
-
-        const workflowVersionsToCreate = payload.map((workflow) => ({
-          workflowId: workflow.id,
-          status: WorkflowVersionStatus.DRAFT,
-          name: 'v1',
-          position,
-        }));
-
-        await Promise.all(
-          workflowVersionsToCreate.map((workflowVersion) => {
-            return workflowVersionRepository.insert(workflowVersion);
-          }),
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspace.id,
+          'workflowVersion',
         );
-      },
-    );
+
+      const position = await this.recordPositionService.buildRecordPosition({
+        value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId: workspace.id,
+      });
+
+      const workflowVersionsToCreate = payload.map((workflow) => ({
+        workflowId: workflow.id,
+        status: WorkflowVersionStatus.DRAFT,
+        name: 'v1',
+        position,
+      }));
+
+      await Promise.all(
+        workflowVersionsToCreate.map((workflowVersion) => {
+          return workflowVersionRepository.insert(workflowVersion);
+        }),
+      );
+    }, authContext as WorkspaceAuthContext);
   }
 }

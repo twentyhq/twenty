@@ -1,8 +1,9 @@
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
-import { getFunctionBaseFile } from '@/cli/utilities/entity/utils/entity-function-template';
-import { convertToLabel } from '@/cli/utilities/entity/utils/entity-label';
-import { getNewObjectFileContent } from '@/cli/utilities/entity/utils/entity-object-template';
-import { getRoleBaseFile } from '@/cli/utilities/entity/utils/entity-role-template';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
+import { getFunctionBaseFile } from '@/cli/utilities/entity/entity-function-template';
+import { convertToLabel } from '@/cli/utilities/entity/entity-label';
+import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
+import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
@@ -10,12 +11,13 @@ import camelcase from 'lodash.camelcase';
 import kebabcase from 'lodash.kebabcase';
 import { join } from 'path';
 
-const APP_FOLDER = 'src/app';
+const APP_FOLDER = 'src';
 
 export enum SyncableEntity {
   AGENT = 'agent',
   OBJECT = 'object',
   FUNCTION = 'function',
+  FRONT_COMPONENT = 'front-component',
   ROLE = 'role',
 }
 
@@ -26,7 +28,7 @@ export const isSyncableEntity = (value: string): value is SyncableEntity => {
 export class EntityAddCommand {
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
-      // Default to src/app/ folder, allow override with path parameter
+      // Default to src/ folder, allow override with path parameter
       const appPath = path
         ? join(CURRENT_EXECUTION_DIRECTORY, path)
         : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER);
@@ -43,7 +45,7 @@ export class EntityAddCommand {
         // Use *.object.ts naming convention
         const objectFileName = `${camelcase(name)}.object.ts`;
 
-        const decoratedObject = getNewObjectFileContent({
+        const decoratedObject = getObjectBaseFile({
           data: entityData,
           name,
         });
@@ -66,16 +68,38 @@ export class EntityAddCommand {
         // Use *.function.ts naming convention
         const functionFileName = `${kebabcase(entityName)}.function.ts`;
 
-        const decoratedServerlessFunction = getFunctionBaseFile({
+        const decoratedLogicFunction = getFunctionBaseFile({
           name: entityName,
         });
 
         const filePath = join(appPath, functionFileName);
 
-        await fs.writeFile(filePath, decoratedServerlessFunction);
+        await fs.writeFile(filePath, decoratedLogicFunction);
 
         console.log(
           chalk.green(`✓ Created function:`),
+          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
+        );
+
+        return;
+      }
+
+      if (entity === SyncableEntity.FRONT_COMPONENT) {
+        const entityName = await this.getEntityName(entity);
+
+        // Use *.front-component.tsx naming convention
+        const frontComponentFileName = `${kebabcase(entityName)}.front-component.tsx`;
+
+        const decoratedFrontComponent = getFrontComponentBaseFile({
+          name: entityName,
+        });
+
+        const filePath = join(appPath, frontComponentFileName);
+
+        await fs.writeFile(filePath, decoratedFrontComponent);
+
+        console.log(
+          chalk.green(`✓ Created front component:`),
           chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
         );
 
@@ -119,7 +143,12 @@ export class EntityAddCommand {
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: [SyncableEntity.FUNCTION, SyncableEntity.OBJECT, SyncableEntity.ROLE],
+        choices: [
+          SyncableEntity.FUNCTION,
+          SyncableEntity.FRONT_COMPONENT,
+          SyncableEntity.OBJECT,
+          SyncableEntity.ROLE,
+        ],
       },
     ]);
 

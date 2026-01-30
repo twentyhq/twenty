@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-required-metadata-for-validation.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -38,12 +39,18 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   private readonly logger = new Logger(
     WorkspaceMigrationValidateBuildAndRunService.name,
   );
+  private readonly isDebugEnabled: boolean;
 
   constructor(
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMigrationBuildOrchestratorService: WorkspaceMigrationBuildOrchestratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-  ) {}
+    twentyConfigService: TwentyConfigService,
+  ) {
+    const logLevels = twentyConfigService.get('LOG_LEVELS');
+
+    this.isDebugEnabled = logLevels.includes('debug');
+  }
 
   private async computeAllRelatedFlatEntityMaps({
     allFlatEntityOperationByMetadataName,
@@ -186,6 +193,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         });
 
     if (validateAndBuildResult.status === 'fail') {
+      if (this.isDebugEnabled) {
+        this.logger.debug(JSON.stringify(validateAndBuildResult, null, 2));
+      }
+
       return validateAndBuildResult;
     }
 
@@ -196,15 +207,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return;
     }
 
-    await this.workspaceMigrationRunnerService
-      .run(validateAndBuildResult.workspaceMigration)
-      .catch((error) => {
-        this.logger.error(error);
-        throw new WorkspaceMigrationV2Exception(
-          WorkspaceMigrationV2ExceptionCode.RUNNER_INTERNAL_SERVER_ERROR,
-          error.message,
-        );
-      });
+    await this.workspaceMigrationRunnerService.run(
+      validateAndBuildResult.workspaceMigration,
+    );
   }
 
   public async validateBuildAndRunWorkspaceMigration({

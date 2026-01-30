@@ -111,10 +111,12 @@ export class WorkspaceSoftDeleteQueryBuilder<
         aliasName: objectMetadata.nameSingular,
       }) as WhereClause[];
 
-      const after = await super.execute();
+      const typeORMSoftRemoveResultWithOnlyIdColumn = await super.execute();
+
+      const afterWithAllFields = await beforeEventSelectQueryBuilder.getMany();
 
       const formattedAfter = formatResult<T[]>(
-        after.raw,
+        afterWithAllFields,
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -133,15 +135,16 @@ export class WorkspaceSoftDeleteQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedBefore,
+          recordsBefore: formattedBefore,
+          recordsAfter: formattedAfter,
           authContext: this.authContext,
         }),
       );
 
       return {
-        raw: after.raw,
+        raw: typeORMSoftRemoveResultWithOnlyIdColumn.raw,
         generatedMaps: formattedAfter,
-        affected: after.affected,
+        affected: typeORMSoftRemoveResultWithOnlyIdColumn.affected,
       };
     } catch (error) {
       throw await computeTwentyORMException(error);

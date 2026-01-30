@@ -5,6 +5,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
@@ -68,11 +69,28 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           computeReferences: false,
         });
 
+        if (
+          !isDefined(cachedRecord) ||
+          !isDefined(cachedRecordWithConnection)
+        ) {
+          continue;
+        }
+
         const computedOptimisticRecord = {
+          ...cachedRecord,
           ...updatedRecord,
           id: updatedRecord.id,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
         };
+
+        updateRecordFromCache({
+          objectMetadataItems,
+          objectMetadataItem,
+          cache: apolloCoreClient.cache,
+          record: computedOptimisticRecord,
+          recordGqlFields,
+          objectPermissionsByObjectMetadataId,
+        });
 
         const computedOptimisticRecordWithConnection = getRecordNodeFromRecord({
           record: computedOptimisticRecord,
@@ -81,10 +99,7 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           recordGqlFields,
         });
 
-        if (
-          !isDefined(cachedRecordWithConnection) ||
-          !isDefined(computedOptimisticRecordWithConnection)
-        ) {
+        if (!isDefined(computedOptimisticRecordWithConnection)) {
           continue;
         }
 

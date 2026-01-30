@@ -7,9 +7,11 @@ export const canBeUnique = (
   field: Pick<FieldMetadataItem, 'type' | 'isCustom'>,
 ) => {
   if (
-    [FieldMetadataType.MORPH_RELATION, FieldMetadataType.RELATION].includes(
-      field.type,
-    ) ||
+    [
+      FieldMetadataType.MORPH_RELATION,
+      FieldMetadataType.RELATION,
+      FieldMetadataType.FILES,
+    ].includes(field.type) ||
     (isCompositeFieldType(field.type) &&
       SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[field.type].subFields.every(
         (subField) => !subField.isIncludedInUniqueConstraint,

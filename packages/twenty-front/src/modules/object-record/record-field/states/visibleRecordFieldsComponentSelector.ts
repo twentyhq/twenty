@@ -48,10 +48,16 @@ export const visibleRecordFieldsComponentSelector = createComponentSelector({
             return false;
           }
 
-          const isActive = isActiveFieldMetadataItem({
-            objectNameSingular: objectMetadataItem.nameSingular,
-            fieldMetadata: fieldMetadataItem,
-          });
+          const isLabelIdentifier =
+            fieldMetadataItem.id ===
+            objectMetadataItem.labelIdentifierFieldMetadataId;
+
+          const isActive =
+            isLabelIdentifier ||
+            isActiveFieldMetadataItem({
+              objectNameSingular: objectMetadataItem.nameSingular,
+              fieldMetadata: fieldMetadataItem,
+            });
 
           const isReadable = objectMetadataItem.readableFields.some(
             findById(fieldMetadataItem.id),

@@ -1,0 +1,21 @@
+import { SettingsLogicFunctionNewForm } from '@/settings/logic-functions/components/SettingsLogicFunctionNewForm';
+import { SettingsLogicFunctionTabEnvironmentVariablesSection } from '@/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection';
+import { type LogicFunctionFormValues } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
+
+export const SettingsLogicFunctionSettingsTab = ({
+  formValues,
+  onChange,
+}: {
+  formValues: LogicFunctionFormValues;
+  onChange: (key: string) => (value: string) => void;
+}) => {
+  return (
+    <>
+      <SettingsLogicFunctionNewForm
+        formValues={formValues}
+        onChange={onChange}
+      />
+      <SettingsLogicFunctionTabEnvironmentVariablesSection />
+    </>
+  );
+};

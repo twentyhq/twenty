@@ -1,67 +1,67 @@
 ---
-title: Widget FAQ
-description: Common questions and error messages explained.
+title: FAQ по виджету
+description: Разъяснение распространённых вопросов и сообщений об ошибках.
 ---
 
 <AccordionGroup>
-  <Accordion title="How do I show percentages instead of counts?">
-    Three options:
+  <Accordion title="Как отображать проценты вместо количества?">
+    Три варианта:
 
-    * **Percent empty/not empty**: Under Data on display, select Percent empty or Percent not empty
-    * **Ratio**: For Select or Checkbox fields, enable Ratio to show a specific option as a percentage of all records
-    * **Suffix**: For aggregate charts, add `%` as a Suffix in Style settings
+    * **Процент пустых/непустых**: В разделе Отображаемые данные выберите Процент пустых или Процент непустых
+    * **Доля**: Для полей типа Выбор или Флажок включите параметр Доля, чтобы показывать конкретный вариант в процентах от всех записей
+    * **Суффикс**: Для агрегированных диаграмм добавьте `%` как суффикс в настройках стиля
   </Accordion>
 
-  <Accordion title="What's the difference between grouped and stacked bars?">
-    When using **Group by**, you can display series two ways:
+  <Accordion title="В чём разница между сгруппированными столбцами и столбцами с накоплением?">
+    При использовании **Группировки по** можно отображать ряды двумя способами:
 
-    * **Grouped**: Bars side by side—best for comparing exact values
-    * **Stacked**: Bars on top of each other—best for showing composition
+    * **Сгруппировано**: Столбцы рядом — лучше для сравнения точных значений
+    * **С накоплением**: Столбцы один над другим — лучше для демонстрации состава
 
-    Toggle **Stacked** in Style settings to switch.
+    Переключите параметр **С накоплением** в настройках стиля, чтобы переключить режим.
   </Accordion>
 
-  <Accordion title="Why can't I see Sum or Average options?">
-    Available operations depend on **field type**:
+  <Accordion title="Почему я не вижу параметры Сумма или Среднее?">
+    Доступные операции зависят от **типа поля**:
 
-    * **Number fields**: Sum, Average, Min, Max
-    * **Date fields**: Earliest, Latest (aggregate charts only)
-    * **Checkbox fields**: Count true, Count false
+    * **Числовые поля**: Сумма, Среднее, Минимум, Максимум
+    * **Поля даты**: Самая ранняя, Самая поздняя (только для агрегированных диаграмм)
+    * **Поля-флажки**: Количество true, Количество false
 
-    If you don't see an option, check that you've selected a compatible field type.
+    Если вы не видите нужный параметр, проверьте, что выбран совместимый тип поля.
   </Accordion>
 
-  <Accordion title="Why are some settings grayed out or missing?">
-    Many settings only appear when prerequisites are met:
+  <Accordion title="Почему некоторые настройки неактивны или отсутствуют?">
+    Многие параметры отображаются только при выполнении предварительных условий:
 
-    * **Date granularity**: Select a date field first
-    * **Group by, Legend, Stacked**: Set Source first
-    * **Legend, Stacked toggles**: Set Group by first
+    * **Детализация даты**: сначала выберите поле с датой
+    * **Группировка по, Легенда, С накоплением**: сначала задайте Источник
+    * **Переключатели «Легенда» и «С накоплением»**: сначала задайте Группировку по
 
-    If a setting is missing, configure its prerequisite first.
+    Если параметр отсутствует, сначала настройте его предварительное условие.
   </Accordion>
 
-  <Accordion title="What does 'No data' mean?">
-    The chart found no records matching your configuration.
+  <Accordion title="Что означает 'Нет данных'?">
+    Диаграмма не нашла записей, соответствующих вашей конфигурации.
 
-    **To fix:** Remove or adjust filters, verify you selected the correct Source object, or check that records exist for your date range.
+    **Как исправить:** Удалите или скорректируйте фильтры, убедитесь, что выбран правильный объект Источник, или проверьте, что для вашего диапазона дат существуют записи.
   </Accordion>
 
-  <Accordion title="What does 'Invalid configuration' mean?">
-    A required setting is missing or incompatible.
+  <Accordion title="Что означает 'Недопустимая конфигурация'?">
+    Отсутствует обязательный параметр или он несовместим.
 
-    **To fix:** Ensure Source is set, Data on display is configured, and any required grouping fields are selected.
+    **Как исправить:** Убедитесь, что задан Источник, настроены Отображаемые данные и выбраны все обязательные поля группировки.
   </Accordion>
 
-  <Accordion title="What does 'Undisplayed data' mean?">
-    Your data exceeds display limits (100 bars, 100 data points, or 100 slices).
+  <Accordion title="Что означает 'Неотображаемые данные'?">
+    Ваши данные превышают пределы отображения (100 столбцов, 100 точек данных или 100 секторов).
 
-    **To fix:** Add filters to narrow your data, or change date granularity from Day to Week or Month.
+    **Как исправить:** Добавьте фильтры, чтобы сузить данные, или измените детализацию даты с дня на неделю или месяц.
   </Accordion>
 
-  <Accordion title="Why is one axis showing no data?">
-    The selected field has no values for the records in your filter, or the field type doesn't match the expected data.
+  <Accordion title="Почему на одной оси нет данных?">
+    В выбранном поле нет значений для записей, попадающих под ваш фильтр, или тип поля не соответствует ожидаемым данным.
 
-    **To fix:** Try a different field, or check that records have values for the selected field.
+    **Как исправить:** Попробуйте другое поле или проверьте, что у записей есть значения для выбранного поля.
   </Accordion>
 </AccordionGroup>

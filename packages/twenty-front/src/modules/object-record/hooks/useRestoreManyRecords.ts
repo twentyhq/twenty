@@ -203,6 +203,7 @@ export const useRestoreManyRecords = ({
         objectMetadataItem,
         operation: {
           type: 'restore-many',
+          restoredRecords: restoredRecordsForThisBatch,
         },
       });
 

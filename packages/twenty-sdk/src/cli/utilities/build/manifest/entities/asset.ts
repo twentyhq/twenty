@@ -1,0 +1,25 @@
+import { glob } from 'fast-glob';
+import path from 'path';
+import { type AssetManifest, ASSETS_DIR } from 'twenty-shared/application';
+
+import { type EntityBuildResult } from '@/cli/utilities/build/manifest/entities/entity-interface';
+
+export class AssetEntityBuilder {
+  async build(appPath: string): Promise<EntityBuildResult<AssetManifest>> {
+    const assetFiles = await glob([`${ASSETS_DIR}/**/*`], {
+      cwd: appPath,
+      onlyFiles: true,
+    });
+
+    const manifests: AssetManifest[] = assetFiles.map((filePath) => ({
+      filePath,
+      fileName: path.basename(filePath),
+      fileType: path.extname(filePath).replace(/^\./, ''),
+      checksum: null,
+    }));
+
+    return { manifests, filePaths: assetFiles };
+  }
+}
+
+export const assetEntityBuilder = new AssetEntityBuilder();

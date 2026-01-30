@@ -1,5 +1,3 @@
-import { ObjectType } from '@nestjs/graphql';
-
 import {
   Column,
   CreateDateColumn,
@@ -14,10 +12,10 @@ import {
 } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
-@ObjectType('File')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
 export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -49,4 +47,7 @@ export class FileEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: false, default: false })
   isStaticAsset: boolean;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  settings: FileSettings | null;
 }

@@ -12,6 +12,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { type RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
@@ -21,7 +22,8 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
+import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
+import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
@@ -45,6 +47,7 @@ export class WorkspaceInsertQueryBuilder<
   private relationNestedConfig:
     | [RelationConnectQueryConfig[], RelationDisconnectQueryFieldsByEntityIndex]
     | null;
+  private filesFieldSync: FilesFieldSync;
 
   constructor(
     queryBuilder: InsertQueryBuilder<T>,
@@ -63,6 +66,7 @@ export class WorkspaceInsertQueryBuilder<
     this.relationNestedQueries = new RelationNestedQueries(
       this.internalContext,
     );
+    this.filesFieldSync = new FilesFieldSync(this.internalContext);
   }
 
   override clone(): this {
@@ -157,6 +161,38 @@ export class WorkspaceInsertQueryBuilder<
         this.internalContext,
       );
 
+      let filesFieldFileIds = null;
+      let fileIdToApplicationId = new Map<string, string>();
+
+      const entities = Array.isArray(this.expressionMap.valuesSet)
+        ? this.expressionMap.valuesSet
+        : [this.expressionMap.valuesSet];
+
+      const filesFieldDiffByEntityIndex =
+        this.filesFieldSync.computeFilesFieldDiffBeforeInsert(
+          entities as QueryDeepPartialEntityWithNestedRelationFields<T>[],
+          mainAliasTarget,
+        );
+
+      if (isDefined(filesFieldDiffByEntityIndex)) {
+        const result = await this.filesFieldSync.enrichFilesFields({
+          entities:
+            entities as QueryDeepPartialEntityWithNestedRelationFields<T>[],
+          filesFieldDiffByEntityIndex,
+          workspaceId: this.internalContext.workspaceId,
+          target: mainAliasTarget,
+        });
+
+        filesFieldFileIds = result.fileIds;
+        fileIdToApplicationId = result.fileIdToApplicationId;
+
+        this.expressionMap.valuesSet = Array.isArray(
+          this.expressionMap.valuesSet,
+        )
+          ? result.entities
+          : result.entities[0];
+      }
+
       if (isDefined(this.relationNestedConfig)) {
         const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
           this as unknown as WorkspaceSelectQueryBuilder<T>,
@@ -182,6 +218,13 @@ export class WorkspaceInsertQueryBuilder<
       this.validateRLSPredicatesForInsert();
 
       const result = await super.execute();
+
+      if (isDefined(filesFieldFileIds)) {
+        await this.filesFieldSync.updateFileEntityRecords(
+          filesFieldFileIds,
+          fileIdToApplicationId,
+        );
+      }
       const eventSelectQueryBuilder = (
         this.connection.manager as WorkspaceEntityManager
       ).createQueryBuilder(
@@ -212,7 +255,7 @@ export class WorkspaceInsertQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedResultForEvent,
+          recordsAfter: formattedResultForEvent,
           authContext: this.authContext,
         }),
       );
@@ -223,7 +266,7 @@ export class WorkspaceInsertQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedResultForEvent,
+          recordsAfter: formattedResultForEvent,
           authContext: this.authContext,
         }),
       );
@@ -273,6 +316,14 @@ export class WorkspaceInsertQueryBuilder<
   }
 
   private validateRLSPredicatesForInsert(): void {
+    if (
+      this.featureFlagMap[
+        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
+      ] !== true
+    ) {
+      return;
+    }
+
     const mainAliasTarget = this.getMainAliasTarget();
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,
@@ -283,8 +334,15 @@ export class WorkspaceInsertQueryBuilder<
       ? this.expressionMap.valuesSet
       : [this.expressionMap.valuesSet];
 
+    const valuesToInsertFormatted = formatResult<T[]>(
+      valuesToInsert,
+      objectMetadata,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
+    );
+
     validateRLSPredicatesForRecords({
-      records: valuesToInsert,
+      records: valuesToInsertFormatted,
       objectMetadata,
       internalContext: this.internalContext,
       authContext: this.authContext,

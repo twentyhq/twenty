@@ -24,10 +24,13 @@ import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrad
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-delete-all-files.command';
+import { FlushV2CacheAndIncrementMetadataVersionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-flush-v2-cache-and-increment-metadata-version.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
 import { IdentifyIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-index-metadata.command';
 import { IdentifyObjectMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-object-metadata.command';
+import { IdentifyRemainingEntitiesMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-remaining-entities-metadata.command';
 import { IdentifyRoleMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-role-metadata.command';
 import { IdentifyViewFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-field-metadata.command';
 import { IdentifyViewFilterMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-view-filter-metadata.command';
@@ -37,12 +40,16 @@ import { MakeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand
 import { MakeFieldMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-field-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-index-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeObjectMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-object-metadata-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-remaining-entities-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeRoleUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-role-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFieldUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-field-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-filter-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-group-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
+import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
+import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
+import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -103,6 +110,15 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly makeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewFilterUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly makeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly identifyRemainingEntitiesMetadataCommand: IdentifyRemainingEntitiesMetadataCommand,
+    protected readonly makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    protected readonly flushV2CacheAndIncrementMetadataVersionCommand: FlushV2CacheAndIncrementMetadataVersionCommand,
+    protected readonly deleteFileRecordsCommand: DeleteFileRecordsCommand,
+
+    // 1.17 Commands
+    protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
+    protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
+    protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -137,9 +153,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     ];
 
     const commands_1160: VersionCommands = [
-      this.updateTaskOnDeleteActionCommand,
-      this.backfillOpportunityOwnerFieldCommand,
-      this.backfillStandardPageLayoutsCommand,
       this.identifyAgentMetadataCommand,
       this.identifyFieldMetadataCommand,
       this.identifyObjectMetadataCommand,
@@ -149,6 +162,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyViewFilterMetadataCommand,
       this.identifyViewGroupMetadataCommand,
       this.identifyIndexMetadataCommand,
+      this.backfillOpportunityOwnerFieldCommand,
+      this.backfillStandardPageLayoutsCommand,
       this
         .makeAgentUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
@@ -167,6 +182,20 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         .makeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this
         .makeIndexMetadataUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this.identifyRemainingEntitiesMetadataCommand,
+      this
+        .makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this.flushV2CacheAndIncrementMetadataVersionCommand,
+      this.updateTaskOnDeleteActionCommand,
+      this.deleteFileRecordsCommand,
+    ];
+
+    const commands_1170: VersionCommands = [
+      this.migrateAttachmentToMorphRelationsCommand,
+      this.identifyWebhookMetadataCommand,
+      this
+        .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this.deleteFileRecordsCommand,
     ];
 
     this.allCommands = {
@@ -175,6 +204,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.14.0': commands_1140,
       '1.15.0': commands_1150,
       '1.16.0': commands_1160,
+      '1.17.0': commands_1170,
     };
   }
 

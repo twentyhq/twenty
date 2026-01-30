@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -28,12 +29,13 @@ import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/r
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      ApplicationEntity,
       RoleEntity,
       RoleTargetEntity,
       ObjectPermissionEntity,
@@ -65,7 +67,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RoleResolver,
     WorkspaceFlatRoleMapCacheService,
     WorkspaceFlatRoleTargetMapCacheService,
-    WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+    WorkspaceMigrationGraphqlApiExceptionInterceptor,
     WorkspaceRolesPermissionsCacheService,
   ],
   exports: [

@@ -29,7 +29,7 @@ import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
-import { WidgetType } from '~/generated/graphql';
+import { PageLayoutType, WidgetType } from '~/generated/graphql';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;
@@ -79,16 +79,15 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
 
   const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
 
+  const isReorderEnabled =
+    currentPageLayout.type !== PageLayoutType.RECORD_PAGE;
+
   // TODO: when we have more widgets without headers, we should use a more generic approach to hide the header
   // each widget type could have metadata (e.g., hasHeader: boolean or headerMode: 'always' | 'editOnly' | 'never')
   const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
   const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
 
-  const showHeader =
-    layoutMode !== 'canvas' &&
-    !hideRichTextHeader &&
-    // TODO: use a more generic approach after record page layout v1 release
-    widget.type !== WidgetType.FIELDS;
+  const showHeader = layoutMode !== 'canvas' && !hideRichTextHeader;
 
   const handleClick = () => {
     handleEditWidget({
@@ -139,6 +138,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         data-widget-id={widget.id}
+        data-testid={widget.id}
         className="widget"
       >
         {showHeader && (
@@ -147,6 +147,7 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
             variant={variant}
             isInEditMode={isPageLayoutInEditMode}
             isResizing={isResizing}
+            isReorderEnabled={isReorderEnabled}
             title={widget.title}
             onRemove={handleRemove}
             actions={actions}
@@ -161,15 +162,18 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
           />
         )}
 
-        <WidgetCardContent variant={variant}>
-          {hasAccess && (
+        <WidgetCardContent
+          variant={variant}
+          hasHeader={showHeader}
+          isEditable={isPageLayoutInEditMode}
+        >
+          {hasAccess ? (
             <ErrorBoundary
               FallbackComponent={PageLayoutWidgetInvalidConfigDisplay}
             >
               <WidgetContentRenderer widget={widget} />
             </ErrorBoundary>
-          )}
-          {!hasAccess && (
+          ) : (
             <StyledNoAccessContainer>
               <IconLock
                 color={theme.font.color.tertiary}

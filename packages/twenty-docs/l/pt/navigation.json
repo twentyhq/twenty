@@ -15,7 +15,7 @@
           }
         },
         "dataModel": {
-          "label": "Data Model",
+          "label": "Modelo de dados",
           "groups": {
             "dataModelCapabilities": {
               "label": "Capabilities"
@@ -48,7 +48,7 @@
           }
         },
         "workflows": {
-          "label": "Workflows",
+          "label": "Fluxos de trabalho",
           "groups": {
             "workflowsCapabilities": {
               "label": "Capabilities"
@@ -66,14 +66,14 @@
                   "label": "Advanced Configurations"
                 },
                 "needMoreHelp": {
-                  "label": "Need More Help"
+                  "label": "Precisa de mais ajuda"
                 }
               }
             }
           }
         },
         "ai": {
-          "label": "AI",
+          "label": "IA",
           "groups": {
             "aiCapabilities": {
               "label": "Capabilities"
@@ -84,7 +84,7 @@
           }
         },
         "viewsPipelines": {
-          "label": "Views & Pipelines",
+          "label": "Visualizações e pipelines",
           "groups": {
             "viewsPipelinesCapabilities": {
               "label": "Capabilities"
@@ -95,7 +95,7 @@
           }
         },
         "dashboards": {
-          "label": "Dashboards",
+          "label": "Painéis",
           "groups": {
             "dashboardsCapabilities": {
               "label": "Capabilities"
@@ -117,7 +117,7 @@
           }
         },
         "billing": {
-          "label": "Billing",
+          "label": "Faturação",
           "groups": {
             "billingCapabilities": {
               "label": "Capabilities"
@@ -128,7 +128,7 @@
           }
         },
         "settings": {
-          "label": "Settings",
+          "label": "Configurações",
           "groups": {
             "settingsCapabilities": {
               "label": "Capabilities"
@@ -141,10 +141,10 @@
       }
     },
     "developers": {
-      "label": "Developers",
+      "label": "Programadores",
       "groups": {
         "developersGroup": {
-          "label": "Developers"
+          "label": "Programadores"
         },
         "extend": {
           "label": "Extend",
@@ -169,29 +169,29 @@
               "label": "Capabilities",
               "groups": {
                 "frontendDevelopment": {
-                  "label": "Frontend Development",
+                  "label": "Desenvolvimento Frontend",
                   "groups": {
                     "twentyUi": {
                       "label": "Twenty UI",
                       "groups": {
                         "display": {
-                          "label": "Display"
+                          "label": "Exibir"
                         },
                         "feedback": {
                           "label": "Feedback"
                         },
                         "input": {
-                          "label": "Input"
+                          "label": "Entrada"
                         },
                         "navigation": {
-                          "label": "Navigation"
+                          "label": "Navegação"
                         }
                       }
                     }
                   }
                 },
                 "backendDevelopment": {
-                  "label": "Backend Development"
+                  "label": "Desenvolvimento Backend"
                 }
               }
             }

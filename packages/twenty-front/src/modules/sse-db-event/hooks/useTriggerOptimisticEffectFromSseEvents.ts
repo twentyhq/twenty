@@ -1,4 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useTriggerOptimisticEffectFromSseCreateEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseCreateEvents';
+import { useTriggerOptimisticEffectFromSseDeleteEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseDeleteEvents';
+import { useTriggerOptimisticEffectFromSseRestoreEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseRestoreEvents';
 import { useTriggerOptimisticEffectFromSseUpdateEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseUpdateEvents';
 import { groupObjectRecordSseEventsByEventType } from '@/sse-db-event/utils/groupObjectRecordSseEventsByEventType';
 import { groupObjectRecordSseEventsByObjectMetadataItemNameSingular } from '@/sse-db-event/utils/groupObjectRecordSseEventsByObjectMetadataItemNameSingular';
@@ -14,6 +17,15 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
 
   const { triggerOptimisticEffectFromSseUpdateEvents } =
     useTriggerOptimisticEffectFromSseUpdateEvents();
+
+  const { triggerOptimisticEffectFromSseCreateEvents } =
+    useTriggerOptimisticEffectFromSseCreateEvents();
+
+  const { triggerOptimisticEffectFromSseDeleteEvents } =
+    useTriggerOptimisticEffectFromSseDeleteEvents();
+
+  const { triggerOptimisticEffectFromSseRestoreEvents } =
+    useTriggerOptimisticEffectFromSseRestoreEvents();
 
   const triggerOptimisticEffectFromSseEvents = useCallback(
     ({ objectRecordEvents }: { objectRecordEvents: ObjectRecordEvent[] }) => {
@@ -58,11 +70,35 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
                 objectMetadataItem,
               });
               break;
+            case DatabaseEventAction.CREATED:
+              triggerOptimisticEffectFromSseCreateEvents({
+                objectRecordEvents: objectRecordEventsForThisEventType,
+                objectMetadataItem,
+              });
+              break;
+            case DatabaseEventAction.DELETED:
+              triggerOptimisticEffectFromSseDeleteEvents({
+                objectRecordEvents: objectRecordEventsForThisEventType,
+                objectMetadataItem,
+              });
+              break;
+            case DatabaseEventAction.RESTORED:
+              triggerOptimisticEffectFromSseRestoreEvents({
+                objectRecordEvents: objectRecordEventsForThisEventType,
+                objectMetadataItem,
+              });
+              break;
           }
         }
       }
     },
-    [objectMetadataItems, triggerOptimisticEffectFromSseUpdateEvents],
+    [
+      objectMetadataItems,
+      triggerOptimisticEffectFromSseUpdateEvents,
+      triggerOptimisticEffectFromSseCreateEvents,
+      triggerOptimisticEffectFromSseDeleteEvents,
+      triggerOptimisticEffectFromSseRestoreEvents,
+    ],
   );
 
   return { triggerOptimisticEffectFromSseEvents };

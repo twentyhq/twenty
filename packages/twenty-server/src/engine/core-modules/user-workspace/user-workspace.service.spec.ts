@@ -2,8 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type DataSource, type Repository } from 'typeorm';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileFolder } from 'twenty-shared/types';
 
 import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
@@ -107,7 +106,9 @@ describe('UserWorkspaceService', () => {
           useValue: {
             executeInWorkspaceContext: jest
               .fn()
-              .mockImplementation(async (_authContext, callback) => callback()),
+              .mockImplementation(
+                async (callback: () => any, _authContext?: any) => callback(),
+              ),
             getRepository: jest.fn(),
           },
         },

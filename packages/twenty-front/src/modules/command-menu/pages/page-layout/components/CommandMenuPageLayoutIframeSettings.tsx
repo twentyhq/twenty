@@ -1,3 +1,4 @@
+import { WidgetSettingsFooter } from '@/command-menu/pages/page-layout/components/WidgetSettingsFooter';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -9,8 +10,15 @@ import { useState } from 'react';
 import { isDefined, isValidUrl } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated/graphql';
 
+const StyledOuterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
 const StyledContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   padding: ${({ theme }) => theme.spacing(2)};
@@ -75,7 +83,7 @@ export const CommandMenuPageLayoutIframeSettings = () => {
   };
 
   return (
-    <>
+    <StyledOuterContainer>
       <StyledContainer>
         <FormTextFieldInput
           label={t`URL to Embed`}
@@ -85,6 +93,7 @@ export const CommandMenuPageLayoutIframeSettings = () => {
           error={urlError}
         />
       </StyledContainer>
-    </>
+      <WidgetSettingsFooter />
+    </StyledOuterContainer>
   );
 };

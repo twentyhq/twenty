@@ -1,94 +1,94 @@
 ---
-title: Import Relations Between Objects
-description: Import relationships between records via CSV.
+title: オブジェクト間のリレーションをインポートする
+description: CSV を使ってレコード間のリレーションをインポートします。
 ---
 
-## Overview
+## 概要
 
-Twenty supports importing relationships between objects during CSV import. This allows you to link records (e.g., attach People to Companies) as part of your data migration.
+Twenty は、CSV インポート時にオブジェクト間のリレーションのインポートをサポートしています。 これにより、データ移行の一環としてレコードをリンクできます（例：連絡先を会社に関連付ける）。
 
-<Note>**Currently supported for import**: One-to-many relations pointing to a single object type on each side (e.g., People → Companies). Relations pointing to multiple object types are not yet supported in import/export.</Note>
+<Note>**現在インポートでサポート**：各側が単一のオブジェクトタイプを指す一対多リレーション（例：連絡先 → 会社）。 複数のオブジェクトタイプを指すリレーションは、現時点ではインポート/エクスポートに対応していません。</Note>
 
-## How Relations Work in Twenty
+## Twenty におけるリレーションの仕組み
 
-### One to Many / Many to One
+### 1 対多 / 多対 1
 
-Twenty supports standard relations where one record links to many others:
+Twenty は、1 件のレコードが複数のレコードにリンクする標準的なリレーションをサポートしています:
 
-* **One Company → Many People**: A company can have multiple employees, but each person belongs to one company
-* **One Company → Many Opportunities**: A company can have multiple deals, but each opportunity belongs to one company
+* **1 社 → 複数の連絡先**：1 つの会社には複数の従業員が所属できますが、各連絡先は 1 つの会社に所属します
+* **1 社 → 複数の商談**：1 つの会社は複数の商談を持てますが、各商談は 1 つの会社に属します
 
-### Relations That Can Point to Multiple Object Types
+### 複数のオブジェクトタイプを指すことができるリレーション
 
-Some relations can connect to different types of objects. This works in two ways:
+一部のリレーションは、異なる種類のオブジェクトに接続できます。 これは 2 つのパターンで機能します:
 
-**Pattern 1: Many records linking to one record each from different object types**
+**パターン 1：異なるオブジェクトタイプからの多数のレコードが、それぞれ 1 件のレコードにリンクする場合**
 
-Several Notes, Tasks, or Activities can each be attached to multiple object types at once:
+複数のメモ、タスク、またはアクティビティは、それぞれ同時に複数のオブジェクトタイプに関連付けることができます:
 
-* **Notes** can be linked to one Person, one Company, and one Opportunity simultaneously
-* **Tasks** can be linked to one Person, one Company, and one Opportunity simultaneously
+* **メモ**は、連絡先 1 件、会社 1 社、商談 1 件に同時にリンクできます
+* **タスク**は、連絡先 1 件、会社 1 社、商談 1 件に同時にリンクできます
 
-Here, the Notes/Tasks are on the "many" side. Each links to one record per object type.
+ここでは、メモ/タスクが「多」の側です。 それぞれがオブジェクトタイプごとに 1 件のレコードへリンクします。
 
 <img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
 
-**Pattern 2: One record receiving links from many records of different object types**
+**パターン 2：1 件のレコードが、異なるオブジェクトタイプの多数のレコードからリンクを受け取る場合**
 
-A Project can receive links from multiple records across different object types:
+プロジェクトは、異なるオブジェクトタイプにわたる複数のレコードからリンクを受け取ることができます:
 
-* **A Project** can have many People linked to it, many Companies linked to it, and many Notes attached to it
+* **プロジェクト**には、多数の連絡先がリンクされ、多数の会社がリンクされ、多数のメモが添付される可能性があります
 
-Here, the Project is on the "one" side. Multiple records from different objects can all link to the same Project.
+ここでは、プロジェクトが「1」の側です。 異なるオブジェクトの複数のレコードが、同じプロジェクトにすべてリンクできます。
 
 <img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
 
 <Warning>
-  **Import/Export limitation**: Relations that point to multiple object types (like Notes → People/Companies/Opportunities) are **not yet supported** in CSV import or export.
+  **インポート/エクスポートの制限**：複数のオブジェクトタイプを指すリレーション（例：メモ → 連絡先/会社/商談）は、CSV のインポートやエクスポートでは**まだサポートされていません**。
 
-  * **Import**: Only one-to-many relations pointing to a single object type on each side can be imported
-  * **Export**: Columns for relations pointing to multiple object types are currently left empty
+  * **インポート**：各側が単一のオブジェクトタイプを指す一対多のリレーションのみインポートできます
+  * **エクスポート**：複数のオブジェクトタイプを指すリレーションの列は、現在空のままになります
 
-  This is on our roadmap.
+  これはロードマップにあります。
 </Warning>
 
-### What's Not Supported Today
+### 現在サポートされていないもの
 
-**Many to Many relations** are not yet available. For example, you cannot currently create a relation where:
+**多対多リレーション**はまだ利用できません。 たとえば、現在は次のようなリレーションを作成できません：
 
-* Many People are linked to many Projects
+* 多数の連絡先が多数のプロジェクトにリンクされる
 
-<Note>Many to Many relations are planned for H1 2026.</Note>
+<Note>多対多リレーションは 2026 年上半期に提供予定です。</Note>
 
-## Linking Records During Import
+## インポート時にレコードをリンクする
 
-<Note>**Reminder**: Only one-to-many relations pointing to a single object type can be imported (e.g., People → Companies). Relations pointing to multiple object types (e.g., Notes → People/Companies/Opportunities) are not yet supported.</Note>
+<Note>**リマインダー**：各側が単一のオブジェクトタイプを指す一対多のリレーションのみインポートできます（例：連絡先 → 会社）。 複数のオブジェクトタイプを指すリレーション（例：メモ → 連絡先/会社/商談）は、まだサポートされていません。</Note>
 
-### Step 1: Identify the "One" and "Many" Sides
+### ステップ 1: 「1」と「多」の側を特定する
 
-First, determine which object is on the "one" side and which is on the "many" side of the relationship.
+まず、どのオブジェクトがリレーションの「1」の側で、どのオブジェクトが「多」の側かを特定します。
 
-**Example**:
+**例**:
 
-* **Company** is the "one" side (one company has many employees)
-* **People** is the "many" side (each person belongs to one company)
+* **会社**が「1」の側（1 つの会社に多くの従業員がいる）
+* **連絡先**が「多」の側（各人は 1 つの会社に所属する）
 
-### Step 2: Ensure the "One" Side Records Exist
+### ステップ 2: 「1」の側のレコードが存在することを確認する
 
-Before importing the "many" side, the "one" side records must already exist in Twenty.
+「多」の側をインポートする前に、「1」の側のレコードが Twenty に既に存在している必要があります。
 
-* Import or create the "one" side records first (e.g., Companies)
-* Validate their unique identifier. This can be:
-  * The `id` (Twenty's UUID)
-  * A field set as unique (e.g., `domain` for Companies, or an external ID from your previous system)
+* まず「1」の側のレコード（例：会社）をインポートまたは作成します
+* それらの一意の識別子を検証します。 これは次のいずれかです:
+  * `id`（Twenty の UUID）
+  * 一意に設定されたフィールド（例：会社の `domain`、または以前のシステムの外部 ID）
 
-<Warning>The import will fail if a reference is made to a record that does not exist.</Warning>
+<Warning>存在しないレコードを参照している場合、インポートは失敗します。</Warning>
 
-### Step 3: Prepare Your CSV File
+### ステップ 3: CSV ファイルを準備する
 
-Add a column in your "many" side CSV file that references the "one" side record.
+「多」の側の CSV ファイルに、「1」の側のレコードを参照する列を追加します。
 
-**Example**: For a People CSV file linking to Companies:
+**例**：会社にリンクする連絡先の CSV ファイルの場合:
 
 ```
 firstName,lastName,email,companyDomain
@@ -96,53 +96,53 @@ John,Smith,john@acme.com,https://acme.com
 Jane,Doe,jane@widgets.co,https://widgets.co
 ```
 
-**Important**:
+**重要**:
 
-* The value must **exactly match** the unique field on the Company record
-* For domains, use the **Domain URL** (e.g., `https://acme.com`), not the Domain Label
-* Map only **one** unique identifier per relation: this leads to a smoother import
+* 値は会社レコード上の一意フィールドと**完全に一致**している必要があります
+* ドメインの場合は、ドメインラベルではなく、**ドメイン URL**（例：`https://acme.com`）を使用してください
+* リレーションごとに**1 つ**の一意の識別子のみをマッピングしてください。そうすることで、よりスムーズにインポートできます
 
-### Step 4: Ensure the Relation Field Exists
+### ステップ 4: リレーションフィールドが存在することを確認する
 
-Before uploading your file, make sure the relation field exists between your objects.
+ファイルをアップロードする前に、オブジェクト間にリレーションフィールドが存在することを確認してください。
 
-If it doesn't exist:
+存在しない場合は:
 
-1. Go to **Settings → Data Model**
-2. Select your object (e.g., People)
-3. Create a relation field pointing to the target object (e.g., Company)
+1. **設定 → データモデル** に移動
+2. オブジェクト（例：連絡先）を選択する
+3. 対象オブジェクト（例：会社）を指すリレーションフィールドを作成する
 
-### Step 5: Upload and Map the Relation
+### ステップ 5: リレーションをアップロードしてマッピングする
 
-1. Upload your CSV file via the import UI
-2. In the field mapping step, find your relation column (e.g., `companyDomain`)
-3. Map it to the relation field (e.g., Company)
-4. Twenty will automatically link each record to the matching parent
+1. インポート UI から CSV ファイルをアップロードする
+2. フィールドのマッピング手順で、リレーション列（例：`companyDomain`）を見つける
+3. それをリレーションフィールド（例：会社）にマッピングする
+4. Twenty が各レコードを一致する親に自動でリンクします。
 
-### Available Unique Fields for Relations
+### リレーションで利用可能な一意フィールド
 
-| Object                                | Unique Fields Available                 |
-| ------------------------------------- | --------------------------------------- |
-| **Companies**                         | `id`, `domain`, any custom unique field |
-| **People**                            | `id`, `email`, any custom unique field  |
-| **Workspace Members**                 | `id`, `email` (not name)                |
-| **Other standard and custom objects** | `id`, any field marked as unique        |
+| オブジェクト                        | 利用可能な一意フィールド                 |
+| ----------------------------- | ---------------------------- |
+| **会社**                        | `id`、`domain`、任意のカスタム一意フィールド |
+| **連絡先**                       | `id`、`email`、任意のカスタム一意フィールド  |
+| **ワークスペースメンバー**               | `id`、`email`（名前ではありません）      |
+| **その他の標準オブジェクトおよびカスタムオブジェクト** | `id`、一意としてマークされた任意のフィールド     |
 
-<Note>**Linking to Workspace Members**: When the relation points to Workspace Members (your team logging into Twenty), reference them by their **email address**, not their name.</Note>
+<Note>**ワークスペースメンバーへのリンク**：リレーションの参照先がワークスペースメンバー（Twenty にログインするあなたのチーム）の場合、名前ではなく**メールアドレス**で参照してください。</Note>
 
-<Note>We recommend using `domain` for Companies and `email` for People, as these are human-readable and easy to maintain in spreadsheets.</Note>
+<Note>会社には `domain`、連絡先には `email` を使用することをおすすめします。これらは人間が読みやすく、スプレッドシートでの管理も容易です。</Note>
 
-<Note>**Reminder**: Soft-deleted records (visible under Command Menu → See deleted records) count toward uniqueness criteria. If you import a record with the same unique value as a deleted record, the deleted record will be restored. See [Uniqueness Constraints](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints) for more details.</Note>
+<Note>**リマインダー**：ソフト削除されたレコード（コマンドメニュー → 削除済みレコードを表示 で確認可能）は、一意性の判定に含まれます。 削除済みレコードと同じ一意の値を持つレコードをインポートすると、その削除済みレコードが復元されます。 詳細は[一意性制約](/l/ja/user-guide/data-migration/capabilities/uniqueness-constraints)を参照してください。</Note>
 
-## Import Order Rule
+## インポート順のルール
 
 <Warning>
-  **Always import the "one" side first!**
+  **必ず「1」の側を先にインポートしてください！**
 
-  1. **Companies** first (no dependencies)
-  2. **People** second (linked to Companies)
-  3. **Opportunities** third (linked to Companies/People)
-  4. **Custom objects** following their dependencies
+  1. **会社**を最初に（依存関係なし）
+  2. **連絡先**を次に（会社にリンク）
+  3. **商談**を 3 番目に（会社/連絡先にリンク）
+  4. **カスタムオブジェクト**は依存関係に従って
 
-  The parent record must exist before you can reference it.
+  参照する前に、親レコードが存在している必要があります。
 </Warning>

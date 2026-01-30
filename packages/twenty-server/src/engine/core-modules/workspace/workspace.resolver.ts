@@ -18,9 +18,8 @@ import assert from 'assert';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -28,6 +27,7 @@ import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
+import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
@@ -319,6 +319,13 @@ export class WorkspaceResolver {
     }
 
     return workspace.logo ?? '';
+  }
+
+  @ResolveField(() => [BillingEntitlementDTO])
+  billingEntitlements(@Parent() workspace: WorkspaceEntity) {
+    return this.billingSubscriptionService.getWorkspaceEntitlements(
+      workspace.id,
+    );
   }
 
   @ResolveField(() => Boolean)

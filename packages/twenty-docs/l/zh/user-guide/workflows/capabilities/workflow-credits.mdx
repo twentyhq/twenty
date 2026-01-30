@@ -1,76 +1,76 @@
 ---
-title: Workflow Credits
-description: Understand workflow credit consumption and management.
+title: 工作流程积分
+description: 了解工作流程积分的消耗与管理。
 ---
 
-Workflow credits power your automations in Twenty. Understanding how they work helps you optimize costs and manage your automation budget effectively.
+在 Twenty 中，工作流程积分为您的自动化提供支持。 了解其如何运作，有助于优化成本并有效管理您的自动化预算。
 
-## Credit Allocation
+## 积分分配
 
-Workflow credits are allocated based on your billing cycle, not your plan tier:
+工作流程积分基于您的计费周期分配，而非您的计划：
 
-| Billing Cycle            | Credits                     |
-| ------------------------ | --------------------------- |
-| **Monthly subscription** | 5 million credits per month |
-| **Yearly subscription**  | 50 million credits per year |
+| 计费周期     | 积分          |
+| -------- | ----------- |
+| **月度订阅** | 每月 500 万积分  |
+| **年度订阅** | 每年 5000 万积分 |
 
 <Note>
-  5 million monthly credits are generous for standard automations. Most teams won't exceed this limit with typical workflow usage. Additional credits are primarily needed for advanced Code actions and AI-powered workflows.
+  每月 500 万积分对于标准自动化而言已相当充足。 大多数团队在典型的工作流程使用中不会超出此限制。 额外积分主要用于高级 Code 操作和由 AI 驱动的工作流程。
 </Note>
 
-## How Credit Consumption Works
+## 积分消耗工作原理
 
-Credits are consumed when workflows execute, not when you create them. Each workflow action consumes credits based on its complexity:
+工作流程执行时消耗积分，而不是创建时。 每个工作流程操作根据其复杂性消耗积分：
 
-### Credit Consumption by Action Type
+### 按操作类型消耗积分
 
-* **Basic internal operations**: Very low credit consumption
-  * Search Records
-  * Create Record
-  * Update Record
-  * Delete Record
-  * Form actions
+* **基本内部操作**：非常低的积分消耗
+  * 搜索记录
+  * 创建记录
+  * 更新记录
+  * 删除记录
+  * 表单操作
 
-* **Complex operations**: Higher credit consumption
-  * Code actions (JavaScript execution)
-  * HTTP Requests to external services
+* **复杂操作**：更高的积分消耗
+  * 代码操作（JavaScript 执行）
+  * 向外部服务发送HTTP请求
 
-* **AI features**: Higher credit consumption
-  * AI Agent actions consume credits based on the AI model used
-  * More complex prompts and longer outputs use more credits
+* **AI 功能**：更高的积分消耗
+  * AI 代理操作会根据所用 AI 模型消耗积分
+  * 更复杂的提示词和更长的输出会消耗更多积分
 
-* **Delay actions**: Minimal credit consumption
-  * The Delay node consumes **1 credit** when it executes
-  * **No credits are consumed** during the wait period
-  * A 5-minute delay costs the same as a 5-day delay
+* **延迟操作**：积分消耗极少
+  * Delay 节点在执行时会消耗**1 积分**
+  * 在等待期间**不会消耗积分**
+  * 5 分钟的延迟与 5 天的延迟消耗的积分相同
 
-### Real-Time Deduction
+### 实时扣减
 
-Credits are deducted in real-time as workflows execute. This means:
+工作流程执行时，积分实时扣减。 这意味着：
 
-* Draft workflows don't consume credits
-* Only active, running workflows use your credit allocation
-* Failed workflows still consume credits for completed steps
+* 草稿工作流程不消耗积分
+* 仅激活并运行中的工作流程使用您的积分额度
+* 失败的工作流程仍为已完成的步骤消耗积分
 
-## Managing Credits
+## 管理积分
 
-### Check Credit Usage
+### 检查积分使用情况
 
-1. Go to **Settings → Billing**
-2. View your current credit consumption and remaining balance
-3. Monitor usage patterns to optimize your workflows
+1. 前往**设置 → 结算**
+2. 查看您当前的积分消耗和剩余余额
+3. 监控使用模式以优化工作流程
 
-### Purchasing Additional Credits
+### 购买额外的积分
 
-If you need more credits beyond your plan allocation:
+如果您需要超出计划分配的更多积分：
 
-1. Go to **Settings → Billing**
-2. Click on the option to purchase additional credits. Packages of different sizes are available.
-3. Credits are added to your current balance
+1. 前往**设置 → 结算**
+2. 点击选项以购买额外的积分。 提供不同大小的套餐。
+3. 积分将添加到您当前的余额
 
-## Best Practices
+## 最佳实践
 
-* **Batch Processing**: Use bulk operations and Iterator actions efficiently
-* **Manual Trigger Optimization**: For manual triggers, choose `Bulk` availability to process multiple records in a single workflow run
-* Optimize Code actions for efficiency
-* Batch operations to reduce individual action calls
+* **批处理**：有效利用批量操作和迭代器操作
+* **手动触发优化**：对于手动触发，选择 `Bulk` 可用性以在单个工作流程运行中处理多个记录
+* 优化代码操作以提高效率
+* 进行批量操作以减少个别动作调用

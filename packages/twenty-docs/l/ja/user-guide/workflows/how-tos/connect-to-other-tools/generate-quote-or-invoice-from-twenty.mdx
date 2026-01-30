@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: Twenty から見積書または請求書を作成
+description: 商談がクローズしたときに、外部ツールで請求書を自動作成します。
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+商談データを請求書発行システム (Stripe、QuickBooks、Xero など) に自動送信します。 商談が受注になったときに。
 
-## Workflow Structure
+## ワークフローの構成
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **トリガー**: レコードが更新 (商談オブジェクト)
+2. **フィルター**: ステージ = Closed Won
+3. **レコード検索**: 会社の詳細を取得
+4. **コード** (任意): ペイロードを整形
+5. **HTTP リクエスト**: 請求書発行システムに送信
 
-## Step 1: Set Up the Trigger
+## ステップ 1: トリガーを設定
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. 新しいワークフローを作成
+2. **Record is Updated** トリガーを選択
+3. オブジェクトとして **Opportunity** を選択
 
-## Step 2: Filter for Closed Won
+## ステップ 2: Closed Won でフィルター
 
-Add a **Filter** action to only continue when the deal is won:
+商談が受注になったときのみ続行するように、**フィルター** アクションを追加:
 
-| Setting       | Value                             |
-| ------------- | --------------------------------- |
-| **Field**     | Stage                             |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
+| 設定        | 値                           |
+| --------- | --------------------------- |
+| **フィールド** | ステージ                        |
+| **条件**    | 等しい                         |
+| **値**     | `CLOSED_WON` (またはあなたのステージ名) |
 
 <Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  このトリガーは、商談の更新があるたびに発火します。 このフィルターにより、ステージが Closed Won に変わった場合にのみワークフローが続行されます。
 </Tip>
 
-## Step 3: Get Company Details
+## ステップ 3: 会社の詳細を取得
 
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+商談レコードには、請求書に必要なすべての会社フィールドが含まれていない可能性があります。 **レコード検索** アクションを追加:
 
-| Setting      | Value                                    |
-| ------------ | ---------------------------------------- |
-| **Object**   | Company                                  |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| 設定         | 値                                        |
+| ---------- | ---------------------------------------- |
+| **オブジェクト** | 会社                                       |
+| **一致条件**   | ID が `{{trigger.object.companyId}}` に等しい |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+これにより、請求先住所、税番号などを含む会社の完全なレコードを取得します。
 
-## Step 4: Format the Payload (Optional)
+## ステップ 4: ペイロードを整形 (任意)
 
-If your invoicing system expects a specific format, add a **Code** action:
+請求書発行システムが特定のフォーマットを想定している場合は、**コード** アクションを追加:
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## ステップ 5: 請求書発行システムに送信
 
-Add an **HTTP Request** action:
+**HTTP リクエスト** アクションを追加:
 
-| Setting     | Value                                     |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| 設定       | 値                                    |
+| -------- | ------------------------------------ |
+| **メソッド** | POST                                 |
+| **URL**  | 請求書発行 API のエンドポイント                   |
+| **ヘッダー** | `Authorization: Bearer YOUR_API_KEY` |
+| **本文**   | `{{code.invoice}}` またはフィールドを直接マッピング  |
 
-### Example: Stripe Invoice
+### 例: Stripe の請求書
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### 例: QuickBooks の請求書
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,25 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## ワークフロー全体の概要
 
-| Step | Action                  | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Filter                  | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | Code                    | Format data for invoicing API        |
-| 5    | HTTP Request            | Create invoice in external system    |
+| 手順 | アクション                | 目的                       |
+| -- | -------------------- | ------------------------ |
+| 1  | トリガー: Record Updated | 任意の商談が変更されたときに発火         |
+| 2  | フィルター                | ステージが Closed Won の場合のみ続行 |
+| 3  | レコード検索               | 請求用の会社詳細を取得              |
+| 4  | コード                  | 請求書発行 API 向けにデータを整形      |
+| 5  | HTTPリクエスト            | 外部システムで請求書を作成            |
 
-## Tips
+## ヒント
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **外部 ID を保存**: **Update Record** アクションを使用して、API から返された請求書 ID を商談に保存
+* **エラー処理**: HTTP リクエストが失敗した場合に通知を送信する分岐を追加
+* **まずテスト**: 本番運用前に、請求書発行システムのサンドボックス/テストモードを使用
 
-## Related
+## 関連
 
-* [Workflow Triggers](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [Twenty から PDF を生成する](/l/ja/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) — 生成された PDF をレコードに添付する
+* [ワークフローのトリガー](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+* [Closed Won の自動化](/l/ja/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

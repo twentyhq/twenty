@@ -3,7 +3,6 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
@@ -24,6 +23,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { MemberInfosTab } from '@/settings/members/components/MemberInfosTab';
 import { MemberPermissionsTab } from '@/settings/members/components/MemberPermissionsTab';
 import { useWorkspaceMemberRoles } from '@/settings/members/hooks/useWorkspaceMemberRoles';
@@ -80,9 +80,7 @@ export const SettingsWorkspaceMember = () => {
     tabListComponentId,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const [deleteUserFromWorkspace, { loading: isDeleting }] =
     useDeleteUserWorkspaceMutation();
@@ -98,6 +96,7 @@ export const SettingsWorkspaceMember = () => {
       }
       try {
         await updateOneRecord({
+          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
           idToUpdate: member.id,
           updateOneRecordInput: {
             name: { firstName, lastName },

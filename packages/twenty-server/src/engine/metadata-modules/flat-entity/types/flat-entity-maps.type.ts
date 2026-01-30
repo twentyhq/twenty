@@ -1,4 +1,4 @@
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 
 export type FlatEntityMaps<T extends SyncableFlatEntity> = {
   byId: Partial<Record<string, T>>;

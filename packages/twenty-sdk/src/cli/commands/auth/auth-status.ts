@@ -1,6 +1,6 @@
 import chalk from 'chalk';
-import { ApiService } from '@/cli/utilities/api/services/api.service';
-import { ConfigService } from '@/cli/utilities/config/services/config.service';
+import { ApiService } from '@/cli/utilities/api/api-service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export class AuthStatusCommand {
   private configService = new ConfigService();
@@ -19,9 +19,9 @@ export class AuthStatusCommand {
       );
 
       if (config.apiKey) {
-        const isValid = await this.apiService.validateAuth();
+        const validateAuth = await this.apiService.validateAuth();
         console.log(
-          `Status: ${isValid ? chalk.green('✓ Valid') : chalk.red('✗ Invalid')}`,
+          `Status: ${validateAuth.authValid ? chalk.green('✓ Valid') : chalk.red('✗ Invalid')}`,
         );
       } else {
         console.log(`Status: ${chalk.yellow('⚠ Not authenticated')}`);

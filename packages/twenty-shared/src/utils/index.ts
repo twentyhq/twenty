@@ -145,6 +145,8 @@ export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { appendCopySuffix } from './strings/appendCopySuffix';
 export { capitalize } from './strings/capitalize';
+export { pascalCase } from './strings/pascalCase';
+export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export type {
   TipTapMarkType,
@@ -160,6 +162,7 @@ export {
 export type { StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
 export { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
+export { isPlainObject } from './typeguard/isPlainObject';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
 export { buildSignedPath } from './url/buildSignedPath';

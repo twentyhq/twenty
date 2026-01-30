@@ -16,16 +16,15 @@ export const oneSucceededWorkflowRunQueryResult = {
         steps: [
           {
             id: '212a171a-f887-4213-8892-e39c2a3ecc30',
-            name: 'Code - Serverless Function',
+            name: 'Code - Logic Function',
             type: 'CODE',
             valid: false,
             settings: {
               input: {
-                serverlessFunctionId: 'e031ae6a-5b9e-496b-9a98-ba015f7b5508',
-                serverlessFunctionInput: {
+                logicFunctionId: 'e031ae6a-5b9e-496b-9a98-ba015f7b5508',
+                logicFunctionInput: {
                   userId: '{{trigger.userId}}',
                 },
-                serverlessFunctionVersion: '1',
               },
               outputSchema: {
                 link: {
@@ -48,14 +47,13 @@ export const oneSucceededWorkflowRunQueryResult = {
           },
           {
             id: 'a01b2953-9aa7-4d9a-aded-8e9bafbd6c30',
-            name: 'Code - Serverless Function',
+            name: 'Code - Logic Function',
             type: 'CODE',
             valid: false,
             settings: {
               input: {
-                serverlessFunctionId: '605efcda-6689-43b3-b24c-2eb76948f523',
-                serverlessFunctionInput: {},
-                serverlessFunctionVersion: '2',
+                logicFunctionId: '605efcda-6689-43b3-b24c-2eb76948f523',
+                logicFunctionInput: {},
               },
               outputSchema: {
                 link: {
@@ -4485,16 +4483,15 @@ export const oneSucceededWorkflowRunQueryResult = {
       steps: [
         {
           id: '212a171a-f887-4213-8892-e39c2a3ecc30',
-          name: 'Code - Serverless Function',
+          name: 'Code - Logic Function',
           type: 'CODE',
           valid: false,
           settings: {
             input: {
-              serverlessFunctionId: 'e031ae6a-5b9e-496b-9a98-ba015f7b5508',
-              serverlessFunctionInput: {
+              logicFunctionId: 'e031ae6a-5b9e-496b-9a98-ba015f7b5508',
+              logicFunctionInput: {
                 userId: '{{trigger.userId}}',
               },
-              serverlessFunctionVersion: '1',
             },
             outputSchema: {
               link: {
@@ -4517,14 +4514,13 @@ export const oneSucceededWorkflowRunQueryResult = {
         },
         {
           id: 'a01b2953-9aa7-4d9a-aded-8e9bafbd6c30',
-          name: 'Code - Serverless Function',
+          name: 'Code - Logic Function',
           type: 'CODE',
           valid: false,
           settings: {
             input: {
-              serverlessFunctionId: '605efcda-6689-43b3-b24c-2eb76948f523',
-              serverlessFunctionInput: {},
-              serverlessFunctionVersion: '2',
+              logicFunctionId: '605efcda-6689-43b3-b24c-2eb76948f523',
+              logicFunctionInput: {},
             },
             outputSchema: {
               link: {

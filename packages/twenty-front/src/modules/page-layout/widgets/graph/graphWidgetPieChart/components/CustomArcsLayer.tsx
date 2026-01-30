@@ -11,9 +11,10 @@ type CustomArcsLayerProps = Pick<
   PieCustomLayerProps<PieChartDataItemWithColor>,
   'dataWithArc' | 'arcGenerator' | 'centerX' | 'centerY'
 > & {
-  onMouseMove?: MouseEventHandler<PieChartDataItemWithColor, SVGPathElement>;
-  onMouseLeave?: MouseEventHandler<PieChartDataItemWithColor, SVGPathElement>;
-  onClick?: MouseEventHandler<PieChartDataItemWithColor, SVGPathElement>;
+  padAngle: number;
+  onMouseMove?: MouseEventHandler<PieChartDataItemWithColor, SVGElement>;
+  onMouseLeave?: MouseEventHandler<PieChartDataItemWithColor, SVGElement>;
+  onClick?: MouseEventHandler<PieChartDataItemWithColor, SVGElement>;
 };
 
 export const CustomArcsLayer = ({
@@ -21,6 +22,7 @@ export const CustomArcsLayer = ({
   arcGenerator,
   centerX,
   centerY,
+  padAngle,
   onMouseMove,
   onMouseLeave,
   onClick,
@@ -29,33 +31,35 @@ export const CustomArcsLayer = ({
     graphWidgetHighlightedLegendIdComponentState,
   );
 
-  const { transition, interpolate } = useArcsTransition(
-    [...dataWithArc],
-    'innerRadius',
-  );
+  const { transition } = useArcsTransition([...dataWithArc], 'innerRadius');
 
   return (
     <g transform={`translate(${centerX},${centerY})`}>
-      {transition((style, datum) => {
+      {transition((_, datum) => {
         const isDimmed =
           isDefined(highlightedLegendId) &&
           String(highlightedLegendId) !== String(datum.id);
+        const arcLength = datum.arc.endAngle - datum.arc.startAngle;
+        const padAngleRadians = (padAngle * Math.PI) / 180;
+        const clampedPadAngle = Math.min(
+          padAngleRadians,
+          Math.max(0, arcLength - 0.0001),
+        );
+        const halfPadAngle = clampedPadAngle / 2;
+        const hitAreaPath = arcGenerator(datum.arc);
+        const paddedArc = clampedPadAngle
+          ? {
+              ...datum.arc,
+              startAngle: datum.arc.startAngle + halfPadAngle,
+              endAngle: datum.arc.endAngle - halfPadAngle,
+            }
+          : datum.arc;
+        const visiblePath = arcGenerator(paddedArc);
 
         return (
-          <animated.path
+          <g
             key={datum.id}
-            d={interpolate(
-              style.startAngle,
-              style.endAngle,
-              style.innerRadius,
-              style.outerRadius,
-              arcGenerator,
-            )}
-            fill={datum.color}
-            opacity={isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1}
-            style={{
-              transition: 'opacity 0.15s ease-in-out',
-            }}
+            pointerEvents="all"
             onMouseMove={
               onMouseMove ? (event) => onMouseMove(datum, event) : undefined
             }
@@ -63,7 +67,17 @@ export const CustomArcsLayer = ({
               onMouseLeave ? (event) => onMouseLeave(datum, event) : undefined
             }
             onClick={onClick ? (event) => onClick(datum, event) : undefined}
-          />
+          >
+            <animated.path d={hitAreaPath ?? undefined} fill="transparent" />
+            <animated.path
+              d={visiblePath ?? undefined}
+              fill={datum.color}
+              opacity={isDimmed ? LEGEND_HIGHLIGHT_DIMMED_OPACITY : 1}
+              style={{
+                transition: 'opacity 0.15s ease-in-out',
+              }}
+            />
+          </g>
         );
       })}
     </g>

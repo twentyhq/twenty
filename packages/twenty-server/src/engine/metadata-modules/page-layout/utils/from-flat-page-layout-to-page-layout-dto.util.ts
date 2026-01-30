@@ -9,6 +9,7 @@ export const fromFlatPageLayoutToPageLayoutDto = (
     updatedAt,
     deletedAt,
     tabIds: _tabIds,
+    defaultTabToFocusOnMobileAndSidePanelId,
     ...rest
   } = flatPageLayout;
 
@@ -17,5 +18,7 @@ export const fromFlatPageLayoutToPageLayoutDto = (
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     deletedAt: deletedAt ? new Date(deletedAt) : null,
+    defaultTabToFocusOnMobileAndSidePanelId:
+      defaultTabToFocusOnMobileAndSidePanelId ?? undefined,
   };
 };

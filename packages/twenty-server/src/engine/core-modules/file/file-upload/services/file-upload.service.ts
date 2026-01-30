@@ -1,17 +1,16 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
-import DOMPurify from 'dompurify';
 import FileType from 'file-type';
 import sharp from 'sharp';
+import { FileFolder } from 'twenty-shared/types';
 import { v4 } from 'uuid';
-
-import { type FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignedFile = { path: string; token: string };
@@ -41,7 +40,7 @@ export class FileUploadService {
     mimeType: string | undefined;
     folder: string;
   }) {
-    await this.fileStorage.write({
+    await this.fileStorage.writeFile({
       file,
       name: filename,
       mimeType,
@@ -49,26 +48,9 @@ export class FileUploadService {
     });
   }
 
-  private _sanitizeFile({
-    file,
-    ext,
-    mimeType,
-  }: {
-    file: Buffer | Uint8Array | string;
-    ext: string;
-    mimeType: string | undefined;
-  }): Buffer | Uint8Array | string {
-    if (ext === 'svg' || mimeType === 'image/svg+xml') {
-      const { JSDOM } = require('jsdom');
-      const window = new JSDOM('').window;
-      const purify = DOMPurify(window);
-
-      return purify.sanitize(file.toString());
-    }
-
-    return file;
-  }
-
+  /**
+   * @deprecated Use uploadWorkspaceRecordFile if uploading workspace records-scoped files. Or create your dedicated upload file service.
+   */
   async uploadFile({
     file,
     filename,
@@ -86,7 +68,7 @@ export class FileUploadService {
     const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
     await this._uploadFile({
-      file: this._sanitizeFile({ file, ext, mimeType }),
+      file: sanitizeFile({ file, ext, mimeType }),
       filename: name,
       mimeType,
       folder,

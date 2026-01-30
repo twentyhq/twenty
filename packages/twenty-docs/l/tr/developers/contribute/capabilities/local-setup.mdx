@@ -168,6 +168,13 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
 
     Bu, `postgres` adıyla giriş erişimi olan bir süper kullanıcı rolü oluşturur.
 
+    ```bash
+    Rol adı | Özellikler  | Üyesi olduğu
+    -----------+-------------+-----------
+    postgres  | Superuser   | {}
+    john      | Superuser   | {}
+    ```
+
     **Seçenek 2:** Eğer docker yüklüyse:
 
     ```bash
@@ -258,10 +265,10 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/tr/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **Çoklu Çalışma Alanı Modu:** Varsayılan olarak, Twenty yalnızca bir çalışma alanının oluşturulabildiği tek çalışma alanı modunda çalışır. Çoklu çalışma alanı desteğini etkinleştirmek için (alt alan adına dayalı özellikleri test etmek açısından kullanışlıdır), sunucunuzdaki `.env` dosyanızda `IS_MULTIWORKSPACE_ENABLED=true` değerini ayarlayın. Ayrıntılar için [Çoklu Çalışma Alanı Modu](/l/tr/developers/self-host/capabilities/setup#multi-workspace-mode) bölümüne bakın.
 </Info>
 
-## Step 6: Installing dependencies
+## Adım 6: Bağımlılıkların yüklenmesi
 
 Twenty server'ı oluşturup veritabanınıza bazı veriler yerleştirmek için aşağıdaki komutu çalıştırın:
 
@@ -313,16 +320,16 @@ Alternatif olarak, tüm hizmetleri aynı anda başlatabilirsiniz:
 npx nx start
 ```
 
-## Step 8: Use Twenty
+## Adım 8: Twenty'yi kullanın
 
 **Ön Uç**
 
-Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001).
+Twenty'nin ön ucu [http://localhost:3001](http://localhost:3001) adresinde çalışıyor olacak.
 Varsayılan demo hesabıyla giriş yapabilirsiniz: `tim@apple.dev` (şifre: `tim@apple.dev`)
 
 **Arka Uç**
 
-* Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000)
+* Twenty'nin sunucusu [http://localhost:3000](http://localhost:3000) adresinde çalışır durumda olacak
 * GraphQL API'sine [http://localhost:3000/graphql](http://localhost:3000/graphql) adresinden erişebilirsiniz.
 * REST API'sine [http://localhost:3000/rest](http://localhost:3000/rest) adresinden ulaşabilirsiniz.
 

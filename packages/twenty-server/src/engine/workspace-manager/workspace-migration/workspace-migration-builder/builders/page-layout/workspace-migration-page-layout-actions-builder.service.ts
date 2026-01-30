@@ -72,7 +72,7 @@ export class WorkspaceMigrationPageLayoutActionsBuilderService extends Workspace
       action: {
         type: 'delete',
         metadataName: 'pageLayout',
-        entityId: flatPageLayoutToValidate.id,
+        universalIdentifier: flatPageLayoutToValidate.universalIdentifier,
       },
     };
   }

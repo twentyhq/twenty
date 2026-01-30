@@ -1,19 +1,19 @@
 ---
-title: Best Practices
+title: 最佳实践
 ---
 
-This document outlines the best practices you should follow when working on the frontend.
+本文档概述了在前端工作时应遵循的最佳实践。
 
-## State management
+## 状态管理
 
-React and Recoil handle state management in the codebase.
+React 和 Recoil 在代码库中处理状态管理。
 
-### Use `useRecoilState` to store state
+### 使用 `useRecoilState` 来存储状态
 
-It's good practice to create as many atoms as you need to store your state.
+根据需要创建足够多的原子来存储你的状态，是一种良好实践。
 
 <Warning>
-  It's better to use extra atoms than trying to be too concise with props drilling.
+  与其为了通过 props 层层传递而过度精简，不如使用额外的原子。
 </Warning>
 
 ```tsx
@@ -36,29 +36,29 @@ export const MyComponent = () => {
 }
 ```
 
-### Do not use `useRef` to store state
+### 不要使用 `useRef` 来存储状态
 
-Avoid using `useRef` to store state.
+避免使用 `useRef` 来存储状态。
 
-If you want to store state, you should use `useState` or `useRecoilState`.
+如果想存储状态，应该使用 `useState` 或 `useRecoilState`。
 
-See [how to manage re-renders](#managing-re-renders) if you feel like you need `useRef` to prevent some re-renders from happening.
+如果您觉得需要通过使用 `useRef` 来防止一些再渲染，请了解[如何管理再渲染](#managing-re-renders)。
 
-## Managing re-renders
+## 管理再渲染
 
-Re-renders can be hard to manage in React.
+在 React 中管理再渲染可能很困难。
 
-Here are some rules to follow to avoid unnecessary re-renders.
+这里有一些规则以帮助避免不必要的再渲染。
 
-Keep in mind that you can **always** avoid re-renders by understanding their cause.
+请记住，通过了解其原因，可以**始终**避免再渲染。
 
-### Work at the root level
+### 在根级别工作
 
-Avoiding re-renders in new features is now made easy by eliminating them at the root level.
+通过从根级消除它们，现在在新功能中避免再渲染变得容易。
 
 The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
 
-That way you know that there's just one place that can trigger a re-render.
+这样您就知道只有一个地方可以触发再渲染。
 
 ### Always think twice before adding `useEffect` in your codebase
 
@@ -68,17 +68,17 @@ You should think whether you need `useEffect`, or if you can move the logic in a
 
 You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
 
-You can also find them in libraries like Apollo: `onCompleted`, `onError`, etc.
+您还可以在如 Apollo 的库中找到它们：`onCompleted`，`onError` 等。
 
 ### Use a sibling component to extract `useEffect` or data fetching logic
 
 If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
 
-You can apply the same for data fetching logic, with Apollo hooks.
+对于数据获取逻辑也可以采用相同的方法，使用 Apollo hooks。
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing,
-//    because useEffect needs to be re-evaluated
+// ❌ 不佳：即使数据未发生变化也会导致重新渲染，
+//    因为需要重新评估 useEffect
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
   const [someDependency] = useRecoilState(someDependencyState);
@@ -100,8 +100,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Good, will not cause re-renders if data is not changing,
-//   because useEffect is re-evaluated in another sibling component
+// ✅ 良好：如果数据未发生变化，将不会导致重新渲染，
+//   因为 useEffect 会在另一个同级组件中重新评估
 export const PageComponent = () => {
   const [data, setData] = useRecoilState(dataState);
 
@@ -129,84 +129,84 @@ export const App = () => (
 );
 ```
 
-### Use recoil family states and recoil family selectors
+### 使用 Recoil 状态族和 Recoil 选择器族
 
-Recoil family states and selectors are a great way to avoid re-renders.
+Recoil 状态族和选择器族是避免再渲染的好方法。
 
-They are useful when you need to store a list of items.
+当您需要存储项目列表时，它们很有用。
 
-### You shouldn't use `React.memo(MyComponent)`
+### 您不应使用 `React.memo(MyComponent)`
 
-Avoid using `React.memo()` because it does not solve the cause of the re-render, but instead breaks the re-render chain, which can lead to unexpected behavior and make the code very hard to refactor.
+避免使用 `React.memo()` 因为它不能解决再渲染的原因，而是中断了再渲染链，可能导致意外行为并使代码难以重构。
 
-### Limit `useCallback` or `useMemo` usage
+### 限制 `useCallback` 或 `useMemo` 的使用
 
-They are often not necessary and will make the code harder to read and maintain for a gain of performance that is unnoticeable.
+它们通常没有必要，会使代码难以阅读和维护，而性能提升难以察觉。
 
 ## Console.logs
 
-`console.log` statements are valuable during development, offering real-time insights into variable values and code flow. But, leaving them in production code can lead to several issues:
+`console.log` 语句在开发过程中非常有价值，提供关于变量值和代码流的实时洞察。 但是，将它们留在生产代码中可能导致几个问题：
 
-1. **Performance**: Excessive logging can affect the runtime performance, especially on client-side applications.
+1. **性能**：过多的日志记录会影响运行时性能，尤其是在客户端应用程序中。
 
-2. **Security**: Logging sensitive data can expose critical information to anyone who inspects the browser's console.
+2. **安全性**：记录敏感数据可能会将重要信息暴露给任何检查浏览器控制台的人。
 
-3. **Cleanliness**: Filling up the console with logs can obscure important warnings or errors that developers or tools need to see.
+3. **清洁度**：在控制台中填满日志可能会遮蔽开发人员或工具需要查看的重要警告或错误。
 
-4. **Professionalism**: End users or clients checking the console and seeing a myriad of log statements might question the code's quality and polish.
+4. **专业性**：检查控制台的最终用户或客户看到数量众多的日志语句，可能会质疑代码的质量和精致度。
 
-Make sure you remove all `console.logs` before pushing the code to production.
+确保在提交代码到生产环境前移除所有 `console.logs`。
 
-## Naming
+## 命名
 
-### Variable Naming
+### 变量命名
 
-Variable names ought to precisely depict the purpose or function of the variable.
+变量名称应该准确描述变量的用途或功能。
 
-#### The issue with generic names
+#### 泛化的名称问题
 
-Generic names in programming are not ideal because they lack specificity, leading to ambiguity and reduced code readability. Such names fail to convey the variable or function's purpose, making it challenging for developers to understand the code's intent without deeper investigation. This can result in increased debugging time, higher susceptibility to errors, and difficulties in maintenance and collaboration. Meanwhile, descriptive naming makes the code self-explanatory and easier to navigate, enhancing code quality and developer productivity.
+在编程中使用泛化的名称不是理想的，因为缺乏具体性，导致模糊性和降低代码的可读性。 这种名称无法传达变量或函数的目的，使得开发人员在不进行深入调查的情况下难以理解代码的意图。 这样会导致调试时间增加、错误的易发性提高以及在维护和协作中遇到困难。 同时，描述性的命名使代码自解释，更易于导航，提高代码质量和开发人员的生产力。
 
 ```tsx
-// ❌ Bad, uses a generic name that doesn't communicate its
-//    purpose or content clearly
+// ❌ 不佳：使用了过于笼统的名称，无法清晰表达其
+//    用途或内容
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Good, uses a descriptive name
+// ✅ 良好：使用了更具描述性的名称
 const [email, setEmail] = useState('');
 ```
 
-#### Some words to avoid in variable names
+#### 变量名称中应避免使用的一些词
 
-* dummy
+* 空壳
 
-### Event handlers
+### 事件处理
 
-Event handler names should start with `handle`, while `on` is a prefix used to name events in components props.
+事件处理器名称应以 `handle` 开头，而 `on` 是用于命名组件属性事件的前缀。
 
 ```tsx
-// ❌ Bad
+// ❌ 不佳
 const onEmailChange = (val: string) => {
   // ...
 };
 ```
 
 ```tsx
-// ✅ Good
+// ✅ 良好
 const handleEmailChange = (val: string) => {
   // ...
 };
 ```
 
-## Optional Props
+## 可选属性
 
-Avoid passing the default value for an optional prop.
+避免为可选属性传递默认值。
 
-**EXAMPLE**
+**示例**
 
-Take the`EmailField` component defined below:
+参见下面定义的 `EmailField` 组件：
 
 ```tsx
 type EmailFieldProps = {
@@ -219,28 +219,28 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 );
 ```
 
-**Usage**
+**用法**
 
 ```tsx
-// ❌ Bad, passing in the same value as the default value adds no value
+// ❌ 不佳：传入与默认值相同的值没有任何意义
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
-// ✅ Good, assumes the default value
+// ✅ 良好：采用默认值
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
-## Component as props
+## 组件作为属性
 
-Try as much as possible to pass uninstantiated components as props, so children can decide on their own of what props they need to pass.
+尽可能将未实例化的组件作为属性传递，以便子组件可以自行决定需要传递哪些属性。
 
-The most common example for that is icon components:
+最常见的例子是图标组件：
 
 ```tsx
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
-// In MyComponent
+// 在 MyComponent 中
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
   const theme = useTheme();
 
@@ -252,25 +252,25 @@ const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
 };
 ```
 
-For React to understand that the component is a component, you need to use PascalCase, to later instantiate it with `<MyIcon>`
+为了让 React 理解一个组件就是一个组件，需要使用 PascalCase，然后用 `<MyIcon>` 来实例化它。
 
-## Prop Drilling: Keep It Minimal
+## 属性传递：保持简约
 
-Prop drilling, in the React context, refers to the practice of passing state variables and their setters through many component layers, even if intermediary components don't use them. While sometimes necessary, excessive prop drilling can lead to:
+在 React 中，属性传递是指通过多个组件层传递状态变量及其设置器，即使中介组件不使用它们。 虽然有时是必要的，过多的属性传递可能会导致：
 
-1. **Decreased Readability**: Tracing where a prop originates or where it's utilized can become convoluted in a deeply nested component structure.
+1. **可读性降低**：在深嵌套组件结构中追踪属性的来源或使用位置可能会变得复杂。
 
-2. **Maintenance Challenges**: Changes in one component's prop structure might require adjustments in several components, even if they don't directly use the prop.
+2. **维护挑战**：一个组件的属性结构变化可能需要在多个组件中进行调整，即便它们不直接使用该属性。
 
-3. **Reduced Component Reusability**: A component receiving a lot of props solely for passing them down becomes less general-purpose and harder to reuse in different contexts.
+3. **组件重用性降低**：一个仅接受众多属性用于向下传递的组件变得不那么通用，且在不同上下文中更难以重用。
 
-If you feel that you are using excessive prop drilling, see [state management best practices](#state-management).
+如果您觉得使用了过多的属性传递，请参见[状态管理最佳实践](#state-management)。
 
-## Imports
+## 导入
 
-When importing, opt for the designated aliases rather than specifying complete or relative paths.
+导入时，选择指定的别名而不是指定完整或相对路径。
 
-**The Aliases**
+**句柄别名**
 
 ```js
 {
@@ -282,10 +282,10 @@ When importing, opt for the designated aliases rather than specifying complete o
 }
 ```
 
-**Usage**
+**用法**
 
 ```tsx
-// ❌ Bad, specifies the entire relative path
+// ❌ 不佳：使用了完整的相对路径
 import {
   CatalogDecorator
 } from '../../../../../testing/decorators/CatalogDecorator';
@@ -295,14 +295,14 @@ import {
 ```
 
 ```tsx
-// ✅ Good, utilises the designated aliases
+// ✅ 良好：使用了指定的别名
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from 'twenty-ui/testing';
 ```
 
-## Schema Validation
+## 模式验证
 
-[Zod](https://github.com/colinhacks/zod) is the schema validator for untyped objects:
+[Zod](https://github.com/colinhacks/zod) 是用于无类型对象的模式验证器：
 
 ```js
 const validationSchema = z
@@ -320,6 +320,6 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 ```
 
-## Breaking Changes
+## 重大变更
 
-Always perform thorough manual testing before proceeding to guarantee that modifications haven’t caused disruptions elsewhere, given that tests have not yet been extensively integrated.
+在进行下一步之前，始终进行彻底的手动测试，以确保修改没有在其他地方造成干扰，因为测试尚未全面集成。

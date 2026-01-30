@@ -41,7 +41,7 @@ const StyledSettingsOptionCardToggleCover = styled.span`
 type SettingsOptionCardContentToggleProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
-  description?: string;
+  description?: React.ReactNode;
   divider?: boolean;
   disabled?: boolean;
   advancedMode?: boolean;

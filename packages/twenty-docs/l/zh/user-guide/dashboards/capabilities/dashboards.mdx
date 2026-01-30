@@ -1,74 +1,92 @@
 ---
-title: Dashboards
-description: Create and organize dashboards with tabs to visualize your CRM data.
+title: 仪表板
+description: 使用选项卡创建并组织仪表板，以可视化你的 CRM 数据。
 ---
 
-## Overview
+## 概览
 
-Dashboards in Twenty are organized in a hierarchy: **Dashboards → Tabs → Widgets**. Each dashboard can contain multiple tabs, and each tab contains widgets (charts, numbers, iFrames).
+Twenty 中的仪表板按层级组织：**仪表板 → 选项卡 → 小部件**。 每个仪表板可包含多个选项卡，每个选项卡包含小部件（图表、数字、iFrame）。
 
-## Creating a Dashboard
+## 创建仪表板
 
-1. Go to **Dashboards** in the navigation
-2. Click **+ New Dashboard**
-3. Give your dashboard a name
-4. Start adding tabs and widgets
+1. 前往导航中的 **仪表板**
+2. 点击 **+ 新建记录**
 
-## Working with Tabs
+<img src="/images/user-guide/dashboard/dashboard-create-new.png" alt="创建新的仪表板" />
 
-Tabs help you organize your dashboard into logical sections.
+3. 为你的仪表板命名
+4. 开始添加选项卡和小部件
 
-### Creating Tabs
+## 使用选项卡
 
-1. In edit mode, click **+ Add Tab**
-2. Name your tab (e.g., "Pipeline Overview", "Team Performance")
-3. Add widgets to the tab
+选项卡可帮助你将仪表板组织为逻辑部分。
 
-### Duplicating Tabs
+### 创建选项卡
 
-1. Click on the tab you want to duplicate
-2. Click the **Duplicate** button in the side panel
+1. 在编辑模式下，点击选项卡栏中的 **+**，右侧将打开侧边面板
+2. 为你的选项卡命名（例如，"销售管道概览"、"团队绩效"）
+3. 向该选项卡添加小部件
 
-## Dashboard Layout
+### 重新排序选项卡
 
-### Arranging Widgets
+1. 在编辑模式下，点击并按住你要移动的选项卡
+2. 拖放到新位置
+3. 你也可以点击该选项卡，并使用命令菜单将其移动到左侧或右侧
 
-* Drag and drop to position
-* Resize for emphasis
-* Group related charts together
+### 删除选项卡
 
-### Duplicating a Dashboard
+1. 在编辑模式下，点击你要删除的选项卡
+2. 点击命令菜单中的 **删除** 按钮
 
-1. Exit edit mode (view mode only)
-2. Open the command bar with **Cmd + K** (or **Ctrl + K** on Windows)
-3. Select **Duplicate dashboard**
+### 复制选项卡
 
-### Best Practices
+1. 点击你要复制的选项卡
+2. 点击侧边面板中的 **复制** 按钮
 
-* **Logical flow**: Arrange from overview to detail
-* **Visual hierarchy**: Larger charts for key metrics
-* **Consistent styling**: Use matching colors and fonts
+<img src="/images/user-guide/dashboard/dashboard-tabs.png" alt="仪表板选项卡" />
 
-## Visibility & Access
+## 仪表板布局
 
-### Dashboard Visibility
+### 排列小部件
 
-Dashboards are visible to everyone who has access to your Twenty workspace. There is no private dashboard option at the moment.
+* 拖放以定位
+* 调整大小以突出重点
+* 将相关图表分组在一起
 
-### Favorites
+### 复制仪表板
 
-You can add dashboards to your favorites for quick access. This is a personal setting—your favorites are not visible to other users.
+1. 选择你要复制的仪表板
+2. 按 **Cmd + K** 打开命令栏（Windows 上为 **Ctrl + K**）
+3. 选择 **复制仪表板**
 
-To add a dashboard to favorites, open the dashboard and click the star icon.
+<img src="/images/user-guide/dashboard/dashboard-duplicate.png" alt="复制仪表板" />
 
-### Timezone Behavior
+### 最佳实践
 
-Dashboards currently display data based on the timezone of the user viewing them. This means the same dashboard may show different metrics for team members in different regions (e.g., APAC vs. US).
+* **逻辑流程**：按从概览到细节的顺序排列
+* **视觉层级**：关键指标使用更大的图表
+* **样式一致**：使用协调的颜色和字体
+
+## 可见性与访问
+
+### 仪表板可见性
+
+凡能访问你的 Twenty 工作区的所有人都可以查看仪表板。 目前没有私有仪表板选项。
+
+### 收藏夹
+
+你可以将仪表板添加到收藏以便快速访问。 这是个人设置——你的收藏对其他用户不可见。
+
+要将仪表板添加到收藏，打开该仪表板并点击星形图标。
+
+### 时区行为
+
+仪表板目前根据查看者的时区显示数据。 这意味着，不同地区的团队成员（例如，APAC 与 US）看到的同一仪表板可能会显示不同的指标。
 
 <Note>
-  **Coming soon**: We will add the ability to set a specific timezone for a dashboard, so all users see consistent data regardless of their location.
+  **即将推出**：我们将新增为仪表板设置特定时区的功能，这样无论用户身在何处，所有人看到的数据都将保持一致。
 </Note>
 
 <Note>
-  **Coming soon**: Dashboard-level filters will allow you to apply filters across all widgets at once, making it faster to explore your data.
+  **即将推出**：仪表板级别的筛选器将允许你一次性对所有小部件应用筛选，从而更快速地探索你的数据。
 </Note>

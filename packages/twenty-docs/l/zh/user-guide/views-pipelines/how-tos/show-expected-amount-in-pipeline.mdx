@@ -1,149 +1,149 @@
 ---
-title: Show Expected Amount in Your Pipeline
-description: Calculate and display weighted deal values based on stage probability.
+title: 在您的销售管道中显示预期金额
+description: 根据阶段概率计算并显示加权交易金额。
 ---
 
-The Expected Amount is a calculated value: **Amount × Probability**. This helps you forecast revenue by weighting deals based on how likely they are to close.
+预期金额是一个计算值：**Amount × Probability**。 这有助于根据成交可能性为交易加权，从而预测收入。
 
 <Tip>
-  This is an example of creating [Formula Fields](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields) using workflows.
+  这是使用工作流创建[公式字段](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields)的示例。
 </Tip>
 
-This guide walks you through setting up the custom fields and workflows needed to calculate and display expected amounts in your pipeline.
+本指南将引导您设置在管道中计算并显示预期金额所需的自定义字段和工作流。
 
-## Step 1: Create Custom Fields
+## 步骤 1：创建自定义字段
 
-You need two custom fields on the Opportunities object.
+您需要在商机对象上创建两个自定义字段。
 
-### Create the Probability Field
+### 创建 Probability 字段
 
-1. Go to **Settings → Data Model → Opportunities**
-2. Click **+ Add Field**
-3. Configure:
-   * **Name**: Probability
-   * **Type**: Number
-   * **Description**: Stage-based probability (0-100%)
-4. Click **Save**
+1. 前往 **设置 → 数据模型 → 商机**
+2. 点击 **+ 添加字段**
+3. 配置:
+   * **名称**：Probability
+   * **类型**：数字
+   * **描述**：基于阶段的概率（0–100%）
+4. 单击 **保存**
 
-### Create the Expected Amount Field
+### 创建 Expected Amount 字段
 
-1. Click **+ Add Field**
-2. Configure:
-   * **Name**: Expected Amount
-   * **Type**: Currency
-   * **Description**: Calculated: Amount × Probability
-3. Click **Save**
+1. 点击 **+ 添加字段**
+2. 配置:
+   * **名称**：Expected Amount
+   * **类型**：货币
+   * **描述**：计算值：Amount × Probability
+3. 单击 **保存**
 
-### Optional: Make Fields Read-Only for Users
+### 可选：将字段设置为对用户只读
 
-If you don't want users manually editing these calculated fields:
+如果您不希望用户手动编辑这些计算字段：
 
-1. Go to **Settings → Roles**
-2. Select the role to configure
-3. Find the Opportunities object
-4. Set **Probability** and **Expected Amount** fields to read-only
+1. 进入 **设置 → 角色**
+2. 选择要配置的角色
+3. 找到商机对象
+4. 将 **Probability** 和 **Expected Amount** 字段设为只读
 
-This ensures only the workflows can update these values.
+这可确保只有工作流可以更新这些值。
 
-## Step 2: Create Workflow #1 — Update Probability on Stage Change
+## 步骤 2：创建工作流 #1 — 阶段变更时更新 Probability
 
-This workflow automatically sets the Probability when an opportunity moves to a new stage.
+当商机进入新阶段时，此工作流会自动设置 Probability。
 
-### Create the Workflow
+### 创建工作流
 
-1. Go to **Workflows**
-2. Click **+ New Workflow**
-3. Name it "Update Probability on Stage Change"
+1. 前往 **工作流**
+2. 点击 **+ 新建工作流**
+3. 将其命名为 "Update Probability on Stage Change"
 
-### Configure the Trigger
+### 配置触发器
 
-1. Add a **Record Created or Updated** trigger
-2. Select **Opportunities** as the object
-3. Filter on: **Stage** field is updated
+1. 添加一个 **Record Created or Updated** 触发器
+2. 选择 **Opportunities** 作为对象
+3. 筛选条件：**Stage** 字段已更新
 
-### Add Branches for Each Stage
+### 为每个阶段添加分支
 
-Create a branch for each stage with its probability:
+为每个阶段创建一个分支，并设置相应的概率：
 
-| Stage       | Probability |
-| ----------- | ----------- |
-| New         | 10%         |
-| Qualified   | 25%         |
-| Meeting     | 40%         |
-| Proposal    | 60%         |
-| Negotiation | 80%         |
-| Closed Won  | 100%        |
-| Closed Lost | 0%          |
+| 阶段      | 概率   |
+| ------- | ---- |
+| 新       | 10%  |
+| 合格      | 25%  |
+| 会议      | 40%  |
+| 提案      | 60%  |
+| 谈判      | 80%  |
+| 已成交（赢单） | 100% |
+| 已关闭（丢单） | 0%   |
 
 <Note>
-  To create a new branch, right click on the workflow canvas and click **New action**. Then, link this action to the previous node by dragging the arrow from the previous node to this new action.
+  要创建新分支，在工作流画布上单击右键，然后点击 **新建操作**。 然后，从上一个节点拖动箭头到此新操作，将其与前一个节点连接。
 </Note>
 
-For each stage:
+对于每个阶段：
 
-1. Add a **Filter** node: Stage = [stage name]
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Probability
-   * Value: [probability for that stage]
+1. 添加一个 **筛选** 节点：Stage = [阶段名称]
+2. 添加一个 **更新记录** 操作：
+   * 记录：触发的商机
+   * 字段：Probability
+   * 值：[该阶段的概率]
 
-### Calculate Expected Amount
+### 计算 Expected Amount
 
-After the branches rejoin:
+在分支汇合之后：
 
-1. Add a **Filter** node: Amount is not empty
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Expected Amount
-   * Value: Amount × Probability
+1. 添加一个 **筛选** 节点：Amount 不为空
+2. 添加一个 **更新记录** 操作：
+   * 记录：触发的商机
+   * 字段：Expected Amount
+   * 值：Amount × Probability
 
-## Step 3: Create Workflow #2 — Recalculate on Amount Change
+## 步骤 3：创建工作流 #2 — 当 Amount 发生变化时重新计算
 
-This workflow updates the Expected Amount when the deal Amount changes.
+当交易的 Amount 更改时，此工作流会更新 Expected Amount。
 
-### Create the Workflow
+### 创建工作流
 
-1. Go to **Workflows**
-2. Click **+ New Workflow**
-3. Name it "Recalculate Expected Amount on Amount Change"
+1. 前往 **工作流**
+2. 点击 **+ 新建工作流**
+3. 将其命名为 "Recalculate Expected Amount on Amount Change"
 
-### Configure the Trigger
+### 配置触发器
 
-1. Add a **Record Created or Updated** trigger
-2. Select **Opportunities** as the object
-3. Filter on: **Amount** field is updated
+1. 添加一个 **Record Created or Updated** 触发器
+2. 选择 **Opportunities** 作为对象
+3. 筛选条件：**Amount** 字段已更新
 
-### Add the Logic
+### 添加逻辑
 
-1. Add a **Filter** node: Amount is not empty
-2. Add an **Update Record** action:
-   * Record: The triggering Opportunity
-   * Field: Expected Amount
-   * Value: Amount × Probability
+1. 添加一个 **筛选** 节点：Amount 不为空
+2. 添加一个 **更新记录** 操作：
+   * 记录：触发的商机
+   * 字段：Expected Amount
+   * 值：Amount × Probability
 
-## Step 4: Display in Your Pipeline
+## 步骤 4：在您的管道中显示
 
-Now show the Expected Amount totals in your Kanban view:
+现在在看板视图中显示 Expected Amount 的总计：
 
-1. Open your **Sales Pipeline** Kanban view
-2. Click the **number** next to any Stage name at the top of a column
-3. Select **Sum**
-4. Choose **Expected Amount**
+1. 打开您的 **销售管道** 看板视图
+2. 点击列顶部任一阶段名称旁的**数字**
+3. 选择 **求和**
+4. 选择 **Expected Amount**
 
-Each column now shows the total weighted pipeline value for that stage.
+现在，每列都会显示该阶段的加权管道总值。
 
-## Summary
+## 摘要
 
-| Component                 | Purpose                                                                   |
-| ------------------------- | ------------------------------------------------------------------------- |
-| **Probability field**     | Stores the stage-based win probability                                    |
-| **Expected Amount field** | Stores Amount × Probability                                               |
-| **Workflow #1**           | Updates Probability when Stage changes, then recalculates Expected Amount |
-| **Workflow #2**           | Recalculates Expected Amount when Amount changes                          |
-| **Aggregation**           | Displays Sum of Expected Amount per stage                                 |
+| 组件                     | 用途                                               |
+| ---------------------- | ------------------------------------------------ |
+| **Probability 字段**     | 存储基于阶段的赢单概率                                      |
+| **Expected Amount 字段** | 存储 Amount × Probability                          |
+| **工作流 #1**             | 当 Stage 变化时更新 Probability，然后重新计算 Expected Amount |
+| **工作流 #2**             | 当 Amount 变化时重新计算 Expected Amount                 |
+| **聚合**                 | 按阶段显示 Expected Amount 的求和                        |
 
-## Related
+## 相关内容
 
-* [Formula Fields](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields) — create calculated fields using workflows
-* [Kanban Views](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — column aggregations
-* [How to Create Custom Fields](/l/zh/user-guide/data-model/how-tos/create-custom-fields) — field configuration
+* [公式字段](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields) — 使用工作流创建计算字段
+* [看板视图](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — 列聚合
+* [如何创建自定义字段](/l/zh/user-guide/data-model/how-tos/create-custom-fields) — 字段配置

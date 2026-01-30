@@ -1,92 +1,88 @@
 ---
-title: Use Iterator
-description: Loop through arrays of records to perform actions on each item.
+title: Usar Iterador
+description: Percorra arrays de registos para executar ações em cada item.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
+O Iterador permite percorrer um array de registos e executar ações em cada um. É essencial para fluxos de trabalho que precisam de processar vários registos devolvidos por Pesquisar Registos ou recebidos via Webhooks.
 
-<Note>
-  Iterator is currently in beta. Activate it under **Settings → Releases → Lab**.
-</Note>
+## Quando usar o Iterador
 
-## When to Use Iterator
+| Cenário                              | Exemplo                                          |
+| ------------------------------------ | ------------------------------------------------ |
+| **Processar resultados da pesquisa** | Enviar e-mail a cada pessoa encontrada           |
+| **Lidar com arrays de Webhooks**     | Criar registos para cada item por ordem          |
+| **Atualizações em massa**            | Atualizar vários registos com valores calculados |
+| **Notificações**                     | Alertar várias pessoas sobre um evento           |
 
-| Scenario                   | Example                                        |
-| -------------------------- | ---------------------------------------------- |
-| **Process search results** | Send email to each person found                |
-| **Handle webhook arrays**  | Create records for each item in order          |
-| **Bulk updates**           | Update multiple records with calculated values |
-| **Notifications**          | Alert multiple people about an event           |
+## Compreender o Iterador
 
-## Understanding Iterator
+O Iterador espera um **array** como entrada. Em seguida:
 
-Iterator expects an **array** as input. It then:
+1. Obtém o primeiro item do array
+2. Executa todas as ações dentro do Iterador com esse item
+3. Passa para o item seguinte
+4. Repete até que todos os itens sejam processados
 
-1. Takes the first item from the array
-2. Runs all actions inside the iterator with that item
-3. Moves to the next item
-4. Repeats until all items are processed
+## Configuração básica
 
-## Basic Setup
+### Exemplo: Enviar e-mail a todos nos resultados da pesquisa
 
-### Example: Email Everyone in Search Results
+**Objetivo**: Encontrar todos os contactos numa empresa específica e enviar a cada um um e-mail personalizado.
 
-**Goal**: Find all contacts in a specific company and send each one a personalized email.
+### Etapa 1: Pesquisar registos
 
-### Step 1: Search for Records
+1. Adicione a ação **Pesquisar Registos**
+2. Objeto: **Pessoas**
+3. Filtro: Empresa igual a "Acme Inc"
+4. Isto devolve um array de pessoas
 
-1. Add **Search Records** action
-2. Object: **People**
-3. Filter: Company equals "Acme Inc"
-4. This returns an array of people
+### Etapa 2: Verificar se existem resultados
 
-### Step 2: Check Results Exist
+1. Adicione a ação **Filtro**
+2. Condição: `{{searchRecords.length}}` é maior do que 0
+3. Isto evita erros do Iterador em resultados vazios
 
-1. Add **Filter** action
-2. Condition: `{{searchRecords.length}}` is greater than 0
-3. This prevents Iterator errors on empty results
+### Etapa 3: Adicionar um Iterador
 
-### Step 3: Add Iterator
+1. Adicione a ação **Iterador**
+2. Entrada do array: selecione `{{searchRecords}}`
+3. Isto cria um ciclo
 
-1. Add **Iterator** action
-2. Array input: Select `{{searchRecords}}`
-3. This creates a loop
+### Etapa 4: Adicionar ações dentro do Iterador
 
-### Step 4: Add Actions Inside Iterator
+As ações colocadas após o Iterador são executadas para cada item:
 
-Actions placed after Iterator run for each item:
+1. Adicione a ação **Enviar e-mail** (dentro do Iterador)
+2. Para: `{{iterator.currentItem.email}}`
+3. Assunto: Olá `{{iterator.currentItem.firstName}}`!
+4. Corpo: Mensagem personalizada utilizando os campos do item atual
 
-1. Add **Send Email** action (inside iterator)
-2. To: `{{iterator.currentItem.email}}`
-3. Subject: Hello `{{iterator.currentItem.firstName}}`!
-4. Body: Personalized message using current item fields
+### Resultado
 
-### Result
+Se Pesquisar Registos devolver 5 pessoas, o Iterador:
 
-If Search Records returns 5 people, the Iterator:
+* Envia e-mail para a pessoa 1
+* Envia e-mail para a pessoa 2
+* ... continua para todas as 5
 
-* Sends email to person 1
-* Sends email to person 2
-* ... continues for all 5
+## Aceder aos dados do item atual
 
-## Accessing Current Item Data
+Dentro do Iterador, use `{{iterator.currentItem}}` para aceder ao registo atual:
 
-Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
+| Variável                                | Descrição                       |
+| --------------------------------------- | ------------------------------- |
+| `{{iterator.currentItem}}`              | Todo o objeto do registo atual  |
+| `{{iterator.currentItem.id}}`           | ID do registo                   |
+| `{{iterator.currentItem.email}}`        | Campo de e-mail                 |
+| `{{iterator.currentItem.company.name}}` | Nome da empresa relacionada     |
+| `{{iterator.index}}`                    | Posição atual no array (base 0) |
 
-| Variable                                | Description                         |
-| --------------------------------------- | ----------------------------------- |
-| `{{iterator.currentItem}}`              | The entire current record object    |
-| `{{iterator.currentItem.id}}`           | Record ID                           |
-| `{{iterator.currentItem.email}}`        | Email field                         |
-| `{{iterator.currentItem.company.name}}` | Related company name                |
-| `{{iterator.index}}`                    | Current position in array (0-based) |
+## Padrões comuns
 
-## Common Patterns
+### Atualizar vários registos
 
-### Update Multiple Records
-
-**Goal**: Mark all overdue tasks as "Late"
+**Objetivo**: Marcar todas as tarefas em atraso como "Late"
 
 ```
 1. Search Records (Tasks, Due Date < Today, Status ≠ Completed)
@@ -98,9 +94,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Status: Late
 ```
 
-### Create Records from Array
+### Criar registos a partir de um array
 
-**Goal**: Webhook receives order with multiple items, create a record for each
+**Objetivo**: O Webhook recebe um pedido com vários itens, criar um registo para cada um
 
 ```
 1. Webhook Trigger (receives items array)
@@ -113,9 +109,9 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
        - Related Order: {{trigger.body.orderId}}
 ```
 
-### Conditional Processing Inside Loop
+### Processamento condicional dentro do ciclo
 
-**Goal**: Only send email to contacts with valid emails
+**Objetivo**: Enviar e-mail apenas para contactos com e-mails válidos
 
 ```
 1. Search Records (People)
@@ -125,56 +121,56 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
            - To: {{iterator.currentItem.email}}
 ```
 
-## Troubleshooting
+## Resolução de Problemas
 
-### "Iterator expects an array"
+### "O Iterador espera um array"
 
-**Cause**: You passed a single record instead of an array.
+**Causa**: Passou um único registo em vez de um array.
 
-**Fix**: Make sure you're passing the result of Search Records or an array field, not a single record.
+**Correção**: Certifique-se de que está a passar o resultado de Pesquisar Registos ou um campo do tipo array, e não um único registo.
 
 ```
 ✅ Correct: {{searchRecords}}
 ❌ Wrong: {{searchRecords[0]}}
 ```
 
-### Iterator Doesn't Run
+### O Iterador não é executado
 
-**Cause**: The array is empty.
+**Causa**: O array está vazio.
 
-**Fix**: Add a Filter before Iterator to check array length:
+**Correção**: Adicione um Filtro antes do Iterador para verificar o tamanho do array:
 
 ```
 Filter: {{searchRecords.length}} > 0
 ```
 
-### Actions Run Too Many Times
+### Ações executadas vezes demais
 
-**Cause**: Search Records returned more records than expected.
+**Causa**: Pesquisar Registos devolveu mais registos do que o esperado.
 
-**Fix**:
+**Correção**:
 
-* Add more specific filters to Search Records
-* Set a limit on Search Records (max 200)
-* Add Filter inside Iterator for additional conditions
+* Adicione filtros mais específicos a Pesquisar Registos
+* Defina um limite em Pesquisar Registos (máx. 200)
+* Adicione um Filtro dentro do Iterador para condições adicionais
 
-## Performance Considerations
+## Considerações de desempenho
 
-* **Credit usage**: Each iteration consumes credits for its actions
-* **Time**: Large arrays take longer to process
-* **Limits**: Consider batching very large operations
-* **Rate limits**: External API calls may hit rate limits with many iterations
+* **Utilização de créditos**: Cada iteração consome créditos pelas suas ações
+* **Tempo**: Arrays grandes demoram mais a processar
+* **Limites**: Considere agrupar em lotes operações muito grandes
+* **Limites de taxa**: Chamadas a APIs externas podem atingir limites de taxa com muitas iterações
 
-## Best Practices
+## Melhores Práticas
 
-1. **Always check array length** before Iterator to avoid errors
-2. **Add filters inside loops** when not all items need processing
-3. **Rename your Iterator step** to describe what it's looping through
-4. **Test with small arrays** before processing large datasets
-5. **Monitor workflow runs** to ensure iterations complete as expected
+1. **Verifique sempre o tamanho do array** antes do Iterador para evitar erros
+2. **Adicione filtros dentro dos ciclos** quando nem todos os itens precisam de processamento
+3. **Renomeie a etapa do seu Iterador** para descrever o que está a percorrer
+4. **Teste com arrays pequenos** antes de processar conjuntos de dados grandes
+5. **Monitorize as execuções dos fluxos de trabalho** para garantir que as iterações se concluam conforme o esperado
 
-## Related
+## Relacionados
 
-* [Workflow Actions](/l/pt/user-guide/workflows/capabilities/workflow-actions)
-* [How to Use Branches](/l/pt/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows FAQ](/l/pt/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Como usar ramificações](/l/pt/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [FAQ de Fluxos de Trabalho](/l/pt/user-guide/workflows/how-tos/need-more-help/workflows-faq)

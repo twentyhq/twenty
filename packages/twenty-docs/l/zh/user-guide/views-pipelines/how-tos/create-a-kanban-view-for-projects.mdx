@@ -1,80 +1,80 @@
 ---
-title: Create a Kanban View for Projects
-description: Track projects through stages using a visual board.
+title: 为项目创建看板视图
+description: 使用可视化看板按阶段跟踪项目。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Use a Kanban view to visualize your projects (or any object with stages) as cards moving through columns.
+使用看板视图将您的项目（或任何具有阶段的对象）可视化为在列间移动的卡片。
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="视频演示" />
 
-## Prerequisites
+## 先决条件
 
-Your object needs a **Select field** to use as columns (e.g., Status, Stage, Phase).
+您的对象需要一个用作列的 **选择字段**（例如：状态、阶段、环节）。
 
-If you don't have one:
+如果您还没有：
 
-1. Go to **Settings → Data Model**
-2. Select your object
-3. Add a Select field with your stage options
+1. 进入 **设置 → 数据模型**
+2. 选择你的对象
+3. 添加一个包含阶段选项的选择字段
 
-## Steps
+## 步骤
 
-1. Navigate to your object (e.g., Projects, Tasks)
-2. Click the view dropdown → **+ Add view**
-3. Name your view (e.g., "Project Board")
-4. Click **Create**
-5. Click **Options** and select **Kanban** as the layout
-6. The view uses your Select field for columns automatically
-7. Click **Save**
+1. 导航到您的对象（例如：项目、任务）
+2. 单击视图下拉菜单 → **+ 添加视图**
+3. 为视图命名（例如：“项目看板”）
+4. 单击 **创建**
+5. 单击 **选项**，并选择 **看板** 作为布局
+6. 该视图会自动使用您的选择字段作为列
+7. 单击 **保存**
 
-## Configure Your Board
+## 配置您的看板
 
-### Show Key Fields on Cards
+### 在卡片上显示关键字段
 
-1. Click **Options → Fields**
-2. Find fields in the "Hidden Fields" section
-3. Click the **eye icon** to display them on cards
-4. Drag to reorder
+1. 点击 **选项 → 字段**
+2. 在 "隐藏字段" 部分查找字段
+3. 单击 **眼睛图标** 以在卡片上显示它们
+4. 拖动以重新排序
 
 <img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
 
-### Enable Compact View
+### 启用紧凑视图
 
-For a high-level overview:
+用于高层概览：
 
-1. Click **Options**
-2. Turn on **Compact view**
+1. 单击 **选项**
+2. 开启 **紧凑视图**
 
-Cards show only the record name.
+卡片仅显示记录名称。
 
 <img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
 
-### Add Aggregations
+### 添加聚合
 
-Show counts or totals at the top of each column:
+在每列顶部显示计数或总计：
 
-1. Click the number next to a column name
-2. Select an aggregation (Count, Sum, etc.)
-3. Choose a field if needed
+1. 单击列名旁边的数字
+2. 选择一种聚合（计数、求和等）
+3. 如有需要，选择一个字段
 
-## Moving Cards
+## 移动卡片
 
-Drag and drop cards between columns to update their status.
+在列之间拖放卡片以更新其状态。
 
-<VimeoEmbed videoId="927888627" title="Video demonstration" />
+<VimeoEmbed videoId="927888627" title="视频演示" />
 
-## Example: Task Board
+## 示例：任务看板
 
-| Column (Status) | Cards             |
-| --------------- | ----------------- |
-| **To Do**       | New tasks         |
-| **In Progress** | Active work       |
-| **Review**      | Awaiting approval |
-| **Done**        | Completed         |
+| 列（状态）   | 卡片     |
+| ------- | ------ |
+| **待办**  | 新任务    |
+| **进行中** | 进行中的工作 |
+| **审核**  | 等待批准   |
+| **已完成** | 已完成    |
 
-## Related
+## 相关内容
 
-* [Kanban Views](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — aggregations, compact view, stages
-* [How to Set Up a Sales Pipeline](/l/zh/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban for Opportunities
+* [看板视图](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — 聚合、紧凑视图、阶段
+* [如何设置销售管道](/l/zh/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — 用于商机的看板

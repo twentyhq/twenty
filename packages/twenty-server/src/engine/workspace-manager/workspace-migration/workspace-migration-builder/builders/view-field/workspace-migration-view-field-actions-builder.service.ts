@@ -68,7 +68,7 @@ export class WorkspaceMigrationViewFieldActionsBuilderService extends WorkspaceE
       action: {
         type: 'delete',
         metadataName: 'viewField',
-        entityId: flatViewFieldToValidate.id,
+        universalIdentifier: flatViewFieldToValidate.universalIdentifier,
       },
     };
   }

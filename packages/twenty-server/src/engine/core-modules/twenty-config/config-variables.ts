@@ -10,6 +10,7 @@ import {
   validateSync,
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
+import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -21,11 +22,12 @@ import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.en
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
+import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.interface';
 import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
-import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/decorators/cast-to-positive-number.decorator';
+import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-typeorm-log-level-array.decorator';
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
@@ -70,11 +72,11 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,
     description:
-      'Enable safe mode for HTTP requests (prevents private IPs and other security risks)',
+      'Enable safe mode for outbound HTTP requests (prevents private IPs and other security risks). Applies to HTTP workflow actions and webhooks.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  HTTP_TOOL_SAFE_MODE_ENABLED = true;
+  OUTBOUND_HTTP_SAFE_MODE_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
@@ -212,6 +214,15 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description:
+      'Enable or disable the seeding of standard record page layouts',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
@@ -452,87 +463,98 @@ export class ConfigVariables {
   STORAGE_S3_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
-    description: 'Type of serverless execution (local or Lambda)',
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
-    options: Object.values(ServerlessDriverType),
+    options: Object.values(LogicFunctionExecutorDriverType),
     isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.LOCAL;
+  LOGIC_FUNCTION_TYPE: LogicFunctionExecutorDriverType =
+    LogicFunctionExecutorDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description:
-      'Configure whether console logs from serverless functions are displayed in the terminal',
+      'Configure whether console logs from logic functions are displayed in the terminal',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  SERVERLESS_LOGS_ENABLED: false;
+  LOGIC_FUNCTION_LOGS_ENABLED: false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
-    description: 'Throttle limit for serverless function execution',
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description: 'Throttle limit for logic function execution',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT = 1000;
+  LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT = 1000;
 
   // milliseconds
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
-    description: 'Time-to-live for serverless function execution throttle',
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
+    description: 'Time-to-live for logic function execution throttle',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 60_000;
+  LOGIC_FUNCTION_EXEC_THROTTLE_TTL = 60_000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Region for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
   @IsAWSRegion()
-  SERVERLESS_LAMBDA_REGION: AwsRegion;
+  LOGIC_FUNCTION_LAMBDA_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'IAM role for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
-  SERVERLESS_LAMBDA_ROLE: string;
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
+  LOGIC_FUNCTION_LAMBDA_ROLE: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Role to assume when hosting lambdas in dedicated AWS account',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
   @IsOptional()
-  SERVERLESS_LAMBDA_SUBHOSTING_ROLE?: string;
+  LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     isSensitive: true,
     description: 'Access key ID for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
   @IsOptional()
-  SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
+  LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVERLESS_CONFIG,
+    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     isSensitive: true,
     description: 'Secret access key for AWS Lambda functions',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.LAMBDA)
+  @ValidateIf(
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+  )
   @IsOptional()
-  SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
+  LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
@@ -596,6 +618,17 @@ export class ConfigVariables {
   })
   @IsOptional()
   TELEMETRY_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'TypeORM logging options for development mode. Accepts comma-separated values: query, schema, error, warn, info, log, migration',
+    type: ConfigVariableType.ARRAY,
+    options: ['query', 'schema', 'error', 'warn', 'info', 'log', 'migration'],
+  })
+  @CastToTypeORMLogLevelArray()
+  @IsOptional()
+  TYPEORM_LOGGING: LoggerOptions = ['error'];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,

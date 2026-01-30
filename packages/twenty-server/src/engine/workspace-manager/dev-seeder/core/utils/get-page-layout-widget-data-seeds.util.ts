@@ -393,6 +393,23 @@ export const getPageLayoutWidgetDataSeeds = (
           objectMetadataId: taskObject?.id ?? null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
+
+    // Sales Overview Tab Widgets - Front Component
+    {
+      id: generateSeedId(workspaceId, PAGE_LAYOUT_WIDGET_SEEDS.FRONT_COMPONENT),
+      pageLayoutTabId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_TAB_SEEDS.SALES_OVERVIEW,
+      ),
+      title: 'Front Component',
+      type: WidgetType.FRONT_COMPONENT,
+      gridPosition: { row: 2, column: 7, rowSpan: 2, columnSpan: 5 },
+      configuration: {
+        configurationType: WidgetConfigurationType.FRONT_COMPONENT,
+        frontComponentId: '6cdf2607-4b28-40e6-8c53-cc06799ddc88',
+      } as const,
+      objectMetadataId: null,
+    } satisfies SeederFlatPageLayoutWidget,
   ].filter(isDefined);
 
   const v2Widgets = isDashboardV2Enabled

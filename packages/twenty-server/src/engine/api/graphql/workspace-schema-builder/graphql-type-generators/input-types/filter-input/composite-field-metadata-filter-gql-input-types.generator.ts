@@ -7,7 +7,7 @@ import {
   isEnumType,
   isObjectType,
 } from 'graphql';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { CompositeType } from 'twenty-shared/types';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
@@ -19,7 +19,6 @@ import { computeCompositeFieldInputTypeKey } from 'src/engine/api/graphql/worksp
 import { createGqlEnumFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/create-gql-enum-filter-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class CompositeFieldMetadataFilterGqlInputTypeGenerator {

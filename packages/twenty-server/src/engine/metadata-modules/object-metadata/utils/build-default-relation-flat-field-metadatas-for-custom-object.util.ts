@@ -5,6 +5,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -18,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+  ATTACHMENT_STANDARD_FIELD_IDS,
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
@@ -33,7 +35,7 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 const morphIdByRelationObjectNameSingular = {
   timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   favorite: null,
-  attachment: null,
+  attachment: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
   noteTarget: null,
   taskTarget: null,
 } satisfies Record<
@@ -52,7 +54,7 @@ export type BuildDefaultRelationFieldsForCustomObjectArgs = {
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   workspaceId: string;
   sourceFlatObjectMetadata: FlatObjectMetadata;
-  workspaceCustomApplicationId: string;
+  flatApplication: FlatApplication;
 };
 
 type SourceAndTargetFlatFieldMetadatasRecord = {
@@ -70,7 +72,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,
   workspaceId,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: BuildDefaultRelationFieldsForCustomObjectArgs): SourceAndTargetFlatFieldMetadatasRecord => {
   const objectIdByNameSingular = Object.values(
     existingFlatObjectMetadataMaps.byId,
@@ -96,7 +98,9 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
           (objectMetadataNameSingular === 'timelineActivity' &&
             existingFeatureFlagsMap[
               FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED
-            ]) ??
+            ]) ||
+          (objectMetadataNameSingular === 'attachment' &&
+            existingFeatureFlagsMap[FeatureFlagKey.IS_ATTACHMENT_MIGRATED]) ||
           false;
         const isObjectMigratedToMorphRelations =
           isObjectMigratedFromOlderReleases || isFeatureFlagEnabled;
@@ -153,7 +157,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
               ? FieldMetadataType.MORPH_RELATION
               : FieldMetadataType.RELATION,
             workspaceId,
-            workspaceCustomApplicationId,
+            flatApplication,
             sourceFlatObjectMetadataJoinColumnName: joinColumnName,
             morphId,
             targetFieldName: fieldName,

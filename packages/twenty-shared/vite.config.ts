@@ -41,12 +41,35 @@ export default defineConfig(() => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-shared',
+    resolve: {
+      alias: {
+        '@/': path.resolve(__dirname, 'src') + '/',
+      },
+    },
     plugins: [
       tsconfigPaths({
-        root: __dirname
+        root: __dirname,
       }),
       dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
     ],
+    worker: {
+      format: 'iife',
+      rollupOptions: {
+        output: {
+          inlineDynamicImports: true,
+        },
+      },
+      plugins: () => [
+        {
+          name: 'define-process-env',
+          transform(code: string) {
+            return code
+              .replace(/process\.env\.NODE_ENV/g, JSON.stringify('production'))
+              .replace(/process\.env/g, '{}');
+          },
+        },
+      ],
+    },
     build: {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-shared' },

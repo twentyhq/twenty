@@ -1,13 +1,13 @@
 ---
-title: Local Setup
-description: The guide for contributors (or curious developers) who want to run Twenty locally.
+title: 本地设置
+description: 本指南适用于希望在本地运行 Twenty 的贡献者或好奇的开发人员。
 ---
 
-## Prerequisites
+## 先决条件
 
 <Tabs>
-  <Tab title="Linux and MacOS">
-    Before you can install and use Twenty, make sure you install the following on your computer:
+  <Tab title="Linux 和 MacOS">
+    在安装和使用 Twenty 之前，请确保在您的计算机上安装以下内容：
 
     * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
     * [Node v24.5.0](https://nodejs.org/en/download)
@@ -15,25 +15,25 @@ description: The guide for contributors (or curious developers) who want to run 
     * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
     <Warning>
-      `npm` won't work, you should use `yarn` instead. Yarn is now shipped with Node.js, so you don't need to install it separately.
-      You only have to run `corepack enable` to enable Yarn if you haven't done it yet.
+      `npm` 无法使用，您应该改用 `yarn`。 Yarn 现在与 Node.js 一起提供，因此您不需要单独安装它。
+      如果您尚未执行此操作，只需运行 `corepack enable` 即可启用 Yarn。
     </Warning>
   </Tab>
 
   <Tab title="Windows (WSL)">
-    1. Install WSL
-       Open PowerShell as Administrator and run:
+    1. 安装 WSL
+       以管理员身份打开 PowerShell 并运行：
 
     ```powershell
     wsl --install
     ```
 
-    You should now see a prompt to restart your computer. If not, restart it manually.
+    现在您应该看到一个提示，要求您重启计算机。 如果没有，请手动重启。
 
-    Upon restart, a powershell window will open and install Ubuntu. This may take up some time.
-    You'll see a prompt to create a username and password for your Ubuntu installation.
+    重启后，一个 powershell 窗口将打开并安装 Ubuntu。 这可能需要一些时间。
+    您将看到一个提示，要求为您的 Ubuntu 安装创建用户名和密码。
 
-    2. Install and configure git
+    2. 安装和配置 git
 
     ```bash
     sudo apt-get install git
@@ -43,10 +43,10 @@ description: The guide for contributors (or curious developers) who want to run 
     git config --global user.email "youremail@domain.com"
     ```
 
-    3. Install nvm, node.js and yarn
+    3. 安装 nvm、node.js 和 yarn
 
     <Warning>
-      Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contributors use the same version.
+      使用 `nvm` 安装正确的 `node` 版本。 `.nvmrc` 确保所有贡献者使用相同的版本。
     </Warning>
 
     ```bash
@@ -55,7 +55,7 @@ description: The guide for contributors (or curious developers) who want to run 
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
     ```
 
-    Close and reopen your terminal to use nvm. Then run the following commands.
+    关闭并重新打开您的终端以使用 nvm。 然后运行以下命令。
 
     ```bash
 
@@ -70,13 +70,13 @@ description: The guide for contributors (or curious developers) who want to run 
 
 ---
 
-## Step 1: Git Clone
+## 步骤 1：Git 克隆
 
-In your terminal, run the following command.
+在您的终端中，运行以下命令。
 
 <Tabs>
-  <Tab title="SSH (Recommended)">
-    If you haven't already set up SSH keys, you can learn how to do so [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh).
+  <Tab title="SSH (推荐)">
+    如果您尚未设置 SSH 密钥，您可以在 [这里](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh) 学习如何设置。
 
     ```bash
     git clone git@github.com:twentyhq/twenty.git
@@ -90,36 +90,36 @@ In your terminal, run the following command.
   </Tab>
 </Tabs>
 
-## Step 2: Position yourself at the root
+## 步骤 2：定位到项目根目录
 
 ```bash
 cd twenty
 ```
 
-You should run all commands in the following steps from the root of the project.
+您应该从项目的根目录运行以下步骤中的所有命令。
 
-## Step 3: Set up a PostgreSQL Database
+## 步骤 3：设置 PostgreSQL 数据库
 
 <Tabs>
   <Tab title="Linux">
-    **Option 1 (preferred):** To provision your database locally:
-    Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    \*\*选项 1（推荐）：\*\*在本地供应您的数据库：
+    使用以下链接在 Linux 机器上安装 Postgresql：[Postgresql 安装](https://www.postgresql.org/download/linux/)
 
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
-    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+    注意：您可能需要在命令 `psql` 前添加 `sudo -u postgres` 以避免权限错误。
 
-    **Option 2:** If you have docker installed:
+    \*\*选项 2：\*\*如果您已安装 docker：
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
   <Tab title="Mac OS">
-    **Option 1 (preferred):** To provision your database locally with `brew`:
+    \*\*选项 1（推荐）：\*\*通过 `brew` 在本地设置数据库：
 
     ```bash
       brew install postgresql@16
@@ -128,16 +128,14 @@ You should run all commands in the following steps from the root of the project.
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
-    You can verify if the PostgreSQL server is running by executing:
+    您可以通过执行以下操作来验证 PostgreSQL 服务器是否正在运行：
 
     ```bash
       brew services list
     ```
 
-    The installer might not create the `postgres` user by default when installing
-    via Homebrew on MacOS. Instead, it creates a PostgreSQL role that matches your macOS
-    username (e.g., "john").
-    To check and create the `postgres` user if necessary, follow these steps:
+    安装器在通过 Homebrew 安装时可能不会默认创建 `postgres` 用户。 相反，它会创建一个与您的 macOS 用户名（例如，“john”）匹配的 PostgreSQL 角色。
+    按照以下步骤检查并在必要时创建 `postgres` 用户：
 
     ```bash
       # Connect to PostgreSQL
@@ -146,14 +144,14 @@ You should run all commands in the following steps from the root of the project.
       psql -U $(whoami) -d postgres
     ```
 
-    Once at the psql prompt (postgres=#), run:
+    在 psql 提示符（postgres=#）下，运行：
 
     ```bash
      # List existing PostgreSQL roles
      \du
     ```
 
-    You'll see output similar to:
+    您将看到类似于以下的输出：
 
     ```bash
      Role name | Attributes  | Member of
@@ -161,98 +159,105 @@ You should run all commands in the following steps from the root of the project.
      john      | Superuser   | {}
     ```
 
-    If you do not see a `postgres` role listed, proceed to the next step.
-    Create the `postgres` role manually:
+    如果您没有看到 `postgres` 角色列出，请继续下一步。
+    手动创建 `postgres` 角色：
 
     ```bash
      CREATE ROLE postgres WITH SUPERUSER LOGIN;
     ```
 
-    This creates a superuser role named `postgres` with login access.
-
-    **Option 2:** If you have docker installed:
+    这将创建一个具备登录权限名为 `postgres` 的超级用户角色。
 
     ```bash
-      make postgres-on-docker
+    角色名 | 属性  | 成员
+    -----------+-------------+-----------
+    postgres  | 超级用户   | {}
+    john      | 超级用户   | {}
+    ```
+
+    \*\*选项 2：\*\*如果您已安装 docker：
+
+    ```bash
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 
   <Tab title="Windows (WSL)">
-    All the following steps are to be run in the WSL terminal (within your virtual machine)
+    以下所有步骤应在 WSL 终端（在您的虚拟机内）中运行
 
-    **Option 1:** To provision your Postgresql locally:
-    Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    \*\*选项 1：\*\*在本地提供您的 Postgresql：
+    使用以下链接在 Linux 虚拟机上安装 Postgresql：[Postgresql 安装](https://www.postgresql.org/download/linux/)
 
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
-    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
+    注意：您可能需要在命令 `psql` 前添加 `sudo -u postgres` 以避免权限错误。
 
-    **Option 2:** If you have docker installed:
-    Running Docker on WSL adds an extra layer of complexity.
-    Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+    \*\*选项 2：\*\*如果您已安装 docker：
+    在 WSL 上运行 Docker 增加了额外的复杂性。
+    仅在您对涉及的额外步骤感到舒适时使用此选项，包括开启 [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl)。
 
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
 
-You can now access the database at [localhost:5432](localhost:5432), with user `postgres` and password `postgres` .
+您现在可以在 [localhost:5432](localhost:5432) 访问数据库，用户名 `postgres`，密码 `postgres`。
 
-## Step 4: Set up a Redis Database (cache)
+## 步骤 4：设置 Redis 数据库（缓存）
 
-Twenty requires a redis cache to provide the best performance
+Twenty 需要 Redis 缓存来提供最佳性能
 
 <Tabs>
   <Tab title="Linux">
-    **Option 1:** To provision your Redis locally:
-    Use the following link to install Redis on your Linux machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+    \*\*选项 1：\*\*在本地供应您的 Redis：
+    使用以下链接在 Linux 机器上安装 Redis：[Redis 安装](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
-    **Option 2:** If you have docker installed:
+    \*\*选项 2：\*\*如果您已安装 docker：
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
   <Tab title="Mac OS">
-    **Option 1 (preferred):** To provision your Redis locally with `brew`:
+    \*\*选项 1（推荐）：\*\*通过 `brew` 在本地设置 Redis：
 
     ```bash
     brew install redis
     ```
 
-    Start your redis server:
+    启动您的 redis server：
     `brew services start redis`
 
-    **Option 2:** If you have docker installed:
+    \*\*选项 2：\*\*如果您已安装 docker：
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 
   <Tab title="Windows (WSL)">
-    **Option 1:** To provision your Redis locally:
-    Use the following link to install Redis on your Linux virtual machine: [Redis Installation](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+    \*\*选项 1：\*\*在本地供应您的 Redis：
+    使用以下链接在 Linux 虚拟机上安装 Redis：[Redis 安装](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 
-    **Option 2:** If you have docker installed:
+    \*\*选项 2：\*\*如果您已安装 docker：
 
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>
 
-If you need a Client GUI, we recommend [redis insight](https://redis.io/insight/) (free version available)
+如果您需要客户端 GUI，我们推荐 [redis insight](https://redis.io/insight/)（提供免费版）
 
-## Step 5: Setup environment variables
+## 步骤 5：设置环境变量
 
-Use environment variables or `.env` files to configure your project. More info [here](/l/zh/developers/self-host/capabilities/setup)
+使用环境变量或 `.env` 文件配置您的项目。 更多信息请参见 [此处](/l/zh/developers/self-host/capabilities/setup)
 
-Copy the `.env.example` files in `/front` and `/server`:
+复制 `/front` 和 `/server` 目录中的 `.env.example` 文件：
 
 ```bash
 cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
@@ -260,29 +265,29 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Multi-Workspace Mode:** By default, Twenty runs in single-workspace mode where only one workspace can be created. To enable multi-workspace support (useful for testing subdomain-based features), set `IS_MULTIWORKSPACE_ENABLED=true` in your server `.env` file. See [Multi-Workspace Mode](/l/zh/developers/self-host/capabilities/setup#multi-workspace-mode) for details.
+  **多工作区模式：** 默认情况下，Twenty 以单工作区模式运行，在此模式下只能创建一个工作区。 要启用多工作区支持（对于测试基于子域的功能很有用），请在服务器的 `.env` 文件中设置 `IS_MULTIWORKSPACE_ENABLED=true`。 详见 [多工作区模式](/l/zh/developers/self-host/capabilities/setup#multi-workspace-mode)。
 </Info>
 
-## Step 6: Installing dependencies
+## 步骤 6：安装依赖项
 
-To build Twenty server and seed some data into your database, run the following command:
+要构建 Twenty 服务器并向你的数据库预置一些数据，请运行以下命令：
 
 ```bash
 yarn
 ```
 
-Note that `npm` or `pnpm` won't work
+注意 `npm` 或 `pnpm` 将不起作用
 
-## Step 7: Running the project
+## 步骤 7：运行项目
 
 <Tabs>
   <Tab title="Linux">
-    Depending on your Linux distribution, Redis server might be started automatically.
-    If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
+    根据您的 Linux 发行版，Redis 服务器可能会自动启动。
+    如果没有，请查看您的发行版的 [Redis 安装指南](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)。
   </Tab>
 
   <Tab title="Mac OS">
-    Redis should already be running. If not, run:
+    Redis 应该已经在运行中。 如果没有，运行：
 
     ```bash
     brew services start redis
@@ -290,18 +295,18 @@ Note that `npm` or `pnpm` won't work
   </Tab>
 
   <Tab title="Windows (WSL)">
-    Depending on your Linux distribution, Redis server might be started automatically.
-    If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
+    根据您的 Linux 发行版，Redis 服务器可能会自动启动。
+    如果没有，请查看您的发行版的 [Redis 安装指南](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)。
   </Tab>
 </Tabs>
 
-Set up your database with the following command:
+使用以下命令设置您的数据库：
 
 ```bash
 npx nx database:reset twenty-server
 ```
 
-Start the server, the worker and the frontend services:
+启动服务器、工作程序和前端服务：
 
 ```bash
 npx nx start twenty-server
@@ -309,25 +314,25 @@ npx nx worker twenty-server
 npx nx start twenty-front
 ```
 
-Alternatively, you can start all services at once:
+或者，您可以一次启动所有服务：
 
 ```bash
 npx nx start
 ```
 
-## Step 8: Use Twenty
+## 步骤 8：使用 Twenty
 
-**Frontend**
+**前端**
 
-Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001).
-You can log in using the default demo account: `tim@apple.dev` (password: `tim@apple.dev`)
+Twenty 的前端将在 [http://localhost:3001](http://localhost:3001) 运行。
+您可以使用默认的演示帐号登录：`tim@apple.dev` （密码：`tim@apple.dev`）
 
-**Backend**
+**后端**
 
-* Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000)
-* The GraphQL API can be accessed at [http://localhost:3000/graphql](http://localhost:3000/graphql)
-* The REST API can be reached at [http://localhost:3000/rest](http://localhost:3000/rest)
+* Twenty 的服务器将在 [http://localhost:3000](http://localhost:3000) 启动并运行
+* 可在 [http://localhost:3000/graphql](http://localhost:3000/graphql) 访问 GraphQL API
+* 可通过 [http://localhost:3000/rest](http://localhost:3000/rest) 访问 REST API
 
-## Troubleshooting
+## 故障排除
 
-If you encounter any problem, check [Troubleshooting](/l/zh/developers/self-host/capabilities/troubleshooting) for solutions.
+如果您遇到任何问题，请检查[故障排除](/l/zh/developers/self-host/capabilities/troubleshooting)以获取解决方案。

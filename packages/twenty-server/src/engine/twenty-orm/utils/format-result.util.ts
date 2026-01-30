@@ -6,7 +6,7 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, stringifySafely } from 'twenty-shared/utils';
 
 import {
   DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
@@ -180,6 +180,41 @@ export function formatResult<T>(
 
     // @ts-expect-error legacy noImplicitAny
     newData[dateField.name] = rawUpdatedDate;
+  }
+
+  const fieldMetadataItemsOfTypeDateTimeOnly =
+    getFlatFieldsFromFlatObjectMetadata(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    ).filter((field) => field.type === FieldMetadataType.DATE_TIME);
+
+  for (const dateTimeField of fieldMetadataItemsOfTypeDateTimeOnly) {
+    // @ts-expect-error legacy noImplicitAny
+    const rawUpdatedDateTime = newData[dateTimeField.name] as
+      | string
+      | Date
+      | null
+      | undefined
+      | Record<string, unknown>;
+
+    if (!isDefined(rawUpdatedDateTime)) {
+      continue;
+    }
+
+    if (
+      typeof rawUpdatedDateTime === 'string' ||
+      rawUpdatedDateTime instanceof Date ||
+      isPlainObject(rawUpdatedDateTime)
+    ) {
+      // @ts-expect-error legacy noImplicitAny
+      newData[dateTimeField.name] = rawUpdatedDateTime;
+    } else {
+      const stringifiedUnknownValue = stringifySafely(rawUpdatedDateTime);
+
+      throw new Error(
+        `Invalid DATE_TIME field "${dateTimeField.name}", value: "${stringifiedUnknownValue}", it should be a string, Date instance or plain object, (current type : ${typeof rawUpdatedDateTime}).`,
+      );
+    }
   }
 
   return newData as T;

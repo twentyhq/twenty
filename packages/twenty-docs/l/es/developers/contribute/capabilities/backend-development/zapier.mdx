@@ -1,18 +1,18 @@
 ---
-title: Zapier App
+title: Aplicación Zapier
 ---
 
-Effortlessly sync Twenty with 3000+ apps using [Zapier](https://zapier.com/). Automate tasks, boost productivity, and supercharge your customer relationships!
+Sincroniza sin esfuerzo Twenty con más de 3000 aplicaciones usando [Zapier](https://zapier.com/). ¡Automatiza tareas, mejora la productividad y potencia tus relaciones con los clientes!
 
-## About Zapier
+## Acerca de Zapier
 
-Zapier is a tool that allows you to automate workflows by connecting the apps that your team uses every day. The fundamental concept of Zapier is automation workflows, called Zaps, and include triggers and actions.
+Zapier es una herramienta que permite automatizar flujos de trabajo al conectar las aplicaciones que tu equipo utiliza a diario. El concepto fundamental de Zapier son los flujos de trabajo automatizados, llamados Zaps, que incluyen desencadenantes y acciones.
 
-You can learn more about how Zapier works [here](https://zapier.com/how-it-works).
+Puedes aprender más sobre cómo funciona Zapier [aquí](https://zapier.com/how-it-works).
 
-## Setup
+## Configuración
 
-### Step 1: Install Zapier packages
+### Paso 1: Instalar paquetes de Zapier
 
 ```bash
 cd packages/twenty-zapier
@@ -20,33 +20,33 @@ cd packages/twenty-zapier
 yarn
 ```
 
-### Step 2: Login with the CLI
+### Paso 2: Iniciar sesión con la CLI
 
-Use your Zapier credentials to log in using the CLI:
+Utiliza tus credenciales de Zapier para iniciar sesión usando la CLI:
 
 ```bash
 zapier login
 ```
 
-### Step 3: Set environment variables
+### Paso 3: Configurar variables de entorno
 
-From the `packages/twenty-zapier` folder, run:
+Desde la carpeta `packages/twenty-zapier`, ejecuta:
 
 ```bash
 cp .env.example .env
 ```
 
-Run the application locally, go to [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks), and generate an API key.
+Ejecuta la aplicación localmente, ve a [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks) y genera una clave API.
 
-Replace the **YOUR_API_KEY** value in the `.env` file with the API key you just generated.
+Reemplaza el valor de **YOUR_API_KEY** en el archivo `.env` con la clave API que acabas de generar.
 
-## Development
+## Desarrollo
 
 <Warning>
-  Make sure to run `yarn build` before any `zapier` command.
+  Asegúrate de ejecutar `yarn build` antes de cualquier comando `zapier`.
 </Warning>
 
-### Test
+### Prueba
 
 ```bash
 yarn test
@@ -58,25 +58,25 @@ yarn test
 yarn format
 ```
 
-### Watch and compile as you edit code
+### Observa y compila mientras editas el código
 
 ```bash
 yarn watch
 ```
 
-### Validate your Zapier app
+### Valida tu aplicación Zapier
 
 ```bash
 yarn validate
 ```
 
-### Deploy your Zapier app
+### Despliega tu aplicación Zapier
 
 ```bash
 yarn deploy
 ```
 
-### List all Zapier CLI commands
+### Lista todos los comandos de Zapier CLI
 
 ```bash
 zapier

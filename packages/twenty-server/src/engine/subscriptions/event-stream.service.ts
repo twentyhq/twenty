@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,21 +9,46 @@ import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
 import {
   EventStreamException,
   EventStreamExceptionCode,
 } from 'src/engine/subscriptions/event-stream.exception';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
-import { type ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
 
 @Injectable()
-export class EventStreamService {
+export class EventStreamService implements OnModuleInit {
+  private readonly logger = new Logger(EventStreamService.name);
+
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineSubscriptions)
     private readonly cacheStorageService: CacheStorageService,
     private readonly cacheLockService: CacheLockService,
+    private readonly metricsService: MetricsService,
   ) {}
+
+  onModuleInit() {
+    this.metricsService.createObservableGauge(
+      'twenty_event_streams_live_total',
+      { description: 'Current number of live event streams' },
+      async (observableResult) => {
+        try {
+          const count = await this.getTotalActiveStreamCount();
+
+          observableResult.observe(count);
+        } catch (error) {
+          this.logger.error('Failed to collect event streams metrics', error);
+        }
+      },
+    );
+  }
+
+  async getTotalActiveStreamCount(): Promise<number> {
+    return this.cacheStorageService.scanAndCountSetMembers(
+      'workspace:*:activeStreams',
+    );
+  }
 
   async createEventStream({
     workspaceId,
@@ -131,15 +156,6 @@ export class EventStreamService {
     return result;
   }
 
-  async getStreamData(
-    workspaceId: string,
-    eventStreamChannelId: string,
-  ): Promise<EventStreamData | undefined> {
-    const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
-
-    return this.cacheStorageService.get<EventStreamData>(key);
-  }
-
   async isAuthorized({
     workspaceId,
     eventStreamChannelId,
@@ -214,40 +230,25 @@ export class EventStreamService {
     }
   }
 
-  async getQueries(
-    workspaceId: string,
-    eventStreamId: string,
-  ): Promise<Map<string, RecordGqlOperationSignature>> {
-    const streamData = await this.getStreamData(workspaceId, eventStreamId);
+  async refreshEventStreamTTL({
+    workspaceId,
+    eventStreamChannelId,
+  }: {
+    workspaceId: string;
+    eventStreamChannelId: string;
+  }): Promise<boolean> {
+    const eventStreamKey = this.getEventStreamKey(
+      workspaceId,
+      eventStreamChannelId,
+    );
+    const activeStreamsKey = this.getActiveStreamsKey(workspaceId);
 
-    if (!isDefined(streamData)) {
-      return new Map();
-    }
+    const [eventStreamRefreshed, activeStreamsRefreshed] = await Promise.all([
+      this.cacheStorageService.expire(eventStreamKey, EVENT_STREAM_TTL_MS),
+      this.cacheStorageService.expire(activeStreamsKey, EVENT_STREAM_TTL_MS),
+    ]);
 
-    return new Map(Object.entries(streamData.queries));
-  }
-
-  matchQueriesWithEvent(
-    queries: Record<string, RecordGqlOperationSignature>,
-    event: ObjectRecordSubscriptionEvent,
-  ): string[] {
-    const matchedQueryIds: string[] = [];
-
-    for (const [queryId, operationSignature] of Object.entries(queries)) {
-      if (this.isQueryMatchingEvent(operationSignature, event)) {
-        matchedQueryIds.push(queryId);
-      }
-    }
-
-    return matchedQueryIds;
-  }
-
-  private isQueryMatchingEvent(
-    operationSignature: RecordGqlOperationSignature,
-    event: ObjectRecordSubscriptionEvent,
-  ): boolean {
-    // to be improved
-    return operationSignature.objectNameSingular === event.objectNameSingular;
+    return eventStreamRefreshed && activeStreamsRefreshed;
   }
 
   private getEventStreamKey(
@@ -259,5 +260,14 @@ export class EventStreamService {
 
   private getActiveStreamsKey(workspaceId: string): string {
     return `workspace:${workspaceId}:activeStreams`;
+  }
+
+  private async getStreamData(
+    workspaceId: string,
+    eventStreamChannelId: string,
+  ): Promise<EventStreamData | undefined> {
+    const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
+
+    return this.cacheStorageService.get<EventStreamData>(key);
   }
 }

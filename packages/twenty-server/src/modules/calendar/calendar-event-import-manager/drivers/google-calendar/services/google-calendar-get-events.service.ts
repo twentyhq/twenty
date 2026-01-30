@@ -108,7 +108,7 @@ export class GoogleCalendarGetEventsService {
       this.logger.error(
         `Calendar event import error for Google Calendar. status: ${error.response?.status}`,
       );
-      this.logger.log(error);
+      this.logger.error(error);
       const googleCalendarError = {
         code: error.response?.status,
         reason:

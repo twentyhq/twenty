@@ -1,67 +1,67 @@
 ---
-title: Update Existing Records via Import
-description: Complete step-by-step guide to bulk updating records using CSV import.
+title: Mettre à jour des enregistrements existants via l'importation
+description: Guide complet étape par étape pour mettre à jour en masse des enregistrements à l'aide de l'importation CSV.
 ---
 
-## Overview
+## Vue d'ensemble
 
-Need to update many records at once? Instead of editing them one by one, use the CSV import to bulk update existing records.
+Besoin de mettre à jour de nombreux enregistrements en une seule fois ? Au lieu de les modifier un par un, utilisez l'importation CSV pour mettre à jour en masse les enregistrements existants.
 
-**Use cases:**
+**Cas d'utilisation :**
 
-* Update job titles for multiple people
-* Change company information in bulk
-* Add data to new custom fields
-* Correct data errors across many records
+* Mettre à jour les intitulés de poste pour plusieurs personnes
+* Modifier les informations d'entreprise en masse
+* Ajouter des données à de nouveaux champs personnalisés
+* Corriger des erreurs de données sur de nombreux enregistrements
 
-## How It Works
+## Comment ça marche
 
-When you import a file containing a **unique identifier** that matches an existing record, Twenty updates that record instead of creating a duplicate.
+Lorsque vous importez un fichier contenant un **identifiant unique** qui correspond à un enregistrement existant, Twenty met à jour cet enregistrement au lieu de créer un doublon.
 
-| If unique identifier...    | Twenty will...                                   |
-| -------------------------- | ------------------------------------------------ |
-| Matches an existing record | **Update** the existing record                   |
-| Doesn't match any record   | **Create** a new record                          |
-| Is missing from your file  | **Create** a new record (with auto-generated ID) |
+| Si l'identifiant unique...              | Twenty va...                                                                    |
+| --------------------------------------- | ------------------------------------------------------------------------------- |
+| Correspond à un enregistrement existant | **Mettre à jour** l'enregistrement existant                                     |
+| Ne correspond à aucun enregistrement    | **Créer** un nouvel enregistrement                                              |
+| Est absent de votre fichier             | **Créer** un nouvel enregistrement (avec un identifiant généré automatiquement) |
 
 <Warning>
-  **Multi-Select fields are overwritten, not merged.**
+  **Les champs à sélection multiple sont écrasés, pas fusionnés.**
 
-  If a record has `Option A` and `Option B` selected, and you import `["Option C"]`, the record will only have `Option C` after import. The import replaces all previous selections—it does not add to them.
+  Si un enregistrement a `Option A` et `Option B` sélectionnées et que vous importez `["Option C"]`, l'enregistrement n'aura plus que `Option C` après l'importation. L'importation remplace toutes les sélections précédentes — elle ne les complète pas.
 
-  To keep existing values, include them all in your import: `["Option A","Option B","Option C"]`
+  Pour conserver les valeurs existantes, incluez-les toutes dans votre importation : `["Option A","Option B","Option C"]`
 </Warning>
 
-## Step 1: Export Your Current Data
+## Étape 1 : Exporter vos données actuelles
 
-First, export the records you want to update:
+Commencez par exporter les enregistrements que vous souhaitez mettre à jour :
 
-1. Navigate to the object (People, Companies, etc.)
-2. **Add the columns you need** — click **Options → Fields** to show the fields you want to update
-3. **Filter if needed** — narrow down to only the records you want to update
-4. Click **⋮** → **Export view**
-5. Save the CSV file
+1. Accédez à l'objet (Personnes, Entreprises, etc.)
+2. **Ajoutez les colonnes dont vous avez besoin** — cliquez sur **Options → Champs** pour afficher les champs que vous souhaitez mettre à jour
+3. **Filtrez si nécessaire** — réduisez la vue aux seuls enregistrements que vous souhaitez mettre à jour
+4. Cliquez sur **⋮** → **Exporter la vue**
+5. Enregistrez le fichier CSV
 
-<Note>**Why export first?** The exported file has the correct format, includes unique identifiers, and maps automatically during import.</Note>
+<Note>**Pourquoi exporter d'abord ?** Le fichier exporté a le bon format, inclut des identifiants uniques et se met automatiquement en correspondance lors de l'importation.</Note>
 
-### What Gets Exported
+### Ce qui est exporté
 
-* All visible columns in your current view
-* The record's unique identifiers (`id`, `email`, `domain`)
-* Current field values you can modify
+* Toutes les colonnes visibles dans votre vue actuelle
+* Les identifiants uniques de l'enregistrement (`id`, `email`, `domain`)
+* Les valeurs de champ actuelles que vous pouvez modifier
 
-## Step 2: Edit the CSV File
+## Étape 2 : Modifier le fichier CSV
 
-Open the exported file in your spreadsheet application (Excel, Google Sheets, etc.):
+Ouvrez le fichier exporté dans votre application de feuille de calcul (Excel, Google Sheets, etc.) :
 
-1. **Keep the unique identifier column** — don't delete `id`, `email`, or `domain`
-2. **Update the values** in the columns you want to change
-3. **Remove columns you don't need to update** (optional, but cleaner)
-4. **Don't change unique identifier values** — or Twenty will create new records
+1. **Conservez la colonne de l'identifiant unique** — ne supprimez pas `id`, `email` ni `domain`
+2. **Mettez à jour les valeurs** dans les colonnes que vous souhaitez modifier
+3. **Supprimez les colonnes que vous n'avez pas besoin de mettre à jour** (facultatif, mais plus propre)
+4. **Ne modifiez pas les valeurs des identifiants uniques** — sinon Twenty créera de nouveaux enregistrements
 
-### Example: Updating Job Titles
+### Exemple : Mise à jour des intitulés de poste
 
-**Exported file:**
+**Fichier exporté :**
 
 ```csv
 id,email,firstName,lastName,jobTitle
@@ -70,7 +70,7 @@ id,email,firstName,lastName,jobTitle
 550e8400-e29b-41d4-a716-446655440003,bob@acme.com,Bob,Johnson,Sales Rep
 ```
 
-**After your edits:**
+**Après vos modifications :**
 
 ```csv
 id,email,firstName,lastName,jobTitle
@@ -80,63 +80,63 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Don't change the unique identifier values.**
+  **Ne modifiez pas les valeurs des identifiants uniques.**
 
-  If you change `john@acme.com` to `john.smith@acme.com`, Twenty will create a new record instead of updating the existing one.
+  Si vous remplacez `john@acme.com` par `john.smith@acme.com`, Twenty créera un nouvel enregistrement au lieu de mettre à jour l'existant.
 </Warning>
 
-## Step 3: Import the Updated File
+## Étape 3 : Importer le fichier mis à jour
 
-1. Navigate to the object
-2. Click **⋮** → **Import records**
-3. Upload your edited CSV file
-4. **Ensure the unique identifier is mapped** — verify `email`, `domain`, or `id` is mapped correctly
-5. Review the field mappings
-6. Check for errors
-7. Click **Confirm**
+1. Accédez à l'objet
+2. Cliquez sur **⋮** → **Importer des enregistrements**
+3. Téléversez votre fichier CSV modifié
+4. **Assurez-vous que l'identifiant unique est mis en correspondance** — vérifiez que `email`, `domain` ou `id` est correctement mis en correspondance
+5. Vérifiez les correspondances de champs
+6. Recherchez des erreurs
+7. Cliquez sur **Confirmer**
 
-Twenty matches records by the unique identifier and updates them with new values.
+Twenty fait correspondre les enregistrements via l'identifiant unique et les met à jour avec les nouvelles valeurs.
 
-## Choosing the Right Unique Identifier
+## Choisir le bon identifiant unique
 
-| Object             | Recommended      | Alternative | Notes                        |
-| ------------------ | ---------------- | ----------- | ---------------------------- |
-| **People**         | `email`          | `id`        | Email is human-readable      |
-| **Companies**      | `domain`         | `id`        | Domain is human-readable     |
-| **Custom objects** | Any unique field | `id`        | Use your custom unique field |
+| Objet                    | Recommandé                  | Alternative | Notes                                      |
+| ------------------------ | --------------------------- | ----------- | ------------------------------------------ |
+| **Personnes**            | `e-mail`                    | `id`        | L'adresse e-mail est lisible par un humain |
+| **Entreprises**          | `domaine`                   | `id`        | Le domaine est lisible par un humain       |
+| **Objets personnalisés** | N'importe quel champ unique | `id`        | Utilisez votre champ unique personnalisé   |
 
-<Note>**Use only ONE unique identifier.** Don't map both `email` AND `id`. This can cause confusion and errors.</Note>
+<Note>**N'utilisez qu'UN SEUL identifiant unique.** N'associez pas à la fois `email` ET `id`. Cela peut provoquer de la confusion et des erreurs.</Note>
 
-### Using Custom Unique Fields
+### Utiliser des champs uniques personnalisés
 
-If you have a custom field marked as unique (like an external ID from another system):
+Si vous avez un champ personnalisé marqué comme unique (comme un ID externe provenant d'un autre système) :
 
-1. Include that field in your export and import
-2. Map it during import
-3. Twenty will match on that field
+1. Incluez ce champ dans votre export et votre import
+2. Associez-le lors de l'importation
+3. Twenty effectuera la correspondance sur ce champ
 
-## Step 4: Verify the Updates
+## Étape 4 : Vérifier les mises à jour
 
-After importing:
+Après l'importation :
 
-1. Open a few updated records
-2. Verify the changes were applied
-3. Check that no duplicate records were created
+1. Ouvrez quelques enregistrements mis à jour
+2. Vérifiez que les modifications ont été appliquées
+3. Vérifiez qu'aucun enregistrement en double n'a été créé
 
-## What About Fields Not in Your File?
+## Et les champs qui ne figurent pas dans votre fichier ?
 
-**Fields not included in your import file remain unchanged.**
+**Les champs non inclus dans votre fichier d'import restent inchangés.**
 
-| Your file includes...        | Result                                                 |
-| ---------------------------- | ------------------------------------------------------ |
-| `email`, `jobTitle`          | Only `jobTitle` is updated; other fields stay the same |
-| `email`, `jobTitle`, `phone` | `jobTitle` and `phone` are updated                     |
+| Votre fichier inclut...      | Résultat                                                             |
+| ---------------------------- | -------------------------------------------------------------------- |
+| `email`, `jobTitle`          | Seul `jobTitle` est mis à jour ; les autres champs restent inchangés |
+| `email`, `jobTitle`, `phone` | `jobTitle` et `phone` sont mis à jour                                |
 
-This means you only need to include the fields you want to change (plus the unique identifier).
+Cela signifie que vous n'avez besoin d'inclure que les champs que vous souhaitez modifier (plus l'identifiant unique).
 
-## Combining Updates and New Records
+## Combiner mises à jour et nouveaux enregistrements
 
-You can update existing records AND create new ones in the same import:
+Vous pouvez mettre à jour des enregistrements existants ET en créer de nouveaux dans la même importation :
 
 ```csv
 email,firstName,lastName,jobTitle
@@ -144,55 +144,55 @@ john@acme.com,John,Smith,Senior Manager    ← Updates existing (email matches)
 newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
 ```
 
-## Common Mistakes to Avoid
+## Erreurs courantes à éviter
 
-| Mistake                        | Problem                                                 | Result                                 | Solution                                  |
-| ------------------------------ | ------------------------------------------------------- | -------------------------------------- | ----------------------------------------- |
-| **Changing unique identifier** | Changed `john@acme.com` to `john.smith@acme.com`        | Creates new record instead of updating | Keep unique identifiers unchanged         |
-| **Multiple unique fields**     | Mapping both `email` AND `id`                           | Potential matching conflicts           | Map only ONE unique identifier            |
-| **No unique identifier**       | File only has `firstName`, `lastName`, `jobTitle`       | All rows create new records            | Always include `email`, `domain`, or `id` |
-| **Case mismatch**              | File has `John@acme.com` but Twenty has `john@acme.com` | Creates new record                     | Export from Twenty to get exact values    |
+| Erreur                            | Problème                                                                 | Résultat                                               | Solution                                                |
+| --------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------- |
+| **Modifier l'identifiant unique** | Remplacé `john@acme.com` par `john.smith@acme.com`                       | Crée un nouvel enregistrement au lieu de mettre à jour | Conservez les identifiants uniques inchangés            |
+| **Plusieurs champs uniques**      | Association de `email` ET `id`                                           | Risques de conflits de correspondance                  | N'associez qu'UN SEUL identifiant unique                |
+| **Pas d'identifiant unique**      | Le fichier ne contient que `firstName`, `lastName`, `jobTitle`           | Toutes les lignes créent de nouveaux enregistrements   | Incluez toujours `email`, `domain` ou `id`              |
+| **Incohérence de casse**          | Le fichier contient `John@acme.com` mais Twenty contient `john@acme.com` | Crée un nouvel enregistrement                          | Exportez depuis Twenty pour obtenir les valeurs exactes |
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="What if some records don't exist yet?">
-    Records with unique identifiers that don't match existing records will be created as new records. This lets you update and create in the same import.
+  <Accordion title="Que se passe-t-il si certains enregistrements n'existent pas encore ?">
+    Les enregistrements avec des identifiants uniques qui ne correspondent à aucun enregistrement existant seront créés comme de nouveaux enregistrements. Cela vous permet de mettre à jour et de créer dans la même importation.
   </Accordion>
 
-  <Accordion title="Can I clear/empty a field value?">
-    Yes, leave the cell empty in your CSV. The import will clear that field's value on the existing record.
+  <Accordion title="Puis-je effacer/vider la valeur d'un champ ?">
+    Oui, laissez la cellule vide dans votre CSV. L'importation effacera la valeur de ce champ sur l'enregistrement existant.
   </Accordion>
 
-  <Accordion title="What happens to fields I don't include in the import?">
-    Fields not in your import file remain unchanged on existing records. Only fields you include are updated.
+  <Accordion title="Que se passe-t-il pour les champs que je n'inclus pas dans l'import ?">
+    Les champs qui ne figurent pas dans votre fichier d'import restent inchangés sur les enregistrements existants. Seuls les champs que vous incluez sont mis à jour.
   </Accordion>
 
-  <Accordion title="Can I update relation fields (like Company)?">
-    Yes! Include the relation's unique identifier (e.g., `companyDomain`) and map it to the relation field. The relation will be updated.
+  <Accordion title="Puis-je mettre à jour des champs de relation (comme Entreprise) ?">
+    Oui! Incluez l'identifiant unique de la relation (par ex., `companyDomain`) et associez-le au champ de relation. La relation sera mise à jour.
   </Accordion>
 
-  <Accordion title="How do I know which records will be updated vs. created?">
-    During the import review step, Twenty shows you how many records will be updated vs. created based on unique identifier matches.
+  <Accordion title="Comment savoir quels enregistrements seront mis à jour et lesquels seront créés ?">
+    Lors de l'étape de révision de l'import, Twenty vous indique combien d'enregistrements seront mis à jour ou créés en fonction des correspondances d'identifiants uniques.
   </Accordion>
 
-  <Accordion title="Can I undo a bulk update?">
-    There's no automatic undo. We recommend exporting your data as a backup before making bulk updates.
+  <Accordion title="Puis-je annuler une mise à jour en masse ?">
+    Il n'existe pas d'annulation automatique. Nous recommandons d'exporter vos données comme sauvegarde avant d'effectuer des mises à jour en masse.
   </Accordion>
 </AccordionGroup>
 
-## Best Practices
+## Meilleures pratiques
 
-1. **Export first** — always start from an export to ensure correct format
-2. **Backup before updating** — export your data before making bulk changes
-3. **Test with a few records** — try updating 5-10 records first before doing a large batch
-4. **Use human-readable identifiers** — `email` and `domain` are easier to verify than `id`
-5. **Only include necessary columns** — fewer columns means less chance for errors
+1. **Exportez d'abord** — commencez toujours à partir d'une exportation pour garantir le bon format
+2. **Sauvegardez avant de mettre à jour** — exportez vos données avant d'effectuer des modifications en masse
+3. **Testez avec quelques enregistrements** — essayez d'abord de mettre à jour 5 à 10 enregistrements avant d'effectuer un lot important
+4. **Utilisez des identifiants lisibles par un humain** — `email` et `domain` sont plus faciles à vérifier que `id`
+5. **Incluez uniquement les colonnes nécessaires** — moins de colonnes signifie moins de risques d'erreurs
 
-## Troubleshooting
+## Résolution des problèmes
 
-Having issues? Check:
+Vous rencontrez des problèmes ? Consultez :
 
-* [How to Fix Import Errors](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)
-* [Uniqueness Constraints](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
-* [Field Mapping Reference](/l/fr/user-guide/data-migration/capabilities/field-mapping)
+* [Comment corriger les erreurs d'import](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)
+* [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
+* [Référence de correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping)

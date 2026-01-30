@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":"not-an-addFiles-property"} 1`] = `"Expected type "FileItemInput" to be an object."`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":[{"addFiles":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":12345}]}]} 1`] = `"Field "fileId" of required type "UUID!" was not provided."`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":{"addFiles":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":"Document.pdf","extension":"not-allowed-in-input"}]}} 1`] = `"Field "fileId" of required type "UUID!" was not provided."`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":{"addFiles":[{"fileId":"not-a-uuid","label":"Document.pdf"}]}} 1`] = `"Field "fileId" of required type "UUID!" was not provided."`;
+
+exports[`Create input validation - FILES Gql create input - failure FILES - should fail with : {"filesField":{"addFiles":[{"invalidField":"test"}]}} 1`] = `"Field "fileId" of required type "UUID!" was not provided."`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":"not-an-addFiles-property"} 1`] = `"["Invalid value \\"'not-an-addFiles-property'\\" for FILES field \\"filesField\\" - It should be an array of objects with \\"fileId\\" and \\"label\\" properties."]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":[{"addFiles":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":12345}]}]} 1`] = `"["Invalid value \\"[ { addFiles: [ [Object] ] } ]\\" for FILES field \\"filesField\\" - 0.fileId: Invalid input: expected string, received undefined, 0.label: Invalid input: expected string, received undefined, 0: Unrecognized key: \\"addFiles\\""]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":{"addFiles":[{"fileId":"550e8400-e29b-41d4-a716-446655440000","label":"Document.pdf","extension":"not-allowed-in-input"}]}} 1`] = `"["Invalid value \\"{\\n  addFiles: [\\n    {\\n      fileId: '550e8400-e29b-41d4-a716-446655440000',\\n      label: 'Document.pdf',\\n      extension: 'not-allowed-in-input'\\n    }\\n  ]\\n}\\" for FILES field \\"filesField\\" - : Invalid input: expected array, received object"]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":{"addFiles":[{"fileId":"not-a-uuid","label":"Document.pdf"}]}} 1`] = `"["Invalid value \\"{ addFiles: [ { fileId: 'not-a-uuid', label: 'Document.pdf' } ] }\\" for FILES field \\"filesField\\" - : Invalid input: expected array, received object"]"`;
+
+exports[`Create input validation - FILES Rest create input - failure FILES - should fail with : {"filesField":{"addFiles":[{"invalidField":"test"}]}} 1`] = `"["Invalid value \\"{ addFiles: [ { invalidField: 'test' } ] }\\" for FILES field \\"filesField\\" - : Invalid input: expected array, received object"]"`;

@@ -1,6 +1,6 @@
 ---
-title: Display Number of Emails Received
-description: Create a workflow to automatically count and display the number of emails received from each contact.
+title: Alınan E-posta Sayısını Görüntüle
+description: Her bir kişiden alınan e-posta sayısını otomatik olarak sayıp görüntülemek için bir iş akışı oluşturun.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
@@ -9,66 +9,66 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Genel Bakış
 
-This workflow triggers every time a new email is received and updates a custom field on the Person record with the total count of emails from that sender.
+Bu iş akışı, her yeni e-posta alındığında tetiklenir ve Kişi kaydındaki özel bir alanı, bu gönderenin e-postalarının toplam sayısıyla günceller.
 
 ## Ön Gereksinimler
 
-Before setting up this workflow, create a custom field on the **People** object:
+Bu iş akışını kurmadan önce, **Kişiler** nesnesinde özel bir alan oluşturun:
 
-1. Go to **Settings → Data Model → People**
-2. Add a new **Number** field
-3. Name it something like "Number of emails received from this person"
+1. **Ayarlar → Veri Modeli → Kişiler** bölümüne gidin
+2. Yeni bir **Sayı** alanı ekleyin
+3. Adını "Bu kişiden alınan e-posta sayısı" gibi koyun
 
-## Step-by-Step Setup
+## Adım Adım Kurulum
 
-<VimeoEmbed videoId="1148700336" title="Video demonstration" />
+<VimeoEmbed videoId="1148700336" title="Video gösterimi" />
 
-### Step 1: Configure the Trigger
+### Adım 1: Tetikleyiciyi Yapılandırın
 
-1. Go to **Workflows** and create a new workflow
-2. Select **Record is Created** as the trigger
-3. Choose **Message Participants** (available under Advanced objects)
-
-<Note>
-  A Message Participant is a combination of a message ID and a person ID, creating one unique record per message. This is easier to track than Messages directly because we can access the `handle` field, which contains the sender's (or recipient's) email address.
-</Note>
-
-### Step 2: Filter on Role
-
-1. Add a **Filter** action
-2. Set the condition: **Role** equals **FROM**
-
-This ensures you only count messages sent by this person, not messages sent to them.
-
-### Step 3: Search All Message Participants with Same Handle
-
-1. Add a **Search Records** action
-2. Select **Message Participants** as the object
-3. Add filters: **Handle** equals the handle from the trigger (the sender's email address) and **Role** equals **FROM**
-4. Increase the **Limit** from 1 to **200** (the maximum)
-
-This finds all messages from this email address to get the total count.
+1. **İş Akışları**'na gidin ve yeni bir iş akışı oluşturun
+2. Tetikleyici olarak **Kayıt Oluşturuldu**'yu seçin
+3. **Mesaj Katılımcıları**'nı seçin (Gelişmiş nesneler altında kullanılabilir)
 
 <Note>
-  The Search Records action is limited to returning 200 records maximum. However, since you're only using the `totalCount` value (not the individual records), this step will return the total number of emails sent by this person.
+  Bir Mesaj Katılımcısı, bir mesaj kimliği ile bir kişi kimliğinin birleşimidir ve mesaj başına tekil bir kayıt oluşturur. Bu, Mesajları doğrudan izlemekten daha kolaydır çünkü gönderenin (veya alıcının) e-posta adresini içeren `handle` alanına erişebiliriz.
 </Note>
 
-### Step 4: Update the Person Record with a Create or Update Record action
+### Adım 2: Role göre filtreleyin
 
-1. Add a **Create or Update Record** action
+1. **Filtre** eylemi ekleyin
+2. Koşulu ayarlayın: **Rol** **FROM**'a eşittir
+
+Bu, yalnızca bu kişi tarafından gönderilen mesajları saymanızı ve onlara gönderilen mesajları saymamanızı sağlar.
+
+### Adım 3: Aynı handle'a sahip tüm Mesaj Katılımcılarını arayın
+
+1. Bir **Kayıtları Ara** eylemi ekleyin
+2. Nesne olarak **Mesaj Katılımcıları**'nı seçin
+3. Filtreler ekleyin: **Handle**, tetikleyicideki handle'a (gönderenin e-posta adresi) eşittir ve **Rol** **FROM**'a eşittir
+4. **Limit** değerini 1'den **200**'e (maksimum) yükseltin
+
+Bu, toplam sayıyı elde etmek için bu e-posta adresinden gelen tüm mesajları bulur.
+
+<Note>
+  Kayıtları Ara eylemi en fazla 200 kayıt döndürmekle sınırlıdır. Ancak, yalnızca `totalCount` değerini (tek tek kayıtları değil) kullandığınız için bu adım, bu kişi tarafından gönderilen e-postaların toplam sayısını döndürecektir.
+</Note>
+
+### Adım 4: Kayıt Oluştur veya Güncelle eylemiyle Kişi kaydını güncelleyin
+
+1. Bir **Kayıt Oluştur veya Güncelle** eylemi ekleyin
 
 <Warning>
-  Use **Upsert Record** instead of **Update Record** here. This lets you identify the person by their email address (the `handle` field) rather than requiring a record ID from a previous step.
+  Burada **Kayıt Güncelle** yerine **Kayıt Ekle veya Güncelle** kullanın. Bu, önceki bir adımdan bir kayıt kimliği gerektirmek yerine, kişiyi e-posta adresiyle (`handle` alanı) tanımlamanıza olanak tanır.
 </Warning>
 
-2. Select **People** as the object
-3. Find the person by matching their email to the `handle` from the Message Participant
-4. Set your custom "Number of emails received" field to `{{searchRecords.totalCount}}`
+2. Nesne olarak **Kişiler**'i seçin
+3. E-postasını Mesaj Katılımcısı'ndaki `handle` ile eşleştirerek kişiyi bulun.
+4. Özel "Alınan e-posta sayısı" alanınızı `{{searchRecords.totalCount}}` olarak ayarlayın
 
-The `totalCount` value from the Search Records action represents the total number of emails received from this person.
+Kayıtları Ara eyleminden gelen `totalCount` değeri, bu kişiden alınan e-postaların toplam sayısını ifade eder.
 
-## Related
+## İlgili
 
-* [Workflow Actions](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [Create Custom Fields](/l/tr/user-guide/data-model/how-tos/customize-your-data-model)
-* [Search Records Action](/l/tr/user-guide/workflows/capabilities/workflow-actions#search-records)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [Özel Alanlar Oluşturma](/l/tr/user-guide/data-model/how-tos/customize-your-data-model)
+* [Kayıtları Ara Eylemi](/l/tr/user-guide/workflows/capabilities/workflow-actions#search-records)

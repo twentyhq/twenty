@@ -1,19 +1,24 @@
 ---
-title: Backend Commands
+title: バックエンドコマンド
 ---
 
-## Useful commands
+## 便利なコマンド
 
-These commands should be executed from packages/twenty-server folder.
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
 From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
 
-### First time setup
+### 初期設定
 
 ```
 npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
-### Starting the server
+### サーバーの起動
 
 ```
 npx nx run twenty-server:start
@@ -25,77 +30,77 @@ npx nx run twenty-server:start
 npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
-### Test
+### テスト
 
 ```
 npx nx run twenty-server:test:unit          # run unit tests
 npx nx run twenty-server:test:integration   # run integration tests
 ```
 
-Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
+注: 統合テストを実行する前にデータベースをリセットする必要がある場合、 `npx nx run twenty-server:test:integration:with-db-reset` を実行できます。
 
-### Resetting the database
+### データベースのリセット
 
-If you want to reset and seed the database, you can run the following command:
+データベースをリセットおよびシードしたい場合は、次のコマンドを実行してください:
 
 ```bash
 npx nx run twenty-server:database:reset
 ```
 
-### Migrations
+### マイグレーション
 
-#### For objects in Core/Metadata schemas (TypeORM)
+#### Core/Metadata スキーマ (TypeORM) のオブジェクトに対して
 
 ```bash
 npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
 ```
 
-#### For Workspace objects
+#### ワークスペースオブジェクトに対して
 
-There are no migrations files, migration are generated automatically for each workspace,
-stored in the database, and applied with this command
+マイグレーションファイルはなく、それぞれのワークスペースに対して自動的に生成され、
+データベースに保存され、このコマンドで適用されます。
 
 ```bash
 npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <Warning>
-  This will drop the database and re-run the migrations and seed.
+  これによりデータベースが削除され、マイグレーションとシードが再実行されます。
 
-  Make sure to back up any data you want to keep before running this command.
+  このコマンドを実行する前に、保持したいデータをバックアップしてください。
 </Warning>
 
-## Tech Stack
+## 技術スタック
 
-Twenty primarily uses NestJS for the backend.
+Twenty は主にバックエンドに NestJS を使用しています。
 
-Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM.
+最初に使用した ORM は Prisma でした。 最初に使用した ORM は Prisma でした。 But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. 最初に使用した ORM は Prisma でした。 But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. 現在のプロジェクトでは TypeORM を使用しています。
 
-Here's what the tech stack now looks like.
+現在の技術スタックは次のようになっています。
 
-**Core**
+**コア**
 
 * [NestJS](https://nestjs.com/)
 * [TypeORM](https://typeorm.io/)
 * [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
 
-**Database**
+**データベース**
 
 * [Postgres](https://www.postgresql.org/)
 
-**Third-party integrations**
+**サードパーティ統合**
 
-* [Sentry](https://sentry.io/welcome/) for tracking bugs
+* [Sentry](https://sentry.io/welcome/) バグトラッキング用
 
-**Testing**
+**テスト**
 
 * [Jest](https://jestjs.io/)
 
-**Tooling**
+**ツール**
 
 * [Yarn](https://yarnpkg.com/)
 * [ESLint](https://eslint.org/)
 
-**Development**
+**開発**
 
 * [AWS EKS](https://aws.amazon.com/eks/)

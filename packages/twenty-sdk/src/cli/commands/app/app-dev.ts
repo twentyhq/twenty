@@ -1,138 +1,162 @@
-import { FUNCTIONS_DIR } from '@/cli/constants/functions-dir';
-import { OUTPUT_DIR } from '@/cli/constants/output-dir';
-import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/constants/current-execution-directory';
+import { AssetWatcher } from '@/cli/utilities/build/common/asset-watcher';
 import {
-  cleanupOldFunctions,
-  createDevWatcher,
-  createManifestPlugin,
-  runManifestBuild,
-  type BuildWatcher,
-  type ManifestPluginState,
-} from '@/cli/utilities/vite';
-import chalk from 'chalk';
-import * as fs from 'fs-extra';
+  createFrontComponentsWatcher,
+  createFunctionsWatcher,
+  type EsbuildWatcher,
+} from '@/cli/utilities/build/common/esbuild-watcher';
+import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
+import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { DevModeOrchestrator } from '@/cli/utilities/dev/dev-mode-orchestrator';
 import path from 'path';
+import * as fs from 'fs-extra';
+import { DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
+import { renderDevUI } from '@/cli/utilities/dev/dev-ui';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 
 export type AppDevOptions = {
   appPath?: string;
 };
 
 export class AppDevCommand {
-  private watcher: BuildWatcher | null = null;
-  private appPath: string = '';
-  private isRestarting: boolean = false;
-  private manifestState: ManifestPluginState = { currentEntryPoints: [] };
+  private appPath = '';
+  private orchestrator: DevModeOrchestrator | null = null;
+  private manifestWatcher: ManifestWatcher | null = null;
+  private functionsWatcher: EsbuildWatcher | null = null;
+  private frontComponentsWatcher: EsbuildWatcher | null = null;
+  private assetWatcher: AssetWatcher | null = null;
+  private watchersStarted = false;
+  private uiStateManager: DevUiStateManager | null = null;
+  private unmountUI: (() => void) | null = null;
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
 
-    console.log(chalk.blue('🚀 Starting Twenty Application Development Mode'));
-    console.log(chalk.gray(`📁 App Path: ${this.appPath}`));
-    console.log('');
+    await this.cleanOutputDir();
 
-    await this.ensureOutputDirs();
-    await this.startWatcher();
+    this.uiStateManager = new DevUiStateManager({
+      appPath: this.appPath,
+      frontendUrl: process.env.FRONTEND_URL,
+    });
 
+    const { unmount } = await renderDevUI(this.uiStateManager);
+
+    this.unmountUI = unmount;
+
+    this.orchestrator = new DevModeOrchestrator({
+      appPath: this.appPath,
+      handleManifestBuilt: this.handleWatcherRestarts.bind(this),
+      uiStateManager: this.uiStateManager,
+    });
+
+    await this.startManifestWatcher();
     this.setupGracefulShutdown();
   }
 
-  private async ensureOutputDirs(): Promise<void> {
+  private async cleanOutputDir() {
     const outputDir = path.join(this.appPath, OUTPUT_DIR);
-    const functionsDir = path.join(outputDir, FUNCTIONS_DIR);
-    await fs.ensureDir(functionsDir);
+    await fs.ensureDir(outputDir);
+    await fs.emptyDir(outputDir);
   }
 
-  private async startWatcher(): Promise<void> {
-    const functionInput = await runManifestBuild(
-      this.appPath,
-      this.manifestState,
-    );
-
-    await cleanupOldFunctions(this.appPath, this.manifestState.currentEntryPoints);
-
-    const hasFunctions = Object.keys(functionInput).length > 0;
-
-    if (hasFunctions) {
-      console.log(chalk.blue('  📦 Building functions...'));
-    } else {
-      console.log(chalk.gray('  No functions to build'));
-    }
-
-    const manifestPlugin = createManifestPlugin(
-      this.appPath,
-      this.manifestState,
-      {
-        onEntryPointsChange: (newEntryPoints) => {
-          console.log(chalk.yellow(`🔄 Entry points changed: ${JSON.stringify(newEntryPoints)}`));
-          this.scheduleRestart();
-        },
-      },
-    );
-
-    this.watcher = await createDevWatcher({
+  private async startManifestWatcher(): Promise<void> {
+    this.manifestWatcher = new ManifestWatcher({
       appPath: this.appPath,
-      functionInput,
-      plugins: [manifestPlugin],
+      handleChangeDetected: this.orchestrator!.handleChangeDetected.bind(
+        this.orchestrator,
+      ),
     });
 
-    this.watcher.on('event', (event) => {
-      if (event.code === 'END') {
-        if (hasFunctions) {
-          console.log(chalk.green('  ✓ Functions built'));
-        }
-        console.log('');
-        console.log(
-          chalk.gray('👀 Watching for changes... (Press Ctrl+C to stop)'),
-        );
-      } else if (event.code === 'ERROR') {
-        console.error(chalk.red('  ✗ Build error:'), event.error?.message);
-      }
-    });
+    await this.manifestWatcher.start();
   }
 
-  private scheduleRestart(): void {
-    if (this.isRestarting) {
+  private async handleWatcherRestarts(result: ManifestBuildResult) {
+    const { functions, frontComponents } = result.filePaths;
+
+    if (!this.watchersStarted) {
+      this.watchersStarted = true;
+      await this.startFileWatchers(functions, frontComponents);
       return;
     }
 
-    setImmediate(() => {
-      this.restartWatcher();
-    });
+    if (this.functionsWatcher?.shouldRestart(functions)) {
+      await this.functionsWatcher.restart(functions);
+    }
+
+    if (this.frontComponentsWatcher?.shouldRestart(frontComponents)) {
+      await this.frontComponentsWatcher.restart(frontComponents);
+    }
   }
 
-  private async restartWatcher(): Promise<void> {
-    if (this.isRestarting) {
-      return;
-    }
+  private async startFileWatchers(
+    functions: string[],
+    frontComponents: string[],
+  ): Promise<void> {
+    await Promise.all([
+      this.startFunctionsWatcher(functions),
+      this.startFrontComponentsWatcher(frontComponents),
+      this.startAssetWatcher(),
+    ]);
+  }
 
-    this.isRestarting = true;
+  private async startFunctionsWatcher(sourcePaths: string[]): Promise<void> {
+    this.functionsWatcher = createFunctionsWatcher({
+      appPath: this.appPath,
+      sourcePaths,
+      handleBuildError: this.orchestrator!.handleFileBuildError.bind(
+        this.orchestrator,
+      ),
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
+    });
 
-    try {
-      console.log(
-        chalk.yellow('🔄 Function entry points changed, restarting watcher...'),
-      );
+    await this.functionsWatcher.start();
+  }
 
-      if (this.watcher) {
-        await this.watcher.close();
-      }
+  private async startFrontComponentsWatcher(
+    sourcePaths: string[],
+  ): Promise<void> {
+    this.frontComponentsWatcher = createFrontComponentsWatcher({
+      appPath: this.appPath,
+      sourcePaths,
+      handleBuildError: this.orchestrator!.handleFileBuildError.bind(
+        this.orchestrator,
+      ),
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
+    });
 
-      await this.startWatcher();
+    await this.frontComponentsWatcher.start();
+  }
 
-      console.log(chalk.green('✓ Watcher restarted with new entry points'));
-    } finally {
-      this.isRestarting = false;
-    }
+  private async startAssetWatcher(): Promise<void> {
+    this.assetWatcher = new AssetWatcher({
+      appPath: this.appPath,
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
+    });
+
+    await this.assetWatcher.start();
   }
 
   private setupGracefulShutdown(): void {
-    process.on('SIGINT', async () => {
-      console.log(chalk.yellow('\n🛑 Stopping development mode...'));
+    const shutdown = async () => {
+      this.unmountUI?.();
 
-      if (this.watcher) {
-        await this.watcher.close();
-      }
+      await Promise.all([
+        this.manifestWatcher?.close(),
+        this.functionsWatcher?.close(),
+        this.frontComponentsWatcher?.close(),
+        this.assetWatcher?.close(),
+      ]);
 
       process.exit(0);
-    });
+    };
+
+    process.on('SIGINT', () => void shutdown());
+    process.on('SIGTERM', () => void shutdown());
   }
 }

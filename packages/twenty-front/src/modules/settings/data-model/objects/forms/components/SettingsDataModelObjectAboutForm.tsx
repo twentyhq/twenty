@@ -16,6 +16,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
   IconInfoCircle,
+  IconLink,
   IconRefresh,
   TooltipDelay,
 } from 'twenty-ui/display';
@@ -408,6 +409,31 @@ export const SettingsDataModelObjectAboutForm = ({
                             fillNamePluralFromLabelPlural(labelPlural);
                             fillNameSingularFromLabelSingular(labelSingular);
                           }
+                          onNewDirtyField?.();
+                        }}
+                      />
+                    </Card>
+                  )}
+                />
+              </AdvancedSettingsWrapper>
+            )}
+            {!isDefined(objectMetadataItem) && (
+              <AdvancedSettingsWrapper>
+                <Controller
+                  name="skipNameField"
+                  control={control}
+                  defaultValue={false}
+                  render={({ field: { onChange, value } }) => (
+                    <Card rounded>
+                      <SettingsOptionCardContentToggle
+                        Icon={IconLink}
+                        title={t`Skip creating a Name field `}
+                        description={t`Useful for pivot/junction tables`}
+                        checked={value ?? false}
+                        advancedMode
+                        disabled={disableEdition}
+                        onChange={(value) => {
+                          onChange(value);
                           onNewDirtyField?.();
                         }}
                       />

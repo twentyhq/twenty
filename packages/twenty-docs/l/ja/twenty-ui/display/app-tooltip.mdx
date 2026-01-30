@@ -1,16 +1,16 @@
 ---
-title: App Tooltip
+title: アプリツールチップ
 image: /images/user-guide/tips/light-bulb.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/tips/light-bulb.png" alt="Header" />
+  <img src="/images/user-guide/tips/light-bulb.png" alt="ヘッダー" />
 </Frame>
 
-A brief message that displays additional information when a user interacts with an element.
+ユーザーが要素とやり取りするときに追加情報を表示する短いメッセージ。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
 
@@ -37,27 +37,27 @@ A brief message that displays additional information when a user interacts with 
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props            | Type                                           | Description                                                                                                                                                                                             |
-    | ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className        | string                                         | Optional CSS class for additional styling                                                                                                                                                               |
-    | anchorSelect     | CSS selector                                   | Selector for the tooltip anchor (the element that triggers the tooltip)                                                                                                                                 |
-    | content          | string                                         | The content you want to display within the tooltip                                                                                                                                                      |
-    | delayHide        | number                                         | The delay in seconds before hiding the tooltip after the cursor leaves the anchor                                                                                                                       |
-    | offset           | number                                         | The offset in pixels for positioning the tooltip                                                                                                                                                        |
-    | noArrow          | boolean                                        | If `true`, hides the arrow on the tooltip                                                                                                                                                               |
-    | isOpen           | boolean                                        | If `true`, the tooltip is open by default                                                                                                                                                               |
-    | place            | `PlacesType` string from `react-tooltip`       | Specifies the placement of the tooltip. Values include `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, and `left-end` |
-    | positionStrategy | `PositionStrategy` string from `react-tooltip` | Position strategy for the tooltip. Has two values: `absolute` and `fixed`                                                                                                                               |
+  <Tab title="プロパティ">
+    | プロパティ            | タイプ                                     | 説明                                                                                                                                                          |
+    | ---------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | className        | string                                  | 追加のスタイリング用のオプションのCSSクラス                                                                                                                                     |
+    | anchorSelect     | CSSセレクタ                                 | ツールチップのアンカー（ツールチップをトリガーする要素）のセレクタ                                                                                                                           |
+    | content          | string                                  | ツールチップ内に表示したいコンテンツ                                                                                                                                          |
+    | delayHide        | 数                                       | アンカーからカーソルが離れた後、ツールチップを非表示にする前の遅延（秒）                                                                                                                        |
+    | offset           | 数                                       | ツールチップの位置を決めるためのオフセット（ピクセル）                                                                                                                                 |
+    | noArrow          | ブール型                                    | `true`の場合、ツールチップの矢印を非表示にします                                                                                                                                 |
+    | isOpen           | ブール型                                    | `true`の場合、ツールチップはデフォルトで開かれています                                                                                                                              |
+    | place            | `react-tooltip`からの`PlacesType`文字列       | ツールチップの配置を指定します。 値は`bottom`、`left`、`right`、`top`、`top-start`、`top-end`、`right-start`、`right-end`、`bottom-start`、`bottom-end`、`left-start`、`left-end`などがあります |
+    | positionStrategy | `react-tooltip`からの`PositionStrategy`文字列 | ツールチップの位置戦略。 2つの値があります: `absolute` と `fixed`                                                                                                                |
   </Tab>
 </Tabs>
 
-## Overflowing Text with Tooltip
+## ツールチップを伴うオーバーフローテキスト
 
-Handles overflowing text and displays a tooltip when the text overflows.
+オーバーフローテキストを処理し、テキストがオーバーフローしたときにツールチップを表示します。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
@@ -70,9 +70,9 @@ Handles overflowing text and displays a tooltip when the text overflows.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props | Type   | Description                                                  |
-    | ----- | ------ | ------------------------------------------------------------ |
-    | text  | string | The content you want to display in the overflowing text area |
+  <Tab title="プロパティ">
+    | プロパティ | タイプ    | 説明                         |
+    | ----- | ------ | -------------------------- |
+    | テキスト  | string | オーバーフローテキストエリア内に表示したいコンテンツ |
   </Tab>
 </Tabs>

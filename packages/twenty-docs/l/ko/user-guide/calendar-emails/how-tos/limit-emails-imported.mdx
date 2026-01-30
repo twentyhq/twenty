@@ -1,52 +1,50 @@
 ---
-title: Limit Emails Imported
-description: Control which emails are imported into Twenty.
+title: 가져오는 이메일 제한
+description: 어떤 이메일을 Twenty로 가져올지 제어하세요.
 ---
 
-## Overview
+## 개요
 
-By default, Twenty syncs all external emails from your connected mailbox. You can limit what gets imported using **folder selection** and **visibility settings**.
+기본적으로 Twenty는 연결된 메일박스의 모든 외부 이메일을 동기화합니다. **폴더 선택**과 **표시 설정**을 사용하여 가져올 항목을 제한할 수 있습니다.
 
-## Method 1: Folder Selection (Recommended)
+## 방법 1: 폴더 선택(권장)
 
-Control which email folders sync with Twenty:
+Twenty와 동기화할 이메일 폴더 제어:
 
-1. Go to **Settings → Releases → Lab**
-2. Enable **Message Folder**
-3. Return to **Settings → Accounts**
-4. Select your connected email account
-5. Choose which folders to sync:
+1. **설정 → 계정**으로 이동
+2. 연결된 이메일 계정을 선택하세요.
+3. 동기화할 폴더를 선택하세요:
 
-| Folder             | Description                   |
-| ------------------ | ----------------------------- |
-| **Inbox**          | Primary incoming emails       |
-| **Sent**           | Outgoing emails you've sent   |
-| **Archive**        | Archived messages             |
-| **Custom Folders** | Any specific folders you want |
+| 폴더            | 설명        |
+| ------------- | --------- |
+| **받은 편지함**    | 주요 수신 이메일 |
+| **보낸 편지함**    | 발송한 이메일   |
+| **보관함**       | 보관된 메시지   |
+| **사용자 지정 폴더** | 원하는 특정 폴더 |
 
-6. Exclude folders you don't want synced (Spam, Trash, personal folders)
+6. 동기화하지 않을 폴더를 제외하세요(스팸, 휴지통, 개인 폴더).
 
-<Note>This gives you precise control over which emails appear in your CRM without syncing everything.</Note>
+<Note>모든 이메일을 전부 동기화하지 않고도 CRM에 표시되는 이메일을 정확하게 제어할 수 있습니다.</Note>
 
-## Method 2: Contact Auto-Creation Settings
+## 방법 2: 연락처 자동 생성 설정
 
-Control when contacts are created from emails:
+이메일에서 연락처를 생성할 시점을 제어하세요:
 
-1. Go to **Settings → Accounts**
-2. Select your connected mailbox
-3. Choose an option:
-   * **Deactivated**: No contacts created, but emails still sync to existing contacts
-   * **Sent & Received**: Create contacts from all external emails
-   * **Sent Only**: Only create contacts from emails you send
+1. **설정 → 계정**으로 이동
+2. 연결된 메일박스를 선택하세요.
+3. 옵션을 선택하세요:
+   * **비활성화**: 연락처는 생성되지 않지만, 이메일은 기존 연락처와 계속 동기화됩니다
+   * **발신 및 수신**: 모든 외부 이메일에서 연락처를 생성합니다
+   * **발신만**: 사용자가 보낸 이메일에서만 연락처를 생성합니다
 
-## What's Always Excluded
+## 항상 제외되는 항목
 
-These emails are never synced, regardless of settings:
+설정과 관계없이 다음 이메일은 동기화되지 않습니다:
 
-* **Internal emails**: Messages between colleagues (same domain)
-* **Group emails**: Distribution lists and group messages
-* **Spam/Trash**: System folders are typically excluded
+* **내부 이메일**: 동료 간(동일 도메인) 메시지
+* **그룹 이메일**: 배포 목록 및 그룹 메시지
+* **스팸/휴지통**: 시스템 폴더는 일반적으로 제외됩니다
 
-## Important Note
+## 중요 참고 사항
 
-<Note>We don't provide a CC email address for selective syncing. Use the folder selection feature above to achieve the same level of control.</Note>
+<Note>선택적 동기화를 위한 CC 이메일 주소는 제공하지 않습니다. 위의 폴더 선택 기능을 사용하여 동일한 수준의 제어를 구현하세요.</Note>

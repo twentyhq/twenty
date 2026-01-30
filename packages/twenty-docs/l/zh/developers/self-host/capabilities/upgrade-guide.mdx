@@ -1,26 +1,26 @@
 ---
-title: Upgrade guide
+title: 升级指南
 ---
 
-## General guidelines
+## 通用指南
 
-**Always make sure to back up your database before starting the upgrade process** by running `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**在开始升级过程之前，请务必备份您的数据库**，通过运行 `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`。
 
-To restore backup, run `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+要恢复备份，运行 `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`。
 
-If you used Docker Compose, follow these steps:
+如果您使用了 Docker Compose，请按照以下步骤操作：
 
-1. In a terminal, on the host where Twenty is running, turn off Twenty: `docker compose down`
+1. 在 Twenty 运行的主机上打开终端，关闭 Twenty：`docker compose down`
 
-2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose. ( We recommend consuming `major.minor` version such as `v0.53` )
+2. 通过更改 docker-compose 附近 .env 文件中的 `TAG` 值来升级版本。 （我们建议使用 `major.minor` 版本，例如 `v0.53`）
 
-3. Bring Twenty back online with `docker compose up -d`
+3. 用 `docker compose up -d` 重新启动 Twenty
 
-If you want to upgrade your instance by few versions, e.g. from v0.33.0 to v0.35.0, you have to upgrade your instance sequentially, in this example from v0.33.0 to v0.34.0, then from v0.34.0 to v0.35.0.
+如果您想要升级实例多个版本，例如从 v0.33.0 升级到 v0.35.0，您需要按顺序升级您的实例，例如从 v0.33.0 升级到 v0.34.0，然后从 v0.34.0 到 v0.35.0。
 
-**Make sure that after each upgraded version you have non-corrupted backup.**
+**确保每个升级后的版本都具有未损坏的备份。**
 
-## Version-specific upgrade steps
+## 特定版本的升级步骤
 
 ## v1.0
 
@@ -28,13 +28,13 @@ Hello Twenty v1.0! 🎉
 
 ## v0.60
 
-### Performance Enhancements
+### 性能增强
 
-All interactions with the metadata API have been optimized for better performance, particularly for object metadata manipulation and workspace creation operations.
+与元数据 API 的所有交互已优化，以获得更好的性能，尤其是对象元数据操作和工作区创建操作。
 
-We've refactored our caching strategy to prioritize cache hits over database queries when possible, significantly improving the performance of metadata API operations.
+我们重构了缓存策略，以在可能的情况下优先于数据库查询显著提高元数据 API 操作的性能。
 
-If you encounter any runtime issues after upgrading, you may need to flush your cache to ensure it's synchronized with the latest changes. Run this command in your twenty-server container:
+如果在升级后遇到任何运行时问题，可能需要清空您的缓存以确保其与最新更改同步。 在 twenty-server 容器中运行此命令：
 
 ```bash
 yarn command:prod cache:flush
@@ -42,64 +42,64 @@ yarn command:prod cache:flush
 
 ### v0.55
 
-Upgrade your Twenty instance to use v0.55 image
+升级您的 Twenty 实例以使用 v0.55 映像
 
-You don't need to run any command anymore, the new image will automatically care about running all required migrations.
+您不再需要运行任何命令，新映像将自动处理所需的所有迁移。
 
 ### `User does not have permission` error
 
-If you encounter authorization errors on most requests after upgrading, you may need to flush your cache to recompute the latest permissions.
+如果在大多数请求中出现授权错误，升级后可能需要清空您的缓存以重新计算最新的权限。
 
-In your `twenty-server` container, run:
+在你的 `twenty-server` 容器中，运行：
 
 ```bash
 yarn command:prod cache:flush
 ```
 
-This issue is specific to this Twenty version and should not be required for future upgrades.
+此问题仅适用于此 Twenty 版本，未来的升级不应需要此操作。
 
 ### v0.54
 
-Since version `0.53`, no manual actions needed.
+自版本 `0.53` 开始，不需要手动操作。
 
-#### Metadata schema deprecation
+#### 元数据模式弃用
 
-We've merged the `metadata` schema into the `core` one to simplify data retrieval from `TypeORM`.
-We have merged the `migrate` command step within the `upgrade` command. We do not recommend running `migrate` manually within any of your server/worker containers.
+我们已将 `metadata` 模式合并到 `core` 模式以简化从 `TypeORM` 数据的检索。
+我们在 `upgrade` 命令中合并了 `migrate` 命令步骤。 我们不建议在任何 server/worker 容器内手动运行 `migrate`。
 
-### Since v0.53
+### 自 v0.53
 
-Starting from `0.53`, upgrade is programmatically done within the `DockerFile`, this means from now on, you shouldn't have to run any command manually anymore.
+从 `0.53` 起，升级在 `DockerFile` 内以编程方式完成，这意味着从现在起，您不必再手动运行任何命令。
 
-Make sure to keep upgrading your instance sequentially, without skipping any major version (e.g. `0.43.3` to `0.44.0` is allowed, but `0.43.1` to `0.45.0` isn't), else could lead to workspace version desynchronization that could result in runtime error and missing functionality.
+确保保持顺序升级您的实例，不要跳过任何大版本（例如，允许从 `0.43.3` 升级到 `0.44.0`，但不能从 `0.43.1` 升级到 `0.45.0`），否则可能导致工作区版本不同步，可能导致运行时错误和功能缺失。
 
-To check if a workspace has been correctly migrated you can review its version in database in `core.workspace` table.
+要检查是否正确迁移了工作区，您可以在数据库中查看其版本在 `core.workspace` 表中。
 
-It should always be in the range of your current Twenty's instance `major.minor` version, you can view your instance version in the admin panel (at `/settings/admin-panel`, accessible if your user has `canAccessFullAdminPanel` property set to true in the database) or by running `echo $APP_VERSION` in your `twenty-server` container.
+它应始终在您当前 Twenty 实例 `major.minor` 版本的范围内，您可以在管理面板中查看您的实例版本（在 `/settings/admin-panel`，如果您的用户在数据库中设置了 `canAccessFullAdminPanel` 属性为真则可访问）或通过在 `twenty-server` 容器中运行 `echo $APP_VERSION`。
 
-To fix a desynchronized workspace version, you will have to upgrade from the corresponding twenty's version following related upgrade guide sequentially and so on until it reaches desired version.
+要修复不同步的工作区版本，你将需要从相应的 Twenty 版本按照相关的升级指南顺序升级，等等，直到到达所需的版本。
 
-#### `auditLog` removal
+#### `auditLog` 移除
 
-We've removed the auditLog standard object, which means your backup size might be significantly reduced after this migration.
+我们已移除了 auditLog 标准对象，这意味着在此迁移后，备份的大小可能显著减少。
 
 ### v0.51 to v0.52
 
-Upgrade your Twenty instance to use v0.52 image
+升级您的 Twenty 实例以使用 v0.52 映像
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
-#### I have a workspace blocked in version between `0.52.0` and `0.52.6`
+#### 我的工作区被锁定在 `0.52.0` 和 `0.52.6` 之间的版本
 
-Unfortunately `0.52.0` and `0.52.6` have been completely removed from dockerHub.
-You will have to manually update your workspace version to `0.51.0` in database and upgrade using twenty version `0.52.11` following its just above upgrade guide.
+不幸的是，`0.52.0` 和 `0.52.6` 已从 dockerHub 完全移除。
+您将需要在数据库中手动更新工作区版本到 `0.51.0`，并使用 Twenty 版本 `0.52.11` 进行升级，按照其上方的升级指南。
 
 ### v0.50 to v0.51
 
-Upgrade your Twenty instance to use v0.51 image
+升级您的 Twenty 实例以使用 v0.51 映像
 
 ```
 yarn database:migrate:prod
@@ -108,21 +108,21 @@ yarn command:prod upgrade
 
 ### v0.44.0 to v0.50.0
 
-Upgrade your Twenty instance to use v0.50.0 image
+升级您的 Twenty 实例以使用 v0.50.0 映像
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
-#### Docker-compose.yml mutation
+#### Docker-compose.yml 修改
 
-This version includes a `docker-compose.yml` mutation to give `worker` service access to the `server-local-data` volume.
-Please update your local `docker-compose.yml` with [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
+此版本包括对 `docker-compose.yml` 的修改，以赋予 `worker` 服务对 `server-local-data` 卷的访问权限。
+请使用 [v0.50.0 docker-compose.yml](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml) 更新本地主机上的 `docker-compose.yml`
 
 ### v0.43.0 to v0.44.0
 
-Upgrade your Twenty instance to use v0.44.0 image
+升级您的 Twenty 实例以使用 v0.44.0 映像
 
 ```
 yarn database:migrate:prod
@@ -131,24 +131,24 @@ yarn command:prod upgrade
 
 ### v0.42.0 to v0.43.0
 
-Upgrade your Twenty instance to use v0.43.0 image
+升级您的 Twenty 实例以使用 v0.43.0 映像
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade
 ```
 
-In this version, we have also switched to postgres:16 image in docker-compose.yml.
+在此版本中，我们还在 docker-compose.yml 中切换到了 postgres:16 映像。
 
-#### (Option 1) Database migration
+#### （选项 1）数据库迁移
 
-Keeping the existing postgres-spilo image is fine, but you will have to freeze the version in your docker-compose.yml to be 0.43.0.
+保留现有的 postgres-spilo 图像是可以的，但您需要在 docker-compose.yml 中将版本冻结为 0.43.0。
 
-#### (Option 2) Database migration
+#### （选项 2）数据库迁移
 
-If you want to migrate your database to the new postgres:16 image, please follow these steps:
+如果您想将数据库迁移到新的 postgres:16 图像，请按照以下步骤操作：
 
-1. Dump your database from the old postgres-spilo container
+1. 从旧的 postgres-spilo 容器中导出数据库
 
 ```
 docker exec -it twenty-db-1 sh
@@ -157,11 +157,11 @@ exit
 docker cp twenty-db-1:/home/postgres/databases_backup.sql .
 ```
 
-Make sure your dump file is not empty.
+确保您的转储文件不为空。
 
-2. Upgrade your docker-compose.yml to use postgres:16 image as in the [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) file.
+2. 将您的 docker-compose.yml 升级为与 [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) 文件中的 postgres:16 映像相同。
 
-3. Restore the database to the new postgres:16 container
+3. 将新 postgres:16 容器中的数据库恢复
 
 ```
 docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
@@ -172,84 +172,84 @@ exit
 
 ### v0.41.0 to v0.42.0
 
-Upgrade your Twenty instance to use v0.42.0 image
+升级您的 Twenty 实例以使用 v0.42.0 映像
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.42
 ```
 
-**Environment Variables**
+**环境变量**
 
-* Removed: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
-* Added: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+* 移除：`FRONT_PORT`，`FRONT_PROTOCOL`，`FRONT_DOMAIN`，`PORT`
+* 新增：`FRONTEND_URL`，`NODE_PORT`，`MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`，`MESSAGING_PROVIDER_MICROSOFT_ENABLED`，`CALENDAR_PROVIDER_MICROSOFT_ENABLED`，`IS_MICROSOFT_SYNC_ENABLED`
 
 ### v0.40.0 to v0.41.0
 
-Upgrade your Twenty instance to use v0.41.0 image
+升级您的 Twenty 实例以使用 v0.41.0 映像
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.41
 ```
 
-**Environment Variables**
+**环境变量**
 
-* Removed: `AUTH_MICROSOFT_TENANT_ID`
+* 移除：`AUTH_MICROSOFT_TENANT_ID`
 
 ### v0.35.0 to v0.40.0
 
-Upgrade your Twenty instance to use v0.40.0 image
+升级您的 Twenty 实例以使用 v0.40.0 映像
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.40
 ```
 
-**Environment Variables**
+**环境变量**
 
-* Added: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+* 新增：`IS_EMAIL_VERIFICATION_REQUIRED`，`EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`，`WORKFLOW_EXEC_THROTTLE_LIMIT`，`WORKFLOW_EXEC_THROTTLE_TTL`
 
 ### v0.34.0 to v0.35.0
 
-Upgrade your Twenty instance to use v0.35.0 image
+升级您的 Twenty 实例以使用 v0.35.0 映像
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.35
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.35` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` 命令将迁移应用于数据库结构（核心和元数据模式）
+`yarn command:prod upgrade-0.35` 负责所有工作区的数据迁移。
 
-**Environment Variables**
+**环境变量**
 
-* We replaced `ENABLE_DB_MIGRATIONS` with `DISABLE_DB_MIGRATIONS` (default value is now `false`, you probably don't have to set anything)
+* 我们将 `ENABLE_DB_MIGRATIONS` 替换为 `DISABLE_DB_MIGRATIONS`（默认值现在为 `false`，您可能不必设置任何东西）
 
 ### v0.33.0 to v0.34.0
 
-Upgrade your Twenty instance to use v0.34.0 image
+升级您的 Twenty 实例以使用 v0.34.0 映像
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.34
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.34` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` 命令将迁移应用于数据库结构（核心和元数据模式）
+`yarn command:prod upgrade-0.34` 负责所有工作区的数据迁移。
 
-**Environment Variables**
+**环境变量**
 
-* Removed: `FRONT_BASE_URL`
-* Added: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+* 移除：`FRONT_BASE_URL`
+* 新增：`FRONT_DOMAIN`，`FRONT_PROTOCOL`，`FRONT_PORT`
 
-We have updated the way we handle the frontend URL.
-You can now set the frontend URL using the `FRONT_DOMAIN`, `FRONT_PROTOCOL` and `FRONT_PORT` variables.
-If FRONT_DOMAIN is not set, the frontend URL will fall back to `SERVER_URL`.
+我们更新了前端 URL 的处理方式。
+您现在可以使用 `FRONT_DOMAIN`，`FRONT_PROTOCOL` 和 `FRONT_PORT` 变量设置前端 URL。
+如果未设置 FRONT_DOMAIN，前端 URL 将回退到 `SERVER_URL`。
 
 ### v0.32.0 to v0.33.0
 
-Upgrade your Twenty instance to use v0.33.0 image
+升级您的 Twenty 实例以使用 v0.33.0 映像
 
 ```
 yarn command:prod cache:flush
@@ -257,68 +257,68 @@ yarn database:migrate:prod
 yarn command:prod upgrade-0.33
 ```
 
-The `yarn command:prod cache:flush` command will flush the Redis cache.
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.33` takes care of the data migration of all workspaces.
+`yarn command:prod cache:flush` 命令将清空 Redis 缓存。
+`yarn database:migrate:prod` 命令将迁移应用于数据库结构（核心和元数据模式）
+`yarn command:prod upgrade-0.33` 负责所有工作区的数据迁移。
 
-Starting from this version, twenty-postgres image for DB became deprecated and twenty-postgres-spilo is used instead.
-If you want to keep using twenty-postgres image, simply replace `twentycrm/twenty-postgres:${TAG}` with `twentycrm/twenty-postgres` in docker-compose.yml.
+从该版本开始，用于 DB 的 twenty-postgres 图像已经弃用，并改用 twenty-postgres-spilo。
+如果要继续使用 twenty-postgres 映像，只需在 docker-compose.yml 中将 `twentycrm/twenty-postgres:${TAG}` 替换为 `twentycrm/twenty-postgres` 即可。
 
 ### v0.31.0 to v0.32.0
 
-Upgrade your Twenty instance to use v0.32.0 image
+升级您的 Twenty 实例以使用 v0.32.0 映像
 
-**Schema and data migration**
+**模式和数据迁移**
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.32
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.32` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` 命令将迁移应用于数据库结构（核心和元数据模式）
+`yarn command:prod upgrade-0.32` 负责所有工作区的数据迁移。
 
-**Environment Variables**
+**环境变量**
 
-We have updated the way we handle the Redis connection.
+我们更新了 Redis 连接的处理方式。
 
-* Removed: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
-* Added: `REDIS_URL`
+* 移除：`REDIS_HOST`，`REDIS_PORT`，`REDIS_USERNAME`，`REDIS_PASSWORD`
+* 新增：`REDIS_URL`
 
-Update your `.env` file to use the new `REDIS_URL` variable instead of the individual Redis connection parameters.
+更新您的 `.env` 文件以使用新 `REDIS_URL` 变量，而不是各个 Redis 连接参数。
 
-We have also simplified the way we handle the JWT tokens.
+我们也简化了我们处理 JWT 令牌的方式。
 
-* Removed: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
-* Added: `APP_SECRET`
+* 移除：`ACCESS_TOKEN_SECRET`，`LOGIN_TOKEN_SECRET`，`REFRESH_TOKEN_SECRET`，`FILE_TOKEN_SECRET`
+* 新增：`APP_SECRET`
 
-Update your `.env` file to use the new `APP_SECRET` variable instead of the individual tokens secrets (you can use the same secret as before or generate a new random string)
+更新您的 `.env` 文件以使用新 `APP_SECRET` 变量，而不是各个令牌密钥（您可以使用以前的相同密钥或生成一个新的随机字符串）
 
-**Connected Account**
+**连接账户**
 
-If you are using connected account to synchronize your Google emails and calendars, you will need to activate the [People API](https://developers.google.com/people) on your Google Admin console.
+如果您使用已连接的帐户来同步您的谷歌电子邮件和日历，您需要在谷歌管理员控制台中激活 [People API](https://developers.google.com/people)。
 
 ### v0.30.0 to v0.31.0
 
-Upgrade your Twenty instance to use v0.31.0 image
+升级您的 Twenty 实例以使用 v0.31.0 映像
 
-**Schema and data migration**:
+**模式和数据迁移**：
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.31
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.31` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` 命令将迁移应用于数据库结构（核心和元数据模式）
+`yarn command:prod upgrade-0.31` 负责所有工作区的数据迁移。
 
 ### v0.24.0 to v0.30.0
 
-Upgrade your Twenty instance to use v0.30.0 image
+升级您的 Twenty 实例以使用 v0.30.0 映像
 
-**Breaking change**:
-To enhance performances, Twenty now requires redis cache to be configured. We have updated our [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) to reflect this.
-Make sure to update your configuration and to update your environment variables accordingly:
+**重大更改**：
+为了提高性能，Twenty 现在要求配置 Redis 缓存。 我们更新了我们的 [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) 来反映这一点。
+确保更新您的配置并相应地更新您的环境变量：
 
 ```
 REDIS_HOST={your-redis-host}
@@ -326,49 +326,49 @@ REDIS_PORT={your-redis-port}
 CACHE_STORAGE_TYPE=redis
 ```
 
-**Schema and data migration**:
+**模式和数据迁移**：
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.30
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.30` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` 命令将迁移应用于数据库结构（核心和元数据模式）
+`yarn command:prod upgrade-0.30` 负责所有工作区的数据迁移。
 
 ### v0.23.0 to v0.24.0
 
-Upgrade your Twenty instance to use v0.24.0 image
+升级您的 Twenty 实例以使用 v0.24.0 映像
 
-Run the following commands:
+运行以下命令：
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.24
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
+`yarn database:migrate:prod` 命令将迁移应用于数据库结构（核心和元数据模式）
+`yarn command:prod upgrade-0.24` 负责所有工作区的数据迁移。
 
 ### v0.22.0 to v0.23.0
 
-Upgrade your Twenty instance to use v0.23.0 image
+升级您的 Twenty 实例以使用 v0.23.0 映像
 
-Run the following commands:
+运行以下命令：
 
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.23
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.
-The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
+`yarn database:migrate:prod` 命令将迁移应用于数据库。
+`yarn command:prod upgrade-0.23` 负责数据迁移，包括将活动转移到任务/笔记。
 
 ### v0.21.0 to v0.22.0
 
-Upgrade your Twenty instance to use v0.22.0 image
+升级您的 Twenty 实例以使用 v0.22.0 映像
 
-Run the following commands:
+运行以下命令：
 
 ```
 yarn database:migrate:prod
@@ -376,6 +376,6 @@ yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.
-The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.
-The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
+`yarn database:migrate:prod` 命令将迁移应用于数据库。
+该 `yarn command:prod workspace:sync-metadata -f` 命令将把标准对象的定义同步到元数据表，并将所需的迁移应用到现有工作区。
+该 `yarn command:prod upgrade-0.22` 命令将应用特定的数据转换，以适配新的对象 defaultRequestInstrumentationOptions。

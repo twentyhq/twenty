@@ -1,92 +1,92 @@
 ---
-title: Workflow Runs
-description: Monitor and manage workflow executions.
+title: 工作流运行
+description: 监控并管理工作流执行。
 image: /images/user-guide/workflows/workflow.png
 ---
 
-## About Runs
+## 关于运行
 
-A **Run** is a record of a workflow execution. Every time a workflow is triggered—whether by a record event, schedule, manual action, or webhook—a new run is created.
+**运行** 是一条工作流执行记录。 每当工作流被触发——无论是由记录事件、计划、手动操作还是 Webhook——都会创建一个新的运行。
 
-## Viewing Runs
+## 查看运行
 
-### From the Workflow Editor
+### 在工作流编辑器中
 
-1. Open the workflow you want to monitor
-2. Click the **Runs** panel on the right side
-3. See a list of recent runs with their status
+1. 打开你要监控的工作流
+2. 单击右侧的**运行**面板
+3. 查看最近的运行及其状态列表
 
-### From the Workflow Runs View
+### 在工作流运行视图中
 
-1. Go to **Workflow Runs** in the sidebar
-2. View runs across all workflows
-3. Filter by status, workflow, or date
+1. 前往侧边栏中的**工作流运行**
+2. 查看所有工作流的运行
+3. 按状态、工作流或日期进行筛选
 
-## Run Statuses
+## 运行状态
 
-| Status        | Description                                                              |
-| ------------- | ------------------------------------------------------------------------ |
-| **Running**   | Workflow is currently executing                                          |
-| **Completed** | Workflow finished successfully                                           |
-| **Failed**    | Workflow encountered an error and stopped                                |
-| **Waiting**   | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| 状态       | 描述                             |
+| -------- | ------------------------------ |
+| **正在运行** | 工作流当前正在执行                      |
+| **已完成**  | 工作流已成功完成                       |
+| **失败**   | 工作流遇到错误并已停止                    |
+| **等待中**  | 工作流处于暂停状态（例如，等待 Delay 操作或表单提交） |
 
-## Run Details
+## 运行详情
 
-Click on any run to see:
+单击任意运行以查看：
 
-* **Status**: Current state of the run
-* **Started at**: When the run began
-* **Duration**: How long the run took
-* **Trigger data**: The input that started the workflow
-* **Step outputs**: Data returned by each step
-* **Error messages**: If the run failed, what went wrong
+* **状态**：运行的当前状态
+* **开始时间**：运行开始的时间
+* **持续时间**：运行耗时
+* **触发数据**：启动工作流的输入
+* **步骤输出**：各步骤返回的数据
+* **错误消息**：如果运行失败，出了什么问题
 
-## Step-by-Step Execution
+## 逐步执行
 
-Each run shows the progression through your workflow:
+每次运行都会显示工作流中的执行过程：
 
-1. See which steps completed successfully
-2. Identify where failures occurred
-3. View the data passed between steps
-4. Debug issues by examining step inputs and outputs
+1. 查看哪些步骤已成功完成
+2. 确定失败发生的位置
+3. 查看步骤之间传递的数据
+4. 通过检查步骤的输入和输出来调试问题
 
-## Error Handling
+## 错误处理
 
-When a run fails:
+当运行失败时：
 
-1. Open the failed run
-2. Find the step that caused the failure
-3. Check the error message for details
-4. Common issues:
-   * Missing required fields
-   * Invalid data format
-   * External API errors
-   * Permission issues
+1. 打开失败的运行
+2. 找到导致失败的步骤
+3. 查看错误消息以了解详细信息
+4. 常见问题：
+   * 缺少必填字段
+   * 数据格式无效
+   * 外部 API 错误
+   * 权限问题
 
-## Re-running Workflows
+## 重新运行工作流
 
-If a run fails, you can:
+如果某次运行失败，你可以：
 
-* Fix the underlying issue and wait for the next trigger
-* For manual workflows, trigger again with the same or updated data
-* Review the workflow logic to prevent future failures
+* 修复根本问题并等待下一次触发
+* 对于手动工作流，使用相同或更新的数据再次触发
+* 检查工作流逻辑以防止将来发生失败
 
-## Performance Tips
+## 性能提示
 
-### Managing Run History
+### 管理运行历史
 
-* Runs are retained for historical reference
-* Very old runs may be archived automatically
-* Export run data if you need to keep records
+* 运行会被保留以供历史参考
+* 非常久远的运行可能会被自动归档
+* 如果需要保留记录，请导出运行数据
 
-### Monitoring Best Practices
+### 监控最佳实践
 
-* Check runs regularly after activating new workflows
-* Review failed runs to identify patterns
+* 在启用新的工作流后定期检查运行
+* 审查失败的运行以识别模式
 
-## Related
+## 相关内容
 
-* [Workflow Triggers](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/zh/user-guide/workflows/capabilities/workflow-actions)
-* [Workflow Troubleshooting](/l/zh/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)
+* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+* [工作流故障排除](/l/zh/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

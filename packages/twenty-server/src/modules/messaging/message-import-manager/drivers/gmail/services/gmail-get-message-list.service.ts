@@ -7,6 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  MessageChannelWorkspaceEntity,
+  MessageFolderImportPolicy,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import {
   MessageImportDriverException,
@@ -38,8 +42,12 @@ export class GmailGetMessageListService {
     >,
     messageFolders: Pick<
       MessageFolderWorkspaceEntity,
-      'name' | 'externalId' | 'isSynced'
+      'name' | 'externalId' | 'isSynced' | 'parentFolderId'
     >[],
+    messageChannel: Pick<
+      MessageChannelWorkspaceEntity,
+      'messageFolderImportPolicy'
+    >,
   ): Promise<GetMessageListsResponse> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
@@ -55,8 +63,10 @@ export class GmailGetMessageListService {
 
     const messageExternalIds: string[] = [];
 
-    const excludedSearchFilter =
-      computeGmailExcludeSearchFilter(messageFolders);
+    const excludedSearchFilter = computeGmailExcludeSearchFilter(
+      messageFolders,
+      messageChannel.messageFolderImportPolicy,
+    );
 
     while (hasMoreMessages) {
       const messageList = await gmailClient.users.messages
@@ -145,6 +155,21 @@ export class GmailGetMessageListService {
     connectedAccount,
     messageFolders,
   }: GetMessageListsArgs): Promise<GetMessageListsResponse> {
+    if (
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
+    ) {
+      const foldersToSync = messageFolders.filter((folder) => folder.isSynced);
+
+      if (foldersToSync.length === 0) {
+        this.logger.warn(
+          `Connected account ${connectedAccount.id} Message Channel: ${messageChannel.id}: No folders to process`,
+        );
+
+        return [];
+      }
+    }
+
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
         connectedAccount,
@@ -155,7 +180,11 @@ export class GmailGetMessageListService {
     });
 
     if (!isNonEmptyString(messageChannel.syncCursor)) {
-      return this.getMessageListWithoutCursor(connectedAccount, messageFolders);
+      return this.getMessageListWithoutCursor(
+        connectedAccount,
+        messageFolders,
+        messageChannel,
+      );
     }
 
     const { history, historyId: nextSyncCursor } =
@@ -167,11 +196,15 @@ export class GmailGetMessageListService {
     const { messagesAdded, messagesDeleted } =
       await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
 
-    const messageIdsToFilter = await this.getEmailIdsFromExcludedFolders(
-      connectedAccount,
-      messageChannel.syncCursor,
-      messageFolders,
-    );
+    const messageIdsToFilter =
+      messageChannel.messageFolderImportPolicy ===
+      MessageFolderImportPolicy.SELECTED_FOLDERS
+        ? await this.getEmailIdsFromExcludedFolders(
+            connectedAccount,
+            messageChannel.syncCursor,
+            messageFolders,
+          )
+        : [];
 
     const messagesAddedFiltered = messagesAdded.filter(
       (messageId) => !messageIdsToFilter.includes(messageId),
