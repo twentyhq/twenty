@@ -193,7 +193,7 @@ export const renderDevUI = async (
 
     return (
       <Text color={config.color}>
-        {icon ?? ''}
+        {icon ? `${icon} ` : ''}
         {config.text}
         {snapshot.error && `: ${snapshot.error}`}
       </Text>
