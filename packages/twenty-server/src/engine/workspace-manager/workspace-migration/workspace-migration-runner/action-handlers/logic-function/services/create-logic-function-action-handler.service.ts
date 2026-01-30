@@ -24,7 +24,7 @@ import {
 import { CreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { LogicFunctionBuildService } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.service';
+import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function-executor/logic-function-build.service';
 
 @Injectable()
 export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(

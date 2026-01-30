@@ -4,6 +4,7 @@ import { AddPackagesCommand } from 'src/engine/core-modules/logic-function-execu
 import { DisabledDriver } from 'src/engine/core-modules/logic-function-executor/drivers/disabled.driver';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function-executor/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/logic-function-executor/drivers/local.driver';
+import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function-executor/logic-function-build.service';
 import { LOGIC_FUNCTION_EXECUTOR_DRIVER } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.constants';
 import {
   LogicFunctionExecutorDriverType,
@@ -44,8 +45,13 @@ export class LogicFunctionExecutorModule {
     return {
       module: LogicFunctionExecutorModule,
       imports: options.imports || [],
-      providers: [LogicFunctionExecutorService, provider, AddPackagesCommand],
-      exports: [LogicFunctionExecutorService],
+      providers: [
+        LogicFunctionExecutorService,
+        LogicFunctionBuildService,
+        provider,
+        AddPackagesCommand,
+      ],
+      exports: [LogicFunctionExecutorService, LogicFunctionBuildService],
     };
   }
 }

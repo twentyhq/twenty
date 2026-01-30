@@ -43,7 +43,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { LogicFunctionBuildService } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.service';
+import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function-executor/logic-function-build.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
