@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { dirname, join } from 'path';
 import fs from 'fs/promises';
+import { dirname, join } from 'path';
 
 import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';

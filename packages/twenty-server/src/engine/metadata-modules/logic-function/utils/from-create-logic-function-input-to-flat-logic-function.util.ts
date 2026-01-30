@@ -55,8 +55,6 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),
     deletedAt: null,
-    latestVersion: null,
-    publishedVersions: [],
     applicationId: workspaceCustomApplicationId,
     runtime: LogicFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,

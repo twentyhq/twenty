@@ -123,6 +123,12 @@ describe('WorkspaceEntityManager', () => {
       duplicateCriteria: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      applicationUniversalIdentifier: 'test-application-id',
+      fieldUniversalIdentifiers: ['field-id'],
+      viewUniversalIdentifiers: [],
+      indexMetadataUniversalIdentifiers: [],
+      labelIdentifierFieldMetadataUniversalIdentifier: null,
+      imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
 
     (getObjectMetadataFromEntityTarget as jest.Mock).mockReturnValue(
@@ -162,6 +168,16 @@ describe('WorkspaceEntityManager', () => {
       relationTargetObjectMetadataId: null,
       morphId: null,
       applicationId: 'application-id',
+      applicationUniversalIdentifier: 'application-id',
+      objectMetadataUniversalIdentifier: 'test-entity-id',
+      relationTargetObjectMetadataUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      viewFilterUniversalIdentifiers: [],
+      viewFieldUniversalIdentifiers: [],
+      kanbanAggregateOperationViewUniversalIdentifiers: [],
+      calendarViewUniversalIdentifiers: [],
+      mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      universalSettings: null,
     };
 
     const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {

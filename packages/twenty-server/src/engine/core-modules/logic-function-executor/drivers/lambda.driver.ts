@@ -19,13 +19,13 @@ import {
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
-import { isDefined } from 'twenty-shared/utils';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type LogicFunctionExecutorDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
+  type LogicFunctionExecutorDriver,
 } from 'src/engine/core-modules/logic-function-executor/drivers/interfaces/logic-function-executor-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';

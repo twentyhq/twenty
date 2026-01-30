@@ -2,10 +2,11 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
+import { useRecoilValue } from 'recoil';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { useGetManyLogicFunctions } from '@/settings/logic-functions/hooks/useGetManyLogicFunctions';
 import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
+import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -59,7 +60,7 @@ const DEFAULT_TOOL_INPUT_SCHEMA = {
 };
 
 export const SettingsToolsTable = () => {
-  const { logicFunctions, loading } = useGetManyLogicFunctions();
+  const logicFunctions = useRecoilValue(logicFunctionsState);
   const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
   const { createLogicFunction } = usePersistLogicFunction();
 
@@ -116,7 +117,7 @@ export const SettingsToolsTable = () => {
     [systemTools, builtInSearchTerm],
   );
 
-  const showSkeleton = (loading || toolIndexLoading) && tools.length === 0;
+  const showSkeleton = toolIndexLoading && tools.length === 0;
 
   const handleCreateTool = async () => {
     setIsCreating(true);

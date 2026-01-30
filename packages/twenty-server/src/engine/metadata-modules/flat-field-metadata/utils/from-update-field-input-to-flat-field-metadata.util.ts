@@ -5,6 +5,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -23,7 +24,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
-  workspaceCustomApplicationId: string;
+  flatApplication: FlatApplication;
   isSystemBuild: boolean;
 } & Pick<
   AllFlatEntityMaps,
@@ -41,7 +42,7 @@ type FlatFieldMetadataAndIndexToUpdate = {
   flatFieldMetadatasToCreate: FlatFieldMetadata[];
 } & FlatFieldMetadataUpdateSideEffects;
 export const fromUpdateFieldInputToFlatFieldMetadata = ({
-  workspaceCustomApplicationId,
+  flatApplication,
   flatIndexMaps,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -109,7 +110,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       FieldMetadataType.MORPH_RELATION,
     )
       ? computeFlatFieldToUpdateFromMorphRelationUpdatePayload({
-          workspaceCustomApplicationId,
+          flatApplication,
           morphRelationsUpdatePayload:
             rawUpdateFieldInput?.morphRelationsUpdatePayload,
           flatFieldMetadataMaps: flatFieldMetadataMaps,
@@ -149,7 +150,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       toFlatFieldMetadata,
       flatViewMaps,
       flatViewFieldMaps,
-      workspaceCustomApplicationId,
+      flatApplication,
     });
 
     if (sideEffectResult.status === 'fail') {
