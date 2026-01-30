@@ -22,6 +22,7 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/types/property-update.type';
+import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/is-property-update.util';
@@ -49,7 +50,7 @@ type UpdateFieldPropertyUpdateHandlerArgs<
   queryRunner: QueryRunner;
   schemaName: string;
   tableName: string;
-  flatFieldMetadata: FlatFieldMetadata<T>;
+  flatFieldMetadata: UniversalFlatFieldMetadata<T>; // & id ?
   update: PropertyUpdate<FlatFieldMetadata, P>;
 };
 
@@ -67,16 +68,23 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
+    const { action, queryRunner, allFlatEntityMaps } = context;
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<FieldMetadataEntity>(
         FieldMetadataEntity,
       );
 
-    const { entityId } = action;
+    const { universalIdentifier } = action;
+
+    const fromFlatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier,
+      flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+    });
+
+    // TODO prastoin when migrated builder fromUniversalSettingsToInsertableSettings
 
     await fieldMetadataRepository.update(
-      entityId,
+      fromFlatFieldMetadata.id,
       fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
     );
   }
@@ -90,12 +98,14 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { entityId, updates } = action;
+    const { universalIdentifier, updates } = action;
 
-    const currentFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: entityId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+    const currentFlatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow(
+      {
+        universalIdentifier,
+        flatEntityMaps: flatFieldMetadataMaps,
+      },
+    );
 
     const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
@@ -105,7 +115,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
-      flatObjectMetadata,
+      objectMetadata: flatObjectMetadata,
     });
 
     let optimisticFlatFieldMetadata = structuredClone(currentFlatFieldMetadata);
@@ -169,6 +179,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           flatObjectMetadata,
           flatFieldMetadata: optimisticFlatFieldMetadata,
           update,
+          workspaceId,
         });
         optimisticFlatFieldMetadata.options = update.to ?? [];
       }
@@ -337,7 +348,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     const enumOperations = collectEnumOperationsForField({
-      flatFieldMetadata: flatFieldMetadata,
+      universalFlatFieldMetadata: flatFieldMetadata,
       tableName,
       operation: EnumOperation.RENAME,
       options: {
@@ -435,8 +446,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     tableName,
     update,
     flatObjectMetadata,
+    workspaceId,
   }: UpdateFieldPropertyUpdateHandlerArgs<'options'> & {
     flatObjectMetadata: FlatObjectMetadata;
+    workspaceId: string;
   }) {
     const fromOptionsById = new Map(
       (update.from ?? [])
@@ -461,8 +474,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     const enumColumnDefinitions = generateColumnDefinitions({
-      flatFieldMetadata: flatFieldMetadata,
-      flatObjectMetadata: flatObjectMetadata,
+      universalFlatFieldMetadata: flatFieldMetadata,
+      universalFlatObjectMetadata: flatObjectMetadata,
+      workspaceId,
     });
 
     for (const enumColumnDefinition of enumColumnDefinitions) {
