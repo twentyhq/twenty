@@ -38,8 +38,6 @@ export const FUNCTION_EXTERNAL_MODULES: string[] = [
   'twenty-shared/*',
 ];
 
-// React and react/jsx-runtime are handled by reactGlobalsPlugin (virtual modules)
-// to enable single-pass JSX compilation with full incremental build benefits
 export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
   'react-dom',
   'twenty-sdk',
