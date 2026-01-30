@@ -1,5 +1,8 @@
-import { DEFINE_FRONT_COMPONENT_EXPORT_PATTERN } from '../constants/DefineFrontComponentExportPattern';
-import { DEFINE_FRONT_COMPONENT_IMPORT_PATTERN } from '../constants/DefineFrontComponentImportPattern';
+const DEFINE_FRONT_COMPONENT_IMPORT_PATTERN =
+  /import\s*\{\s*defineFrontComponent\s*\}\s*from\s*['"][^'"]+['"];?\n?/g;
+
+const DEFINE_FRONT_COMPONENT_EXPORT_PATTERN =
+  /export\s+default\s+defineFrontComponent\s*\(\s*\{[^}]*component\s*:\s*(\w+)[^}]*\}\s*\)\s*;?/s;
 
 export const unwrapDefineFrontComponentToDirectExport = (
   sourceCode: string,

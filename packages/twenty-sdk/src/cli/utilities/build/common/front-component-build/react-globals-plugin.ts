@@ -3,10 +3,18 @@ import * as fs from 'fs/promises';
 import type * as esbuild from 'esbuild';
 
 import { isDefined } from 'twenty-shared/utils';
-import { JSX_RUNTIME_EXPORTS } from './constants/JsxRuntimeExports';
-import { REACT_IMPORT_PATTERN } from './constants/ReactImportPattern';
-import { REACT_MODULE_FILTER_PATTERN } from './constants/ReactModuleFilterPattern';
 import { extractNamesFromImportSpecifier } from './utils/extract-names-from-import-specifier';
+
+const REACT_IMPORT_PATTERN =
+  /import\s+(?:(\w+)\s*,?\s*)?(?:\{([^}]*)\})?\s*from\s*['"]react['"];?/g;
+
+const REACT_MODULE_FILTER_PATTERN = /^react(\/jsx-runtime)?$/;
+
+const JSX_RUNTIME_EXPORTS = `
+export var jsx = globalThis.jsx;
+export var jsxs = globalThis.jsxs;
+export var Fragment = globalThis.React.Fragment;
+`.trim();
 
 const collectReactImports = (sourceContent: string): Set<string> => {
   const collectedReactImports = new Set<string>();

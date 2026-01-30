@@ -1,8 +1,22 @@
 import { HTML_TAG_TO_REMOTE_COMPONENT } from 'twenty-shared/front-component-constants';
 
 import { isDefined } from 'twenty-shared/utils';
-import { HTML_TAG_TO_REMOTE_COMPONENT_PATTERN } from '../constants/HtmlTagToRemoteComponentPattern';
-import { REMOTE_COMPONENTS_GLOBAL_NAMESPACE } from '../constants/RemoteComponentsGlobalNamespace';
+
+const REMOTE_COMPONENTS_GLOBAL_NAMESPACE = 'RemoteComponents';
+
+const buildHtmlTagToRemoteComponentPattern = (): RegExp => {
+  const supportedHtmlTagNames = Object.keys(HTML_TAG_TO_REMOTE_COMPONENT).join(
+    '|',
+  );
+
+  return new RegExp(
+    `(<\\/?)\\b(${supportedHtmlTagNames})\\b(?=[\\s>\\/>])`,
+    'g',
+  );
+};
+
+const HTML_TAG_TO_REMOTE_COMPONENT_PATTERN =
+  buildHtmlTagToRemoteComponentPattern();
 
 export const replaceHtmlTagsWithRemoteComponents = (
   sourceCode: string,
