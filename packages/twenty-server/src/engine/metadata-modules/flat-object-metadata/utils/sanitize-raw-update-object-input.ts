@@ -66,6 +66,16 @@ export const sanitizeRawUpdateObjectInput = ({
 
   let standardOverrides = existingFlatObjectMetadata.standardOverrides;
 
+  const standardOverrideKeys = new Set<string>(
+    OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES,
+  );
+
+  const filteredEditableObjectProperties = Object.fromEntries(
+    Object.entries(updatedEditableObjectProperties).filter(
+      ([key]) => !standardOverrideKeys.has(key),
+    ),
+  );
+
   for (const property of OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES) {
     const propertyValue = updatedEditableObjectProperties[property];
     const isPropertyUpdated = propertyValue !== undefined;
@@ -73,8 +83,6 @@ export const sanitizeRawUpdateObjectInput = ({
     if (!isPropertyUpdated) {
       continue;
     }
-
-    delete updatedEditableObjectProperties[property];
 
     const isResettingToDefault =
       propertyValue === existingFlatObjectMetadata[property];
@@ -100,6 +108,6 @@ export const sanitizeRawUpdateObjectInput = ({
 
   return {
     standardOverrides: isEmptyOverrides ? null : standardOverrides,
-    updatedEditableObjectProperties,
+    updatedEditableObjectProperties: filteredEditableObjectProperties,
   };
 };
