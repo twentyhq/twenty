@@ -10,6 +10,7 @@ import {
   mockCurrentWorkspace,
   mockedUserData,
 } from '~/testing/mock-data/users';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 
 const renderHooks = (
   onboardingStatus: OnboardingStatus,
@@ -19,12 +20,16 @@ const renderHooks = (
   const { result } = renderHook(
     () => {
       const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+      const setCurrentUserWorkspace = useSetRecoilState(
+        currentUserWorkspaceState,
+      );
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
       return {
         currentUser,
         setCurrentUser,
         setCurrentWorkspace,
+        setCurrentUserWorkspace,
         setNextOnboardingStatus,
       };
     },
@@ -34,6 +39,7 @@ const renderHooks = (
   );
   act(() => {
     result.current.setCurrentUser({ ...mockedUserData, onboardingStatus });
+    result.current.setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
     result.current.setCurrentWorkspace({
       ...mockCurrentWorkspace,
       currentBillingSubscription: withCurrentBillingSubscription
