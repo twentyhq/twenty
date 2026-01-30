@@ -42,8 +42,9 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'create',
         metadataName: 'fieldMetadata',
-        objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
-        flatFieldMetadatas: [flatFieldMetadataToValidate],
+        objectMetadataUniversalIdentifier:
+          flatFieldMetadataToValidate.objectMetadataId,
+        universalFlatFieldMetadatas: [flatFieldMetadataToValidate],
       },
     };
   }
@@ -94,12 +95,12 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { universalIdentifier, flatEntityUpdates } = args;
 
     const updateFieldAction: UpdateFieldAction = {
       type: 'update',
       metadataName: 'fieldMetadata',
-      entityId: flatEntityId,
+      universalIdentifier,
       updates: flatEntityUpdates,
     };
 

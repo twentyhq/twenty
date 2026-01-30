@@ -24,7 +24,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
 }: OptimisticallyApplyCreateActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
   switch (action.metadataName) {
     case 'fieldMetadata': {
-      action.flatFieldMetadatas.forEach((flatEntity) =>
+      action.universalFlatFieldMetadatas.forEach((flatEntity) =>
         addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
           flatEntity,
           flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,

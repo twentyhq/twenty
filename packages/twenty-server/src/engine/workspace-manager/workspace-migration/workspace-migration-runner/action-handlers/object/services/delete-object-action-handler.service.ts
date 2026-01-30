@@ -3,9 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
-import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { findManyFlatEntityByUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifiers-or-throw.util';
+import {
+  isCompositeUniversalFlatFieldMetadata
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import {
+  isEnumUniversalFlatFieldMetadata
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type DeleteObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
@@ -75,13 +79,14 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       cascade: true,
     });
     const objectFlatFieldMetadatas =
-      findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      findManyFlatEntityByUniversalIdentifiersOrThrow({
         flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityIds: flatObjectMetadata.fieldIds,
+        universalIdentifiers: flatObjectMetadata.fieldUniversalIdentifiers,
       });
     const enumOrCompositeFlatFieldMetadatas = objectFlatFieldMetadatas.filter(
       (field) =>
-        isEnumFlatFieldMetadata(field) || isCompositeFlatFieldMetadata(field),
+        isEnumUniversalFlatFieldMetadata(field) ||
+        isCompositeUniversalFlatFieldMetadata(field),
     );
 
     const enumOperations = collectEnumOperationsForObject({
