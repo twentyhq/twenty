@@ -3,7 +3,7 @@ import { readFile } from 'fs-extra';
 import { glob } from 'fast-glob';
 import {
   type EntityFilePaths,
-  extractDefaultExportConfig,
+  extractDefineEntity,
   ManifestEntityKey,
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
@@ -80,7 +80,7 @@ export const buildManifest = async (
     const fileContent = await readFile(filePath, 'utf-8');
     const relativePath = relative(appPath, filePath);
 
-    const targetFunctionName = extractDefaultExportConfig(fileContent);
+    const targetFunctionName = extractDefineEntity(fileContent);
 
     if (!targetFunctionName) {
       continue;
@@ -186,7 +186,7 @@ export const buildManifest = async (
 
   if (!application) {
     throw new Error(
-      'Cannot build application, please export default defineApp() to define an application',
+      'Cannot build application, please export default defineApplication() to define an application',
     );
   }
 

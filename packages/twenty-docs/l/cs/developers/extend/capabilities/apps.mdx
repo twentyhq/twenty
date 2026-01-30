@@ -219,7 +219,7 @@ SDK poskytuje čtyři pomocné funkce s vestavěnou validací pro definování e
 
 | Funkce             | Účel                                             |
 | ------------------ | ------------------------------------------------ |
-| `defineApp()`      | Konfigurace metadat aplikace                     |
+| `defineApplication()`      | Konfigurace metadat aplikace                     |
 | `defineObject()`   | Definice vlastních objektů s poli                |
 | `defineFunction()` | Definice logických funkcí s obslužnými funkcemi  |
 | `defineRole()`     | Konfigurace oprávnění rolí a přístupu k objektům |
@@ -319,14 +319,14 @@ Každá aplikace má jeden soubor `application.config.ts`, který popisuje:
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
 * **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
 
-K definování konfigurace aplikace použijte `defineApp()`:
+K definování konfigurace aplikace použijte `defineApplication()`:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',

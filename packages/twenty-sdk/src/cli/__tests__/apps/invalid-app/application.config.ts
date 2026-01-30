@@ -1,6 +1,6 @@
-import { defineApp } from '@/application/application/define-app';
+import { defineApplication } from '@/application/application/define-app';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: 'invalid-app-0000-0000-0000-000000000001',
   displayName: 'Invalid App',
   description: 'An app with duplicate IDs for testing validation',

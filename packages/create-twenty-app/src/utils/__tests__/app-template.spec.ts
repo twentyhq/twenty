@@ -102,7 +102,7 @@ describe('copyBaseApplicationProject', () => {
     expect(yarnLockContent).toContain('yarn lockfile v1');
   });
 
-  it('should create application.config.ts with defineApp and correct values', async () => {
+  it('should create application.config.ts with defineApplication and correct values', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -117,11 +117,11 @@ describe('copyBaseApplicationProject', () => {
     );
     const appConfigContent = await fs.readFile(appConfigPath, 'utf8');
 
-    // Verify it uses defineApp
+    // Verify it uses defineApplication
     expect(appConfigContent).toContain(
-      "import { defineApp } from 'twenty-sdk'",
+      "import { defineApplication } from 'twenty-sdk'",
     );
-    expect(appConfigContent).toContain('export default defineApp({');
+    expect(appConfigContent).toContain('export default defineApplication({');
 
     // Verify it imports the role identifier
     expect(appConfigContent).toContain(

@@ -1,6 +1,6 @@
-import { defineApp } from '@/sdk';
+import { defineApplication } from '@/sdk';
 
-describe('defineApp', () => {
+describe('defineApplication', () => {
   it('should return successful validation result when valid', () => {
     const config = {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
@@ -10,7 +10,7 @@ describe('defineApp', () => {
       roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     };
 
-    const result = defineApp(config);
+    const result = defineApplication(config);
 
     expect(result.success).toBe(true);
     expect(result.config).toEqual(config);
@@ -33,7 +33,7 @@ describe('defineApp', () => {
       roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     };
 
-    const result = defineApp(config);
+    const result = defineApplication(config);
 
     expect(result.success).toBe(true);
     expect(result.config).toEqual(config);
@@ -48,7 +48,7 @@ describe('defineApp', () => {
       displayName: 'My App',
     };
 
-    const result = defineApp(config as any);
+    const result = defineApplication(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
@@ -62,7 +62,7 @@ describe('defineApp', () => {
       displayName: 'My App',
     };
 
-    const result = defineApp(config as any);
+    const result = defineApplication(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(

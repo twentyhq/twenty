@@ -8,7 +8,7 @@
  */
 
 export type { ApplicationConfig } from './application/application-config';
-export { defineApp } from './application/define-app';
+export { defineApplication } from './application/define-application';
 export type {
   ValidationResult,
   DefinableEntity,

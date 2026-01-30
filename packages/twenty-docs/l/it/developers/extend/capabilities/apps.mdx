@@ -219,7 +219,7 @@ L'SDK fornisce quattro funzioni helper con convalida integrata per definire le e
 
 | Funzione           | Scopo                                                   |
 | ------------------ | ------------------------------------------------------- |
-| `defineApp()`      | Configura i metadati dell'applicazione                  |
+| `defineApplication()`      | Configura i metadati dell'applicazione                  |
 | `defineObject()`   | Definisci oggetti personalizzati con campi              |
 | `defineFunction()` | Definisci funzioni logiche con handler                  |
 | `defineRole()`     | Configura i permessi dei ruoli e l'accesso agli oggetti |
@@ -319,14 +319,14 @@ Ogni app ha un singolo file `application.config.ts` che descrive:
 * **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
 * **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
 
-Usa `defineApp()` per definire la configurazione della tua applicazione:
+Usa `defineApplication()` per definire la configurazione della tua applicazione:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',

@@ -214,7 +214,7 @@ The SDK provides four helper functions with built-in validation for defining you
 
 | Function | Purpose |
 |----------|---------|
-| `defineApp()` | Configure application metadata |
+| `defineApplication()` | Configure application metadata |
 | `defineObject()` | Define custom objects with fields |
 | `defineFunction()` | Define logic functions with handlers |
 | `defineRole()` | Configure role permissions and object access |
@@ -315,14 +315,14 @@ Every app has a single `application.config.ts` file that describes:
 - **How its functions run**: which role they use for permissions.
 - **(Optional) variables**: key–value pairs exposed to your functions as environment variables.
 
-Use `defineApp()` to define your application configuration:
+Use `defineApplication()` to define your application configuration:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',

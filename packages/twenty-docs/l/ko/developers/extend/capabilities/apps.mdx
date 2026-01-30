@@ -219,7 +219,7 @@ SDK는 앱 엔티티를 정의할 때 사용할 수 있는, 내장 검증이 포
 
 | 함수                 | 목적                  |
 | ------------------ | ------------------- |
-| `defineApp()`      | 애플리케이션 메타데이터 구성     |
+| `defineApplication()`      | 애플리케이션 메타데이터 구성     |
 | `defineObject()`   | 필드가 있는 사용자 정의 객체 정의 |
 | `defineFunction()` | 핸들러가 있는 로직 함수 정의    |
 | `defineRole()`     | 역할 권한과 객체 접근 구성     |
@@ -319,14 +319,14 @@ export default defineObject({
 * **함수가 실행되는 방식**: 권한을 위해 사용하는 역할.
 * **(선택 사항) 변수**: 함수에 환경 변수로 노출되는 키–값 쌍.
 
-`defineApp()`을 사용해 애플리케이션 구성을 정의하세요:
+`defineApplication()`을 사용해 애플리케이션 구성을 정의하세요:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',

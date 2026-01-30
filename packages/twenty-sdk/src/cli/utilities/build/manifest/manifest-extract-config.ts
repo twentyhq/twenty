@@ -1,7 +1,7 @@
 import * as ts from 'typescript';
 
 export enum TargetFunction {
-  DefineApp = 'defineApp',
+  DefineApplication = 'defineApplication',
   DefineField = 'defineField',
   DefineLogicFunction = 'defineLogicFunction',
   DefineObject = 'defineObject',
@@ -24,7 +24,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   TargetFunction,
   ManifestEntityKey
 > = {
-  [TargetFunction.DefineApp]: ManifestEntityKey.Application,
+  [TargetFunction.DefineApplication]: ManifestEntityKey.Application,
   [TargetFunction.DefineField]: ManifestEntityKey.Fields,
   [TargetFunction.DefineLogicFunction]: ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefineObject]: ManifestEntityKey.Objects,
@@ -47,7 +47,7 @@ const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {
   return undefined;
 };
 
-export const extractDefaultExportConfig = (
+export const extractDefineEntity = (
   fileContent: string,
 ): TargetFunction | undefined => {
   const sourceFile = ts.createSourceFile(

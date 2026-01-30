@@ -219,7 +219,7 @@ twenty-sdk 提供你在应用中使用的类型化构件和辅助函数。 以�
 
 | 函数                 | 目的           |
 | ------------------ | ------------ |
-| `defineApp()`      | 配置应用元数据      |
+| `defineApplication()`      | 配置应用元数据      |
 | `defineObject()`   | 定义带字段的自定义对象  |
 | `defineFunction()` | 定义带处理程序的逻辑函数 |
 | `defineRole()`     | 配置角色权限和对象访问  |
@@ -319,14 +319,14 @@ export default defineObject({
 * **函数如何运行**：它们用于权限的角色。
 * **（可选）变量**：以环境变量形式提供给函数的键值对。
 
-使用 `defineApp()` 定义你的应用配置：
+使用 `defineApplication()` 定义你的应用配置：
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',

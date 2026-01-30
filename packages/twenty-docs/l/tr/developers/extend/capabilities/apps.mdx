@@ -219,7 +219,7 @@ SDK, uygulama varlıklarınızı tanımlamak için yerleşik doğrulamaya sahip 
 
 | Fonksiyon          | Amaç                                           |
 | ------------------ | ---------------------------------------------- |
-| `defineApp()`      | Uygulama meta verilerini yapılandırın          |
+| `defineApplication()`      | Uygulama meta verilerini yapılandırın          |
 | `defineObject()`   | Alanlara sahip özel nesneler tanımlayın        |
 | `defineFunction()` | İşleyicilerle mantık fonksiyonları tanımlayın  |
 | `defineRole()`     | Rol izinlerini ve nesne erişimini yapılandırın |
@@ -319,14 +319,14 @@ Her uygulamanın aşağıdakileri açıklayan tek bir `application.config.ts` do
 * **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
 * **(İsteğe bağlı) değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
 
-Uygulama yapılandırmanızı tanımlamak için `defineApp()` kullanın:
+Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',

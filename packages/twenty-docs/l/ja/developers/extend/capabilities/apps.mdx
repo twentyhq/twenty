@@ -217,7 +217,7 @@ twenty-sdk は、アプリ内で使用する型付きのビルディングブロ
 
 | 関数                 | 目的                                   |
 | ------------------ | ------------------------------------ |
-| `defineApp()`      | アプリケーションのメタデータを構成                    |
+| `defineApplication()`      | アプリケーションのメタデータを構成                    |
 | `defineObject()`   | フィールド付きのカスタムオブジェクトを定義                |
 | `defineFunction()` | Define logic functions with handlers |
 | `defineRole()`     | ロールの権限とオブジェクトアクセスを構成                 |
@@ -317,14 +317,14 @@ export default defineObject({
 * **関数の実行方法**: 権限に使用するロール。
 * **（任意）変数**: 関数に環境変数として公開されるキーと値のペア。
 
-アプリケーション設定を定義するには `defineApp()` を使用します：
+アプリケーション設定を定義するには `defineApplication()` を使用します：
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',

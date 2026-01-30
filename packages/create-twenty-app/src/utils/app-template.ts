@@ -211,10 +211,10 @@ const createApplicationConfig = async ({
   description?: string;
   appDirectory: string;
 }) => {
-  const content = `import { defineApp } from 'twenty-sdk';
+  const content = `import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-logic-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',

@@ -1,13 +1,13 @@
-import { extractDefaultExportConfig } from '@/cli/utilities/build/manifest/manifest-extract-config';
+import { extractDefineEntity } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
-describe('extractDefaultExportConfig', () => {
-  it('should detect defineApp in default export', () => {
+describe('extractDefineEntity', () => {
+  it('should detect defineApplication in default export', () => {
     const fileContent = `
-      import { defineApp } from 'twenty-sdk';
-      export default defineApp({ name: 'MyApp' });
+      import { defineApplication } from 'twenty-sdk';
+      export default defineApplication({ name: 'MyApp' });
     `;
-    const result = extractDefaultExportConfig(fileContent);
-    expect(result).toBe('defineApp');
+    const result = extractDefineEntity(fileContent);
+    expect(result).toBe('defineApplication');
   });
 
   it('should detect defineField in default export', () => {
@@ -15,7 +15,7 @@ describe('extractDefaultExportConfig', () => {
       import { defineField } from 'twenty-sdk';
       export default defineField({ name: 'myField' });
     `;
-    const result = extractDefaultExportConfig(fileContent);
+    const result = extractDefineEntity(fileContent);
     expect(result).toBe('defineField');
   });
 
@@ -24,7 +24,7 @@ describe('extractDefaultExportConfig', () => {
       import { defineLogicFunction } from 'twenty-sdk';
       export default defineLogicFunction({ name: 'myFunction' });
     `;
-    const result = extractDefaultExportConfig(fileContent);
+    const result = extractDefineEntity(fileContent);
     expect(result).toBe('defineLogicFunction');
   });
 
@@ -33,7 +33,7 @@ describe('extractDefaultExportConfig', () => {
       import { defineObject } from 'twenty-sdk';
       export default defineObject({ name: 'myObject' });
     `;
-    const result = extractDefaultExportConfig(fileContent);
+    const result = extractDefineEntity(fileContent);
     expect(result).toBe('defineObject');
   });
 
@@ -42,7 +42,7 @@ describe('extractDefaultExportConfig', () => {
       import { defineRole } from 'twenty-sdk';
       export default defineRole({ name: 'myRole' });
     `;
-    const result = extractDefaultExportConfig(fileContent);
+    const result = extractDefineEntity(fileContent);
     expect(result).toBe('defineRole');
   });
 
@@ -51,7 +51,7 @@ describe('extractDefaultExportConfig', () => {
       import { defineFrontComponent } from 'twenty-sdk';
       export default defineFrontComponent({ name: 'myComponent' });
     `;
-    const result = extractDefaultExportConfig(fileContent);
+    const result = extractDefineEntity(fileContent);
     expect(result).toBe('defineFrontComponent');
   });
 
@@ -60,25 +60,25 @@ describe('extractDefaultExportConfig', () => {
       import { someOtherFunction } from 'twenty-sdk';
       export default someOtherFunction({ name: 'myFunction' });
     `;
-    const result = extractDefaultExportConfig(fileContent);
+    const result = extractDefineEntity(fileContent);
     expect(result).toBeUndefined();
   });
 
   it('should handle files without default export', () => {
     const fileContent = `
-      import { defineApp } from 'twenty-sdk';
-      const app = defineApp({ name: 'MyApp' });
+      import { defineApplication } from 'twenty-sdk';
+      const app = defineApplication({ name: 'MyApp' });
     `;
-    const result = extractDefaultExportConfig(fileContent);
+    const result = extractDefineEntity(fileContent);
     expect(result).toBeUndefined();
   });
 
   it('should handle files with non-call default export', () => {
     const fileContent = `
-      import { defineApp } from 'twenty-sdk';
+      import { defineApplication } from 'twenty-sdk';
       export default { name: 'MyApp' };
     `;
-    const result = extractDefaultExportConfig(fileContent);
+    const result = extractDefineEntity(fileContent);
     expect(result).toBeUndefined();
   });
 });

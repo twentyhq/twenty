@@ -219,7 +219,7 @@ El SDK proporciona cuatro funciones auxiliares con validación incorporada para 
 
 | Función            | Propósito                                      |
 | ------------------ | ---------------------------------------------- |
-| `defineApp()`      | Configura los metadatos de la aplicación       |
+| `defineApplication()`      | Configura los metadatos de la aplicación       |
 | `defineObject()`   | Define objetos personalizados con campos       |
 | `defineFunction()` | Define funciones de lógica con controladores   |
 | `defineRole()`     | Configura permisos de roles y acceso a objetos |
@@ -319,14 +319,14 @@ Cada aplicación tiene un único archivo `application.config.ts` que describe:
 * **Cómo se ejecutan sus funciones**: qué rol usan para permisos.
 * **Variables (opcionales)**: pares clave–valor expuestos a tus funciones como variables de entorno.
 
-Usa `defineApp()` para definir la configuración de tu aplicación:
+Usa `defineApplication()` para definir la configuración de tu aplicación:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',

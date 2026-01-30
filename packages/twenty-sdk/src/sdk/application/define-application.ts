@@ -2,7 +2,7 @@ import { type Application } from 'twenty-shared/application';
 import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 
-export const defineApp: DefineEntity<Application> = (config) => {
+export const defineApplication: DefineEntity<Application> = (config) => {
   const errors = [];
 
   if (!config.universalIdentifier) {
