@@ -19,8 +19,5 @@ export const getTabListInstanceIdFromPageLayoutAndRecord = ({
       ? targetRecordIdentifier?.id
       : undefined;
   const baseInstanceId = getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-  return isDefined(recordId)
-    ? `${baseInstanceId}-${recordId}`
-    : baseInstanceId;
+  return isDefined(recordId) ? `${baseInstanceId}-${recordId}` : baseInstanceId;
 };
-
