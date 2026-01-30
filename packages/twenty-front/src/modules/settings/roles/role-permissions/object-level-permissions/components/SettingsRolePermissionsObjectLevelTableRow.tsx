@@ -94,6 +94,7 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         <SettingsRolePermissionsObjectLevelTableRowOptionsDropdown
           roleId={roleId}
           objectMetadataId={objectMetadataItem.id}
+          objectPermissionDetailUrl={navigationUrl}
         />
       </TableCell>
       <TableCell align="right">
