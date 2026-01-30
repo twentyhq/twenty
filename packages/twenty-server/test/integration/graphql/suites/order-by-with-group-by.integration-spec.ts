@@ -204,7 +204,7 @@ describe('group-by resolvers - order by', () => {
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek then avgEmployees then city
+      // Order by dayOfWeek (chronological) then avgEmployees then city
       expect(groupInfos).toEqual([
         {
           city: 'Dallas',
@@ -235,17 +235,17 @@ describe('group-by resolvers - order by', () => {
           annualRecurringRevenue: '100',
         },
         {
-          city: 'Paris',
-          dayOfWeek: 'Thursday',
-          avgEmployees: 10,
-          totalCount: 1,
-          annualRecurringRevenue: '100',
-        },
-        {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
+          annualRecurringRevenue: '100',
+        },
+        {
+          city: 'Paris',
+          dayOfWeek: 'Thursday',
+          avgEmployees: 10,
+          totalCount: 1,
           annualRecurringRevenue: '100',
         },
       ]);
@@ -284,6 +284,7 @@ describe('group-by resolvers - order by', () => {
         totalCount: g.totalCount,
       }));
 
+      // Order by dayOfWeek (chronological) then addressCity then avgEmployees
       expect(groupInfos).toEqual([
         {
           city: 'Anvers',
@@ -314,17 +315,17 @@ describe('group-by resolvers - order by', () => {
           annualRecurringRevenue: '100',
         },
         {
-          city: 'Paris',
-          dayOfWeek: 'Thursday',
-          avgEmployees: 10,
-          totalCount: 1,
-          annualRecurringRevenue: '100',
-        },
-        {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
+          annualRecurringRevenue: '100',
+        },
+        {
+          city: 'Paris',
+          dayOfWeek: 'Thursday',
+          avgEmployees: 10,
+          totalCount: 1,
           annualRecurringRevenue: '100',
         },
       ]);
@@ -486,6 +487,137 @@ describe('group-by resolvers - order by', () => {
           annualRecurringRevenue: '100',
         },
       ]);
+    });
+  });
+
+  describe('chronological ordering for date granularities', () => {
+    it('should order DAY_OF_THE_WEEK chronologically (Monday=1 to Sunday=7), not alphabetically', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          groupBy: [{ createdAt: { granularity: 'DAY_OF_THE_WEEK' } }],
+          orderBy: [
+            {
+              createdAt: {
+                granularity: 'DAY_OF_THE_WEEK',
+                orderBy: 'AscNullsFirst',
+              },
+            },
+          ],
+          filter: filter2025,
+          gqlFields: `
+            totalCount
+          `,
+        }),
+      );
+
+      const groups = response.body.data.companiesGroupBy;
+
+      expect(groups).toBeDefined();
+      expect(Array.isArray(groups)).toBe(true);
+
+      const dayOrder = groups.map((g: any) => g.groupByDimensionValues?.[0]);
+
+      // Monday (1), Wednesday (3), Thursday (4) - chronological order
+      expect(dayOrder).toEqual(['Monday', 'Wednesday', 'Thursday']);
+    });
+
+    it('should order DAY_OF_THE_WEEK in descending chronological order', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          groupBy: [{ createdAt: { granularity: 'DAY_OF_THE_WEEK' } }],
+          orderBy: [
+            {
+              createdAt: {
+                granularity: 'DAY_OF_THE_WEEK',
+                orderBy: 'DescNullsLast',
+              },
+            },
+          ],
+          filter: filter2025,
+          gqlFields: `
+            totalCount
+          `,
+        }),
+      );
+
+      const groups = response.body.data.companiesGroupBy;
+
+      expect(groups).toBeDefined();
+
+      const dayOrder = groups.map((g: any) => g.groupByDimensionValues?.[0]);
+
+      // Thursday (4), Wednesday (3), Monday (1) - reverse chronological order
+      expect(dayOrder).toEqual(['Thursday', 'Wednesday', 'Monday']);
+    });
+
+    it('should order MONTH_OF_THE_YEAR chronologically (January=1 to December=12), not alphabetically', async () => {
+      // Test data has January (companies 4,5,6) and March (companies 1,2,3,7)
+      // Chronological order: January (1), March (3)
+      // Alphabetical would be: January, March (same in this case, but tests the mechanism)
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          groupBy: [{ createdAt: { granularity: 'MONTH_OF_THE_YEAR' } }],
+          orderBy: [
+            {
+              createdAt: {
+                granularity: 'MONTH_OF_THE_YEAR',
+                orderBy: 'AscNullsFirst',
+              },
+            },
+          ],
+          filter: filter2025,
+          gqlFields: `
+            totalCount
+          `,
+        }),
+      );
+
+      const groups = response.body.data.companiesGroupBy;
+
+      expect(groups).toBeDefined();
+      expect(Array.isArray(groups)).toBe(true);
+
+      const monthOrder = groups.map((g: any) => g.groupByDimensionValues?.[0]);
+
+      // January (1), March (3) - chronological order
+      expect(monthOrder).toEqual(['January', 'March']);
+    });
+
+    it('should order MONTH_OF_THE_YEAR in descending chronological order', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          groupBy: [{ createdAt: { granularity: 'MONTH_OF_THE_YEAR' } }],
+          orderBy: [
+            {
+              createdAt: {
+                granularity: 'MONTH_OF_THE_YEAR',
+                orderBy: 'DescNullsLast',
+              },
+            },
+          ],
+          filter: filter2025,
+          gqlFields: `
+            totalCount
+          `,
+        }),
+      );
+
+      const groups = response.body.data.companiesGroupBy;
+
+      expect(groups).toBeDefined();
+
+      const monthOrder = groups.map((g: any) => g.groupByDimensionValues?.[0]);
+
+      // March (3), January (1) - reverse chronological order
+      expect(monthOrder).toEqual(['March', 'January']);
     });
   });
 

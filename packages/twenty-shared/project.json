@@ -24,6 +24,8 @@
         "{projectRoot}/database-events/dist",
         "{projectRoot}/front-component/package.json",
         "{projectRoot}/front-component/dist",
+        "{projectRoot}/front-component-constants/package.json",
+        "{projectRoot}/front-component-constants/dist",
         "{projectRoot}/metadata/package.json",
         "{projectRoot}/metadata/dist",
         "{projectRoot}/testing/package.json",

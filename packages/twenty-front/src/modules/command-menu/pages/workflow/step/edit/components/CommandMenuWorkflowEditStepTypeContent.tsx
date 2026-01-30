@@ -52,24 +52,11 @@ export const CommandMenuWorkflowEditStepTypeContent = () => {
       throw new Error('Step not found');
     }
 
-    const stepUpdate =
-      selection.type === 'LOGIC_FUNCTION'
-        ? {
-            ...existingStep,
-            type: selection.type,
-            name: selection.name,
-            settings: {
-              ...existingStep.settings,
-              input: {
-                logicFunctionId: selection.logicFunctionId,
-                logicFunctionInput: {},
-              },
-            },
-          }
-        : {
-            ...existingStep,
-            type: selection.type,
-          };
+    const stepUpdate = {
+      ...existingStep,
+      type: selection.type,
+      settings: selection.defaultSettings ?? existingStep.settings,
+    };
 
     const { updatedStep } = await updateStep(stepUpdate as WorkflowAction);
 

@@ -31,7 +31,6 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                       a: null,
                       b: null,
                     },
-                    logicFunctionVersion: 'draft',
                   },
                   outputSchema: {
                     link: {
@@ -96,7 +95,6 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                       a: null,
                       b: null,
                     },
-                    logicFunctionVersion: 'draft',
                   },
                   outputSchema: {
                     link: {
@@ -162,7 +160,6 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                       a: null,
                       b: null,
                     },
-                    logicFunctionVersion: 'draft',
                   },
                   outputSchema: {
                     link: {
@@ -195,7 +192,6 @@ describe('getWorkflowRunStepExecutionStatus', () => {
                       a: null,
                       b: null,
                     },
-                    logicFunctionVersion: 'draft',
                   },
                   outputSchema: {
                     link: {

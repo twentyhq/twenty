@@ -3,6 +3,8 @@ import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/C
 import { getSelectedRecordsContextText } from '@/command-menu/utils/getRecordContextText';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useRecoilValue } from 'recoil';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 export const CommandMenuContextRecordsChip = ({
   objectMetadataItemId,
@@ -14,6 +16,9 @@ export const CommandMenuContextRecordsChip = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
+  );
 
   const { records, loading, totalCount } =
     useFindManyRecordsSelectedInContextStore({
@@ -39,6 +44,7 @@ export const CommandMenuContextRecordsChip = ({
         objectMetadataItem,
         records,
         totalCount,
+        allowRequestsToTwentyIcons,
       )}
       Icons={Avatars}
     />

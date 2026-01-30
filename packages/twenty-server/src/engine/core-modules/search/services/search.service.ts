@@ -33,6 +33,7 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-me
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -48,6 +49,7 @@ export class SearchService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly fileService: FileService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async getAllRecordsWithObjectMetadataItems({
@@ -383,7 +385,10 @@ export class SearchService {
       flatFieldMetadataMaps,
     );
 
-    if (flatObjectMetadata.nameSingular === 'company') {
+    if (
+      flatObjectMetadata.nameSingular === 'company' &&
+      this.twentyConfigService.get('ALLOW_REQUESTS_TO_TWENTY_ICONS')
+    ) {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 

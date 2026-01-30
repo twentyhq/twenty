@@ -1,5 +1,10 @@
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import {
+  CommandMenuItemException,
+  CommandMenuItemExceptionCode,
+} from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -13,13 +18,28 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   workspaceId: string;
   applicationId: string;
 }): FlatCommandMenuItem => {
+  const hasWorkflowVersionId = isDefined(
+    createCommandMenuItemInput.workflowVersionId,
+  );
+  const hasFrontComponentId = isDefined(
+    createCommandMenuItemInput.frontComponentId,
+  );
+
+  if (hasWorkflowVersionId === hasFrontComponentId) {
+    throw new CommandMenuItemException(
+      'Exactly one of workflowVersionId or frontComponentId is required',
+      CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED,
+    );
+  }
+
   const id = uuidv4();
   const now = new Date().toISOString();
 
   return {
     id,
     universalIdentifier: id,
-    workflowVersionId: createCommandMenuItemInput.workflowVersionId,
+    workflowVersionId: createCommandMenuItemInput.workflowVersionId ?? null,
+    frontComponentId: createCommandMenuItemInput.frontComponentId ?? null,
     label: createCommandMenuItemInput.label,
     icon: createCommandMenuItemInput.icon ?? null,
     isPinned: createCommandMenuItemInput.isPinned ?? false,

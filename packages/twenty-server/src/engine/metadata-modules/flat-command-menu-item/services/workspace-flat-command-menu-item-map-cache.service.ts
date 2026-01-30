@@ -10,6 +10,7 @@ import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
 import { fromCommandMenuItemEntityToFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-entity-to-flat-command-menu-item.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
@@ -25,13 +26,15 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheP
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
   ) {
     super();
   }
 
   async computeForCache(workspaceId: string): Promise<FlatCommandMenuItemMaps> {
-    const [commandMenuItems, applications, objectMetadatas] = await Promise.all(
-      [
+    const [commandMenuItems, applications, objectMetadatas, frontComponents] =
+      await Promise.all([
         this.commandMenuItemRepository.find({
           where: { workspaceId },
           withDeleted: true,
@@ -46,13 +49,19 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheP
           select: ['id', 'universalIdentifier'],
           withDeleted: true,
         }),
-      ],
-    );
+        this.frontComponentRepository.find({
+          where: { workspaceId },
+          select: ['id', 'universalIdentifier'],
+          withDeleted: true,
+        }),
+      ]);
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
     const objectMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(objectMetadatas);
+    const frontComponentIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(frontComponents);
 
     const flatCommandMenuItemMaps = createEmptyFlatEntityMaps();
 
@@ -62,6 +71,7 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheP
           entity: commandMenuItemEntity,
           applicationIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
+          frontComponentIdToUniversalIdentifierMap,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

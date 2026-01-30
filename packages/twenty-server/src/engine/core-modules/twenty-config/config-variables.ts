@@ -15,6 +15,7 @@ import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
+import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function/logic-function-executor/interfaces/logic-function-executor.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
@@ -23,11 +24,10 @@ import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handle
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
-import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.interface';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
-import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-typeorm-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/decorators/cast-to-positive-number.decorator';
+import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-typeorm-log-level-array.decorator';
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
@@ -162,6 +162,14 @@ export class ConfigVariables {
   IS_IMAP_SMTP_CALDAV_ENABLED = true;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description:
+      "Enable or disable requests to twenty-icons to get companies' icons",
+    type: ConfigVariableType.BOOLEAN,
+  })
+  ALLOW_REQUESTS_TO_TWENTY_ICONS = true;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
     description: 'Enable or disable Microsoft authentication',
     type: ConfigVariableType.BOOLEAN,
@@ -206,6 +214,15 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    description:
+      'Enable or disable the seeding of standard record page layouts',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,

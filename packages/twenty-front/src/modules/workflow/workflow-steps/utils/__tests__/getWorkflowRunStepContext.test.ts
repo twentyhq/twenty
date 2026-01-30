@@ -19,7 +19,6 @@ const mockFlow = {
         input: {
           logicFunctionId: '',
           logicFunctionInput: {},
-          logicFunctionVersion: '',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -38,7 +37,6 @@ const mockFlow = {
         input: {
           logicFunctionId: '',
           logicFunctionInput: {},
-          logicFunctionVersion: '',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -141,7 +139,6 @@ describe('getWorkflowRunStepContext', () => {
             input: {
               logicFunctionId: '',
               logicFunctionInput: {},
-              logicFunctionVersion: '',
             },
             outputSchema: {},
             errorHandlingOptions: {
@@ -178,7 +175,6 @@ describe('getWorkflowRunStepContext', () => {
             input: {
               logicFunctionId: '',
               logicFunctionInput: {},
-              logicFunctionVersion: '',
             },
             outputSchema: {},
             errorHandlingOptions: {

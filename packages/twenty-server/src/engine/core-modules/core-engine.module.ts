@@ -47,8 +47,8 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
-import { logicFunctionExecutorModuleFactory } from 'src/engine/core-modules/logic-function-executor/logic-function-executor-module.factory';
-import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.module';
+import { logicFunctionModuleFactory } from 'src/engine/core-modules/logic-function/logic-function-executor/factories/logic-function-module.factory';
+import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
@@ -141,8 +141,8 @@ import { FileModule } from './file/file.module';
     CacheStorageModule,
     AiModelsModule,
     AiBillingModule,
-    LogicFunctionExecutorModule.forRootAsync({
-      useFactory: logicFunctionExecutorModuleFactory,
+    LogicFunctionModule.forRootAsync({
+      useFactory: logicFunctionModuleFactory,
       inject: [TwentyConfigService, FileStorageService],
     }),
     CodeInterpreterModule.forRootAsync({

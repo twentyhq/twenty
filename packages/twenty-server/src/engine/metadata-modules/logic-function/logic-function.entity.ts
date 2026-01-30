@@ -41,7 +41,7 @@ export enum LogicFunctionRuntime {
 }
 
 export const DEFAULT_SOURCE_HANDLER_PATH = 'src/index.ts';
-export const DEFAULT_BUILT_HANDLER_PATH = 'index.mjs';
+export const DEFAULT_BUILT_HANDLER_PATH = 'src/index.mjs';
 export const DEFAULT_HANDLER_NAME = 'main';
 
 @Entity('logicFunction')
@@ -68,12 +68,6 @@ export class LogicFunctionEntity
 
   @Column({ nullable: true, type: 'varchar' })
   description: string | null;
-
-  @Column({ nullable: true, type: 'varchar' })
-  latestVersion: string | null;
-
-  @Column({ nullable: false, type: 'jsonb', default: [] })
-  publishedVersions: JsonbProperty<string[]>;
 
   @Column({ nullable: false, default: LogicFunctionRuntime.NODE22 })
   runtime: LogicFunctionRuntime;
