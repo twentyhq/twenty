@@ -13,7 +13,7 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
