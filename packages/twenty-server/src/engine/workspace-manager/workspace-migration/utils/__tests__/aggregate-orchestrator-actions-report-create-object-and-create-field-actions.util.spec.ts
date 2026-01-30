@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getUniversalFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-universal-flat-field-metadata.mock';
 import { getUniversalFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-universal-flat-object-metadata.mock';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
@@ -15,13 +15,17 @@ import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-
 type CreateAggregationTestCase = EachTestingContext<{
   input: OrchestratorActionsReport;
   expected: {
-    expectCreateFieldActionPerObjectMetadataId: Record<string, number>;
+    expectCreateFieldActionPerObjectMetadataUniversalIdentifier: Record<
+      string,
+      number
+    >;
     expectCreateObjectActionPerObjectMetadataUniversalIdentifier: Record<
       string,
       number
     >;
   };
 }>;
+
 describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', () => {
   const testCases: CreateAggregationTestCase[] = [
     {
@@ -51,17 +55,17 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'firstName',
                   }),
-                  getFlatFieldMetadataMock({
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'lastName',
                   }),
@@ -73,7 +77,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           },
         } satisfies OrchestratorActionsReport,
         expected: {
-          expectCreateFieldActionPerObjectMetadataId: {},
+          expectCreateFieldActionPerObjectMetadataUniversalIdentifier: {},
           expectCreateObjectActionPerObjectMetadataUniversalIdentifier: {
             'object-1': 1,
           },
@@ -96,11 +100,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'firstName',
                   }),
@@ -109,11 +113,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'secondName',
                   }),
@@ -122,11 +126,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-3',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'lastName',
                   }),
@@ -138,7 +142,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           },
         } satisfies OrchestratorActionsReport,
         expected: {
-          expectCreateFieldActionPerObjectMetadataId: {
+          expectCreateFieldActionPerObjectMetadataUniversalIdentifier: {
             'object-1': 1,
           },
           expectCreateObjectActionPerObjectMetadataUniversalIdentifier: {},
@@ -181,11 +185,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'firstName',
                   }),
@@ -194,17 +198,17 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-2',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-2',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
-                    objectMetadataId: 'object-2',
+                    objectMetadataUniversalIdentifier: 'object-2',
                     type: FieldMetadataType.TEXT,
                     name: 'name',
                   }),
-                  getFlatFieldMetadataMock({
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-3',
-                    objectMetadataId: 'object-2',
+                    objectMetadataUniversalIdentifier: 'object-2',
                     type: FieldMetadataType.TEXT,
                     name: 'industry',
                   }),
@@ -216,7 +220,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           },
         } satisfies OrchestratorActionsReport,
         expected: {
-          expectCreateFieldActionPerObjectMetadataId: {},
+          expectCreateFieldActionPerObjectMetadataUniversalIdentifier: {},
           expectCreateObjectActionPerObjectMetadataUniversalIdentifier: {
             'object-1': 1,
             'object-2': 1,
@@ -251,11 +255,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'firstName',
                   }),
@@ -264,11 +268,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-2',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-2',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
-                    objectMetadataId: 'object-2',
+                    objectMetadataUniversalIdentifier: 'object-2',
                     type: FieldMetadataType.TEXT,
                     name: 'orphanField',
                   }),
@@ -280,7 +284,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           },
         } satisfies OrchestratorActionsReport,
         expected: {
-          expectCreateFieldActionPerObjectMetadataId: {
+          expectCreateFieldActionPerObjectMetadataUniversalIdentifier: {
             'object-2': 1,
           },
           expectCreateObjectActionPerObjectMetadataUniversalIdentifier: {
@@ -305,11 +309,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'firstName',
                   }),
@@ -318,11 +322,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-2',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'lastName',
                   }),
@@ -331,11 +335,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-3',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.TEXT,
                     name: 'email',
                   }),
@@ -347,7 +351,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           },
         } satisfies OrchestratorActionsReport,
         expected: {
-          expectCreateFieldActionPerObjectMetadataId: {
+          expectCreateFieldActionPerObjectMetadataUniversalIdentifier: {
             'object-1': 1,
           },
           expectCreateObjectActionPerObjectMetadataUniversalIdentifier: {},
@@ -359,7 +363,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
       context: {
         input: createEmptyOrchestratorActionsReport(),
         expected: {
-          expectCreateFieldActionPerObjectMetadataId: {},
+          expectCreateFieldActionPerObjectMetadataUniversalIdentifier: {},
           expectCreateObjectActionPerObjectMetadataUniversalIdentifier: {},
         },
       },
@@ -391,11 +395,11 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
               {
                 type: 'create',
                 metadataName: 'fieldMetadata',
-                objectMetadataId: 'object-1',
-                flatFieldMetadatas: [
-                  getFlatFieldMetadataMock({
+                objectMetadataUniversalIdentifier: 'object-1',
+                universalFlatFieldMetadatas: [
+                  getUniversalFlatFieldMetadataMock({
                     universalIdentifier: 'field-1',
-                    objectMetadataId: 'object-1',
+                    objectMetadataUniversalIdentifier: 'object-1',
                     type: FieldMetadataType.RELATION,
                     name: 'author',
                   }),
@@ -407,7 +411,7 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
           },
         } satisfies OrchestratorActionsReport,
         expected: {
-          expectCreateFieldActionPerObjectMetadataId: {
+          expectCreateFieldActionPerObjectMetadataUniversalIdentifier: {
             'object-1': 1,
           },
           expectCreateObjectActionPerObjectMetadataUniversalIdentifier: {
@@ -429,8 +433,8 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
       const fieldActions = result.fieldMetadata.create as CreateFieldAction[];
       const fieldActionCounts = fieldActions.reduce(
         (acc, action) => {
-          acc[action.objectMetadataId] =
-            (acc[action.objectMetadataId] || 0) + 1;
+          acc[action.objectMetadataUniversalIdentifier] =
+            (acc[action.objectMetadataUniversalIdentifier] || 0) + 1;
 
           return acc;
         },
@@ -450,20 +454,24 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
       );
 
       Object.entries(
-        expected.expectCreateFieldActionPerObjectMetadataId,
-      ).forEach(([objectId, expectedCount]) => {
-        expect(fieldActionCounts[objectId]).toBe(expectedCount);
+        expected.expectCreateFieldActionPerObjectMetadataUniversalIdentifier,
+      ).forEach(([objectMetadataUniversalIdentifier, expectedCount]) => {
+        expect(fieldActionCounts[objectMetadataUniversalIdentifier]).toBe(
+          expectedCount,
+        );
       });
 
       Object.entries(
         expected.expectCreateObjectActionPerObjectMetadataUniversalIdentifier,
-      ).forEach(([objectId, expectedCount]) => {
-        expect(objectActionCounts[objectId]).toBe(expectedCount);
+      ).forEach(([objectMetadataUniversalIdentifier, expectedCount]) => {
+        expect(objectActionCounts[objectMetadataUniversalIdentifier]).toBe(
+          expectedCount,
+        );
       });
 
       // Check total counts
       const expectedTotalFieldActions = Object.values(
-        expected.expectCreateFieldActionPerObjectMetadataId,
+        expected.expectCreateFieldActionPerObjectMetadataUniversalIdentifier,
       ).reduce((sum: number, count: number) => sum + count, 0);
       const expectedTotalObjectActions = Object.values(
         expected.expectCreateObjectActionPerObjectMetadataUniversalIdentifier,
