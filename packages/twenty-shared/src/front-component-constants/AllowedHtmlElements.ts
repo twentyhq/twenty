@@ -3,11 +3,13 @@ type PropertySchema = {
   optional: boolean;
 };
 
-export const ALLOWED_HTML_ELEMENTS: Array<{
+export type AllowedHtmlElement = {
   tag: string;
   name: string;
   properties: Record<string, PropertySchema>;
-}> = [
+};
+
+export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
   { tag: 'html-div', name: 'HtmlDiv', properties: {} },
   { tag: 'html-span', name: 'HtmlSpan', properties: {} },
   { tag: 'html-section', name: 'HtmlSection', properties: {} },
@@ -143,4 +145,4 @@ export const ALLOWED_HTML_ELEMENTS: Array<{
   },
   { tag: 'html-br', name: 'HtmlBr', properties: {} },
   { tag: 'html-hr', name: 'HtmlHr', properties: {} },
-] as const;
+];

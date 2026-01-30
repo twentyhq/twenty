@@ -75,6 +75,11 @@
       "import": "./dist/front-component.mjs",
       "require": "./dist/front-component.cjs"
     },
+    "./front-component-constants": {
+      "types": "./dist/front-component-constants/index.d.ts",
+      "import": "./dist/front-component-constants.mjs",
+      "require": "./dist/front-component-constants.cjs"
+    },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
       "import": "./dist/metadata.mjs",
@@ -118,6 +123,7 @@
     "constants",
     "database-events",
     "front-component",
+    "front-component-constants",
     "metadata",
     "testing",
     "translations",
@@ -142,6 +148,9 @@
       ],
       "front-component": [
         "dist/front-component/index.d.ts"
+      ],
+      "front-component-constants": [
+        "dist/front-component-constants/index.d.ts"
       ],
       "metadata": [
         "dist/metadata/index.d.ts"

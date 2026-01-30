@@ -4,10 +4,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { IndentationText, Project, QuoteKind } from 'ts-morph';
 
-import { ALLOWED_HTML_ELEMENTS } from '../../src/front-component/constants/AllowedHtmlElements';
-import { COMMON_HTML_EVENTS } from '../../src/front-component/constants/CommonHtmlEvents';
-import { EVENT_TO_REACT } from '../../src/front-component/constants/EventToReact';
-import { HTML_COMMON_PROPERTIES } from '../../src/front-component/constants/HtmlCommonProperties';
+import { ALLOWED_HTML_ELEMENTS } from '../../src/front-component-constants/AllowedHtmlElements';
+import { COMMON_HTML_EVENTS } from '../../src/front-component-constants/CommonHtmlEvents';
+import { EVENT_TO_REACT } from '../../src/front-component-constants/EventToReact';
+import { HTML_COMMON_PROPERTIES } from '../../src/front-component-constants/HtmlCommonProperties';
 
 import {
   type ComponentSchema,
