@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. In altre parole:
+L'`universalIdentifier` di questo ruolo viene quindi referenziato in `application.config.ts` come `roleUniversalIdentifier`. In altre parole:
 
 * **\*.role.ts** definisce ciò che il ruolo funzione predefinito può fare.
 * **application.config.ts** punta a quel ruolo in modo che le tue funzioni ne ereditino i permessi.
@@ -606,8 +606,8 @@ Quando la tua funzione viene eseguita su Twenty, la piattaforma inietta le crede
 Note:
 
 * Non è necessario passare URL o chiave API al client generato. Legge `TWENTY_API_URL` e `TWENTY_API_KEY` da process.env in fase di esecuzione.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. Questo è il ruolo predefinito utilizzato dalle funzioni logiche della tua applicazione.
-* Le applicazioni possono definire ruoli per seguire il principio del privilegio minimo. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
+* I permessi della chiave API sono determinati dal ruolo referenziato in `application.config.ts` tramite `roleUniversalIdentifier`. Questo è il ruolo predefinito utilizzato dalle funzioni logiche della tua applicazione.
+* Le applicazioni possono definire ruoli per seguire il principio del privilegio minimo. Concedi solo i permessi necessari alle tue funzioni, quindi punta `roleUniversalIdentifier` all'identificatore universale di quel ruolo.
 
 ### Esempio Hello World
 

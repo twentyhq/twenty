@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. Jinými slovy:
+Na `universalIdentifier` této role se poté odkazuje v `application.config.ts` jako na `roleUniversalIdentifier`. Jinými slovy:
 
 * **\*.role.ts** definuje, co může výchozí role funkce dělat.
 * **application.config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
@@ -606,8 +606,8 @@ Když vaše funkce běží na Twenty, platforma před spuštěním kódu vloží
 Poznámky:
 
 * Není nutné předávat URL ani klíč API vygenerovanému klientovi. Za běhu čte `TWENTY_API_URL` a `TWENTY_API_KEY` z process.env.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
-* Aplikace mohou definovat role podle principu nejmenších oprávnění. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
+* Oprávnění API klíče jsou určena rolí odkazovanou v `application.config.ts` prostřednictvím `roleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
+* Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `roleUniversalIdentifier` na univerzální identifikátor této role.
 
 ### Příklad Hello World
 
