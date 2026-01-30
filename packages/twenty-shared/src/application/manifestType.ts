@@ -1,3 +1,4 @@
+import { type Sources } from '@/types';
 import { type ApplicationManifest } from './applicationType';
 import { type AssetManifest } from './assetManifestType';
 import { type FieldManifest } from './fieldManifestType';
@@ -6,7 +7,6 @@ import { type LogicFunctionManifest } from './logicFunctionManifestType';
 import { type ObjectManifest } from './objectManifestType';
 import { type PackageJson } from './packageJsonType';
 import { type RoleManifest } from './roleManifestType';
-import { type Sources } from '@/types';
 
 export type Manifest = {
   application: ApplicationManifest;
