@@ -82,14 +82,12 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }) {
     const fileFolder = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      version: 'draft',
     });
 
     await this.fileStorageService.writeFolder(code, fileFolder);
 
     await this.functionBuildService.buildAndUpload({
       flatLogicFunction,
-      version: 'draft',
     });
   }
 }

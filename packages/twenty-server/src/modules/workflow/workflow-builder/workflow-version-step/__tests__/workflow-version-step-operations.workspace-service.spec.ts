@@ -37,10 +37,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   beforeEach(async () => {
     logicFunctionService = {
       createOneLogicFunction: jest.fn(),
-      hasLogicFunctionPublishedVersion: jest.fn(),
       deleteOneLogicFunction: jest.fn(),
       duplicateLogicFunction: jest.fn(),
-      createDraftFromPublishedVersion: jest.fn(),
     } as unknown as jest.Mocked<LogicFunctionService>;
 
     agentRepository = {
@@ -142,7 +140,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: 'function-id',
-            logicFunctionVersion: 'v1',
           },
           outputSchema: {},
           errorHandlingOptions: {
@@ -151,10 +148,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           },
         },
       } as unknown as WorkflowAction;
-
-      logicFunctionService.hasLogicFunctionPublishedVersion.mockResolvedValue(
-        false,
-      );
 
       await service.runWorkflowVersionStepDeletionSideEffects({
         step,
@@ -252,8 +245,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         id: 'new-function-id',
         name: 'Test Function',
         description: 'Test Description',
-        latestVersion: 'v1',
-        publishedVersions: [],
         workspaceId: mockWorkspaceId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -289,13 +280,11 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: string;
-            logicFunctionVersion: string;
           };
         };
       };
 
       expect(codeResult.settings.input.logicFunctionId).toBe('new-function-id');
-      expect(codeResult.settings.input.logicFunctionVersion).toBe('draft');
     });
 
     it('should create form step', async () => {
@@ -320,7 +309,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: 'function-id',
-            logicFunctionVersion: 'v1',
           },
         },
         nextStepIds: ['next-step'],
@@ -330,8 +318,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         id: 'new-function-id',
         name: 'Test Function',
         description: 'Test Description',
-        latestVersion: 'v1',
-        publishedVersions: [],
         workspaceId: mockWorkspaceId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -370,13 +356,11 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: string;
-            logicFunctionVersion: string;
           };
         };
       };
 
       expect(codeResult.settings.input.logicFunctionId).toBe('new-function-id');
-      expect(codeResult.settings.input.logicFunctionVersion).toBe('draft');
 
       expect(duplicateStep.nextStepIds).toEqual([]);
     });

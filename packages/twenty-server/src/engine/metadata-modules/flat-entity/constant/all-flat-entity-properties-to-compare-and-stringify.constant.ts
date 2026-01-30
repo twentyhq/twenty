@@ -79,10 +79,8 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
         (property) => property !== 'code',
       ),
       'deletedAt',
-      'latestVersion',
-      'publishedVersions',
     ],
-    propertiesToStringify: ['toolInputSchema', 'publishedVersions'],
+    propertiesToStringify: ['toolInputSchema'],
   },
   viewFilter: {
     propertiesToCompare: [

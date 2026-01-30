@@ -16,7 +16,6 @@ export const logicFunctionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof LogicFunctionException) {
     switch (error.code) {
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
-      case LogicFunctionExceptionCode.LOGIC_FUNCTION_VERSION_NOT_FOUND:
         throw new NotFoundError(error);
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_ALREADY_EXIST:
         throw new ConflictError(error);

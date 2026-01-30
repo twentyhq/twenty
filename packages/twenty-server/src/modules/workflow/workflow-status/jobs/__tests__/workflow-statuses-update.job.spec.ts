@@ -81,7 +81,7 @@ describe('WorkflowStatusesUpdate', () => {
           provide: getRepositoryToken(LogicFunctionEntity),
           useValue: {
             findOneOrFail: jest.fn().mockResolvedValue({
-              latestVersion: 'v2',
+              id: 'mock-logic-function-id',
             }),
           },
         },
@@ -229,7 +229,6 @@ describe('WorkflowStatusesUpdate', () => {
 
         const mockLogicFunction = {
           id: 'logic-function-1',
-          latestVersion: 'v2',
         };
 
         mockWorkflowRepository.findOneOrFail.mockResolvedValue(mockWorkflow);
@@ -262,7 +261,6 @@ describe('WorkflowStatusesUpdate', () => {
               settings: {
                 input: {
                   logicFunctionId: 'logic-function-1',
-                  logicFunctionVersion: 'v2',
                 },
               },
             },

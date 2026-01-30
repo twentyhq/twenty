@@ -3,7 +3,6 @@ import gql from 'graphql-tag';
 export type ExecuteLogicFunctionFactoryInput = {
   id: string;
   payload: Record<string, unknown>;
-  version?: string;
 };
 
 const DEFAULT_EXECUTION_RESULT_GQL_FIELDS = `
@@ -29,9 +28,6 @@ export const executeLogicFunctionQueryFactory = ({
     }
   `,
   variables: {
-    input: {
-      ...input,
-      version: input.version ?? 'latest',
-    },
+    input,
   },
 });

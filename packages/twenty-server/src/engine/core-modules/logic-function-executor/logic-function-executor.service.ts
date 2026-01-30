@@ -26,20 +26,17 @@ export class LogicFunctionExecutorService
     flatLogicFunction,
     flatLogicFunctionLayer,
     payload,
-    version,
     env,
   }: {
     flatLogicFunction: FlatLogicFunction;
     flatLogicFunctionLayer: FlatLogicFunctionLayer;
     payload: object;
-    version: string;
     env?: Record<string, string>;
   }): Promise<LogicFunctionExecuteResult> {
     return this.driver.execute({
       flatLogicFunction,
       flatLogicFunctionLayer,
       payload,
-      version,
       env,
     });
   }
