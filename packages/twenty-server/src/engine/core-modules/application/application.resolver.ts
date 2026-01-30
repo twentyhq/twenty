@@ -151,7 +151,7 @@ export class ApplicationResolver {
     }: UploadApplicationFileInput,
   ): Promise<FileDTO> {
     const allowedApplicationFileFolders: FileFolder[] = [
-      FileFolder.BuiltFunction,
+      FileFolder.BuiltLogicFunction,
       FileFolder.BuiltFrontComponent,
       FileFolder.PublicAsset,
       FileFolder.Source,
@@ -178,7 +178,7 @@ export class ApplicationResolver {
       dirname,
     );
 
-    await this.fileStorageService.write({
+    await this.fileStorageService.writeFile({
       file: buffer,
       name: filename,
       folder: folderPath,

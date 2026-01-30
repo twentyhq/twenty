@@ -16,17 +16,17 @@ export type LogicFunctionExecuteResult = {
   error?: LogicFunctionExecuteError;
 };
 
+export type LogicFunctionExecuteParams = {
+  flatLogicFunction: FlatLogicFunction;
+  flatLogicFunctionLayer: FlatLogicFunctionLayer;
+  applicationUniversalIdentifier: string;
+  payload: object;
+  env?: Record<string, string>;
+};
+
 export interface LogicFunctionExecutorDriver {
   delete(flatLogicFunction: FlatLogicFunction): Promise<void>;
-  execute({
-    flatLogicFunction,
-    flatLogicFunctionLayer,
-    payload,
-    env,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
-    payload: object;
-    env?: Record<string, string>;
-  }): Promise<LogicFunctionExecuteResult>;
+  execute(
+    params: LogicFunctionExecuteParams,
+  ): Promise<LogicFunctionExecuteResult>;
 }

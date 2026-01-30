@@ -918,10 +918,35 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
   async createDraftStep({
     step,
+    workspaceId,
   }: {
     step: WorkflowAction;
     workspaceId: string;
   }): Promise<WorkflowAction> {
-    return step;
+    switch (step.type) {
+      case WorkflowActionType.CODE: {
+        const newLogicFunction =
+          await this.logicFunctionService.createLogicFunctionFromExistingLogicFunctionById(
+            {
+              id: step.settings.input.logicFunctionId,
+              workspaceId,
+            },
+          );
+
+        return {
+          ...step,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              logicFunctionId: newLogicFunction.id,
+            },
+          },
+        };
+      }
+      default: {
+        return step;
+      }
+    }
   }
 }
