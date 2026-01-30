@@ -1,6 +1,6 @@
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { jsxTransformPluginToRemoteDomWorkerFormat } from '@/cli/utilities/build/common/front-component-build/jsx-transform-plugin-to-remote-dom-worker-format';
+import { jsxTransformToRemoteDomWorkerFormatPlugin } from '@/cli/utilities/build/common/front-component-build/jsx-transform-to-remote-dom-worker-format-plugin';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
@@ -224,6 +224,6 @@ export const createFrontComponentsWatcher = (
     config: {
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
-      extraPlugins: [jsxTransformPluginToRemoteDomWorkerFormat],
+      extraPlugins: [jsxTransformToRemoteDomWorkerFormatPlugin],
     },
   });

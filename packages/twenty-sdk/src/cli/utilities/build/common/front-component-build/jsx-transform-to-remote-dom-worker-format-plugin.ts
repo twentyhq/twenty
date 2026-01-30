@@ -5,8 +5,8 @@ import { applyFrontComponentTransformationsForRemoteWorker } from './utils/apply
 
 export { replaceHtmlTagsWithRemoteComponents as transformJsxToRemoteComponents } from './utils/replace-html-tags-with-remote-components';
 
-export const jsxTransformPluginToRemoteDomWorkerFormat: esbuild.Plugin = {
-  name: 'jsx-transform-plugin-to-remote-dom-worker-format',
+export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
+  name: 'jsx-transform-to-remote-dom-worker-format-plugin',
   setup: (esbuildBuild) => {
     esbuildBuild.onLoad(
       { filter: /\.front-component\.tsx$/ },
