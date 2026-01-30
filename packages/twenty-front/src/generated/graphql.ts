@@ -2328,8 +2328,8 @@ export type MutationCreateOneLogicFunctionArgs = {
 
 
 export type MutationCreateOneLogicFunctionLayerArgs = {
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
+  packageJsonChecksum: Scalars['JSON'];
+  yarnLockChecksum: Scalars['String'];
 };
 
 
@@ -2759,8 +2759,6 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
 };
 
 

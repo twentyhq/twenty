@@ -28,7 +28,8 @@ export class LogicFunctionLayerService {
     workspaceId: string,
   ) {
     const logicFunctionLayer = this.logicFunctionLayerRepository.create({
-      packageJson: {}, // Will be deleted when migration to Source files storage is done
+      packageJson: {}, // TODO: Delete when migration to Source files storage is done
+      yarnLock: '', // TODO: Delete when migration to Source files storage is done
       packageJsonChecksum,
       yarnLockChecksum,
       workspaceId,
