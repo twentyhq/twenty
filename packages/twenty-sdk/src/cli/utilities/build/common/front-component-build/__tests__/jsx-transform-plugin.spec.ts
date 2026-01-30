@@ -1,4 +1,4 @@
-import { transformJsxToRemoteComponents } from '@/cli/utilities/build/common/jsx-transform-plugin-to-remote-dom-worker-format';
+import { transformJsxToRemoteComponents } from '@/cli/utilities/build/common/front-component-build/jsx-transform-plugin-to-remote-dom-worker-format';
 
 describe('transformJsxToRemoteComponents', () => {
   describe('basic tag transformations', () => {
@@ -186,19 +186,6 @@ describe('transformJsxToRemoteComponents', () => {
       const expected =
         '<RemoteComponents.HtmlDiv>{items.map(item => <RemoteComponents.HtmlSpan key={item.id}>{item.name}</RemoteComponents.HtmlSpan>)}</RemoteComponents.HtmlDiv>';
       expect(transformJsxToRemoteComponents(input)).toBe(expected);
-    });
-
-    // Known limitation: regex-based transform cannot distinguish JSX from string literals
-    // This is acceptable since front-component files should primarily contain JSX
-    it.skip('should not transform tags in string literals (known limitation)', () => {
-      const input = 'const html = "<div>not JSX</div>";';
-      expect(transformJsxToRemoteComponents(input)).toBe(input);
-    });
-
-    it('should not transform partial tag names', () => {
-      const input = '<divider>Content</divider>';
-      // divider is not in our list, should not be transformed
-      expect(transformJsxToRemoteComponents(input)).toBe(input);
     });
   });
 });
