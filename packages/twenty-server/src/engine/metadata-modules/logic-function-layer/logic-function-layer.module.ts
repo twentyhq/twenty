@@ -7,7 +7,10 @@ import { LogicFunctionLayerResolver } from 'src/engine/metadata-modules/logic-fu
 import { WorkspaceLogicFunctionLayerMapCacheService } from 'src/engine/metadata-modules/logic-function-layer/services/workspace-logic-function-layer-map-cache.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LogicFunctionLayerEntity]), PermissionsModule],
+  imports: [
+    TypeOrmModule.forFeature([LogicFunctionLayerEntity]),
+    PermissionsModule,
+  ],
   providers: [
     LogicFunctionLayerResolver,
     WorkspaceLogicFunctionLayerMapCacheService,

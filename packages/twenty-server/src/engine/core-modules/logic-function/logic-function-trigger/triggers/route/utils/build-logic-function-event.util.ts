@@ -22,7 +22,6 @@ export const filterRequestHeaders = ({
     const headerValue = requestHeaders[headerName];
 
     if (headerValue !== undefined) {
-      // Convert string[] to comma-separated string (as per HTTP spec)
       filteredHeaders[headerName] = Array.isArray(headerValue)
         ? headerValue.join(', ')
         : headerValue;
@@ -42,22 +41,18 @@ export const extractBody = (request: Request): object | null => {
     return null;
   }
 
-  // If body is already an object (parsed JSON by body-parser), return as-is
   if (typeof request.body === 'object' && !Buffer.isBuffer(request.body)) {
     return request.body;
   }
 
-  // If body is a string, try to parse as JSON
   if (typeof request.body === 'string') {
     try {
       return JSON.parse(request.body);
     } catch {
-      // If not valid JSON, wrap in an object
       return { raw: request.body };
     }
   }
 
-  // If body is a Buffer, try to parse as JSON
   if (Buffer.isBuffer(request.body)) {
     try {
       return JSON.parse(request.body.toString('utf-8'));
@@ -84,7 +79,6 @@ export const normalizeQueryStringParameters = (
     }
 
     if (Array.isArray(value)) {
-      // Join array values with commas
       const stringValues = value.filter(
         (v): v is string => typeof v === 'string',
       );
@@ -93,8 +87,6 @@ export const normalizeQueryStringParameters = (
     } else if (typeof value === 'string') {
       normalized[key] = value;
     } else if (typeof value === 'object') {
-      // Handle nested query objects (e.g., ?foo[bar]=baz)
-      // This is uncommon in REST APIs, convert to JSON string as fallback
       normalized[key] = JSON.stringify(value);
     }
   }

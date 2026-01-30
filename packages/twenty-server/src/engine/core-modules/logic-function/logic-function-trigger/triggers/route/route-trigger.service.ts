@@ -9,19 +9,19 @@ import { HTTPMethod } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { LogicFunctionExecutionOrchestratorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-execution-orchestrator.service';
 import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 
 @Injectable()
 export class RouteTriggerService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly logicFunctionService: LogicFunctionService,
+    private readonly logicFunctionExecutionOrchestratorService: LogicFunctionExecutionOrchestratorService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
@@ -146,11 +146,14 @@ export class RouteTriggerService {
       forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
     });
 
-    const result = await this.logicFunctionService.executeOneLogicFunction({
-      id: logicFunction.id,
-      workspaceId: logicFunction.workspaceId,
-      payload: event,
-    });
+    const result =
+      await this.logicFunctionExecutionOrchestratorService.executeOneLogicFunction(
+        {
+          id: logicFunction.id,
+          workspaceId: logicFunction.workspaceId,
+          payload: event,
+        },
+      );
 
     if (!isDefined(result)) {
       return result;

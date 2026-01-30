@@ -3,7 +3,7 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
+import { LogicFunctionExecutionOrchestratorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-execution-orchestrator.service';
 
 export type LogicFunctionTriggerJobData = {
   logicFunctionId: string;
@@ -16,18 +16,22 @@ export type LogicFunctionTriggerJobData = {
   scope: Scope.REQUEST,
 })
 export class LogicFunctionTriggerJob {
-  constructor(private readonly logicFunctionService: LogicFunctionService) {}
+  constructor(
+    private readonly logicFunctionExecutionOrchestratorService: LogicFunctionExecutionOrchestratorService,
+  ) {}
 
   @Process(LogicFunctionTriggerJob.name)
   async handle(logicFunctionPayloads: LogicFunctionTriggerJobData[]) {
     await Promise.all(
       logicFunctionPayloads.map(
         async (logicFunctionPayload) =>
-          await this.logicFunctionService.executeOneLogicFunction({
-            id: logicFunctionPayload.logicFunctionId,
-            workspaceId: logicFunctionPayload.workspaceId,
-            payload: logicFunctionPayload.payload || {},
-          }),
+          await this.logicFunctionExecutionOrchestratorService.executeOneLogicFunction(
+            {
+              id: logicFunctionPayload.logicFunctionId,
+              workspaceId: logicFunctionPayload.workspaceId,
+              payload: logicFunctionPayload.payload ?? {},
+            },
+          ),
       ),
     );
   }
