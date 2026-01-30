@@ -46,7 +46,7 @@ export const SettingsApplicationsAvailableTab = () => {
     );
   }, [applications, searchTerm]);
 
-  if (isLoading === true) {
+  if (isLoading) {
     return (
       <Section>
         <StyledEmptyState>{t`Loading applications...`}</StyledEmptyState>

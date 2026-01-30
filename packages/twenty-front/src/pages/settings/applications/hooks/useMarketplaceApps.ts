@@ -18,8 +18,8 @@ export const useMarketplaceApps = () => {
       content: {
         objects: 0,
         fields: 0,
-        widgets: 0,
-        commands: 0,
+        functions: 0,
+        frontComponents: 0,
       },
       version: app.version,
       websiteUrl: app.websiteUrl ?? '',

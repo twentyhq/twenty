@@ -355,11 +355,11 @@ export const SettingsAvailableApplicationDetails = () => {
                   </StyledContentItem>
                   <StyledContentItem>
                     <IconApps size={16} />
-                    {application.content.widgets} {t`widget`}
+                    {application.content.frontComponents} {t`front components`}
                   </StyledContentItem>
                   <StyledContentItem>
                     <IconCommand size={16} />
-                    {application.content.commands} {t`commands`}
+                    {application.content.functions} {t`functions`}
                   </StyledContentItem>
                 </StyledSidebarSection>
 

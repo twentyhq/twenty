@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconFilter, IconSearch } from '@ui/display';
-import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { IconButton } from '@ui/input/button/components/IconButton';
 import { type ChangeEvent, type ReactNode, useState } from 'react';
 
@@ -9,7 +8,6 @@ export type SearchInputProps = {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  LeftIcon?: IconComponent;
   filterDropdown?: (filterButton: ReactNode) => ReactNode;
   autoFocus?: boolean;
   disabled?: boolean;

@@ -11,8 +11,8 @@ export type AvailableApplication = {
   content: {
     objects: number;
     fields: number;
-    widgets: number;
-    commands: number;
+    functions: number;
+    frontComponents: number;
   };
   version: string;
   websiteUrl: string;
