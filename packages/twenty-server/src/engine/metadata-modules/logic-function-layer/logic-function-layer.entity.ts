@@ -1,4 +1,4 @@
-import { PackageJson } from 'twenty-shared/application';
+import { type PackageJson } from 'type-fest';
 import {
   Column,
   CreateDateColumn,
