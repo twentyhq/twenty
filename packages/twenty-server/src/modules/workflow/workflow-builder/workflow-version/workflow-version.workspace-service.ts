@@ -288,7 +288,7 @@ export class WorkflowVersionWorkspaceService {
                   ...remappedStep.settings.input,
                   initialLoopStepIds:
                     source.settings.input.initialLoopStepIds.map(
-                      (oldId) => oldToNewIdMap.get(oldId) ?? oldId,
+                      (oldId: string) => oldToNewIdMap.get(oldId) ?? oldId,
                     ),
                 },
               };

@@ -64,7 +64,7 @@ export class ApiService {
     );
   }
 
-  async validateAuth(): Promise<boolean> {
+  async validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {
     try {
       const query = `
         query CurrentWorkspace {
@@ -87,9 +87,15 @@ export class ApiService {
         },
       );
 
-      return response.status === 200 && !response.data.errors;
+      return {
+        authValid: response.status === 200 && !response.data.errors,
+        serverUp: response.status === 200,
+      };
     } catch {
-      return false;
+      return {
+        authValid: false,
+        serverUp: false,
+      };
     }
   }
 

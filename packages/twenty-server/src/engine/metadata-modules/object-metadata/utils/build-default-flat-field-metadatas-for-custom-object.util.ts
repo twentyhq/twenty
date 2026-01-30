@@ -15,7 +15,13 @@ import {
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
   flatObjectMetadata: NonNullableRequired<
-    Pick<FlatObjectMetadata, 'id' | 'applicationId'>
+    Pick<
+      FlatObjectMetadata,
+      | 'id'
+      | 'applicationId'
+      | 'universalIdentifier'
+      | 'applicationUniversalIdentifier'
+    >
   >;
   skipNameField?: boolean;
 };
@@ -26,7 +32,12 @@ export type DefaultFlatFieldForCustomObjectMaps = ReturnType<
 // This could be replaced totally by an import schema + its transpilation when it's ready
 export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   workspaceId,
-  flatObjectMetadata: { id: objectMetadataId, applicationId },
+  flatObjectMetadata: {
+    id: objectMetadataId,
+    applicationId,
+    applicationUniversalIdentifier,
+    universalIdentifier: objectMetadataUniversalIdentifier,
+  },
   skipNameField = false,
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
   const createdAt = new Date().toISOString();
@@ -65,6 +76,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 
   const nameFieldId = skipNameField ? null : v4();
@@ -105,6 +126,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           settings: null,
           morphId: null,
           applicationId,
+          applicationUniversalIdentifier,
+          objectMetadataUniversalIdentifier,
+          relationTargetObjectMetadataUniversalIdentifier: null,
+          relationTargetFieldMetadataUniversalIdentifier: null,
+          viewFilterUniversalIdentifiers: [],
+          viewFieldUniversalIdentifiers: [],
+          kanbanAggregateOperationViewUniversalIdentifiers: [],
+          calendarViewUniversalIdentifiers: [],
+          mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+          universalSettings: null,
         };
 
   const createdAtFieldId = v4();
@@ -142,6 +173,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 
   const updatedAtFieldId = v4();
@@ -179,6 +220,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 
   const deletedAtFieldId = v4();
@@ -216,6 +267,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 
   const createdByFieldId = v4();
@@ -252,6 +313,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 
   const updatedByFieldId = v4();
@@ -288,6 +359,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 
   const positionFieldId = v4();
@@ -325,6 +406,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     settings: null,
     morphId: null,
     applicationId,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 
   const searchVectorFieldId = v4();
@@ -367,6 +458,16 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     },
     morphId: null,
     applicationId,
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 
   return {

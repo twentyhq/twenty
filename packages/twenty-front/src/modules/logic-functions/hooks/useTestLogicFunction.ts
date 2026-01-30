@@ -25,7 +25,6 @@ export const useTestLogicFunction = ({
       const result = await executeOneLogicFunction({
         id: logicFunctionId,
         payload: logicFunctionTestData.input,
-        version: 'draft',
       });
 
       setIsTesting(false);

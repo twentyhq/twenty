@@ -1,9 +1,28 @@
-import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
-import { type FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { isDefined } from 'twenty-shared/utils';
 
-export const fromFrontComponentEntityToFlatFrontComponent = (
-  frontComponentEntity: FrontComponentEntity,
-): FlatFrontComponent => {
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
+
+export const fromFrontComponentEntityToFlatFrontComponent = ({
+  entity: frontComponentEntity,
+  applicationIdToUniversalIdentifierMap,
+}: FromEntityToFlatEntityArgs<'frontComponent'>): FlatFrontComponent => {
+  const applicationUniversalIdentifier =
+    applicationIdToUniversalIdentifierMap.get(
+      frontComponentEntity.applicationId,
+    );
+
+  if (!isDefined(applicationUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `Application with id ${frontComponentEntity.applicationId} not found for frontComponent ${frontComponentEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
   return {
     id: frontComponentEntity.id,
     name: frontComponentEntity.name,
@@ -12,5 +31,9 @@ export const fromFrontComponentEntityToFlatFrontComponent = (
     applicationId: frontComponentEntity.applicationId,
     createdAt: frontComponentEntity.createdAt.toISOString(),
     updatedAt: frontComponentEntity.updatedAt.toISOString(),
+    __universal: {
+      universalIdentifier: frontComponentEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+    },
   };
 };

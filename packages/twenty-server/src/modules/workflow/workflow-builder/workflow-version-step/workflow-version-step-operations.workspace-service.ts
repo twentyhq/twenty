@@ -20,9 +20,11 @@ import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
+import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -72,6 +74,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -83,18 +86,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        if (
-          !(await this.logicFunctionService.hasLogicFunctionPublishedVersion(
-            step.settings.input.logicFunctionId,
-            workspaceId,
-          ))
-        ) {
-          await this.logicFunctionService.deleteOneLogicFunction({
-            id: step.settings.input.logicFunctionId,
-            workspaceId,
-            softDelete: false,
-          });
-        }
+        await this.logicFunctionService.deleteOneLogicFunction({
+          id: step.settings.input.logicFunctionId,
+          workspaceId,
+          softDelete: false,
+        });
         break;
       }
       case WorkflowActionType.AI_AGENT: {
@@ -135,12 +131,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workflowVersionId,
     position,
     id,
+    defaultSettings,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
     workflowVersionId: string;
     position?: WorkflowStepPositionInput;
     id?: string;
+    defaultSettings?: Record<string, unknown>;
   }): Promise<{
     builtStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
@@ -188,8 +186,47 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               },
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionVersion: 'draft',
                 logicFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.LOGIC_FUNCTION: {
+        const logicFunctionId = (
+          defaultSettings?.input as { logicFunctionId: string } | undefined
+        )?.logicFunctionId;
+
+        if (!isDefined(logicFunctionId)) {
+          throw new WorkflowVersionStepException(
+            'Logic function ID is required for LOGIC_FUNCTION step',
+            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        const { flatLogicFunctionMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatLogicFunctionMaps'],
+            },
+          );
+
+        const flatLogicFunction = findFlatLogicFunctionOrThrow({
+          id: logicFunctionId,
+          flatLogicFunctionMaps,
+        });
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: flatLogicFunction.name,
+            type: WorkflowActionType.LOGIC_FUNCTION,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                logicFunctionId,
+                logicFunctionInput: {},
               },
             },
           },
@@ -618,7 +655,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const newLogicFunction =
           await this.logicFunctionService.duplicateLogicFunction({
             id: step.settings.input.logicFunctionId,
-            version: step.settings.input.logicFunctionVersion,
             workspaceId,
           });
 
@@ -632,7 +668,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             input: {
               ...step.settings.input,
               logicFunctionId: newLogicFunction.id,
-              logicFunctionVersion: 'draft',
             },
           },
         };
@@ -890,11 +925,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }): Promise<WorkflowAction> {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.logicFunctionService.createDraftFromPublishedVersion({
-          id: step.settings.input.logicFunctionId,
-          version: step.settings.input.logicFunctionVersion,
-          workspaceId,
-        });
+        const newLogicFunction =
+          await this.logicFunctionService.createLogicFunctionFromExistingLogicFunctionById(
+            {
+              id: step.settings.input.logicFunctionId,
+              workspaceId,
+            },
+          );
 
         return {
           ...step,
@@ -902,7 +939,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             ...step.settings,
             input: {
               ...step.settings.input,
-              logicFunctionVersion: 'draft',
+              logicFunctionId: newLogicFunction.id,
             },
           },
         };

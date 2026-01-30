@@ -3,9 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
+import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { ADMIN_ROLE } from 'src/engine/metadata-modules/role/constants/admin-role';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -70,14 +71,13 @@ export class WorkflowExecutionContextService {
       workspaceId,
     });
 
-    const authContext = {
-      user: userWorkspace.user,
-      apiKey: null,
-      application: null,
+    const authContext: WorkspaceAuthContext = buildUserAuthContext({
       workspace: userWorkspace.workspace,
-      workspaceMemberId: workspaceMember.id,
       userWorkspaceId: userWorkspace.id,
-    } as WorkspaceAuthContext;
+      user: userWorkspace.user,
+      workspaceMemberId: workspaceMember.id,
+      workspaceMember,
+    });
 
     return {
       isActingOnBehalfOfUser: true,
@@ -114,17 +114,13 @@ export class WorkflowExecutionContextService {
       ? { unionOf: [roleId] }
       : { shouldBypassPermissionChecks: true as const };
 
-    const authContext = {
-      user: null,
-      apiKey: null,
+    const authContext: WorkspaceAuthContext = buildApplicationAuthContext({
+      workspace,
       application: {
         ...application,
         defaultLogicFunctionRoleId: roleId,
       },
-      workspace,
-      workspaceMemberId: undefined,
-      userWorkspaceId: undefined,
-    } as WorkspaceAuthContext;
+    });
 
     return {
       isActingOnBehalfOfUser: false,

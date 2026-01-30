@@ -43,6 +43,7 @@ export const objectMetadataGraphqlApiExceptionHandler = (
       case ObjectMetadataExceptionCode.INVALID_ORM_OUTPUT:
         throw new InternalServerError(error);
       case ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD:
+      case ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND:
         throw error;
       default: {
         return assertUnreachable(error.code);

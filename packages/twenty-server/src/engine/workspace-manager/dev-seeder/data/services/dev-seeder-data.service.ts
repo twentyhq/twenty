@@ -429,7 +429,7 @@ export class DevSeederDataService {
       const filePath = join(sampleFilesDir, filename);
       const fileBuffer = await readFile(filePath);
 
-      await this.fileStorageService.write({
+      await this.fileStorageService.writeFile({
         file: fileBuffer,
         name: filename,
         folder: `workspace-${workspaceId}/attachment`,

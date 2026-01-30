@@ -46,7 +46,7 @@ export const processEsbuildResult = async ({
       await onFileBuilt({
         fileFolder,
         builtPath: relativeBuiltPath,
-        filePath: relativeSourcePath,
+        sourcePath: relativeSourcePath,
         checksum,
       });
     }

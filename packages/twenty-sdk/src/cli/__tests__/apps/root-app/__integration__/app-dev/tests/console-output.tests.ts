@@ -10,7 +10,7 @@ export const defineConsoleOutputTests = (
 
       expect(output).toContain('Application');
       expect(output).toContain('Name: Loading...');
-      expect(output).toContain('Status: o Idle');
+      expect(output).toContain('Status: Idle');
     });
 
     it('should contain dev-mode build messages', () => {

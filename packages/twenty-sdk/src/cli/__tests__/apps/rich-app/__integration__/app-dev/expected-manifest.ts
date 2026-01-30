@@ -4,6 +4,14 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const EXPECTED_MANIFEST: ApplicationManifest = {
   sources: {},
+  publicAssets: [
+    {
+      checksum: '99496069dcc2a1488e1cae9f826d2707',
+      fileName: 'favicon.png',
+      filePath: 'public/favicon.png',
+      fileType: 'png',
+    },
+  ],
   yarnLock: '',
   application: {
     applicationVariables: {

@@ -331,10 +331,23 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       featureFlagsMap: existingFeatureFlagsMap,
+      flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'featureFlagsMap',
+      'flatApplicationMaps',
     ]);
+
+    const ownerFlatApplication = isDefined(applicationId)
+      ? flatApplicationMaps.byId[applicationId]
+      : workspaceCustomFlatApplication;
+
+    if (!isDefined(ownerFlatApplication)) {
+      throw new ObjectMetadataException(
+        `Could not find related application ${applicationId}`,
+        ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     const {
       flatObjectMetadataToCreate,
@@ -344,8 +357,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
       createObjectInput,
       workspaceId,
-      workspaceCustomApplicationId:
-        applicationId ?? workspaceCustomFlatApplication.id,
+      flatApplication: ownerFlatApplication,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       existingFeatureFlagsMap,
     });

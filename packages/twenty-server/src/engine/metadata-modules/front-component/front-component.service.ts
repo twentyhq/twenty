@@ -11,7 +11,6 @@ import { fromDeleteFrontComponentInputToFlatFrontComponentOrThrow } from 'src/en
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { fromUpdateFrontComponentInputToFlatFrontComponentToUpdateOrThrow } from 'src/engine/metadata-modules/flat-front-component/utils/from-update-front-component-input-to-flat-front-component-to-update-or-throw.util';
 import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
-import { type FrontComponentCodeDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component-code.dto';
 import { type FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { type UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import {
@@ -234,15 +233,5 @@ export class FrontComponentService {
     }
 
     return frontComponent;
-  }
-
-  async getFrontComponentCode(
-    _id: string,
-    _workspaceId: string,
-  ): Promise<FrontComponentCodeDTO> {
-    // TODO: get the source code from the front component here, we will implement a mock version for now
-    const sourceCode = '';
-
-    return { sourceCode };
   }
 }

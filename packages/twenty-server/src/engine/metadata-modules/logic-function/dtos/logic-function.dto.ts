@@ -6,7 +6,6 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 import {
-  IsArray,
   IsBoolean,
   IsDateString,
   IsNotEmpty,
@@ -60,10 +59,6 @@ export class LogicFunctionDTO {
   timeoutSeconds: number;
 
   @IsString()
-  @Field({ nullable: true })
-  latestVersion?: string;
-
-  @IsString()
   @Field()
   sourceHandlerPath: string;
 
@@ -74,10 +69,6 @@ export class LogicFunctionDTO {
   @IsString()
   @Field()
   handlerName: string;
-
-  @IsArray()
-  @Field(() => [String], { nullable: false })
-  publishedVersions: string[];
 
   @IsObject()
   @IsOptional()

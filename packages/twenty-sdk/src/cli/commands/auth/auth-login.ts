@@ -55,9 +55,9 @@ export class AuthLoginCommand {
       });
 
       // Validate authentication
-      const isValid = await this.apiService.validateAuth();
+      const validateAuth = await this.apiService.validateAuth();
 
-      if (isValid) {
+      if (validateAuth.authValid) {
         const activeWorkspace = ConfigService.getActiveWorkspace();
         console.log(
           chalk.green(
