@@ -4,8 +4,8 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -19,7 +19,7 @@ import { WorkflowLogicFunctionActionInput } from 'src/modules/workflow/workflow-
 @Injectable()
 export class LogicFunctionWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly logicFunctionService: LogicFunctionService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -67,11 +67,12 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
         );
       }
 
-      const result = await this.logicFunctionService.executeOneLogicFunction({
-        id: workflowActionInput.logicFunctionId,
-        workspaceId,
-        payload: workflowActionInput.logicFunctionInput,
-      });
+      const result =
+        await this.logicFunctionExecutorService.executeOneLogicFunction({
+          id: workflowActionInput.logicFunctionId,
+          workspaceId,
+          payload: workflowActionInput.logicFunctionInput,
+        });
 
       if (result.error) {
         return { error: result.error.errorMessage };
