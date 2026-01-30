@@ -37,7 +37,6 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
     ObjectPermissions & { objectMetadataId: string }
   >;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
-  updatedFieldNames?: string[];
 };
 
 export const triggerUpdateRelationsOptimisticEffect = ({
@@ -48,7 +47,6 @@ export const triggerUpdateRelationsOptimisticEffect = ({
   objectMetadataItems,
   objectPermissionsByObjectMetadataId,
   upsertRecordsInStore,
-  updatedFieldNames,
 }: TriggerUpdateRelationsOptimisticEffectArgs) => {
   const isDeletion =
     isDefined(updatedSourceRecord) &&
@@ -58,13 +56,6 @@ export const triggerUpdateRelationsOptimisticEffect = ({
     if (
       !isFieldMorphRelation(fieldMetadataItemOnSourceRecord) &&
       !isFieldRelation(fieldMetadataItemOnSourceRecord)
-    ) {
-      return;
-    }
-
-    if (
-      isDefined(updatedFieldNames) &&
-      !updatedFieldNames.includes(fieldMetadataItemOnSourceRecord.name)
     ) {
       return;
     }

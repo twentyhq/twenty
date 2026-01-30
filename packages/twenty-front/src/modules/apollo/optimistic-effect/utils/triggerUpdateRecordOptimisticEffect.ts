@@ -24,7 +24,6 @@ export const triggerUpdateRecordOptimisticEffect = ({
   objectMetadataItems,
   objectPermissionsByObjectMetadataId,
   upsertRecordsInStore,
-  updatedFieldNames,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
@@ -36,7 +35,6 @@ export const triggerUpdateRecordOptimisticEffect = ({
     ObjectPermissions & { objectMetadataId: string }
   >;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
-  updatedFieldNames?: string[];
 }) => {
   triggerUpdateRelationsOptimisticEffect({
     cache,
@@ -46,7 +44,6 @@ export const triggerUpdateRecordOptimisticEffect = ({
     objectMetadataItems,
     objectPermissionsByObjectMetadataId,
     upsertRecordsInStore,
-    updatedFieldNames,
   });
 
   cache.modify<StoreObject>({
