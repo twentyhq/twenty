@@ -7,6 +7,7 @@ import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/work
 export const WorkspaceMigrationRunnerExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
   EXECUTION_FAILED: 'EXECUTION_FAILED',
+  APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
 } as const;
 
 const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
@@ -17,6 +18,8 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
       return msg`An unexpected error occurred.`;
     case WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED:
       return msg`Migration execution failed.`;
+    case WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND:
+      return msg`Application not found.`;
     default:
       assertUnreachable(code);
   }
@@ -27,16 +30,20 @@ export type WorkspaceMigrationRunnerExecutionErrors = {
   workspaceSchema?: Error;
 };
 
+const {
+  EXECUTION_FAILED: WorkspaceMigrationRunnerExceptionExecutionFailedCode,
+  ...WorkspaceMigrationRunnerExceptionCodeOtherCode
+} = WorkspaceMigrationRunnerExceptionCode;
 type WorkspaceMigrationRunnerExceptionConstructorArgs =
   | {
       message: string;
-      code: typeof WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR;
+      code: (typeof WorkspaceMigrationRunnerExceptionCodeOtherCode)[keyof typeof WorkspaceMigrationRunnerExceptionCodeOtherCode];
       userFriendlyMessage?: MessageDescriptor;
     }
   | {
       action: WorkspaceMigrationAction;
       errors: WorkspaceMigrationRunnerExecutionErrors;
-      code: typeof WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED;
+      code: typeof WorkspaceMigrationRunnerExceptionExecutionFailedCode;
       userFriendlyMessage?: MessageDescriptor;
     };
 

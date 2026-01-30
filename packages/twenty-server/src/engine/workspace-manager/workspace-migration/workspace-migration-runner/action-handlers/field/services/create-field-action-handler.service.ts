@@ -2,17 +2,19 @@ import { Injectable } from '@nestjs/common';
 
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { isMorhphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { fromUniversalFlatFieldMetadataToInsertableFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-flat-field-metadata-to-insertable-field-metadata.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -35,16 +37,35 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
+    const { action, queryRunner, allFlatEntityMaps, workspaceId } = context;
+    const { universalFlatFieldMetadatas } = action;
+
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<FieldMetadataEntity>(
         FieldMetadataEntity,
       );
 
-    const { flatFieldMetadatas } = action;
+    // Generate IDs for all fields in this action upfront
+    const universalIdentifierToGeneratedIdMap = new Map<string, string>();
 
-    for (const flatFieldMetadata of flatFieldMetadatas) {
-      await fieldMetadataRepository.insert(flatFieldMetadata);
+    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
+      universalIdentifierToGeneratedIdMap.set(
+        universalFlatFieldMetadata.universalIdentifier,
+        v4(),
+      );
+    }
+
+    // Transform and insert each field
+    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
+      const insertableFieldMetadata =
+        fromUniversalFlatFieldMetadataToInsertableFieldMetadata({
+          universalFlatFieldMetadata,
+          universalIdentifierToGeneratedIdMap,
+          allFlatEntityMaps,
+          workspaceId,
+        });
+
+      await fieldMetadataRepository.insert(insertableFieldMetadata);
     }
   }
 
@@ -57,29 +78,30 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps },
       workspaceId,
     } = context;
-    const { flatFieldMetadatas } = action;
+    const { universalFlatFieldMetadatas, objectMetadataUniversalIdentifier } =
+      action;
 
-    // TODO prastoin improve doing batchs
-    for (const flatFieldMetadata of flatFieldMetadatas) {
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: flatFieldMetadata.objectMetadataId,
-      });
+    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      universalIdentifier: objectMetadataUniversalIdentifier,
+    });
 
-      const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
-        workspaceId,
-        flatObjectMetadata,
-      });
+    const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
+      workspaceId,
+      objectMetadata: flatObjectMetadata,
+    });
 
+    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
       const enumOperations = collectEnumOperationsForField({
-        flatFieldMetadata,
+        universalFlatFieldMetadata,
         tableName,
         operation: EnumOperation.CREATE,
       });
 
       const columnDefinitions = generateColumnDefinitions({
-        flatFieldMetadata,
-        flatObjectMetadata,
+        universalFlatFieldMetadata,
+        universalFlatObjectMetadata: flatObjectMetadata,
+        workspaceId,
       });
 
       await executeBatchEnumOperations({
@@ -97,19 +119,24 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       });
 
       if (
-        isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
-        flatFieldMetadata.settings.relationType === RelationType.MANY_TO_ONE
+        isMorhphOrRelationUniversalFlatFieldMetadata(
+          universalFlatFieldMetadata,
+        ) &&
+        universalFlatFieldMetadata.universalSettings?.relationType ===
+          RelationType.MANY_TO_ONE
       ) {
         const targetFlatObjectMetadata =
-          findFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+          findFlatEntityByUniversalIdentifierOrThrow({
+            universalIdentifier:
+              universalFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier!,
             flatEntityMaps: flatObjectMetadataMaps,
           });
         const referencedTableName = computeObjectTargetTable(
           targetFlatObjectMetadata,
         );
 
-        const joinColumnName = flatFieldMetadata.settings.joinColumnName;
+        const joinColumnName =
+          universalFlatFieldMetadata.universalSettings?.joinColumnName;
 
         if (!isDefined(joinColumnName)) {
           throw new Error(
@@ -128,7 +155,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
               referencedColumnName: 'id',
               onDelete:
                 convertOnDeleteActionToOnDelete(
-                  flatFieldMetadata.settings.onDelete,
+                  universalFlatFieldMetadata.universalSettings?.onDelete,
                 ) ?? 'CASCADE',
             },
           },
