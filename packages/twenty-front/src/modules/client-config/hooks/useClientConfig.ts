@@ -111,10 +111,11 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setIsEmailingDomainsEnabled = useSetRecoilState(
     isEmailingDomainsEnabledState,
   );
-  
+
   const setAllowRequestsToTwentyIcons = useSetRecoilState(
-    allowRequestsToTwentyIconsState);
-  
+    allowRequestsToTwentyIconsState,
+  );
+
   const setIsCloudflareIntegrationEnabled = useSetRecoilState(
     isCloudflareIntegrationEnabledState,
   );
