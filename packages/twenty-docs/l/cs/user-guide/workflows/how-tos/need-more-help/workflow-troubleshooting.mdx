@@ -1,0 +1,170 @@
+---
+title: Řešení problémů s workflow
+description: Běžné problémy s pracovními postupy a jak je vyřešit.
+---
+
+## Běžné problémy a řešení
+
+### Workflow se nespouští
+
+**Příznaky**: Váš pracovní postup se nespustí, když to očekáváte.
+
+**Možné příčiny**:
+
+1. **Pracovní postup není aktivován**: Ujistěte se, že je pracovní postup nastaven na "Active", ne na "Draft"
+2. **Podmínky spouštěče nesplněny**: Ověřte, že spouštěč odpovídá očekávané události
+3. **Pole není sledováno**: U spouštěčů "Record is Updated" se ujistěte, že je dané pole sledováno
+4. **Oprávnění**: Zkontrolujte, že máte oprávnění spouštět pracovní postupy
+
+**Řešení**:
+
+* Ověřte stav pracovního postupu v seznamu pracovních postupů
+* Otestujte to konkrétní akcí, u které očekáváte, že jej spustí
+* Zkontrolujte konfiguraci spouštěče
+* Kontaktujte svého administrátora ohledně oprávnění
+
+### Spouštění pracovního postupu příliš brzy (prázdná pole)
+
+**Příznaky**: Při ručním vytváření záznamu v UI se váš pracovní postup spustí dříve, než máte čas vyplnit všechna pole. Pracovní postup běží převážně s prázdnými hodnotami polí.
+
+**Proč k tomu dochází**: Twenty ukládá vše v reálném čase — neexistuje oddělený režim "edit" vs "read". Když vytvoříte záznam, ihned se uloží, což vyvolá událost "Record is created" dříve, než stihnete vyplnit další pole.
+
+**Kdy se "Record is created" hodí**:
+
+* Záznamy vytvořené přes volání API (pole jsou vyplněna v jednom požadavku)
+* Záznamy vytvořené pomocí importu
+* Automatické vytváření záznamů z jiných pracovních postupů
+
+**Řešení**: Pro záznamy vytvořené ručně v UI použijte jako spouštěč místo toho **"Record is created or updated"**. Tímto způsobem:
+
+* Pracovní postup se spustí poté, co uživatel dokončí vyplňování polí a jejich uložení
+* Získáte kompletní data namísto prázdných hodnot
+
+<Tip>
+  Pokud chcete, aby se pracovní postup spustil jen jednou na záznam, přidejte akci Filter, která zkontroluje pole jako `createdAt equals updatedAt` (první uložení), nebo použijte vlastní zaškrtávací pole ke sledování, zda už pracovní postup běžel.
+</Tip>
+
+### Selhávající akce
+
+**Příznaky**: Pracovní postup běží, ale některé akce selhávají.
+
+**Možné příčiny**:
+
+1. **Chybějící data**: Povinná pole jsou prázdná
+2. **Neplatné odkazy**: Proměnné z předchozích kroků neexistují
+3. **Chyby API**: Externí služby vracejí chyby
+4. **Problémy s oprávněními**: Akce vyžaduje oprávnění, která nemáte
+
+**Řešení**:
+
+* Zkontrolujte podrobnosti běhu pracovního postupu kvůli chybovým zprávám
+* Ověřte, že všechna povinná pole mají hodnoty
+* Otestujte připojení k API samostatně
+* Projděte oprávnění rolí
+
+### Chyby požadavků HTTP
+
+**Příznaky**: Akce HTTP Request selhávají nebo vracejí neočekávané výsledky.
+
+**Běžné chybové kódy**:
+
+* **400**: Neplatný požadavek - zkontrolujte formát těla požadavku
+* **401**: Neautorizováno - ověřte klíč API
+* **403**: Zakázáno - zkontrolujte oprávnění API
+* **404**: Nenalezeno - ověřte URL endpointu
+* **429**: Příliš mnoho požadavků - zaveďte omezení četnosti požadavků
+* **500**: Chyba serveru - problém v externí službě
+
+**Řešení**:
+
+* Ověřte URL endpointu API
+* Zkontrolujte autentizační hlavičky
+* Nejprve otestujte volání API mimo Twenty
+* Přidejte zpracování chyb v akcích Code
+
+### Chyby akcí Code
+
+**Příznaky**: Kód JavaScriptu se nedaří spustit.
+
+**Běžné problémy**:
+
+1. **Syntaktické chyby**: Překlepy nebo neplatný JavaScript
+2. **Nedefinované proměnné**: Odkazování na proměnné, které neexistují
+3. **Chyby typů**: Operace na nesprávných datových typech
+4. **Vypršení časového limitu**: Kód se spouští příliš dlouho
+
+**Řešení**:
+
+* Použijte vestavěnou validaci editoru kódu
+* Nejprve otestujte logiku kódu v konzoli JavaScriptu
+* Přidejte výpisy console.log pro ladění
+* Zjednodušte složité operace
+
+### E-mail se neodesílá
+
+**Příznaky**: Akce Send Email nedoručuje e-maily.
+
+**Možné příčiny**:
+
+1. **Není připojen e-mailový účet**: Zkontrolujte Nastavení → Účty
+2. **Neplatná e-mailová adresa**: E-mail příjemce má neplatný formát
+3. **Limity odesílání**: Byly dosaženy limity poskytovatele e-mailu
+4. **Spamové filtry**: E-maily jsou blokovány
+
+**Řešení**:
+
+* Ověřte připojení e-mailového účtu
+* Ověřte e-mailové adresy příjemců
+* Zkontrolujte limity poskytovatele e-mailu
+* Zkontrolujte obsah e-mailu kvůli spouštěčům spamu
+
+## Ladění pracovních postupů
+
+### Používání běhů pracovního postupu
+
+1. Přejděte do editoru pracovního postupu
+2. Otevřete panel **Runs**
+3. Najděte neúspěšný běh
+4. Klikněte pro zobrazení podrobných informací krok za krokem
+5. Projděte chybové zprávy a výstupní data
+
+### Testování jednotlivých kroků
+
+1. U akcí Code použijte tlačítko **Test**
+2. U požadavků HTTP otestujte endpoint samostatně
+3. Vytvářejte testovací záznamy pro spuštění pracovních postupů
+4. Pro řízené testování použijte manuální spouštěče
+
+### Běžné vzory ladění
+
+**Přidejte logování**:
+Použijte akce Code k zaznamenávání mezilehlých hodnot pro ladění.
+
+**Izolujte kroky**:
+Testujte každý krok samostatně, abyste identifikovali selhání.
+
+**Zkontrolujte tok dat**:
+Ověřte, že každý krok dostává očekávaná vstupní data.
+
+## Osvědčené postupy k předcházení problémům
+
+### Před aktivací
+
+* Důkladně testujte v režimu konceptu
+* Ověřte všechna připojení k API
+* Pečlivě zkontrolujte podmínky spouštěče
+* Zdokumentujte očekávané chování
+
+### Během vývoje
+
+* Používejte výstižné názvy kroků
+* Přidejte komentáře v akcích Code
+* Testujte s realistickými daty
+* Plánujte i okrajové případy
+
+### Po aktivaci
+
+* Pečlivě sledujte počáteční běhy
+* Nastavte upozornění na selhání
+* Pravidelně procházejte historii běhů
+* Udržujte pracovní postupy co nejjednodušší

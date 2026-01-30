@@ -1,8 +1,9 @@
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
 
-import { useLineChartData } from '../useLineChartData';
+import { useLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/hooks/useLineChartData';
+import { type LineChartSeries } from '~/generated/graphql';
 
 const mockUseRecoilComponentValue = jest.fn();
 jest.mock(
@@ -57,7 +58,7 @@ describe('useLineChartData', () => {
     },
   };
 
-  const mockData: LineChartSeries[] = [
+  const mockData: LineChartSeriesWithColor[] = [
     {
       id: 'series1',
       data: [
@@ -85,6 +86,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -105,6 +107,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -134,6 +137,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -157,6 +161,7 @@ describe('useLineChartData', () => {
         data: [],
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -171,6 +176,7 @@ describe('useLineChartData', () => {
       {
         id: 'series1',
         data: [{ x: 'Jan', y: 100 }],
+        label: 'series1',
       },
     ];
 
@@ -179,6 +185,7 @@ describe('useLineChartData', () => {
         data: dataWithoutLabel,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -193,6 +200,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -210,6 +218,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -224,6 +233,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -239,6 +249,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 
@@ -255,6 +266,7 @@ describe('useLineChartData', () => {
         data: mockData,
         colorRegistry: mockColorRegistry,
         id: 'test-chart',
+        colorMode: 'automaticPalette',
       }),
     );
 

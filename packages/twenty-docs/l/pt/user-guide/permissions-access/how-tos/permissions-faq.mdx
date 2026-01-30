@@ -1,0 +1,126 @@
+---
+title: Perguntas frequentes sobre permissões
+description: Perguntas frequentes sobre funções e permissões.
+---
+
+## Funções
+
+<AccordionGroup>
+  <Accordion title="Quais funções o Twenty traz por padrão?">
+    O Twenty vem com as funções **Admin** e **Member** por padrão. Você pode criar funções personalizadas adicionais com base nas necessidades da sua equipe (por exemplo, Representante de vendas, Gerente, Usuário somente leitura).
+  </Accordion>
+
+  <Accordion title="Posso excluir a função Admin?">
+    Não, a função Admin não pode ser excluída. Deve sempre haver pelo menos um membro atribuído à função Admin.
+  </Accordion>
+
+  <Accordion title="O que acontece quando eu excluo uma função?">
+    Qualquer membro do espaço de trabalho atribuído a essa função será automaticamente reatribuído à função padrão.
+  </Accordion>
+
+  <Accordion title="Como defino uma função padrão para novos membros?">
+    Vá para **Configurações → Funções**, encontre a opção **Função Padrão** e selecione qual função os novos membros devem receber automaticamente ao entrar.
+  </Accordion>
+
+  <Accordion title="Posso atribuir várias funções a um único usuário?">
+    Não, cada usuário pode ter apenas uma função por vez. Crie uma função personalizada se precisar de uma combinação de permissões.
+  </Accordion>
+</AccordionGroup>
+
+## Permissões
+
+<AccordionGroup>
+  <Accordion title="Qual é a diferença entre permissões de objeto e de campo?">
+    * **Permissões de objeto**: Controlam o acesso a registros inteiros (por exemplo, ver/editar/excluir registros de Pessoas)
+    * **Permissões de campo**: Controlam o acesso a campos específicos dentro de um objeto (por exemplo, ver, mas não editar, o campo Salário)
+
+    As permissões de campo permitem um controle mais granular sobre dados confidenciais.
+  </Accordion>
+
+  <Accordion title="Como funcionam as substituições de permissões?">
+    As permissões se propagam do nível global para o específico:
+
+    1. **Todos os objetos** define a base para todos os objetos
+    2. **Permissões em nível de objeto** podem substituir a configuração global para objetos específicos
+    3. **Permissões em nível de campo** podem substituir a configuração do objeto para campos específicos
+
+    Configurações mais específicas sempre têm precedência.
+  </Accordion>
+
+  <Accordion title="O que significam os diferentes níveis de permissão?">
+    Para objetos:
+
+    * **Ver registros**: Visualizar registros em listas e páginas de detalhes
+    * **Editar registros**: Modificar registros existentes
+    * **Excluir registros**: Exclusão lógica de registros (podem ser restaurados)
+    * **Destruir registros**: Excluir permanentemente registros
+
+    Para campos:
+
+    * **Ver campo**: Visualizar o valor do campo
+    * **Editar campo**: Modificar o valor do campo
+    * **Sem acesso**: O campo fica totalmente oculto
+  </Accordion>
+
+  <Accordion title="Posso restringir o acesso a registros específicos (permissões em nível de linha)?">
+    As permissões em nível de linha estarão disponíveis no plano **Organization** até o 1º trimestre de 2026. Isso permite restringir o acesso a registros específicos com base em critérios (por exemplo, ver apenas suas próprias oportunidades).
+  </Accordion>
+
+  <Accordion title="Como deixar um campo somente leitura para determinados usuários?">
+    1. Vá para **Configurações → Funções**
+    2. Selecione a função
+    3. Navegue até o objeto que contém o campo
+    4. Defina a permissão do campo como **Ver campo** (sem Editar campo)
+  </Accordion>
+</AccordionGroup>
+
+## Configurações e Ações
+
+<AccordionGroup>
+  <Accordion title="Quais permissões de configuração estão disponíveis?">
+    Você pode controlar o acesso a:
+
+    * Geração de chave de API
+    * Preferências do espaço de trabalho
+    * Atribuição de função
+    * Configuração do modelo de dados
+    * Configurações de segurança
+    * Gerenciamento de fluxos de trabalho
+
+    Use **Settings All Access** para conceder acesso total ou habilite permissões específicas.
+  </Accordion>
+
+  <Accordion title="Quais permissões de ação estão disponíveis?">
+    Você pode controlar:
+
+    * **Enviar e-mail**: Capacidade de enviar e-mails a partir do Twenty
+    * **Importar CSV**: Capacidade de importar dados via CSV
+    * **Exportar CSV**: Capacidade de exportar dados para CSV
+
+    Use **Application All Access** para conceder todas as ações ou habilitar ações específicas.
+  </Accordion>
+</AccordionGroup>
+
+## SSO
+
+<AccordionGroup>
+  <Accordion title="O SSO está disponível em todos os planos?">
+    Não, o SSO é um recurso Premium disponível apenas no plano **Organization**.
+  </Accordion>
+
+  <Accordion title="Quais provedores de identidade são compatíveis?">
+    O Twenty é compatível com:
+
+    * **SAML 2.0** (funciona com a maioria dos provedores de identidade corporativos)
+    * **Google Workspace**
+    * **Microsoft Entra ID** (anteriormente Azure AD)
+  </Accordion>
+
+  <Accordion title="O que é o provisionamento Just-in-Time (JIT)?">
+    Com o provisionamento JIT, as contas de usuário são criadas automaticamente no Twenty quando alguém faz login via SSO pela primeira vez. A função padrão é atribuída automaticamente.
+  </Accordion>
+
+  <Accordion title="Posso exigir SSO para todos os usuários?">
+    Sim, depois que o SSO for configurado, você pode desativar o login por senha para usuários de SSO para impor a autenticação por meio do seu provedor de identidade.
+  </Accordion>
+</AccordionGroup>

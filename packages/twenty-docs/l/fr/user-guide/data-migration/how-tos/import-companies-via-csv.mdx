@@ -1,0 +1,201 @@
+---
+title: Importer des entreprises via CSV
+description: Guide complet étape par étape pour importer des entreprises dans Twenty.
+---
+
+## Vue d'ensemble
+
+Ce guide vous accompagne pour importer vos entreprises dans Twenty. **Les entreprises doivent être importées en premier** car les Personnes et les Opportunités sont liées aux Entreprises.
+
+## Avant de démarrer
+
+### Liste de vérification des prérequis
+
+<Check>
+  Votre fichier est au format CSV, XLSX ou XLS
+</Check>
+
+<Check>
+  Le fichier contient moins de 10 000 enregistrements
+</Check>
+
+<Check>
+  Aucun domaine en double dans votre fichier
+</Check>
+
+<Check>
+  Tous les champs personnalisés existent dans **Paramètres → Modèle de données**
+</Check>
+
+<Note>
+  Besoin d'importer plus de 10 000 entreprises ? Divisez en plusieurs fichiers ou utilisez l’[importation via l’API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api).
+</Note>
+
+## Étape 1 : Préparer vos données d'entreprises
+
+### Champs obligatoires et recommandés
+
+| Champ                    | Obligatoire ? | Format               | Notes                                  |
+| ------------------------ | ------------- | -------------------- | -------------------------------------- |
+| **Nom**                  | Recommandé    | Texte                | Nom d'affichage de l'entreprise        |
+| **Domaine**              | Recommandé    | `https://domain.com` | Identifiant unique                     |
+| **Adresse**              | Facultatif    | Plusieurs colonnes   | Voir ci-dessous                        |
+| **Employés**             | Facultatif    | Nombre               | Nombre d'employés                      |
+| **Champs personnalisés** | Facultatif    | Variable             | Doit exister dans le Modèle de données |
+
+### Format du domaine
+
+<Warning>
+  **Utilisez le format `https://domain.com` pour les domaines.**
+
+  Cela correspond au format utilisé lorsque des entreprises sont créées automatiquement à partir de la synchronisation e-mail/calendrier, ce qui évite les doublons par la suite.
+</Warning>
+
+**Colonnes de domaine :**
+
+* **Domaine / Libellé du domaine** : `acme.com`
+* **Domaine / URL du domaine** : `https://acme.com`
+
+### Format de l'adresse
+
+L'adresse est un champ imbriqué avec plusieurs colonnes :
+
+```
+Address / Address 1,Address / City,Address / State,Address / Country,Address / Post Code
+123 Main Street,San Francisco,CA,USA,94105
+```
+
+### Exemple de structure CSV
+
+```csv
+name,Domain / Domain URL,Domain / Domain Label,Address / City,Address / Country,employees
+Acme Corp,https://acme.com,acme.com,San Francisco,USA,250
+Widget Co,https://widgets.co,widgets.co,New York,USA,50
+```
+
+<Note>
+  **Astuce :** Cliquez sur **Télécharger le fichier d'exemple** lors de l'import pour voir les noms de colonnes exacts attendus par Twenty.
+</Note>
+
+## Étape 2 : Accéder à la fonction d'importation
+
+**Option 1 : Depuis la vue Entreprises**
+
+1. Accédez à **Entreprises** dans la barre latérale gauche
+2. Cliquez sur l'icône **⋮** en haut à droite
+3. Sélectionnez **Importer des enregistrements**
+
+**Option 2 : Utiliser le menu de commandes**
+
+1. Appuyez sur `Cmd + K` (Mac) ou `Ctrl + K` (Windows)
+2. Tapez "import"
+3. Sélectionnez **Importer des enregistrements**
+4. Choisissez **Entreprises**
+
+## Étape 3 : Téléverser votre fichier
+
+1. Cliquez sur **Sélectionner un fichier**
+2. Choisissez votre fichier CSV, XLSX ou XLS
+3. Attendez que Twenty analyse votre fichier
+
+## Étape 4 : Associer vos colonnes
+
+Twenty tente automatiquement d'associer vos colonnes aux champs. Vérifiez et ajustez :
+
+1. **Vérifiez les correspondances automatiques** — assurez-vous qu'elles sont correctes
+2. **Corrigez les correspondances incorrectes** — cliquez sur la liste déroulante pour sélectionner le bon champ
+3. **Ignorer des colonnes** — sélectionnez **Do not map** pour les colonnes que vous ne souhaitez pas importer
+
+### Règles de mappage importantes
+
+* **Domaine** : Associez à **Domaine / URL du domaine** (et non au Libellé du domaine)
+* **Adresse** : Associez chaque partie à sa colonne spécifique (Ville, État, etc.)
+* **Champs de sélection** : les valeurs doivent correspondre aux options existantes (ou vous les associerez à l'étape suivante)
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+## Étape 5 : Faire correspondre les valeurs des champs de sélection
+
+Si vous avez des champs Sélection ou Multi-sélection :
+
+1. Twenty affiche vos valeurs à côté des options existantes
+2. Faites correspondre chaque valeur de votre fichier à une option Twenty
+3. Ou créez de nouvelles options si nécessaire
+
+<Note>
+  Les options de sélection utilisent les **noms d'API**, pas les libellés d'affichage. Accédez à **Paramètres → Modèle de données** → activez le **Mode avancé** pour voir les noms d'API.
+</Note>
+
+## Étape 6 : Examiner et corriger les erreurs
+
+Avant de terminer l'import, Twenty valide vos données :
+
+1. Cliquez sur **Prochaines étapes**
+2. Les lignes comportant des erreurs sont mises en évidence en **jaune**
+3. **Corrigez les erreurs directement** — cliquez sur une cellule et modifiez la valeur
+4. **Supprimez les lignes problématiques** — cliquez sur le X pour ignorer cette ligne
+
+### Erreurs courantes lors de l'import d'entreprises
+
+| Erreur                         | Cause                              | Solution                                                           |
+| ------------------------------ | ---------------------------------- | ------------------------------------------------------------------ |
+| **Domaine en double**          | Le domaine existe déjà dans Twenty | Supprimez-le du fichier ou mettez à jour l'enregistrement existant |
+| **Format de domaine invalide** | Mauvais format                     | Utilisez `https://domain.com`                                      |
+| **Champ obligatoire manquant** | Le champ obligatoire est vide      | Renseignez la valeur ou supprimez la ligne                         |
+
+## Étape 7 : Finaliser l'import
+
+1. Vérifiez le récapitulatif de l'import
+2. Cliquez sur **Confirmer** pour importer
+3. Attendez la fin de l'import
+4. Vérifiez en examinant quelques enregistrements
+
+## Après l'import des entreprises
+
+Vous pouvez maintenant importer des enregistrements liés aux entreprises :
+
+1. **[Importer des personnes](/l/fr/user-guide/data-migration/how-tos/import-contacts-via-csv)** — liez-les aux entreprises à l'aide du domaine
+2. **Importez des opportunités** — liez-les aux entreprises
+3. **Vérifiez l'import** — faites un contrôle ponctuel de quelques enregistrements pour vous assurer que les données sont correctes
+
+## Mise à jour des entreprises existantes
+
+Pour mettre à jour des entreprises au lieu d'en créer de nouvelles :
+
+1. Incluez la colonne `domain` ou `id` dans votre fichier
+2. Twenty fait correspondre les enregistrements à partir de cet identifiant unique
+3. Les entreprises existantes sont mises à jour ; les nouvelles sont créées
+
+Voir [Comment mettre à jour des enregistrements existants](/l/fr/user-guide/data-migration/how-tos/update-existing-records-via-import) pour plus de détails.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Pourquoi deux entreprises ne peuvent-elles pas avoir le même domaine ?">
+    Le domaine est un identifiant unique dans Twenty. Cela évite les entreprises en double et garantit que la synchronisation des e-mails associe correctement les e-mails à la bonne entreprise.
+  </Accordion>
+
+  <Accordion title="Que faire si j'ai des entreprises sans domaine ?">
+    Vous pouvez laisser le domaine vide. Cependant, nous recommandons d'ajouter des domaines lorsque c'est possible pour une meilleure qualité des données et une liaison automatique des e-mails.
+  </Accordion>
+
+  <Accordion title="Puis-je importer des entreprises sans aucune personne liée ?">
+    Oui! Vous pouvez d'abord importer des entreprises, puis importer des Personnes plus tard et les lier en utilisant le domaine de l'entreprise.
+  </Accordion>
+
+  <Accordion title="Que se passe-t-il si j'importe un domaine qui existe déjà ?">
+    Si vous incluez un identifiant unique (domaine ou id) correspondant à une entreprise existante, Twenty met à jour cette entreprise au lieu de créer un doublon.
+  </Accordion>
+
+  <Accordion title="Comment corriger les erreurs 'duplicate domain' ?">
+    Supprimez le doublon de votre fichier ou incluez l'`id` de l'entreprise pour mettre à jour l'enregistrement existant.
+  </Accordion>
+</AccordionGroup>
+
+## Résolution des problèmes
+
+Vous rencontrez des problèmes ? Consultez :
+
+* [Comment corriger les erreurs d'import](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)
+* [Référence de correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping)
+* [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)

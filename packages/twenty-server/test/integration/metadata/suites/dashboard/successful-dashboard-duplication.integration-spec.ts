@@ -6,19 +6,16 @@ import {
 } from 'test/integration/metadata/suites/dashboard/utils/dashboard-graphql.util';
 import { duplicateOneDashboard } from 'test/integration/metadata/suites/dashboard/utils/duplicate-one-dashboard.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
-import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
-import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
-import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
 
 type TestContext = {
   id: string;
@@ -57,40 +54,14 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
 describe('Dashboard duplication should succeed', () => {
   let testPageLayoutId: string;
   let testPageLayoutTabId: string;
-  let testPageLayoutWidgetId: string;
   let testDashboardId: string;
   let duplicatedDashboardId: string;
-  let duplicatedPageLayoutId: string;
   let currentTestContextId: string;
 
   const cleanup = async () => {
     if (isNonEmptyString(duplicatedDashboardId)) {
       await destroyDashboardWithGraphQL(duplicatedDashboardId);
       duplicatedDashboardId = '';
-    }
-
-    if (isNonEmptyString(duplicatedPageLayoutId)) {
-      await destroyOnePageLayout({
-        expectToFail: false,
-        input: { id: duplicatedPageLayoutId },
-      });
-      duplicatedPageLayoutId = '';
-    }
-
-    if (isNonEmptyString(testPageLayoutWidgetId)) {
-      await destroyOnePageLayoutWidget({
-        expectToFail: false,
-        input: { id: testPageLayoutWidgetId },
-      });
-      testPageLayoutWidgetId = '';
-    }
-
-    if (isNonEmptyString(testPageLayoutTabId)) {
-      await destroyOnePageLayoutTab({
-        expectToFail: false,
-        input: { id: testPageLayoutTabId },
-      });
-      testPageLayoutTabId = '';
     }
 
     if (isNonEmptyString(testDashboardId)) {
@@ -102,23 +73,13 @@ describe('Dashboard duplication should succeed', () => {
       await destroyDashboardWithGraphQL(currentTestContextId);
       currentTestContextId = '';
     }
-
-    if (isNonEmptyString(testPageLayoutId)) {
-      await destroyOnePageLayout({
-        expectToFail: false,
-        input: { id: testPageLayoutId },
-      });
-      testPageLayoutId = '';
-    }
   };
 
   beforeEach(async () => {
     testPageLayoutId = '';
     testPageLayoutTabId = '';
-    testPageLayoutWidgetId = '';
     testDashboardId = '';
     duplicatedDashboardId = '';
-    duplicatedPageLayoutId = '';
     currentTestContextId = '';
   });
 
@@ -153,7 +114,7 @@ describe('Dashboard duplication should succeed', () => {
         testPageLayoutTabId = tabData.createPageLayoutTab.id;
 
         if (withWidgets) {
-          const { data: widgetData } = await createOnePageLayoutWidget({
+          await createOnePageLayoutWidget({
             expectToFail: false,
             input: {
               title: 'Test Widget',
@@ -168,8 +129,6 @@ describe('Dashboard duplication should succeed', () => {
               configuration: TEST_IFRAME_CONFIG,
             },
           });
-
-          testPageLayoutWidgetId = widgetData.createPageLayoutWidget.id;
         }
       }
 
@@ -187,7 +146,6 @@ describe('Dashboard duplication should succeed', () => {
       });
 
       duplicatedDashboardId = data.duplicateDashboard.id;
-      duplicatedPageLayoutId = data.duplicateDashboard.pageLayoutId ?? '';
 
       expect(data.duplicateDashboard).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny({ ...data.duplicateDashboard }),

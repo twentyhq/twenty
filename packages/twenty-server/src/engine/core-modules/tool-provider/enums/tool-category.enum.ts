@@ -6,4 +6,5 @@ export enum ToolCategory {
   NATIVE_MODEL = 'NATIVE_MODEL',
   VIEW = 'VIEW',
   DASHBOARD = 'DASHBOARD',
+  LOGIC_FUNCTION = 'LOGIC_FUNCTION',
 }

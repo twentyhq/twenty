@@ -35,7 +35,7 @@ export const triggerUpdateRecordOptimisticEffectByBatch = ({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   for (const [index, currentRecord] of currentRecords.entries()) {
     triggerUpdateRelationsOptimisticEffect({

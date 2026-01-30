@@ -1,0 +1,130 @@
+---
+title: Importa gli invii di Typeform in Twenty
+description: Gestisci il payload del webhook di Typeform per creare lead dalle risposte del modulo.
+---
+
+Per la configurazione standard del webhook, vedi [Configura un trigger webhook](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). Questo articolo tratta la gestione specifica richiesta dalla struttura di payload personalizzata di Typeform.
+
+### Passaggio 1: Crea un flusso di lavoro webhook
+
+1. Vai a **Impostazioni → Flussi di lavoro**
+2. Fai clic su **+ Nuovo flusso di lavoro**
+3. Seleziona **Webhook** come trigger
+4. Copia l'URL del webhook
+
+### Passaggio 2: Configura Typeform
+
+1. In Typeform, apri il tuo modulo
+2. Vai a **Connect → Webhooks**
+3. Incolla l'URL del webhook di Twenty
+4. Salva
+
+### Passaggio 3: Comprendi il payload di Typeform
+
+Typeform invia una struttura JSON annidata. Ecco un esempio semplificato:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+Punti chiave da notare:
+
+* I dati del modulo sono annidati in `form_response`
+* **Le risposte vengono restituite come array**, non come campi denominati
+* Ogni risposta include il tipo e il titolo del campo come riferimento
+
+### Passaggio 4: Estrai i campi dall'array delle risposte
+
+Poiché `answers` è un array, nei passaggi successivi puoi selezionare solo l'intero array — non i singoli campi. Aggiungi un'azione **Code** per estrarre i campi di cui hai bisogno:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+Ora, nei passaggi successivi, puoi selezionare `contact.firstName`, `contact.email`, ecc. dal selettore delle variabili.
+
+<Tip>
+  Per maggiori dettagli sulla gestione degli array, vedi [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+### Passaggio 5: Crea il record
+
+Aggiungi un'azione **Create Record**:
+
+| Campo       | Valore                                            |
+| ----------- | ------------------------------------------------- |
+| **Oggetto** | Persone                                           |
+| **Nome**    | `{{code.contact.firstName}}`                      |
+| **Cognome** | `{{code.contact.lastName}}`                       |
+| **Email**   | `{{code.contact.email}}`                          |
+| **Azienda** | Cerca o crea in base a `{{code.contact.company}}` |
+
+### Passaggio 6: Testa e attiva
+
+1. Invia una risposta di prova in Typeform
+2. Controlla l'esecuzione del flusso di lavoro per verificare che i dati siano stati acquisiti
+3. Attiva il flusso di lavoro
+
+## Correlati
+
+* [Configura un trigger webhook](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

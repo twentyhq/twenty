@@ -15,7 +15,9 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
+import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatFieldMetadataModule } from 'src/engine/metadata-modules/flat-field-metadata/flat-field-metadata.module';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
@@ -27,12 +29,9 @@ import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-f
 import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-group.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
-import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
-import { FieldMetadataToolsFactory } from 'src/engine/metadata-modules/field-metadata/tools/field-metadata-tools.factory';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -47,8 +46,6 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           FieldMetadataEntity,
           ObjectMetadataEntity,
         ]),
-        WorkspaceMigrationModule,
-        WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
         WorkspaceCacheStorageModule,
         ObjectMetadataModule,
@@ -62,10 +59,11 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         ViewFilterModule,
         ViewGroupModule,
         PermissionsModule,
-        WorkspaceMigrationV2Module,
+        WorkspaceMigrationModule,
         FlatFieldMetadataModule,
         IndexMetadataModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
+        WorkspaceCacheModule,
       ],
       services: [FieldMetadataService],
       resolvers: [

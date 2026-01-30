@@ -1,3 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+// Disabled type checking due to tsgo performance issue with deep spread operations
+// See: https://github.com/microsoft/typescript-go/issues/2551
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
@@ -27,9 +31,8 @@ describe('removeStep', () => {
     type: WorkflowActionType.CODE,
     settings: {
       input: {
-        serverlessFunctionId: 'test',
-        serverlessFunctionVersion: '1.0.0',
-        serverlessFunctionInput: {},
+        logicFunctionId: 'test',
+        logicFunctionInput: {},
       },
       outputSchema: {},
       errorHandlingOptions: {

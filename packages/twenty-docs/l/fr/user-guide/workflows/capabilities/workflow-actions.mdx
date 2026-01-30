@@ -1,0 +1,311 @@
+---
+title: Actions de flux de travail
+description: Découvrez les actions disponibles dans les workflows de Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## À propos des actions
+
+Les actions définissent ce qui se passe après le déclenchement d'un déclencheur. Vous pouvez enchaîner plusieurs actions pour créer des automatisations complexes.
+
+<Tip>
+  * Utilisez le sélecteur de variables (cliquez sur l'icône `(x+)`) pour parcourir les données disponibles provenant des étapes précédentes
+  * Survolez n'importe quel champ de saisie pour voir de quelle étape provient une variable — utile lorsque le même champ (par ex., ID) existe dans plusieurs étapes précédentes
+  * Donnez à chaque action un nom explicite pour faciliter la maintenance
+</Tip>
+
+## Actions sur les enregistrements
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Créer un enregistrement
+
+Ajoute un nouvel enregistrement à un objet sélectionné.
+
+**Configuration**:
+
+* Sélectionnez l'objet cible
+* Remplissez les champs requis et optionnels
+* Utilisez les données des étapes précédentes ou saisissez des valeurs manuellement pour remplir les champs
+
+**Sortie**: Les données de l'enregistrement nouvellement créé sont disponibles pour une utilisation dans les étapes suivantes.
+
+### Mettre à jour un enregistrement
+
+Modifie un enregistrement existant dans un objet sélectionné.
+
+<img src="/images/user-guide/workflows/update_record.png" style={{width:'100%'}} />
+
+**Configuration**:
+
+* Sélectionnez l'objet cible
+* Choisissez l'enregistrement spécifique à mettre à jour.
+  * Vous pouvez choisir un enregistrement fixe, à l'aide du menu déroulant affichant tous les enregistrements disponibles.
+  * Ou vous pouvez sélectionner l'enregistrement de façon dynamique, en désignant un enregistrement trouvé lors d'une étape précédente, à l'aide du `(x+)`. Vous ne pouvez pas rechercher l'enregistrement selon différents critères à ce stade. Si vous n'avez pas encore identifié l'enregistrement, ajoutez une étape `Search Record` avant cette étape `Update Record`.
+* Sélectionnez les champs à modifier et entrez de nouvelles valeurs
+
+**Sortie**: Les données de l'enregistrement mis à jour sont disponibles pour une utilisation dans les étapes suivantes.
+
+### Supprimer un enregistrement
+
+Supprime un enregistrement d'un objet sélectionné.
+
+**Configuration**:
+
+* Sélectionnez l'objet cible
+* Choisissez l'enregistrement spécifique à supprimer
+
+**Sortie**: Les données de l'enregistrement supprimé restent disponibles pour une utilisation dans les étapes suivantes.
+
+### Rechercher des enregistrements
+
+Trouve des enregistrements dans un objet sélectionné en utilisant des conditions de filtre.
+
+**Configuration**:
+
+* Sélectionnez l'objet à rechercher
+* Définissez les critères de filtre pour restreindre les résultats
+* Configurez le tri et les limites
+
+**Sortie**: Renvoie les enregistrements correspondants qui peuvent être utilisés dans les étapes suivantes.
+
+<Note>
+  **Limite**: Search Records renvoie un maximum de **200 enregistrements**. Si vous devez en traiter davantage, ajoutez des filtres spécifiques pour réduire les résultats ou utilisez des workflows planifiés pour traiter par lots.
+</Note>
+
+**Meilleure pratique**: Utilisez [branches](/l/fr/user-guide/workflows/capabilities/workflow-branches) après Search Records pour gérer les scénarios "trouvé" vs "non trouvé".
+
+### Créer ou mettre à jour un enregistrement
+
+Crée un nouvel enregistrement ou met à jour un enregistrement existant en fonction de critères de correspondance. C'est utile lorsque vous n'êtes pas certain qu'un enregistrement existe déjà.
+
+<img src="/images/user-guide/workflows/upsert_double_identifier.png" style={{width:'100%'}} />
+
+**Configuration**:
+
+* Sélectionnez l'objet cible
+* Notez quels champs peuvent être utilisés pour la correspondance : adresse e-mail pour les Contacts, domaine pour les Entreprises, ID pour tout objet, ou tout champ marqué comme unique. Vous devrez renseigner au moins l'un des éléments ci-dessous.
+* Renseignez les valeurs des champs. N'oubliez pas de renseigner au moins un des identifiants uniques.
+
+<Note>
+  **La correspondance fonctionne généralement encore mieux lorsque vous n'ajoutez qu'un seul identifiant unique.** Par exemple, la capture d'écran ci-dessous fera correspondre les entreprises en fonction de leur domaine. L'ID n'est pas forcément nécessaire.
+</Note>
+
+<img src="/images/user-guide/workflows/upsert_simple_identifier.png" style={{width:'100%'}} />
+
+* Utilisez les données des étapes précédentes pour remplir les champs
+
+**Comment ça marche**:
+
+1. Recherche un enregistrement correspondant à vos critères
+2. S'il est trouvé → met à jour l'enregistrement existant
+3. S'il n'est pas trouvé → crée un nouvel enregistrement
+
+**Sortie**: Les données de l'enregistrement créé ou mis à jour sont disponibles pour une utilisation dans les étapes suivantes.
+
+## Actions de flux de travail
+
+### Itérateur
+
+**Parcourt un tableau d'enregistrements** renvoyé par une étape précédente, vous permettant d'effectuer des actions sur chaque enregistrement individuellement.
+
+**Configuration**:
+
+* Sélectionnez le tableau d'enregistrements depuis une étape précédente (par ex., résultats de Rechercher des enregistrements, d'un déclencheur manuel avec exécution par lots, d'un nœud de code)
+* Définissez les actions à effectuer sur chaque enregistrement dans la boucle.
+
+<Note>
+  - Vous pouvez ajouter plusieurs actions au sein d'un itérateur.
+  - Lorsque vous utilisez des branches à l'intérieur d'un itérateur, assurez-vous que la dernière étape de chaque branche revient à l'itérateur pour fermer la boucle.
+</Note>
+
+* Accéder aux champs `Current Item`: pour utiliser les champs de l'enregistrement en cours de traitement, cliquez sur l'étape **Iterator**, puis sélectionnez **Current item**. La liste des champs disponibles de cet enregistrement s'affichera et pourra être sélectionnée pour une utilisation dans les actions suivantes.
+
+<VimeoEmbed videoId="1146577247" title="Démonstration vidéo" />
+
+### Filtre
+
+Filtre les enregistrements selon des conditions spécifiées, ne laissant passer que ceux qui répondent aux critères.
+
+**Configuration**:
+
+* Sélectionnez l'enregistrement à filtrer
+* Définissez les conditions de filtre et les critères
+* Configurez quels enregistrements doivent passer aux étapes suivantes
+
+<Note>
+  1. **Sortie**: Les nœuds de filtre ne renvoient pas de données — ils agissent comme des portes. Si les conditions sont remplies, le flux de travail continue. Sinon, le flux de travail s'arrête à cette branche.
+  2. L'opérateur `IS` peut être utilisé avec des champs numériques. Il équivaut à `EQUAL`.
+</Note>
+
+### Délai
+
+Met en pause l'exécution du flux de travail pendant une durée spécifiée ou jusqu'à une date/heure spécifique.
+
+**Types de délai**:
+
+| Type               | Description                                                      |
+| ------------------ | ---------------------------------------------------------------- |
+| **Durée**          | Attendre une durée spécifique (jours, heures, minutes, secondes) |
+| **Date planifiée** | Attendre jusqu'à une date et une heure spécifiques               |
+
+**Configuration pour la durée**:
+
+* Définissez des jours, des heures, des minutes et/ou des secondes
+* Combinez plusieurs unités (par ex., 2 jours et 4 heures)
+
+**Configuration pour la date planifiée**:
+
+* Sélectionnez une date et une heure
+* Peut référencer un champ de date d'une étape précédente (par ex., relancer 3 jours après une réunion)
+
+**Cas d'utilisation**:
+
+* Attendre 24 heures avant d'envoyer un e-mail de relance
+* Mettre en pause jusqu'à la date de clôture d'une opportunité
+* Planifier des actions pendant les heures ouvrées
+
+<Note>
+  La date planifiée ne peut pas être dans le passé. Si un champ de date d'une étape précédente est utilisé et que la date est déjà passée, le flux de travail échouera.
+</Note>
+
+**Limites et crédits**:
+
+* **Aucune limite de durée maximale** — vous pouvez définir des délais de quelques minutes, jours, semaines, ou plus
+* **1 crédit consommé** lorsque le nœud Délai s'exécute, quelle que soit la durée
+* **Aucun crédit consommé** pendant l'attente — un délai de 5 minutes coûte autant qu'un délai de 5 jours
+
+## Actions de communication
+
+### Envoyer l'email
+
+Envoie un e-mail à partir de votre flux de travail. Idéal pour des e-mails groupés basés sur des modèles. Les e-mails auront l'apparence de ceux que vous envoyez depuis votre boîte aux lettres.
+Ne convient pas aux newsletters (qui nécessitent un formatage plus riche) ni aux séquences d'e-mails automatisées.
+
+**Prérequis**: Ajoutez un compte de messagerie dans Paramètres → Comptes
+
+**Configuration**:
+
+* Sélectionnez le compte e-mail de l'expéditeur
+
+<Note>
+  Vous pouvez uniquement envoyer des e-mails à partir de boîtes aux lettres synchronisées avec votre propre compte Twenty. L'envoi depuis les boîtes aux lettres d'autres membres de l'équipe (par ex., l'e-mail du propriétaire du compte) est sur la feuille de route.
+</Note>
+
+Pour toutes les étapes suivantes, vous pouvez référencer des variables des étapes précédentes pour la personnalisation.
+
+* Entrez l'adresse e-mail du destinataire.
+
+<Note>
+  Un seul destinataire est possible pour le moment.
+</Note>
+
+* Définissez la ligne d'objet.
+* Rédigez le corps du message. Vous pouvez formater des liens, créer des listes numérotées, des listes à puces, ajouter des pièces jointes.
+
+<Note>
+  L'ajout de signatures HTML n'est pas possible pour le moment.
+</Note>
+
+### Formulaire
+
+Affiche un formulaire lors de l'exécution du flux de travail pour recueillir les saisies de l'utilisateur. Les réponses peuvent ensuite être utilisées dans les étapes suivantes pour créer des enregistrements, envoyer des e-mails ou exécuter toute autre action selon la saisie.
+
+<Warning>
+  **Les formulaires sont conçus uniquement pour les déclencheurs manuels**. Pour les flux de travail avec d'autres déclencheurs (Enregistrement créé, mis à jour, etc.), les formulaires ne sont accessibles que via l'interface de l'exécution de flux de travail, ce qui n'est pas l'expérience utilisateur attendue. Un centre de notifications sera lancé en 2026 pour supporter correctement les formulaires dans les flux de travail automatisés.
+</Warning>
+
+**Configuration**:
+
+* Configurez les champs que les utilisateurs devront remplir. Pour chaque champ, choisissez
+  * un type parmi texte, nombre, date, un enregistrement donné, un champ de sélection. Les champs de sélection de tous les objets sont disponibles.
+  * une étiquette
+  * une valeur par défaut sous `Placeholder` (facultatif)
+* Modifiez le titre du formulaire
+
+**Sortie**: Les réponses au formulaire sont disponibles pour une utilisation dans les étapes suivantes.
+
+**Exemple**: Le flux de travail "Quick Lead" est disponible par défaut dans tous les espaces de travail, accessible partout dans le menu de commande `Cmd + K`.
+
+**Comment remplir le formulaire**:
+
+* Déclenchez votre flux de travail manuel depuis le menu de commande `Cmd K`
+* Remplissez le formulaire affiché dans le panneau latéral et cliquez sur `Submit`.
+
+<Note>
+  Les champs ne peuvent pas être rendus obligatoires.
+</Note>
+
+<VimeoEmbed videoId="1147277989" title="Démonstration vidéo" />
+
+## Actions d'intégration
+
+### Code
+
+Exécute du JavaScript personnalisé dans votre flux de travail.
+
+**Configuration**:
+
+* Accédez aux variables des étapes précédentes. Vous pouvez modifier dynamiquement les noms des variables.
+
+<VimeoEmbed videoId="1147281795" title="Démonstration vidéo" />
+
+* Écrivez le code JavaScript dans l'éditeur
+* Retournez des variables pour une utilisation dans les étapes suivantes
+* Testez le code directement dans l'étape
+
+<Note>
+  Si vous devez utiliser des clés d'API externes dans votre code, vous devez les saisir directement dans le corps de la fonction. Vous ne pouvez pas configurer des clés d'API ailleurs et les référencer dans la fonction logique.
+</Note>
+
+<Tip>
+  **Vous travaillez avec des tableaux ?** Les tableaux provenant de systèmes externes ou d'étapes précédentes peuvent arriver sous forme de chaînes de caractères. Voir [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions) pour la solution.
+</Tip>
+
+<Tip>
+  Cliquez sur l'icône carrée en haut à droite de l'éditeur de code pour l'afficher en plein écran — utile car la largeur par défaut de l'éditeur est limitée.
+</Tip>
+
+### Requête HTTP
+
+Envoie une requête à une API externe dans le cadre de votre flux de travail.
+
+<img src="/images/user-guide/workflows/http_action.png" style={{width:'100%'}} />
+
+**Configuration**:
+
+* Entrez l'URL du point de terminaison de l'API. Il est possible d'utiliser des paramètres issus des étapes précédentes.
+* Sélectionnez la méthode HTTP (GET, POST, PUT, PATCH, DELETE)
+* Ajoutez les en-têtes et valeurs requis
+* Fournissez un exemple de réponse pour l'aperçu de la structure
+
+## Actions d'IA
+
+### Agent IA - Bientôt disponible
+
+Exécute un agent IA au sein de votre flux de travail pour effectuer des tâches intelligentes.
+
+**Configuration**:
+
+* **Agent**: Sélectionnez un agent IA existant ou utilisez l'agent par défaut
+* **Prompt**: Écrivez l'instruction pour l'agent IA
+* Référencez des variables des étapes précédentes dans le prompt
+
+**Ce que les agents IA peuvent faire**:
+
+* Analyser et résumer des données
+* Classer ou catégoriser des enregistrements
+* Générer du contenu textuel
+* Prendre des décisions basées sur des données
+* Interagir avec vos données CRM à l'aide d'outils
+
+**Sortie**: La réponse de l'agent IA est disponible pour une utilisation dans les étapes suivantes. Si l'agent a un schéma de sortie structuré, la réponse suivra ce format.
+
+<Note>
+  Les actions d'agent IA consomment des crédits de flux de travail en fonction du modèle d'IA utilisé. Voir [Crédits de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-credits) pour plus de détails.
+</Note>
+
+<Note>
+  Les agents IA respectent les autorisations basées sur les rôles. Vous pouvez attribuer des rôles spécifiques aux agents dans **Paramètres → Rôles** pour contrôler les données auxquelles ils peuvent accéder. Voir [Autorisations](/l/fr/user-guide/permissions-access/capabilities/permissions) pour plus de détails.
+</Note>

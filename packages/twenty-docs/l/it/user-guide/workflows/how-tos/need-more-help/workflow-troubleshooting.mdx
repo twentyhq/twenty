@@ -1,0 +1,170 @@
+---
+title: Risoluzione dei problemi del flusso di lavoro
+description: Problemi comuni dei flussi di lavoro e come risolverli.
+---
+
+## Problemi comuni e soluzioni
+
+### Flusso di lavoro non attivato
+
+**Sintomi**: Il flusso di lavoro non viene eseguito quando previsto.
+
+**Possibili cause**:
+
+1. **Flusso di lavoro non attivato**: Assicurati che il flusso di lavoro sia impostato su "Attivo" e non su "Bozza"
+2. **Condizioni del trigger non soddisfatte**: Verifica che il trigger corrisponda all'evento previsto
+3. **Campo non monitorato**: Per i trigger "Record is Updated", assicurati che il campo specifico sia monitorato
+4. **Autorizzazioni**: Verifica di avere l'autorizzazione per eseguire i flussi di lavoro
+
+**Soluzioni**:
+
+* Verifica lo stato del flusso di lavoro nell'elenco dei flussi di lavoro
+* Esegui un test con l'azione specifica che dovrebbe attivarlo
+* Rivedi la configurazione del trigger
+* Contatta l'amministratore per le autorizzazioni
+
+### Il flusso di lavoro si attiva troppo presto (campi vuoti)
+
+**Sintomi**: Quando crei manualmente un record nell'interfaccia utente, il flusso di lavoro si attiva prima che tu abbia il tempo di compilare tutti i campi. Il flusso di lavoro viene eseguito con valori di campo per la maggior parte vuoti.
+
+**Perché accade**: Twenty salva tutto in tempo reale — non esiste una modalità separata "modifica" vs "lettura". Quando crei un record, questo viene salvato immediatamente, attivando l'evento "Record is created" prima che tu possa compilare i campi aggiuntivi.
+
+**Quando "Record is created" funziona bene**:
+
+* Record creati tramite chiamate API (i campi vengono popolati in un'unica richiesta)
+* Record creati tramite importazione
+* Creazione automatizzata di record da altri flussi di lavoro
+
+**Soluzione**: Per i record creati manualmente nell'interfaccia utente, usa **"Record is created or updated"** come trigger. In questo modo:
+
+* Il flusso di lavoro si attiva dopo che l'utente ha terminato di compilare e salvare i campi
+* Ottieni i dati completi invece di valori vuoti
+
+<Tip>
+  Se desideri che il flusso di lavoro venga eseguito solo una volta per record, aggiungi un'azione Filter per verificare un campo come `createdAt equals updatedAt` (primo salvataggio) oppure usa un campo casella di controllo personalizzato per tracciare se il flusso di lavoro è già stato eseguito.
+</Tip>
+
+### Azioni non riuscite
+
+**Sintomi**: Il flusso di lavoro viene eseguito ma alcune azioni non riescono.
+
+**Possibili cause**:
+
+1. **Dati mancanti**: I campi obbligatori sono vuoti
+2. **Riferimenti non validi**: Le variabili dei passaggi precedenti non esistono
+3. **Errori API**: I servizi esterni restituiscono errori
+4. **Problemi di autorizzazioni**: L'azione richiede autorizzazioni che non possiedi
+
+**Soluzioni**:
+
+* Controlla i dettagli dell'esecuzione del flusso di lavoro per eventuali messaggi di errore
+* Verifica che tutti i campi obbligatori abbiano un valore
+* Testa le connessioni API in modo indipendente
+* Rivedi le autorizzazioni del ruolo
+
+### Errori delle richieste HTTP
+
+**Sintomi**: Le azioni HTTP Request non riescono o restituiscono risultati inattesi.
+
+**Codici di errore comuni**:
+
+* **400**: Richiesta non valida - controlla il formato del corpo della richiesta
+* **401**: Non autorizzato - verifica la chiave API
+* **403**: Vietato - controlla le autorizzazioni dell'API
+* **404**: Non trovato - verifica l'URL dell'endpoint
+* **429**: Troppe richieste - implementa la limitazione della frequenza
+* **500**: Errore del server - problema del servizio esterno
+
+**Soluzioni**:
+
+* Verifica l'URL dell'endpoint API
+* Controlla le intestazioni di autenticazione
+* Esegui prima il test della chiamata API al di fuori di Twenty
+* Aggiungi la gestione degli errori nelle azioni di Codice
+
+### Errori delle azioni di Codice
+
+**Sintomi**: Il codice JavaScript non viene eseguito.
+
+**Problemi comuni**:
+
+1. **Errori di sintassi**: Refusi o JavaScript non valido
+2. **Variabili non definite**: Riferimento a variabili che non esistono
+3. **Errori di tipo**: Operazioni su tipi di dati errati
+4. **Timeout**: Il codice impiega troppo tempo per essere eseguito
+
+**Soluzioni**:
+
+* Usa la convalida dell'editor di codice integrato
+* Verifica prima la logica del codice in una console JavaScript
+* Aggiungi istruzioni console.log per il debug
+* Semplifica le operazioni complesse
+
+### Le email non vengono inviate
+
+**Sintomi**: L'azione Invia email non recapita le email.
+
+**Possibili cause**:
+
+1. **Nessun account email connesso**: Controlla Impostazioni → Account
+2. **Indirizzo email non valido**: L'email del destinatario non è valida
+3. **Limiti di invio**: Raggiunti i limiti di frequenza del provider email
+4. **Filtri antispam**: Le email vengono bloccate
+
+**Soluzioni**:
+
+* Verifica la connessione dell'account email
+* Convalida gli indirizzi email dei destinatari
+* Controlla i limiti del provider email
+* Rivedi il contenuto dell'email per possibili trigger di spam
+
+## Debug dei flussi di lavoro
+
+### Utilizzo delle esecuzioni del flusso di lavoro
+
+1. Vai all'editor dei flussi di lavoro
+2. Apri il pannello **Esecuzioni**
+3. Trova l'esecuzione non riuscita
+4. Fai clic per vedere i dettagli passo dopo passo
+5. Rivedi i messaggi di errore e i dati di output
+
+### Test dei singoli passaggi
+
+1. Per le azioni di Codice, usa il pulsante **Test**
+2. Per le richieste HTTP, testa separatamente l'endpoint
+3. Crea record di test per attivare i flussi di lavoro
+4. Usa trigger manuali per test controllati
+
+### Schemi comuni di debug
+
+**Aggiungi logging**:
+Usa le azioni di Codice per registrare valori intermedi per il debug.
+
+**Isola i passaggi**:
+Testa ogni passaggio in modo indipendente per identificare gli errori.
+
+**Controlla il flusso dei dati**:
+Verifica che ogni passaggio riceva i dati di input previsti.
+
+## Buone pratiche per evitare problemi
+
+### Prima dell'attivazione
+
+* Esegui test approfonditi in modalità bozza
+* Convalida tutte le connessioni API
+* Rivedi attentamente le condizioni del trigger
+* Documenta il comportamento previsto
+
+### Durante lo sviluppo
+
+* Usa nomi di passaggio descrittivi
+* Aggiungi commenti nelle azioni di Codice
+* Testa con dati realistici
+* Pianifica i casi limite
+
+### Dopo l'attivazione
+
+* Monitora attentamente le esecuzioni iniziali
+* Configura avvisi per gli errori
+* Rivedi regolarmente la cronologia delle esecuzioni
+* Mantieni i flussi di lavoro semplici quando possibile

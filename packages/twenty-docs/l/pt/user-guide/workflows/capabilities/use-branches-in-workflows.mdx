@@ -1,0 +1,90 @@
+---
+title: Use ramificações em fluxos de trabalho
+description: Entenda como as ramificações funcionam e como controlar qual caminho é executado.
+---
+
+## Como as ramificações funcionam
+
+No editor de fluxos de trabalho, você pode criar vários caminhos (ramificações) saindo de um único nó. Isso permite criar automações complexas com resultados diferentes.
+
+**Importante**: Quando um fluxo de trabalho é executado, **todas as ramificações são executadas em paralelo por padrão**. Não há lógica "if/else" integrada para escolher uma ramificação em vez de outra — todos os caminhos serão executados simultaneamente.
+
+## Controlando qual ramificação é executada
+
+Para executar apenas uma ramificação com base em condições específicas, **adicione um nó Filter no início de cada ramificação**.
+
+### Exemplo de configuração
+
+1. Crie seu fluxo de trabalho com várias ramificações a partir de um único nó
+2. Adicione um nó **Filter** como a primeira etapa de cada ramificação
+3. Defina condições em cada Filter para determinar quando essa ramificação deve continuar
+4. Somente as ramificações cujas condições do Filter forem atendidas prosseguirão
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+
+### Como funcionam os nós Filter
+
+* Se a condição do Filter for **atendida**: A ramificação continua em execução
+* Se a condição do Filter **não for atendida**: A ramificação para no nó Filter
+
+Isso efetivamente cria uma lógica condicional em que apenas a ramificação apropriada é executada com base nos seus dados.
+
+## Exemplo: Roteamento por tamanho do negócio
+
+**Cenário**: Quando um negócio é fechado, envie notificações diferentes com base no tamanho do negócio.
+
+1. **Gatilho**: Oportunidade atualizada (Estágio = Closed Won)
+2. **Ramificação 1**: Filter para Amount > $10,000 → Enviar mensagem no Slack para #big-deals
+3. **Ramificação 2**: Filter para Amount ≤ $10,000 → Enviar e-mail para o gerente de vendas
+
+Ambas as ramificações iniciam, mas somente aquela que corresponder ao valor do negócio continuará além do seu Filter.
+
+## Criando ramificações
+
+<Note>
+  Para criar uma nova ramificação a partir de uma etapa existente, clique no botão **+** na etapa e adicione sua ação. Você pode adicionar várias ramificações clicando em **+** várias vezes.
+</Note>
+
+1. No editor de fluxos de trabalho, selecione a etapa a partir da qual deseja ramificar
+2. Clique no botão **+** para adicionar uma ação
+3. Isso cria uma ramificação
+4. Clique em **+** novamente na mesma etapa para criar ramificações adicionais
+5. Cada ramificação pode ter sua própria sequência de ações
+
+## Unindo ramificações novamente
+
+Depois que as ramificações paralelas concluírem seu trabalho, você pode uní-las novamente em um único caminho:
+
+1. Conclua suas ações ramificadas
+2. Adicione uma nova etapa que deve ser executada após todas as ramificações
+3. Arraste uma conexão da última etapa de cada ramificação para essa nova etapa
+4. A etapa unificada aguarda todas as ramificações conectadas concluírem antes de ser executada
+
+### Exemplo: Processar e depois notificar
+
+```
+Gatilho
+   │
+   ├── Ramificação A: Atualizar registro do cliente
+   │
+   └── Ramificação B: Criar ticket de suporte
+
+       ↘  ↙
+
+   Etapa unificada: Enviar e-mail de confirmação
+```
+
+O e-mail de confirmação é enviado somente depois que a atualização do cliente e a criação do ticket forem concluídas.
+
+## Melhores Práticas
+
+* Sempre use **nós Filter** no início das ramificações quando quiser execução condicional
+* Mantenha as condições das ramificações **mutuamente exclusivas** para evitar ações duplicadas
+* Teste seus fluxos de trabalho com dados diferentes para garantir que as ramificações corretas sejam executadas
+* **Renomeie as etapas das ramificações** de forma descritiva para que fique claro o que cada caminho faz
+* **Una as ramificações** quando precisar de uma ação final após o processamento em paralelo
+
+## Relacionados
+
+* [Perguntas frequentes sobre fluxos de trabalho](/l/pt/user-guide/workflows/how-tos/need-more-help/workflows-faq) — respostas sobre execução paralela
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions) — ações disponíveis para ramificações

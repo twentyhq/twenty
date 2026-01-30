@@ -1,0 +1,155 @@
+---
+title: 数据模型常见问题解答
+description: 关于 Twenty 数据模型的常见问题。
+---
+
+## 对象管理
+
+<AccordionGroup>
+  <Accordion title="我可以删除自定义对象吗？">
+    是的，可以删除自定义对象。 您也可以先将其停用，这会在界面中隐藏该对象及其数据，同时保留这些数据。
+  </Accordion>
+
+  <Accordion title="我可以删除标准对象（人员、公司等）吗？">
+    不可以，标准对象无法删除。 您只能将其停用，这会在界面中将其隐藏，但会保留数据。
+  </Accordion>
+
+  <Accordion title="我可以创建多少个自定义对象？">
+    您可以根据需要创建任意多的自定义对象和字段 — 价格不会变。
+  </Accordion>
+
+  <Accordion title="我可以重命名标准对象吗？">
+    您可以重命名标准对象的标签（People、Companies、Opportunities），但不能更改其 API 名称。 为了在所有 Twenty 工作区中保持一致性，API 名称是固定的。
+  </Accordion>
+
+  <Accordion title="我可以更改对象的图标吗？">
+    可以，您可以在 **设置 → 数据模型** 中更改标准对象和自定义对象的图标。
+  </Accordion>
+
+  <Accordion title="我可以在左侧导航栏中重新排列对象吗？">
+    还不可以。 导航中的对象排序目前是固定的，但该功能计划于未来发布。
+  </Accordion>
+
+  <Accordion title="我可以隐藏左侧导航栏中的对象吗？">
+    所有活动对象都将出现在导航中。 您可以在 **设置 → 数据模型** 下停用不需要的对象。
+  </Accordion>
+</AccordionGroup>
+
+## 字段功能
+
+<AccordionGroup>
+  <Accordion title="创建后我可以更改字段类型吗？">
+    不可以，字段类型在创建后无法更改。 如果您需要其他类型，请创建一个具有正确类型的新字段，迁移您的数据，然后停用旧字段。
+  </Accordion>
+
+  <Accordion title="为什么我需要不同的单复数名称？">
+    我们的 GraphQL API 针对不同操作使用单复数形式：
+
+    * `createPerson`（单数）用于单个记录操作
+    * `createPeople`（复数）用于批量操作
+
+    当单复数形式相同时，这会产生限制，但它改善了开发者的体验。
+  </Accordion>
+
+  <Accordion title="为什么某些字段名称是受保护的？">
+    某些字段名称如 `Type` 或 `Application` 被保留用于系统使用。 请选择其他名称，如 `Category` 或 `Classification`。
+  </Accordion>
+
+  <Accordion title="停用字段会发生什么？">
+    * 该字段会在界面中被隐藏
+    * 现有数据将被保留
+    * 您仍可通过 API 访问该字段
+    * 现有关联将保留，但您无法创建新的关联
+    * 您可以稍后重新启用该字段
+  </Accordion>
+
+  <Accordion title="我可以将字段设为必填吗？">
+    目前，您无法将自定义字段设为必填。 所有字段都接受空值。 您可以使用工作流在字段为空时发送警报或阻止操作，以强制执行必填字段。
+  </Accordion>
+
+  <Accordion title="唯一与必填有什么区别？">
+    * **唯一**：任意两条记录在该字段中的值不能相同
+    * **必填**：该字段必须有值（目前不支持自定义字段）
+  </Accordion>
+
+  <Accordion title="我可以创建公式字段吗？">
+    公式字段将在 **2026 年第一季度** 推出。 同时，您可以使用工作流程来自动计算和更新字段值。
+  </Accordion>
+
+  <Accordion title="我可以在我的对象中使用嵌套字段吗？">
+    嵌套字段将在 **2026 年第一季度** 推出。 目前，您可以使用工作流程从相关对象中获取字段值。 例如，要在人员记录上显示公司的行业信息，可以在人员自定义字段中创建一个自定义字段，并使用工作流程来同步该值。
+  </Accordion>
+
+  <Accordion title="我可以在对象中重新排序字段吗？">
+    字段重新排序将伴随自定义布局在 **2025 年第四季度** 推出。 目前，字段按字母顺序显示。
+  </Accordion>
+</AccordionGroup>
+
+## 关系
+
+<AccordionGroup>
+  <Accordion title="我可以创建指向同一对象的关系吗？">
+    是! 支持自引用关系，并建议在账户层级等用例中使用。 例如，从"公司"到"公司"创建关系，以跟踪父/子账户。
+  </Accordion>
+
+  <Accordion title="我可以创建多对多关系吗？">
+    多对多关系将在 **2026 年上半年** 推出。 目前，可以创建一个中间对象，建立两个一对多关系作为替代方案。
+
+    例如，要关联人员和项目（多对多），请创建一个 "项目分配" 对象，其中包含：
+
+    * 到人员的关系（多个分配 → 一名人员）
+    * 到项目的关系（多个分配 → 一个项目）
+  </Accordion>
+
+  <Accordion title="什么是指向多个对象类型的关系（Morph 关系）？">
+    这使单个对象能够通过一个字段关联到多种不同的对象类型。 例如，备注可以同时附加到人员、公司和商机。
+
+    每条备注同时关联到一名人员、一家公司和一个商机。
+
+    在 [关系字段](/l/zh/user-guide/data-model/capabilities/relation-fields) 中了解更多。
+  </Accordion>
+
+  <Accordion title="同一对对象之间可以有多个关系吗？">
+    可以，您可以在同一对对象之间创建多个关系。 例如，一个公司可以同时与人员建立 "主要联系人" 和 "账单联系人" 两个关系。
+  </Accordion>
+
+  <Accordion title="当我删除一条记录时，关系会发生什么变化？">
+    当您删除记录时，相关记录中的关系链接会被移除。 相关记录本身不会被删除。
+  </Accordion>
+
+  <Accordion title="我可以创建循环关系吗？">
+    尽管在技术上可行，循环关系（A → B → C → A）应尽量避免，因为它们可能导致混淆并带来潜在的性能问题。
+  </Accordion>
+</AccordionGroup>
+
+## 访问权限
+
+<AccordionGroup>
+  <Accordion title="我在哪里可以查看和编辑我的数据模型？">
+    前往 **设置 → 数据模型** 查看并编辑您的所有对象和字段。
+  </Accordion>
+
+  <Accordion title="为什么我在设置中看不到数据模型？">
+    请联系您的工作区管理员。 数据模型访问通常仅限于管理员。
+  </Accordion>
+</AccordionGroup>
+
+## 数据管理
+
+<AccordionGroup>
+  <Accordion title="记录数量是否有限制？">
+    记录数量没有硬性上限。 但是，非常大的数据集可能会影响某些视图中的性能。 使用筛选器和视图高效管理大型数据集。
+  </Accordion>
+
+  <Accordion title="我可以将数据导入自定义对象吗？">
+    是的，您可以将 CSV 数据导入任何对象，包括自定义对象。 导入过程支持自定义字段的映射。 参见 [如何准备 CSV 文件](/l/zh/user-guide/data-migration/how-tos/prepare-your-csv-files)。
+  </Accordion>
+
+  <Accordion title="我可以导出我的数据模型配置吗？">
+    目前，数据模型配置没有内置导出功能。 如果您需要在工作区之间迁移数据模型，请联系支持团队。
+  </Accordion>
+</AccordionGroup>
+
+## 需要更多帮助吗？
+
+查看我们的 [实施服务](/l/zh/user-guide/getting-started/capabilities/implementation-services) 以获取复杂数据模型设计方面的帮助。

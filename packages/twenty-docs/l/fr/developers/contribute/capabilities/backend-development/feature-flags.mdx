@@ -1,0 +1,46 @@
+---
+title: Drapeaux de fonctionnalité
+---
+
+Les drapeaux de fonctionnalité sont utilisés pour masquer les fonctionnalités expérimentales. Pour Twenty, ils sont définis au niveau de l'espace de travail et non au niveau de l'utilisateur.
+
+## Ajout d'un nouveau drapeau de fonctionnalité
+
+Dans `FeatureFlagKey.ts` ajoutez l'indicateur de fonctionnalité :
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Ajoutez-le également à l'énumération dans `feature-flag.entity.ts` :
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Pour appliquer un drapeau de fonctionnalité à une fonctionnalité **back-end**, utilisez :
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Pour appliquer un drapeau de fonctionnalité à une fonctionnalité **front-end**, utilisez :
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Configurer les drapeaux de fonctionnalité pour le déploiement
+
+Modifiez l'enregistrement correspondant dans la Table `core.featureFlag` :
+
+| iD        | clé                      | workspaceId | valeur |
+| --------- | ------------------------ | ----------- | ------ |
+| Aléatoire | `IS_FEATURENAME_ENABLED` | WorkspaceID | `vrai` |

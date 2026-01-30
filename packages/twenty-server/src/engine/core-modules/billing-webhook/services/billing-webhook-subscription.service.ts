@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
+import { msg } from '@lingui/core/macro';
 
 import type Stripe from 'stripe';
 
@@ -13,13 +14,19 @@ import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from '
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import { transformStripeSubscriptionEventToDatabaseSubscription } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription.util';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -29,11 +36,9 @@ import {
   CleanWorkspaceDeletionWarningUserVarsJob,
   type CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
-import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
-import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class BillingWebhookSubscriptionService {
   protected readonly logger = new Logger(
     BillingWebhookSubscriptionService.name,
@@ -70,12 +75,27 @@ export class BillingWebhookSubscriptionService {
       withDeleted: true,
     });
 
+    if (!workspace) {
+      throw new BillingException(
+        `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
+        },
+      );
+    }
+
     if (
-      !workspace ||
-      (isDefined(workspace?.deletedAt) &&
-        type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED)
+      isDefined(workspace.deletedAt) &&
+      type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
     ) {
-      return { noWorkspace: true };
+      throw new BillingException(
+        `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
+        },
+      );
     }
 
     await this.billingCustomerRepository.upsert(
@@ -108,7 +128,10 @@ export class BillingWebhookSubscriptionService {
     );
 
     if (!updatedBillingSubscription) {
-      throw new Error('Billing subscription not found');
+      throw new BillingException(
+        'Billing subscription not found after upsert',
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
     }
 
     await this.updateBillingSubscriptionItems(
@@ -116,25 +139,21 @@ export class BillingWebhookSubscriptionService {
       event,
     );
 
-    if (
-      this.shouldSuspendWorkspace(data) &&
-      workspace.activationStatus == WorkspaceActivationStatus.ACTIVE
-    ) {
-      await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.SUSPENDED,
-      });
-    }
+    const shouldSuspend = this.shouldSuspendWorkspace(data);
 
-    if (
-      this.shouldSuspendWorkspace(data) &&
-      workspace.activationStatus === WorkspaceActivationStatus.PENDING_CREATION
-    ) {
-      await this.workspaceService.deleteWorkspace(workspace.id);
-    }
-
-    if (
-      !this.shouldSuspendWorkspace(data) &&
-      workspace.activationStatus == WorkspaceActivationStatus.SUSPENDED
+    if (shouldSuspend) {
+      if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
+        await this.workspaceRepository.update(workspaceId, {
+          activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        });
+      } else if (
+        workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION
+      ) {
+        await this.workspaceService.deleteWorkspace(workspace.id);
+      }
+    } else if (
+      workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -177,23 +196,24 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionUpdatedEvent.Data
       | Stripe.CustomerSubscriptionCreatedEvent.Data
       | Stripe.CustomerSubscriptionDeletedEvent.Data,
-  ) {
-    const timeSinceTrialEnd = Date.now() / 1000 - (data.object.trial_end || 0);
-    const hasTrialJustEnded =
-      timeSinceTrialEnd < 60 * 60 * 24 && timeSinceTrialEnd > 0;
+  ): boolean {
+    const status = data.object.status as SubscriptionStatus;
 
-    if (
-      [
-        SubscriptionStatus.Canceled,
-        SubscriptionStatus.Unpaid,
-        SubscriptionStatus.Paused, // TODO: remove this once paused subscriptions are deprecated
-      ].includes(data.object.status as SubscriptionStatus) ||
-      (hasTrialJustEnded && data.object.status === SubscriptionStatus.PastDue)
-    ) {
+    const suspendedStatuses = [
+      SubscriptionStatus.Canceled,
+      SubscriptionStatus.Unpaid,
+      SubscriptionStatus.Paused, // TODO: remove this once paused subscriptions are deprecated
+    ];
+
+    if (suspendedStatuses.includes(status)) {
       return true;
     }
 
-    return false;
+    const timeSinceTrialEnd = Date.now() / 1000 - (data.object.trial_end || 0);
+    const hasTrialJustEnded =
+      timeSinceTrialEnd > 0 && timeSinceTrialEnd < 60 * 60 * 24;
+
+    return hasTrialJustEnded && status === SubscriptionStatus.PastDue;
   }
 
   async updateBillingSubscriptionItems(

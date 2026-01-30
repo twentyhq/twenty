@@ -1,5 +1,5 @@
-import { type HttpRequestBody } from '../../constants/HttpRequest';
-import { hasNonStringValues } from '../hasNonStringValues';
+import { type HttpRequestBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { hasNonStringValues } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/hasNonStringValues';
 
 describe('hasNonStringValues', () => {
   it('should return true for empty object', () => {

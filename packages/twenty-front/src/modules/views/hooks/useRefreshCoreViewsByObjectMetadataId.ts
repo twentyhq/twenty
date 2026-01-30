@@ -6,7 +6,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/selectors/coreViewsByObjectMetadataIdFamilySelector';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
-import { getFilterableFieldsWithVectorSearch } from '@/views/utils/getFilterableFieldsWithVectorSearch';
+import { getFilterableFields } from '@/views/utils/getFilterableFields';
 
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
@@ -117,7 +117,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
               }),
               mapViewFiltersToFilters(
                 view.viewFilters,
-                getFilterableFieldsWithVectorSearch(objectMetadataItem),
+                getFilterableFields(objectMetadataItem),
               ),
             );
           }

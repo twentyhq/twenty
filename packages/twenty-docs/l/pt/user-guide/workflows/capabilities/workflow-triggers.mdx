@@ -1,0 +1,136 @@
+---
+title: Gatilhos de Fluxo de Trabalho
+description: Conheça os diferentes gatilhos que iniciam os seus fluxos de trabalho.
+---
+
+## Sobre os Gatilhos
+
+Os fluxos de trabalho sempre começam com um único gatilho que define quando a automação deve ser executada.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Objetos avançados são suportados!** Além dos objetos padrão de CRM (Pessoas, Empresas, Oportunidades), você também pode acionar fluxos de trabalho e executar ações em:
+
+  * Membros do Workspace
+  * Eventos de Calendário
+  * Mensagens (E-mails)
+  * Tarefas, Notas e muitos outros objetos do sistema
+
+  Isso possibilita automações poderosas, como notificar membros da equipe quando eventos de calendário são criados ou processar automaticamente e-mails recebidos.
+</Tip>
+
+## Registro é Criado
+
+Inicia o fluxo de trabalho quando um novo registro é criado em um objeto selecionado (Pessoas, Empresas, Oportunidades ou qualquer objeto personalizado).
+
+**Configuração**: Selecione o tipo de objeto para monitorar novos registros.
+
+<Note>
+  * Este gatilho é ótimo para registros criados por CSV, sincronização de caixa de correio e calendário, API.
+  * **Não é recomendado para registros criados manualmente**: com este gatilho, os fluxos de trabalho começam assim que o registro é criado. Como o Twenty UI oferece salvamento automático em tempo real (não há um modo de edição e depois uma validação para salvar registros), o fluxo de trabalho será acionado antes que o usuário preencha todos os campos.
+    Para acionar este fluxo de trabalho em registros criados manualmente, recomenda-se usar o gatilho `Record is created or updated`.
+</Note>
+
+## Registro é Atualizado
+
+Inicia o fluxo de trabalho quando alterações são feitas em um registro existente.
+
+**Configuração**:
+
+* Selecione o tipo de objeto
+* Opcionalmente, especifique quais campos monitorar para alterações
+
+## Registro é Atualizado ou Criado
+
+Inicia o fluxo de trabalho quando um registro é criado ou atualizado em um objeto selecionado.
+
+**Por que isto é importante**: Este gatilho é particularmente útil porque registros criados por métodos diferentes se comportam de maneira diferente:
+
+* **Importações API/CSV**: Registros são criados com todos os campos preenchidos imediatamente
+* **Criação manual**: Registros são criados primeiro, depois os campos são adicionados em atualizações subsequentes
+
+**Configuração**:
+
+* Selecione o tipo de objeto para monitorar
+* Opcionalmente, especifique quais campos monitorar para alterações
+* O fluxo de trabalho será acionado tanto na criação inicial quanto em quaisquer atualizações subsequentes
+
+## Registro é Excluído
+
+Inicia o fluxo de trabalho quando um registro é removido de um objeto.
+
+**Configuração**: Selecione o tipo de objeto para monitorar exclusões.
+
+## Gatilho Manual
+
+Inicia o fluxo de trabalho quando acionado por uma ação do usuário. Este gatilho pode ser acessado pelo menu `Cmd+K` ou por um botão personalizado que será exibido na barra de navegação superior após selecionar um ou mais registros.
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Configuração de Disponibilidade**:
+Escolha como o fluxo de trabalho deve lidar com a seleção de registros:
+
+* **Global**: Nenhum registro é necessário para acionar este fluxo de trabalho. O fluxo de trabalho é acionado a partir do menu de comando `Cmd + K` em qualquer lugar (de qualquer objeto) e não usa registros como entrada.
+
+* **Único**: O(s) registro(s) selecionado(s) será(ão) passado(s) para o seu fluxo de trabalho. Está configurado para um determinado objeto. Vários registros podem ser selecionados antes de acionar o fluxo de trabalho. O fluxo de trabalho será executado do início ao fim tantas vezes quanto houver registros selecionados.
+
+  <Note>
+    **Limite flexível: 100 execuções/minuto**. Além disso, os fluxos de trabalho permanecem com o status "Not Started" e são processados gradualmente — seja por uma tarefa em segundo plano ou quando outro fluxo de trabalho entra na fila. Isso significa que você pode selecionar mais de 100 registros com um gatilho único; a execução será apenas mais lenta.
+  </Note>
+
+* **Em Massa**: O(s) registro(s) selecionado(s) será(ão) passado(s) para o seu fluxo de trabalho. Está configurado para um determinado objeto. Vários registros podem ser selecionados antes de acionar o fluxo de trabalho. O fluxo de trabalho será executado uma vez, fornecendo a lista completa de registros como entrada. Isso significa que o fluxo de trabalho precisa conter uma [ação de iterador](/l/pt/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  Isto é mais avançado e é melhor para pessoas que desejam otimizar o número de execuções de fluxo de trabalho.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Configuração Adicional**:
+
+* Selecione o objeto alvo (para disponibilidade Única e em Massa)
+* Escolha um ícone de comando para acionar o fluxo de trabalho
+* Configure o local da barra de navegação (Fixado ou Não Fixado)
+
+**Métodos de Acesso**:
+
+* `Cmd+K` menu para encontrar e iniciar fluxos de trabalho manuais
+* Botão personalizado na barra de navegação superior (se configurado)
+
+## Gatilho baseado em tempo: Em um cronograma
+
+Inicia o fluxo de trabalho em uma base recorrente que você define.
+
+**Configuração**:
+
+* Selecione a unidade de tempo (minutos, horas, dias)
+* Insira um valor ou utilize expressões cron personalizadas para agendamentos avançados
+
+<Note>
+  **Fuso horário**: Fluxos de trabalho agendados são executados em **UTC**. Ao definir horários para agendamentos diários, converta seu horário local para UTC.
+</Note>
+
+## Gatilho Externo: Webhook
+
+Inicia o fluxo de trabalho quando uma solicitação GET ou POST é recebida de um serviço externo.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Configuração**:
+
+* O fluxo de trabalho fornece uma URL de webhook exclusiva — copie-a e adicione-a ao seu sistema externo como o endpoint a ser chamado.
+* Para requisições POST, defina a estrutura de corpo esperada para que o Twenty saiba quais dados esperar. Adicione aqui os campos que você receberá e que serão necessários abaixo no seu fluxo de trabalho.
+* Configure a autenticação (em breve).
+
+## Escolhendo o Gatilho Correto
+
+| Caso de uso                                   | Gatilho recomendado             |
+| --------------------------------------------- | ------------------------------- |
+| Novos leads precisam de processamento         | Registro é Criado               |
+| Alterações de dados precisam de sincronização | Registro é Atualizado           |
+| Importação/manipulação manual de dados        | Registro é Atualizado ou Criado |
+| Limpeza após exclusão                         | Registro é Excluído             |
+| Ação iniciada pelo usuário                    | Iniciar Manualmente             |
+| Relatórios recorrentes                        | Agendamento                     |
+| Integração externa                            | Webhook ou Em um cronograma     |

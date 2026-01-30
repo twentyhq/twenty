@@ -1,0 +1,155 @@
+---
+title: FAQ del modello dati
+description: Domande frequenti sul modello dati di Twenty.
+---
+
+## Gestione degli Oggetti
+
+<AccordionGroup>
+  <Accordion title="Posso eliminare un oggetto personalizzato?">
+    Sì, gli oggetti personalizzati possono essere eliminati. Puoi anche disattivarli prima, il che nasconde l'oggetto e i relativi dati dall'interfaccia, preservando i dati.
+  </Accordion>
+
+  <Accordion title="Posso eliminare gli oggetti standard (Persone, Aziende, ecc.)?">
+    No, gli oggetti standard non possono essere eliminati. Puoi solo disattivarli, il che li nasconde dall'interfaccia ma preserva i dati.
+  </Accordion>
+
+  <Accordion title="Quanti oggetti personalizzati posso creare?">
+    Puoi creare quanti oggetti e campi personalizzati ti servono: il prezzo non cambia.
+  </Accordion>
+
+  <Accordion title="Posso rinominare un oggetto standard?">
+    Puoi rinominare l'etichetta degli oggetti standard (Persone, Aziende, Opportunità), ma non i loro nomi API. I nomi API sono fissi per garantire coerenza in tutti gli spazi di lavoro di Twenty.
+  </Accordion>
+
+  <Accordion title="Posso cambiare l'icona di un oggetto?">
+    Sì, puoi cambiare l'icona sia per gli oggetti standard sia per quelli personalizzati in **Settings → Data Model**.
+  </Accordion>
+
+  <Accordion title="Posso riordinare gli oggetti nella barra di navigazione a sinistra?">
+    Non ancora. L'ordinamento degli oggetti nella navigazione è attualmente fisso, ma questa funzionalità è pianificata per una futura versione.
+  </Accordion>
+
+  <Accordion title="Posso nascondere gli oggetti dalla barra di navigazione a sinistra?">
+    Tutti gli oggetti attivi appaiono nella navigazione. Puoi disattivare gli oggetti di cui non hai bisogno in **Impostazioni → Modello dati**.
+  </Accordion>
+</AccordionGroup>
+
+## Funzionalità dei Campi
+
+<AccordionGroup>
+  <Accordion title="Posso cambiare il tipo di un campo dopo la creazione?">
+    No, i tipi di campo non possono essere cambiati dopo la creazione. Se ti serve un tipo diverso, crea un nuovo campo con il tipo corretto, migra i tuoi dati e poi disattiva il vecchio campo.
+  </Accordion>
+
+  <Accordion title="Perché ho bisogno di nomi singolari e plurali diversi?">
+    La nostra API GraphQL utilizza entrambe le forme per operazioni diverse:
+
+    * `createPerson` (singolare) per azioni su singoli record
+    * `createPeople` (plurale) per operazioni di massa
+
+    Questo crea limitazioni quando le forme singolari e plurali sono le stesse, ma migliora l'esperienza dello sviluppatore.
+  </Accordion>
+
+  <Accordion title="Perché alcuni nomi di campi sono protetti?">
+    Certi nomi di campi come `Tipo` o `Applicazione` sono riservati per uso di sistema. Scegli nomi alternativi come `Categoria` o `Classificazione`.
+  </Accordion>
+
+  <Accordion title="Cosa succede quando disattivo un campo?">
+    * Il campo viene nascosto dall'interfaccia
+    * I dati esistenti vengono conservati
+    * Puoi ancora accedere al campo tramite API
+    * Le relazioni esistenti rimangono, ma non puoi crearne di nuove
+    * Puoi riattivare il campo in un secondo momento
+  </Accordion>
+
+  <Accordion title="Posso rendere obbligatorio un campo?">
+    Attualmente non puoi rendere obbligatori i campi personalizzati. Tutti i campi accettano valori vuoti. Puoi utilizzare i flussi di lavoro per imporre i campi obbligatori inviando avvisi o bloccando le azioni quando i campi sono vuoti.
+  </Accordion>
+
+  <Accordion title="Qual è la differenza tra univoco e obbligatorio?">
+    * **Univoco**: non possono esserci due record con lo stesso valore in questo campo
+    * **Obbligatorio**: il campo deve avere un valore (attualmente non supportato per i campi personalizzati)
+  </Accordion>
+
+  <Accordion title="Posso creare campi di formula?">
+    I campi di formula arriveranno nel **Q1 2026**. Nel frattempo, puoi utilizzare i Workflows per calcolare e aggiornare automaticamente i valori dei campi.
+  </Accordion>
+
+  <Accordion title="Posso avere campi nidificati nei miei oggetti?">
+    I campi nidificati arriveranno nel **Q1 2026**. Attualmente, puoi utilizzare i Workflows per importare i valori dei campi da oggetti correlati. Ad esempio, per visualizzare il settore di un'azienda sul record di una Persona, crea un campo personalizzato su Persone e utilizza un Workflow per sincronizzare il valore.
+  </Accordion>
+
+  <Accordion title="Posso riordinare i campi negli oggetti?">
+    Il riordino dei campi sarà disponibile con layout personalizzati nel **Q4 2025**. Attualmente, i campi sono visualizzati in ordine alfabetico.
+  </Accordion>
+</AccordionGroup>
+
+## Relazioni
+
+<AccordionGroup>
+  <Accordion title="Posso avere una relazione che punta allo stesso oggetto?">
+    Sì! Le relazioni auto-referenziali sono supportate e consigliate per casi d'uso come le gerarchie di account. Ad esempio, crea una relazione da Aziende ad Aziende per tracciare account padre/figlio.
+  </Accordion>
+
+  <Accordion title="Posso creare relazioni molti-a-molti?">
+    Le relazioni molti-a-molti arriveranno nell'H1 2026. Attualmente, crea un oggetto intermedio con due relazioni uno-a-molti come soluzione alternativa.
+
+    Ad esempio, per collegare Persone e Progetti (molti-a-molti), crea un oggetto "Assegnazioni ai progetti" con:
+
+    * Una relazione con Persone (molte assegnazioni → una persona)
+    * Una relazione con Progetti (molte assegnazioni → un progetto)
+  </Accordion>
+
+  <Accordion title="Cosa sono le relazioni verso più tipi di oggetti (relazioni Morph)?">
+    Queste consentono a un oggetto di relazionarsi a più tipi di oggetti diversi tramite un unico campo. Ad esempio, le Note possono essere associate contemporaneamente a Persone E Aziende E Opportunità.
+
+    Ogni Nota è collegata contemporaneamente a una Persona, a un'Azienda e a un'Opportunità.
+
+    Scopri di più in [Campi di relazione](/l/it/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="Posso avere più relazioni tra gli stessi oggetti?">
+    Sì, puoi creare più relazioni tra gli stessi due oggetti. Ad esempio, un'Azienda potrebbe avere sia una relazione "Contatto principale" sia una relazione "Contatto di fatturazione" con Persone.
+  </Accordion>
+
+  <Accordion title="Cosa succede alle relazioni quando elimino un record?">
+    Quando elimini un record, il collegamento della relazione viene rimosso dai record correlati. I record correlati non vengono eliminati.
+  </Accordion>
+
+  <Accordion title="Posso creare relazioni circolari?">
+    Sebbene tecnicamente possibili, le relazioni circolari (A → B → C → A) andrebbero evitate perché possono causare confusione e potenziali problemi di prestazioni.
+  </Accordion>
+</AccordionGroup>
+
+## Accesso e Permessi
+
+<AccordionGroup>
+  <Accordion title="Dove posso vedere e modificare il mio modello dati?">
+    Vai a **Settings → Data Model** per visualizzare e modificare tutti i tuoi oggetti e campi.
+  </Accordion>
+
+  <Accordion title="Perché non riesco a vedere il Modello Dati in Impostazioni?">
+    Contatta l'amministratore del tuo workspace. L'accesso al modello dati è solitamente riservato solo agli amministratori.
+  </Accordion>
+</AccordionGroup>
+
+## Gestione dei dati
+
+<AccordionGroup>
+  <Accordion title="C'è un limite al numero di record che posso avere?">
+    Non esiste un limite rigido al numero di record. Tuttavia, set di dati molto grandi possono influire sulle prestazioni in alcune viste. Usa filtri e viste per gestire efficacemente set di dati di grandi dimensioni.
+  </Accordion>
+
+  <Accordion title="Posso importare dati negli oggetti personalizzati?">
+    Sì, puoi importare dati CSV in qualsiasi oggetto, inclusi gli oggetti personalizzati. Il processo di importazione supporta la mappatura dei campi per i campi personalizzati. Vedi [Come preparare i tuoi file CSV](/l/it/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Posso esportare la configurazione del mio modello dati?">
+    Attualmente non esiste un'esportazione integrata per la configurazione del modello dati. Contatta il supporto se devi migrare il tuo modello dati tra spazi di lavoro.
+  </Accordion>
+</AccordionGroup>
+
+## Hai bisogno di ulteriore aiuto?
+
+Consulta i nostri [Servizi di implementazione](/l/it/user-guide/getting-started/capabilities/implementation-services) per assistenza nella progettazione di modelli dati complessi.

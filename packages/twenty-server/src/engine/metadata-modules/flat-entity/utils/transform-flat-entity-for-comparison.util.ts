@@ -1,5 +1,5 @@
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
-import { orderObjectProperties } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/order-object-properties.util';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { orderObjectProperties } from 'src/engine/metadata-modules/flat-entity/utils/order-object-properties.util';
 
 export function transformFlatEntityForComparison<
   TFlatEntity extends SyncableFlatEntity,

@@ -1,0 +1,90 @@
+---
+title: Ön Yüz Komutları
+---
+
+## Faydalı Komutlar
+
+### Uygulamayı Başlatma
+
+```bash
+npx nx start twenty-front
+```
+
+### API graphql şemasına dayalı graphql şemasını yeniden oluştur
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+VEYA
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Kod Temizleme
+
+```bash
+npx nx run twenty-front:lint # lint hatalarını düzeltmek için --fix'i geç
+```
+
+## Çeviriler
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### Test
+
+```bash
+npx nx run twenty-front:test # jest testlerini çalıştır
+npx nx run twenty-front:storybook:serve:dev # storybook'u çalıştır
+npx nx run twenty-front:storybook:test # testleri çalıştır # (yarn storybook:serve:dev'nin çalışıyor olması gerekir)
+npx nx run twenty-front:storybook:coverage # (yarn storybook:serve:dev'nin çalışıyor olması gerekir)
+```
+
+## Teknoloji Yığını
+
+Proje temiz ve basit bir yığına sahip, minimum şablon koduyla.
+
+**Uygulama**
+
+* [React](https://react.dev/)
+* [Apollo](https://www.apollographql.com/docs/)
+* [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+* [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+* [TypeScript](https://www.typescriptlang.org/)
+
+**Test**
+
+* [Jest](https://jestjs.io/)
+* [Storybook](https://storybook.js.org/)
+
+**Araçlar**
+
+* [Yarn](https://yarnpkg.com/)
+* [Craco](https://craco.js.org/docs/)
+* [ESLint](https://eslint.org/)
+
+## Mimari
+
+### Rotalama
+
+[React Router](https://reactrouter.com/) rotalamayı halleder.
+
+Gereksiz [yeniden renderların](/l/tr/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) önlenmesi için tüm rotalama mantığı `PageChangeEffect` içindeki bir `useEffect`'te yer alır.
+
+### Durum Yönetimi
+
+Durum yönetimini [Recoil](https://recoiljs.org/docs/introduction/core-concepts) halleder.
+
+Durum yönetimi hakkında daha fazla bilgi için [en iyi uygulamalar](/l/tr/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) bölümüne bakın.
+
+## Test
+
+[Jest](https://jestjs.io/) birim testi aracı olarak kullanılırken [Storybook](https://storybook.js.org/) bileşen testleri için kullanılır.
+
+Jest, esas olarak yardımcı programların test edilmesi için kullanılır ve bileşenlerin kendisi için değil.
+
+Storybook, izole bileşenlerin davranışlarının test edilmesi ve tasarım sisteminin gösterilmesi için kullanılır.

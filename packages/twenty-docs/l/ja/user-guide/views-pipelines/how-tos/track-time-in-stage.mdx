@@ -1,0 +1,231 @@
+---
+title: 各ステージにおける商談の滞在時間を追跡
+description: 商談が各ステージに入ったタイミングを追跡して、商談の進行速度を監視します。
+---
+
+<Tip>
+  これは、ワークフローを使って[数式フィールド](/l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields)を作成する例で、特に日付計算です。
+</Tip>
+
+商談が各ステージに入った時点を追跡することで、ボトルネックを特定し、商談の進行速度を測定できます。
+
+このガイドでは、商談が各ステージへ移動した時点を自動記録し、前のステージに要した日数を計算するためのカスタムフィールドとワークフローの設定手順を説明します。
+
+## 手順 1: カスタムフィールドを作成する
+
+各ステージに対して、次の2種類のフィールドが必要です:
+
+* **日付と時刻フィールド**: 商談が各ステージに入った時刻を記録します
+* **数値フィールド**: 商談が各ステージに滞在した日数を保存します
+
+### "Last Entered" フィールドを作成する
+
+1. **Settings → Data Model → Opportunities** に移動
+2. 各ステージについて、**+ Add Field** をクリックして次のように設定します:
+   * **Name**: Last Entered [Stage Name]（例: "Last Entered New", "Last Entered Qualified"）
+   * **Type**: Date & Time
+   * **Description**: このステージに商談が入ったタイムスタンプ
+3. **保存**をクリック
+
+次のフィールドを作成します:
+
+* Last Entered New
+* Last Entered Qualified
+* Last Entered Meeting
+* Last Entered Proposal
+* Last Entered Negotiation
+* Last Entered Closed Won
+* Last Entered Closed Lost
+
+### "Days in Stage" フィールドを作成する
+
+1. 各ステージについて、**+ Add Field** をクリックして次のように設定します:
+   * **Name**: Days in [Stage Name]（例: "Days in New", "Days in Qualified"）
+   * **Type**: Number
+   * **Description**: このステージに滞在した日数
+2. **保存**をクリック
+
+次のフィールドを作成します:
+
+* Days in New
+* Days in Qualified
+* Days in Meeting
+* Days in Proposal
+* Days in Negotiation
+
+<Note>
+  Closed Won と Closed Lost は最終ステージのため、"Days in" フィールドは不要です。
+</Note>
+
+### 任意: フィールドを読み取り専用にする
+
+これらの計算フィールドをユーザーに手動編集させたくない場合:
+
+1. **設定 → 役割** に移動
+2. 設定するロールを選択
+3. Opportunities オブジェクトを見つける
+4. "Last Entered" と "Days in" フィールドを読み取り専用に設定する
+
+## 手順 2: ワークフローを作成する
+
+この1つのワークフローで両方のタスクを処理します:
+
+* 新しいステージに入った時刻を記録する
+* 前のステージに滞在した日数を計算する
+
+### ワークフローを作成する
+
+1. **Workflows** に移動
+2. **+ New Workflow** をクリック
+3. 名前を "Track Stage Time" にする
+
+### トリガーを設定する
+
+1. **Record Updated** トリガーを追加
+2. オブジェクトとして **Opportunities** を選択
+3. フィルター条件: **Stage** フィールドが更新されたとき
+
+### 各ステージ用のブランチを追加する
+
+<Note>
+  新しいブランチを作成するには、ワークフローキャンバスを右クリックし、**New action** をクリックします。 次に、前のノードからこの新しいアクションへ矢印をドラッグして、このアクションを前のノードにリンクします。
+</Note>
+
+---
+
+**ブランチ 1: Stage = New（最初のステージ）**
+
+これは最初のステージのため、記録するのは入場時刻のみです。計算対象となる前ステージはありません。
+
+1. **Filter** ノードを追加: Stage = New
+2. **Code** アクションを追加:
+
+```javascript
+export const main = async (): Promise<object> => {
+  return { now: new Date().toISOString() };
+};
+```
+
+3. **Update Record** アクションを追加:
+   * Record: トリガーとなった Opportunity
+   * Field: Last Entered New
+   * Value: Code ノードの `now`
+
+---
+
+**ブランチ 2: Stage = Qualified**
+
+Qualified に移動したら、入場時刻を記録し、かつ New に滞在した日数を計算します。
+
+1. **Filter** ノードを追加: Stage = Qualified
+2. **Code** アクションを追加:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Code ノードの入力を設定: `lastEnteredPreviousStage` を **Last Entered New** フィールドにマップする
+4. **Update Record** アクションを追加:
+   * Record: トリガーとなった Opportunity
+   * 更新するフィールド:
+     * Last Entered Qualified = `now`
+     * Days in New = `daysInPreviousStage`
+
+---
+
+**ブランチ 3: Stage = Meeting**
+
+Meeting に移動したら、入場時刻を記録し、かつ Qualified に滞在した日数を計算します。
+
+1. **Filter** ノードを追加: Stage = Meeting
+2. **Code** アクションを追加:
+
+```javascript
+export const main = async (params: {
+  lastEnteredPreviousStage: Date;
+}): Promise<object> => {
+  const { lastEnteredPreviousStage } = params;
+
+  const now = new Date();
+  const entryDate = new Date(lastEnteredPreviousStage);
+  const diffTime = Math.abs(now.getTime() - entryDate.getTime());
+  const daysInPreviousStage = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return {
+    now: now.toISOString(),
+    daysInPreviousStage: daysInPreviousStage
+  };
+};
+```
+
+3. Code ノードの入力を設定: `lastEnteredPreviousStage` を **Last Entered Qualified** フィールドにマップする
+4. **Update Record** アクションを追加:
+   * Record: トリガーとなった Opportunity
+   * 更新するフィールド:
+     * Last Entered Meeting = `now`
+     * Days in Qualified = `daysInPreviousStage`
+
+---
+
+**残りのステージも同様に続けます:**
+
+| ステージ        | レコード                     | 計算                  |
+| ----------- | ------------------------ | ------------------- |
+| Proposal    | Last Entered Proposal    | Days in Meeting     |
+| Negotiation | Last Entered Negotiation | Days in Proposal    |
+| Closed Won  | Last Entered Closed Won  | Days in Negotiation |
+| Closed Lost | Last Entered Closed Lost | Days in Negotiation |
+
+ブランチを再結合する必要はありません。各ブランチは、そのステージ条件が満たされたときに独立して実行されます。
+
+## 手順 3: ステージ滞在時間を分析する
+
+タイムスタンプと日数が記録されたら、商談の進行速度を分析できます。
+
+### "Slow Deals" ビューを作成する
+
+1. Opportunities のテーブルビューを作成する
+2. 列を追加: Name、Stage、Days in [previous stage]、Amount
+3. "Days in" フィールドで並べ替え（降順）
+4. Stage でフィルターして、1つのステージに絞り込む
+
+上位の商談は、前のステージで最も長く滞在していたことを示します。
+
+### 集計を使用する
+
+パイプラインのカンバンビューで:
+
+1. ステージ名の横にある数値をクリック
+2. **Average** を選択
+3. "Days in" フィールドを選択
+
+各ステージで商談が費やす平均時間が表示されます。
+
+## まとめ
+
+| コンポーネント                | 目的                      |
+| ---------------------- | ----------------------- |
+| **Last Entered フィールド** | 商談が各ステージに入った時刻を保存する     |
+| **Days in フィールド**      | 各ステージでの滞在日数を保存する        |
+| **ワークフロー**             | タイムスタンプの記録と日数計算を一度に実行する |
+| **ビューと集計**             | 商談の進行速度を分析し、ボトルネックを特定する |
+
+## 関連項目
+
+* [ワークフロー](/l/ja/user-guide/workflows/overview) — 自動化の基本
+* [カスタムフィールドの作成方法](/l/ja/user-guide/data-model/how-tos/create-custom-fields) — フィールドの設定
+* [カンバンビュー](/l/ja/user-guide/views-pipelines/capabilities/kanban-views) — 集計

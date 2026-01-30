@@ -28,7 +28,9 @@ test('Create workflow', async ({ page }) => {
     createWorkflowButton.click()
   ]);
 
-  const recordName = page.getByTestId('top-bar-title').getByText('Untitled');
+
+  const recordName = page.getByTestId('top-bar-title').getByPlaceholder('Name');
+  await expect(recordName).toBeVisible();
   await recordName.click();
 
   const nameInput = page.getByTestId('top-bar-title').getByRole('textbox');
@@ -45,6 +47,8 @@ test('Create workflow', async ({ page }) => {
       .getByTestId('top-bar-title')
       .getByText(NEW_WORKFLOW_NAME);
 
+    // Wait for the name to be visible and not hidden
+    await workflowName.waitFor({ state: 'visible' });
     await expect(workflowName).toBeVisible();
 
     await expect(page).toHaveURL(`/object/workflow/${newWorkflowId}`);

@@ -2,10 +2,15 @@ import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { type EntityMetadata } from 'typeorm';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/applicationVariable/types/application-variable-cache-maps.type';
 import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
+import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
+import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { type LogicFunctionLayerCacheMaps } from 'src/engine/metadata-modules/logic-function-layer/types/logic-function-layer-cache-maps.type';
 
 export const WORKSPACE_CACHE_KEYS_V2 = {
   flatObjectMetadataMaps: 'flat-maps:object-metadata',
@@ -15,10 +20,8 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatViewFieldMaps: 'flat-maps:view-field',
   flatViewGroupMaps: 'flat-maps:view-group',
   flatViewFilterMaps: 'flat-maps:view-filter',
-  flatServerlessFunctionMaps: 'flat-maps:serverless-function',
-  flatCronTriggerMaps: 'flat-maps:cron-trigger',
-  flatDatabaseEventTriggerMaps: 'flat-maps:database-event-trigger',
-  flatRouteTriggerMaps: 'flat-maps:route-trigger',
+  flatViewFilterGroupMaps: 'flat-maps:view-filter-group',
+  flatLogicFunctionMaps: 'flat-maps:logic-function',
   featureFlagsMap: 'feature-flag:feature-flags-map',
   rolesPermissions: 'metadata:permissions:roles-permissions',
   userWorkspaceRoleMap: 'metadata:permissions:user-workspace-role-map',
@@ -28,10 +31,22 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatRoleTargetMaps: 'flat-maps:role-target',
   ORMEntityMetadatas: 'orm:entity-metadatas',
   flatAgentMaps: 'flat-maps:agent',
+  flatSkillMaps: 'flat-maps:skill',
+  flatCommandMenuItemMaps: 'flat-maps:command-menu-item',
+  flatNavigationMenuItemMaps: 'flat-maps:navigation-menu-item',
   flatRoleTargetByAgentIdMaps: 'flat-maps:flatRoleTargetByAgentId',
   flatPageLayoutMaps: 'flat-maps:page-layout',
   flatPageLayoutWidgetMaps: 'flat-maps:page-layout-widget',
   flatPageLayoutTabMaps: 'flat-maps:flatPageLayoutTabMaps',
+  flatRowLevelPermissionPredicateMaps:
+    'flat-maps:row-level-permission-predicate',
+  flatRowLevelPermissionPredicateGroupMaps:
+    'flat-maps:row-level-permission-predicate-group',
+  flatFrontComponentMaps: 'flat-maps:front-component',
+  flatWebhookMaps: 'flat-maps:webhook',
+  flatWorkspaceMemberMaps: 'flat-maps:workspace-member',
+  logicFunctionLayerMaps: 'cache:logic-function-layer',
+  applicationVariableMaps: 'cache:application-variable',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 export type AdditionalCacheDataMaps = {
@@ -42,6 +57,11 @@ export type AdditionalCacheDataMaps = {
   flatApplicationMaps: FlatApplicationCacheMaps;
   ORMEntityMetadatas: EntityMetadata[];
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
+  flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
+  flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
+  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  logicFunctionLayerMaps: LogicFunctionLayerCacheMaps;
+  applicationVariableMaps: ApplicationVariableCacheMaps;
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps & AdditionalCacheDataMaps;

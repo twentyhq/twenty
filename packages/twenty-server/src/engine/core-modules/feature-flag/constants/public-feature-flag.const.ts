@@ -13,21 +13,21 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_IMAP_SMTP_CALDAV_ENABLED,
+    key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
     metadata: {
-      label: 'IMAP, SMTP, CalDAV',
+      label: 'Junction Relations',
       description:
-        'Easily add email accounts from any provider that supports IMAP, send emails with SMTP (and soon, sync calendars with CalDAV)',
-      imagePath:
-        'https://twenty.com/images/lab/is-imap-smtp-caldav-enabled.png',
+        'Enable many-to-many relations through junction tables configuration',
+      imagePath: 'https://twenty.com/images/lab/is-junction-relations.png',
     },
   },
   {
-    key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+    key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
     metadata: {
-      label: 'Dashboards',
-      description: 'Enable dashboards',
-      imagePath: 'https://twenty.com/images/lab/is-dashboards-enabled.png',
+      label: 'Row Level Permissions',
+      description: 'Enable row level permission',
+      imagePath:
+        'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout/enums/widget-type.enum';
+import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
+import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import {
   gridPositionSchema,
   widgetConfigurationSchema,
@@ -47,13 +49,13 @@ See create_complete_dashboard for configuration examples.`,
       columnSpan: number;
     };
     objectMetadataId?: string;
-    configuration?: Record<string, unknown>;
+    configuration?: AllPageLayoutWidgetConfiguration;
   }) => {
     try {
-      const widget = await deps.pageLayoutWidgetService.create(
-        parameters,
-        context.workspaceId,
-      );
+      const widget = await deps.pageLayoutWidgetService.create({
+        input: parameters as CreatePageLayoutWidgetInput,
+        workspaceId: context.workspaceId,
+      });
 
       return {
         success: true,

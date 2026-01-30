@@ -1,0 +1,60 @@
+---
+title: Créer des champs de relation
+description: Guide étape par étape pour connecter des objets à l'aide de champs de relation.
+---
+
+Les champs de relation relient des enregistrements provenant d'objets différents — par exemple, relier des Personnes à des Entreprises.
+
+<Note>
+  **Les noms de relation ne peuvent pas être modifiés après leur création** (ils affectent l'API). Planifiez soigneusement les noms.
+</Note>
+
+## Avant de démarrer
+
+Décidez :
+
+* Quels objets connectez-vous ? (p. ex. : Personnes → Entreprises)
+* Quel est le côté "un" ? (p. ex. : Entreprise)
+* Quel est le côté "plusieurs" ? (p. ex. : Personnes — de nombreuses personnes travaillent dans une seule entreprise)
+* Comment le champ doit-il s'appeler de chaque côté ?
+
+Voir [Champs de relation](/l/fr/user-guide/data-model/capabilities/relation-fields) pour une explication des types de relation.
+
+## Étapes
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez l'objet où vous voulez la relation (généralement le côté "plusieurs")
+3. Cliquez sur **+ Ajouter un champ**
+4. Sélectionnez **Relation** comme type de champ
+5. Choisissez l'**objet cible**
+6. Sélectionnez **Un-à-plusieurs** ou **Plusieurs-à-un**
+7. Saisissez des noms de champ pour **les deux côtés** de la relation
+8. Cliquez sur **Enregistrer**
+
+## Exemple : Personnes → Entreprises
+
+* Allez dans **Paramètres → Modèle de données → Personnes**
+* Ajoutez un champ de relation
+* Cible : **Entreprises**
+* Type : **Plusieurs-à-un**
+* Champ dans Personnes : **Entreprise**
+* Champ dans Entreprises : **Employés**
+
+Désormais, chaque Personne peut être liée à une Entreprise, et chaque Entreprise affiche ses Personnes.
+
+## Suppression d'une relation
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Recherchez le champ de relation
+3. Cliquez sur **⋮ → Désactiver**
+
+Les liens sont conservés mais masqués. Réactivez pour restaurer.
+
+<Note>
+  **La suppression d'une relation ne supprime pas les enregistrements.** Seul le lien entre eux est supprimé.
+</Note>
+
+## Connexes
+
+* [Champs de relation](/l/fr/user-guide/data-model/capabilities/relation-fields) — types et limitations
+* [Comment importer des relations](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — importation en masse d'enregistrements liés

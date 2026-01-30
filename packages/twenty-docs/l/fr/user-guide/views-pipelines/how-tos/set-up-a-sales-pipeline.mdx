@@ -1,0 +1,120 @@
+---
+title: Mettre en place un pipeline de vente
+description: Configurez votre pipeline de vente pour suivre les opportunités au fil des étapes.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Dans Twenty, un pipeline de vente est une vue Kanban de votre objet Opportunités, où chaque colonne représente une étape de votre processus commercial.
+
+## Étape 1 : Configurez vos étapes
+
+Les étapes sont définies dans le champ **Étape** de l'objet Opportunités.
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez **Opportunités**
+3. Trouvez et cliquez sur le champ **Étape**
+4. Ajoutez, supprimez ou renommez des étapes pour correspondre à votre processus
+
+<VimeoEmbed videoId="927890428" title="Démonstration vidéo" />
+
+### Étapes recommandées
+
+| Étape               | Objectif                           |
+| ------------------- | ---------------------------------- |
+| **Nouveau**         | Opportunités récemment identifiées |
+| **Qualifié**        | Confirmée comme bien adaptée       |
+| **Réunion**         | Engagée dans des discussions       |
+| **Proposition**     | Proposition envoyée                |
+| **Négociation**     | Négociation des conditions         |
+| **Clôturée gagnée** | Affaire gagnée                     |
+| **Clôturée perdue** | Affaire perdue                     |
+
+<Note>
+  **5 à 7 étapes, c'est optimal.** Trop d'étapes rendent le pipeline difficile à parcourir ; trop peu fait perdre de la visibilité sur l'avancement des opportunités.
+</Note>
+
+## Étape 2 : Créez une vue de pipeline
+
+1. Allez dans **Opportunités**
+2. Cliquez sur le menu déroulant de la vue → **+ Ajouter une vue**
+3. Nommez-la "Pipeline de vente"
+4. Cliquez sur **Créer**
+5. Ouvrez **Options** et sélectionnez **Kanban** comme mise en page
+
+La vue utilise automatiquement le champ Étape pour les colonnes.
+
+## Étape 3 : Configurez votre vue
+
+### Affichez les champs clés
+
+1. Cliquez sur **Options → Champs**
+2. Recherchez des champs dans la section "Champs masqués"
+3. Cliquez sur l'**icône en forme d'œil** pour afficher : Société, Montant, Date de clôture, Propriétaire
+
+### Activez les agrégations
+
+Affichez les totaux en haut de chaque colonne :
+
+1. Cliquez sur le nombre affiché à côté d'un nom d'étape en haut d'une colonne
+2. Sélectionnez le type d'agrégation (Nombre, Somme, Moyenne, etc.)
+3. Choisissez le champ à agréger (par exemple, Montant)
+
+**Exemple :** Affichez la valeur totale des affaires par étape en agrégeant le Montant avec la Somme.
+
+### Utilisez la vue compacte (facultatif)
+
+Pour une vue d'ensemble avec un contenu de carte minimal :
+
+1. Cliquez sur **Options**
+2. Activez l'option **Vue compacte**
+
+## Étape 4 : Créez des vues personnelles et d'équipe
+
+### "Mon pipeline"
+
+* **Filtre** : Propriétaire = Moi
+* **Visibilité** : Non répertoriée (vue personnelle)
+
+### "Pipeline de l'équipe"
+
+* **Filtre** : Aucun (tout afficher)
+* **Visibilité** : Espace de travail (vue partagée)
+
+### "Clôture ce mois-ci"
+
+* **Type** : Tableau
+* **Filtre** : Date de clôture = Ce mois-ci, Étape ≠ Clôturée gagnée, Étape ≠ Clôturée perdue
+* **Tri** : Date de clôture croissante
+
+## Travailler avec les opportunités
+
+### Créer des opportunités
+
+* Cliquez sur **+ New** dans la vue Opportunités
+* Ou cliquez sur **+** dans la colonne d'une étape spécifique
+
+### Passer d'une étape à l'autre
+
+Faites glisser et déposez les cartes d'opportunité entre les colonnes pour mettre à jour leur étape.
+
+<VimeoEmbed videoId="927888627" title="Démonstration vidéo" />
+
+## Meilleures pratiques
+
+### Hygiène du pipeline
+
+* Mettez à jour les affaires quotidiennement au fur et à mesure de leur avancement
+* Déplacez ou fermez rapidement les affaires stagnantes
+* Gardez des dates de clôture réalistes
+
+### Discipline des étapes
+
+* Définissez des critères clairs pour chaque étape
+* Déplacez les affaires rapidement lorsque les critères sont remplis
+* Ne laissez pas les affaires rester trop longtemps dans les étapes
+
+## Articles connexes
+
+* [Vues Kanban](/l/fr/user-guide/views-pipelines/capabilities/kanban-views) — agrégations et vue compacte
+* [Filtres et tri](/l/fr/user-guide/views-pipelines/capabilities/filters-and-sorting) — création de vues filtrées

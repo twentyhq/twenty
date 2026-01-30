@@ -1,0 +1,171 @@
+---
+title: 设置 Webhook 触发器
+description: 从外部服务接收数据以触发工作流。
+image: /images/user-guide/workflows/workflow.png
+---
+
+Webhook 触发器允许外部服务通过向唯一的 URL 发送数据来启动您的工作流。 使用它们连接表单、第三方应用和自定义集成。
+
+## 何时使用 Webhook
+
+| 用例        | 示例                 |
+| --------- | ------------------ |
+| **网页表单**  | 联系表单提交会创建线索        |
+| **第三方应用** | Stripe 支付 → 创建客户记录 |
+| **自定义集成** | 您的应用 → Twenty 自动化  |
+| **无代码工具** | Zapier、Make、n8n 连接 |
+
+## 分步设置
+
+### 步骤 1：创建工作流
+
+1. 进入 **设置 → 工作流**
+2. 点击 **+ 新建工作流**
+3. 为其命名（例如，“网站表单提交”）
+
+### 步骤 2：配置 Webhook 触发器
+
+1. 单击触发器块
+2. 选择 **Webhook**
+3. 您将收到一个唯一的 Webhook URL，例如：
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. 复制此 URL——您需要在外部服务中使用它
+
+### 步骤 3：定义预期的数据结构
+
+对于 **POST** 请求，定义预期的请求体结构：
+
+1. 点击 **定义预期请求体**
+2. 输入与您的服务将发送内容匹配的示例 JSON：
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. 点击 **保存**——这会创建可在后续步骤中使用的变量
+
+### 步骤 4：添加操作
+
+现在添加使用 Webhook 数据的操作：
+
+**示例：创建一条 Person 记录**
+
+1. 添加 **创建记录** 操作
+2. 选择 **People** 对象
+3. 映射字段：
+
+| 字段   | 值                                   |
+| ---- | ----------------------------------- |
+| 名字   | `{{trigger.body.firstName}}`        |
+| 姓氏   | `{{trigger.body.lastName}}`         |
+| 电子邮件 | `{{trigger.body.email}}`            |
+| 公司   | 基于 `{{trigger.body.company}}` 搜索或创建 |
+
+### 步骤 5：测试 Webhook
+
+在激活之前，测试您的 Webhook：
+
+**使用 cURL**：
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**使用 Postman 或类似工具**：
+
+1. 向您的 Webhook URL 发起一个 POST 请求
+2. 将 Content-Type 头设置为 `application/json`
+3. 添加您的测试 JSON 请求体
+4. 发送并检查工作流运行情况
+
+### 步骤 6：启用
+
+测试完成后，点击 **启用** 使该工作流生效。
+
+## 处理不同的数据结构
+
+### 嵌套数据
+
+如果您的 Webhook 发送的是嵌套数据：
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+通过以下方式引用：`{{trigger.body.contact.email}}`
+
+### 数组
+
+如果数据包含数组：
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+如何处理数组取决于您的使用场景：
+
+**项目数量未知 → 使用 Iterator**
+
+如果需要处理数组中的每个项目（例如为每个项目创建一条记录），请添加一个 **Code** 操作来解析数组，然后使用 **Iterator**：
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+然后使用 Iterator 进行循环：`{{code.items}}`
+
+**已知/特定字段 → 提取到具名字段**
+
+如果数组包含您想单独访问的特定字段（例如表单答案，其中位置 0 始终为“名”，位置 1 始终为“姓”），请添加一个 **Code** 操作来提取它们：
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+现在您可以在后续步骤中分别选择 `product.name` 和 `product.qty`。
+
+<Tip>
+  关于处理数组的更多详情，请参见[在代码操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)。
+</Tip>
+
+## 相关内容
+
+* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)

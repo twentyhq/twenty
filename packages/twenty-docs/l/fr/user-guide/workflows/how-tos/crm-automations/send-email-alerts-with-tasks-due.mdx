@@ -1,0 +1,106 @@
+---
+title: Envoyer des alertes par e-mail pour les tâches arrivant à échéance
+description: Informer automatiquement les membres de l'équipe de leurs tâches à venir ou en retard.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+Envoyer des rappels quotidiens par e-mail à chaque membre de l'équipe concernant ses tâches arrivant à échéance aujourd'hui.
+
+## Vue d'ensemble
+
+Ce workflow s'exécute selon un calendrier et :
+
+1. Récupère tous les membres de l'espace de travail
+2. Parcourt chaque membre
+3. Trouve ses tâches arrivant à échéance aujourd'hui
+4. Formate et envoie un e-mail personnalisé
+
+## Configuration pas à pas
+
+<VimeoEmbed videoId="1147463514" title="Démonstration vidéo" />
+
+### Étape 1 : Configurer le déclencheur
+
+1. Allez dans **Paramètres → Workflows** et créez un nouveau workflow
+2. Sélectionnez **Selon un calendrier** comme déclencheur
+3. Utilisez une expression cron pour tous les jours à 8:00 : `0 8 * * *`
+
+### Étape 2 : Rechercher tous les membres de l'espace de travail
+
+1. Ajoutez une action **Rechercher des enregistrements**
+2. Sélectionnez **Membres de l'espace de travail** (dans les objets avancés)
+3. Aucun filtre nécessaire — cela renvoie tous les membres
+
+### Étape 3 : Ajouter un itérateur
+
+1. Ajoutez une action **Itérateur**
+2. Définissez le tableau d'entrée sur les membres de l'espace de travail de l'étape précédente
+3. Toutes les actions à l'intérieur de l'itérateur s'exécuteront une fois par membre
+
+### Étape 4 : Rechercher les tâches arrivant à échéance aujourd'hui (dans l'itérateur)
+
+1. À l'intérieur de l'itérateur, ajoutez une action **Rechercher des enregistrements**
+2. Sélectionnez **Tâches** comme objet
+3. Ajoutez des filtres :
+   * **Assigné** = membre actuel de l'espace de travail (depuis l'itérateur)
+   * **Date d'échéance** = aujourd'hui
+
+### Étape 5 : Mettre en forme les tâches dans le corps de l'e-mail (dans l'itérateur)
+
+Ajoutez une action **Code** pour mettre en forme les tâches en une liste lisible avec des liens :
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  Remplacez `yourSubDomain` par le sous-domaine réel de votre espace de travail Twenty.
+</Note>
+
+### Étape 6 : Envoyer un e-mail (dans l'itérateur)
+
+1. Ajoutez une action **Envoyer un e-mail** (toujours dans l'itérateur)
+2. Configurer:
+
+| Champ                | Valeur                                                                         |
+| -------------------- | ------------------------------------------------------------------------------ |
+| **À**                | `{{iterator.currentItem.userEmail}}` (e-mail du membre de l'espace de travail) |
+| **Objet**            | Vos tâches arrivant à échéance aujourd'hui                                     |
+| **Corps du message** | `{{code.formattedTasks}}`                                                      |
+
+### Étape 7 : Tester et activer
+
+1. Cliquez sur **Test** pour exécuter le workflow manuellement
+2. Vérifiez les boîtes de réception pour les e-mails
+3. Activez le workflow
+
+## Articles connexes
+
+* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Envoyer des e-mails depuis des workflows](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

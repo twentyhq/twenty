@@ -14,8 +14,8 @@ import { H2Title } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useDeleteTwoFactorAuthenticationMethodMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { useCurrentUserWorkspaceTwoFactorAuthentication } from '../hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
-import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '../hooks/useWorkspaceTwoFactorAuthenticationPolicy';
+import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
+import { useCurrentWorkspaceTwoFactorAuthenticationPolicy } from '@/settings/two-factor-authentication/hooks/useWorkspaceTwoFactorAuthenticationPolicy';
 
 const DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID =
   'delete-two-factor-authentication-modal';

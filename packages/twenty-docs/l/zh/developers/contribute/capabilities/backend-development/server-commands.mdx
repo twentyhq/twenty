@@ -1,0 +1,101 @@
+---
+title: 后端命令
+---
+
+## 实用命令
+
+这些命令应从 packages/twenty-server 文件夹中执行。
+从其他文件夹，您可以运行 `npx nx {command} twenty-server`（或 `npx nx run twenty-server:{command}`）。
+
+### 首次设置
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### 启动服务器
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### 测试
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+注意：如果需要在运行集成测试之前重置数据库，可以运行 `npx nx run twenty-server:test:integration:with-db-reset`。
+
+### 重置数据库
+
+如果您想重置并为数据库预置数据，可以运行以下命令：
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### 迁移
+
+#### 适用于 Core/Metadata 模式中的对象 (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### 用于工作区对象
+
+没有迁移文件，每个工作区的迁移都是自动生成的，
+储存在数据库中，并通过该命令应用
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  这将删除数据库，并重新运行迁移和预置数据。
+
+  在运行此命令之前，请确保备份任何想要保留的数据。
+</Warning>
+
+## 技术栈
+
+Twenty 主要使用 NestJS 作为后端。
+
+Prisma 是我们最先使用的 ORM。 但为了允许用户创建自定义字段和对象，使用更底层的工具更有意义，因为我们需要进行精细控制。 项目现在使用 TypeORM。
+
+这是当前技术栈的样子。
+
+**核心**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**数据库**
+
+* [Postgres](https://www.postgresql.org/)
+
+**第三方集成**
+
+* [Sentry](https://sentry.io/welcome/) 用于 bug 跟踪
+
+**测试**
+
+* [Jest](https://jestjs.io/)
+
+**工具**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**开发**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

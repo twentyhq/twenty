@@ -1,46 +1,53 @@
-import { ObjectType } from '@nestjs/graphql';
-
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
+  UpdateDateColumn,
 } from 'typeorm';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
-@ObjectType('File')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
-export class FileEntity {
+export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
-  name: string;
+  @Column({ nullable: true, type: 'uuid' })
+  applicationId: string;
+
+  @ManyToOne('ApplicationEntity', {
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity>;
 
   @Column({ nullable: false })
-  fullPath: string;
+  path: string;
 
   @Column({ nullable: false, type: 'bigint' })
   size: number;
 
-  @Column({ nullable: false })
-  type: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
-  @ManyToOne(() => WorkspaceEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date | null;
+
+  @Column({ nullable: false, default: false })
+  isStaticAsset: boolean;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  settings: FileSettings | null;
 }

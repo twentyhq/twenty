@@ -86,6 +86,7 @@ export const useBuildSpreadsheetImportFields = () => {
           createBaseField(fieldMetadataItem, relationConnectFieldOverrides),
         ];
 
+      case FieldMetadataType.FILES:
       case FieldMetadataType.POSITION:
       case FieldMetadataType.MORPH_RELATION:
       case FieldMetadataType.ACTOR:

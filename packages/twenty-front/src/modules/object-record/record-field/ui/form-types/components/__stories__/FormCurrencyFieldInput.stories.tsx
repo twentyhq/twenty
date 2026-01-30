@@ -1,18 +1,17 @@
+import { FormCurrencyFieldInput } from '@/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput';
 import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormCurrencyFieldInput } from '../FormCurrencyFieldInput';
 
 const meta: Meta<typeof FormCurrencyFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormCurrencyFieldInput',
   component: FormCurrencyFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -32,7 +31,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText('Currency Code');
-    await canvas.findByText('Amount');
+    await canvas.findByText('Amount Micros');
   },
 };
 
@@ -47,10 +46,10 @@ export const WithVariable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const amountMicros = await canvas.findByText('Amount Micros');
+    const amountMicros = await canvas.findAllByText('Amount Micros');
     const currencyCode = await canvas.findAllByText('Currency Code');
 
-    expect(amountMicros).toBeVisible();
+    expect(amountMicros).toHaveLength(2);
     expect(currencyCode).toHaveLength(2);
   },
 };
@@ -81,7 +80,7 @@ export const Disabled: Story = {
     const currency = await canvas.findByText(/USD/);
     expect(currency).toBeVisible();
 
-    const amountInput = await canvas.findByDisplayValue('44');
+    const amountInput = await canvas.findByDisplayValue('44000000');
     expect(amountInput).toBeVisible();
     expect(amountInput).toBeDisabled();
 

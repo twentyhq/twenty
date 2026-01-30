@@ -1,0 +1,170 @@
+---
+title: Apresentar dados de registos relacionados
+description: Mostrar dados de registos relacionados (por exemplo, informações da Empresa em Oportunidades) usando fluxos de trabalho.
+---
+
+Apresente dados de registos relacionados diretamente nos seus registos — por exemplo, mostre o número de funcionários de uma Empresa nas suas Oportunidades. Esta solução alternativa com fluxos de trabalho é útil até que os campos aninhados estejam disponíveis nativamente.
+
+## Casos de Uso Comuns
+
+| Fonte        | Destino      | Campos a Copiar                                         |
+| ------------ | ------------ | ------------------------------------------------------- |
+| Empresa      | Oportunidade | Setor, Tamanho da Empresa, ARR                          |
+| Pessoa       | Oportunidade | Email, Telefone, Cargo                                  |
+| Oportunidade | Empresa      | Valor do Último Negócio, Data do Último Negócio Ganhado |
+
+## Cópia Básica de Campo
+
+### Exemplo: Copiar Email do Contacto para a Oportunidade
+
+**Objetivo**: Ao definir um Ponto de Contacto numa oportunidade, copiar o email dessa pessoa para a oportunidade para acesso facilitado.
+
+### Pré-requisito
+
+Crie os campos de destino em **Definições → Modelo de Dados → Oportunidades** antes de construir o fluxo de trabalho:
+
+* Email do Contacto (tipo: Email)
+* Telefone do Contacto (tipo: Telefone)
+
+### Configuração
+
+1. **Gatilho**: Registo é atualizado (Oportunidades, campo Ponto de Contacto)
+
+2. **Filtro**: Verificar que o Ponto de Contacto não está vazio
+
+3. **Pesquisar Registos**: Encontrar a pessoa associada
+   * Objeto: Pessoas
+   * Filtro: ID igual a `{{trigger.object.pointOfContact.id}}`
+
+4. **Atualizar Registo**:
+   * Objeto: Oportunidades
+   * Registo: `{{trigger.object.id}}`
+   * Email do Contacto: `{{searchRecords[0].email}}`
+   * Telefone do Contacto: `{{searchRecords[0].phone}}`
+
+## Copiar Vários Campos
+
+### Exemplo: Sincronizar Informações da Empresa com Todas as Oportunidades Relacionadas
+
+**Objetivo**: Quando os detalhes da empresa mudarem, atualizar todas as oportunidades relacionadas.
+
+### Configuração
+
+1. **Gatilho**: Registo é atualizado (Empresas)
+   * Campos: Setor, Tamanho da Empresa, Receita Anual
+
+2. **Pesquisar Registos**: Encontrar todas as oportunidades desta empresa
+   * Objeto: Oportunidades
+   * Filtro: ID da Empresa igual a `{{trigger.object.id}}`
+
+3. **Iterador**: Percorrer cada oportunidade
+
+4. **Atualizar Registo** (dentro do iterador):
+   * Objeto: Oportunidades
+   * Registo: `{{iterator.currentItem.id}}`
+   * Setor da Empresa: `{{trigger.object.industry}}`
+   * Tamanho da Empresa: `{{trigger.object.companySize}}`
+   * ARR da Empresa: `{{trigger.object.annualRevenue}}`
+
+## Copiar na Criação do Registo
+
+### Exemplo: Preencher a Oportunidade com Dados da Empresa
+
+**Objetivo**: Ao criar uma oportunidade vinculada a uma empresa, copiar automaticamente as informações principais da empresa.
+
+### Pré-requisito
+
+Crie os campos de destino em **Definições → Modelo de Dados → Oportunidades**:
+
+* Setor da Empresa (tipo: Texto)
+* Tamanho da Empresa (tipo: Número)
+
+### Configuração
+
+1. **Gatilho**: Registo é criado (Oportunidades)
+   * Filtro: Empresa não está vazia
+
+2. **Pesquisar Registos**: Obter os detalhes da empresa associada
+   * Objeto: Empresas
+   * Filtro: ID igual a `{{trigger.object.company.id}}`
+
+3. **Atualizar Registo**:
+   * Objeto: Oportunidades
+   * Registo: `{{trigger.object.id}}`
+   * Setor da Empresa: `{{searchRecords[0].industry}}`
+   * Tamanho da Empresa: `{{searchRecords[0].employees}}`
+
+<Note>
+  **Limitação de Tarefas e Notas**: As relações em Tarefas e Notas são pré-definidas como muitos-para-muitos e ainda não estão disponíveis em gatilhos ou ações de fluxos de trabalho. Para aceder a estas relações, use a [API](/l/pt/developers/extend/capabilities/apis).
+</Note>
+
+## Sincronização Bidirecional
+
+### Exemplo: Manter o Contacto Principal Sincronizado
+
+**Objetivo**: Quando o contacto principal de uma empresa mudar, atualizar o contacto. Quando uma pessoa se tornar principal, atualizar a empresa.
+
+### Fluxo de Trabalho 1: Empresa → Pessoa
+
+1. **Gatilho**: Registo é atualizado (Empresas, campo Contacto Principal)
+2. **Atualizar Registo**: Definir "É Contacto Principal" da pessoa como verdadeiro
+3. **Pesquisar Registos**: Encontrar o contacto principal anterior
+4. **Atualizar Registo**: Definir "É Contacto Principal" do contacto anterior como falso
+
+### Fluxo de Trabalho 2: Pessoa → Empresa
+
+1. **Gatilho**: Registo é atualizado (Pessoas, É Contacto Principal = verdadeiro)
+2. **Atualizar Registo**: Definir o Contacto Principal da empresa para esta pessoa
+
+<Note>
+  Tenha cuidado com sincronizações bidirecionais para evitar ciclos infinitos. Use filtros para verificar se o valor realmente mudou antes de atualizar.
+</Note>
+
+## Usar Código para Mapeamento Complexo
+
+### Exemplo: Transformar Dados Durante a Cópia
+
+**Objetivo**: Copiar e formatar o número de telefone da pessoa para a oportunidade.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Melhores Práticas
+
+### Evitar Ciclos
+
+* Não crie fluxos de trabalho que disparem uns aos outros indefinidamente
+* Use condições específicas de campo
+* Adicione verificações para ver se o valor realmente mudou
+
+### Tratar Dados em Falta
+
+* Verifique sempre se o registo de origem existe antes de copiar
+* Forneça valores predefinidos para campos opcionais
+* Use filtros para ignorar quando o campo de origem estiver vazio
+
+### Desempenho
+
+* Agrupe atualizações ao copiar para muitos registos
+* Use fluxos de trabalho agendados para operações de sincronização em massa
+* Considere usar o Iterador para atualizações de múltiplos registos
+
+## Relacionados
+
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)

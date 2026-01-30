@@ -1,6 +1,8 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -45,6 +47,8 @@ export const useCreateNewIndexRecord = ({
 
   const { openRecordInCommandMenu } = useOpenRecordInCommandMenu();
 
+  const { closeCommandMenu } = useCommandMenu();
+
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
     shouldMatchRootQueryFilter: true,
@@ -60,11 +64,24 @@ export const useCreateNewIndexRecord = ({
     objectMetadataItem,
   });
 
+  const { buildRecordInputFromRLSPredicates } =
+    useBuildRecordInputFromRLSPredicates({
+      objectMetadataItem,
+    });
+
   const createNewIndexRecord = useRecoilCallback(
     ({ snapshot, set }) =>
       async (recordInput?: Partial<ObjectRecord>) => {
         const recordId = v4();
+        const recordInputFromRLSPredicates =
+          buildRecordInputFromRLSPredicates();
         const recordInputFromFilters = buildRecordInputFromFilters();
+
+        const mergedRecordInput = {
+          ...recordInputFromRLSPredicates,
+          ...recordInputFromFilters,
+          ...recordInput,
+        };
 
         const recordIndexOpenRecordIn = snapshot
           .getLoadable(recordIndexOpenRecordInState)
@@ -72,8 +89,7 @@ export const useCreateNewIndexRecord = ({
 
         const createdRecord = await createOneRecord({
           id: recordId,
-          ...recordInputFromFilters,
-          ...recordInput,
+          ...mergedRecordInput,
         });
 
         if (
@@ -92,7 +108,7 @@ export const useCreateNewIndexRecord = ({
           if (isDefined(labelIdentifierFieldMetadataItem)) {
             openRecordTitleCell({
               recordId,
-              fieldName: labelIdentifierFieldMetadataItem.name,
+              fieldMetadataItemId: labelIdentifierFieldMetadataItem.id,
               instanceId: getRecordFieldInputInstanceId({
                 recordId,
                 fieldName: labelIdentifierFieldMetadataItem.name,
@@ -101,10 +117,26 @@ export const useCreateNewIndexRecord = ({
             });
           }
         } else {
-          navigate(AppPath.RecordShowPage, {
-            objectNameSingular: objectMetadataItem.nameSingular,
-            objectRecordId: recordId,
-          });
+          const labelIdentifierFieldMetadataItem =
+            getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+          closeCommandMenu();
+          navigate(
+            AppPath.RecordShowPage,
+            {
+              objectNameSingular: objectMetadataItem.nameSingular,
+              objectRecordId: recordId,
+            },
+            undefined,
+            {
+              state: {
+                isNewRecord: true,
+                objectRecordId: recordId,
+                labelIdentifierFieldName:
+                  labelIdentifierFieldMetadataItem?.name,
+              },
+            },
+          );
         }
 
         if (isDefined(recordIndexGroupFieldMetadataItem)) {
@@ -139,11 +171,12 @@ export const useCreateNewIndexRecord = ({
           }
         }
 
-        upsertRecordsInStore([createdRecord]);
+        upsertRecordsInStore({ partialRecords: [createdRecord] });
 
         return createdRecord;
       },
     [
+      buildRecordInputFromRLSPredicates,
       buildRecordInputFromFilters,
       createOneRecord,
       navigate,
@@ -154,6 +187,7 @@ export const useCreateNewIndexRecord = ({
       recordIndexGroupFieldMetadataItem,
       recordIndexRecordIdsByGroupCallbackState,
       upsertRecordsInStore,
+      closeCommandMenu,
     ],
   );
 

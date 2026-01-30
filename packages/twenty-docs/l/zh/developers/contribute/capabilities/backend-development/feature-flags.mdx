@@ -1,0 +1,46 @@
+---
+title: 功能标志
+---
+
+功能标志用于隐藏实验性功能。 对于 Twenty，它们是在工作区级别设置的，而不是在用户级别。
+
+## 添加新的功能标志
+
+在 `FeatureFlagKey.ts` 中添加功能标志:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+还要将其添加到 `feature-flag.entity.ts` 中的枚举：
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+要在 **后端** 功能上应用功能标志，请使用:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+要在 **前端** 功能上应用功能标志，请使用:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## 配置部署的功能标志
+
+更改 Table `core.featureFlag` 中的相应记录：
+
+| iD | 键                        | workspaceId | 值   |
+| -- | ------------------------ | ----------- | --- |
+| 随机 | `IS_FEATURENAME_ENABLED` | 工作区 ID      | `真` |

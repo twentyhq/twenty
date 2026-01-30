@@ -5,19 +5,18 @@ import {
   MultiItemBaseInput,
   type MultiItemBaseInputProps,
 } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
-import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID } from '@/ui/input/components/internal/phone/constants/PhoneCountryCodePickerDropdownId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilValue } from 'recoil';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { CustomError } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -73,17 +72,14 @@ export const MultiItemFieldInput = <T,>({
     RecordFieldComponentInstanceContext,
   );
 
-  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
+  const currentFocusedItem = useRecoilValue(currentFocusedItemSelector);
 
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
       if (
-        (isDefined(activeDropdownFocusId) &&
-          activeDropdownFocusId.startsWith(
-            MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX,
-          )) ||
-        activeDropdownFocusId === PHONE_COUNTRY_CODE_PICKER_DROPDOWN_ID
+        currentFocusedItem?.componentInstance.componentType !==
+        FocusComponentType.OPENED_FIELD_INPUT
       ) {
         return;
       }

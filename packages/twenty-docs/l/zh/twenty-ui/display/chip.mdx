@@ -4,56 +4,50 @@ image: /images/user-guide/github/github-header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/github/github-header.png" alt="Header" />
+  <img src="/images/user-guide/github/github-header.png" alt="标题" />
 </Frame>
 
-一種視覺元素，可用作帶標籤的可點擊或不可點擊的容器，並可選擇添加左側和右側組件，以及用於顯示標籤和標籤的各種樣式選項。
+一个视觉元素，可用作可点击或不可点击的容器，带有标签、可选的左右组件和多种样式选项，用于显示标签和标记。
 
 <Tabs>
+  <Tab title="**用法**">
+    ```jsx
+    import { Chip } from 'twenty-ui/components';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <Chip
+          size="large"
+          label="可点击的 Chip"
+          clickable={true}
+          variant="highlighted"
+          accent="text-primary"
+          leftComponent
+          rightComponent
+          maxWidth="200px"
+          className
+        />
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { Chip } from 'twenty-ui/components';
-
-export const MyComponent = () => {
-  return (
-    <Chip
-      size="large"
-      label="Clickable Chip"
-      clickable={true}
-      variant="highlighted"
-      accent="text-primary"
-      leftComponent
-      rightComponent
-      maxWidth="200px"
-      className
-    />
-  );
-};
-
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性           | 類型                     | 描述                                                                             |
-| ------------ | ---------------------- | ------------------------------------------------------------------------------ |
-| linkToEntity | 字串                     | 實體的鏈接                                                                          |
-| entityId     | 字串                     | 實體的唯一標識符                                                                       |
-| 名稱           | 字串                     | 實體的名稱                                                                          |
-| 圖片URL        | 字串                     | 的圖片","                                                                         |
-| avatarType   | 頭像類型                   | 您要顯示的頭像類型。 您要顯示的頭像類型。 Has two options: `rounded` and `squared` |
-| 變體           | `EntityChipVariant` 枚舉 | 你要顯示的實體芯片的變體。 有兩種選擇：`常規`和`透明`                                                  |
-| 左圖標          | 圖標組件                   | 一個代表圖標的 React 組件。 顯示在芯片的左側                                                     |
-
-</Tab>
+  <Tab title="属性">
+    | 属性           | 类型                    | 描述                            |
+    | ------------ | --------------------- | ----------------------------- |
+    | linkToEntity | 字符串                   | 指向实体的链接                       |
+    | entityId     | string                | 实体的唯一标识符                      |
+    | 名称           | 字符串                   | 实体名称                          |
+    | pictureUrl   | string                | 的图片",                         |
+    | avatarType   | 头像类型                  | 您要显示的头像类型。 有两个选项：`圆形`和`方形`    |
+    | variant      | `EntityChipVariant`枚举 | 您要显示的实体芯片的变体。 有两个选项：`普通`和`透明` |
+    | LeftIcon     | IconComponent         | 一个代表图标的React组件。 显示在芯片的左侧      |
+  </Tab>
 </Tabs>
 
-## Examples
+## 示例
 
-### Transparent Disabled Chip
+### 透明禁用芯片
 
 ```jsx
 import { Chip } from 'twenty-ui/components';
@@ -62,7 +56,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Transparent Disabled Chip"
+      label="透明的禁用 Chip"
       clickable={false}
       variant="rounded"
       accent="text-secondary"
@@ -76,9 +70,9 @@ export const MyComponent = () => {
 
 ```
 
-<br/>
+<br />
 
-### Disabled Chip with Tooltip
+### 带工具提示的禁用芯片
 
 ```jsx
 import { Chip } from "twenty-ui/components";
@@ -87,7 +81,7 @@ export const MyComponent = () => {
   return (
       <Chip 
       size="large"
-      label="Disabled chip that triggers a tooltip when overflowing."
+      label="当内容溢出时会触发工具提示的禁用 Chip。"
       clickable={false}
       variant="regular"
       accent="text-primary"
@@ -100,49 +94,44 @@ export const MyComponent = () => {
 };
 ```
 
-## 實體芯片
+## 实体芯片
 
-一個芯片狀元素，用於顯示有關實體的信息。
+类似芯片的元素，用于显示有关实体的信息。
 
 <Tabs>
+  <Tab title="用法">
+    ```jsx
+    import { BrowserRouter as Router } from 'react-router-dom';
+    import { IconTwentyStar } from 'twenty-ui/display';
+    import { Chip } from 'twenty-ui/components';
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <Router>
+          <Chip
+            linkToEntity="/entity-link"
+            entityId="entityTest"
+            name="实体名称"
+            pictureUrl=""
+            avatarType="rounded"
+            variant="regular"
+            LeftIcon={IconTwentyStar}
+          />
+        </Router>
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { BrowserRouter as Router } from 'react-router-dom';
-import { IconTwentyStar } from 'twenty-ui/display';
-import { Chip } from 'twenty-ui/components';
-
-export const MyComponent = () => {
-  return (
-    <Router>
-      <Chip
-        linkToEntity="/entity-link"
-        entityId="entityTest"
-        name="Entity name"
-        pictureUrl=""
-        avatarType="rounded"
-        variant="regular"
-        LeftIcon={IconTwentyStar}
-      />
-    </Router>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| 屬性           | 類型                     | 描述                                                                             |
-| ------------ | ---------------------- | ------------------------------------------------------------------------------ |
-| linkToEntity | 字串                     | 實體的鏈接                                                                          |
-| entityId     | 字串                     | 實體的唯一標識符                                                                       |
-| 名稱           | 字串                     | 實體的名稱                                                                          |
-| 圖片URL        | 字串                     | 的圖片","                                                                         |
-| avatarType   | 頭像類型                   | 您要顯示的頭像類型。 您要顯示的頭像類型。 Has two options: `rounded` and `squared` |
-| 變體           | `EntityChipVariant` 枚舉 | 你要顯示的實體芯片的變體。 有兩種選擇：`常規`和`透明`                                                  |
-| 左圖標          | 圖標組件                   | 一個代表圖標的 React 組件。 顯示在芯片的左側                                                     |
-
-</Tab>
+  <Tab title="属性">
+    | 属性           | 类型                    | 描述                            |
+    | ------------ | --------------------- | ----------------------------- |
+    | linkToEntity | string                | 指向实体的链接                       |
+    | entityId     | string                | 实体的唯一标识符                      |
+    | 名称           | string                | 实体名称                          |
+    | pictureUrl   | string                | 的图片",                         |
+    | avatarType   | 头像类型                  | 您要显示的头像类型。 有两个选项：`圆形`和`方形`    |
+    | variant      | `EntityChipVariant`枚举 | 您要显示的实体芯片的变体。 有两个选项：`普通`和`透明` |
+    | LeftIcon     | IconComponent         | 一个代表图标的React组件。 显示在芯片的左侧      |
+  </Tab>
 </Tabs>

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
@@ -71,7 +71,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    const fields = flatObjectMetadata.fieldMetadataIds
+    const fields = flatObjectMetadata.fieldIds
       .map((fieldId) => {
         const field = flatFieldMetadataMaps.byId[fieldId];
 
@@ -101,7 +101,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
             fields,
             recordFilters: workflowActionInput.filter.recordFilters,
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
-            filterValueDependencies: {},
+            filterValueDependencies: {
+              timeZone: 'UTC',
+            },
           })
         : {};
 
@@ -110,7 +112,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
       limit: workflowActionInput.limit,
-      workspaceId,
+      authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
     });
 

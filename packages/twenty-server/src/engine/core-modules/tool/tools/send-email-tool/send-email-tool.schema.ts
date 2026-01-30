@@ -1,9 +1,28 @@
 import { isValidUuid } from 'twenty-shared/utils';
-import { z } from 'zod';
 import { workflowFileSchema } from 'twenty-shared/workflow';
+import { z } from 'zod';
+
+const EmailRecipientsZodSchema = z.object({
+  to: z
+    .string()
+    .describe('Comma-separated recipient email addresses (To)')
+    .default(''),
+  cc: z
+    .string()
+    .describe('Comma-separated CC email addresses')
+    .optional()
+    .default(''),
+  bcc: z
+    .string()
+    .describe('Comma-separated BCC email addresses')
+    .optional()
+    .default(''),
+});
 
 export const SendEmailInputZodSchema = z.object({
-  email: z.email().describe('The recipient email address'),
+  recipients: EmailRecipientsZodSchema.describe(
+    'Recipients object with to, cc, and bcc fields (comma-separated)',
+  ),
   subject: z.string().describe('The email subject line'),
   body: z.string().describe('The email body content (HTML or plain text)'),
   connectedAccountId: z
@@ -18,13 +37,4 @@ export const SendEmailInputZodSchema = z.object({
     .describe('Array of file objects to attach to the email')
     .optional()
     .default([]),
-});
-
-export const SendEmailToolParametersZodSchema = z.object({
-  loadingMessage: z
-    .string()
-    .describe(
-      "A clear, human-readable status message describing the email being sent. This will be shown to the user while the tool is being called, so phrase it as a present-tense status update (e.g., 'Sending email to customer about order status'). Explain what email you are sending and to whom in natural language.",
-    ),
-  input: SendEmailInputZodSchema,
 });

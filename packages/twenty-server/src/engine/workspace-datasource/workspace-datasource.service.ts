@@ -37,14 +37,15 @@ export class WorkspaceDataSourceService {
    */
   public async createWorkspaceDBSchema(workspaceId: string): Promise<string> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
-
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.createSchema(schemaName, true);
+    try {
+      await queryRunner.createSchema(schemaName, true);
 
-    await queryRunner.release();
-
-    return schemaName;
+      return schemaName;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   /**
@@ -56,12 +57,13 @@ export class WorkspaceDataSourceService {
    */
   public async deleteWorkspaceDBSchema(workspaceId: string): Promise<void> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
-
     const queryRunner = this.coreDataSource.createQueryRunner();
 
-    await queryRunner.dropSchema(schemaName, true, true);
-
-    await queryRunner.release();
+    try {
+      await queryRunner.dropSchema(schemaName, true, true);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   public async executeRawQuery(

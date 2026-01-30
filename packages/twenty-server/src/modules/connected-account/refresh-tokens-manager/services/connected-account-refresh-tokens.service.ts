@@ -12,7 +12,6 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
 
 export type ConnectedAccountTokens = {
   accessToken: string;
@@ -66,8 +65,8 @@ export class ConnectedAccountRefreshTokensService {
       };
     }
 
-    this.logger.log(
-      `Access token expired for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}, refreshing...`,
+    this.logger.debug(
+      `Access token expired for connected account ${connectedAccount.id} in workspace ${workspaceId}, refreshing...`,
     );
 
     const connectedAccountTokens = await this.refreshTokens(
@@ -78,24 +77,21 @@ export class ConnectedAccountRefreshTokensService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-
-        await connectedAccountRepository.update(
-          { id: connectedAccount.id },
-          {
-            ...connectedAccountTokens,
-            lastCredentialsRefreshedAt: new Date(),
-          },
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const connectedAccountRepository =
+        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+          workspaceId,
+          'connectedAccount',
         );
-      },
-    );
+
+      await connectedAccountRepository.update(
+        { id: connectedAccount.id },
+        {
+          ...connectedAccountTokens,
+          lastCredentialsRefreshedAt: new Date(),
+        },
+      );
+    }, authContext);
 
     return connectedAccountTokens;
   }
@@ -157,15 +153,8 @@ export class ConnectedAccountRefreshTokensService {
           );
       }
     } catch (error) {
-      if (isGmailNetworkError(error)) {
-        throw new ConnectedAccountRefreshAccessTokenException(
-          `Error refreshing tokens for connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}: ${error.code}`,
-          ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
-        );
-      }
-
       this.logger.log(
-        `Error while refreshing tokens on connected account ${connectedAccount.id.slice(0, 7)} in workspace ${workspaceId.slice(0, 7)}`,
+        `Error while refreshing tokens on connected account ${connectedAccount.id} in workspace ${workspaceId}`,
         error,
       );
       throw error;

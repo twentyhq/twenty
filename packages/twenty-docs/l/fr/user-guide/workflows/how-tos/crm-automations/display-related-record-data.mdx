@@ -1,0 +1,170 @@
+---
+title: Afficher les données des enregistrements liés
+description: Afficher les données provenant d'enregistrements liés (p. ex., informations sur l'entreprise dans les Opportunités) à l'aide de workflows.
+---
+
+Afficher les données d'enregistrements liés directement sur vos enregistrements — par exemple, afficher l'effectif d'une Entreprise dans ses Opportunités. Cette solution de contournement par workflow est utile jusqu'à ce que les champs imbriqués soient disponibles nativement.
+
+## Cas d'utilisation courants
+
+| Source      | Destination | Champs à copier                                           |
+| ----------- | ----------- | --------------------------------------------------------- |
+| Entreprise  | Opportunité | Secteur, Taille de l'entreprise, ARR                      |
+| Personne    | Opportunité | E-mail, Téléphone, Titre du poste                         |
+| Opportunité | Entreprise  | Montant du dernier contrat, Date du dernier contrat gagné |
+
+## Copie de champ simple
+
+### Exemple : Copier l'e-mail du contact vers l'Opportunité
+
+**Objectif** : Lors de la définition d'un Point de contact sur une opportunité, copier son e-mail dans l'opportunité pour un accès facile.
+
+### Prérequis
+
+Créez les champs de destination dans **Paramètres → Modèle de données → Opportunités** avant de créer le workflow :
+
+* E-mail du contact (type : E-mail)
+* Téléphone du contact (type : Téléphone)
+
+### Installation
+
+1. **Déclencheur** : Enregistrement mis à jour (Opportunités, champ Point de contact)
+
+2. **Filtre** : Vérifiez que le Point de contact n'est pas vide
+
+3. **Rechercher des enregistrements** : Trouver la personne liée
+   * Objet : Personnes
+   * Filtre : ID égal à `{{trigger.object.pointOfContact.id}}`
+
+4. **Mettre à jour un enregistrement** :
+   * Objet : Opportunités
+   * Enregistrement : `{{trigger.object.id}}`
+   * E-mail du contact : `{{searchRecords[0].email}}`
+   * Téléphone du contact : `{{searchRecords[0].phone}}`
+
+## Copier plusieurs champs
+
+### Exemple : Synchroniser les informations de l'entreprise vers toutes les Opportunités liées
+
+**Objectif** : Lorsque les détails de l'entreprise changent, mettre à jour toutes les opportunités liées.
+
+### Installation
+
+1. **Déclencheur** : Enregistrement mis à jour (Entreprises)
+   * Champs : Secteur, Taille de l'entreprise, Chiffre d'affaires annuel
+
+2. **Rechercher des enregistrements** : Trouver toutes les opportunités pour cette entreprise
+   * Objet : Opportunités
+   * Filtre : ID de l'entreprise égal à `{{trigger.object.id}}`
+
+3. **Iterator** : Parcourir chaque opportunité
+
+4. **Mettre à jour un enregistrement** (dans l'Iterator) :
+   * Objet : Opportunités
+   * Enregistrement : `{{iterator.currentItem.id}}`
+   * Secteur de l'entreprise : `{{trigger.object.industry}}`
+   * Taille de l'entreprise : `{{trigger.object.companySize}}`
+   * ARR de l'entreprise : `{{trigger.object.annualRevenue}}`
+
+## Copier lors de la création d'un enregistrement
+
+### Exemple : Préremplir l'Opportunité avec les données de l'entreprise
+
+**Objectif** : Lors de la création d'une opportunité liée à une entreprise, copier automatiquement les informations clés de l'entreprise.
+
+### Prérequis
+
+Créez les champs de destination dans **Paramètres → Modèle de données → Opportunités** :
+
+* Secteur de l'entreprise (type : Texte)
+* Taille de l'entreprise (type : Nombre)
+
+### Installation
+
+1. **Déclencheur** : Enregistrement créé (Opportunités)
+   * Filtre : L'entreprise n'est pas vide
+
+2. **Rechercher des enregistrements** : Récupérer les détails de l'entreprise liée
+   * Objet : Entreprises
+   * Filtre : ID égal à `{{trigger.object.company.id}}`
+
+3. **Mettre à jour un enregistrement** :
+   * Objet : Opportunités
+   * Enregistrement : `{{trigger.object.id}}`
+   * Secteur de l'entreprise : `{{searchRecords[0].industry}}`
+   * Taille de l'entreprise : `{{searchRecords[0].employees}}`
+
+<Note>
+  **Limitation concernant les tâches et les notes** : Les relations sur les tâches et les notes sont codées en dur en plusieurs-à-plusieurs et ne sont pas encore disponibles dans les déclencheurs ou actions de workflows. Pour accéder à ces relations, utilisez plutôt l'[API](/l/fr/developers/extend/capabilities/apis).
+</Note>
+
+## Synchronisation bidirectionnelle
+
+### Exemple : Maintenir le contact principal synchronisé
+
+**Objectif** : Lorsque le contact principal d'une entreprise change, mettre à jour le contact. Lorsqu'une personne devient contact principal, mettre à jour l'entreprise.
+
+### Workflow 1 : Entreprise → Personne
+
+1. **Déclencheur** : Enregistrement mis à jour (Entreprises, champ Contact principal)
+2. **Mettre à jour un enregistrement** : Définir le champ "Is Primary Contact" de la personne sur true
+3. **Rechercher des enregistrements** : Trouver le contact principal précédent
+4. **Mettre à jour un enregistrement** : Définir le "Is Primary Contact" de l'ancien contact sur false
+
+### Workflow 2 : Personne → Entreprise
+
+1. **Déclencheur** : Enregistrement mis à jour (Personnes, Is Primary Contact = true)
+2. **Mettre à jour un enregistrement** : Définir le contact principal de l'entreprise sur cette personne
+
+<Note>
+  Soyez prudent avec les synchronisations bidirectionnelles pour éviter les boucles infinies. Utilisez des filtres pour vérifier si la valeur a réellement changé avant la mise à jour.
+</Note>
+
+## Utiliser du code pour des mappages complexes
+
+### Exemple : Transformer les données lors de la copie
+
+**Objectif** : Copier et mettre en forme le numéro de téléphone de la personne vers l'opportunité.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Meilleures pratiques
+
+### Évitez les boucles
+
+* Ne créez pas de workflows qui se déclenchent mutuellement à l'infini
+* Utilisez des conditions spécifiques sur les champs
+* Ajoutez des vérifications pour voir si la valeur a réellement changé
+
+### Gérer les données manquantes
+
+* Vérifiez toujours que l'enregistrement source existe avant de copier
+* Fournissez des valeurs par défaut pour les champs facultatifs
+* Utilisez des filtres pour ignorer lorsque le champ source est vide
+
+### Performances
+
+* Regroupez les mises à jour lors de la copie vers de nombreux enregistrements
+* Utilisez des workflows planifiés pour les opérations de synchronisation en masse
+* Envisagez d'utiliser Iterator pour les mises à jour de plusieurs enregistrements
+
+## Articles connexes
+
+* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)

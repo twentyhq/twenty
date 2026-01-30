@@ -1,0 +1,106 @@
+---
+title: バックエンドコマンド
+---
+
+## 便利なコマンド
+
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+これらのコマンドは packages/twenty-server フォルダから実行してください。
+From any other folder you can run `npx nx {command} twenty-server` (or `npx nx run twenty-server:{command}`).
+
+### 初期設定
+
+```
+npx nx database:reset twenty-server # setup the database with dev seeds
+```
+
+### サーバーの起動
+
+```
+npx nx run twenty-server:start
+```
+
+### Lint
+
+```
+npx nx run twenty-server:lint # pass --fix to fix lint errors
+```
+
+### テスト
+
+```
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
+```
+
+注: 統合テストを実行する前にデータベースをリセットする必要がある場合、 `npx nx run twenty-server:test:integration:with-db-reset` を実行できます。
+
+### データベースのリセット
+
+データベースをリセットおよびシードしたい場合は、次のコマンドを実行してください:
+
+```bash
+npx nx run twenty-server:database:reset
+```
+
+### マイグレーション
+
+#### Core/Metadata スキーマ (TypeORM) のオブジェクトに対して
+
+```bash
+npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+```
+
+#### ワークスペースオブジェクトに対して
+
+マイグレーションファイルはなく、それぞれのワークスペースに対して自動的に生成され、
+データベースに保存され、このコマンドで適用されます。
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
+```
+
+<Warning>
+  これによりデータベースが削除され、マイグレーションとシードが再実行されます。
+
+  このコマンドを実行する前に、保持したいデータをバックアップしてください。
+</Warning>
+
+## 技術スタック
+
+Twenty は主にバックエンドに NestJS を使用しています。
+
+最初に使用した ORM は Prisma でした。 最初に使用した ORM は Prisma でした。 But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. 最初に使用した ORM は Prisma でした。 But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. 現在のプロジェクトでは TypeORM を使用しています。
+
+現在の技術スタックは次のようになっています。
+
+**コア**
+
+* [NestJS](https://nestjs.com/)
+* [TypeORM](https://typeorm.io/)
+* [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**データベース**
+
+* [Postgres](https://www.postgresql.org/)
+
+**サードパーティ統合**
+
+* [Sentry](https://sentry.io/welcome/) バグトラッキング用
+
+**テスト**
+
+* [Jest](https://jestjs.io/)
+
+**ツール**
+
+* [Yarn](https://yarnpkg.com/)
+* [ESLint](https://eslint.org/)
+
+**開発**
+
+* [AWS EKS](https://aws.amazon.com/eks/)

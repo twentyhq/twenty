@@ -1,0 +1,170 @@
+---
+title: Solução de Problemas do Workflow
+description: Problemas comuns de fluxos de trabalho e como resolvê-los.
+---
+
+## Problemas Comuns e Soluções
+
+### Workflow Não Dispara
+
+**Sintomas**: Seu fluxo de trabalho não é executado quando você espera.
+
+**Possíveis causas**:
+
+1. **Fluxo de trabalho não ativado**: Garanta que o fluxo de trabalho esteja definido como "Active", não "Draft"
+2. **Condições do gatilho não atendidas**: Verifique se o gatilho corresponde ao evento esperado
+3. **Campo não monitorado**: Para gatilhos "Record is Updated", garanta que o campo específico esteja sendo monitorado
+4. **Permissões**: Verifique se você tem permissão para executar fluxos de trabalho
+
+**Soluções**:
+
+* Verifique o status do fluxo de trabalho na lista de fluxos de trabalho
+* Teste com a ação específica que você espera que o dispare
+* Revise a configuração do gatilho
+* Entre em contato com o seu administrador sobre permissões
+
+### Gatilhos do fluxo de trabalho ocorrem cedo demais (campos vazios)
+
+**Sintomas**: Ao criar um registro manualmente na interface do usuário (UI), o seu fluxo de trabalho é acionado antes de você ter tempo de preencher todos os campos. O fluxo de trabalho é executado com a maioria dos campos vazios.
+
+**Por que isso acontece**: Twenty salva tudo em tempo real — não há um modo separado de "edit" vs "read". Quando você cria um registro, ele é salvo imediatamente, acionando o evento "Record is created" antes de você preencher os campos adicionais.
+
+**Quando "Record is created" funciona bem**:
+
+* Registros criados por chamadas de API (os campos são preenchidos em uma única requisição)
+* Registros criados por importação
+* Criação automática de registros a partir de outros fluxos de trabalho
+
+**Solução**: Para registros criados manualmente na UI, use **"Record is created or updated"** como seu gatilho em vez disso. Dessa forma:
+
+* O fluxo de trabalho é acionado depois que o usuário termina de preencher e salvar os campos
+* Você obtém os dados completos em vez de valores vazios
+
+<Tip>
+  Se você quer que o fluxo de trabalho seja executado apenas uma vez por registro, adicione uma ação Filter para verificar um campo como `createdAt equals updatedAt` (primeiro salvamento) ou use um campo de caixa de seleção personalizado para acompanhar se o fluxo de trabalho já foi executado.
+</Tip>
+
+### Ações com falha
+
+**Sintomas**: O fluxo de trabalho é executado, mas algumas ações falham.
+
+**Possíveis causas**:
+
+1. **Dados ausentes**: Campos obrigatórios estão vazios
+2. **Referências inválidas**: Variáveis de etapas anteriores não existem
+3. **Erros de API**: Serviços externos retornando erros
+4. **Problemas de permissão**: A ação requer permissões que você não possui
+
+**Soluções**:
+
+* Verifique os detalhes da execução do fluxo de trabalho em busca de mensagens de erro
+* Verifique se todos os campos obrigatórios têm valores
+* Teste as conexões de API de forma independente
+* Revise as permissões de função
+
+### Erros de requisição HTTP
+
+**Sintomas**: Ações de requisição HTTP falham ou retornam resultados inesperados.
+
+**Códigos de erro comuns**:
+
+* **400**: Solicitação inválida - verifique o formato do corpo da requisição
+* **401**: Não autorizado - verifique a chave da API
+* **403**: Proibido - verifique as permissões da API
+* **404**: Não encontrado - verifique a URL do endpoint
+* **429**: Muitas requisições - implemente limitação de taxa
+* **500**: Erro do servidor - problema no serviço externo
+
+**Soluções**:
+
+* Verifique a URL do endpoint da API
+* Verifique os cabeçalhos de autenticação
+* Teste a chamada de API primeiro fora do Twenty
+* Adicione tratamento de erros em Ações de Código
+
+### Erros em Ações de Código
+
+**Sintomas**: O código JavaScript não é executado.
+
+**Problemas comuns**:
+
+1. **Erros de sintaxe**: Erros de digitação ou JavaScript inválido
+2. **Variáveis indefinidas**: Referenciando variáveis que não existem
+3. **Erros de tipo**: Operações com tipos de dados incorretos
+4. **Tempo limite excedido**: Código demorando muito para executar
+
+**Soluções**:
+
+* Use a validação integrada do editor de código
+* Teste a lógica do código primeiro em um console JavaScript
+* Adicione instruções console.log para depuração
+* Simplifique operações complexas
+
+### E-mail não enviado
+
+**Sintomas**: A ação Send Email não entrega os e-mails.
+
+**Possíveis causas**:
+
+1. **Nenhuma conta de e-mail conectada**: Verifique Configurações → Contas
+2. **Endereço de e-mail inválido**: O e-mail do destinatário está com formato inválido
+3. **Limites de envio**: Limites de taxa do provedor de e-mail atingidos
+4. **Filtros de spam**: E-mails sendo bloqueados
+
+**Soluções**:
+
+* Verifique a conexão da conta de e-mail
+* Valide os endereços de e-mail dos destinatários
+* Verifique os limites do provedor de e-mail
+* Revise o conteúdo do e-mail para gatilhos de spam
+
+## Depuração de fluxos de trabalho
+
+### Usando execuções de fluxo de trabalho
+
+1. Vá para o editor de fluxo de trabalho
+2. Abra o painel **Runs**
+3. Encontre a execução com falha
+4. Clique para ver os detalhes passo a passo
+5. Revise as mensagens de erro e os dados de saída
+
+### Testando etapas individuais
+
+1. Para Ações de Código, use o botão **Test**
+2. Para requisições HTTP, teste o endpoint separadamente
+3. Crie registros de teste para acionar fluxos de trabalho
+4. Use gatilhos manuais para testes controlados
+
+### Padrões comuns de depuração
+
+**Adicione logs**:
+Use Ações de Código para registrar valores intermediários para depuração.
+
+**Isole etapas**:
+Teste cada etapa de forma independente para identificar falhas.
+
+**Verifique o fluxo de dados**:
+Confirme que cada etapa recebe os dados de entrada esperados.
+
+## Boas práticas para evitar problemas
+
+### Antes da ativação
+
+* Teste cuidadosamente no modo de rascunho
+* Valide todas as conexões de API
+* Revise cuidadosamente as condições do gatilho
+* Documente o comportamento esperado
+
+### Durante o desenvolvimento
+
+* Use nomes descritivos para as etapas
+* Adicione comentários nas Ações de Código
+* Teste com dados realistas
+* Planeje casos-limite
+
+### Após a ativação
+
+* Monitore de perto as execuções iniciais
+* Configure alertas para falhas
+* Revise regularmente o histórico de execuções
+* Mantenha os fluxos de trabalho simples quando possível

@@ -35,13 +35,12 @@ export const RecordCalendarCardBody = ({
   const { objectPermissions, objectMetadataItem } =
     useRecordCalendarContextOrThrow();
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord?.({
+      updateOneRecord({
+        objectNameSingular: objectMetadataItem.nameSingular,
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       });

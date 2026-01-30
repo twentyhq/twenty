@@ -1,0 +1,51 @@
+---
+title: Criar uma visualização de tabela com agrupamento
+description: Organize seus registros em grupos recolhíveis com base no valor do campo.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Agrupe sua visualização de tabela por um campo de seleção para organizar registros em seções recolhíveis.
+
+<img src="/images/user-guide/table-views/table-group-by.png" style={{width:'100%'}} />
+
+## Etapas
+
+1. Navegue até o objeto (Pessoas, Empresas, etc.)
+2. Clique no menu suspenso de visualizações → **+ Adicionar visualização**
+3. Nomeie sua visualização (por exemplo, "Empresas por tipo")
+4. Clique em **Criar**
+5. Clique em **Opções → Agrupar**
+6. Escolha um campo de seleção para agrupar
+7. Clique em **Salvar**
+
+## Configurar ordem dos grupos
+
+Em **Opções → Agrupar → Ordenação**, escolha como os grupos são ordenados:
+
+| Opção                  | Descrição                                             |
+| ---------------------- | ----------------------------------------------------- |
+| **Alfabética**         | De A a Z                                              |
+| **Alfabética inversa** | De Z a A                                              |
+| **Ordem manual**       | Arraste os grupos para reordenar em "Grupos visíveis" |
+
+Clique no **ícone de olho** ao lado de um grupo para ocultá-lo da visualização.
+
+<Note>
+  **Para melhor desempenho, limite a 10-15 grupos visíveis.** Se precisar de mais, considere usar um Painel.
+</Note>
+
+## Exemplo: Empresas por indústria
+
+1. Vá para **Empresas**
+2. Crie uma nova visualização chamada "Por indústria"
+3. Clique em **Opções → Agrupar**
+4. Selecione o campo **Indústria**
+5. Salvar
+
+Agora suas empresas estão organizadas por indústria, facilitando focar em um segmento por vez.
+
+## Relacionados
+
+* [Visualizações de Tabela](/l/pt/user-guide/views-pipelines/capabilities/table-views) — todos os recursos da visualização de tabela
+* [Filtros e ordenação](/l/pt/user-guide/views-pipelines/capabilities/filters-and-sorting) — combine o agrupamento com filtros

@@ -1,13 +1,19 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS } from '@/page-layout/widgets/graph/constants/ExtraItemToDetectTooManyGroups';
-import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMaximumNumberOfSlices.constant';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
-import { transformGroupByDataToPieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/transformGroupByDataToPieChartData';
-import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { PIE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/pieChartData';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
+import { extractPieChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractPieChartDataConfiguration';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
+import { useQuery } from '@apollo/client';
+import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type PieChartConfiguration } from '~/generated/graphql';
 
 type UseGraphPieChartWidgetDataProps = {
@@ -16,13 +22,14 @@ type UseGraphPieChartWidgetDataProps = {
 };
 
 type UseGraphPieChartWidgetDataResult = {
-  data: PieChartDataItem[];
+  data: PieChartDataItemWithColor[];
   showLegend: boolean;
   loading: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
   objectMetadataItem: ObjectMetadataItem;
   formattedToRawLookup: Map<string, RawDimensionValue>;
+  colorMode: GraphColorMode;
   showDataLabels: boolean;
   showCenterMetric: boolean;
 };
@@ -34,43 +41,77 @@ export const useGraphPieChartWidgetData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const apolloCoreClient = useApolloCoreClient();
+
+  const dataConfiguration = useMemo(
+    () => extractPieChartDataConfiguration(configuration),
+    [configuration],
+  );
 
   const {
-    data: groupByData,
+    data: queryData,
     loading,
     error,
-    aggregateOperation,
-  } = useGraphWidgetGroupByQuery({
-    objectMetadataItemId,
-    configuration,
-    limit:
-      PIE_CHART_MAXIMUM_NUMBER_OF_SLICES + EXTRA_ITEM_TO_DETECT_TOO_MANY_GROUPS,
+  } = useQuery(PIE_CHART_DATA, {
+    client: apolloCoreClient,
+    variables: {
+      input: {
+        objectMetadataId: objectMetadataItemId,
+        configuration: dataConfiguration,
+      },
+    },
   });
 
-  const transformedData = useMemo(
-    () =>
-      transformGroupByDataToPieChartData({
-        groupByData,
-        objectMetadataItem,
-        objectMetadataItems: objectMetadataItems ?? [],
-        configuration,
-        aggregateOperation,
-      }),
-    [
-      groupByData,
-      objectMetadataItem,
-      objectMetadataItems,
-      configuration,
-      aggregateOperation,
-    ],
+  const formattedToRawLookup = queryData?.pieChartData?.formattedToRawLookup
+    ? new Map(Object.entries(queryData.pieChartData.formattedToRawLookup))
+    : new Map();
+
+  const groupByField = objectMetadataItem?.fields?.find(
+    (field) => field.id === configuration.groupByFieldMetadataId,
+  );
+
+  const selectFieldOptions =
+    isDefined(groupByField) &&
+    (groupByField.type === FieldMetadataType.SELECT ||
+      groupByField.type === FieldMetadataType.MULTI_SELECT)
+      ? groupByField.options
+      : null;
+
+  const configurationColor = parseGraphColor(configuration.color);
+
+  const colorMode = determineGraphColorMode({
+    configurationColor,
+    selectFieldOptions,
+  });
+
+  const chartData = queryData?.pieChartData?.data?.map(
+    (item: PieChartDataItemWithColor): PieChartDataItemWithColor => {
+      const rawValue = formattedToRawLookup.get(item.id);
+
+      const itemColor = determineChartItemColor({
+        configurationColor,
+        selectOptions: selectFieldOptions,
+        rawValue: isString(rawValue) ? rawValue : undefined,
+      });
+
+      return {
+        id: item.id,
+        value: item.value,
+        color: itemColor,
+      };
+    },
   );
 
   return {
-    ...transformedData,
-    objectMetadataItem,
+    data: chartData,
+    showLegend: configuration.displayLegend ?? true,
     showDataLabels: configuration.displayDataLabel ?? false,
     showCenterMetric: configuration.showCenterMetric ?? true,
+    hasTooManyGroups: queryData?.pieChartData?.hasTooManyGroups ?? false,
+    colorMode,
+    formattedToRawLookup,
+    objectMetadataItem,
     loading,
     error,
   };

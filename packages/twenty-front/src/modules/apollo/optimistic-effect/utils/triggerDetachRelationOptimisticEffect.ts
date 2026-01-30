@@ -32,7 +32,7 @@ export const triggerDetachRelationOptimisticEffect = ({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   const targetRecordTypeName = capitalize(
     targetObjectMetadataItem.nameSingular,
@@ -89,5 +89,5 @@ export const triggerDetachRelationOptimisticEffect = ({
     return;
   }
 
-  upsertRecordsInStore([newCachedRecord]);
+  upsertRecordsInStore({ partialRecords: [newCachedRecord] });
 };

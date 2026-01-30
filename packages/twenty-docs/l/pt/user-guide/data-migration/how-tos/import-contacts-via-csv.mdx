@@ -1,0 +1,242 @@
+---
+title: Importar contactos via CSV
+description: Guia completo passo a passo para importar pessoas/contactos para o Twenty.
+---
+
+## Visão Geral
+
+Este guia explica como importar os seus contactos (People) para o Twenty. **Importe Empresas primeiro** se quiser associar Pessoas a Empresas.
+
+## Antes de Começar
+
+### Lista de Verificação de Pré-requisitos
+
+<Check>
+  O seu ficheiro está no formato CSV, XLSX ou XLS
+</Check>
+
+<Check>
+  O ficheiro tem menos de 10 000 registos
+</Check>
+
+<Check>
+  Sem endereços de e-mail duplicados no seu ficheiro
+</Check>
+
+<Check>
+  **Empresas importadas primeiro** (se estiver a associar Pessoas a Empresas)
+</Check>
+
+<Check>
+  Todos os campos personalizados existem em **Settings → Data Model**
+</Check>
+
+<Warning>
+  **Importe Empresas Antes de Pessoas**
+
+  Se quiser associar Pessoas a Empresas, importe primeiro as Empresas. A Empresa deve existir antes de poder referenciá-la.
+</Warning>
+
+## Passo 1: Prepare os seus dados de contactos
+
+### Campos Obrigatórios e Recomendados
+
+| Campo                     | Obrigatório? | Formato           | Notas                      |
+| ------------------------- | ------------ | ----------------- | -------------------------- |
+| **Email**                 | Recomendado  | `name@domain.com` | Deve ser único             |
+| **Nome**                  | Recomendado  | Texto             |                            |
+| **Apelido**               | Recomendado  | Texto             |                            |
+| **Empresa**               | Opcional     | Domínio ou ID     | Liga à Empresa existente   |
+| **Telefone**              | Opcional     | Várias colunas    | Veja abaixo                |
+| **Cargo**                 | Opcional     | Texto             |                            |
+| **Campos personalizados** | Opcional     | Varia             | Deve existir no Data Model |
+
+### Formato de E-mail
+
+* Deve estar num formato de e-mail válido: `name@domain.com`
+* **Deve ser único** — sem duplicados no seu ficheiro ou no Twenty
+* Para e-mails adicionais, utilize a coluna **Emails / Additional Emails**:
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### Formato de Telefone
+
+Telefone é um **campo aninhado** que requer várias colunas:
+
+| Coluna                                  | Exemplo      |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### A associar a Empresas
+
+Adicione uma coluna com o identificador único da Empresa:
+
+| Nome da Coluna  | Formato        | Exemplo                                |
+| --------------- | -------------- | -------------------------------------- |
+| `companyDomain` | Formato de URL | `https://acme.com`                     |
+| `companyId`     | UUID           | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+
+<Note>
+  **Use o formato de URL de domínio** (`https://acme.com`), não o rótulo. Isto corresponde à forma como as Empresas são armazenadas no Twenty.
+</Note>
+
+### Exemplo de estrutura de CSV
+
+```csv
+firstName,lastName,email,jobTitle,companyDomain,Phones / Primary Phone Number,Phones / Primary Phone Country Code
+John,Smith,john@acme.com,CEO,https://acme.com,4159095555,US
+Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
+```
+
+<Note>
+  **Dica profissional:** Clique em **Download sample file** durante a importação ou exporte algumas Pessoas existentes para ver os nomes de colunas exatos que o Twenty espera.
+</Note>
+
+## Passo 2: Aceda à funcionalidade de importação
+
+**Opção 1: A partir da vista Pessoas**
+
+1. Navegue até **Pessoas** na barra lateral esquerda
+2. Clique no ícone **⋮** no canto superior direito
+3. Selecione **Import records**
+
+**Opção 2: Utilizando o Menu de Comando**
+
+1. Prima `Cmd + K` (Mac) ou `Ctrl + K` (Windows)
+2. Escreva "import"
+3. Selecione **Import records**
+4. Escolha **Pessoas**
+
+## Passo 3: Carregue o seu ficheiro
+
+1. Clique em **Select file**
+2. Escolha o seu ficheiro CSV, XLSX ou XLS
+3. Aguarde que o Twenty analise o seu ficheiro
+
+## Passo 4: Mapeie as suas colunas
+
+O Twenty tenta automaticamente corresponder as suas colunas aos campos. Revise e ajuste:
+
+1. **Verifique os mapeamentos automáticos** — confirme que estão corretos
+2. **Corrija mapeamentos incorretos** — clique no menu suspenso para selecionar o campo correto
+3. **Ignorar colunas** — selecione **Do not map** para as colunas que não quer importar
+
+### Regras Importantes de Mapeamento
+
+| Tipo de Coluna        | Mapear Para                    | Notas                                     |
+| --------------------- | ------------------------------ | ----------------------------------------- |
+| Referência de Empresa | campo de relação **Empresa**   | Use domínio OU ID, não ambos              |
+| E-mail                | **Email**                      | Endereço de e-mail principal              |
+| E-mails adicionais    | **Emails / Additional Emails** | Formato de array                          |
+| Telefone              | Colunas separadas              | Número, Código do País, Código de Chamada |
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+### Mapeamento da Relação com a Empresa
+
+Ao mapear a coluna de empresa:
+
+1. Encontre a sua coluna de referência de empresa (por exemplo, `companyDomain`)
+2. Mapeie-a para o campo de relação **Empresa**
+3. O Twenty irá associar cada Pessoa à Empresa correspondente
+
+<Warning>
+  **Mapeie apenas UM identificador único para relações.**
+
+  Não mapeie ambos `companyId` E `companyDomain`. Escolha um — de preferência o domínio, pois é legível para humanos.
+</Warning>
+
+## Etapa 5: Mapear valores de campos Select
+
+Se você tiver campos Select ou Multi-Select (como Origem do lead):
+
+1. O Twenty exibe seus valores ao lado das opções existentes
+2. Relacione cada valor no seu arquivo a uma opção do Twenty
+3. Ou crie novas opções, se necessário
+
+<Note>
+  As opções de Select usam **nomes de API**, não os rótulos de exibição. Em **Configurações → Modelo de dados** → Ative o **Modo avançado** para ver os nomes de API.
+</Note>
+
+## Etapa 6: Revisar e corrigir erros
+
+Antes de concluir a importação, o Twenty valida seus dados:
+
+1. Clique em **Próximos Passos**
+2. As linhas com erros são destacadas em **amarelo**
+3. **Corrija os erros diretamente** — clique em uma célula e edite o valor
+4. **Remova as linhas problemáticas** — clique no X para ignorar essa linha
+
+### Erros comuns na importação de contatos
+
+| Erro                           | Causa                                      | Solução                                              |
+| ------------------------------ | ------------------------------------------ | ---------------------------------------------------- |
+| **E-mail duplicado**           | O e-mail já existe no Twenty ou no arquivo | Remova o duplicado ou atualize o registro existente  |
+| **Formato de e-mail inválido** | Formato de e-mail incorreto                | Corrija para `name@domain.com`                       |
+| **Relação não encontrada**     | A empresa não existe                       | Importe as Empresas primeiro ou corrija a referência |
+| **Campo obrigatório ausente**  | O campo obrigatório está vazio             | Preencha o valor ou remova a linha                   |
+
+## Etapa 7: Concluir a importação
+
+1. Revise o resumo da importação
+2. Clique em **Confirmar** para importar
+3. Aguarde a conclusão da importação
+4. Verifique conferindo alguns registros e seus vínculos com a Empresa
+
+## Após importar contatos
+
+Seus contatos agora estão no Twenty! Próximos passos:
+
+1. **Verifique os vínculos com a Empresa** — abra alguns registros de Pessoas para confirmar que estão vinculados à Empresa correta
+2. **Importe Oportunidades** — se necessário, vincule-as a Pessoas e Empresas
+3. **Configure a sincronização de e-mail** — conecte sua caixa de correio para ver o histórico de e-mails nos registros de contato
+
+## Atualizando contatos existentes
+
+Para atualizar contatos em vez de criar novos:
+
+1. Inclua a coluna `email` ou `id` no seu arquivo
+2. O Twenty faz a correspondência dos registros por esse identificador único
+3. Os contatos existentes são atualizados; os novos são criados
+
+Veja [Como Atualizar Registros Existentes](/l/pt/user-guide/data-migration/how-tos/update-existing-records-via-import) para obter detalhes.
+
+## Perguntas frequentes
+
+<AccordionGroup>
+  <Accordion title="Por que duas Pessoas não podem ter o mesmo e-mail?">
+    O e-mail é um identificador único no Twenty. Isso evita contatos duplicados e garante que a sincronização de e-mail vincule corretamente os e-mails à pessoa certa.
+  </Accordion>
+
+  <Accordion title="E se eu tiver pessoas sem e-mail?">
+    Você pode deixar o e-mail em branco. No entanto, recomendamos adicionar e-mails quando possível para melhorar a qualidade dos dados e a funcionalidade de sincronização de e-mail.
+  </Accordion>
+
+  <Accordion title="Como vinculo Pessoas a Empresas durante a importação?">
+    Adicione uma coluna com o domínio da Empresa (por exemplo, `https://acme.com`) ou o ID. Durante o mapeamento, conecte essa coluna ao campo de relação da Empresa.
+  </Accordion>
+
+  <Accordion title="E se a Empresa ainda não existir?">
+    Importe as Empresas primeiro e, depois, as Pessoas. A Empresa deve existir antes que você possa referenciá-la.
+  </Accordion>
+
+  <Accordion title="Posso importar o ID do meu CRM anterior?">
+    Sim! Crie um campo personalizado marcado como "único" no seu modelo de dados para armazenar o ID externo. Observação: o nome do campo `id` é reservado para o ID interno do Twenty.
+  </Accordion>
+
+  <Accordion title="Como corrijo erros de 'relação não encontrada'?">
+    A Empresa que você está referenciando não existe. Importe a Empresa primeiro ou verifique se o domínio/ID corresponde exatamente a uma Empresa existente.
+  </Accordion>
+</AccordionGroup>
+
+## Resolução de Problemas
+
+Com problemas? Confira:
+
+* [Como corrigir erros de importação](/l/pt/user-guide/data-migration/how-tos/fix-import-errors)
+* [Como importar relações](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Referência de mapeamento de campos](/l/pt/user-guide/data-migration/capabilities/field-mapping)

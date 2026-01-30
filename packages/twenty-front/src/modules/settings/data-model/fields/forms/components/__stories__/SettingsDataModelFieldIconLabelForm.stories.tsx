@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 
+import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
-import { SettingsDataModelFieldIconLabelForm } from '../SettingsDataModelFieldIconLabelForm';
 
 const StyledContainer = styled.div`
   flex: 1;
@@ -25,7 +24,6 @@ const meta: Meta<typeof SettingsDataModelFieldIconLabelForm> = {
     FormProviderDecorator,
     IconsProviderDecorator,
     ComponentDecorator,
-    I18nFrontDecorator,
   ],
 };
 

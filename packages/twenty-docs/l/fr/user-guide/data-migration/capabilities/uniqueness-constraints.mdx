@@ -1,0 +1,72 @@
+---
+title: Contraintes d'unicité
+description: Comment Twenty impose l'unicité des données lors de l'importation.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Vue d'ensemble
+
+Twenty impose l'unicité sur certains champs afin d'éviter les doublons et d'assurer l'intégrité des données. Comprendre ces contraintes est essentiel pour des importations réussies.
+
+## Champs uniques par défaut
+
+| Objet                    | Champs uniques               |
+| ------------------------ | ---------------------------- |
+| **Personnes**            | `id`, `email`                |
+| **Entreprises**          | `id`, `domain`               |
+| **Objets personnalisés** | `id` uniquement (par défaut) |
+
+<Note>Le champ `id` est l'identifiant interne de Twenty, généré automatiquement pour chaque enregistrement. Il utilise le format UUID (par exemple, `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+## Champs uniques personnalisés
+
+Vous pouvez définir des champs uniques supplémentaires sous **Paramètres → Modèle de données** :
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez l'objet
+3. Cliquez sur un champ
+4. Activez **Unique** dans les paramètres du champ
+
+### Cas d'utilisation pour les champs uniques personnalisés
+
+* **ID externes** : Stockez les ID provenant d'autres systèmes (Salesforce ID, HubSpot ID)
+* **Identifiants métier** : Numéros d'employé, codes client
+* **Coordonnées alternatives** : Profil LinkedIn, numéro de téléphone
+
+<Note>Le nom de champ `id` est réservé à l'ID interne de Twenty. Utilisez un nom différent comme `externalId` ou `legacyId` pour les identifiants externes.</Note>
+
+## Comportement de l'importation
+
+### Création de nouveaux enregistrements
+
+Si la valeur d'un champ unique n'existe pas, un nouvel enregistrement est créé.
+
+### Mise à jour des enregistrements existants
+
+Si la valeur d'un champ unique correspond à un enregistrement existant, cet enregistrement est **mis à jour** avec les nouvelles données.
+<Warning>Pour **mettre à jour des enregistrements existants**, il est recommandé de **ne faire correspondre qu'un seul champ unique**.</Warning>
+
+### Enregistrements supprimés de manière logique
+
+<Warning>
+  **Les enregistrements supprimés de manière logique comptent pour l'unicité.**
+
+  Les enregistrements supprimés de manière logique (visibles sous Menu Commandes → Voir les enregistrements supprimés) sont inclus dans les vérifications d'unicité. Si vous importez un enregistrement avec la même valeur unique qu'un enregistrement supprimé, l'enregistrement supprimé sera **restauré** avec les nouvelles données.
+</Warning>
+
+## Détection des doublons lors de l'importation
+
+Pendant la phase de validation :
+
+* Les doublons dans votre fichier sont surlignés en jaune
+* Vous pouvez modifier ou supprimer les lignes en double depuis l'interface avant de lancer l'importation
+
+<VimeoEmbed videoId="1145246326" title="Démonstration vidéo" />
+
+## Meilleures pratiques
+
+1. **Supprimez les doublons** de votre fichier avant l'importation
+2. **Vérifiez les enregistrements existants** dans Twenty avant l'importation
+3. **Utilisez des ID externes** lors de la migration depuis d'autres systèmes
+4. **Incluez des champs uniques** si vous souhaitez mettre à jour des enregistrements existants

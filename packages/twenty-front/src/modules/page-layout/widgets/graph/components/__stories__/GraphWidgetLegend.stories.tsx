@@ -1,8 +1,8 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
+import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { GraphWidgetLegend } from '../GraphWidgetLegend';
 
 const meta: Meta<typeof GraphWidgetLegend> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLegend',

@@ -5,7 +5,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ToReferenceFunction } from '@apollo/client/cache/core/types/common';
 
-import { createCacheEdgeWithRecordRef } from '../createCacheEdgeWithRecordRef';
+import { createCacheEdgeWithRecordRef } from '@/object-record/cache/utils/createCacheEdgeWithRecordRef';
 
 describe('createCacheEdgeWithRecordRef', () => {
   it('should create an edge with reference when toReference returns a reference', () => {

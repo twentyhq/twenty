@@ -4,10 +4,7 @@ import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pa
 import { useUpdateCurrentWidgetConfig } from '@/command-menu/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { type ChartConfiguration } from '@/command-menu/pages/page-layout/types/ChartConfiguration';
-import { isBarOrLineChartConfiguration } from '@/command-menu/pages/page-layout/utils/isBarOrLineChartConfiguration';
-import { isGaugeChartConfiguration } from '@/command-menu/pages/page-layout/utils/isGaugeChartConfiguration';
-import { isIframeConfiguration } from '@/command-menu/pages/page-layout/utils/isIframeConfiguration';
-import { isPieChartConfiguration } from '@/command-menu/pages/page-layout/utils/isPieChartConfiguration';
+import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -52,17 +49,30 @@ export const ChartColorSelectionDropdownContent = () => {
     return null;
   }
 
-  if (isIframeConfiguration(widgetInEditMode.configuration)) {
+  if (
+    isWidgetConfigurationOfType(
+      widgetInEditMode.configuration,
+      'IframeConfiguration',
+    )
+  ) {
     throw new Error('Invalid configuration type');
   }
 
   const configuration = widgetInEditMode.configuration as ChartConfiguration;
 
-  if (
-    !isBarOrLineChartConfiguration(configuration) &&
-    !isGaugeChartConfiguration(configuration) &&
-    !isPieChartConfiguration(configuration)
-  ) {
+  const isBarOrLineChart =
+    isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
+    isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
+  const isGaugeChart = isWidgetConfigurationOfType(
+    configuration,
+    'GaugeChartConfiguration',
+  );
+  const isPieChart = isWidgetConfigurationOfType(
+    configuration,
+    'PieChartConfiguration',
+  );
+
+  if (!isBarOrLineChart && !isGaugeChart && !isPieChart) {
     return null;
   }
 
@@ -71,7 +81,7 @@ export const ChartColorSelectionDropdownContent = () => {
   const colorOptions: ColorOption[] = [
     {
       id: 'auto',
-      name: 'Palette',
+      name: 'Default palette',
       colorName: 'auto',
     },
     ...MAIN_COLOR_NAMES.map((colorName) => ({

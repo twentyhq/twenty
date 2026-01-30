@@ -1,0 +1,136 @@
+---
+title: Spouštěče pracovních postupů
+description: Seznamte se s různými spouštěči, které zahajují vaše pracovní postupy.
+---
+
+## O spouštěčích
+
+Pracovní postupy vždy začínají jedním spouštěčem, který určuje, kdy by měla být automatizace spuštěna.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Pokročilé objekty jsou podporovány!** Kromě standardních CRM objektů (Lidé, Společnosti, Příležitosti) můžete také spouštět pracovní postupy a provádět akce nad:
+
+  * Členové pracovního prostoru
+  * Události v kalendáři
+  * Zprávy (e-maily)
+  * Úkoly, poznámky a mnoho dalších systémových objektů
+
+  To umožňuje výkonné automatizace, například upozorňovat členy týmu, když jsou v kalendáři vytvořeny události, nebo automaticky zpracovávat příchozí e-maily.
+</Tip>
+
+## Záznam je vytvořen
+
+Spouští pracovní postup, když je vytvořen nový záznam ve vybraném objektu (Lidé, Společnosti, Příležitosti nebo jakýkoli vlastní objekt).
+
+**Konfigurace**: Vyberte typ objektu, který chcete sledovat ohledně nových záznamů.
+
+<Note>
+  * Tento spouštěč je skvělý pro záznamy vytvořené pomocí CSV, synchronizace poštovní schránky a kalendáře nebo API.
+  * **Nedoporučuje se pro záznamy vytvářené ručně**: s tímto spouštěčem se pracovní postupy spouštějí okamžitě po vytvoření záznamu. Protože Twenty UI nabízí průběžné automatické ukládání (neexistuje režim úprav a následné potvrzení pro uložení záznamů), pracovní postup bude spuštěn dříve, než uživatel vyplní všechna pole.
+    Chcete-li tento pracovní postup spouštět u záznamů vytvořených ručně, doporučujeme místo toho použít spouštěč `Record is created or updated`.
+</Note>
+
+## Záznam je aktualizován
+
+Spouští pracovní postup, když jsou v existujícím záznamu provedeny změny.
+
+**Konfigurace**:
+
+* Vyberte typ objektu
+* Volitelně specifikujte, které pole chcete sledovat pro změny
+
+## Záznam je aktualizován nebo vytvořen
+
+Spouští pracovní postup, když je záznam buď vytvořen, nebo aktualizován ve vybraném objektu.
+
+**Proč to je důležité**: Tento spouštěč je obzvláště užitečný, protože záznamy vytvořené různými metodami se chovají odlišně:
+
+* **API/CSV importy**: Záznamy jsou vytvořeny s okamžitě vyplněnými všemi poli
+* **Manuální tvorba**: Záznamy jsou nejprve vytvořeny, poté jsou pole přidávány v následných aktualizacích
+
+**Konfigurace**:
+
+* Vyberte typ objektu, který chcete sledovat
+* Volitelně specifikujte, které pole chcete sledovat pro změny
+* Pracovní postup se spustí jak při počátečním vytvoření, tak při jakýchkoliv následných aktualizacích
+
+## Záznam je odstraněn
+
+Spouští pracovní postup, když je záznam odstraněn z objektu.
+
+**Konfigurace**: Vyberte typ objektu, který chcete sledovat ohledně odstranění.
+
+## Ruční spouštěč
+
+Spustí pracovní postup, když jej vyvolá uživatelská akce. K tomuto spouštěči je možné přistupovat prostřednictvím nabídky `Cmd+K` nebo pomocí vlastního tlačítka, které se zobrazí v horní navigační liště po výběru záznamu nebo záznamů.
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Konfigurace dostupnosti**:
+Vyberte, jak má pracovní postup zpracovávat výběr záznamů:
+
+* **Globální**: K aktivaci tohoto pracovního postupu není vyžadován žádný záznam. Pracovní postup se spouští z příkazové nabídky `Cmd + K` odkudkoli (z jakéhokoli objektu) a nepoužívá jako vstup žádné záznamy.
+
+* **Jednotlivé**: Vybraný záznam či záznamy budou předány vašemu pracovnímu postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup se spustí od začátku do konce tolikrát, kolik je vybraných záznamů.
+
+  <Note>
+    **Měkký limit: 100 běhů za minutu**. Po překročení tohoto limitu zůstanou pracovní postupy ve stavu "Not Started" a budou zpracovávány postupně—buď úlohou na pozadí, nebo když do fronty vstoupí další pracovní postup. To znamená, že se spouštěčem Jednotlivé můžete vybrat více než 100 záznamů; provádění bude jen pomalejší.
+  </Note>
+
+* **Hromadné**: Vybrané záznamy budou předány do vašeho pracovního postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup poběží jednou, přičemž celý seznam záznamů bude použit jako vstup. To znamená, že pracovní postup musí obsahovat [akci Iterator](/l/cs/user-guide/workflows/capabilities/workflow-actions#iterator).
+
+<Note>
+  Toto je pokročilejší a hodí se pro uživatele, kteří chtějí optimalizovat počet běhů pracovního postupu.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Dodatečné nastavení**:
+
+* Vyberte cílový objekt (pro dostupnost v režimu Jednotlivé a Hromadné)
+* Vyberte ikonu příkazu pro spuštění pracovního postupu
+* Nakonfigurujte umístění v navigaci (připnuté nebo nepřipnuté)
+
+**Způsoby přístupu**:
+
+* Nabídka `Cmd+K` pro vyhledání a spuštění ručních pracovních postupů
+* Vlastní tlačítko v horní navigaci (pokud je nastaveno)
+
+## Časový spouštěč: Podle plánu
+
+Spouští pracovní postup v opakovaných intervalech, které definujete.
+
+**Konfigurace**:
+
+* Vyberte časovou jednotku (minuty, hodiny, dny)
+* Zadejte hodnotu nebo použijte vlastní cron výrazy pro rozšířené plánování
+
+<Note>
+  **Časové pásmo**: Plánované pracovní postupy běží v **UTC**. Při nastavování hodin pro denní plány převeďte svůj místní čas na UTC.
+</Note>
+
+## Externí spouštěč: Webhook
+
+Spustí pracovní postup, když je z externí služby přijat požadavek typu GET nebo POST.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Konfigurace**:
+
+* Pracovní postup poskytne jedinečnou URL adresu webhooku—zkopírujte ji a přidejte do svého externího systému jako koncový bod, který se má volat.
+* Pro požadavky POST definujte očekávanou strukturu těla, aby Twenty vědělo, jaká data očekávat. Zde přidejte pole, která obdržíte a která budou dále ve vašem pracovním postupu potřeba.
+* Nakonfigurujte ověřování (již brzy).
+
+## Výběr správného spouštěče
+
+| Případ použití                                 | Doporučený spouštěč                  |
+| ---------------------------------------------- | ------------------------------------ |
+| Nové potenciální kontakty je potřeba zpracovat | Záznam je vytvořen                   |
+| Změny dat je potřeba synchronizovat            | Záznam je aktualizován               |
+| Import/ruční zpracování dat                    | Záznam je aktualizován nebo vytvořen |
+| Čištění po smazání                             | Záznam je odstraněn                  |
+| Akce spuštěná uživatelem                       | Spustit manuálně                     |
+| Pravidelné reporty                             | Podle plánu                          |
+| Externí integrace                              | Webhook nebo Podle plánu             |

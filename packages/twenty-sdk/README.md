@@ -15,8 +15,11 @@
 A CLI and SDK to develop, build, and publish applications that extend [Twenty CRM](https://twenty.com).
 
 - Type‑safe client and workspace entity typings
-- Built‑in CLI for auth, generate, dev sync, one‑off sync, and uninstall
+- Built‑in CLI for auth, dev mode (watch & sync), generate, uninstall, and function management
 - Works great with the scaffolder: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app)
+
+## Documentation
+See Twenty application documentation https://docs.twenty.com/developers/extend/capabilities/apps
 
 ## Prerequisites
 - Node.js 24+ (recommended) and Yarn 4
@@ -30,72 +33,250 @@ npm install twenty-sdk
 yarn add twenty-sdk
 ```
 
-## Getting started
-You can either scaffold a new app or add the SDK to an existing one.
+## Usage
 
-- Start new (recommended):
-  ```bash
-  npx create-twenty-app@latest my-twenty-app
-  cd my-twenty-app
-  ```
-- Existing project: install the SDK as shown above, then use the CLI below.
+```
+Usage: twenty [options] [command]
 
-## CLI quickstart
+CLI for Twenty application development
+
+Options:
+  --workspace <name>   Use a specific workspace configuration (default: "default")
+  -V, --version        output the version number
+  -h, --help           display help for command
+
+Commands:
+  auth:login           Authenticate with Twenty
+  auth:logout          Remove authentication credentials
+  auth:status          Check authentication status
+  auth:switch          Switch the default workspace
+  auth:list            List all configured workspaces
+  app:dev              Watch and sync local application changes
+  app:generate         Generate Twenty client
+  app:uninstall        Uninstall application from Twenty
+  entity:add           Add a new entity to your application
+  function:logs        Watch application function logs
+  function:execute     Execute a serverless function with a JSON payload
+  help [command]       display help for command
+```
+
+## Global Options
+
+- `--workspace <name>`: Use a specific workspace configuration profile. Defaults to `default`. See Configuration for details.
+
+## Commands
+
+### Auth
+
+Authenticate the CLI against your Twenty workspace.
+
+- `twenty auth:login` — Authenticate with Twenty.
+  - Options:
+    - `--api-key <key>`: API key for authentication.
+    - `--api-url <url>`: Twenty API URL (defaults to your current profile's value or `http://localhost:3000`).
+  - Behavior: Prompts for any missing values, persists them to the active workspace profile, and validates the credentials.
+
+- `twenty auth:logout` — Remove authentication credentials for the active workspace profile.
+
+- `twenty auth:status` — Print the current authentication status (API URL, masked API key, validity).
+
+- `twenty auth:list` — List all configured workspaces.
+  - Behavior: Displays all available workspaces with their authentication status and API URLs. Shows which workspace is the current default.
+
+- `twenty auth:switch [workspace]` — Switch the default workspace for authentication.
+  - Arguments:
+    - `workspace` (optional): Name of the workspace to switch to. If omitted, shows an interactive selection.
+  - Behavior: Sets the specified workspace as the default, so subsequent commands use it without needing `--workspace`.
+
+Examples:
+
 ```bash
-# Authenticate using your API key (CLI will prompt for it)
-twenty auth login
+# Login interactively (recommended)
+twenty auth:login
 
-# Add a new entity to your application (guided prompts)
-twenty app add
+# Provide values in flags
+twenty auth:login --api-key $TWENTY_API_KEY --api-url https://api.twenty.com
 
-# Generate a typed Twenty client and TypeScript definitions for your workspace entities
-twenty app generate
+# Login interactively for a specific workspace profile
+twenty auth:login --workspace my-custom-workspace
 
-# Start dev mode: automatically syncs changes to your workspace for instant testing
-twenty app dev
+# Check status
+twenty auth:status
 
-# One‑time sync of local changes
-twenty app sync
+# Logout current profile
+twenty auth:logout
 
-# Uninstall the application from the current workspace
-twenty app uninstall
+# List all configured workspaces
+twenty auth:list
+
+# Switch default workspace interactively
+twenty auth:switch
+
+# Switch to a specific workspace
+twenty auth:switch production
 ```
 
-## Usage (SDK)
-```typescript
-// Example: import what you need from the SDK
-import { /* your exports */ } from 'twenty-sdk';
-```
+### App
 
-## Publish your application
-Applications are currently stored in [`twenty/packages/twenty-apps`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps).
+Application development commands.
 
-You can share your application with all Twenty users:
+- `twenty app:dev [appPath]` — Start development mode: watch and sync local application changes.
+  - Behavior: Builds your application (functions and front components), computes the manifest, syncs everything to your workspace, then watches the directory for changes and re-syncs automatically. Displays an interactive UI showing build and sync status in real time. Press Ctrl+C to stop.
+
+- `twenty app:uninstall [appPath]` — Uninstall the application from the current workspace.
+
+- `twenty app:generate [appPath]` — Generate the typed Twenty client for your application.
+
+### Entity
+
+- `twenty entity:add [entityType]` — Add a new entity to your application.
+  - Arguments:
+    - `entityType`: one of `function`, `front-component`, `object`, or `role`. If omitted, an interactive prompt is shown.
+  - Options:
+    - `--path <path>`: The path where the entity file should be created (relative to the current directory).
+  - Behavior:
+    - `object`: prompts for singular/plural names and labels, then creates a `*.object.ts` definition file.
+    - `function`: prompts for a name and scaffolds a `*.function.ts` logic function file.
+    - `front-component`: prompts for a name and scaffolds a `*.front-component.tsx` file.
+    - `role`: prompts for a name and scaffolds a `*.role.ts` role definition file.
+
+### Function
+
+- `twenty function:logs [appPath]` — Stream application function logs.
+  - Options:
+    - `-u, --functionUniversalIdentifier <id>`: Only show logs for a specific function universal ID.
+    - `-n, --functionName <name>`: Only show logs for a specific function name.
+
+- `twenty function:execute [appPath]` — Execute a logic function with a JSON payload.
+  - Options:
+    - `-n, --functionName <name>`: Name of the function to execute (required if `-u` not provided).
+    - `-u, --functionUniversalIdentifier <id>`: Universal ID of the function to execute (required if `-n` not provided).
+    - `-p, --payload <payload>`: JSON payload to send to the function (default: `{}`).
+
+Examples:
 
 ```bash
-# pull the Twenty project
-git clone https://github.com/twentyhq/twenty.git
-cd twenty
+# Start dev mode (watch, build, and sync)
+twenty app:dev
 
-# create a new branch
-git checkout -b feature/my-awesome-app
+# Start dev mode with a custom workspace profile
+twenty app:dev --workspace my-custom-workspace
+
+# Add a new entity interactively
+twenty entity:add
+
+# Add a new function
+twenty entity:add function
+
+# Add a new front component
+twenty entity:add front-component
+
+# Generate client types
+twenty app:generate
+
+# Uninstall the app from the workspace
+twenty app:uninstall
+
+# Watch all function logs
+twenty function:logs
+
+# Watch logs for a specific function by name
+twenty function:logs -n my-function
+
+# Execute a function by name (with empty payload)
+twenty function:execute -n my-function
+
+# Execute a function with a JSON payload
+twenty function:execute -n my-function -p '{"name": "test"}'
+
+# Execute a function by universal identifier
+twenty function:execute -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf -p '{"key": "value"}'
 ```
 
-- Copy your app folder into `twenty/packages/twenty-apps`.
-- Commit your changes and open a pull request on https://github.com/twentyhq/twenty
+## Configuration
 
-```bash
-git commit -m "Add new application"
-git push
+The CLI stores configuration per user in a JSON file:
+
+- Location: `~/.twenty/config.json`
+- Structure: Profiles keyed by workspace name. The active profile is selected with `--workspace <name>` or by the `defaultWorkspace` setting.
+
+Example configuration file:
+
+```json
+{
+  "defaultWorkspace": "prod",
+  "profiles": {
+    "default": {
+      "apiUrl": "http://localhost:3000",
+      "apiKey": "<your-api-key>"
+    },
+    "prod": {
+      "apiUrl": "https://api.twenty.com",
+      "apiKey": "<your-api-key>"
+    }
+  }
+}
 ```
 
-Our team reviews contributions for quality, security, and reusability.
+Notes:
+
+- If a profile is missing, `apiUrl` defaults to `http://localhost:3000` until set.
+- `twenty auth:login` writes the `apiUrl` and `apiKey` for the active workspace profile.
+- `twenty auth:login --workspace custom-workspace` writes the `apiUrl` and `apiKey` for a custom `custom-workspace` profile.
+- `twenty auth:switch` sets the `defaultWorkspace` field, which is used when `--workspace` is not specified.
+- `twenty auth:list` shows all configured workspaces and their authentication status.
+
 
 ## Troubleshooting
-- Auth errors: run `twenty auth login` again and ensure the API key has the required permissions.
-- Typings out of date: run `twenty app generate` to refresh the client and types.
-- Not seeing changes in dev: make sure dev mode is running (`twenty app dev`).
+- Auth errors: run `twenty auth:login` again and ensure the API key has the required permissions.
+- Typings out of date: run `twenty app:generate` to refresh the client and types.
+- Not seeing changes in dev: make sure dev mode is running (`twenty app:dev`).
 
 ## Contributing
+
+### Development Setup
+
+To contribute to the twenty-sdk package, clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+cd twenty
+yarn install
+```
+
+### Development Mode
+
+Run the SDK build in watch mode to automatically rebuild on file changes:
+
+```bash
+npx nx run twenty-sdk:dev
+```
+
+This will watch for changes and rebuild the `dist` folder automatically.
+
+### Production Build
+
+Build the SDK for production:
+
+```bash
+npx nx run twenty-sdk:build
+```
+
+### Running the CLI Locally
+
+After building, you can run the CLI directly:
+
+```bash
+npx nx run twenty-sdk:start -- <command>
+# Example: npx nx run twenty-sdk:start -- auth:status
+```
+
+Or run the built CLI directly:
+
+```bash
+node packages/twenty-sdk/dist/cli.cjs <command>
+```
+
+### Resources
 - See our [GitHub](https://github.com/twentyhq/twenty)
 - Join our [Discord](https://discord.gg/cx5n4Jzs57)

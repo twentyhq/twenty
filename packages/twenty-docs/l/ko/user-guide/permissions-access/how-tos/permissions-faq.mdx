@@ -1,0 +1,126 @@
+---
+title: 권한 FAQ
+description: 역할과 권한에 관한 자주 묻는 질문입니다.
+---
+
+## 역할
+
+<AccordionGroup>
+  <Accordion title="Twenty에는 기본적으로 어떤 역할이 제공되나요?">
+    Twenty에는 기본적으로 **Admin** 및 **Member** 역할이 포함됩니다. 팀의 필요에 따라 추가 사용자 지정 역할을 만들 수 있습니다(예: 영업 담당자, 관리자, 읽기 전용 사용자).
+  </Accordion>
+
+  <Accordion title="Admin 역할을 삭제할 수 있나요?">
+    아니요, Admin 역할은 삭제할 수 없습니다. Admin 역할에는 항상 최소 한 명의 구성원이 할당되어 있어야 합니다.
+  </Accordion>
+
+  <Accordion title="역할을 삭제하면 어떻게 되나요?">
+    해당 역할이 할당된 워크스페이스 구성원은 기본 역할로 자동 재할당됩니다.
+  </Accordion>
+
+  <Accordion title="신규 구성원에게 기본 역할을 어떻게 설정하나요?">
+    **Settings → Roles**로 이동하여 **Default Role** 옵션을 찾은 뒤, 신규 구성원이 가입할 때 자동으로 부여될 역할을 선택하세요.
+  </Accordion>
+
+  <Accordion title="한 사용자에게 여러 역할을 할당할 수 있나요?">
+    아니요, 각 사용자는 한 번에 하나의 역할만 가질 수 있습니다. 권한 조합이 필요하다면 사용자 지정 역할을 생성하세요.
+  </Accordion>
+</AccordionGroup>
+
+## 권한
+
+<AccordionGroup>
+  <Accordion title="객체 권한과 필드 권한의 차이점은 무엇인가요?">
+    * **객체 권한**: 전체 레코드에 대한 액세스를 제어합니다(예: People 레코드를 보기/편집/삭제 가능)
+    * **필드 권한**: 객체 내 특정 필드에 대한 액세스를 제어합니다(예: Salary 필드는 볼 수만 있고 편집은 불가)
+
+    필드 권한은 민감한 데이터에 대해 더 세밀한 제어를 가능하게 합니다.
+  </Accordion>
+
+  <Accordion title="권한 재정의는 어떻게 작동하나요?">
+    권한은 전역 설정에서 구체적 설정으로 계단식으로 적용됩니다:
+
+    1. **All Objects**는 모든 객체에 대한 기준을 설정합니다
+    2. **Object-Level Permissions**는 특정 객체에 대해 전역 설정을 재정의할 수 있습니다
+    3. **Field-Level Permissions**는 특정 필드에 대해 객체 설정을 재정의할 수 있습니다
+
+    보다 구체적인 설정이 항상 우선합니다.
+  </Accordion>
+
+  <Accordion title="다양한 권한 수준은 무엇을 의미하나요?">
+    객체의 경우:
+
+    * **See Records**: 목록 및 상세 페이지에서 레코드를 조회
+    * **Edit Records**: 기존 레코드 수정
+    * **Delete Records**: 레코드를 소프트 삭제(복원 가능)
+    * **Destroy Records**: 레코드를 영구 삭제
+
+    필드의 경우:
+
+    * **See Field**: 필드 값 조회
+    * **Edit Field**: 필드 값 수정
+    * **No Access**: 필드가 완전히 숨겨짐
+  </Accordion>
+
+  <Accordion title="특정 레코드에 대한 액세스를 제한할 수 있나요(행 수준 권한)?">
+    행 수준 권한은 2026년 1분기까지 **Organization** 요금제에서 제공될 예정입니다. 이를 통해 기준에 따라 특정 레코드에 대한 액세스를 제한할 수 있습니다(예: 자신의 영업 기회만 보기).
+  </Accordion>
+
+  <Accordion title="일부 사용자에 대해 필드를 읽기 전용으로 설정하려면 어떻게 하나요?">
+    1. **설정 → 역할**로 이동
+    2. 역할을 선택합니다
+    3. 해당 필드가 포함된 객체로 이동합니다
+    4. 필드 권한을 **See Field**로 설정합니다(**Edit Field** 없이)
+  </Accordion>
+</AccordionGroup>
+
+## 설정 및 작업
+
+<AccordionGroup>
+  <Accordion title="사용할 수 있는 설정 권한은 무엇인가요?">
+    다음에 대한 액세스를 제어할 수 있습니다:
+
+    * API 키 생성
+    * 워크스페이스 환경설정
+    * 역할 할당
+    * 데이터 모델 구성
+    * 보안 설정
+    * 워크플로우 관리
+
+    **Settings All Access**를 사용하여 전체 액세스를 부여하거나, 특정 권한만 활성화하세요.
+  </Accordion>
+
+  <Accordion title="사용할 수 있는 작업 권한은 무엇인가요?">
+    다음을 제어할 수 있습니다:
+
+    * **Send Email**: Twenty에서 이메일을 보낼 수 있음
+    * **Import CSV**: CSV를 통해 데이터를 가져올 수 있음
+    * **Export CSV**: 데이터를 CSV로 내보낼 수 있음
+
+    **Application All Access**를 사용하여 모든 작업을 허용하거나, 필요한 항목만 활성화하세요.
+  </Accordion>
+</AccordionGroup>
+
+## SSO
+
+<AccordionGroup>
+  <Accordion title="모든 요금제에서 SSO를 사용할 수 있나요?">
+    아니요, SSO는 **Organization** 요금제에서만 제공되는 프리미엄 기능입니다.
+  </Accordion>
+
+  <Accordion title="어떤 아이덴티티 제공자가 지원되나요?">
+    Twenty는 다음을 지원합니다:
+
+    * **SAML 2.0**(대부분의 엔터프라이즈 아이덴티티 제공자와 호환)
+    * **Google Workspace**
+    * **Microsoft Entra ID**(이전 명칭: Azure AD)
+  </Accordion>
+
+  <Accordion title="Just-in-Time(JIT) 프로비저닝이란 무엇인가요?">
+    JIT 프로비저닝을 사용하면, 사용자가 SSO로 처음 로그인할 때 Twenty에 사용자 계정이 자동으로 생성됩니다. 기본 역할이 자동으로 할당됩니다.
+  </Accordion>
+
+  <Accordion title="모든 사용자에게 SSO를 필수로 적용할 수 있나요?">
+    예. SSO 구성이 완료되면, 아이덴티티 제공자를 통한 인증을 강제하기 위해 SSO 사용자에 대한 비밀번호 로그인을 비활성화할 수 있습니다.
+  </Accordion>
+</AccordionGroup>

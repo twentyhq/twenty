@@ -1,0 +1,325 @@
+---
+title: 모범 사례
+---
+
+이 문서는 프론트엔드 작업 시 따라야 할 모범 사례를 설명합니다.
+
+## 상태 관리
+
+React와 Recoil은 코드베이스에서 상태 관리를 처리합니다.
+
+### `useRecoilState`로 상태 저장하기
+
+상태를 저장하는 데 필요한 만큼의 atom을 만드는 것이 좋은 습관입니다.
+
+<Warning>
+  프롭스 드릴링에 너무 많은 노력을 기울이기보다는 추가 아톰을 사용하는 것이 좋습니다.
+</Warning>
+
+```tsx
+export const myAtomState = atom({
+  key: 'myAtomState',
+  default: 'default value',
+});
+
+export const MyComponent = () => {
+  const [myAtom, setMyAtom] = useRecoilState(myAtomState);
+
+  return (
+    <div>
+      <input
+        value={myAtom}
+        onChange={(e) => setMyAtom(e.target.value)}
+      />
+    </div>
+  );
+}
+```
+
+### 상태 저장에 `useRef`를 사용하지 마십시오
+
+상태 저장에 `useRef`를 사용하지 않도록 주의하십시오.
+
+If you want to store state, you should use `useState` or `useRecoilState`.
+
+일부 리렌더링을 방지하기 위해 `useRef`가 필요하다고 느낄 경우 [리렌더링 관리 방법](#managing-re-renders)을 참조하십시오.
+
+## 리렌더링 관리
+
+리액트에서 리렌더링은 관리하기 어려울 수 있습니다.
+
+불필요한 리렌더링을 피하기 위해 따라야 할 몇 가지 규칙이 있습니다.
+
+리렌더링의 원인을 이해하면 항상 리렌더링을 피할 수 있다는 점을 명심하십시오.
+
+### 루트 레벨에서 작업하기
+
+새 기능에서 리렌더링을 피하는 것은 이제 루트 수준에서 문제를 제거함으로써 쉬워졌습니다.
+
+The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+
+그렇게 하면 리렌더링을 트리거할 수 있는 곳이 오직 한 곳뿐이라는 것을 알 수 있습니다.
+
+### 코드베이스에 `useEffect`를 추가하기 전에 항상 신중히 고려하세요.
+
+Re-renders are often caused by unnecessary `useEffect`.
+
+You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+
+You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+
+Apollo와 같은 라이브러리에서 `onCompleted`, `onError` 등을 찾을 수 있습니다.
+
+### Use a sibling component to extract `useEffect` or data fetching logic
+
+If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+
+Apollo 훅을 사용하여 데이터 페칭 로직에 동일한 규칙을 적용할 수 있습니다.
+
+```tsx
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <div>{data}</div>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+```tsx
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
+export const PageComponent = () => {
+  const [data, setData] = useRecoilState(dataState);
+
+  return <div>{data}</div>;
+};
+
+export const PageData = () => {
+  const [data, setData] = useRecoilState(dataState);
+  const [someDependency] = useRecoilState(someDependencyState);
+
+  useEffect(() => {
+    if(someDependency !== data) {
+      setData(someDependency);
+    }
+  }, [someDependency]);
+
+  return <></>;
+};
+
+export const App = () => (
+  <RecoilRoot>
+    <PageData />
+    <PageComponent />
+  </RecoilRoot>
+);
+```
+
+### Recoil 가족 상태 및 Recoil 가족 선택자 사용하기
+
+Recoil 가족 상태와 선택자는 리렌더링을 피하기 위한 훌륭한 방법입니다.
+
+항목 목록을 저장해야 할 때 유용합니다.
+
+### `React.memo(MyComponent)`를 사용하지 마십시오
+
+`React.memo()`를 사용하지 마십시오. 이것은 리렌더링의 원인을 해결하지 않으며, 대신 리렌더 체인을 끊어 의도치 않은 동작을 유발하고 코드 리팩토링을 매우 어렵게 만듭니다.
+
+### `useCallback` 또는 `useMemo` 사용 제한
+
+이들은 종종 필요하지 않으며, 성능 향상을 위해 코드 읽기와 유지보수를 어렵게 만듭니다.
+
+## Console.logs
+
+`console.log` 문은 개발 중에 변수 값과 코드 흐름에 대한 실시간 정보를 제공합니다. 그러나 생산 코드에 남아 있으면 여러 문제를 일으킬 수 있습니다.
+
+1. **성능**: 과도한 로깅은 특히 클라이언트 측 애플리케이션의 경우 런타임 성능에 영향을 미칠 수 있습니다.
+
+2. **보안**: 민감한 데이터 로깅은 브라우저 콘솔을 검사하는 누구나 중요한 정보를 노출할 수 있습니다.
+
+3. **깔끔함**: 콘솔을 로그로 가득 채우면 개발자나 도구가 필요한 중요한 경고나 오류를 가릴 수 있습니다.
+
+4. **전문성**: 사용자가 콘솔을 확인하고 수많은 로그를 보면 코드의 품질과 정교함을 의심할 수 있습니다.
+
+생산 환경에 코드를 올리기 전에 모든 `console.logs`를 제거해야 합니다.
+
+## 이름 지정
+
+### 변수 이름 지정
+
+변수 이름은 변수의 목적이나 기능을 정확히 설명해야 합니다.
+
+#### 일반적인 이름의 문제
+
+프로그래밍에서 일반적인 이름은 특수성이 부족하여 모호성을 유발하고 코드 가독성을 감소시킵니다. 이름이 변수나 함수의 목적을 전달하지 않으면 개발자가 코드의 의도를 깊이 조사해야 합니다. 이로 인해 디버깅 시간이 증가하고 오류에 더 많이 노출되며 유지보수와 협업에 어려움이 생길 수 있습니다. 반면에 설명적인 이름을 사용하면 코드가 자가 설명적이 되고 탐색하기 쉬워져 코드 품질과 개발자 생산성을 향상시킵니다.
+
+```tsx
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
+const [value, setValue] = useState('');
+```
+
+```tsx
+// ✅ Good, uses a descriptive name
+const [email, setEmail] = useState('');
+```
+
+#### 변수 이름에서 피해야 할 단어들
+
+* 더미
+
+### 이벤트 핸들러
+
+이벤트 핸들러 이름은 `handle`로 시작해야 하고, `on`은 컴포넌트 속성의 이벤트 이름 지정에 사용됩니다.
+
+```tsx
+// ❌ Bad
+const onEmailChange = (val: string) => {
+  // ...
+};
+```
+
+```tsx
+// ✅ Good
+const handleEmailChange = (val: string) => {
+  // ...
+};
+```
+
+## 선택적 Props
+
+선택적 프로퍼티에 대한 기본값 전달을 피하십시오.
+
+**예시**
+
+다음과 같은 `EmailField` 컴포넌트를 보십시오:
+
+```tsx
+type EmailFieldProps = {
+  value: string;
+  disabled?: boolean;
+};
+
+const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+  <TextInput value={value} disabled={disabled} fullWidth />
+);
+```
+
+**사용법**
+
+```tsx
+// ❌ Bad, passing in the same value as the default value adds no value
+const Form = () => <EmailField value="username@email.com" disabled={false} />;
+```
+
+```tsx
+// ✅ Good, assumes the default value
+const Form = () => <EmailField value="username@email.com" />;
+```
+
+## 프로퍼티로써 컴포넌트
+
+가능한 한, 인스턴스화되지 않은 컴포넌트를 prop으로 전달하여 자식이 필요한 prop을 스스로 결정할 수 있도록 하세요.
+
+가장 일반적인 예는 아이콘 컴포넌트입니다.
+
+```tsx
+const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
+
+// In MyComponent
+const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div>
+      <MyIcon size={theme.icon.size.md}>
+    </div>
+  )
+};
+```
+
+React가 컴포넌트를 컴포넌트로 인식하려면, PascalCase를 사용하여 나중에 `<MyIcon>`으로 인스턴스화해야 합니다.
+
+## Prop 드릴링: 최소화하기
+
+React에서 prop 드릴링은 상태 변수 및 그 설정자를 중간 컴포넌트가 사용하지 않더라도 여러 컴포넌트 계층에 걸쳐 전달하는 관행을 의미합니다. 가끔 필요할 수 있지만, 과도한 prop 드릴링은 다음과 같은 문제를 초래할 수 있습니다:
+
+1. **읽기 어려움**: prop이 어디서 시작되었고 어디에서 사용되는지를 추적하는 것이 깊게 중첩된 컴포넌트 구조에서는 복잡해질 수 있습니다.
+
+2. **유지보수의 어려움**: 한 컴포넌트의 prop 구조의 변화는, 해당 prop을 직접 사용하지 않더라도 여러 컴포넌트에서의 조정이 필요할 수 있습니다.
+
+3. **컴포넌트 재사용성 감소**: 많은 prop을 전달하기 위한 컴포넌트는 그 용도가 덜 일반적이게 되며, 다양한 컨텍스트에서 재사용하기 어려워집니다.
+
+과도한 prop 드릴링을 사용하고 있다고 느껴진다면, [상태 관리 최적 관행](#state-management)을 참조하세요.
+
+## 가져오기
+
+가져올 때는, 지정된 별칭을 사용하고 전체나 상대 경로를 지정하지 않도록 하세요.
+
+**별칭 처리**
+
+```js
+{
+  alias: {
+    "~": path.resolve(__dirname, "src"),
+    "@": path.resolve(__dirname, "src/modules"),
+    "@testing": path.resolve(__dirname, "src/testing"),
+  },
+}
+```
+
+**사용법**
+
+```tsx
+// ❌ Bad, specifies the entire relative path
+import {
+  CatalogDecorator
+} from '../../../../../testing/decorators/CatalogDecorator';
+import {
+  ComponentDecorator
+} from '../../../../../testing/decorators/ComponentDecorator';
+```
+
+```tsx
+// ✅ Good, utilises the designated aliases
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from 'twenty-ui/testing';
+```
+
+## 스키마 유효성 검사
+
+[Zod](https://github.com/colinhacks/zod)는 타이핑되지 않은 객체를 위한 스키마 유효성 검사기입니다:
+
+```js
+const validationSchema = z
+  .object({
+    exist: z.boolean(),
+    email: z
+      .string()
+      .email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+  })
+  .required();
+
+type Form = z.infer<typeof validationSchema>;
+```
+
+## 파괴적 변경
+
+테스트가 아직 광범위하게 통합되지 않았으므로, 변경 사항이 다른 부분에 문제를 일으키지 않았는지 철저한 수동 테스트를 통해 보장하세요.

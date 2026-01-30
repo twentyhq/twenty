@@ -1,0 +1,253 @@
+---
+title: 1-点击使用Docker Compose
+---
+
+<Warning>
+  Docker容器用于生产托管或自托管，关于贡献，请查看[本地设置](/l/zh/developers/contribute/capabilities/local-setup)。
+</Warning>
+
+## 概览
+
+本指南提供了使用Docker Compose安装和配置Twenty应用程序的分步说明。 其目的是使过程简单明了，并防止可能造成设置中断的常见错误。
+
+**重要:** 仅修改本指南中明确提到的设置。 更改其他配置可能会导致问题。
+
+请参阅文档[设置环境变量](/l/zh/developers/self-host/capabilities/setup)获取高级配置。 所有环境变量必须在docker-compose.yml文件中根据变量声明在服务器和/或工作器级别。
+
+## 系统要求
+
+* RAM：确保您的环境至少有2GB的RAM。 内存不足会导致进程崩溃。
+* Docker & Docker Compose：确保两者均已安装并是最新的。
+
+## 选项 1：单行脚本
+
+通过简单的命令安装最新的Twenty稳定版本：
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+要安装特定版本或分支：
+
+```bash
+VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* 将x.y.z替换为所需的版本号。
+* 将branch-name替换为您要安装的分支名称。
+
+## 选项 2：手动步骤
+
+请按以下步骤进行手动设置。
+
+### 步骤 1：设置环境文件
+
+1. **创建 .env 文件**
+
+   将示例环境文件复制到工作目录中的新.env文件：
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
+
+2. **生成密钥令牌**
+
+   运行以下命令以生成唯一的随机字符串：
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **重要:** 保持该值秘密/不要共享。
+
+3. **更新`.env`**
+
+   用生成的令牌替换.env文件中的占位符值：
+
+   ```ini
+   APP_SECRET=first_random_string
+   ```
+
+4. **设置Postgres密码**
+
+   用不含特殊字符的强密码更新.env文件中的`PG_DATABASE_PASSWORD`值。
+
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
+
+### 步骤2：获取Docker Compose文件
+
+将`docker-compose.yml`文件下载到工作目录：
+
+```bash
+curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/docker-compose.yml
+```
+
+### 步骤3：启动应用程序
+
+启动Docker容器：
+
+```bash
+docker compose up -d
+```
+
+### 步骤4：访问应用程序
+
+如果您在自己的电脑上托管twentyCRM，打开浏览器并导航到[http://localhost:3000](http://localhost:3000)。
+
+如果您在服务器上托管它，请检查服务器是否正在运行并确保一切正常。
+
+```bash
+curl http://localhost:3000
+```
+
+## 配置
+
+### 将Twenty暴露给外部访问
+
+默认情况下，Twenty在`localhost`的端口`3000`上运行。 要通过外部域或IP地址访问它，您需要在`.env`文件中配置`SERVER_URL`。
+
+#### 理解`SERVER_URL`
+
+* **协议:** 根据您的设置，使用`http`或者`https`。
+  * 如果您没有设置SSL，请使用`http`。
+  * 如果已配置SSL，请使用`https`。
+* **域名/IP:** 这是您的应用程序可访问的域名或IP地址。
+* **端口:** 如果您没有使用默认端口(`http`为80，`https`为443)，请包括端口号。
+
+### SSL要求
+
+某些浏览器功能需要SSL（HTTPS）才能正常工作。 虽然这些功能在本地开发期间可能正常工作（因为浏览器对待localhost不同），但在常规域上托管Twenty时需要正确的SSL设置。
+
+例如，剪贴板API可能需要安全的上下文 - 一些功能如整个应用程序中的复制按钮可能在未启用HTTPS时无法使用。
+
+我们强烈建议您在带有SSL终止的反向代理背后设置Twenty，以实现最佳的安全性和功能。
+
+#### 配置`SERVER_URL`
+
+1. **确定您的访问URL**
+   * **没有反向代理（直接访问）：**
+
+     如果您直接访问应用程序而没有反向代理：
+
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
+
+   * **有反向代理（标准端口）：**
+
+     如果您使用像Nginx或Traefik这样的反向代理并配置了SSL：
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   * **有反向代理（自定义端口）：**
+
+     如果您使用非标准端口：
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
+
+2. **更新`.env`文件**
+
+   打开您的`.env`文件并更新`SERVER_URL`：
+
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
+
+   **示例：**
+
+   * 无需SSL的直接访问：
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   * 通过域名访问使用SSL：
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
+
+3. **重新启动应用程序**
+
+   为了让更改生效，重启Docker容器：
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+#### 注意事项
+
+* **反向代理配置:**
+
+  确保您的反向代理将请求转发到正确的内部端口（默认情况下为`3000`）。 配置 SSL 终止和任何必要的头信息。
+
+* **防火墙设置:**
+
+  打开防火墙中的必要端口以允许外部访问。
+
+* **一致性:**
+
+  `SERVER_URL` 必须与用户在浏览器中访问您的应用程序的方式匹配。
+
+#### 数据持久化
+
+* **数据卷:**
+
+  Docker Compose 配置使用卷来持久化数据库和服务器存储的数据。
+
+* **无状态环境:**
+
+  如果部署到无状态环境（例如，某些云服务），请配置外部存储以持久化数据。
+
+## 备份与恢复
+
+定期备份可保护您的 CRM 数据免于丢失。
+
+### 创建数据库备份
+
+```bash
+docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).sql
+```
+
+### 自动化每日备份
+
+将以下内容添加到您的 crontab（`crontab -e`）：
+
+```bash
+0 2 * * * docker exec twenty-postgres pg_dump -U postgres twenty > /backups/twenty_$(date +\%Y\%m\%d).sql
+```
+
+### 从备份恢复
+
+1. 停止应用程序：
+
+```bash
+docker compose stop twenty-server twenty-front
+```
+
+2. 恢复数据库：
+
+```bash
+docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
+```
+
+3. 重启服务：
+
+```bash
+docker compose up -d
+```
+
+### 备份最佳实践
+
+* **定期测试恢复** — 验证备份确实有效
+* **将备份异地存储** — 使用云存储（S3、GCS 等）
+* **加密敏感数据** — 使用加密保护备份
+* **保留多份副本** — 同时保留每日、每周和每月的备份
+
+## 故障排除
+
+如果您遇到任何问题，请检查[故障排除](/l/zh/developers/self-host/capabilities/troubleshooting)以获取解决方案。

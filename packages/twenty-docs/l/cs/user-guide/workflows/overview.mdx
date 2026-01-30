@@ -1,0 +1,80 @@
+---
+title: Pracovní postupy
+description: Naučte se vytvářet automatizace v Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Pracovní postupy" />
+</Frame>
+
+## Proč na Workflows záleží
+
+Twenty bylo vytvořeno, aby svým uživatelům přineslo maximální flexibilitu. Namísto toho, abyste byli nuceni přizpůsobovat vaše obchodní procesy rigidním, předem připraveným funkcím, vám Workflows umožňují vytvářet automatizace, které vytvářejí CRM, které nejlépe podporuje vaše jedinečné obchodní potřeby.
+
+Workflows jsou funkce v aplikaci Twenty pro vytváření těchto automatizací. Poskytují vám stavební bloky potřebné k vytvoření přesně toho, co váš obchod potřebuje, kdy to potřebuje.
+
+## Co mohu s Workflows dělat?
+
+Doporučujeme vytvářet automatizace pro dva hlavní účely:
+
+1. **Interní automatizace k usnadnění každodenní činnosti vašeho týmu**: Snižte množství manuálních vstupů a opakujících se úkolů, které zpomalují váš tým.
+2. **Přenášení dat do a z Twenty**: Připojte Twenty přes API volání a webhooks k vaší databázi a dalším nástrojům.
+
+## Vytvoření prvního pracovního postupu
+
+### Krok 1: Vytvořte nový pracovní postup
+
+1. Přejděte na **Pracovní postupy**, které jsou dostupné pod ostatními objekty
+2. Klikněte na **+ New Record**
+3. Pojmenujte svůj pracovní postup
+
+### Krok 2: Přidejte spouštěč
+
+Každý pracovní postup začíná spouštěčem. Vyberte z následujících možností:
+
+* **Události záznamů**: Když je záznam vytvořen, aktualizován nebo smazán
+* **Plán**: Spouští se v konkrétních časech (denně, týdně apod.)
+* **Ruční**: Spouštěno akcí uživatele
+* **Webhook**: Spouštěno pomocí webhooku
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Krok 3: Přidejte akce
+
+Po spouštěči přidejte jednu nebo více akcí:
+
+* **Vytvořit záznam**: Přidejte nové záznamy do libovolného objektu
+* **Aktualizovat záznam**: Upravte data existujícího záznamu
+* **Smazat záznam**: Odstraňte záznamy z objektů
+* **Vyhledat záznamy**: Najděte záznamy odpovídající kritériím
+* **Vložit nebo aktualizovat záznam**: Vytvořte nebo aktualizujte na základě odpovídajících kritérií
+* **Iterátor**: Procházejte pole záznamů
+* **Filtr**: Určete, které záznamy postoupí
+* **Prodleva**: Počkejte před pokračováním (doba trvání nebo naplánované datum)
+* **Odeslat e-mail**: Odesílejte e-maily prostřednictvím svého propojeného účtu
+* **Kód**: Spouštějte vlastní JavaScript
+* **HTTP požadavek**: Volejte externí API
+* **Formulář**: Získejte vstupy od uživatelů v rámci Twenty UI v době spuštění
+* **AI Agent** (Již brzy): Spouštějte inteligentní úlohy s AI
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Krok 4: Otestujte a aktivujte
+
+1. Pomocí tlačítka **Test** spusťte svůj pracovní postup se vzorovými daty
+2. Zkontrolujte výsledky, abyste se ujistili, že vše funguje podle očekávání
+3. Až budete připraveni, přepněte pracovní postup na **Active**
+
+## Osvědčené postupy pro pracovní postupy
+
+* **Upravte názvy kroků**: Přejmenujte kroky vašeho workflowu a jasně popište, co každý z nich dělá. To pomáhá s údržbou a usnadňuje předání spolupracovníkům
+* **Využijte data z předchozích kroků**: Můžete použít pole záznamů vrácených z jakéhokoli předchozího kroku ve vašem workflowu
+* **Začněte jednoduše**: Začněte s jednoduchými workflowy a postupně přidávejte složitost, jakmile se s systémem více seznámíte
+* **Naplánujte před stavbou**: Zmapujte si logiku workflowu před tím, než začnete stavět, abyste se vyhnuli zaseknutí v polovině
+
+## Další kroky
+
+* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+* [Automatizace CRM](/l/cs/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

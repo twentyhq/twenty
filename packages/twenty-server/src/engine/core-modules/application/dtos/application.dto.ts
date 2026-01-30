@@ -12,7 +12,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
+import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 @ObjectType('Application')
@@ -47,17 +47,17 @@ export class ApplicationDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  defaultServerlessFunctionRoleId?: string;
+  defaultRoleId?: string;
 
   @IsOptional()
   @Field(() => RoleDTO, { nullable: true })
-  defaultServerlessFunctionRole?: RoleDTO;
+  defaultLogicFunctionRole?: RoleDTO;
 
   @Field(() => [AgentDTO])
   agents?: AgentDTO[];
 
-  @Field(() => [ServerlessFunctionDTO])
-  serverlessFunctions?: ServerlessFunctionDTO[];
+  @Field(() => [LogicFunctionDTO])
+  logicFunctions?: LogicFunctionDTO[];
 
   @Field(() => [ObjectMetadataDTO])
   objects?: ObjectMetadataDTO[];

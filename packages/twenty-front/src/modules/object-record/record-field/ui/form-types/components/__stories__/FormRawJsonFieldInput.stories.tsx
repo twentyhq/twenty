@@ -1,17 +1,16 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { getUserDevice } from 'twenty-ui/utilities';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormRawJsonFieldInput } from '../FormRawJsonFieldInput';
 
 const meta: Meta<typeof FormRawJsonFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRawJsonFieldInput',
   component: FormRawJsonFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;

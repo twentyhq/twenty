@@ -1,0 +1,155 @@
+---
+title: Datenmodell-FAQ
+description: Häufig gestellte Fragen zum Datenmodell von Twenty.
+---
+
+## Objektverwaltung
+
+<AccordionGroup>
+  <Accordion title="Kann ich ein benutzerdefiniertes Objekt löschen?">
+    Ja, benutzerdefinierte Objekte können gelöscht werden. Sie können sie auch zuerst deaktivieren; dadurch werden das Objekt und seine Daten in der Oberfläche ausgeblendet, während die Daten erhalten bleiben.
+  </Accordion>
+
+  <Accordion title="Kann ich Standardobjekte (Personen, Unternehmen usw.) löschen?">
+    Nein, Standardobjekte können nicht gelöscht werden. Sie können sie nur deaktivieren; dadurch werden sie in der Oberfläche ausgeblendet, die Daten bleiben jedoch erhalten.
+  </Accordion>
+
+  <Accordion title="Wie viele benutzerdefinierte Objekte kann ich erstellen?">
+    Sie können so viele benutzerdefinierte Objekte und Felder erstellen, wie Sie benötigen — der Preis ändert sich nicht.
+  </Accordion>
+
+  <Accordion title="Kann ich ein Standardobjekt umbenennen?">
+    Sie können die Bezeichnung von Standardobjekten (People, Companies, Opportunities) umbenennen, jedoch nicht deren API-Namen. Die API-Namen sind für die Konsistenz in allen Twenty-Workspaces festgelegt.
+  </Accordion>
+
+  <Accordion title="Kann ich das Symbol eines Objekts ändern?">
+    Ja, Sie können das Symbol sowohl für Standard- als auch für benutzerdefinierte Objekte in **Settings → Data Model** ändern.
+  </Accordion>
+
+  <Accordion title="Kann ich die Objekte in der linken Navigationsleiste umordnen?">
+    Noch nicht. Die Reihenfolge der Objekte in der Navigation ist derzeit festgelegt, aber diese Funktion ist für eine zukünftige Veröffentlichung geplant.
+  </Accordion>
+
+  <Accordion title="Kann ich Objekte in der linken Navigationsleiste ausblenden?">
+    Alle aktiven Objekte erscheinen in der Navigation. Sie können Objekte, die Sie nicht benötigen, unter **Einstellungen → Datenmodell** deaktivieren.
+  </Accordion>
+</AccordionGroup>
+
+## Feldmöglichkeiten
+
+<AccordionGroup>
+  <Accordion title="Kann ich den Feldtyp nach der Erstellung ändern?">
+    Nein, Feldtypen können nach der Erstellung nicht geändert werden. Wenn Sie einen anderen Typ benötigen, erstellen Sie ein neues Feld mit dem richtigen Typ, migrieren Sie Ihre Daten und deaktivieren Sie anschließend das alte Feld.
+  </Accordion>
+
+  <Accordion title="Warum brauche ich unterschiedliche Singular- und Pluralnamen?">
+    Unsere GraphQL-API verwendet beide Formen für verschiedene Operationen:
+
+    * `createPerson` (Singular) für Einzelaktionen
+    * `createPeople` (Plural) für Massenoperationen
+
+    Dies schafft Einschränkungen, wenn Singular- und Pluralformen gleich sind, verbessert jedoch die Entwicklererfahrung.
+  </Accordion>
+
+  <Accordion title="Warum sind einige Feldnamen geschützt?">
+    Bestimmte Feldnamen wie `Typ` oder `Applikation` sind für Systemnutzung reserviert. Wählen Sie stattdessen alternative Namen wie `Kategorie` oder `Klassifikation`.
+  </Accordion>
+
+  <Accordion title="Was passiert, wenn ich ein Feld deaktiviere?">
+    * Das Feld wird in der Oberfläche ausgeblendet
+    * Vorhandene Daten bleiben erhalten
+    * Sie können weiterhin über die API auf das Feld zugreifen
+    * Bestehende Beziehungen bleiben bestehen, aber Sie können keine neuen erstellen
+    * Sie können das Feld später wieder aktivieren
+  </Accordion>
+
+  <Accordion title="Kann ich ein Feld als erforderlich festlegen?">
+    Derzeit können benutzerdefinierte Felder nicht als erforderlich festgelegt werden. Alle Felder akzeptieren leere Werte. Sie können Workflows verwenden, um erforderliche Felder durchzusetzen, indem Sie Benachrichtigungen senden oder Aktionen blockieren, wenn Felder leer sind.
+  </Accordion>
+
+  <Accordion title="Was ist der Unterschied zwischen eindeutig und erforderlich?">
+    * **Eindeutig**: Keine zwei Datensätze dürfen in diesem Feld denselben Wert haben
+    * **Erforderlich**: Das Feld muss einen Wert haben (derzeit für benutzerdefinierte Felder nicht unterstützt)
+  </Accordion>
+
+  <Accordion title="Kann ich Formelfelder erstellen?">
+    Formelfelder kommen im **1. Quartal 2026**. In der Zwischenzeit können Sie Workflows verwenden, um Feldwerte automatisch zu berechnen und zu aktualisieren.
+  </Accordion>
+
+  <Accordion title="Kann ich verschachtelte Felder in meinen Objekten haben?">
+    Verschachtelte Felder kommen im **1. Quartal 2026**. Aktuell können Sie Workflows verwenden, um Felderwerte von verwandten Objekten einzuholen. Zum Beispiel: Um die Branche eines Unternehmens in einem Personen-Datensatz anzuzeigen, erstellen Sie ein benutzerdefiniertes Feld für Personen und verwenden Sie einen Workflow, um den Wert zu synchronisieren.
+  </Accordion>
+
+  <Accordion title="Kann ich Felder in Objekten umsortieren?">
+    Feld-Umsortierung wird mit benutzerdefinierten Layouts im **4. Quartal 2025** verfügbar sein. Derzeit werden Felder in alphabetischer Reihenfolge angezeigt.
+  </Accordion>
+</AccordionGroup>
+
+## Beziehungen
+
+<AccordionGroup>
+  <Accordion title="Kann ich eine Beziehung erstellen, die auf dasselbe Objekt verweist?">
+    Ja! Sich selbst referenzierende Beziehungen werden unterstützt und für Anwendungsfälle wie Account-Hierarchien empfohlen. Erstellen Sie beispielsweise eine Beziehung von Companies zu Companies, um übergeordnete/untergeordnete Accounts nachzuverfolgen.
+  </Accordion>
+
+  <Accordion title="Kann ich Viele-zu-Viele-Beziehungen erstellen?">
+    Viele-zu-Viele-Beziehungen kommen im **H1 2026**. Derzeit können Sie als Workaround ein Zwischenobjekt mit zwei 1-zu-viele-Beziehungen erstellen.
+
+    Erstellen Sie beispielsweise, um People und Projects (Viele-zu-Viele) zu verknüpfen, ein Objekt "Projektzuweisungen" mit:
+
+    * Eine Beziehung zu People (viele Zuweisungen → eine Person)
+    * Eine Beziehung zu Projects (viele Zuweisungen → ein Projekt)
+  </Accordion>
+
+  <Accordion title="Was sind Beziehungen zu mehreren Objekttypen (Morph-Beziehungen)?">
+    Damit kann ein Objekt über ein einziges Feld mit mehreren unterschiedlichen Objekttypen verknüpft werden. Beispielsweise können Notizen gleichzeitig Personen UND Unternehmen UND Opportunities zugeordnet werden.
+
+    Jede Notiz ist gleichzeitig mit einer Person, einem Unternehmen und einer Opportunity verknüpft.
+
+    Erfahren Sie mehr unter [Beziehungsfelder](/l/de/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="Kann ich mehrere Beziehungen zwischen denselben Objekten erstellen?">
+    Ja, Sie können mehrere Beziehungen zwischen denselben beiden Objekten erstellen. Beispielsweise könnte ein Unternehmen sowohl eine "Primary Contact"- als auch eine "Billing Contact"-Beziehung zu Personen haben.
+  </Accordion>
+
+  <Accordion title="Was passiert mit Beziehungen, wenn ich einen Datensatz lösche?">
+    Wenn Sie einen Datensatz löschen, wird die Verknüpfung aus den verknüpften Datensätzen entfernt. Die verknüpften Datensätze selbst werden nicht gelöscht.
+  </Accordion>
+
+  <Accordion title="Kann ich zirkuläre Beziehungen erstellen?">
+    Obwohl technisch möglich, sollten zirkuläre Beziehungen (A → B → C → A) vermieden werden, da sie zu Verwirrung und möglichen Leistungsproblemen führen können.
+  </Accordion>
+</AccordionGroup>
+
+## Zugriff und Berechtigungen
+
+<AccordionGroup>
+  <Accordion title="Wo kann ich mein Datenmodell sehen und bearbeiten?">
+    Gehen Sie zu **Settings → Data Model**, um alle Ihre Objekte und Felder anzuzeigen und zu bearbeiten.
+  </Accordion>
+
+  <Accordion title="Warum kann ich das Datenmodell unter Einstellungen nicht sehen?">
+    Wenden Sie sich an Ihren Arbeitsbereichs-Administrator. Der Zugriff auf das Datenmodell ist in der Regel nur für Administratoren eingeschränkt.
+  </Accordion>
+</AccordionGroup>
+
+## Datenverwaltung
+
+<AccordionGroup>
+  <Accordion title="Gibt es eine Begrenzung, wie viele Datensätze ich haben kann?">
+    Es gibt keine feste Obergrenze für die Anzahl der Datensätze. Sehr große Datensätze können jedoch die Leistung in einigen Ansichten beeinträchtigen. Verwenden Sie Filter und Ansichten, um große Datensätze effektiv zu verwalten.
+  </Accordion>
+
+  <Accordion title="Kann ich Daten in benutzerdefinierte Objekte importieren?">
+    Ja, Sie können CSV-Daten in jedes Objekt importieren, einschließlich benutzerdefinierter Objekte. Der Importprozess unterstützt die Feldzuordnung für benutzerdefinierte Felder. Siehe [So bereiten Sie Ihre CSV-Dateien vor](/l/de/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Kann ich meine Datenmodell-Konfiguration exportieren?">
+    Derzeit gibt es keinen integrierten Export für die Datenmodell-Konfiguration. Kontaktieren Sie den Support, wenn Sie Ihr Datenmodell zwischen Workspaces migrieren müssen.
+  </Accordion>
+</AccordionGroup>
+
+## Brauchen Sie mehr Hilfe?
+
+Sehen Sie sich unsere [Implementierungsdienste](/l/de/user-guide/getting-started/capabilities/implementation-services) an, um Unterstützung beim Design komplexer Datenmodelle zu erhalten.

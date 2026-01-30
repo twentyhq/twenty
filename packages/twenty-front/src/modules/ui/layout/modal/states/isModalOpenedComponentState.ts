@@ -1,5 +1,5 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { ModalComponentInstanceContext } from '../contexts/ModalComponentInstanceContext';
+import { ModalComponentInstanceContext } from '@/ui/layout/modal/contexts/ModalComponentInstanceContext';
 
 export const isModalOpenedComponentState = createComponentState<boolean>({
   key: 'isModalOpenedComponentState',

@@ -17,10 +17,10 @@ import { appVersionState } from '@/client-config/states/appVersionState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ApolloFactory, type Options } from '../services/apollo.factory';
+import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
-  // eslint-disable-next-line @nx/workspace-no-state-useref
+  // eslint-disable-next-line twenty/no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
 
   const navigate = useNavigate();

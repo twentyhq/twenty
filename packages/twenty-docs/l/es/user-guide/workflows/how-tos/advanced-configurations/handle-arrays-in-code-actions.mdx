@@ -1,0 +1,82 @@
+---
+title: Manejar arrays en acciones de Code
+description: Aprende a manejar correctamente las entradas de arrays en las acciones de Code de flujos de trabajo.
+---
+
+Al trabajar con arrays en acciones de Code, puedes encontrarte con dos desafíos comunes:
+
+1. **Arrays pasados como cadenas** — los datos de sistemas externos o pasos anteriores llegan como una cadena en lugar de un array real
+2. **No se pueden seleccionar elementos individuales** — solo puedes seleccionar el array completo, no campos específicos dentro de él
+
+Ambos se pueden resolver con un nodo Code.
+
+## Analizar arrays a partir de cadenas
+
+A menudo, los arrays se pasan entre pasos de un flujo de trabajo como cadenas o JSON en lugar de arrays nativos. Esto ocurre cuando:
+
+* Se reciben datos de APIs externas mediante HTTP Request
+* Procesar cargas útiles de webhooks
+* Pasar datos entre pasos del flujo de trabajo
+
+**Solución**: agrega este patrón al comienzo de tu acción de Code:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+La línea clave `typeof users === "string" ? JSON.parse(users) : users` verifica si la entrada es una cadena, la analiza si es necesario o la usa directamente si ya es un array.
+
+## Extraer campos individuales de arrays
+
+Un webhook podría devolver un array como `answers: [...]`, pero en pasos posteriores del flujo de trabajo solo puedes seleccionar el **array completo**, no elementos individuales dentro de él.
+
+**Solución**: agrega un nodo Code para extraer campos específicos y devolverlos como un objeto estructurado:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+El nodo Code devuelve un objeto estructurado en lugar de un array. En los pasos posteriores, ahora puedes seleccionar campos individuales como `answer.firstname` y `answer.name` desde el selector de variables.
+
+<Note>
+  Estamos trabajando activamente para facilitar el manejo de arrays en futuras actualizaciones.
+</Note>
+
+<Tip>
+  Haz clic en el icono cuadrado en la parte superior derecha del editor de código para mostrarlo en pantalla completa — es útil, ya que el ancho predeterminado del editor es limitado.
+</Tip>

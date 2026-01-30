@@ -29,6 +29,9 @@ export const prefillCompanies = async (
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
+      'updatedBySource',
+      'updatedByWorkspaceMemberId',
+      'updatedByName',
     ])
     .orIgnore()
     .values([
@@ -47,6 +50,9 @@ export const prefillCompanies = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        updatedBySource: FieldActorSource.SYSTEM,
+        updatedByWorkspaceMemberId: null,
+        updatedByName: 'System',
       },
       {
         id: ANTHROPIC_ID,
@@ -63,6 +69,9 @@ export const prefillCompanies = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        updatedBySource: FieldActorSource.SYSTEM,
+        updatedByWorkspaceMemberId: null,
+        updatedByName: 'System',
       },
       {
         id: STRIPE_ID,
@@ -79,6 +88,9 @@ export const prefillCompanies = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        updatedBySource: FieldActorSource.SYSTEM,
+        updatedByWorkspaceMemberId: null,
+        updatedByName: 'System',
       },
       {
         id: FIGMA_ID,
@@ -95,6 +107,9 @@ export const prefillCompanies = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        updatedBySource: FieldActorSource.SYSTEM,
+        updatedByWorkspaceMemberId: null,
+        updatedByName: 'System',
       },
       {
         id: NOTION_ID,
@@ -111,6 +126,9 @@ export const prefillCompanies = async (
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
+        updatedBySource: FieldActorSource.SYSTEM,
+        updatedByWorkspaceMemberId: null,
+        updatedByName: 'System',
       },
     ])
     .returning('*')

@@ -1,4 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   expect,
   fn,
@@ -6,19 +7,17 @@ import {
   waitFor,
   waitForElementToBeRemoved,
   within,
-} from '@storybook/test';
+} from 'storybook/test';
 import { getUserDevice } from 'twenty-ui/utilities';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormTextFieldInput } from '../FormTextFieldInput';
 
 const meta: Meta<typeof FormTextFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormTextFieldInput',
   component: FormTextFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;

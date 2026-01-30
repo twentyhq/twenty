@@ -1,0 +1,106 @@
+---
+title: Trimiteți alerte prin e-mail pentru sarcini scadente
+description: Notificați automat membrii echipei despre sarcinile lor care urmează sau sunt restante.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+Trimiteți mementouri zilnice prin e-mail fiecărui membru al echipei despre sarcinile sale scadente astăzi.
+
+## Prezentare generală
+
+Acest flux de lucru rulează conform unui program și:
+
+1. Preia toți membrii spațiului de lucru
+2. Parcurge fiecare membru
+3. Găsește sarcinile lor scadente astăzi
+4. Formatează și trimite un e-mail personalizat
+
+## Configurare pas cu pas
+
+<VimeoEmbed videoId="1147463514" title="Demonstrație video" />
+
+### Pasul 1: Configurați declanșatorul
+
+1. Accesați **Settings → Workflows** și creați un nou flux de lucru
+2. Selectați **On a Schedule** ca declanșator
+3. Utilizați o expresie cron pentru rulare zilnică la 8:00 AM: `0 8 * * *`
+
+### Pasul 2: Căutați toți membrii spațiului de lucru
+
+1. Adăugați acțiunea **Search Records**
+2. Selectați **Workspace Members** (sub obiecte avansate)
+3. Nu sunt necesare filtre — aceasta returnează toți membrii
+
+### Pasul 3: Adăugați un Iterator
+
+1. Adăugați o acțiune **Iterator**
+2. Setați array-ul de intrare la membrii spațiului de lucru din pasul anterior
+3. Toate acțiunile din interiorul iteratorului vor rula o dată pentru fiecare membru
+
+### Pasul 4: Căutați sarcinile scadente astăzi (în interiorul Iterator)
+
+1. În interiorul iteratorului, adăugați o acțiune **Search Records**
+2. Selectați **Tasks** ca obiect
+3. Adăugați filtre:
+   * **Assignee** = membrul curent al spațiului de lucru (din iterator)
+   * **Due Date** = astăzi
+
+### Pasul 5: Formatați sarcinile în corpul e-mailului (în interiorul Iterator)
+
+Adăugați o acțiune **Code** pentru a formata sarcinile într-o listă lizibilă cu linkuri:
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  Înlocuiți `yourSubDomain` cu subdomeniul real al spațiului dvs. de lucru Twenty.
+</Note>
+
+### Pasul 6: Trimiteți e-mail (în interiorul Iterator)
+
+1. Adăugați o acțiune **Send Email** (tot în interiorul iteratorului)
+2. Configurați:
+
+| Câmp        | Valoare                                                                      |
+| ----------- | ---------------------------------------------------------------------------- |
+| **Către**   | `{{iterator.currentItem.userEmail}}` (e-mailul membrului spațiului de lucru) |
+| **Subiect** | Sarcinile dvs. scadente astăzi                                               |
+| **Corp**    | `{{code.formattedTasks}}`                                                    |
+
+### Pasul 7: Testați și activați
+
+1. Faceți clic pe **Test** pentru a rula manual fluxul de lucru
+2. Verificați căsuțele de intrare pentru e-mailuri
+3. Activați fluxul de lucru
+
+## Conexe
+
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -106,6 +106,32 @@ export class CacheStorageService {
     });
   }
 
+  async setRemove(key: string, values: string[]): Promise<number> {
+    if (values.length === 0) {
+      return 0;
+    }
+
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.sRem(
+        this.getKey(key),
+        values,
+      );
+    }
+
+    const existing = await this.get<string[]>(key);
+
+    if (!existing) {
+      return 0;
+    }
+
+    const filtered = existing.filter((v) => !values.includes(v));
+    const removed = existing.length - filtered.length;
+
+    await this.set(key, filtered);
+
+    return removed;
+  }
+
   async countAllSetMembers(cacheKeys: string[]) {
     return (
       await Promise.all(cacheKeys.map((key) => this.getSetLength(key) || 0))
@@ -143,6 +169,14 @@ export class CacheStorageService {
     });
   }
 
+  async setMembers(key: string): Promise<string[]> {
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.sMembers(this.getKey(key));
+    }
+
+    return (await this.get<string[]>(key)) ?? [];
+  }
+
   async flush() {
     return this.cache.reset();
   }
@@ -170,6 +204,47 @@ export class CacheStorageService {
 
       cursor = nextCursor;
     } while (cursor !== 0);
+  }
+
+  async scanAndCountSetMembers(scanPattern: string): Promise<number> {
+    if (!this.isRedisCache()) {
+      throw new Error(
+        'scanAndCountSetMembers is only supported with Redis cache',
+      );
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+    let cursor = 0;
+    let totalCount = 0;
+
+    do {
+      const result = await redisClient.scan(cursor, {
+        MATCH: `${this.namespace}:${scanPattern}`,
+        COUNT: 100,
+      });
+
+      cursor = result.cursor;
+      const keys = result.keys;
+
+      if (keys.length > 0) {
+        const pipeline = redisClient.multi();
+
+        for (const key of keys) {
+          pipeline.sCard(key);
+        }
+
+        const results = await pipeline.exec();
+
+        for (const result of results) {
+          if (result instanceof Error) {
+            throw result;
+          }
+          totalCount += result as number;
+        }
+      }
+    } while (cursor !== 0);
+
+    return totalCount;
   }
 
   async acquireLock(key: string, ttl = 1000): Promise<boolean> {
@@ -209,6 +284,25 @@ export class CacheStorageService {
     await this.set(key, newValue);
 
     return newValue;
+  }
+
+  async expire(key: string, ttlMs: Milliseconds): Promise<boolean> {
+    if (this.isRedisCache()) {
+      return (this.cache as RedisCache).store.client.expire(
+        this.getKey(key),
+        ttlMs / 1000,
+      );
+    }
+
+    const existing = await this.get(key);
+
+    if (existing !== undefined) {
+      await this.set(key, existing, ttlMs);
+
+      return true;
+    }
+
+    return false;
   }
 
   private isRedisCache() {

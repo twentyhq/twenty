@@ -1,0 +1,125 @@
+---
+title: SSO-Konfiguration
+description: Konfigurieren Sie Single Sign-On für eine sichere Unternehmensauthentifizierung.
+---
+
+## Über SSO
+
+Single Sign-On (SSO) ermöglicht es Ihren Teammitgliedern, sich mit dem Identitätsanbieter Ihrer Organisation bei Twenty anzumelden. Dies bietet:
+
+* **Zentralisierte Zugriffskontrolle**: Verwalten Sie den Zugriff von einem Ort aus
+* **Verbesserte Sicherheit**: Nutzen Sie Ihre bestehenden Sicherheitsrichtlinien
+* **Bessere Benutzererfahrung**: Ein Satz Anmeldedaten für alle Tools
+
+## Unterstützte Anbieter
+
+Twenty unterstützt SSO mit:
+
+* **SAML 2.0**: Funktioniert mit den meisten Identitätsanbietern für Unternehmen
+* **Google Workspace**: Für Organisationen, die Google verwenden
+* **Microsoft Entra ID**: (früher Azure AD) Für Microsoft-Umgebungen
+
+## SSO einrichten
+
+### Voraussetzungen
+
+* Organisationsplan (Cloud- und selbstgehostete Arbeitsbereiche)
+* Administratorzugriff auf Ihren Identitätsanbieter
+* Administratorzugriff auf den Twenty-Arbeitsbereich
+
+<Note>
+  **Für Self-Hosting-Nutzer, die SSO einrichten möchten**, wenden Sie sich an contact@twenty.com
+</Note>
+
+### Konfigurationsschritte
+
+#### 1. SSO-Einstellungen aufrufen
+
+1. Gehen Sie zu **Einstellungen → Sicherheit**
+2. Suchen Sie den Abschnitt **SSO-Konfiguration**
+3. Klicken Sie auf **SSO konfigurieren**
+
+#### 2) Wählen Sie Ihren Anbieter
+
+Wählen Sie Ihren Identitätsanbieter aus der Liste oder wählen Sie "Benutzerdefiniertes SAML" für andere Anbieter.
+
+#### 3. Konfigurieren Sie Ihren Identitätsanbieter
+
+Sie müssen Ihren Identitätsanbieter mit Folgendem konfigurieren:
+
+* **Entity ID**: Bereitgestellt von Twenty
+* **ACS-URL**: Die Callback-URL für die Authentifizierung
+* **Zertifikat**: Für die sichere Kommunikation
+
+#### 4. Anbieterdetails in Twenty eingeben
+
+* **SSO-URL**: Anmelde-URL Ihres Anbieters
+* **Entity ID**: Kennung Ihres Anbieters
+* **Zertifikat**: X.509-Zertifikat Ihres Anbieters
+
+#### 5. Testen und aktivieren
+
+1. Klicken Sie auf **Konfiguration testen**, um die Einrichtung zu überprüfen
+2. Aktivieren Sie SSO, wenn der Test erfolgreich war
+3. Konfigurieren Sie die Einstellungen für die Benutzerbereitstellung
+
+## Benutzerbereitstellung
+
+### Just-in-Time-(JIT)-Bereitstellung
+
+* Benutzer werden bei der ersten Anmeldung automatisch erstellt
+* Standardrolle wird automatisch zugewiesen
+* Keine manuelle Benutzererstellung erforderlich
+
+### Manuelle Bereitstellung
+
+* Laden Sie Benutzer ein, bevor sie sich anmelden können
+* Bestimmte Rollen vorab zuweisen
+* Mehr Kontrolle darüber, wer Zugriff hat
+
+## SSO-Benutzer verwalten
+
+### Rollenzuweisung
+
+SSO-Benutzern können wie regulären Benutzern Rollen zugewiesen werden:
+
+1. Gehen Sie zu **Einstellungen → Mitglieder**
+2. Suchen Sie den Benutzer
+3. Ändern Sie bei Bedarf die Rolle
+
+### Zugriffsentzug
+
+So entziehen Sie SSO-Benutzern den Zugriff:
+
+* Entfernen Sie sie bei Ihrem Identitätsanbieter oder
+* Entfernen Sie sie aus dem Twenty-Arbeitsbereich
+
+## Beste Praktiken
+
+### Sicherheit
+
+* **SSO erzwingen**: Passwortanmeldung für SSO-Benutzer deaktivieren
+* **Regelmäßige Audits**: Zugriff regelmäßig überprüfen
+* **Strenge IdP-Richtlinien**: MFA beim Identitätsanbieter erzwingen
+
+### Benutzerverwaltung
+
+* **Klare Benennung**: Verwenden Sie eine konsistente Benennung aus Ihrem Verzeichnis
+* **Gruppenzuordnung**: Ordnen Sie IdP-Gruppen Twenty-Rollen zu (falls verfügbar)
+* **Offboarding-Prozess**: Beziehen Sie Twenty in Ihren Deprovisioning-Workflow ein
+
+## Fehlerbehebung
+
+### Häufige Probleme
+
+* **Zertifikatfehler**: Stellen Sie sicher, dass das Zertifikat nicht abgelaufen ist
+* **URL-Abweichungen**: Prüfen Sie, ob die ACS-URL exakt übereinstimmt
+* **Benutzer nicht gefunden**: Prüfen Sie die Einstellungen für die JIT-Bereitstellung
+
+### Hilfe erhalten
+
+Wenn Sie auf Probleme stoßen, wenden Sie sich mit Folgendem an den Support:
+
+* Erhaltene Fehlermeldungen
+* Verwendeter Identitätsanbieter
+* Konfigurationsdetails (ohne vertrauliche Daten)

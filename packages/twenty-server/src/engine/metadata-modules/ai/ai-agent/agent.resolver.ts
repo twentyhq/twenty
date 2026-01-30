@@ -13,7 +13,7 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
-import { WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 import { AgentService } from './agent.service';
 
@@ -29,7 +29,7 @@ import { AgentGraphqlApiExceptionInterceptor } from './interceptors/agent-graphq
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
 @UseInterceptors(
-  WorkspaceMigrationBuilderGraphqlApiExceptionInterceptor,
+  WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AgentGraphqlApiExceptionInterceptor,
 )
 @Resolver()

@@ -1,19 +1,17 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useLinksField } from '@/object-record/record-field/ui/meta-types/hooks/useLinksField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { LinksFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { LinksFieldInput } from '../LinksFieldInput';
 
 const updateRecord = fn();
 
@@ -122,7 +120,7 @@ const getPrimaryLinkBookmarkIcon = (canvasElement: HTMLElement) =>
 const meta: Meta = {
   title: 'UI/Data/Field/Input/LinksFieldInput',
   component: LinksInputWithContext,
-  decorators: [I18nFrontDecorator],
+  decorators: [],
   args: {
     value: {
       primaryLinkUrl: null,
@@ -297,7 +295,7 @@ export const DeletePrimaryLink: Story = {
     await userEvent.click(openDropdownButton);
 
     const deleteOption = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Delete');
     await userEvent.click(deleteOption);
 
@@ -336,7 +334,7 @@ export const DeletePrimaryLinkAndUseSecondaryLinkAsTheNewPrimaryLink: Story = {
     await userEvent.click(openDropdownButtons[0]);
 
     const deleteOption = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Delete');
     await userEvent.click(deleteOption);
 
@@ -378,7 +376,7 @@ export const DeleteSecondaryLink: Story = {
     await userEvent.click(openDropdownButtons[1]);
 
     const deleteOption = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Delete');
     await userEvent.click(deleteOption);
 
@@ -486,7 +484,7 @@ export const MakeSecondaryLinkPrimary: Story = {
     await userEvent.click(openDropdownButtons[1]); // Click the secondary link's dropdown
 
     const setPrimaryOption = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('Set as Primary');
     await userEvent.click(setPrimaryOption);
   },
@@ -515,7 +513,7 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
 
     // Should not see "Set as Primary" option for primary link
     const setPrimaryOption = within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).queryByText('Set as Primary');
     expect(setPrimaryOption).not.toBeInTheDocument();
   },

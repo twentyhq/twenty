@@ -1,0 +1,95 @@
+---
+title: Boîte de réception
+description: Comprendre les fonctionnalités d'intégration des e-mails dans Twenty.
+---
+
+**Remarque** : Pour connecter vos comptes e-mail et configurer les paramètres de synchronisation, rendez-vous sur [Configuration des e-mails et calendriers](/l/fr/user-guide/calendar-emails/overview).
+
+## Comment fonctionne l'intégration des emails
+
+Twenty lie automatiquement les emails de vos boîtes aux lettres connectées aux enregistrements CRM pertinents, gardant tout l'historique de communication en un seul endroit.
+
+### Objets où l'on peut trouver des e-mails
+
+Les conversations par email apparaissent dans trois objets principaux :
+
+* **Personnes** : Afficher tous les emails échangés avec un contact spécifique
+* **Entreprises** : Voir tous les emails relatifs à une entreprise et à ses employés
+* **Opportunités** : Accéder aux discussions email relatives à l'entreprise liée à cette opportunité. Les discussions par email des individus de l'opportunité ne sont pas encore affichées.
+
+### Consulter les discussions email
+
+1. **Naviguer jusqu'à un enregistrement** : Allez sur n'importe quel enregistrement de Personne, Entreprise ou Opportunité
+2. **Sélectionner l'onglet Emails** : Cliquez sur l'onglet `Emails` pour voir les e-mails synchronisés
+3. **Ouvrir une discussion email** : Cliquez sur n'importe quel email pour ouvrir et lire la conversation complète
+4. **Parcourir l'historique** : Faites défiler tout l'historique email avec ce contact
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
+
+## Ce que vous verrez
+
+### Vue de la discussion email
+
+Lorsque vous ouvrez une discussion par email, vous pouvez :
+
+* **Lire les Conversations Complètes** : Voir l'échange email complet
+* **Voir les Participants** : Voir toutes les personnes impliquées dans la discussion par email
+* **Vérifier les Horodatages** : Savoir exactement quand chaque email a été envoyé
+* **Accéder au Contexte** : Comprendre l'historique complet de la communication
+
+### Visibilité des emails
+
+En fonction de vos paramètres de boîte aux lettres, vous pourriez voir :
+
+* **Contenu Complet** : Texte et détails email complets
+* **Sujet + Métadonnées** : Ligne d'objet, expéditeur, destinataire et horodatage
+* **Métadonnées Seulement** : Informations de base sans contenu email
+
+## Comportement de synchronisation des emails
+
+### Débit de synchronisation
+
+Twenty importe des emails à environ **400 messages par minute**. Ce rythme est actuellement limité par la limitation de débit de l'API Gmail (et s'applique de manière similaire aux autres fournisseurs).
+
+À titre de référence :
+
+* 1,000 emails → ~2.5 minutes
+* 10,000 emails → ~25 minutes
+* 50,000 emails → ~2 heures
+
+### Ce qui est synchronisé
+
+* **Emails Externes** : Tous les e-mails avec des contacts en dehors de votre organisation
+* **Lien Automatique** : Les emails connectent aux enregistrements existants de Personnes et d'Entreprises
+* **Adresses Multiples** : Les emails de n'importe quelle adresse se lient au même enregistrement de contact
+* **Mises à jour** : Les nouveaux e-mails apparaissent dans les 5 minutes
+
+### Ce qui n'est pas synchronisé
+
+* **Emails Internes** : Les e-mails entre collègues (même domaine) restent privés
+* **Emails de Groupe** : Les listes de distribution et les e-mails de groupe sont exclus
+* **Dossiers Exclus** : Les dossiers que vous avez choisi de ne pas synchroniser (configurés sous Paramètres → Comptes → Email)
+
+### Synchronisation sélective des dossiers
+
+Contrôlez quels dossiers e-mail sont synchronisés avec Twenty :
+
+1. Accédez à **Paramètres → Comptes** et sélectionnez votre compte de messagerie connecté
+2. Configurez les dossiers dans la section Email
+3. Choisissez des dossiers spécifiques à inclure ou exclure (Boîte de réception, Envoyés, Archive, dossiers personnalisés)
+
+## Dépannage de la synchronisation des e-mails
+
+### Problèmes Courants de Synchronisation
+
+* **Retards de Synchronisation** : Les emails apparaissent dans les 5 minutes, mais les importations initiales prennent plus de temps
+* **Emails Manquants** : Vérifiez si :
+  * Les dossiers sont exclus dans les paramètres de Message Folder
+  * La création automatique de contacts est désactivée (les e-mails nécessitent des enregistrements existants dans Twenty)
+  * L'e-mail provient des collègues (même domaine) ou des listes de groupe
+  * La boîte aux lettres termine toujours la synchronisation initiale
+
+### Limitations des e-mails
+
+* **Dossiers Systèmes** : Certains dossiers d'e-mail peuvent ne pas être disponibles pour la synchronisation
+* **Alias** : Seules les véritables boîtes aux lettres peuvent être connectées (non pas des alias d'email)

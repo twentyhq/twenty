@@ -9,12 +9,12 @@ import {
   type CodeExecutionState,
 } from 'twenty-shared/ai';
 import { v4 } from 'uuid';
+import { FileFolder } from 'twenty-shared/types';
 
 import {
   type InputFile,
   type OutputFile,
 } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import {
   type AccessTokenJwtPayload,
@@ -24,7 +24,7 @@ import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { CodeInterpreterToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
+import { CodeInterpreterInputZodSchema } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool.schema';
 import { TWENTY_MCP_HELPER } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/twenty-mcp-helper.const';
 import { type CodeInterpreterInput } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/types/code-interpreter-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -44,7 +44,7 @@ export class CodeInterpreterTool implements Tool {
   description =
     'Execute Python code in a sandboxed environment for data analysis, CSV processing, calculations, and chart generation. Returns stdout, stderr, and generated files. Input files are available at /home/user/{filename}. Save output files (charts, reports) to /home/user/output/ using plt.savefig() for matplotlib charts.';
 
-  inputSchema = CodeInterpreterToolParametersZodSchema;
+  inputSchema = CodeInterpreterInputZodSchema;
 
   constructor(
     private readonly codeInterpreterService: CodeInterpreterService,
@@ -353,7 +353,7 @@ export class CodeInterpreterTool implements Tool {
     const sanitizedFilename = path.basename(file.filename);
 
     try {
-      await this.fileStorageService.write({
+      await this.fileStorageService.writeFile({
         file: file.content,
         name: sanitizedFilename,
         mimeType: file.mimeType,
@@ -402,7 +402,7 @@ export class CodeInterpreterTool implements Tool {
       }
 
       try {
-        await this.fileStorageService.write({
+        await this.fileStorageService.writeFile({
           file: file.content,
           name: sanitizedFilename,
           mimeType: file.mimeType,

@@ -45,6 +45,7 @@ export class DestroyViewFieldPermissionGuard implements CanActivate {
       viewId,
       request.userWorkspaceId,
       request.workspace.id,
+      request.apiKey?.id,
     );
   }
 }

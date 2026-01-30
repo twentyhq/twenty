@@ -1,0 +1,202 @@
+---
+title: 수식 필드
+description: 네이티브 지원이 제공될 때까지 워크플로우를 사용해 수식 필드를 생성하세요.
+---
+
+Twenty는 아직 네이티브 수식 필드를 지원하지 않습니다(2026년에 제공 예정이지만), 워크플로우를 사용하면 동일한 결과를 얻을 수 있습니다. 이 우회 방법을 사용하면 단순한 연결부터 복잡한 비즈니스 로직까지 필드 값을 자동으로 계산하고 채울 수 있습니다.
+
+## 일반적인 사용 사례
+
+| 사용 사례           | 수식 예시                        |
+| --------------- | ---------------------------- |
+| **전체 이름**       | First Name + " " + Last Name |
+| **예상 금액**       | Amount × Probability         |
+| **마감일까지 남은 일수** | Due Date - Today             |
+| **단계 경과 일수**    | Today - Stage Entry Date     |
+| **리드 점수**       | 여러 기준을 기반으로 한 점수             |
+
+<Tip>
+  파이프라인 단계에서 시간을 추적하는 전체 예시는 [각 단계에서 기회가 머무는 기간 추적하기](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)를 참조하세요.
+</Tip>
+
+## 기본 수식: 연결
+
+### 예시: 전체 이름 자동 채우기
+
+**목표**: 이름과 성을 결합해 전체 이름 필드에 자동으로 입력합니다.
+
+### 설정
+
+1. **트리거**: 레코드가 업데이트되거나 생성됨 (People)
+
+2. **필터**: 이름 또는 성이 변경되었는지 확인
+
+3. **코드 액션**:
+
+```javascript
+export const main = async (params) => {
+  const { firstName, lastName } = params;
+
+  const fullName = [firstName, lastName]
+    .filter(Boolean)
+    .join(' ');
+
+  return { fullName };
+};
+```
+
+4. **레코드 업데이트**: Full Name을 `{{code.fullName}}`(으)로 설정
+
+## 수치 수식: 예상 금액
+
+### 예시: 예상 매출 계산
+
+**목표**: 기회 금액에 확률을 곱하여 예상 금액을 계산합니다.
+
+전체 워크플로우는 [파이프라인에서 예상 금액 표시하기](/l/ko/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)를 참조하세요.
+
+### 빠른 설정
+
+1. **트리거**: 레코드가 업데이트됨 (Opportunities, Amount 또는 Probability 필드)
+
+2. **코드 액션**:
+
+```javascript
+export const main = async (params) => {
+  const { amount, probability } = params;
+
+  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+
+  return { expectedAmount };
+};
+```
+
+3. **레코드 업데이트**: Expected Amount를 `{{code.expectedAmount}}`(으)로 설정
+
+## 날짜 수식: 일수 계산
+
+### 예시: 작업 마감일까지 남은 일수
+
+**목표**: 작업 마감일까지 남은 일수를 계산합니다.
+
+### 설정
+
+1. **트리거**: 레코드가 업데이트되거나 생성됨 (Tasks, Due Date 필드)
+
+2. **코드 액션**:
+
+```javascript
+export const main = async (params) => {
+  const { dueDate } = params;
+
+  if (!dueDate) {
+    return { daysUntilDue: null };
+  }
+
+  const due = new Date(dueDate);
+  const today = new Date();
+  const diffTime = due - today;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return { daysUntilDue: diffDays };
+};
+```
+
+3. **레코드 업데이트**: Days Until Due를 `{{code.daysUntilDue}}`(으)로 설정
+
+<Note>
+  음수 값은 기한이 지난 작업을 의미합니다. 이 필드를 사용하여 긴급도에 따라 작업을 필터링하거나 정렬할 수 있습니다.
+</Note>
+
+## 조건 수식: 리드 점수
+
+### 예시: 기준에 따라 리드 점수 계산
+
+**목표**: 회사 규모, 산업, 참여도에 따라 리드 점수를 산정합니다.
+
+### 설정
+
+1. **트리거**: 레코드가 업데이트됨 (People 또는 Companies)
+
+2. **코드 액션**:
+
+```javascript
+export const main = async (params) => {
+  const { companySize, industry, hasEmail, hasPhone, source } = params;
+
+  let score = 0;
+
+  // Company size scoring
+  if (companySize === 'Enterprise') score += 30;
+  else if (companySize === 'Mid-Market') score += 20;
+  else if (companySize === 'SMB') score += 10;
+
+  // Industry scoring
+  const targetIndustries = ['Technology', 'Finance', 'Healthcare'];
+  if (targetIndustries.includes(industry)) score += 25;
+
+  // Contact info scoring
+  if (hasEmail) score += 10;
+  if (hasPhone) score += 15;
+
+  // Source scoring
+  if (source === 'Referral') score += 20;
+  else if (source === 'Website') score += 10;
+
+  return { leadScore: score };
+};
+```
+
+3. **레코드 업데이트**: Lead Score를 `{{code.leadScore}}`(으)로 설정
+
+## 텍스트 수식: 도메인 추출
+
+### 예시: 이메일에서 도메인 추출
+
+**목표**: 이메일 도메인을 자동으로 추출하여 저장합니다.
+
+### 설정
+
+1. **트리거**: 레코드가 업데이트됨 (People, Email 필드)
+
+2. **코드 액션**:
+
+```javascript
+export const main = async (params) => {
+  const { email } = params;
+
+  if (!email) return { domain: null };
+
+  const domain = email.split('@')[1]?.toLowerCase();
+
+  return { domain };
+};
+```
+
+3. **레코드 업데이트**: Domain 필드를 `{{code.domain}}`(으)로 설정
+
+## 모범 사례
+
+### 성능
+
+* 관련 필드 변경에만 트리거되도록 하세요.
+* 계산이 필요 없는 레코드는 필터로 건너뛰세요.
+* 대량 워크플로우에서는 복잡한 계산을 피하세요.
+
+### 오류 처리
+
+* 계산 전에 null/undefined 값을 확인하세요.
+* 데이터가 없을 때는 기본값을 사용하세요.
+* 계산이 실패하면 명확한 오류 메시지를 반환하세요.
+
+### 테스트
+
+* 엣지 케이스로 테스트하세요(빈 필드, 0 값 등).
+* 활성화 전에 계산을 수동으로 검증하세요.
+* 예상치 못한 결과가 있는지 워크플로우 실행을 모니터링하세요.
+
+## 관련 항목
+
+* [파이프라인에서 예상 금액 표시하기](/l/ko/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [단계에서 시간 추적하기](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)

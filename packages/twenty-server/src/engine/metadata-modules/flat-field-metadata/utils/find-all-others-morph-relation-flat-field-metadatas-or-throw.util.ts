@@ -33,7 +33,7 @@ export const findAllOthersMorphRelationFlatFieldMetadatasOrThrow = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: flatObjectMetadata.fieldIds,
     });
 
   return objectFlatFieldMetadatas.filter(

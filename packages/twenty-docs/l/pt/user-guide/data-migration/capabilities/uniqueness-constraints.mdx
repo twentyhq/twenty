@@ -1,0 +1,72 @@
+---
+title: Restrições de Unicidade
+description: Como o Twenty impõe a unicidade dos dados durante a importação.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Visão geral
+
+O Twenty impõe unicidade em determinados campos para evitar registos duplicados e garantir a integridade dos dados. Compreender estas restrições é essencial para importações bem-sucedidas.
+
+## Campos Únicos por Predefinição
+
+| Objeto                     | Campos Únicos                  |
+| -------------------------- | ------------------------------ |
+| **Pessoas**                | `id`, `email`                  |
+| **Empresas**               | `id`, `domain`                 |
+| **Objetos personalizados** | `id` apenas (por predefinição) |
+
+<Note>O campo `id` é o identificador interno do Twenty, gerado automaticamente para cada registo. Utiliza o formato UUID (por exemplo, `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+## Campos Únicos Personalizados
+
+Pode definir campos únicos adicionais em **Definições → Modelo de Dados**:
+
+1. Vá a **Definições → Modelo de Dados**
+2. Selecione o objeto
+3. Clique num campo
+4. Ative **Único** nas definições do campo
+
+### Casos de Utilização para Campos Únicos Personalizados
+
+* **IDs externos**: Guardar IDs de outros sistemas (Salesforce ID, HubSpot ID)
+* **Identificadores empresariais**: Números de colaborador, códigos de cliente
+* **Informações de contacto alternativas**: Perfil do LinkedIn, número de telefone
+
+<Note>O nome do campo `id` é reservado para o ID interno do Twenty. Utilize um nome diferente, como `externalId` ou `legacyId`, para identificadores externos.</Note>
+
+## Comportamento da Importação
+
+### Criação de Novos Registos
+
+Se o valor de um campo único não existir, é criado um novo registo.
+
+### Atualização de Registos Existentes
+
+Se o valor de um campo único corresponder a um registo existente, esse registo é **atualizado** com os novos dados.
+<Warning>Para **atualizar registos existentes**, recomenda-se **corresponder apenas a um campo único**.</Warning>
+
+### Registos Eliminados Logicamente
+
+<Warning>
+  **Os registos eliminados contam para a unicidade.**
+
+  Registos eliminados logicamente (visíveis em Menu de Comandos → Ver registos eliminados) são incluídos nas verificações de unicidade. Se importar um registo com o mesmo valor único que um registo eliminado, o registo eliminado será **restaurado** com os novos dados.
+</Warning>
+
+## Deteção de Duplicados Durante a Importação
+
+Durante a fase de validação:
+
+* Os duplicados no seu ficheiro são realçados a amarelo
+* Pode editar ou remover linhas duplicadas na interface antes de iniciar a importação
+
+<VimeoEmbed videoId="1145246326" title="Demonstração em vídeo" />
+
+## Melhores Práticas
+
+1. **Remova os duplicados** do seu ficheiro antes de importar
+2. **Verifique se existem registos** no Twenty antes de importar
+3. **Utilize IDs externos** ao migrar de outros sistemas
+4. **Inclua campos únicos** se quiser atualizar registos existentes

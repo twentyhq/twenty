@@ -1,3 +1,6 @@
+import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/command-menu/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { getColorSchemeByIndex } from '@/page-layout/widgets/graph/utils/getColorSchemeByIndex';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -26,26 +29,31 @@ export const ChartColorPaletteOption = ({
 }: ChartColorPaletteOptionProps) => {
   const theme = useTheme();
 
-  const paletteColors: Array<keyof typeof theme.color> = [
-    'purple',
-    'pink',
-    'red',
-    'orange',
-    'yellow',
-  ];
+  const colorRegistry = createGraphColorRegistry(theme);
+
+  const paletteColors = Array.from(
+    { length: CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT },
+    (_, index) => {
+      const colorScheme = getColorSchemeByIndex(colorRegistry, index);
+
+      return {
+        colorName: colorScheme.name,
+        color: colorScheme.solid,
+      };
+    },
+  );
 
   const colorSamples = (
     <StyledColorSamplesContainer>
-      {paletteColors.map((paletteColorName) => {
-        const baseColor = theme.color[paletteColorName] as string;
-        return (
-          <ColorSample
-            key={paletteColorName}
-            colorName={getMainColorNameFromPaletteColorName(paletteColorName)}
-            color={baseColor}
-          />
-        );
-      })}
+      {paletteColors.map((paletteColor) => (
+        <ColorSample
+          key={paletteColor.colorName}
+          colorName={getMainColorNameFromPaletteColorName(
+            paletteColor.colorName,
+          )}
+          color={paletteColor.color}
+        />
+      ))}
     </StyledColorSamplesContainer>
   );
 
@@ -58,7 +66,7 @@ export const ChartColorPaletteOption = ({
       }}
     >
       <MenuItemSelect
-        text={t`Palette`}
+        text={t`Default palette`}
         selected={false}
         focused={selectedItemId === 'auto' || currentColor === 'auto'}
         contextualText={colorSamples}

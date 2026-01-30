@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Index metadata creation on relation field creation v2 Should create and delete index on MANY_TO_ONE relation field creation and deletion 1`] = `
 {

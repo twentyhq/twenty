@@ -1,0 +1,130 @@
+---
+title: Typeform-Formulareinsendungen in Twenty übernehmen
+description: Verarbeiten Sie die Webhook-Payload von Typeform, um aus Formulareinsendungen Leads zu erstellen.
+---
+
+Für die Standard-Webhook-Einrichtung siehe [Webhook-Trigger einrichten](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). Dieser Artikel behandelt die spezifische Verarbeitung, die für die benutzerdefinierte Payload-Struktur von Typeform erforderlich ist.
+
+### Schritt 1: Webhook-Workflow erstellen
+
+1. Gehen Sie zu **Einstellungen → Workflows**
+2. Klicken Sie auf **+ Neuer Workflow**
+3. Wählen Sie **Webhook** als Trigger
+4. Kopieren Sie die Webhook-URL
+
+### Schritt 2: Typeform konfigurieren
+
+1. Öffnen Sie in Typeform Ihr Formular
+2. Gehen Sie zu **Connect → Webhooks**
+3. Fügen Sie Ihre Twenty-Webhook-URL ein
+4. Speichern
+
+### Schritt 3: Die Typeform-Payload verstehen
+
+Typeform sendet eine verschachtelte JSON-Struktur. Hier ist ein vereinfachtes Beispiel:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+Wichtige Hinweise:
+
+* Formulardaten sind unter `form_response` verschachtelt
+* **Antworten werden als Array zurückgegeben**, nicht als benannte Felder
+* Jede Antwort enthält den Feldtyp und den Titel als Referenz
+
+### Schritt 4: Felder aus dem `answers`-Array extrahieren
+
+Da `answers` ein Array ist, können Sie in den folgenden Schritten nur das gesamte Array auswählen — nicht einzelne Felder. Fügen Sie eine **Code**-Aktion hinzu, um die benötigten Felder zu extrahieren:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+In den folgenden Schritten können Sie nun `contact.firstName`, `contact.email` usw. aus der Variablenauswahl auswählen.
+
+<Tip>
+  Weitere Details zum Umgang mit Arrays in Code-Aktionen finden Sie unter [Arrays in Code-Aktionen verarbeiten](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+### Schritt 5: Datensatz erstellen
+
+Fügen Sie die Aktion **Datensatz erstellen** hinzu:
+
+| Feld            | Wert                                                               |
+| --------------- | ------------------------------------------------------------------ |
+| **Objekt**      | Personen                                                           |
+| **Vorname**     | `{{code.contact.firstName}}`                                       |
+| **Nachname**    | `{{code.contact.lastName}}`                                        |
+| **E-Mail**      | `{{code.contact.email}}`                                           |
+| **Unternehmen** | Suchen oder erstellen Sie basierend auf `{{code.contact.company}}` |
+
+### Schritt 6: Testen und aktivieren
+
+1. Senden Sie in Typeform eine Testantwort ab
+2. Überprüfen Sie die Workflow-Ausführung, um zu bestätigen, dass die Daten erfasst wurden
+3. Aktivieren Sie den Workflow
+
+## Verwandt
+
+* [Webhook-Trigger einrichten](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Arrays in Code-Aktionen verarbeiten](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

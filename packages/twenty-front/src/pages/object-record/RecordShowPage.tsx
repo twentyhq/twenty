@@ -5,9 +5,10 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { CommandMenuPageLayout } from '@/object-record/components/CommandMenuPageLayout';
+import { MainContainerLayoutWithCommandMenu } from '@/object-record/components/MainContainerLayoutWithCommandMenu';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
+import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
@@ -51,7 +52,7 @@ export const RecordShowPage = () => {
               <RecordShowActionMenu />
               <PageHeaderToggleCommandMenuButton />
             </RecordShowPageHeader>
-            <CommandMenuPageLayout>
+            <MainContainerLayoutWithCommandMenu>
               <TimelineActivityContext.Provider
                 value={{
                   recordId: objectRecordId,
@@ -63,8 +64,12 @@ export const RecordShowPage = () => {
                     targetObjectNameSingular: objectNameSingular,
                   }}
                 />
+                <RecordShowPageSSESubscribeEffect
+                  objectNameSingular={objectNameSingular}
+                  recordId={objectRecordId}
+                />
               </TimelineActivityContext.Provider>
-            </CommandMenuPageLayout>
+            </MainContainerLayoutWithCommandMenu>
           </PageContainer>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>

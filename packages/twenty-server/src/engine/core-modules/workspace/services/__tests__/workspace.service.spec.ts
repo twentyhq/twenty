@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
@@ -25,9 +25,12 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 describe('WorkspaceService', () => {
@@ -57,6 +60,12 @@ describe('WorkspaceService', () => {
           provide: getRepositoryToken(ApprovedAccessDomainEntity),
           useValue: {
             findOneBy: jest.fn(),
+          },
+        },
+        {
+          provide: ObjectMetadataService,
+          useValue: {
+            deleteWorkspaceAllObjectMetadata: jest.fn(),
           },
         },
         {
@@ -117,9 +126,18 @@ describe('WorkspaceService', () => {
           },
         },
         {
+          provide: WorkspaceDataSourceService,
+          useValue: {
+            deleteWorkspaceDBSchema: jest.fn(),
+          },
+        },
+        {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
             flushFlatEntityMaps: jest.fn(),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest
+              .fn()
+              .mockResolvedValue(createEmptyAllFlatEntityMaps()),
           },
         },
         {
@@ -132,6 +150,21 @@ describe('WorkspaceService', () => {
           provide: getQueueToken(MessageQueue.deleteCascadeQueue),
           useValue: {
             add: jest.fn(),
+          },
+        },
+        {
+          provide: getDataSourceToken(),
+          useValue: {
+            createQueryRunner: jest.fn().mockReturnValue({
+              connect: jest.fn(),
+              startTransaction: jest.fn(),
+              commitTransaction: jest.fn(),
+              rollbackTransaction: jest.fn(),
+              release: jest.fn(),
+              manager: {
+                delete: jest.fn().mockResolvedValue({ affected: 0 }),
+              },
+            }),
           },
         },
       ],
@@ -260,16 +293,9 @@ describe('WorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-      jest
-        .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
-        .mockResolvedValue({} as WorkspaceEntity);
 
       await service.deleteWorkspace(mockWorkspace.id, false);
 
-      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
-      expect(
-        service.deleteMetadataSchemaCacheAndUserWorkspace,
-      ).toHaveBeenCalled();
       expect(workspaceRepository.softDelete).not.toHaveBeenCalled();
       expect(workspaceCacheStorageService.flush).toHaveBeenCalledWith(
         mockWorkspace.id,
@@ -311,16 +337,12 @@ describe('WorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace);
       jest.spyOn(userWorkspaceRepository, 'find').mockResolvedValue([]);
-      jest
-        .spyOn(service, 'deleteMetadataSchemaCacheAndUserWorkspace')
-        .mockResolvedValue({} as WorkspaceEntity);
 
       await service.deleteWorkspace(mockWorkspace.id, false);
 
       expect(dnsManagerService.deleteHostnameSilently).toHaveBeenCalledWith(
         customDomain,
       );
-      expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
     });
 
     it('should not delete the custom domain when soft deleting a workspace with a custom domain', async () => {

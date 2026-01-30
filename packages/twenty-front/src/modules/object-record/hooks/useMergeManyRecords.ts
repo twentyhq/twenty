@@ -3,15 +3,15 @@ import { useCallback, useState } from 'react';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
-import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { useMergeManyRecordsMutation } from '@/object-record/hooks/useMergeManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getMergeManyRecordsMutationResponseField } from '@/object-record/utils/getMergeManyRecordsMutationResponseField';
 import { getOperationName } from '@apollo/client/utilities';
+import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 
 export type MergeManySettings = {
   conflictPriorityIndex: number;
@@ -28,7 +28,6 @@ export const useMergeManyRecords = <
   objectNameSingular,
   recordGqlFields,
 }: UseMergeManyRecordsProps) => {
-  const { registerObjectOperation } = useRegisterObjectOperation();
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
 
@@ -49,9 +48,7 @@ export const useMergeManyRecords = <
     recordGqlFields: computedRecordGqlFields,
   });
 
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,
@@ -102,9 +99,14 @@ export const useMergeManyRecords = <
         setLoading(false);
 
         if (!preview) {
-          await refetchAggregateQueries();
-          registerObjectOperation(objectMetadataItem, {
-            type: 'merge-records',
+          await refetchAggregateQueries({
+            objectMetadataNamePlural: objectMetadataItem.namePlural,
+          });
+          dispatchObjectRecordOperationBrowserEvent({
+            objectMetadataItem,
+            operation: {
+              type: 'merge-records',
+            },
           });
         }
 
@@ -121,7 +123,6 @@ export const useMergeManyRecords = <
       findOneRecordQuery,
       findDuplicateRecordsQuery,
       refetchAggregateQueries,
-      registerObjectOperation,
     ],
   );
 

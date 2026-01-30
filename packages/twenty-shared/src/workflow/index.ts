@@ -9,6 +9,7 @@
 
 export { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from './constants/CaptureAllVariableTagInnerRegex';
 export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesHttpRequest';
+export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositionOffsets';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
@@ -33,12 +34,21 @@ export { workflowFormActionSchema } from './schemas/form-action-schema';
 export { workflowFormActionSettingsSchema } from './schemas/form-action-settings-schema';
 export { workflowHttpRequestActionSchema } from './schemas/http-request-action-schema';
 export { workflowHttpRequestActionSettingsSchema } from './schemas/http-request-action-settings-schema';
+export { workflowIfElseActionSchema } from './schemas/if-else-action-schema';
+export {
+  stepIfElseBranchSchema,
+  workflowIfElseActionSettingsSchema,
+} from './schemas/if-else-action-settings-schema';
 export { workflowIteratorActionSchema } from './schemas/iterator-action-schema';
 export { workflowIteratorActionSettingsSchema } from './schemas/iterator-action-settings-schema';
+export { workflowLogicFunctionActionSchema } from './schemas/logic-function-action-schema';
+export { workflowLogicFunctionActionSettingsSchema } from './schemas/logic-function-action-settings-schema';
 export { workflowManualTriggerSchema } from './schemas/manual-trigger-schema';
 export { objectRecordSchema } from './schemas/object-record-schema';
 export { workflowSendEmailActionSchema } from './schemas/send-email-action-schema';
 export { workflowSendEmailActionSettingsSchema } from './schemas/send-email-action-settings-schema';
+export { stepFilterGroupSchema } from './schemas/step-filter-group-schema';
+export { stepFilterSchema } from './schemas/step-filter-schema';
 export { workflowUpdateRecordActionSchema } from './schemas/update-record-action-schema';
 export { workflowUpdateRecordActionSettingsSchema } from './schemas/update-record-action-settings-schema';
 export { workflowUpsertRecordActionSchema } from './schemas/upsert-record-action-schema';
@@ -55,6 +65,8 @@ export { workflowRunStateStepInfosSchema } from './schemas/workflow-run-state-st
 export { workflowRunStatusSchema } from './schemas/workflow-run-status-schema';
 export { workflowRunStepStatusSchema } from './schemas/workflow-run-step-status-schema';
 export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
+export type { EmailRecipients } from './types/EmailRecipients';
+export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export type { BodyType } from './types/workflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
@@ -66,6 +78,12 @@ export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts'
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
+export {
+  needsEscaping,
+  escapePathSegment,
+  joinVariablePath,
+  parseVariablePath,
+} from './utils/variable-path.util';
 export type {
   LeafType,
   NodeType,

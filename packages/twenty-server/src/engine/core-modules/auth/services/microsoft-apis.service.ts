@@ -65,6 +65,7 @@ export class MicrosoftAPIsService {
     refreshToken: string;
     calendarVisibility: CalendarChannelVisibility | undefined;
     messageVisibility: MessageChannelVisibility | undefined;
+    skipMessageChannelConfiguration?: boolean;
   }): Promise<string> {
     const {
       handle,
@@ -72,6 +73,7 @@ export class MicrosoftAPIsService {
       workspaceMemberId,
       calendarVisibility,
       messageVisibility,
+      skipMessageChannelConfiguration,
     } = input;
 
     const scopes = getMicrosoftApisOauthScopes();
@@ -79,7 +81,6 @@ export class MicrosoftAPIsService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const connectedAccountRepository =
           await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
@@ -130,6 +131,7 @@ export class MicrosoftAPIsService {
                 handle,
                 messageVisibility,
                 manager,
+                skipMessageChannelConfiguration,
               });
 
               if (
@@ -143,6 +145,7 @@ export class MicrosoftAPIsService {
                   handle,
                   calendarVisibility,
                   manager,
+                  skipMessageChannelConfiguration,
                 });
               }
             } else {
@@ -243,6 +246,7 @@ export class MicrosoftAPIsService {
 
         return newOrExistingConnectedAccountId;
       },
+      authContext,
     );
   }
 }

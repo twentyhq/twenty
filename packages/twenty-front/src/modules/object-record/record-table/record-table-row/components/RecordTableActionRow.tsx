@@ -90,9 +90,9 @@ const StyledText = styled.span`
   font-size: ${({ theme }) => theme.font.size.md};
   text-align: left;
   vertical-align: middle;
+  white-space: nowrap;
 
   position: absolute;
-  width: 100px;
 `;
 
 type RecordTableActionRowProps = {

@@ -10,8 +10,6 @@ import {
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
@@ -27,6 +25,7 @@ import {
 import {
   computeBatchPath,
   computeDuplicatesResultPath,
+  computeGroupByResultPath,
   computeManyResultPath,
   computeMergeManyResultPath,
   computeRestoreManyResultPath,
@@ -48,8 +47,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 import { getServerUrl } from 'src/utils/get-server-url';
 
 @Injectable()
@@ -58,7 +55,6 @@ export class OpenApiService {
     private readonly accessTokenService: AccessTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   private async getWorkspaceFromRequest(request: Request) {
@@ -127,20 +123,7 @@ export class OpenApiService {
       return schema;
     }
 
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
-    const filteredObjectMetadataItems = flatObjectMetadataArray.filter(
-      (item) => {
-        return !shouldExcludeFromWorkspaceApi(
-          item,
-          standardObjectMetadataDefinitions,
-          workspaceFeatureFlagsMap,
-        );
-      },
-    );
-
-    schema.paths = filteredObjectMetadataItems.reduce((paths, item) => {
+    schema.paths = flatObjectMetadataArray.reduce((paths, item) => {
       paths[`/${item.namePlural}`] = computeManyResultPath(
         item,
         flatObjectMetadataMaps,
@@ -176,6 +159,11 @@ export class OpenApiService {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       );
+      paths[`/${item.namePlural}/groupBy`] = computeGroupByResultPath(
+        item,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      );
 
       return paths;
     }, schema.paths as OpenAPIV3_1.PathsObject);
@@ -204,7 +192,7 @@ export class OpenApiService {
       },
     } as OpenAPIV3_1.PathItemObject;
 
-    schema.webhooks = filteredObjectMetadataItems.reduce(
+    schema.webhooks = flatObjectMetadataArray.reduce(
       (paths, item) => {
         paths[
           this.createWebhookEventName(
@@ -251,7 +239,7 @@ export class OpenApiService {
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeSchemaComponents(
-        filteredObjectMetadataItems,
+        flatObjectMetadataArray,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       ),
@@ -262,7 +250,7 @@ export class OpenApiService {
       },
     };
 
-    schema.tags = computeSchemaTags(filteredObjectMetadataItems);
+    schema.tags = computeSchemaTags(flatObjectMetadataArray);
 
     return schema;
   }
@@ -287,12 +275,6 @@ export class OpenApiService {
     if (!isDefined(workspace)) {
       return schema;
     }
-
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
-    const isPageLayoutEnabled =
-      workspaceFeatureFlagsMap[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED];
 
     const metadata = [
       {
@@ -335,22 +317,18 @@ export class OpenApiService {
         nameSingular: 'viewFilterGroup',
         namePlural: 'viewFilterGroups',
       },
-      ...(isPageLayoutEnabled
-        ? [
-            {
-              nameSingular: 'pageLayout',
-              namePlural: 'pageLayouts',
-            },
-            {
-              nameSingular: 'pageLayoutTab',
-              namePlural: 'pageLayoutTabs',
-            },
-            {
-              nameSingular: 'pageLayoutWidget',
-              namePlural: 'pageLayoutWidgets',
-            },
-          ]
-        : []),
+      {
+        nameSingular: 'pageLayout',
+        namePlural: 'pageLayouts',
+      },
+      {
+        nameSingular: 'pageLayoutTab',
+        namePlural: 'pageLayoutTabs',
+      },
+      {
+        nameSingular: 'pageLayoutWidget',
+        namePlural: 'pageLayoutWidgets',
+      },
     ];
 
     schema.paths = metadata.reduce((path, item) => {

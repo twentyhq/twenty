@@ -4,51 +4,48 @@ image: /images/user-guide/what-is-twenty/20.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="Header" />
+  <img src="/images/user-guide/what-is-twenty/20.png" alt="En-tête" />
 </Frame>
 
-Permet aux utilisateurs de choisir une valeur dans une liste d'options prédéfinies.
+Permet aux utilisateurs de choisir une valeur parmi une liste d'options prédéfinies.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Utilisation">
+    ```jsx
+    import { RecoilRoot } from 'recoil';
+    import { IconTwentyStar } from 'twenty-ui/display';
 
-```jsx
-import { RecoilRoot } from 'recoil';
-import { IconTwentyStar } from 'twenty-ui/display';
+    import { Select } from '@/ui/input/components/Select';
 
-import { Select } from '@/ui/input/components/Select';
+    export const MyComponent = () => {
 
-export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <Select
+            className
+            disabled={false}
+            label="Sélectionnez une option"
+            options={[
+              { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+              { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
+            ]}
+            value="option1"
+          />
+        </RecoilRoot>
+      );
+    };
 
-  return (
-    <RecoilRoot>
-      <Select
-        className
-        disabled={false}
-        label="Select an option"
-        options={[
-          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
-          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
-        ]}
-        value="option1"
-      />
-    </RecoilRoot>
-  );
-};
+    ```
+  </Tab>
 
-```
-
-</Tab>
-<Tab title="Props">
-
-| Propriétés  | Type     | Description                                                                                                                                                                                                                                                                               |
-| ----------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| nomDeClasse | chaîne   | Classe CSS facultative pour le style supplémentaire                                                                                                                                                                                                                                       |
-| désactivé   | booléen  | Lorsqu'il est réglé sur `true`, cela désactive l'interaction de l'utilisateur avec le composant.                                                                                                                                                                          |
-| étiquette   | chaîne   | L'étiquette pour décrire la fonction du composant `Select`.                                                                                                                                                                                                               |
-| onChange    | fonction | La fonction appelée lorsque les valeurs sélectionnées changent.                                                                                                                                                                                                           |
-| options     | tableau  | Représente les options disponibles pour le composant `Selected`. C'est un tableau d'objets où chaque objet possède une `valeur` (l'identifiant unique), un `label` (l'identifiant unique) et une icône optionnelle. |
-| valeur      | chaîne   | Représente la valeur actuellement sélectionnée. Elle doit correspondre à l'une des propriétés `valeur` dans le tableau `options`.                                                                                                                         |
-
-</Tab>
+  <Tab title="Propriétés">
+    | Propriétés  | Type     | Description                                                                                                                                                                                                                                            |
+    | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+    | nomDeClasse | chaîne   | Classe CSS facultative pour le style supplémentaire                                                                                                                                                                                                    |
+    | désactivé   | booléen  | Lorsqu'il est défini sur `true`, désactive l'interaction de l'utilisateur avec le composant                                                                                                                                                            |
+    | étiquette   | chaîne   | Le libellé décrivant la finalité du composant `Select`                                                                                                                                                                                                 |
+    | onChange    | fonction | La fonction appelée lorsque les valeurs sélectionnées changent                                                                                                                                                                                         |
+    | options     | tableau  | Représente les options disponibles pour le composant `Selected`. C'est un tableau d'objets où chaque objet possède une propriété `value` (l'identifiant unique), une propriété `label` (l'identifiant unique) et, éventuellement, une propriété `Icon` |
+    | valeur      | chaîne   | Représente la valeur actuellement sélectionnée. Elle doit correspondre à l'une des propriétés `value` du tableau `options`                                                                                                                             |
+  </Tab>
 </Tabs>

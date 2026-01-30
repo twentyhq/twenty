@@ -1,0 +1,176 @@
+---
+title: Iterator verwenden
+description: Durchlaufen Sie Arrays von Datensätzen, um Aktionen für jedes Element auszuführen.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Mit Iterator können Sie ein Array von Datensätzen durchlaufen und für jeden Datensatz Aktionen ausführen. Es ist unverzichtbar für Workflows, die mehrere Datensätze verarbeiten müssen, die von der Aktion „Datensätze suchen“ zurückgegeben oder über Webhooks empfangen werden.
+
+## Wann Sie Iterator verwenden sollten
+
+| Szenario                       | Beispiel                                                |
+| ------------------------------ | ------------------------------------------------------- |
+| **Suchergebnisse verarbeiten** | E-Mail an jede gefundene Person senden                  |
+| **Webhook-Arrays verarbeiten** | Der Reihe nach für jedes Element Datensätze erstellen   |
+| **Massenaktualisierungen**     | Mehrere Datensätze mit berechneten Werten aktualisieren |
+| **Benachrichtigungen**         | Mehrere Personen über ein Ereignis benachrichtigen      |
+
+## Iterator verstehen
+
+Iterator erwartet ein **Array** als Eingabe. Dann:
+
+1. Nimmt das erste Element aus dem Array
+2. Führt alle Aktionen innerhalb des Iterators mit diesem Element aus
+3. Wechselt zum nächsten Element
+4. Wiederholt sich, bis alle Elemente verarbeitet sind
+
+## Grundlegende Einrichtung
+
+### Beispiel: E-Mail an alle in den Suchergebnissen
+
+**Ziel**: Alle Kontakte in einem bestimmten Unternehmen finden und jedem eine personalisierte E-Mail senden.
+
+### Schritt 1: Nach Datensätzen suchen
+
+1. Fügen Sie die Aktion **Datensätze suchen** hinzu
+2. Objekt: **Personen**
+3. Filter: Unternehmen ist gleich "Acme Inc"
+4. Dadurch wird ein Array von Personen zurückgegeben
+
+### Schritt 2: Prüfen, ob Ergebnisse vorhanden sind
+
+1. Fügen Sie eine **Filter**-Aktion hinzu
+2. Bedingung: `{{searchRecords.length}}` ist größer als 0
+3. Dies verhindert Iterator-Fehler bei leeren Ergebnissen
+
+### Schritt 3: Iterator hinzufügen
+
+1. Fügen Sie eine **Iterator**-Aktion hinzu
+2. Array-Eingabe: Wählen Sie `{{searchRecords}}` aus
+3. Dadurch wird eine Schleife erstellt
+
+### Schritt 4: Aktionen im Iterator hinzufügen
+
+Aktionen, die nach dem Iterator platziert werden, werden für jedes Element ausgeführt:
+
+1. Fügen Sie eine **E-Mail senden**-Aktion hinzu (im Iterator)
+2. An: `{{iterator.currentItem.email}}`
+3. Betreff: Hallo `{{iterator.currentItem.firstName}}`!
+4. Text: Personalisierte Nachricht unter Verwendung der Felder des aktuellen Elements
+
+### Ergebnis
+
+Wenn Datensätze suchen 5 Personen zurückgibt, führt der Iterator Folgendes aus:
+
+* Sendet E-Mail an Person 1
+* Sendet E-Mail an Person 2
+* ... setzt dies für alle 5 fort
+
+## Zugriff auf Daten des aktuellen Elements
+
+Im Iterator verwenden Sie `{{iterator.currentItem}}`, um auf den aktuellen Datensatz zuzugreifen:
+
+| Variable                                | Beschreibung                                      |
+| --------------------------------------- | ------------------------------------------------- |
+| `{{iterator.currentItem}}`              | Das vollständige Objekt des aktuellen Datensatzes |
+| `{{iterator.currentItem.id}}`           | Datensatz-ID                                      |
+| `{{iterator.currentItem.email}}`        | E-Mail-Feld                                       |
+| `{{iterator.currentItem.company.name}}` | Name des zugehörigen Unternehmens                 |
+| `{{iterator.index}}`                    | Aktuelle Position im Array (0-basiert)            |
+
+## Häufige Muster
+
+### Mehrere Datensätze aktualisieren
+
+**Ziel**: Alle überfälligen Aufgaben als "Late" markieren
+
+```
+1. Datensätze suchen (Aufgaben, Fälligkeitsdatum < Heute, Status ≠ Abgeschlossen)
+2. Filter (length > 0)
+3. Iterator (searchRecords)
+   └── Datensatz aktualisieren
+       - Objekt: Aufgaben
+       - Datensatz: {{iterator.currentItem.id}}
+       - Status: Late
+```
+
+### Datensätze aus Array erstellen
+
+**Ziel**: Ein Webhook erhält eine Bestellung mit mehreren Positionen; für jede Position einen Datensatz erstellen
+
+```
+1. Webhook-Trigger (empfängt ein Array von Positionen)
+2. Filter (items.length > 0)
+3. Iterator (trigger.body.items)
+   └── Datensatz erstellen
+       - Objekt: Bestellpositionen
+       - Name: {{iterator.currentItem.name}}
+       - Menge: {{iterator.currentItem.qty}}
+       - Zugehörige Bestellung: {{trigger.body.orderId}}
+```
+
+### Bedingte Verarbeitung innerhalb der Schleife
+
+**Ziel**: Nur E-Mails an Kontakte mit gültigen E-Mail-Adressen senden
+
+```
+1. Datensätze suchen (Personen)
+2. Iterator (searchRecords)
+   └── Filter (currentItem.email ist nicht leer)
+       └── E-Mail senden
+           - An: {{iterator.currentItem.email}}
+```
+
+## Fehlerbehebung
+
+### "Iterator erwartet ein Array"
+
+**Ursache**: Sie haben einen einzelnen Datensatz statt eines Arrays übergeben.
+
+**Lösung**: Stellen Sie sicher, dass Sie das Ergebnis von Datensätze suchen oder ein Array-Feld übergeben, nicht einen einzelnen Datensatz.
+
+```
+✅ Richtig: {{searchRecords}}
+❌ Falsch: {{searchRecords[0]}}
+```
+
+### Iterator wird nicht ausgeführt
+
+**Ursache**: Das Array ist leer.
+
+**Lösung**: Fügen Sie vor dem Iterator einen Filter hinzu, um die Array-Länge zu prüfen:
+
+```
+Filter: {{searchRecords.length}} > 0
+```
+
+### Aktionen werden zu oft ausgeführt
+
+**Ursache**: Datensätze suchen hat mehr Datensätze zurückgegeben als erwartet.
+
+**Lösung**:
+
+* Fügen Sie der Aktion „Datensätze suchen“ spezifischere Filter hinzu
+* Legen Sie für die Aktion „Datensätze suchen“ ein Limit fest (max. 200)
+* Fügen Sie innerhalb des Iterators einen Filter für zusätzliche Bedingungen hinzu
+
+## Leistungsaspekte
+
+* **Credit-Verbrauch**: Jede Iteration verbraucht Credits für ihre Aktionen
+* **Zeit**: Große Arrays benötigen länger für die Verarbeitung
+* **Grenzwerte**: Ziehen Sie für sehr große Vorgänge eine Stapelverarbeitung in Betracht
+* **Ratenlimits**: Externe API-Aufrufe können bei vielen Iterationen auf Ratenlimits stoßen
+
+## Beste Praktiken
+
+1. **Prüfen Sie stets die Array-Länge** vor dem Iterator, um Fehler zu vermeiden
+2. **Fügen Sie Filter innerhalb von Schleifen hinzu**, wenn nicht alle Elemente verarbeitet werden müssen
+3. **Benennen Sie Ihren Iterator-Schritt um**, um zu beschreiben, was durchlaufen wird
+4. **Testen Sie mit kleinen Arrays**, bevor Sie große Datenmengen verarbeiten
+5. **Überwachen Sie Workflow-Ausführungen**, um sicherzustellen, dass Iterationen wie erwartet abgeschlossen werden
+
+## Verwandt
+
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [So verwenden Sie Verzweigungen](/l/de/user-guide/workflows/capabilities/use-branches-in-workflows)
+* [Workflows-FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq)

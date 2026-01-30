@@ -20,6 +20,7 @@ type MultiSelectControlProps = Omit<SelectControlProps, 'selectedOption'> & {
   fixedIcon?: IconComponent;
   fixedText?: string;
   selectedOptions: MultiSelectOptionType[];
+  placeholderText?: string;
 };
 
 export const MultiSelectControl = ({
@@ -30,20 +31,22 @@ export const MultiSelectControl = ({
   selectSizeVariant,
   textAccent = 'default',
   hasRightElement,
+  placeholderText,
 }: MultiSelectControlProps) => {
   const theme = useTheme();
 
-  if (selectedOptions.length === 0) {
-    return null;
-  }
-
   const firstSelectedOption = selectedOptions[0];
+  const hasSelection = selectedOptions.length > 0;
+
   return (
     <StyledControlContainer
       disabled={isDisabled}
-      hasIcon={isDefined(fixedIcon) || isDefined(firstSelectedOption.Icon)}
+      hasIcon={
+        isDefined(fixedIcon) ||
+        (hasSelection && isDefined(firstSelectedOption?.Icon))
+      }
       selectSizeVariant={selectSizeVariant}
-      textAccent={textAccent}
+      textAccent={hasSelection ? textAccent : 'placeholder'}
       hasRightElement={hasRightElement}
     >
       {isDefined(fixedIcon) ? (
@@ -52,7 +55,7 @@ export const MultiSelectControl = ({
           size: theme.icon.size.md,
           stroke: theme.icon.stroke.sm,
         })
-      ) : isDefined(firstSelectedOption.Icon) ? (
+      ) : hasSelection && isDefined(firstSelectedOption.Icon) ? (
         <firstSelectedOption.Icon
           color={isDisabled ? theme.font.color.light : theme.font.color.primary}
           size={theme.icon.size.md}
@@ -61,9 +64,11 @@ export const MultiSelectControl = ({
       ) : null}
       {isDefined(fixedText) ? (
         <OverflowingTextWithTooltip text={fixedText} />
-      ) : (
+      ) : hasSelection ? (
         <OverflowingTextWithTooltip text={firstSelectedOption.label} />
-      )}
+      ) : isDefined(placeholderText) ? (
+        <OverflowingTextWithTooltip text={placeholderText} />
+      ) : null}
 
       <StyledSelectControlIconChevronDown
         disabled={isDisabled}

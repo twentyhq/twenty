@@ -48,7 +48,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
             executeInWorkspaceContext: jest
               .fn()
 
-              .mockImplementation((_authContext: any, fn: () => any) => fn()),
+              .mockImplementation((fn: () => any, _authContext?: any) => fn()),
           },
         },
       ],
@@ -275,9 +275,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
         lastCredentialsRefreshedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
       } as ConnectedAccountWorkspaceEntity;
 
-      const networkError = new Error('Network error');
-
-      (networkError as any).code = 'ECONNRESET';
+      const networkError = new ConnectedAccountRefreshAccessTokenException(
+        'Google refresh token network error: ECONNRESET - Network error',
+        ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
+      );
 
       jest
         .spyOn(googleAPIRefreshAccessTokenService, 'refreshTokens')

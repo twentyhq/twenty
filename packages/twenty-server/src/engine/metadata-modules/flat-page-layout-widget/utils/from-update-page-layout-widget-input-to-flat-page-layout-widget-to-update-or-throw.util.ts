@@ -7,11 +7,12 @@ import {
 import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
+import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
-} from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export type UpdatePageLayoutWidgetInputWithId = {
@@ -46,6 +47,17 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
       rawUpdatePageLayoutWidgetInput.update,
       FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
     );
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        updatedEditableFieldProperties,
+        'configuration',
+      )
+    ) {
+      validateWidgetConfigurationInput({
+        configuration: updatedEditableFieldProperties.configuration,
+      });
+    }
 
     return mergeUpdateInExistingRecord({
       existing: existingFlatPageLayoutWidgetToUpdate,

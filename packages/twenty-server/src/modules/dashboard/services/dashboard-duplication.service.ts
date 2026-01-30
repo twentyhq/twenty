@@ -1,11 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
+import {
+  appendCopySuffix,
+  assertIsDefinedOrThrow,
+  isDefined,
+} from 'twenty-shared/utils';
 
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
@@ -22,14 +29,20 @@ export class DashboardDuplicationService {
   constructor(
     private readonly pageLayoutDuplicationService: PageLayoutDuplicationService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
   async duplicateDashboard(
     dashboardId: string,
-    workspaceId: string,
+    authContext: AuthContext,
   ): Promise<DuplicatedDashboardDTO> {
+    const { workspace } = authContext;
+
+    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+    const workspaceId = workspace.id;
+
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      buildSystemAuthContext(workspaceId),
       async () => {
         const dashboardRepository =
           await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
@@ -73,6 +86,7 @@ export class DashboardDuplicationService {
             originalDashboard,
             newPageLayout.id,
             dashboardRepository,
+            authContext,
           );
 
           return {
@@ -92,6 +106,7 @@ export class DashboardDuplicationService {
           throw error;
         }
       },
+      authContext as WorkspaceAuthContext,
     );
   }
 
@@ -99,14 +114,24 @@ export class DashboardDuplicationService {
     originalDashboard: DashboardWorkspaceEntity,
     newPageLayoutId: string,
     dashboardRepository: WorkspaceRepository<DashboardWorkspaceEntity>,
+    authContext: AuthContext,
   ): Promise<DashboardWorkspaceEntity> {
     const newTitle = appendCopySuffix(originalDashboard.title ?? '');
 
-    const insertResult = await dashboardRepository.insert({
-      title: newTitle,
-      pageLayoutId: newPageLayoutId,
-      position: originalDashboard.position,
-    });
+    const [recordWithActor] =
+      await this.actorFromAuthContextService.injectActorFieldsOnCreate({
+        records: [
+          {
+            title: newTitle,
+            pageLayoutId: newPageLayoutId,
+            position: originalDashboard.position,
+          },
+        ],
+        objectMetadataNameSingular: 'dashboard',
+        authContext,
+      });
+
+    const insertResult = await dashboardRepository.insert(recordWithActor);
 
     const newDashboardId = insertResult.identifiers[0].id;
 

@@ -1,0 +1,92 @@
+---
+title: Execuções de Workflow
+description: Monitore e gerencie as execuções de fluxos de trabalho.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## Sobre Execuções
+
+Uma **Execução** é um registro de uma execução de fluxo de trabalho. Sempre que um fluxo de trabalho é acionado — seja por um evento de registro, agendamento, ação manual ou webhook — uma nova execução é criada.
+
+## Visualizando Execuções
+
+### No Editor de Fluxo de Trabalho
+
+1. Abra o fluxo de trabalho que você deseja monitorar
+2. Clique no painel **Execuções** no lado direito
+3. Veja uma lista de execuções recentes com seus status
+
+### Na Visualização de Execuções de Fluxo de Trabalho
+
+1. Vá para **Execuções de Fluxo de Trabalho** na barra lateral
+2. Veja execuções em todos os fluxos de trabalho
+3. Filtre por status, fluxo de trabalho ou data
+
+## Status das Execuções
+
+| Estado         | Descrição                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Executando** | O fluxo de trabalho está em execução no momento                                                            |
+| **Concluído**  | O fluxo de trabalho foi concluído com êxito                                                                |
+| **Falhou**     | O fluxo de trabalho encontrou um erro e foi interrompido                                                   |
+| **Aguardando** | O fluxo de trabalho está em pausa (por exemplo, aguardando uma ação de Atraso ou o envio de um Formulário) |
+
+## Detalhes da Execução
+
+Clique em qualquer execução para ver:
+
+* **Status**: Estado atual da execução
+* **Iniciado em**: Quando a execução começou
+* **Duração**: Quanto tempo a execução levou
+* **Dados do gatilho**: A entrada que iniciou o fluxo de trabalho
+* **Saídas das etapas**: Dados retornados por cada etapa
+* **Mensagens de erro**: Se a execução falhou, o que deu errado
+
+## Execução passo a passo
+
+Cada execução mostra o progresso ao longo do seu fluxo de trabalho:
+
+1. Veja quais etapas foram concluídas com êxito
+2. Identifique onde ocorreram falhas
+3. Veja os dados passados entre as etapas
+4. Depure problemas examinando as entradas e saídas das etapas
+
+## Tratamento de Erros
+
+Quando uma execução falha:
+
+1. Abra a execução com falha
+2. Encontre a etapa que causou a falha
+3. Verifique a mensagem de erro para obter detalhes
+4. Problemas comuns:
+   * Campos obrigatórios ausentes
+   * Formato de dados inválido
+   * Erros de API externa
+   * Problemas de permissão
+
+## Reexecutando fluxos de trabalho
+
+Se uma execução falhar, você pode:
+
+* Corrija o problema subjacente e aguarde o próximo gatilho
+* Para fluxos de trabalho manuais, acione novamente com os mesmos dados ou dados atualizados
+* Revise a lógica do fluxo de trabalho para evitar falhas futuras
+
+## Dicas de desempenho
+
+### Gerenciando o histórico de execuções
+
+* As execuções são mantidas para referência histórica
+* Execuções muito antigas podem ser arquivadas automaticamente
+* Exporte os dados da execução se precisar manter registros
+
+### Melhores práticas de monitoramento
+
+* Verifique as execuções regularmente após ativar novos fluxos de trabalho
+* Revise as execuções com falha para identificar padrões
+
+## Relacionados
+
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Solução de Problemas de Fluxo de Trabalho](/l/pt/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

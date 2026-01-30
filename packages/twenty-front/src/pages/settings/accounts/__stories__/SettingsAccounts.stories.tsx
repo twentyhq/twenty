@@ -1,5 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -7,7 +7,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsAccounts } from '../SettingsAccounts';
+import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccounts',

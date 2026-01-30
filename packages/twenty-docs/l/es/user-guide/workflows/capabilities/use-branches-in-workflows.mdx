@@ -1,0 +1,90 @@
+---
+title: Usar ramas en flujos de trabajo
+description: Comprende cómo funcionan las ramas y cómo controlar qué ruta se ejecuta.
+---
+
+## Cómo funcionan las ramas
+
+En el editor de flujos de trabajo, puedes crear varias rutas (ramas) que salgan de un solo nodo. Esto te permite crear automatizaciones complejas con diferentes resultados.
+
+**Importante**: cuando se ejecuta un flujo de trabajo, **todas las ramas se ejecutan en paralelo de forma predeterminada**. No hay una lógica "if/else" incorporada para elegir una rama sobre otra—todas las rutas se ejecutarán simultáneamente.
+
+## Controlar qué rama se ejecuta
+
+Para ejecutar solo una rama según condiciones específicas, **añade un nodo Filter al principio de cada rama**.
+
+### Ejemplo de configuración
+
+1. Crea tu flujo de trabajo con varias ramas desde un único nodo
+2. Añade un nodo **Filter** como primer paso en cada rama
+3. Configura condiciones en cada **Filter** para determinar cuándo debe continuar esa rama
+4. Solo continuarán la(s) rama(s) cuyas condiciones del **Filter** se cumplan
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+
+### Cómo funcionan los nodos Filter
+
+* Si se cumple la condición del Filter: la rama sigue ejecutándose
+* Si la condición del Filter no se cumple: la rama se detiene en el nodo Filter
+
+Esto crea, en la práctica, una lógica condicional en la que solo se ejecuta la rama adecuada según tus datos.
+
+## Ejemplo: enrutar por tamaño del negocio
+
+**Escenario**: cuando se cierra un negocio, envía distintas notificaciones según el tamaño del negocio.
+
+1. **Disparador**: Oportunidad actualizada (Etapa = Cerrado Ganado)
+2. **Rama 1**: Filter para Importe > $10,000 → Enviar mensaje de Slack a #big-deals
+3. **Rama 2**: Filter para Importe ≤ $10,000 → Enviar un correo electrónico al gerente de ventas
+
+Ambas ramas se inician, pero solo la que coincida con el importe del negocio continuará más allá de su Filter.
+
+## Creación de ramas
+
+<Note>
+  Para crear una nueva rama a partir de un paso existente, haz clic en el botón **+** del paso y agrega tu acción. Puedes añadir varias ramas haciendo clic en **+** varias veces.
+</Note>
+
+1. En el editor de flujos de trabajo, selecciona el paso desde el que quieres ramificar
+2. Haz clic en **+** para agregar una acción
+3. Esto crea una rama
+4. Haz clic en **+** de nuevo en el mismo paso para crear ramas adicionales
+5. Cada rama puede tener su propia secuencia de acciones
+
+## Volver a unir las ramas
+
+Después de que las ramas en paralelo completen su trabajo, puedes volver a unirlas en una sola ruta:
+
+1. Completa tus acciones en las ramas
+2. Añade un nuevo paso que deba ejecutarse después de todas las ramas
+3. Arrastra conexiones desde el final de cada rama a este nuevo paso
+4. El paso fusionado espera a que todas las ramas conectadas se completen antes de ejecutarse
+
+### Ejemplo: procesar y luego notificar
+
+```
+Disparador
+   │
+   ├── Rama A: Actualizar el registro del cliente
+   │
+   └── Rama B: Crear ticket de soporte
+
+       ↘  ↙
+
+   Paso fusionado: Enviar correo de confirmación
+```
+
+El correo de confirmación se envía solo después de que se completen tanto la actualización del cliente como la creación del ticket.
+
+## Mejores prácticas
+
+* Usa siempre nodos **Filter** al inicio de las ramas cuando quieras una ejecución condicional
+* Mantén las condiciones de las ramas mutuamente excluyentes para evitar acciones duplicadas
+* Prueba tus flujos de trabajo con distintos datos para asegurarte de que se ejecuten las ramas correctas
+* **Renombra los pasos de las ramas** de forma descriptiva para que quede claro qué hace cada ruta
+* **Fusiona las ramas** cuando necesites una acción final después del procesamiento en paralelo
+
+## Relacionado
+
+* [Preguntas frecuentes sobre flujos de trabajo](/l/es/user-guide/workflows/how-tos/need-more-help/workflows-faq) — respuestas sobre la ejecución en paralelo
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions) — acciones disponibles para las ramas

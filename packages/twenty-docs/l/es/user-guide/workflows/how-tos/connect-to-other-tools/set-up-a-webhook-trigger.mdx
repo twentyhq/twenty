@@ -1,0 +1,171 @@
+---
+title: Configurar un disparador de webhook
+description: Recibe datos de servicios externos para activar flujos de trabajo.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Los disparadores de webhook permiten que servicios externos inicien tus flujos de trabajo enviando datos a una URL única. Úsalos para conectar formularios, aplicaciones de terceros e integraciones personalizadas.
+
+## Cuándo usar webhooks
+
+| Caso de uso                      | Ejemplo                                                          |
+| -------------------------------- | ---------------------------------------------------------------- |
+| **Formularios web**              | Los envíos del formulario de contacto crean clientes potenciales |
+| **Aplicaciones de terceros**     | Pago de Stripe → crear registro de cliente                       |
+| **Integraciones personalizadas** | Tu aplicación → Automatización de Twenty                         |
+| **Herramientas sin código**      | Conexiones con Zapier, Make, n8n                                 |
+
+## Configuración paso a paso
+
+### Paso 1: Crear el flujo de trabajo
+
+1. Ve a **Configuración → Flujos de trabajo**
+2. Haz clic en **+ Nuevo flujo de trabajo**
+3. Ponle un nombre (p. ej., "Envío de formulario del sitio web")
+
+### Paso 2: Configurar el disparador de webhook
+
+1. Haz clic en el bloque del disparador
+2. Selecciona **Webhook**
+3. Recibirás una URL de webhook única como:
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. Copia esta URL; la necesitarás para tu servicio externo
+
+### Paso 3: Definir la estructura de datos esperada
+
+Para solicitudes **POST**, define la estructura esperada del cuerpo:
+
+1. Haz clic en **Definir cuerpo esperado**
+2. Introduce un JSON de ejemplo que coincida con lo que enviará tu servicio:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. Haz clic en **Guardar**—esto crea variables que puedes usar en pasos posteriores
+
+### Paso 4: Agregar acciones
+
+Ahora agrega acciones que utilicen los datos del webhook:
+
+**Ejemplo: Crear un registro de Persona**
+
+1. Añade la acción **Crear registro**
+2. Selecciona el objeto **Personas**
+3. Asigna los campos:
+
+| Campo              | Valor                                           |
+| ------------------ | ----------------------------------------------- |
+| Nombre             | `{{trigger.body.firstName}}`                    |
+| Apellidos          | `{{trigger.body.lastName}}`                     |
+| Correo electrónico | `{{trigger.body.email}}`                        |
+| Empresa            | Buscar o crear según `{{trigger.body.company}}` |
+
+### Paso 5: Probar el webhook
+
+Antes de activarlo, prueba tu webhook:
+
+**Usando cURL**:
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Usando Postman o similar**:
+
+1. Crea una solicitud POST a tu URL de webhook
+2. Establece el encabezado Content-Type en `application/json`
+3. Añade tu cuerpo JSON de prueba
+4. Envía y verifica las ejecuciones del flujo de trabajo
+
+### Paso 6: Activar
+
+Una vez probado, haz clic en **Activar** para poner el flujo de trabajo en marcha.
+
+## Cómo manejar diferentes estructuras de datos
+
+### Datos anidados
+
+Si tu webhook envía datos anidados:
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+Haz referencia con: `{{trigger.body.contact.email}}`
+
+### Arrays
+
+Si los datos incluyen arrays:
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+Cómo manejes los arrays depende de tu caso de uso:
+
+**Número desconocido de elementos → Usa Iterator**
+
+Si necesitas procesar cada elemento del array (p. ej., crear un registro para cada uno), añade una acción **Code** para analizar el array y luego usa **Iterator**:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+Luego usa Iterator para iterar: `{{code.items}}`
+
+**Campos conocidos/específicos → Extraer a campos con nombre**
+
+Si el array contiene campos específicos a los que quieres acceder individualmente (p. ej., respuestas de formulario donde la posición 0 siempre es "nombre", la posición 1 siempre es "apellido"), añade una acción **Code** para extraerlos:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+Ahora puedes seleccionar `product.name` y `product.qty` individualmente en pasos posteriores.
+
+<Tip>
+  Para más detalles sobre cómo manejar arrays, consulta [Cómo manejar arrays en acciones de código](/l/es/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+## Relacionado
+
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)

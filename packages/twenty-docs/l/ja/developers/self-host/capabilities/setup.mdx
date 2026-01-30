@@ -1,0 +1,339 @@
+---
+title: セットアップ
+---
+
+# 構成管理
+
+<Warning>
+  **初めてインストールしますか？** [Docker Compose インストールガイド](/l/ja/developers/self-host/capabilities/docker-compose)に従ってTwentyを起動し、その後はここに戻り構成してください。
+</Warning>
+
+Twentyは、異なる展開ニーズに合わせて**2つの構成モード**を提供します:
+
+**管理パネルアクセス:** 管理者権限を持つユーザーだけが (`canAccessFullAdminPanel: true`) 構成インターフェースにアクセスできます。
+
+## 1. 管理パネル構成（デフォルト）
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
+```
+
+**ほとんどの構成は、インストール後にUIを通じて行われます。**
+
+1. Twentyインスタンスにアクセスしてください (通常は `http://localhost:3000`)
+2. **設定 / 管理パネル / 構成変数**に移動
+3. 統合、メール、ストレージなどを構成します
+4. 変更はすぐに（マルチコンテナ展開の場合、15秒以内に）効果が出ます。
+
+<Warning>
+  **マルチコンテナ展開:** データベース構成を使用する場合 (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)、サーバーとワーカーコンテナの両方が同じデータベースから読み込みます。 管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
+  管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
+</Warning>
+
+**管理パネルを通じて構成できること:**
+
+* **認証** - Google/Microsoft OAuth、パスワード設定
+* **メール** - SMTP設定、テンプレート、検証
+* **ストレージ** - S3構成、ローカルストレージパス
+* **統合** - Gmail、Googleカレンダー、Microsoftサービス
+* **ワークフローとレート制限** - 実行制限、APIスロットリング
+* **さらに多くのこと...**
+
+![管理パネル構成変数](/images/user-guide/setup/admin-panel-config-variables.png)
+
+<Warning>
+  各変数は、**設定 → 管理パネル → 構成変数** で説明付きでドキュメント化されています。
+  各変数は、**設定 → 管理パネル → 構成変数** で説明付きでドキュメント化されています。
+  データベース接続 (`PG_DATABASE_URL`)、サーバーURL (`SERVER_URL`)、アプリの秘密キー (`APP_SECRET`) など、一部のインフラ設定は `.env` ファイルを介してのみ構成可能です。
+
+  [ 完全な技術リファレンス →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+</Warning>
+
+## 2. 環境のみの構成
+
+```bash
+IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
+```
+
+**すべての構成が `.env` ファイルで管理されます:**
+
+1. `.env` ファイル内で `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定
+2. すべての構成変数を `.env` ファイルに追加
+3. 変更を有効にするためにコンテナを再起動してください
+4. 管理パネルは現在の値を表示しますが、修正はできません
+
+## マルチワークスペースモード
+
+デフォルトでは、Twenty は**シングルワークスペースモード**で動作します—組織向けに 1 つの CRM インスタンスが必要な多くのセルフホスト型デプロイメントに最適です。
+
+### シングルワークスペースモード（デフォルト）
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=false  # default
+```
+
+* Twenty の各インスタンスにつき 1 つのワークスペース
+* 最初のユーザーは自動的にフル権限の管理者になります（`canImpersonate` と `canAccessFullAdminPanel`）
+* 最初のワークスペース作成後は新規サインアップが無効になります
+* シンプルな URL 構造: `https://your-domain.com`
+
+### マルチワークスペースモードの有効化
+
+```bash
+IS_MULTIWORKSPACE_ENABLED=true
+DEFAULT_SUBDOMAIN=app  # default value
+```
+
+同一の Twenty インスタンス上で複数の独立したチームがそれぞれのワークスペースを必要とする、SaaS のようなデプロイメント向けにマルチワークスペースモードを有効にします。
+
+**シングルワークスペースモードとの主な違い:**
+
+* 同一インスタンス上に複数のワークスペースを作成できます
+* 各ワークスペースに専用のサブドメインが割り当てられます（例: `sales.your-domain.com`、`marketing.your-domain.com`）
+* ユーザーは `{DEFAULT_SUBDOMAIN}.your-domain.com` でサインアップおよびログインします（例: `app.your-domain.com`）
+* 管理者権限は自動付与されません—各ワークスペースの最初のユーザーは一般ユーザーです
+* サブドメインやカスタムドメインなどのワークスペース固有の設定がワークスペース設定で利用可能になります
+
+<Warning>
+  **環境専用の設定:** `IS_MULTIWORKSPACE_ENABLED` は `.env` ファイルでのみ設定でき、再起動が必要です。 管理パネルからは変更できません。
+</Warning>
+
+### マルチワークスペース向けの DNS 構成
+
+マルチワークスペースモードを使用する場合、動的なサブドメイン作成を可能にするために、ワイルドカードレコードで DNS を構成してください:
+
+```
+*.your-domain.com -> your-server-ip
+```
+
+これにより、手動の DNS 構成なしで新規ワークスペースへのサブドメインルーティングが自動化されます。
+
+### ワークスペース作成の制限
+
+マルチワークスペースモードでは、新しいワークスペースを作成できるユーザーを制限したい場合があります:
+
+```bash
+IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
+```
+
+有効にすると、`canAccessFullAdminPanel` を持つユーザーのみが追加のワークスペースを作成できます。 初回サインアップ時には、ユーザーは引き続き最初のワークスペースを作成できます。
+
+## Gmail & Googleカレンダー統合
+
+### Google Cloudプロジェクトを作成
+
+1. [Google Cloud Console](https://console.cloud.google.com/) にアクセス
+2. 新しいプロジェクトを作成するか既存のプロジェクトを選択
+3. 以下のAPIを有効にします:
+
+* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+* [GoogleカレンダーAPI](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### OAuthの構成
+
+1. [資格情報](https://console.cloud.google.com/apis/credentials)にアクセス
+2. OAuth 2.0 クライアントIDを作成
+3. 次のリダイレクトURIを追加:
+   * `https://{your-domain}/auth/google/redirect` (SSO用)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (統合用)
+
+### Twentyで構成
+
+1. **設定 → 管理パネル → 構成変数** に移動
+2. **Google Auth** セクションを見つけます
+3. 次の変数を設定:
+   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+
+<Warning>
+  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+</Warning>
+
+**必要なスコープ** (自動的に構成される):
+[関連ソースコードを見る](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
+* `https://www.googleapis.com/auth/calendar.events`
+* `https://www.googleapis.com/auth/gmail.readonly`
+* `https://www.googleapis.com/auth/profile.emails.read`
+
+### アプリがテストモードの場合
+
+アプリがテストモードの場合、プロジェクトにテストユーザーを追加する必要があります。
+
+[OAuth 同意画面](https://console.cloud.google.com/apis/credentials/consent)で、「テストユーザー」セクションにテストユーザーを追加してください。
+
+## Microsoft 365 統合
+
+<Warning>
+  カレンダーおよびメッセージングAPIを使用するためには、[Microsoft 365 ライセンス](https://admin.microsoft.com/Adminportal/Home)が必要です。 They will not be able to sync their account on Twenty without one. それがない場合、Twenty でアカウントを同期できません。
+</Warning>
+
+### Microsoft Azureでプロジェクトを作成
+
+[Microsoft Azure](https://portal.azure.com/#view/Microsoft_AAD_IAM/AppGalleryBladeV2)でプロジェクトを作成し、資格情報を取得してください。
+
+### APIを有効にする
+
+Microsoft Azureコンソールで"権限"の欄で以下のAPIを有効にします:
+
+* Microsoft Graph: Mail.ReadWrite
+* Microsoft Graph: Mail.Send
+* Microsoft Graph: Calendars.Read
+* Microsoft Graph: User.Read
+* Microsoft Graph: openid
+* Microsoft Graph: email
+* Microsoft Graph: profile
+* Microsoft Graph: offline_access
+
+注: "Mail.ReadWrite" と "Mail.Send" は、ワークフローアクションを使用してメールを送信する場合に必須です。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。
+
+### 認証されたリダイレクトURI
+
+プロジェクトに次のリダイレクトURIを追加する必要があります:
+
+* `https://{your-domain}/auth/microsoft/redirect` マイクロソフトSSO を使用する場合
+* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+### Twentyで構成
+
+1. **設定 → 管理パネル → 構成変数** に移動
+2. **Microsoft Auth** セクションを見つけます
+3. 次の変数を設定:
+   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_ENABLED=true`
+   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+
+<Warning>
+  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+</Warning>
+
+### スコープを構成
+
+[関連ソースコードを見る](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
+* 'openid'
+* 'メール'
+* 'プロフィール'
+* 'offline_access'
+* 'Mail.ReadWrite'
+* 'Mail.Send'
+* 'Calendars.Read'
+
+### アプリがテストモードの場合
+
+アプリがテストモードの場合、プロジェクトにテストユーザーを追加する必要があります。
+
+「ユーザーとグループ」セクションにテストユーザーを追加してください。
+
+## カレンダーとメッセージングのバックグラウンドジョブ
+
+Gmail、Googleカレンダー、またはMicrosoft 365統合を構成した後、データを同期するバックグラウンドジョブを開始する必要があります。
+
+次の定期ジョブをワーカーコンテナに登録してください:
+
+```bash
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:calendar:calendar-events-import
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+yarn command:prod cron:workflow:automated-cron-trigger
+```
+
+## メール設定
+
+1. **設定 → 管理パネル → 構成変数** に移動
+2. **メール** セクションを見つけます
+3. SMTP設定を構成:
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+  <ArticleTab>
+    [アプリパスワード](https://support.google.com/accounts/answer/185833)を準備する必要があります。
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.gmail.com
+    * EMAIL_SMTP_PORT=465
+    * EMAIL_SMTP_USER=gmail_email_address
+    * EMAIL_SMTP_PASSWORD='gmail_app_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    2FAを有効にしている場合、[アプリパスワード](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)を準備する必要があります。
+
+    * EMAIL_DRIVER=smtp
+    * EMAIL_SMTP_HOST=smtp.office365.com
+    * EMAIL_SMTP_PORT=587
+    * EMAIL_SMTP_USER=office365_email_address
+    * EMAIL_SMTP_PASSWORD='office365_password'
+  </ArticleTab>
+
+  <ArticleTab>
+    **smtp4dev** は開発とテストのためのフェイクSMTPメールサーバーです。
+
+    * smtp4devイメージを実行: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+    * smtp4dev UIにアクセス: [http://localhost:8090](http://localhost:8090)
+    * 次の変数を設定:
+      * EMAIL_DRIVER=smtp
+      * EMAIL_SMTP_HOST=localhost
+      * EMAIL_SMTP_PORT=2525
+  </ArticleTab>
+</ArticleTabs>
+
+<Warning>
+  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+</Warning>
+
+## Logic Functions
+
+Twenty supports logic functions for workflows and custom logic. 実行環境は、`SERVERLESS_TYPE` 環境変数で設定されます。
+
+<Warning>
+  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. 開発では、信頼できるコードにのみ使用してください。 信頼できないコードを扱う本番デプロイでは、`SERVERLESS_TYPE=LAMBDA` または `SERVERLESS_TYPE=DISABLED` の使用を強く推奨します。
+</Warning>
+
+### 利用可能なドライバー
+
+| ドライバー  | 環境変数                       | ユースケース                           | セキュリティレベル       |
+| ------ | -------------------------- | -------------------------------- | --------------- |
+| 無効     | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | 該当なし            |
+| ローカル   | `SERVERLESS_TYPE=LOCAL`    | 開発および信頼できる環境                     | 低（サンドボックスなし）    |
+| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 信頼できないコードを扱う本番環境                 | 高（ハードウェアレベルの分離） |
+
+### 推奨構成
+
+**開発向け:**
+
+```bash
+SERVERLESS_TYPE=LOCAL  # default
+```
+
+**本番向け（AWS）:**
+
+```bash
+SERVERLESS_TYPE=LAMBDA
+SERVERLESS_LAMBDA_REGION=us-east-1
+SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
+SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+```
+
+**To disable logic functions:**
+
+```bash
+SERVERLESS_TYPE=DISABLED
+```
+
+<Note>
+  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
+</Note>

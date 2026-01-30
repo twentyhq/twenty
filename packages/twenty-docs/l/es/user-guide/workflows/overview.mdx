@@ -1,0 +1,80 @@
+---
+title: Flujos de trabajo
+description: Aprende a crear automatizaciones en Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Flujos de trabajo" />
+</Frame>
+
+## Por qué los flujos de trabajo son importantes
+
+Twenty se creó para ofrecer la máxima flexibilidad a sus usuarios. En lugar de obligarte a adaptar tus procesos empresariales a características rígidas y preconstruidas, los workflows te permiten crear automatizaciones que configuran el CRM que mejor respalda los casos de uso únicos de tu negocio.
+
+Workflows es la función integrada de Twenty para desarrollar estas automatizaciones. Te ofrecen los bloques para crear exactamente lo que tu negocio necesita, cuando lo necesita.
+
+## ¿Qué puedo hacer con los workflows?
+
+Recomendamos construir automatizaciones con dos propósitos principales:
+
+1. **Automatizaciones internas para facilitar el día a día de tu equipo**: Reduce la cantidad de entradas manuales y tareas repetitivas que ralentizan a tu equipo.
+2. **Incorporar datos dentro y fuera de Twenty**: Conecta Twenty mediante llamadas API y webhooks a tu base de datos y otras herramientas.
+
+## Crear tu primer flujo de trabajo
+
+### Paso 1: Crear un nuevo flujo de trabajo
+
+1. Ve a **Workflows**, accesible debajo de los demás objetos
+2. Haz clic en **+ New Record**
+3. Asigna un nombre a tu flujo de trabajo
+
+### Paso 2: Agregar un disparador
+
+Todo flujo de trabajo empieza con un disparador. Elige entre:
+
+* **Eventos de registro**: Cuando se crea, se actualiza o se elimina un registro
+* **Programación**: Se ejecuta en momentos específicos (diaria, semanal, etc.)
+* **Manual**: Activado por una acción del usuario
+* **Webhook**: Activado por un webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Paso 3: Agregar acciones
+
+Después de tu disparador, agrega una o más acciones:
+
+* **Crear registro**: Agregar nuevos registros a cualquier objeto
+* **Actualizar registro**: Modificar los datos de un registro existente
+* **Eliminar registro**: Eliminar registros de los objetos
+* **Buscar registros**: Encontrar registros que coincidan con criterios
+* **Insertar o actualizar registro**: Crear o actualizar según criterios de coincidencia
+* **Iterador**: Recorrer arrays de registros
+* **Filtro**: Controlar qué registros continúan
+* **Retraso**: Esperar antes de continuar (duración o fecha programada)
+* **Enviar correo electrónico**: Enviar correos electrónicos a través de tu cuenta conectada
+* **Código**: Ejecutar JavaScript personalizado
+* **Solicitud HTTP**: Llamar a APIs externas
+* **Formulario**: Obtener datos de los usuarios dentro de la interfaz de Twenty en el momento de la ejecución
+* **Agente de IA** (Próximamente): Ejecutar tareas de IA inteligentes
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Paso 4: Probar y activar
+
+1. Usa el botón **Test** para ejecutar tu flujo de trabajo con datos de ejemplo
+2. Revisa los resultados para asegurarte de que funciona como se espera
+3. Cambia el estado del flujo de trabajo a **Active** cuando esté listo
+
+## Mejores prácticas de flujo de trabajo
+
+* **Editar nombres de pasos**: Renombre los pasos de su flujo de trabajo para describir claramente lo que hace cada uno. Esto ayuda con el mantenimiento y facilita la transferencia a compañeros de trabajo
+* **Aprovechar los datos de pasos anteriores**: Puede usar campos de registros devueltos por cualquier paso anterior en su flujo de trabajo
+* **Comenzar simple**: Inicie con flujos de trabajo básicos y agregue complejidad con el tiempo a medida que se sienta más cómodo con el sistema
+* **Planificar antes de construir**: Trace la lógica de su flujo de trabajo antes de comenzar a construir para evitar quedarse atascado a mitad de camino
+
+## Próximos Pasos
+
+* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Automatizaciones de CRM](/l/es/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

@@ -1,10 +1,22 @@
-import { type ApplicationVariables } from '@/application';
+import { type ApplicationVariables } from '@/sdk';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
-export type Application = SyncableEntityOptions & {
+export type ApplicationMarketplaceData = {
+  author?: string;
+  category?: string;
+  logo?: string;
+  screenshots?: string[];
+  aboutDescription?: string;
+  providers?: string[];
+  websiteUrl?: string;
+  termsUrl?: string;
+};
+
+export type ApplicationManifest = SyncableEntityOptions & {
+  defaultRoleUniversalIdentifier: string;
   displayName?: string;
   description?: string;
   icon?: string;
   applicationVariables?: ApplicationVariables;
-  functionRoleUniversalIdentifier?: string;
+  marketplaceData?: ApplicationMarketplaceData;
 };

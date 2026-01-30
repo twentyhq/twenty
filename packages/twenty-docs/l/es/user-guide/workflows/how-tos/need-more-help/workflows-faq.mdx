@@ -1,0 +1,254 @@
+---
+title: Preguntas frecuentes sobre flujos de trabajo
+description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="¿Por qué no puedo activar un flujo de trabajo?">
+    Probablemente se deba a un problema de permisos. Necesitas acceso a los flujos de trabajo para crearlos y activarlos.
+
+    **Solución**: Ponte en contacto con el administrador de tu espacio de trabajo para que te conceda acceso a flujos de trabajo en **Configuración → Roles**.
+
+    Si no ves la sección de Flujos de trabajo en la barra lateral, esto confirma que es un problema de permisos.
+  </Accordion>
+
+  <Accordion title="¿Por qué no veo el botón de flujo de trabajo manual en la barra de navegación superior?">
+    Los flujos de trabajo manuales solo aparecen en la barra de navegación si están configurados correctamente:
+
+    1. El flujo de trabajo debe estar **activado** (no en modo borrador)
+    2. La ubicación en la barra de navegación debe estar configurada como **Pinned**
+    3. Para los disparadores Single/Bulk, debes estar en la página del objeto correcta
+
+    **Para comprobarlo**: Abre el flujo de trabajo → haz clic en el disparador → verifica que "Navbar placement" esté configurado como "Pinned".
+
+    Siempre puedes acceder a los flujos de trabajo manuales con **Cmd + K** (o **Ctrl + K**) independientemente de la configuración de la barra de navegación.
+  </Accordion>
+
+  <Accordion title="¿Cuál es la diferencia entre los disparadores manuales Single, Global y Bulk?">
+    | Tipo | Registros necesarios | Ejecuciones de flujos de trabajo |
+    | ---- | -------------------- | -------------------------------- |
+
+    \| **Global** | Ninguno | Una vez, sin entrada de registros |
+    \| **Single** | Uno o más seleccionados | Una vez por cada registro seleccionado |
+    \| **Bulk** | Uno o más seleccionados | Una vez, con todos los registros como matriz |
+
+    * **Global**: Úsalo cuando el flujo de trabajo no necesite ningún contexto de registros (p. ej., generar un informe)
+    * **Single**: Úsalo cuando quieras procesar cada registro seleccionado de forma independiente (p. ej., enviar correos electrónicos individuales)
+    * **Bulk**: Úsalo cuando necesites procesar registros en conjunto u optimizar el uso de créditos (requiere la acción Iterator)
+
+    Consulta [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers) para más detalles.
+  </Accordion>
+
+  <Accordion title="No veo un nodo If/Else. ¿Qué debo hacer?">
+    Un nodo If/Else explícito todavía no está disponible, pero está en nuestra hoja de ruta.
+
+    **Solución provisional actual**: Crea varias ramas desde tu paso, cada una comenzando con una acción **Filter**:
+
+    ```
+    Step 1
+       │
+       ├── Branch A: Filter (condition = true) → Actions...
+       │
+       └── Branch B: Filter (condition = false) → Actions...
+    ```
+
+    Solo la rama donde la condición del filtro se cumpla ejecutará sus acciones posteriores.
+
+    Consulta [Cómo usar ramas](/l/es/user-guide/workflows/capabilities/workflow-branches) para ver una guía paso a paso.
+  </Accordion>
+
+  <Accordion title="¿Las ramas del flujo de trabajo se ejecutan en paralelo?">
+    **Sí**, las ramas se ejecutan en paralelo de forma predeterminada.
+
+    Si quieres que solo se ejecute una rama:
+
+    * Añade una acción **Filter** al inicio de cada rama
+    * Establece condiciones opuestas (p. ej., Rama A: status = "Open", Rama B: status ≠ "Open")
+
+    Las ramas que no cumplan su condición de filtro dejan de ejecutarse, mientras que las demás continúan.
+  </Accordion>
+
+  <Accordion title="¿Puedo volver a unir las ramas?">
+    **Sí**. Una vez que tus ramas en paralelo hayan terminado, puedes añadir un paso al que se conecten ambas ramas.
+
+    En el editor de flujos de trabajo:
+
+    1. Completa tus acciones en las ramas
+    2. Añade un nuevo paso después de las ramas
+    3. Arrastra conexiones desde el final de cada rama a este nuevo paso
+
+    El paso combinado se ejecutará después de que hayan finalizado todas las ramas conectadas.
+  </Accordion>
+
+  <Accordion title="¿Cuál es el límite en los resultados de Search Records?">
+    **Search Records devuelve un máximo de 200 registros.**
+
+    Si necesitas procesar más:
+
+    * Añade filtros más específicos para reducir los resultados
+    * Usa flujos de trabajo programados para procesar por lotes
+    * Considera usar la API para operaciones masivas
+
+    Para la mayoría de los flujos de trabajo, 200 registros son suficientes. Si alcanzas este límite con frecuencia, considera reestructurar tu automatización.
+  </Accordion>
+
+  <Accordion title="¿Puedo poner en CC a personas en los correos electrónicos del flujo de trabajo?">
+    **Aún no.** Los campos CC y BCC para la acción Send Email están en nuestra hoja de ruta.
+
+    **Solución provisional actual**: Añade varias acciones Send Email para enviar a destinatarios adicionales, o usa un HTTP Request para enviar a través de un servicio de correo externo que admita CC.
+  </Accordion>
+
+  <Accordion title="¿Cómo uso las salidas de pasos anteriores?">
+    Cada acción produce datos de salida que pueden utilizarse en pasos posteriores.
+
+    **Para hacer referencia a los datos de un paso anterior**:
+
+    * Usa el selector de variables al configurar un campo
+    * O escribe `{{stepName.fieldName}}` directamente
+
+    **Ejemplos**:
+
+    * Datos del disparador: `{{trigger.object.email}}`
+    * Resultados de búsqueda: `{{searchRecords[0].name}}`
+    * Resultado de código: `{{code.calculatedValue}}`
+
+    Pasa el cursor sobre cualquier campo en la configuración de la acción para ver las variables disponibles de pasos anteriores.
+  </Accordion>
+
+  <Accordion title="¿Por qué falla mi Iterator?">
+    **Iterator requiere una entrada de tipo matriz.** Problemas comunes:
+
+    1. **La entrada no es una matriz**: Asegúrate de pasar resultados de Search Records u otra acción que devuelva una matriz
+    2. **La matriz está vacía**: Añade un filtro antes de Iterator para comprobar `{{searchRecords.length}} > 0`
+    3. **Variable incorrecta seleccionada**: Asegúrate de seleccionar la propia matriz, no un solo registro
+
+    **Configuración correcta**:
+
+    1. Search Records (devuelve una matriz)
+    2. Filter: length > 0
+    3. Iterator: selecciona `{{searchRecords}}`
+    4. Las acciones dentro de Iterator usan `{{iterator.currentItem.fieldName}}`
+  </Accordion>
+
+  <Accordion title="¿Cuál es el tiempo máximo de ejecución para las acciones Code?">
+    Las acciones Code (funciones sin servidor) tienen un **tiempo de espera predeterminado de 5 minutos** (300 segundos).
+
+    El tiempo de espera configurable máximo es de **15 minutos** (900 segundos).
+
+    Si tu código excede este límite, la acción fallará con un error por tiempo de espera.
+
+    **Consejos para evitar tiempos de espera**:
+
+    * Divide las operaciones grandes en partes más pequeñas usando Iterator
+    * Evita cálculos pesados; usa servicios externos mediante HTTP Request para el procesamiento intensivo
+    * Optimiza tu código para reducir el tiempo de ejecución
+    * Si necesitas un procesamiento más largo, considera usar flujos de trabajo programados que procesen datos por lotes
+  </Accordion>
+
+  <Accordion title="¿Cómo leo las ejecuciones de flujos de trabajo?">
+    Las ejecuciones de flujos de trabajo muestran el historial de ejecución y te ayudan a depurar problemas.
+
+    **Acceder a las ejecuciones**:
+
+    * En el editor de flujos de trabajo → panel **Runs** a la derecha
+    * O ve a **Workflow Runs** en la barra lateral
+
+    **Cómo entender una ejecución**:
+
+    * **Estado**: En ejecución, Completada, Fallida, En espera
+    * **Pasos**: Ve qué pasos se ejecutaron y su salida
+    * **Errores**: Haz clic en los pasos fallidos para ver los mensajes de error
+    * **Datos**: Visualiza los datos de entrada/salida en cada paso
+
+    Consulta [Ejecuciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-runs) para más detalles.
+  </Accordion>
+
+  <Accordion title="¿Por qué no veo mis ejecuciones de flujos de trabajo?">
+    Es posible que las ejecuciones de flujos de trabajo estén fallando de inmediato debido a los límites de tasa.
+
+    **Límite estricto: 5,000 ejecuciones por hora por espacio de trabajo.**
+
+    Si superas este límite, los flujos de trabajo se marcan inmediatamente como fallidos y no aparecerán en tu lista de ejecuciones como cabría esperar.
+
+    **Escenarios comunes que alcanzan este límite**:
+
+    * Seleccionar más de 5,000 registros con un disparador manual Single
+    * Múltiples flujos de trabajo ejecutándose simultáneamente en tu espacio de trabajo
+    * Disparadores automáticos de alta frecuencia (p. ej., Record Updated en un objeto con mucha actividad)
+
+    **Soluciones**:
+
+    * Usa disparadores **Bulk** en lugar de Single para procesar muchos registros en una sola ejecución
+    * Espacia las operaciones por lotes grandes
+    * Usa filtros para reducir la frecuencia de los disparadores
+    * Programa los flujos de trabajo pesados durante las horas de menor actividad
+  </Accordion>
+
+  <Accordion title="¿Cuáles son los límites de tasa de los flujos de trabajo?">
+    Twenty tiene dos límites de tasa para garantizar la estabilidad del sistema:
+
+    | Límite | Valor | Comportamiento |
+    | ------ | ----- | -------------- |
+
+    \| **Límite suave** | 100 ejecuciones/minuto | Las ejecuciones se encolan con estado "Not Started", se procesan gradualmente |
+    \| **Límite estricto** | 5,000 ejecuciones/hora | Las ejecuciones fallan de inmediato |
+
+    **Límite suave (100/min)**: Tus flujos de trabajo no fallarán; solo esperan en la cola y se procesan con el tiempo. Puedes activar más de 100 registros; la ejecución será más lenta.
+
+    **Límite estricto (5,000/h)**: Esto se aplica a todo tu espacio de trabajo. Si todos tus flujos de trabajo combinados superan 5,000 ejecuciones en una hora, las ejecuciones adicionales fallarán de inmediato.
+
+    **Consejos para mantenerse dentro de los límites**:
+
+    * Usa disparadores Bulk con Iterator en lugar de disparadores Single para lotes grandes
+    * Combina automatizaciones relacionadas en menos flujos de trabajo
+    * Usa flujos de trabajo programados para distribuir la carga en el tiempo
+  </Accordion>
+
+  <Accordion title="¿Puedo reintentar una ejecución de flujo de trabajo que falló?">
+    **No, en este momento no hay funcionalidad de reintento automático.**
+
+    Si una ejecución de flujo de trabajo falla, tendrás que:
+
+    1. Revisa el error en **Configuración → Flujos de trabajo → [Tu flujo de trabajo] → Ejecuciones**
+    2. Soluciona el problema (datos, configuración o servicio externo)
+    3. Activa manualmente el flujo de trabajo de nuevo en los registros afectados
+
+    **Consejos para reducir fallos**:
+
+    * Añade nodos **Filter** para validar datos antes de las acciones
+    * Usa **Search Records** para comprobar si existen registros relacionados
+    * Prueba exhaustivamente con unos pocos registros antes de operaciones masivas
+
+    La funcionalidad de reintento automático está en nuestra hoja de ruta para una versión futura.
+  </Accordion>
+
+  <Accordion title="¿Debo desactivar los flujos de trabajo antes de las importaciones CSV?">
+    **Sí, si tus flujos de trabajo se activan por la creación o actualización de registros.**
+
+    Cuando importas datos mediante CSV, cada registro creado o actualizado puede activar flujos de trabajo. Una importación grande (miles de registros) podría:
+
+    * Alcanzar el límite de 5,000 ejecuciones/hora
+    * Consumir una cantidad significativa de créditos de flujos de trabajo
+    * Enviar correos electrónicos o notificaciones inesperados
+    * Crear tareas o registros duplicados
+
+    **Antes de una importación masiva**:
+
+    1. Ve a **Configuración → Flujos de trabajo**
+    2. Identifica los flujos de trabajo activados por el objeto que estás importando
+    3. **Desactívalos** temporalmente
+    4. Ejecuta tu importación CSV
+    5. **Reactiva** los flujos de trabajo al terminar
+
+    **Alternativa**: Si necesitas que los flujos de trabajo se ejecuten con los datos importados, importa en lotes más pequeños para mantenerte dentro de los límites de tasa.
+  </Accordion>
+
+  <Accordion title="¿Cómo limpio el diseño de mi flujo de trabajo?">
+    Si tu lienzo de flujo de trabajo se ve desordenado con nodos dispersos, puedes organizarlo automáticamente:
+
+    1. Haz clic derecho en cualquier parte del lienzo del flujo de trabajo
+    2. Haz clic en **Tidy up workflow**
+
+    Esto reorganizará automáticamente todos los nodos en un diseño limpio y organizado.
+  </Accordion>
+</AccordionGroup>

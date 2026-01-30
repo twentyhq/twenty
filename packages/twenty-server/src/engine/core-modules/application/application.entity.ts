@@ -6,20 +6,18 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'application', schema: 'core' })
 @ObjectType('Application')
@@ -32,7 +30,7 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
     where: '"deletedAt" IS NULL AND "universalIdentifier" IS NOT NULL',
   },
 )
-export class ApplicationEntity {
+export class ApplicationEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -55,26 +53,17 @@ export class ApplicationEntity {
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  logicFunctionLayerId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  serverlessFunctionLayerId: string | null;
-
-  @Column({ nullable: true, type: 'uuid' })
-  defaultServerlessFunctionRoleId: string | null;
+  defaultRoleId: string | null;
 
   @Field(() => RoleDTO, { nullable: true })
-  defaultServerlessFunctionRole: RoleDTO | null;
+  defaultRole: RoleDTO | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
-
-  @ManyToOne(() => WorkspaceEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
 
   @OneToMany(() => AgentEntity, (agent) => agent.application, {
     onDelete: 'CASCADE',
@@ -82,13 +71,13 @@ export class ApplicationEntity {
   agents: Relation<AgentEntity[]>;
 
   @OneToMany(
-    () => ServerlessFunctionEntity,
-    (serverlessFunction) => serverlessFunction.application,
+    () => LogicFunctionEntity,
+    (logicFunction) => logicFunction.application,
     {
       onDelete: 'CASCADE',
     },
   )
-  serverlessFunctions: Relation<ServerlessFunctionEntity[]>;
+  logicFunctions: Relation<LogicFunctionEntity[]>;
 
   @OneToMany(() => ObjectMetadataEntity, (object) => object.application, {
     onDelete: 'CASCADE',

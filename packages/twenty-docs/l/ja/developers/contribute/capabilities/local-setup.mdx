@@ -1,0 +1,347 @@
+---
+title: ローカルセットアップ
+description: 寄稿者（または好奇心旺盛な開発者）のためのガイドで、ローカルにTwentyを実行したい人向けです。
+---
+
+## 前提条件
+
+<Tabs>
+  <Tab title="LinuxとMacOS">
+    Twentyをインストールして使用する前に、以下をコンピュータにインストールしてください。
+
+    * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+    * [Node v24.5.0](https://nodejs.org/en/download)
+    * [yarn v4](https://yarnpkg.com/getting-started/install)
+    * [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+    <Warning>
+      `npm`は使えません。代わりに`yarn`を使用してください。
+      `npm`は使えません。代わりに`yarn`を使用してください。 Yarnは今Node.jsに同梱されているので、別途インストールする必要はありません。
+      Yarnを有効にするには、まだしていない場合は`corepack enable`を実行するだけです。
+      `npm`は使えません。代わりに`yarn`を使用してください。 Yarnは今Node.jsに同梱されているので、別途インストールする必要はありません。
+      Yarnを有効にするには、まだしていない場合は`corepack enable`を実行するだけです。Yarnを有効にするには、まだしていない場合は`corepack enable`を実行するだけです。
+    </Warning>
+  </Tab>
+
+  <Tab title="Windows（WSL）">
+    1. WSLをインストール
+       管理者としてPowerShellを開き、次のコマンドを実行します。
+
+    ```powershell
+    wsl --install
+    ```
+
+    コンピュータを再起動するプロンプトが表示されるはずです。 表示されなければ、手動で再起動してください。 表示されなければ、手動で再起動してください。 表示されなければ、手動で再起動してください。
+
+    再起動後、PowerShellウィンドウが開き、Ubuntuをインストールします。 これには少し時間がかかるかもしれません。
+    再起動後、PowerShellウィンドウが開き、Ubuntuをインストールします。 これには少し時間がかかるかもしれません。
+    Ubuntuインストールのためにユーザー名とパスワードを設定するプロンプトが表示されます。 これには少し時間がかかるかもしれません。
+    再起動後、PowerShellウィンドウが開き、Ubuntuをインストールします。 これには少し時間がかかるかもしれません。
+    Ubuntuインストールのためにユーザー名とパスワードを設定するプロンプトが表示されます。
+
+    2. gitをインストールして設定する
+
+    ```bash
+    sudo apt-get install git
+
+    git config --global user.name "Your Name"
+
+    git config --global user.email "youremail@domain.com"
+    ```
+
+    3. nvm、node.js、yarnをインストールする
+
+    <Warning>
+      `nvm`を使用して正しい`node`バージョンをインストールします。 `.nvmrc`は、すべての寄稿者が同じバージョンを使用することを保証します。
+      `.nvmrc`は、すべての寄稿者が同じバージョンを使用することを保証します。
+    </Warning>
+
+    ```bash
+    sudo apt-get install curl
+
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    ```
+
+    nvmを使用できるようにするには、ターミナルを閉じて再度開いてください。 次のコマンドを実行します。 次のコマンドを実行します。 次のコマンドを実行します。
+
+    ```bash
+
+    nvm install # installs recommended node version
+
+    nvm use # use recommended node version
+
+    corepack enable
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## ステップ1：Gitクローン
+
+ターミナルで次のコマンドを実行します。
+
+<Tabs>
+  <Tab title="SSH（推奨）">
+    SSHキーの設定をまだ行っていない場合は、[こちら](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)で学べます。```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
+
+    ```bash
+    git clone git@github.com:twentyhq/twenty.git
+    ```
+  </Tab>
+
+  <Tab title="HTTPS">
+    ```bash
+    git clone https://github.com/twentyhq/twenty.git
+    ```
+  </Tab>
+</Tabs>
+
+## ステップ 2: ルートディレクトリに移動する
+
+```bash
+cd twenty
+```
+
+プロジェクトのルートで次のステップのすべてのコマンドを実行する必要があります。
+
+## ステップ3：PostgreSQLデータベースをセットアップします
+
+<Tabs>
+  <Tab title="Linux">
+    **オプション1（推奨）：** データベースをローカルにプロビジョニングするには：
+    LinuxマシンにPostgresqlをインストールするには、次のリンクを使用してください：[Postgresqlインストール](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    注意：`psql`の前に`sudo -u postgres`を追加して、パーミッションエラーを避ける必要があるかもしれません。
+
+    **オプション2：** dockerをインストールしている場合：
+
+    ```bash
+      make -C packages/twenty-docker postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **オプション1（推奨）：** `brew`でローカルにデータベースをプロビジョニングするには：
+
+    ```bash
+      brew install postgresql@16
+      export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+      brew services start postgresql@16
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    PostgreSQLサーバーが稼働しているかどうかを確認するには、以下を実行してください。
+
+    ```bash
+      brew services list
+    ```
+
+    インストーラーは、デフォルトでHomebrew経由でMacOSにインストールする際に`postgres`ユーザーを作成しないかもしれません。 代わりに、macOSのユーザー名（例：「john」）と一致するPostgreSQLロールを作成します。
+    必要に応じて、`postgres`ユーザーを確認して作成するには、次の手順を実行してください。
+
+    ```bash
+      # Connect to PostgreSQL
+      psql postgres
+      or
+      psql -U $(whoami) -d postgres
+    ```
+
+    psqlプロンプト（postgres=#）で次を実行します。
+
+    ```bash
+     # List existing PostgreSQL roles
+     \du
+    ```
+
+    以下のような出力が表示されます。
+
+    ```bash
+     Role name | Attributes  | Member of
+     -----------+-------------+-----------
+     john      | Superuser   | {}
+    ```
+
+    `postgres`ロールがリストに表示されない場合は、次のステップに進んでください。
+    `postgres`ロールを手動で作成します。
+
+    ```bash
+     CREATE ROLE postgres WITH SUPERUSER LOGIN;
+    ```
+
+    これにより、ログイン権限を持つ `postgres` というスーパーユーザーロールが作成されます。
+
+    ```bash
+    Role name | Attributes  | Member of
+    -----------+-------------+-----------
+    postgres  | Superuser   | {}
+    john      | Superuser   | {}
+    ```
+
+    **オプション2：** dockerをインストールしている場合：
+
+    ```bash
+      make -C packages/twenty-docker postgres-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows（WSL）">
+    以下のすべてのステップは、WSLターミナル（仮想マシン内）で実行されます。
+
+    **オプション1：** PostgreSQLをローカルでプロビジョニングするには：
+    Linux仮想マシンにPostgresqlをインストールするには、次のリンクを使用してください：[Postgresqlインストール](https://www.postgresql.org/download/linux/)
+
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
+
+    注意：`psql`の前に`sudo -u postgres`を追加して、パーミッションエラーを避ける必要があるかもしれません。
+
+    **オプション2：** dockerをインストールしている場合：
+    WSLでDockerを実行すると、手順が少し複雑になります。
+    追加の手順を含む[Docker Desktop WSL2](https://docs.docker.com/desktop/wsl)の有効化などの追加の手順に精通している場合にのみこのオプションを使用してください。
+
+    ```bash
+      make -C packages/twenty-docker postgres-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+データベースに[localhost:5432](localhost:5432)でアクセスできるようになりました。ユーザーは`postgres`、パスワードは`postgres`です。
+
+## ステップ4：Redisデータベース（キャッシュ）をセットアップ
+
+Twentyは、最良のパフォーマンスを提供するためにredisキャッシュを必要とします。
+
+<Tabs>
+  <Tab title="Linux">
+    **オプション1：** Redisをローカルでプロビジョニングするには：
+    LinuxマシンにRedisをインストールするには、次のリンクを使用してください：[Redisインストール](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **オプション2：** dockerをインストールしている場合：
+
+    ```bash
+      make -C packages/twenty-docker redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Mac OS">
+    **オプション1（推奨）：** `brew`でredisをローカルプロビジョニングするには：
+
+    ```bash
+    brew install redis
+    ```
+
+    Redisサーバーを開始します：
+    `brew services start redis`
+
+    **オプション2：** dockerをインストールしている場合：
+
+    ```bash
+      make -C packages/twenty-docker redis-on-docker
+    ```
+  </Tab>
+
+  <Tab title="Windows（WSL）">
+    **オプション1：** Redisをローカルでプロビジョニングするには：
+    Linux仮想マシンにRedisをインストールするには、次のリンクを使用してください：[Redisインストール](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
+
+    **オプション2：** dockerをインストールしている場合：
+
+    ```bash
+      make -C packages/twenty-docker redis-on-docker
+    ```
+  </Tab>
+</Tabs>
+
+クライアントGUIが必要な場合は、[redis insight](https://redis.io/insight/)（無料版利用可能）をお勧めします。
+
+## ステップ5：環境変数をセットアップします
+
+環境変数や`.env`ファイルを使ってプロジェクトを設定します。 詳細は[こちら](https://docs.twenty.com/l/ja/developers/self-hosting/setup)。 詳細は[こちら](/l/ja/developers/self-host/capabilities/setup)。
+
+`/front`と`/server`内の`.env.example`ファイルをコピーします：
+
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+<Info>
+  **マルチワークスペースモード:** デフォルトでは、Twenty は単一ワークスペースモードで動作し、ワークスペースは 1 つだけ作成できます。 マルチワークスペース対応を有効にするには（サブドメインベースの機能のテストに有用）、サーバーの `.env` ファイルで `IS_MULTIWORKSPACE_ENABLED=true` を設定してください。 詳細は[マルチワークスペースモード](/l/ja/developers/self-host/capabilities/setup#multi-workspace-mode)を参照してください。
+</Info>
+
+## ステップ6：依存関係をインストールします
+
+Twentyサーバーを構築し、データベースにデータをシードするには、以下のコマンドを実行します：
+
+```bash
+yarn
+```
+
+`npm`または`pnpm`は使えません
+
+## ステップ7：プロジェクトを実行する
+
+<Tabs>
+  <Tab title="Linux">
+    Linuxディストリビューションによっては、Redisサーバーが自動的に開始されるかもしれません。
+    そうでない場合は、[Redisインストールガイド](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)を参照し、お使いのディストリビューションに合わせて確認してください。
+  </Tab>
+
+  <Tab title="Mac OS">
+    Redisはすでに稼働しているはずです。 稼働していなかった場合は、以下を実行してください：
+
+    ```bash
+    brew services start redis
+    ```
+  </Tab>
+
+  <Tab title="Windows（WSL）">
+    Linuxディストリビューションによっては、Redisサーバーが自動的に開始されるかもしれません。
+    そうでない場合は、[Redisインストールガイド](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)を参照し、お使いのディストリビューションに合わせて確認してください。
+  </Tab>
+</Tabs>
+
+次のコマンドでデータベースをセットアップします:
+
+```bash
+npx nx database:reset twenty-server
+```
+
+サーバー、ワーカー、フロントエンドサービスを開始します:
+
+```bash
+npx nx start twenty-server
+npx nx worker twenty-server
+npx nx start twenty-front
+```
+
+または、すべてのサービスを一度に開始することができます:
+
+```bash
+npx nx start
+```
+
+## ステップ 8: Twentyを使用する
+
+**フロントエンド**
+
+Twentyのフロントエンドは[http://localhost:3001](http://localhost:3001)で稼働しています。
+デフォルトのデモアカウントを使用してログインできます: `tim@apple.dev` (パスワード: `tim@apple.dev`)
+
+**バックエンド**
+
+* Twentyのサーバーは[http://localhost:3000](http://localhost:3000)で稼働しています
+* GraphQL API は [http://localhost:3000/graphql](http://localhost:3000/graphql) でアクセスできます
+* REST API は [http://localhost:3000/rest](http://localhost:3000/rest) でアクセスできます
+
+## トラブルシューティング
+
+問題が発生した場合は、[トラブルシューティング](/l/ja/developers/self-host/capabilities/troubleshooting)を確認して解決策を見つけてください。

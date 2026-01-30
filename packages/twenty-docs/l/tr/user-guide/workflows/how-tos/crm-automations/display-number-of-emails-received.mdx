@@ -1,0 +1,74 @@
+---
+title: Alınan E-posta Sayısını Görüntüle
+description: Her bir kişiden alınan e-posta sayısını otomatik olarak sayıp görüntülemek için bir iş akışı oluşturun.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
+
+## Genel Bakış
+
+Bu iş akışı, her yeni e-posta alındığında tetiklenir ve Kişi kaydındaki özel bir alanı, bu gönderenin e-postalarının toplam sayısıyla günceller.
+
+## Ön Gereksinimler
+
+Bu iş akışını kurmadan önce, **Kişiler** nesnesinde özel bir alan oluşturun:
+
+1. **Ayarlar → Veri Modeli → Kişiler** bölümüne gidin
+2. Yeni bir **Sayı** alanı ekleyin
+3. Adını "Bu kişiden alınan e-posta sayısı" gibi koyun
+
+## Adım Adım Kurulum
+
+<VimeoEmbed videoId="1148700336" title="Video gösterimi" />
+
+### Adım 1: Tetikleyiciyi Yapılandırın
+
+1. **İş Akışları**'na gidin ve yeni bir iş akışı oluşturun
+2. Tetikleyici olarak **Kayıt Oluşturuldu**'yu seçin
+3. **Mesaj Katılımcıları**'nı seçin (Gelişmiş nesneler altında kullanılabilir)
+
+<Note>
+  Bir Mesaj Katılımcısı, bir mesaj kimliği ile bir kişi kimliğinin birleşimidir ve mesaj başına tekil bir kayıt oluşturur. Bu, Mesajları doğrudan izlemekten daha kolaydır çünkü gönderenin (veya alıcının) e-posta adresini içeren `handle` alanına erişebiliriz.
+</Note>
+
+### Adım 2: Role göre filtreleyin
+
+1. **Filtre** eylemi ekleyin
+2. Koşulu ayarlayın: **Rol** **FROM**'a eşittir
+
+Bu, yalnızca bu kişi tarafından gönderilen mesajları saymanızı ve onlara gönderilen mesajları saymamanızı sağlar.
+
+### Adım 3: Aynı handle'a sahip tüm Mesaj Katılımcılarını arayın
+
+1. Bir **Kayıtları Ara** eylemi ekleyin
+2. Nesne olarak **Mesaj Katılımcıları**'nı seçin
+3. Filtreler ekleyin: **Handle**, tetikleyicideki handle'a (gönderenin e-posta adresi) eşittir ve **Rol** **FROM**'a eşittir
+4. **Limit** değerini 1'den **200**'e (maksimum) yükseltin
+
+Bu, toplam sayıyı elde etmek için bu e-posta adresinden gelen tüm mesajları bulur.
+
+<Note>
+  Kayıtları Ara eylemi en fazla 200 kayıt döndürmekle sınırlıdır. Ancak, yalnızca `totalCount` değerini (tek tek kayıtları değil) kullandığınız için bu adım, bu kişi tarafından gönderilen e-postaların toplam sayısını döndürecektir.
+</Note>
+
+### Adım 4: Kayıt Oluştur veya Güncelle eylemiyle Kişi kaydını güncelleyin
+
+1. Bir **Kayıt Oluştur veya Güncelle** eylemi ekleyin
+
+<Warning>
+  Burada **Kayıt Güncelle** yerine **Kayıt Ekle veya Güncelle** kullanın. Bu, önceki bir adımdan bir kayıt kimliği gerektirmek yerine, kişiyi e-posta adresiyle (`handle` alanı) tanımlamanıza olanak tanır.
+</Warning>
+
+2. Nesne olarak **Kişiler**'i seçin
+3. E-postasını Mesaj Katılımcısı'ndaki `handle` ile eşleştirerek kişiyi bulun.
+4. Özel "Alınan e-posta sayısı" alanınızı `{{searchRecords.totalCount}}` olarak ayarlayın
+
+Kayıtları Ara eyleminden gelen `totalCount` değeri, bu kişiden alınan e-postaların toplam sayısını ifade eder.
+
+## İlgili
+
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [Özel Alanlar Oluşturma](/l/tr/user-guide/data-model/how-tos/customize-your-data-model)
+* [Kayıtları Ara Eylemi](/l/tr/user-guide/workflows/capabilities/workflow-actions#search-records)

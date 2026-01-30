@@ -1,0 +1,179 @@
+---
+title: Automazioni per trattative chiuse come vinte
+description: Automatizza le attività post-vittoria quando le opportunità vengono chiuse.
+---
+
+Quando una trattativa si chiude, devono succedere più cose: aggiornare lo stato dell'azienda, notificare i membri del team, creare attività di onboarding. Automatizza tutto questo con un unico flusso di lavoro.
+
+## Il problema
+
+Quando un'opportunità passa a "Chiusa vinta":
+
+* Il tipo di azienda deve passare da "Potenziale cliente" a "Cliente"
+* Devono essere create le attività di onboarding
+* Il team di Customer Success deve essere avvisato
+* Il rappresentante commerciale ha bisogno di una conferma
+
+Farlo manualmente richiede tempo ed è soggetto a errori.
+
+## La soluzione
+
+Crea un flusso di lavoro che gestisca automaticamente tutte le attività post-vittoria.
+
+## Configurazione completa del flusso di lavoro
+
+### Passaggio 1: Crea il flusso di lavoro
+
+1. Vai a **Impostazioni → Flussi di lavoro**
+2. Fai clic su **+ Nuovo flusso di lavoro**
+3. Assegna il nome "Trattativa vinta - Automazione post-vittoria"
+
+### Passaggio 2: Configura il trigger
+
+1. Seleziona **Record is Updated**
+2. Seleziona **Opportunità**
+3. In "Fields to monitor", seleziona **Stage**
+
+### Passaggio 3: Aggiungi un filtro sulla fase
+
+1. Aggiungi l'azione **Filter**
+2. Condizione: `{{trigger.object.stage}}` uguale a "Chiusa vinta"
+
+### Passaggio 4: Aggiorna il tipo di azienda
+
+1. Aggiungi l'azione **Update Record**
+2. Configura:
+
+| Campo                           | Valore                          |
+| ------------------------------- | ------------------------------- |
+| **Oggetto**                     | Aziende                         |
+| **Record**                      | `{{trigger.object.company.id}}` |
+| **Tipo**                        | Cliente                         |
+| **Data della prima trattativa** | `{{trigger.object.closedAt}}`   |
+| **Proprietario dell'account**   | `{{trigger.object.owner.id}}`   |
+
+### Passaggio 5: Crea un'attività di onboarding
+
+1. Aggiungi l'azione **Create Record**
+2. Configura:
+
+| Campo                     | Valore                                                                                                                 |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Oggetto**               | Attività                                                                                                               |
+| **Titolo**                | `Onboarding: {{trigger.object.name}}`                                                                                  |
+| **Assegnatario**          | Membro del team di Customer Success                                                                                    |
+| **Data di scadenza**      | Tra 3 giorni                                                                                                           |
+| **Priorità**              | Alta                                                                                                                   |
+| **Azienda correlata**     | `{{trigger.object.company.id}}`                                                                                        |
+| **Opportunità correlata** | `{{trigger.object.id}}`                                                                                                |
+| **Descrizione**           | `Onboarding del nuovo cliente per {{trigger.object.company.name}}. Valore della trattativa: {{trigger.object.amount}}` |
+
+### Passaggio 6: Notifica il team di Customer Success
+
+1. Aggiungi l'azione **Send Email**
+2. Configura:
+
+| Campo       | Valore                                              |
+| ----------- | --------------------------------------------------- |
+| **A**       | customer-success@yourcompany.com                    |
+| **Oggetto** | `🎉 Nuovo cliente: {{trigger.object.company.name}}` |
+| **Corpo**   | Vedi l'esempio sotto                                |
+
+**Esempio di corpo dell'email**:
+
+```
+Ciao team di Customer Success,
+
+Abbiamo un nuovo cliente!
+
+Azienda: {{trigger.object.company.name}}
+Trattativa: {{trigger.object.name}}
+Valore: {{trigger.object.amount}}
+Rappresentante commerciale: {{trigger.object.owner.name}}
+Data di chiusura: {{trigger.object.closedAt}}
+
+È stata creata automaticamente un'attività di onboarding.
+
+Diamo loro un ottimo inizio!
+```
+
+### Passaggio 7: Conferma al rappresentante commerciale
+
+1. Aggiungi un'altra azione **Send Email**
+2. Configura:
+
+| Campo       | Valore                                                                                                                        |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **A**       | `{{trigger.object.owner.email}}`                                                                                              |
+| **Oggetto** | `✅ Trattativa chiusa: {{trigger.object.name}}`                                                                                |
+| **Corpo**   | Congratulazioni! La tua trattativa è stata elaborata. Il team di Customer Success è stato avvisato e l'onboarding è iniziato. |
+
+### Passaggio 8: Testa e attiva
+
+1. Esegui un test spostando un'opportunità di prova su "Chiusa vinta"
+2. Verifica:
+   * Il tipo di azienda è stato modificato in "Cliente"
+   * Attività di onboarding creata
+   * Il team di Customer Success ha ricevuto l'email
+   * Il rappresentante commerciale ha ricevuto la conferma
+3. Attiva quando sei pronto
+
+## Gestione di "Chiusa persa"
+
+Crea un flusso di lavoro simile per le trattative perse:
+
+### Scatenante
+
+* Record is Updated (Opportunità, Fase = "Chiusa persa")
+
+### Azioni
+
+1. **Create Record**: Attività per "Analisi trattativa persa"
+2. **Update Record**: Aggiungi il motivo della perdita al record dell'azienda
+3. **Send Email**: Notifica il responsabile della trattativa persa
+
+## Avanzato: Onboarding a più fasi
+
+Per un onboarding complesso, crea più attività:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Usa **Iterator** per creare ogni attività a partire dall'array.
+
+## Idee di personalizzazione
+
+### Mantieni aggiornati gli altri strumenti
+
+* Crea il cliente nel sistema di fatturazione con una **HTTP Request**
+
+### Azioni condizionali
+
+Usa le azioni **Filter** per:
+
+* Onboarding diverso per Enterprise rispetto alle PMI
+* Assegnatari diversi in base alla regione
+* Salta le notifiche per le trattative di piccolo valore
+
+### Includi i dettagli della trattativa
+
+Usa l'azione **Code** per formattare:
+
+* Documenti riepilogativi della trattativa
+* Note di passaggio per il team di Customer Success
+* Checklist di onboarding personalizzate
+
+## Correlati
+
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)

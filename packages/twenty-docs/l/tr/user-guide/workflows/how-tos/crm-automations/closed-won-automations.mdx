@@ -1,0 +1,179 @@
+---
+title: Closed Won Otomasyonları
+description: Fırsatlar kazanılarak kapandığında kazanım sonrası faaliyetleri otomatikleştirin.
+---
+
+Bir anlaşma kapandığında birden çok şeyin olması gerekir: şirket durumunu güncelleyin, ekip üyelerini bilgilendirin, müşteri işe alıştırma görevleri oluşturun. Bunların tümünü tek bir iş akışıyla otomatikleştirin.
+
+## Sorun
+
+Bir fırsat "Closed Won" aşamasına geçtiğinde:
+
+* Şirket türünün "Prospect"'ten "Customer"'a değişmesi gerekir
+* Onboarding görevleri oluşturulmalıdır
+* Müşteri başarı ekibinin bilgilendirilmesi gerekir
+* Satış temsilcisinin onay alması gerekir
+
+Bunu elle yapmak zaman alıcıdır ve hataya açıktır.
+
+## Çözüm
+
+Kazanım sonrası tüm faaliyetleri otomatik olarak yöneten bir iş akışı oluşturun.
+
+## Tam İş Akışı Kurulumu
+
+### Adım 1: İş akışını oluşturun
+
+1. **Ayarlar → İş Akışları** bölümüne gidin
+2. **+ Yeni İş Akışı**'na tıklayın
+3. Adını "Deal Won - Post-Win Automation" olarak verin
+
+### Adım 2: Tetikleyiciyi yapılandırın
+
+1. **Kayıt Güncellendi**'yi seçin
+2. **Fırsatlar**'ı seçin
+3. "Fields to monitor" altında, **Stage**'i seçin
+
+### Adım 3: Aşama Filtresi ekleyin
+
+1. **Filtre** eylemi ekleyin
+2. Koşul: `{{trigger.object.stage}}` "Closed Won" değerine eşittir
+
+### Adım 4: Şirket Türünü Güncelleyin
+
+1. **Kayıt Güncelle** eylemini ekleyin
+2. Alanı Yapılandır:
+
+| Alan                   | Değer                           |
+| ---------------------- | ------------------------------- |
+| **Nesne**              | Şirketler                       |
+| **Kayıt**              | `{{trigger.object.company.id}}` |
+| **Tür**                | Müşteri                         |
+| **İlk Anlaşma Tarihi** | `{{trigger.object.closedAt}}`   |
+| **Hesap Sahibi**       | `{{trigger.object.owner.id}}`   |
+
+### Adım 5: Onboarding Görevi Oluşturun
+
+1. **Kayıt Oluştur** eylemini ekleyin
+2. Alanı Yapılandır:
+
+| Alan              | Değer                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Nesne**         | Görevler                                                                                                      |
+| **Başlık**        | `Onboarding: {{trigger.object.name}}`                                                                         |
+| **Atanan kişi**   | Müşteri başarı ekibi üyesi                                                                                    |
+| **Bitiş Tarihi**  | Şu andan itibaren 3 gün                                                                                       |
+| **Öncelik**       | Yüksek                                                                                                        |
+| **İlgili Şirket** | `{{trigger.object.company.id}}`                                                                               |
+| **İlgili Fırsat** | `{{trigger.object.id}}`                                                                                       |
+| **Açıklama**      | `{{trigger.object.company.name}} için yeni müşteri uyumlandırması. Anlaşma değeri: {{trigger.object.amount}}` |
+
+### Adım 6: Müşteri Başarı Ekibini Bilgilendirin
+
+1. **E-posta Gönder** eylemini ekleyin
+2. Alanı Yapılandır:
+
+| Alan      | Değer                                              |
+| --------- | -------------------------------------------------- |
+| **Kime**  | customer-success@yourcompany.com                   |
+| **Konu**  | `🎉 Yeni Müşteri: {{trigger.object.company.name}}` |
+| **Gövde** | Aşağıdaki örneğe bakın                             |
+
+**E-posta gövdesi örneği**:
+
+```
+Merhaba CS Ekibi,
+
+Yeni bir müşterimiz var!
+
+Şirket: {{trigger.object.company.name}}
+Anlaşma: {{trigger.object.name}}
+Değer: {{trigger.object.amount}}
+Satış Temsilcisi: {{trigger.object.owner.name}}
+Kapanış Tarihi: {{trigger.object.closedAt}}
+
+Bir onboarding görevi otomatik olarak oluşturuldu.
+
+Onlara harika bir başlangıç yapalım!
+```
+
+### Adım 7: Satış temsilcisine onay gönderin
+
+1. Bir tane daha **E-posta Gönder** eylemi ekleyin
+2. Alanı Yapılandır:
+
+| Alan      | Değer                                                                                               |
+| --------- | --------------------------------------------------------------------------------------------------- |
+| **Kime**  | `{{trigger.object.owner.email}}`                                                                    |
+| **Konu**  | `✅ Anlaşma Kapandı: {{trigger.object.name}}`                                                        |
+| **Gövde** | Tebrikler! Anlaşmanız işleme alındı. Müşteri başarı ekibi bilgilendirildi ve onboarding başlatıldı. |
+
+### Adım 8: Test Edin ve Etkinleştirin
+
+1. Bir test fırsatını "Closed Won" aşamasına taşıyarak test edin
+2. Doğrula:
+   * Şirket türü "Customer" olarak değiştirildi
+   * Onboarding görevi oluşturuldu
+   * CS ekibi e-postayı aldı
+   * Satış temsilcisi onayı aldı
+3. Hazır olduğunuzda etkinleştirin
+
+## Closed Lost'u Yönetme
+
+Kaybedilen anlaşmalar için benzer bir iş akışı oluşturun:
+
+### Tetikleyici
+
+* Kayıt Güncellendi (Fırsatlar, Aşama = "Closed Lost")
+
+### Eylemler
+
+1. **Kayıt Oluştur**: "Lost Deal Analysis" için görev
+2. **Kayıt Güncelle**: Şirket kaydına kaybetme nedenini ekleyin
+3. **E-posta Gönder**: Kaybedilen anlaşmayı yöneticiye bildirin
+
+## Gelişmiş: Çok Aşamalı Onboarding
+
+Karmaşık onboarding için birden fazla görev oluşturun:
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Diziden her bir görevi oluşturmak için **Iterator** kullanın.
+
+## Özelleştirme Fikirleri
+
+### Diğer araçlarınızı güncel tutun
+
+* Faturalama sisteminde bir **HTTP Request** ile müşteri oluşturun
+
+### Koşullu Eylemler
+
+**Filtre** eylemlerini şunlar için kullanın:
+
+* Kurumsal ve KOBİ için farklı onboarding
+* Bölgeye göre farklı atanan kişiler
+* Küçük anlaşmalar için bildirimleri atlayın
+
+### Anlaşma Ayrıntılarını Dahil Edin
+
+Biçimlendirmek için **Kod** eylemini kullanın:
+
+* Anlaşma özet belgeleri
+* CS ekibi için devir notları
+* Özel onboarding kontrol listeleri
+
+## İlgili
+
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)

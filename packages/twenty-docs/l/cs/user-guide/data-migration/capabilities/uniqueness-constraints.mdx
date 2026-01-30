@@ -1,0 +1,72 @@
+---
+title: Omezení jedinečnosti
+description: Jak Twenty prosazuje jedinečnost dat při importu.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Přehled
+
+Twenty vynucuje jedinečnost u vybraných polí, aby se předešlo duplicitním záznamům a zajistila integrita dat. Porozumění těmto omezením je zásadní pro úspěšné importy.
+
+## Výchozí jedinečná pole
+
+| Objekt              | Jedinečná pole                     |
+| ------------------- | ---------------------------------- |
+| **Lidé**            | `id`, `email`                      |
+| **Společnosti**     | `id`, `domain`                     |
+| **Vlastní objekty** | pouze `id` (ve výchozím nastavení) |
+
+<Note>Pole `id` je interní identifikátor Twenty, automaticky generovaný pro každý záznam. Používá formát UUID (např. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+## Vlastní jedinečná pole
+
+Další jedinečná pole můžete definovat v **Nastavení → Datový model**:
+
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte objekt
+3. Klikněte na pole
+4. V nastavení pole zapněte **Jedinečné**
+
+### Příklady použití vlastních jedinečných polí
+
+* **Externí ID**: Ukládejte ID z jiných systémů (Salesforce ID, HubSpot ID)
+* **Obchodní identifikátory**: osobní čísla zaměstnanců, zákaznické kódy
+* **Alternativní kontaktní údaje**: profil na LinkedInu, telefonní číslo
+
+<Note>Název pole `id` je vyhrazen pro interní ID Twenty. Pro externí identifikátory použijte jiný název, například `externalId` nebo `legacyId`.</Note>
+
+## Chování importu
+
+### Vytváření nových záznamů
+
+Pokud hodnota jedinečného pole neexistuje, vytvoří se nový záznam.
+
+### Aktualizace stávajících záznamů
+
+Pokud hodnota jedinečného pole odpovídá existujícímu záznamu, tento záznam se **aktualizuje** novými daty.
+<Warning>Pro **aktualizaci stávajících záznamů** se doporučuje **párovat pouze jedno jedinečné pole**.</Warning>
+
+### Měkce smazané záznamy
+
+<Warning>
+  **Smazané záznamy se započítávají do jedinečnosti.**
+
+  Měkce smazané záznamy (viditelné v Command Menu → Zobrazit smazané záznamy) jsou zahrnuty do kontrol jedinečnosti. Pokud naimportujete záznam se stejnou jedinečnou hodnotou jako smazaný záznam, smazaný záznam bude **obnoven** s novými daty.
+</Warning>
+
+## Detekce duplicit během importu
+
+Během fáze validace:
+
+* Duplicitní hodnoty ve vašem souboru jsou zvýrazněny žlutě
+* Před zahájením importu můžete v uživatelském rozhraní upravit nebo odstranit duplicitní řádky
+
+<VimeoEmbed videoId="1145246326" title="Ukázka videa" />
+
+## Osvědčené postupy
+
+1. **Odstraňte duplikáty** ze souboru před importem
+2. Před importem **zkontrolujte existující záznamy** v Twenty
+3. **Používejte externí ID** při migraci z jiných systémů
+4. **Zahrňte jedinečná pole**, pokud chcete aktualizovat stávající záznamy

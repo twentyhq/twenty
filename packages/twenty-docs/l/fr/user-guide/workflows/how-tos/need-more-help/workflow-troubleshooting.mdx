@@ -1,0 +1,170 @@
+---
+title: Dépannage du Flux de Travail
+description: Problèmes courants des flux de travail et comment les résoudre.
+---
+
+## Problèmes Courants et Solutions
+
+### Flux de Travail Ne Se Déclenchant Pas
+
+**Symptômes**: Votre flux de travail ne s'exécute pas lorsque vous vous y attendez.
+
+**Causes possibles**:
+
+1. **Flux de travail non activé**: Assurez-vous que le flux de travail est défini sur "Active" et non sur "Draft"
+2. **Conditions de déclenchement non remplies**: Vérifiez que le déclencheur correspond à l'événement attendu
+3. **Champ non surveillé**: Pour les déclencheurs "Record is Updated", assurez-vous que le champ spécifique est surveillé
+4. **Autorisations**: Vérifiez que vous avez l'autorisation d'exécuter des flux de travail
+
+**Solutions** :
+
+* Vérifiez le statut du flux de travail dans la liste des flux de travail
+* Testez avec l'action spécifique qui est censée le déclencher
+* Passez en revue la configuration du déclencheur
+* Contactez votre administrateur au sujet des autorisations
+
+### Déclenchement du flux de travail trop tôt (champs vides)
+
+**Symptômes**: Lors de la création manuelle d'un enregistrement dans l'interface, votre flux de travail se déclenche avant que vous n'ayez eu le temps de remplir tous les champs. Le flux de travail s'exécute alors que la plupart des champs sont vides.
+
+**Pourquoi cela se produit**: Twenty enregistre tout en temps réel — il n'y a pas de mode "édition" distinct du mode "lecture". Lorsque vous créez un enregistrement, il est enregistré immédiatement, déclenchant l'événement "Record is created" avant que vous ne puissiez remplir des champs supplémentaires.
+
+**Quand "Record is created" fonctionne bien**:
+
+* Enregistrements créés via des appels API (les champs sont renseignés en une seule requête)
+* Enregistrements créés via une importation
+* Création automatisée d'enregistrements à partir d'autres flux de travail
+
+**Solution**: Pour les enregistrements créés manuellement dans l'interface, utilisez plutôt **"Record is created or updated"** comme déclencheur. Ainsi:
+
+* Le flux de travail se déclenche après que l'utilisateur a fini de remplir et d'enregistrer les champs
+* Vous obtenez des données complètes plutôt que des valeurs vides
+
+<Tip>
+  Si vous souhaitez que le flux de travail ne s'exécute qu'une seule fois par enregistrement, ajoutez une action Filter pour vérifier un champ comme `createdAt equals updatedAt` (première sauvegarde) ou utilisez un champ à case à cocher personnalisé pour suivre si le flux de travail s'est déjà exécuté.
+</Tip>
+
+### Actions en échec
+
+**Symptômes**: Le flux de travail s'exécute mais certaines actions échouent.
+
+**Causes possibles**:
+
+1. **Données manquantes**: Les champs requis sont vides
+2. **Références invalides**: Les variables des étapes précédentes n'existent pas
+3. **Erreurs d'API**: Les services externes renvoient des erreurs
+4. **Problèmes d'autorisations**: L'action requiert des autorisations que vous n'avez pas
+
+**Solutions** :
+
+* Examinez les détails de l'exécution du flux de travail pour trouver des messages d'erreur
+* Vérifiez que tous les champs requis ont des valeurs
+* Testez les connexions à l'API indépendamment
+* Passez en revue les autorisations des rôles
+
+### Erreurs de requête HTTP
+
+**Symptômes**: Les actions HTTP Request échouent ou renvoient des résultats inattendus.
+
+**Codes d'erreur courants**:
+
+* **400**: Mauvaise requête - vérifiez le format du corps de la requête
+* **401**: Non autorisé - vérifiez la clé API
+* **403**: Interdit - vérifiez les autorisations de l'API
+* **404**: Introuvable - vérifiez l'URL du point de terminaison
+* **429**: Trop de requêtes - mettez en place une limitation de débit
+* **500**: Erreur serveur - problème du service externe
+
+**Solutions** :
+
+* Vérifiez l'URL du point de terminaison de l'API
+* Vérifiez les en-têtes d'authentification
+* Testez d'abord l'appel d'API en dehors de Twenty
+* Ajoutez une gestion des erreurs dans les actions Code
+
+### Erreurs des actions Code
+
+**Symptômes**: Le code JavaScript ne s'exécute pas.
+
+**Problèmes courants**:
+
+1. **Erreurs de syntaxe**: Fautes de frappe ou JavaScript invalide
+2. **Variables non définies**: Faire référence à des variables qui n'existent pas
+3. **Erreurs de type**: Opérations sur des types de données incorrects
+4. **Dépassements de délai**: Le code met trop de temps à s'exécuter
+
+**Solutions** :
+
+* Utilisez la validation intégrée de l'éditeur de code
+* Testez d'abord la logique du code dans une console JavaScript
+* Ajoutez des instructions console.log pour le débogage
+* Simplifiez les opérations complexes
+
+### E-mails non envoyés
+
+**Symptômes**: L'action Send Email ne délivre pas les e-mails.
+
+**Causes possibles**:
+
+1. **Aucun compte e-mail connecté**: Vérifiez Settings → Accounts
+2. **Adresse e-mail invalide**: L'adresse e-mail du destinataire est mal formée
+3. **Limites d'envoi**: Limites de débit du fournisseur d'e-mails atteintes
+4. **Filtres anti-spam**: Les e-mails sont bloqués
+
+**Solutions** :
+
+* Vérifiez la connexion du compte e-mail
+* Validez les adresses e-mail des destinataires
+* Vérifiez les limites du fournisseur d'e-mails
+* Examinez le contenu de l'e-mail pour détecter des déclencheurs de spam
+
+## Débogage des flux de travail
+
+### Utiliser les exécutions de flux de travail
+
+1. Accédez à l'éditeur de flux de travail
+2. Ouvrez le panneau **Runs**
+3. Trouvez l'exécution en échec
+4. Cliquez pour voir les détails étape par étape
+5. Passez en revue les messages d'erreur et les données de sortie
+
+### Tester les étapes individuellement
+
+1. Pour les actions Code, utilisez le bouton **Test**
+2. Pour les requêtes HTTP, testez le point de terminaison séparément
+3. Créez des enregistrements de test pour déclencher des flux de travail
+4. Utilisez des déclencheurs manuels pour des tests contrôlés
+
+### Schémas de débogage courants
+
+**Ajoutez des logs**:
+Utilisez des actions Code pour consigner des valeurs intermédiaires à des fins de débogage.
+
+**Isolez les étapes**:
+Testez chaque étape indépendamment pour identifier les échecs.
+
+**Vérifiez le flux de données**:
+Assurez-vous que chaque étape reçoit les données d'entrée attendues.
+
+## Bonnes pratiques pour éviter les problèmes
+
+### Avant l'activation
+
+* Testez minutieusement en mode brouillon
+* Validez toutes les connexions API
+* Examinez attentivement les conditions de déclenchement
+* Documentez le comportement attendu
+
+### Pendant le développement
+
+* Utilisez des noms d'étapes descriptifs
+* Ajoutez des commentaires dans les actions Code
+* Testez avec des données réalistes
+* Prévoyez les cas limites
+
+### Après l'activation
+
+* Surveillez de près les premières exécutions
+* Configurez des alertes pour les échecs
+* Examinez régulièrement l'historique des exécutions
+* Gardez les flux de travail simples lorsque c'est possible

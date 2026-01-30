@@ -89,7 +89,7 @@ describe('WorkspaceRepository', () => {
       morphId: null,
       standardId: null,
       standardOverrides: null,
-      applicationId: null,
+      applicationId: 'application-id',
       relationTargetFieldMetadataId: null,
       relationTargetObjectMetadataId: null,
       calendarViewIds: [],
@@ -97,6 +97,16 @@ describe('WorkspaceRepository', () => {
       kanbanAggregateOperationViewIds: [],
       viewFieldIds: [],
       mainGroupByFieldMetadataViewIds: [],
+      applicationUniversalIdentifier: 'application-id',
+      objectMetadataUniversalIdentifier: 'test-metadata-id',
+      relationTargetObjectMetadataUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      viewFilterUniversalIdentifiers: [],
+      viewFieldUniversalIdentifiers: [],
+      kanbanAggregateOperationViewUniversalIdentifiers: [],
+      calendarViewUniversalIdentifiers: [],
+      mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      universalSettings: null,
     };
 
     mockInternalContext = {
@@ -118,8 +128,19 @@ describe('WorkspaceRepository', () => {
         idByUniversalIdentifier: {},
         universalIdentifiersByApplicationId: {},
       },
+      flatRowLevelPermissionPredicateMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
+      flatRowLevelPermissionPredicateGroupMaps: {
+        byId: {},
+        idByUniversalIdentifier: {},
+        universalIdentifiersByApplicationId: {},
+      },
       objectIdByNameSingular: {},
-      featureFlagsMap: {},
+      featureFlagsMap: {} as FeatureFlagMap,
+      userWorkspaceRoleMap: {},
       eventEmitterService: {} as unknown,
     } as unknown as WorkspaceInternalContext;
 
@@ -134,6 +155,8 @@ describe('WorkspaceRepository', () => {
         canSoftDeleteObjectRecords: false,
         canDestroyObjectRecords: false,
         restrictedFields: {},
+        rowLevelPermissionPredicates: [],
+        rowLevelPermissionPredicateGroups: [],
       },
     };
     mockQueryRunner = {} as QueryRunner;
@@ -154,7 +177,7 @@ describe('WorkspaceRepository', () => {
         id: 'test-metadata-id',
         nameSingular: 'test-entity',
         namePlural: 'test-entities',
-        fieldMetadataIds: ['test-field-id'],
+        fieldIds: ['test-field-id'],
         fieldIdByName: {
           id: 'test-field-id',
         },

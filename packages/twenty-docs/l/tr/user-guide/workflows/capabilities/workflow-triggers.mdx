@@ -1,0 +1,136 @@
+---
+title: İş Akışı Tetikleyicileri
+description: İş akışlarınızı başlatan farklı tetikleyiciler hakkında bilgi edinin.
+---
+
+## Tetikleyiciler Hakkında
+
+İş akışları, otomasyonun ne zaman çalıştırılacağını tanımlayan tek bir tetikleyici ile başlar.
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+<Tip>
+  **Gelişmiş nesneler destekleniyor!** Standart CRM nesnelerinin (Kişiler, Şirketler, Fırsatlar) ötesinde, ayrıca şu öğelerde iş akışlarını tetikleyebilir ve işlemler gerçekleştirebilirsiniz:
+
+  * Çalışma Alanı Üyeleri
+  * Takvim etkinlikleri
+  * Mesajlar (E-postalar)
+  * Görevler, Notlar ve daha birçok sistem nesnesi
+
+  Bu, takvim etkinlikleri oluşturulduğunda ekip üyelerini bilgilendirme ya da gelen e-postaları otomatik olarak işleme gibi güçlü otomasyonların önünü açar.
+</Tip>
+
+## Kayıt Oluşturuldu
+
+Seçilen bir nesneye (Kişiler, Şirketler, Fırsatlar veya herhangi bir özel nesne) yeni bir kayıt oluşturulduğunda iş akışını başlatır.
+
+**Yapılandırma**: Yeni kayıtları izlemek için nesne türünü seçin.
+
+<Note>
+  * Bu tetikleyici, csv, posta kutusu ve takvim eşzamanlaması ile API tarafından oluşturulan kayıtlar için harikadır.
+  * **El ile oluşturulan kayıtlar için önerilmez**: bu tetikleyici ile kayıt oluşturulur oluşturulmaz iş akışları başlar. Twenty UI anında otomatik kaydetme sunduğundan (kayıtları kaydetmek için bir düzenleme modu ve ardından doğrulama yoktur), kullanıcı tüm alanları girmeden önce iş akışı tetiklenecektir.
+    Bu iş akışını el ile oluşturulan kayıtlarda tetiklemek için bunun yerine `Record is created or updated` tetikleyicisini kullanmanız önerilir.
+</Note>
+
+## Kayıt Güncellendi
+
+Mevcut bir kayıtta değişiklik yapıldığında iş akışını başlatır.
+
+**Yapılandırma**:
+
+* Nesne türünü seçin
+* Hangi alanların değişiklikler için izleneceğini isteğe bağlı olarak belirtin
+
+## Kayıt Güncellendi veya Oluşturuldu
+
+Bir kaydın seçili bir nesnede oluşturulması veya güncellenmesi durumunda iş akışını başlatır.
+
+**Neden Bu Önemli**: Bu tetikleyici özellikle faydalıdır çünkü farklı yöntemlerle oluşturulan kayıtlar farklı davranır:
+
+* **API/CSV içe aktarmaları**: Kayıtlar tüm alanlar doldurulmuş olarak hemen oluşturulur
+* **Manuel oluşturma**: Önce kayıtlar oluşturulur, ardından alanlar sonraki güncellemelerde eklenir
+
+**Yapılandırma**:
+
+* İzlenecek nesne türünü seçin
+* Hangi alanların değişiklikler için izleneceğini isteğe bağlı olarak belirtin
+* İş akışı, hem ilk oluşturma sırasında hem de sonraki güncellemelerde tetiklenecektir
+
+## Kayıt Silindi
+
+Bir nesneden kayıt kaldırıldığında iş akışını başlatır.
+
+**Yapılandırma**: Silme işlemlerini izlemek için nesne türünü seçin.
+
+## Manuel Tetikleyici
+
+Bir kullanıcı eylemi tarafından tetiklendiğinde iş akışını başlatır. Bu tetikleyiciye `Cmd+K` menüsünden veya kayıt(lar)ı seçtikten sonra üst gezinme çubuğunda görüntülenecek özel bir düğme aracılığıyla erişilebilir.
+
+<img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
+
+**Kullanılabilirlik Yapılandırması**:
+İş akışının kayıt seçimini nasıl ele alacağını seçin:
+
+* **Global**: Bu iş akışını tetiklemek için bir kayda gerek yoktur. İş akışı, komut menüsü `Cmd + K` üzerinden herhangi bir yerden (herhangi bir nesneden) tetiklenir ve girdi olarak kayıt(lar) kullanmaz.
+
+* **Tekil**: Seçilen kayıt(lar) iş akışınıza iletilecektir. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını başlatmadan önce birkaç kayıt seçilebilir. İş akışı, başlangıçtan sona kadar, seçilen kayıt sayısı kadar çalışacaktır.
+
+  <Note>
+    **Yumuşak sınır: dakikada 100 çalıştırma**. Bunun ötesinde, iş akışları "Not Started" durumunda kalır ve kademeli olarak işlenir—arka plan görevi tarafından ya da başka bir iş akışı kuyruğa girdiğinde. Bu, Tekil tetikleyici ile 100'den fazla kayıt seçebileceğiniz anlamına gelir; yalnızca yürütme daha yavaş olacaktır.
+  </Note>
+
+* **Toplu**: Seçilen kayıt(lar) iş akışınıza iletilecektir. Bu, belirli bir nesne için yapılandırılmıştır. İş akışını başlatmadan önce birkaç kayıt seçilebilir. İş akışı bir kere çalışacak, tüm kayıt listesini girdi olarak sağlayacak. Bu, iş akışının bir [Yineleyici eylemi](/l/tr/user-guide/workflows/capabilities/workflow-actions#iterator) içermesi gerektiği anlamına gelir.
+
+<Note>
+  Bu daha gelişmiştir ve iş akışı çalıştırmalarının sayısını optimize etmek isteyenler için en uygunudur.
+</Note>
+
+<img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
+
+**Ek Yapılandırma**:
+
+* Hedef nesneyi seçin (Tek ve Toplu kullanılabilirlik için)
+* İş akışı tetikleyicisi için bir komut simgesi seçin
+* Gezinme çubuğundaki konumu yapılandırın (Sabitlenmiş veya Sabitlenmemiş)
+
+**Erişim Yöntemleri**:
+
+* `Cmd+K` menüsü ile manuel iş akışlarını bulup başlatma
+* Üst gezinme çubuğunda (yapılandırılmışsa) özel bir düğme
+
+## Zamana Dayalı Tetikleyici: Zamanlama ile
+
+Belirlediğiniz aralıklarla iş akışını başlatır.
+
+**Yapılandırma**:
+
+* Zaman birimini seçin (dakika, saat, gün)
+* İleri düzey zamanlama için bir değer girin veya özel cron ifadeleri kullanın.
+
+<Note>
+  **Saat dilimi**: Zamanlanmış iş akışları **UTC**'de çalışır. Günlük zamanlamalar için saatleri ayarlarken yerel saatinizi UTC'ye dönüştürün.
+</Note>
+
+## Harici Tetikleyici: Webhook
+
+İş akışı, harici bir hizmetten bir GET veya POST isteği alındığında başlar.
+
+<img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
+
+**Yapılandırma**:
+
+* İş akışı benzersiz bir webhook URL'si sağlar—bunu kopyalayın ve çağrılacak uç nokta olarak harici sisteminize ekleyin.
+* POST istekleri için, Twenty'nin hangi verileri bekleyeceğini bilmesi amacıyla beklenen gövde yapısını tanımlayın. Buraya, iş akışınızda aşağıda gerekli olacak ve alacağınız alanları ekleyin.
+* Kimlik doğrulamasını yapılandırın (yakında geliyor).
+
+## Doğru Tetikleyiciyi Seçme
+
+| Kullanım alanı                                   | Önerilen Tetikleyici               |
+| ------------------------------------------------ | ---------------------------------- |
+| Yeni potansiyel müşterilerin işlenmesi gerekiyor | Kayıt Oluşturuldu                  |
+| Veri değişikliklerinin eşitlenmesi gerekiyor     | Kayıt Güncellendi                  |
+| İçe aktarma/el ile veri işleme                   | Kayıt Güncellendi veya Oluşturuldu |
+| Silme işleminden sonra temizleme                 | Kayıt Silindi                      |
+| Kullanıcı tarafından başlatılan işlem            | Manuel Olarak Başlat               |
+| Yinelenen raporlar                               | Zamanlama ile                      |
+| Harici entegrasyon                               | Webhook veya Zamanlama ile         |

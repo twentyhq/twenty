@@ -1,5 +1,6 @@
 import { GRAPH_TYPE_INFORMATION } from '@/command-menu/pages/page-layout/constants/GraphTypeInformation';
-import { isChartWidget } from '@/command-menu/pages/page-layout/utils/isChartWidget';
+import { getCurrentGraphTypeFromConfig } from '@/command-menu/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
+import { isWidgetConfigurationOfTypeGraph } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -116,17 +117,19 @@ export const usePageLayoutHeaderInfo = ({
         return null;
       }
 
-      if (!isChartWidget(widgetInEditMode)) {
+      if (!isWidgetConfigurationOfTypeGraph(widgetInEditMode.configuration)) {
         return null;
       }
 
-      const currentGraphType = widgetInEditMode.configuration.graphType;
+      const currentGraphType = getCurrentGraphTypeFromConfig(
+        widgetInEditMode.configuration,
+      );
       const graphTypeInfo = GRAPH_TYPE_INFORMATION[currentGraphType];
       const graphTypeLabel = t(graphTypeInfo.label);
 
       const headerType =
         commandMenuPage === CommandMenuPages.PageLayoutGraphFilter
-          ? t`${graphTypeLabel} Chart`
+          ? graphTypeLabel
           : t`Chart`;
 
       const title = isDefined(editedTitle)

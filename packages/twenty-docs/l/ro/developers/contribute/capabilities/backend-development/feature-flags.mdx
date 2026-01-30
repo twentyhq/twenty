@@ -1,0 +1,46 @@
+---
+title: Steaguri de caracteristici
+---
+
+Steagurile de caracteristici sunt utilizate pentru a ascunde caracteristici experimentale. Pentru Twenty, acestea sunt setate la nivel de spațiu de lucru și nu la nivel de utilizator.
+
+## Adăugarea unui nou steag de caracteristici
+
+În `FeatureFlagKey.ts` adăugați steagul de caracteristici:
+
+```ts
+type FeatureFlagKey =
+  | 'IS_FEATURENAME_ENABLED'
+  | ...;
+```
+
+Adăugați-l și în enumul din `feature-flag.entity.ts`:
+
+```ts
+enum FeatureFlagKeys {
+    IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
+    ...
+}
+```
+
+Pentru a aplica un steag de caracteristici la o funcționalitate de **backend**, utilizați:
+
+```ts
+@Gate({
+  featureFlag: 'IS_FEATURENAME_ENABLED',
+})
+```
+
+Pentru a aplica un steag de caracteristici la o funcționalitate de **frontend**, utilizați:
+
+```ts
+const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
+```
+
+## Configurați steagurile de caracteristici pentru implementare
+
+Modificați înregistrarea corespunzătoare în tabelul `core.featureFlag`:
+
+| id        | cheie                    | IdSpațiuDeLucru | valoare    |
+| --------- | ------------------------ | --------------- | ---------- |
+| Aleatoriu | `IS_FEATURENAME_ENABLED` | IdSpațiuDeLucru | `adevărat` |

@@ -1,19 +1,18 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormPhoneFieldInput } from '../FormPhoneFieldInput';
 
 const meta: Meta<typeof FormPhoneFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormPhoneFieldInput',
   component: FormPhoneFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;

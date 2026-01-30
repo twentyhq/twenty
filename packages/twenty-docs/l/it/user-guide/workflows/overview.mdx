@@ -1,0 +1,80 @@
+---
+title: Flussi di Lavoro
+description: Scopri come creare automazioni in Twenty.
+image: /images/user-guide/workflows/workflow.png
+---
+
+<Frame>
+  <img src="/images/user-guide/workflows/workflow.png" alt="Flussi di Lavoro" />
+</Frame>
+
+## Perché i Workflow sono importanti
+
+Twenty è stato creato per offrire la massima flessibilità ai suoi utenti. Piuttosto che costringerti ad adattare i tuoi processi aziendali a funzionalità rigide e predefinite, i workflow ti consentono di creare automazioni che creano il CRM che meglio supporta i tuoi casi d'uso aziendali unici.
+
+I workflow sono la funzione in-app di Twenty per creare queste automazioni. Ti forniscono gli elementi costitutivi per creare esattamente ciò di cui la tua attività ha bisogno, quando ne ha bisogno.
+
+## Cosa posso fare con i workflow?
+
+Consigliamo di costruire automazioni per due scopi principali:
+
+1. **Automazioni interne per facilitare le attività quotidiane del tuo team**: Riduci il numero di inserimenti manuali e compiti ripetitivi che rallentano il tuo team.
+2. **Portare i dati dentro e fuori da Twenty**: Collega Twenty tramite chiamate API e webhooks al tuo database e ad altri strumenti.
+
+## Creare il tuo primo flusso di lavoro
+
+### Passaggio 1: Crea un nuovo flusso di lavoro
+
+1. Vai a **Flussi di lavoro**, che si trova sotto gli altri oggetti
+2. Fai clic su **+ Nuovo record**
+3. Assegna un nome al tuo flusso di lavoro
+
+### Passaggio 2: Aggiungi un trigger
+
+Ogni flusso di lavoro inizia con un trigger. Scegli tra:
+
+* **Eventi dei record**: quando un record viene creato, aggiornato o eliminato
+* **Pianificazione**: Esegui in orari specifici (giornalmente, settimanalmente, ecc.)
+* **Manuale**: Attivato da un'azione dell'utente
+* **Webhook**: Attivato da un webhook
+
+<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+
+### Passaggio 3: Aggiungi azioni
+
+Dopo il tuo trigger, aggiungi una o più azioni:
+
+* **Crea record**: Aggiungi nuovi record a qualsiasi oggetto
+* **Aggiorna record**: Modifica i dati dei record esistenti
+* **Elimina record**: Rimuovi i record dagli oggetti
+* **Cerca record**: Trova i record che corrispondono ai criteri
+* **Upsert record**: Crea o aggiorna in base ai criteri di corrispondenza
+* **Iterator**: Itera sugli array di record
+* **Filtro**: Controlla quali record proseguono
+* **Ritardo**: Attendi prima di continuare (durata o data programmata)
+* **Invia email**: Invia email tramite il tuo account collegato
+* **Codice**: Esegui JavaScript personalizzato
+* **Richiesta HTTP**: Chiama API esterne
+* **Modulo**: Raccogli input dagli utenti all'interno di Twenty UI al momento dell'esecuzione
+* **Agente IA** (In arrivo): Esegui attività di IA intelligenti
+
+<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+
+### Passaggio 4: Testa e attiva
+
+1. Usa il pulsante **Test** per eseguire il tuo flusso di lavoro con dati di esempio
+2. Esamina i risultati per assicurarti che funzioni come previsto
+3. Imposta il flusso di lavoro su **Attivo** quando sei pronto
+
+## Pratiche migliori per i flussi di lavoro
+
+* **Modifica i nomi dei passaggi**: Rinomina gli step del tuo flusso di lavoro per descrivere chiaramente cosa fa ciascuno. Ciò aiuta con la manutenzione e facilita il passaggio ai colleghi
+* **Sfrutta i dati dei passaggi precedenti**: Puoi utilizzare i campi dei record restituiti da qualsiasi passaggio precedente nel tuo flusso di lavoro
+* **Inizia in modo semplice**: Comincia con flussi di lavoro di base e aggiungi complessità nel tempo man mano che diventi più a tuo agio con il sistema
+* **Pianifica prima di costruire**: Mappa la logica del tuo flusso di lavoro prima di iniziare a costruire per evitare di rimanere bloccato a metà
+
+## Prossimi Passi
+
+* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Automazioni CRM](/l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

@@ -1,0 +1,39 @@
+---
+title: 사용자 지정 개체
+---
+
+개체는 조직 고유의 데이터(레코드, 속성 및 값)를 저장할 수 있는 구조입니다. Twenty에는 표준 개체와 사용자 지정 개체가 모두 제공됩니다.
+
+표준 개체는 모든 사용자에게 제공되는 속성이 있는 내장 개체입니다. Twenty의 표준 개체 예시로는 Company(회사)와 Person(사람)이 있습니다. 표준 개체는 모든 Twenty 사용자에게 제공되는 표준 필드를 가지고 있으며, 예를 들어 Company.displayName과 같습니다.
+
+사용자 지정 개체는 조직 고유의 정보를 저장하기 위해 생성할 수 있는 개체입니다. 이들은 내장되어 있지 않으며, 워크스페이스의 구성원이 표준 개체로는 적합하지 않은 정보를 보관하기 위해 사용자 지정 개체를 생성하고 사용자 정의할 수 있습니다.
+
+## 고급 스키마
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="고급 스키마" />
+</div>
+
+<br />
+
+## 작동 원리
+
+사용자 지정 개체는 개체의 형태, 이름 및 유형을 결정하는 메타데이터 테이블에서 비롯됩니다. 이 모든 정보는 테이블로 구성된 메타데이터 스키마 데이터베이스에 있습니다.
+
+* **DataSource**: 데이터가 존재하는 위치를 설명합니다.
+* **Object**: 개체를 설명하고 DataSource와 연결됩니다.
+* **Field**: 개체의 필드를 설명하고 개체와 연결됩니다.
+
+사용자 지정 개체를 추가하려면 /metadata API를 쿼리하십시오. 이는 메타데이터를 해당 API에 따라 업데이트하고, 메타데이터를 기반으로 GraphQL 스키마를 계산하여 나중에 사용할 수 있도록 GQL 캐시에 저장합니다.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="/metadata API를 쿼리하여 사용자 지정 개체를 추가하십시오." />
+</div>
+
+<br />
+
+데이터를 가져오려면 /graphql 엔드포인트를 통해 쿼리를 수행하고 Query Resolver를 통해 전달하는 과정이 포함됩니다.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="/graphql 엔드포인트를 쿼리하여 데이터를 가져오십시오." />
+</div>

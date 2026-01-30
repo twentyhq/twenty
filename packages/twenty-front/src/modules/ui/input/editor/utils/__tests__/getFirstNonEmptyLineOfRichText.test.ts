@@ -1,5 +1,5 @@
 import type { PartialBlock } from '@blocknote/core';
-import { getFirstNonEmptyLineOfRichText } from '../getFirstNonEmptyLineOfRichText';
+import { getFirstNonEmptyLineOfRichText } from '@/ui/input/editor/utils/getFirstNonEmptyLineOfRichText';
 
 describe('getFirstNonEmptyLineOfRichText', () => {
   it('should return an empty string if the input is null', () => {

@@ -1,0 +1,41 @@
+---
+title: Cola de Mensajes
+---
+
+Las colas facilitan la realización de operaciones asíncronas. Se pueden utilizar para realizar tareas en segundo plano, como enviar un correo de bienvenida al registrarse.
+Cada caso de uso tendrá su propia clase de cola extendida de `MessageQueueServiceBase`.
+
+Actualmente, solo soportamos `bull-mq`[bull-mq](https://bullmq.io/) como el controlador de cola.
+
+## Pasos para crear y usar una nueva cola
+
+1. Agregue un nombre de cola para su nueva cola en la enumeración `MESSAGE_QUEUES`.
+2. Proporcione la implementación de fábrica de la cola con el nombre de la cola como el token de dependencia.
+3. Inyecte la cola que creó en el módulo/servicio requerido con el nombre de la cola como el token de dependencia.
+4. Agregue una clase de trabajador con inyección basada en token, al igual que el productor.
+
+### Ejemplo de uso
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

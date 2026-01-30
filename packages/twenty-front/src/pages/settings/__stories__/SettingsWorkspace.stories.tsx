@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import {
   PageDecorator,
@@ -6,7 +6,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsWorkspace } from '../SettingsWorkspace';
+import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsWorkspace',

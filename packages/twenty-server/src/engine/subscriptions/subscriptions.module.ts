@@ -1,34 +1,23 @@
-import { Inject, Module, type OnModuleDestroy } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { SubscriptionsResolver } from 'src/engine/subscriptions/subscriptions.resolver';
-import { SubscriptionsService } from 'src/engine/subscriptions/subscriptions.service';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
+import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
 @Module({
-  providers: [
-    {
-      provide: 'PUB_SUB',
-      inject: [RedisClientService],
-
-      useFactory: (redisClientService: RedisClientService) =>
-        new RedisPubSub({
-          publisher: redisClientService.getClient().duplicate(),
-          subscriber: redisClientService.getClient().duplicate(),
-        }),
-    },
-    SubscriptionsResolver,
-    SubscriptionsService,
+  imports: [
+    RedisClientModule,
+    CacheStorageModule,
+    CacheLockModule,
+    MetricsModule,
+    TypeOrmModule.forFeature([WorkspaceEntity]),
   ],
-  exports: ['PUB_SUB', SubscriptionsService],
+  providers: [SubscriptionService, EventStreamService],
+  exports: [SubscriptionService, EventStreamService],
 })
-export class SubscriptionsModule implements OnModuleDestroy {
-  constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
-
-  async onModuleDestroy() {
-    if (this.pubSub) {
-      await this.pubSub.close();
-    }
-  }
-}
+export class SubscriptionsModule {}

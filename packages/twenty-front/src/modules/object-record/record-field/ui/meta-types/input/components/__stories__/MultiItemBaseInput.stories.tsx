@@ -1,7 +1,7 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { MultiItemBaseInput } from '../MultiItemBaseInput';
 
 const meta: Meta<typeof MultiItemBaseInput> = {
   title: 'UI/Data/Field/Input/BaseFieldInput',

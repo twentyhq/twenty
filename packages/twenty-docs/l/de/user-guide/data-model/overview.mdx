@@ -1,0 +1,180 @@
+---
+title: Datenmodell
+description: Erfahren Sie, was ein Datenmodell ist und wie Sie eines entwerfen, das zu Ihrem Unternehmen passt.
+image: /images/user-guide/fields/custom_data_model.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Datenmodell" />
+</Frame>
+
+## Was ist ein Datenmodell?
+
+Ein Datenmodell ist die Struktur, die definiert, wie Informationen in Ihrem CRM organisiert sind. Betrachten Sie es als den **Bauplan** Ihrer Kundendaten — Sie entwerfen ihn einmal und füllen ihn dann mit Ihren tatsächlichen Daten.
+
+## Wichtige Konzepte
+
+### Objekte
+
+**Objekte** sind die Hauptkategorien der Daten in Ihrem CRM. Jedes Objekt repräsentiert eine Art von Element, das Sie nachverfolgen möchten.
+
+Twenty enthält Standardobjekte:
+
+* **People** — Einzelpersonen (Kontakte, Leads, Partner)
+* **Companies** — Organisationen
+* **Opportunities** — Deals oder Verkäufe
+* **Notes** — an Datensätzen angehängte Notizen
+* **Tasks** — mit Datensätzen verknüpfte To-dos
+
+Sie können außerdem **benutzerdefinierte Objekte** für alles erstellen, was spezifisch für Ihr Unternehmen ist (z. B. Projects, Subscriptions, Events).
+
+### Felder
+
+**Felder** sind die Eigenschaften oder Attribute, die jedes Objekt beschreiben. Sie speichern die eigentlichen Informationen.
+
+Zum Beispiel hat das **People**-Objekt Felder wie:
+
+* Name
+* E-Mail
+* Telefon
+* Berufsbezeichnung
+* Company (eine Beziehung zum Companies-Objekt)
+
+Felder haben unterschiedliche **Typen**: Text, Zahl, Datum, Auswahl, Mehrfachauswahl, Beziehung und mehr. Sie können benutzerdefinierte Felder zu jedem Objekt hinzufügen.
+
+### Datensätze
+
+**Datensätze** sind die einzelnen Einträge innerhalb eines Objekts — die tatsächlichen Daten, die Sie erstellen und verwalten.
+
+Zum Beispiel:
+
+* "John Smith" ist ein **Datensatz** im People-Objekt
+* "Acme Corp" ist ein **Datensatz** im Companies-Objekt
+
+**Eine Analogie:**
+
+| Konzept des Datenmodells | Analogie aus der realen Welt                                     |
+| ------------------------ | ---------------------------------------------------------------- |
+| **Objekte**              | Abschnitte in einem Buch (die Kategorien)                        |
+| **Felder**               | Spalten in einer Tabellenkalkulation (die Eigenschaften)         |
+| **Datensätze**           | Zeilen in einer Tabellenkalkulation (die tatsächlichen Einträge) |
+
+Sie entwerfen das Datenmodell (Objekte + Felder) einmal und erstellen dann viele Datensätze innerhalb dieser Struktur.
+
+## Warum Ihr Datenmodell anpassen?
+
+Jedes Unternehmen arbeitet anders. Die Anpassung Ihres Datenmodells bedeutet, dass Sie Twenty um **Ihre** Prozesse herum gestalten können, anstatt Ihre in ein starres System zu zwängen.
+
+Twenty bietet volle Flexibilität:
+
+* Erstellen Sie so viele benutzerdefinierte Objekte, wie Sie benötigen
+* Fügen Sie unbegrenzt viele benutzerdefinierte Felder hinzu
+* Der Preis ändert sich durch Anpassungen nicht.
+
+## Tipps zur Gestaltung Ihres Datenmodells
+
+### 1. Beginnen Sie mit Ihren Kernobjekten
+
+Identifizieren Sie die wichtigsten Konzepte, mit denen Sie arbeiten. Twenty bietet bereits:
+
+* **People** — Ihre Kontakte
+* **Companies** — Ihre Accounts
+* **Opportunities** — Ihre Deals
+
+Überlegen Sie, was Sie sonst noch benötigen könnten:
+
+* Stripe bräuchte ein `Subscriptions`-Objekt
+* Airbnb bräuchte ein `Trips`-Objekt
+* Ein Accelerator bräuchte ein `Batches`-Objekt
+
+### 2. Verwenden Sie Felder für Varianten, statt neuer Objekte
+
+Wenn etwas nur ein Merkmal eines bestehenden Objekts ist, machen Sie es zu einem **Feld**.
+
+**Verwenden Sie Felder für:**
+
+* Kategorien und Labels (z. B. `Industry` für Companies)
+* Statuswerte (z. B. `Stage` für Opportunities)
+* Attribute und Eigenschaften
+
+### 3. Erstellen Sie ein Objekt, wenn es eigenständig ist
+
+Wenn das Konzept einen eigenen Lebenszyklus, eigene Eigenschaften oder Beziehungen hat, verdient es ein eigenes Objekt.
+
+**Erstellen Sie ein Objekt für:**
+
+* **Projects** — haben Fristen, Verantwortliche und Aufgaben
+* **Subscriptions** — verbinden Unternehmen, Produkte und Rechnungen
+* **Events** — beziehen Teilnehmer und Folgeaktionen ein
+
+Dies geht über ein einzelnes Feld hinaus, da sie ihre eigenen Daten und Beziehungen haben.
+
+### 4. Erstellen Sie ein Objekt, wenn die Anzahl der Einträge offen ist
+
+Wenn etwas mehrfach verknüpft werden kann und Sie nicht wissen, wie oft, verwenden Sie ein Objekt.
+
+**Schlechter Ansatz:**
+Felder wie `Product 1`, `Product 2`, `Product 3` erstellen ...
+
+**Guter Ansatz:**
+Erstellen Sie ein `Products`-Objekt und verknüpfen Sie es mit Datensätzen. Dies unterstützt ein, zwei oder hundert Produkte, ohne Ihr Modell zu ändern.
+
+### 5. Halten Sie es zunächst einfach
+
+Beginnen Sie mit Feldern. Erstellen Sie neue Objekte nur, wenn Sie an Grenzen stoßen:
+
+* Zu viele Felder in einem Objekt
+* Wiederholte Datensätze, die getrennt sein sollten
+* Beziehungen, die sich nicht sauber abbilden lassen
+
+## Besondere Hinweise zu Personen, Unternehmen und Gelegenheiten
+
+<Warning>
+  **E-Mail- und Kalender-Synchronisierung funktioniert nur mit Personen, Unternehmen und Gelegenheiten.**
+
+  Dies sind die einzigen Objekte, in denen Sie auf synchronisierte E-Mails und Besprechungen aus Ihrem Postfach/Kalender zugreifen können. Wir empfehlen, sie so häufig wie möglich zu nutzen.
+</Warning>
+
+**Beste Praktiken:**
+
+* Wenn Sie Kategorien von Personen benötigen, verwenden Sie Felder (keine neuen Objekte)
+* Beispiel: Verwenden Sie ein `Person Type`-Feld mit den Werten "Prospect" und "Partner" anstatt separate Objekte zu erstellen
+* Erstellen Sie unterschiedliche **Ansichten** zum Filtern: eine zeigt Partner, eine andere Interessenten
+
+**Es ist in Ordnung, Felder zu haben, die nicht für jeden Datensatz gelten.** Zum Beispiel ein `Referral Link`-Feld bei Personen, das nur gilt, wenn `Person Type = Partner`. Blenden Sie dieses Feld in Ansichten aus, in denen es nicht relevant ist.
+
+## Fragen zur Auswahlhilfe
+
+Fragen Sie sich:
+
+<Check>Ist dies nur eine Eigenschaft von etwas, das ich bereits habe, oder benötigt es eigene Eigenschaften?</Check>
+<Check>Werde ich jemals mehrere davon pro Datensatz nachverfolgen müssen, ohne zu wissen, wie viele?</Check>
+<Check>Verbindet dieses Konzept mehrere unterschiedliche Objekte, nicht nur eines?</Check>
+<Check>Wird es einen eigenen Lebenszyklus haben (Phasen, Start-/Enddaten)?</Check>
+
+Wenn die Antwort auf eine oder mehrere dieser Fragen "ja" lautet, ist es wahrscheinlich Zeit für ein neues Objekt.
+
+## Zugriff auf Ihr Datenmodell
+
+1. Gehen Sie zu **Einstellungen** in der linken Seitenleiste
+2. Klicken Sie auf **Datenmodell**
+3. Zeigen Sie alle Ihre Objekte (Standard und benutzerdefiniert) an
+4. Klicken Sie auf ein beliebiges Objekt, um seine Felder anzuzeigen und zu bearbeiten
+
+<Note>
+  **Sie sehen das Datenmodell nicht in den Einstellungen?**
+
+  Der Zugriff auf das Datenmodell ist in der Regel auf Administratoren beschränkt. Kontaktieren Sie Ihren Workspace-Admin, wenn Sie Zugriff benötigen.
+</Note>
+
+## Nächste Schritte
+
+Sobald Sie Ihr Datenmodell geplant haben:
+
+* [Benutzerdefinierte Objekte erstellen](/l/de/user-guide/data-model/how-tos/create-custom-objects)
+* [Benutzerdefinierte Felder erstellen](/l/de/user-guide/data-model/how-tos/create-custom-fields)
+* [Beziehungsfelder erstellen](/l/de/user-guide/data-model/how-tos/create-relation-fields)
+
+## Brauchen Sie Hilfe?
+
+Unser Team kann Sie beim Entwerfen und Erstellen des Datenmodells, das Sie benötigen, unterstützen. Entdecken Sie unsere [Implementierungsdienstleistungen](/l/de/user-guide/getting-started/capabilities/implementation-services).

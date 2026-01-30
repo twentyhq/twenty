@@ -1,0 +1,53 @@
+---
+title: Nu văd e-mailuri în înregistrări
+description: Depanarea e-mailurilor lipsă în înregistrări.
+---
+
+## Motive comune
+
+### 1. Sincronizarea inițială este încă în desfășurare
+
+Sincronizarea e-mailurilor necesită timp, în special pentru căsuțele poștale mari. Twenty importă e-mailuri cu aproximativ **400 de mesaje pe minut** (limitat de limitarea ratei a API-ului Gmail).
+
+* **Sincronizarea calendarului**: Se finalizează în câteva minute
+* **Sincronizarea e-mailurilor**: Depinde de dimensiunea căsuței poștale (de ex., 10.000 de e-mailuri ≈ 25 de minute, 50.000 de e-mailuri ≈ 2 ore)
+
+**Soluție**: Așteptați finalizarea importului inițial. Puteți estima durata în funcție de dimensiunea căsuței poștale.
+
+### 2. Contactul nu există în Twenty
+
+E-mailurile apar doar pe înregistrările existente de tip Persoană. Dacă contactul nu a fost încă creat:
+
+* Activați **Crearea automată a contactelor** în setările căsuței poștale
+* Sau creați mai întâi manual înregistrarea Persoană
+
+**Soluție**: Accesați **Setări → Conturi**, selectați căsuța poștală și activați crearea automată a contactelor.
+
+### 3. E-mailurile interne sunt excluse
+
+E-mailurile între colegi (același domeniu de e-mail) nu sunt niciodată sincronizate pentru a menține confidențialitatea.
+
+**Soluție**: Acesta este comportamentul așteptat. Doar e-mailurile externe sunt sincronizate.
+
+### 4. E-mailul provine de la un grup sau o listă de distribuție
+
+E-mailurile de grup și listele de distribuție sunt excluse de la sincronizare.
+
+**Soluție**: Acesta este comportamentul așteptat.
+
+### 5. Folderul nu este selectat pentru sincronizare
+
+Dacă utilizați funcția Message Folder, unele foldere pot fi excluse.
+
+**Soluție**: Accesați **Setări → Conturi**, selectați căsuța poștală și verificați setările de sincronizare ale folderelor.
+
+### 6. Adresă de e-mail incorectă în înregistrare
+
+Înregistrarea Persoană ar putea avea o adresă de e-mail diferită de cea utilizată în e-mail.
+
+**Soluție**: Adăugați adresa de e-mail corectă în înregistrarea Persoană.
+
+## Încă nu funcționează?
+
+1. Încercați să deconectați și să reconectați căsuța poștală
+2. Contactați asistența dacă problemele persistă

@@ -1,0 +1,41 @@
+---
+title: 메시지 큐
+---
+
+큐는 비동기 작업을 수행할 수 있게 합니다. 이들은 회원 가입 시 환영 이메일 보내기와 같은 백그라운드 작업을 수행하는 데 사용될 수 있습니다.
+각 사용 사례는 `MessageQueueServiceBase`로부터 확장된 자체 큐 클래스를 가집니다.
+
+현재, 큐 드라이버로 `bull-mq`[bull-mq](https://bullmq.io/)만 지원합니다.
+
+## 새 큐를 생성하고 사용하는 단계
+
+1. 새 큐에 대한 큐 이름을 열거형 `MESSAGE_QUEUES`에 추가합니다.
+2. 큐 이름을 종속성 토큰으로 하여 큐의 팩토리 구현을 제공합니다.
+3. 생성한 큐를 큐 이름을 종속성 토큰으로 하여 필요한 모듈/서비스에 주입합니다.
+4. 프로듀서와 마찬가지로 토큰 기반 주입을 사용하는 워커 클래스를 추가합니다.
+
+### 사용 예시
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

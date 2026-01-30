@@ -1,0 +1,96 @@
+---
+title: Campi di Relazione
+description: Collega i record tra oggetti diversi utilizzando campi di relazione.
+---
+
+## Tipi di relazioni
+
+### Uno-a-molti
+
+Un record nell'Oggetto A può essere collegato a molti record nell'Oggetto B.
+
+**Esempio:** Un'Azienda può avere molte Persone (dipendenti).
+
+### Molti-a-uno
+
+Molti record nell'Oggetto A possono essere collegati a un record nell'Oggetto B.
+
+**Esempio:** Molte Persone possono appartenere a un'Azienda.
+
+### Relazioni che puntano a più tipi di oggetto
+
+Alcuni oggetti possono collegarsi a più tipi di oggetto su un lato della relazione.
+
+**Esempio:** Una Nota può essere collegata a una Persona E a un'Azienda E a un'Opportunità contemporaneamente. La Nota si trova sul lato "molti", collegandosi a più lati "uno".
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+Analogamente, un Progetto (sul lato "uno") potrebbe ricevere collegamenti da più Persone, più Aziende e più Note.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Limitazione di importazione/esportazione**: Le relazioni che puntano a più tipi di oggetto non sono ancora supportate per l'importazione/esportazione CSV. È nella nostra roadmap.
+</Warning>
+
+### Molti-a-molti
+
+Molti record nell'Oggetto A possono essere collegati a molti record nell'Oggetto B.
+
+**Esempio:** Molte Persone possono essere collegate a molti Progetti, e viceversa.
+
+Le relazioni molti-a-molti utilizzano lo schema dell'**oggetto di giunzione**: un oggetto intermedio che collega entrambe le parti. Con la funzionalità delle relazioni di giunzione, Twenty visualizza direttamente i record collegati finali, nascondendo l'oggetto intermedio dall'interfaccia utente.
+
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+
+<Warning>
+  **Funzionalità di laboratorio**: le relazioni di giunzione devono essere abilitate in **Impostazioni → Aggiornamenti → Lab** prima dell'uso.
+</Warning>
+
+See [How to Create Many-to-Many Relations](/l/it/user-guide/data-model/how-tos/create-many-to-many-relations) for a complete step-by-step guide.
+
+## Creazione di un campo di relazione
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona l'oggetto in cui vuoi aggiungere la relazione
+3. Fai clic su **+ Aggiungi campo**
+4. Seleziona **Relazione** come tipo di campo
+5. Scegli l'oggetto o gli oggetti di destinazione a cui collegare
+6. Configura le impostazioni della relazione:
+   * **Nome del campo sull'oggetto di origine**: il nome del campo di relazione sull'oggetto che stai modificando
+   * **Nome del campo sull'oggetto di destinazione**: il nome del campo di relazione che apparirà sull'oggetto di destinazione
+   * Tipo di relazione (uno-a-molti, molti-a-uno)
+7. Clicca su **Salva**
+
+## Relazioni standard
+
+Twenty offre relazioni predefinite tra oggetti standard:
+
+| Oggetto di origine | Oggetto di destinazione | Tipo di relazione |
+| ------------------ | ----------------------- | ----------------- |
+| Persone            | Aziende                 | Molti-a-uno       |
+| Opportunità        | Aziende                 | Molti-a-uno       |
+| Opportunità        | Persone                 | Molti-a-uno       |
+
+## Migliori Pratiche
+
+### Pianificazione delle relazioni
+
+* **Mappa il tuo modello di dati**: pianifica le relazioni prima di crearle
+* **Considera la direzione**: pensa a quale oggetto "possiede" la relazione
+* **Evita le dipendenze circolari**: mantieni pulito il tuo modello di dati
+
+### Denominare le relazioni
+
+* **Usa nomi chiari**: rendi evidente ciò che la relazione rappresenta
+* **Sii coerente**: usa schemi di denominazione simili tra le relazioni
+* **Considera entrambi i lati**: assegna un nome appropriato a entrambi i lati della relazione
+
+### Prestazioni
+
+* **Non esagerare con le relazioni**: troppe relazioni possono rallentare il tuo spazio di lavoro
+
+## Limitazioni
+
+* **L'eliminazione delle relazioni** rimuove il collegamento ma non i record correlati
+* **Le relazioni circolari** dovrebbero essere evitate per l'integrità dei dati

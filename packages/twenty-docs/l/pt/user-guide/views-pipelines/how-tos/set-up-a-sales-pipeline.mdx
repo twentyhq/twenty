@@ -1,0 +1,120 @@
+---
+title: Configurar um Pipeline de Vendas
+description: Configure seu pipeline de vendas para acompanhar as oportunidades ao longo das etapas.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Um pipeline de vendas no Twenty é uma visualização Kanban do seu objeto Oportunidades, em que cada coluna representa uma etapa do seu processo de vendas.
+
+## Etapa 1: Configure Suas Etapas
+
+As etapas são definidas no campo **Stage** do objeto Oportunidades.
+
+1. Vá para **Configurações → Modelo de Dados**
+2. Selecione **Oportunidades**
+3. Encontre e clique no campo **Stage**
+4. Adicione, remova ou renomeie etapas para corresponder ao seu processo
+
+<VimeoEmbed videoId="927890428" title="Demonstração em vídeo" />
+
+### Etapas Recomendadas
+
+| Etapa                 | Finalidade                        |
+| --------------------- | --------------------------------- |
+| **Novo**              | Oportunidades recém-identificadas |
+| **Qualificado**       | Confirmado como boa adequação     |
+| **Reunião**           | Em discussões                     |
+| **Proposta**          | Proposta enviada                  |
+| **Negociação**        | Trabalhando nos termos            |
+| **Fechado - Ganho**   | Negócio bem-sucedido              |
+| **Fechado - Perdido** | Negócio mal-sucedido              |
+
+<Note>
+  **5-7 etapas é o ideal.** Etapas demais tornam o pipeline difícil de escanear; poucas demais reduzem a visibilidade do progresso dos negócios.
+</Note>
+
+## Etapa 2: Crie uma Visualização de Pipeline
+
+1. Vá para **Oportunidades**
+2. Clique no menu suspenso de visualizações → **+ Adicionar visualização**
+3. Dê o nome de "Pipeline de Vendas"
+4. Clique em **Criar**
+5. Abra **Opções** e selecione **Kanban** como o layout
+
+A visualização usa automaticamente o campo Stage para as colunas.
+
+## Etapa 3: Configure Sua Visualização
+
+### Mostrar Campos Principais
+
+1. Clique em **Opções → Campos**
+2. Procure campos na seção "Campos Ocultos"
+3. Clique no **ícone de olho** para exibir: Empresa, Valor, Data de Fechamento, Responsável
+
+### Ativar Agregações
+
+Mostrar totais no topo de cada coluna:
+
+1. Clique no número exibido ao lado do nome da etapa no topo de uma coluna
+2. Selecione o tipo de agregação (Contagem, Soma, Média, etc.)
+3. Escolha o campo a agregar (por exemplo, Valor)
+
+**Exemplo:** Mostre o valor total dos negócios por etapa agregando o campo Valor com Soma.
+
+### Usar Visualização Compacta (Opcional)
+
+Para uma visão geral de alto nível com conteúdo mínimo nos cartões:
+
+1. Clique em **Opções**
+2. Ative a opção **Visualização compacta**
+
+## Etapa 4: Crie Visualizações Pessoais e de Equipe
+
+### "Meu Pipeline"
+
+* **Filtro**: Responsável = Eu
+* **Visibilidade**: Não listada (visualização pessoal)
+
+### "Pipeline da Equipe"
+
+* **Filtro**: Nenhum (mostrar tudo)
+* **Visibilidade**: Espaço de trabalho (visualização compartilhada)
+
+### "Fechando Este Mês"
+
+* **Tipo**: Tabela
+* **Filtro**: Data de Fechamento = Este mês, Etapa ≠ Fechado - Ganho, Etapa ≠ Fechado - Perdido
+* **Ordenação**: Data de Fechamento ascendente
+
+## Trabalhando com Oportunidades
+
+### Criando Oportunidades
+
+* Clique em **+ Novo** na visualização de Oportunidades
+* Ou clique em **+** na coluna de uma etapa específica
+
+### Avançando pelas Etapas
+
+Arraste e solte os cartões de oportunidade entre colunas para atualizar sua etapa.
+
+<VimeoEmbed videoId="927888627" title="Demonstração em vídeo" />
+
+## Melhores Práticas
+
+### Higiene do Pipeline
+
+* Atualize os negócios diariamente conforme eles avançam
+* Mova ou feche rapidamente os negócios estagnados
+* Mantenha as datas de fechamento realistas
+
+### Disciplina de Etapas
+
+* Defina critérios claros para cada etapa
+* Mova os negócios prontamente quando os critérios forem atendidos
+* Não deixe os negócios permanecerem tempo demais nas etapas
+
+## Relacionados
+
+* [Visualizações Kanban](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — agregações e visualização compacta
+* [Filtros e Ordenação](/l/pt/user-guide/views-pipelines/capabilities/filters-and-sorting) — criando visualizações filtradas

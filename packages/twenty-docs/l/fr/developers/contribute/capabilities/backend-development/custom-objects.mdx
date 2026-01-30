@@ -1,0 +1,39 @@
+---
+title: Objets personnalisés
+---
+
+Les objets sont des structures qui vous permettent de stocker des données (enregistrements, attributs et valeurs) spécifiques à une organisation. Twenty fournit à la fois des objets standard et personnalisés.
+
+Les objets standard sont des objets intégrés avec un ensemble d'attributs disponibles pour tous les utilisateurs. Les exemples d'objets standard dans Twenty incluent Société et Personne. Les objets standard ont des champs standard également disponibles pour tous les utilisateurs de Twenty, comme Company.displayName.
+
+Les objets personnalisés sont des objets que vous pouvez créer pour stocker des informations uniques à votre organisation. Ils ne sont pas intégrés ; les membres de votre espace de travail peuvent créer et personnaliser des objets personnalisés pour contenir des informations que les objets standard ne conviennent pas.
+
+## Schéma de haut niveau
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Schéma de haut niveau" />
+</div>
+
+<br />
+
+## Comment ça marche
+
+Les objets personnalisés proviennent de tables de métadonnées qui déterminent la forme, le nom et le type des objets. Toutes ces informations sont présentes dans la base de données des schémas de métadonnées, composée de tables :
+
+* **DataSource** : Détaille où les données sont présentes.
+* **Objet** : Décrit l'objet et lie à une DataSource.
+* **Champ** : Décrit les champs d'un objet et se connecte à l'objet.
+
+Pour ajouter un objet personnalisé, le workspaceMember interrogera l'API /metadata. Cela met à jour les métadonnées en conséquence et calcule un schéma GraphQL basé sur les métadonnées, en le stockant dans un cache GQL pour une utilisation ultérieure.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Interroger l'API /metadata pour ajouter des objets personnalisés" />
+</div>
+
+<br />
+
+Pour obtenir des données, le processus implique de faire des requêtes via le point de terminaison /graphql et de les transmettre via le Query Resolver.
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="Interroger le point de terminaison /graphql pour obtenir des données" />
+</div>

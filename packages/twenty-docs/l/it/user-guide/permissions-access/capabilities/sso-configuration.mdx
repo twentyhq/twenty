@@ -1,0 +1,125 @@
+---
+title: Configurazione SSO
+description: Configura il Single Sign-On per un'autenticazione aziendale sicura.
+---
+
+## Informazioni su SSO
+
+Il Single Sign-On (SSO) consente ai membri del tuo team di accedere a Twenty utilizzando il provider di identità della tua organizzazione. Questo offre:
+
+* **Controllo degli accessi centralizzato**: Gestisci gli accessi da un unico punto
+* **Sicurezza avanzata**: Sfrutta i tuoi criteri di sicurezza esistenti
+* **Migliore esperienza utente**: Un unico set di credenziali per tutti gli strumenti
+
+## Provider supportati
+
+Twenty supporta l'SSO con:
+
+* **SAML 2.0**: Funziona con la maggior parte dei provider di identità aziendali
+* **Google Workspace**: Per le organizzazioni che usano Google
+* **Microsoft Entra ID**: (precedentemente Azure AD) Per ambienti Microsoft
+
+## Configurazione dell'SSO
+
+### Prerequisiti
+
+* Piano Organization (spazi di lavoro cloud e self-hosted)
+* Accesso amministratore al tuo provider di identità
+* Accesso amministratore allo spazio di lavoro Twenty
+
+<Note>
+  **Per gli utenti self-hosting che desiderano configurare l'SSO**, contatta contact@twenty.com
+</Note>
+
+### Passaggi di configurazione
+
+#### 1. Accedi alle impostazioni dell'SSO
+
+1. Vai a **Impostazioni → Sicurezza**
+2. Trova la sezione **Configurazione SSO**
+3. Fai clic su **Configura SSO**
+
+#### 2) Scegli il tuo provider
+
+Seleziona il tuo provider di identità dall'elenco oppure scegli "Custom SAML" per altri provider.
+
+#### 3. Configura il tuo provider di identità
+
+Dovrai configurare il tuo provider di identità con:
+
+* **Entity ID**: Fornito da Twenty
+* **ACS URL**: L'URL di callback per l'autenticazione
+* **Certificate**: Per una comunicazione sicura
+
+#### 4. Inserisci i dettagli del provider in Twenty
+
+* **SSO URL**: URL di accesso fornito dal tuo provider
+* **Entity ID**: L'identificatore del tuo provider
+* **Certificate**: Certificato X.509 del tuo provider
+
+#### 5. Test e abilitazione
+
+1. Fai clic su **Test Configuration** per verificare la configurazione
+2. Abilita l'SSO quando il test ha esito positivo
+3. Configura le preferenze di provisioning degli utenti
+
+## Provisioning degli utenti
+
+### Provisioning Just-in-Time (JIT)
+
+* Gli utenti vengono creati automaticamente al primo accesso
+* Il ruolo predefinito viene assegnato automaticamente
+* Non è necessaria la creazione manuale degli utenti
+
+### Provisioning manuale
+
+* Invita gli utenti prima che possano accedere
+* Preassegna ruoli specifici
+* Maggiore controllo su chi può accedere
+
+## Gestione degli utenti SSO
+
+### Assegnazione dei ruoli
+
+Agli utenti SSO possono essere assegnati ruoli come agli utenti normali:
+
+1. Vai a **Impostazioni → Membri**
+2. Trova l'utente
+3. Modifica il loro ruolo secondo necessità
+
+### Revoca dell'accesso
+
+Per rimuovere l'accesso per gli utenti SSO:
+
+* Rimuovili dal tuo provider di identità oppure
+* Rimuovili dallo spazio di lavoro Twenty
+
+## Migliori Pratiche
+
+### Sicurezza
+
+* **Richiedi SSO**: Disabilita l'accesso con password per gli utenti SSO
+* **Audit periodici**: Riesamina periodicamente gli accessi
+* **Policy IdP rigorose**: Applica l'MFA nel provider di identità
+
+### Gestione utenti
+
+* **Nomenclatura chiara**: Usa una nomenclatura coerente con la tua directory
+* **Mappatura dei gruppi**: Mappa i gruppi IdP ai ruoli di Twenty (se disponibile)
+* **Processo di offboarding**: Includi Twenty nel tuo flusso di lavoro di deprovisioning
+
+## Risoluzione dei problemi
+
+### Problemi comuni
+
+* **Errori del certificato**: Assicurati che il certificato non sia scaduto
+* **URL non corrispondenti**: Verifica che l'URL ACS corrisponda esattamente
+* **Utente non trovato**: Controlla le impostazioni del provisioning JIT
+
+### Ottenere aiuto
+
+Se riscontri problemi, contatta l'assistenza fornendo:
+
+* Messaggi di errore ricevuti
+* Provider di identità utilizzato
+* Dettagli di configurazione (senza dati sensibili)

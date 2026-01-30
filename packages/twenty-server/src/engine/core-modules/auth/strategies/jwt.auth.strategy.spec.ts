@@ -1,5 +1,7 @@
 import { randomUUID } from 'crypto';
 
+import { msg } from '@lingui/core/macro';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -12,15 +14,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
-jest.mock('twenty-shared/utils', () => ({
-  ...jest.requireActual('twenty-shared/utils'),
-  assertIsDefinedOrThrow: jest.fn((value, error) => {
-    if (value === null || value === undefined) {
-      throw error;
-    }
-  }),
-}));
-
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
   let workspaceRepository: any;
@@ -30,6 +23,8 @@ describe('JwtAuthStrategy', () => {
   let applicationRepository: any;
   let jwtWrapperService: any;
   let permissionsService: any;
+  let workspaceCacheService: any;
+  let workspaceMemberRepository: any;
 
   const jwt = {
     sub: 'sub-default',
@@ -64,6 +59,35 @@ describe('JwtAuthStrategy', () => {
     permissionsService = {
       userHasWorkspaceSettingPermission: jest.fn(),
     };
+
+    workspaceMemberRepository = {
+      findOne: jest.fn(),
+    };
+    workspaceMemberRepository.findOne.mockResolvedValue({
+      id: 'workspace-member-id',
+    });
+
+    workspaceCacheService = {
+      getOrRecompute: jest.fn(async (_workspaceId, _cacheKeys) => {
+        return {
+          flatWorkspaceMemberMaps: {
+            byId: {
+              'workspace-member-id': {
+                id: 'workspace-member-id',
+                userId: 'valid-user-id',
+                workspaceId: 'workspace-id',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                deletedAt: null,
+              },
+            },
+            idByUserId: {
+              'valid-user-id': 'workspace-member-id',
+            },
+          },
+        };
+      }),
+    };
   });
 
   afterEach(() => {
@@ -87,6 +111,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -118,6 +143,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -152,6 +178,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -186,6 +213,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       const result = await strategy.validate(payload as JwtPayload);
@@ -204,7 +232,7 @@ describe('JwtAuthStrategy', () => {
 
   describe('ACCESS token validation', () => {
     it('should throw AuthExceptionCode if type is ACCESS, no jti, and user not found', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
 
@@ -227,21 +255,24 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
+        new AuthException('User not found', expect.any(String), {
+          userFriendlyMessage: msg`User does not have access to this workspace.`,
+        }),
       );
 
       try {
         await strategy.validate(payload as JwtPayload);
       } catch (e) {
-        expect(e.code).toBe(AuthExceptionCode.USER_WORKSPACE_NOT_FOUND);
+        expect(e.code).toBe(AuthExceptionCode.USER_NOT_FOUND);
       }
     });
 
     it('should throw AuthExceptionCode if type is ACCESS, no jti, and userWorkspace not found', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
 
@@ -266,10 +297,13 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('UserWorkspaceEntity not found', expect.any(String)),
+        new AuthException('UserWorkspaceEntity not found', expect.any(String), {
+          userFriendlyMessage: msg`User does not have access to this workspace.`,
+        }),
       );
 
       try {
@@ -280,7 +314,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should not throw if type is ACCESS, no jti, and user and userWorkspace exist', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
 
@@ -293,7 +327,10 @@ describe('JwtAuthStrategy', () => {
 
       workspaceRepository.findOneBy.mockResolvedValue(new WorkspaceEntity());
 
-      userRepository.findOne.mockResolvedValue({ lastName: 'lastNameDefault' });
+      userRepository.findOne.mockResolvedValue({
+        id: validUserId,
+        lastName: 'lastNameDefault',
+      });
 
       userWorkspaceRepository.findOne.mockResolvedValue({
         id: validUserWorkspaceId,
@@ -309,6 +346,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       const user = await strategy.validate(payload as JwtPayload);
@@ -342,10 +380,13 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-        new AuthException('Application not found', expect.any(String)),
+        new AuthException('Application not found', expect.any(String), {
+          userFriendlyMessage: msg`Application not found.`,
+        }),
       );
 
       try {
@@ -358,7 +399,7 @@ describe('JwtAuthStrategy', () => {
 
   describe('Impersonation validation', () => {
     it('should throw AuthException if impersonation token has missing impersonatorUserWorkspaceId', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
 
@@ -393,6 +434,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -404,7 +446,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should throw AuthException if impersonation token has missing impersonatedUserWorkspaceId', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
@@ -439,6 +481,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -450,7 +493,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should throw AuthException if user tries to impersonate themselves', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
 
@@ -487,6 +530,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -498,7 +542,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should throw AuthException if impersonator user workspace not found', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
@@ -534,7 +578,7 @@ describe('JwtAuthStrategy', () => {
         .mockResolvedValueOnce({
           // For impersonatedUserWorkspace lookup
           id: validUserWorkspaceId,
-          user: { id: randomUUID() },
+          user: { id: 'valid-user-id' },
           workspace: mockWorkspace,
         });
 
@@ -546,18 +590,20 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
           'Invalid impersonation token, cannot find impersonator or impersonated user workspace',
           AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+          { userFriendlyMessage: msg`User workspace not found.` },
         ),
       );
     });
 
     it('should throw AuthException if impersonated user workspace not found', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
@@ -599,6 +645,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -610,7 +657,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should throw AuthException for server level impersonation without permission', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
@@ -641,13 +688,13 @@ describe('JwtAuthStrategy', () => {
 
       const mockImpersonatorUserWorkspace = {
         id: impersonatorUserWorkspaceId,
-        user: { id: randomUUID(), canImpersonate: false }, // No server level permission
+        user: { id: 'valid-user-id', canImpersonate: false }, // No server level permission
         workspace: { id: differentWorkspaceId }, // Different workspace
       };
 
       const mockImpersonatedUserWorkspace = {
         id: validUserWorkspaceId,
-        user: { id: randomUUID() },
+        user: { id: 'valid-user-id' },
         workspace: mockWorkspace,
       };
 
@@ -670,6 +717,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -681,7 +729,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should throw AuthException when no impersonation permissions are granted', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
@@ -711,13 +759,13 @@ describe('JwtAuthStrategy', () => {
 
       const mockImpersonatorUserWorkspace = {
         id: impersonatorUserWorkspaceId,
-        user: { id: randomUUID(), canImpersonate: false },
+        user: { id: 'valid-user-id', canImpersonate: false },
         workspace: mockWorkspace, // Same workspace
       };
 
       const mockImpersonatedUserWorkspace = {
         id: validUserWorkspaceId,
-        user: { id: randomUUID() },
+        user: { id: 'valid-user-id' },
         workspace: mockWorkspace,
       };
 
@@ -740,6 +788,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -751,7 +800,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should throw AuthException when impersonatedUserWorkspaceId does not match userWorkspaceId', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
@@ -782,13 +831,13 @@ describe('JwtAuthStrategy', () => {
 
       const mockImpersonatorUserWorkspace = {
         id: impersonatorUserWorkspaceId,
-        user: { id: randomUUID(), canImpersonate: true },
+        user: { id: 'valid-user-id', canImpersonate: true },
         workspace: mockWorkspace,
       };
 
       const mockImpersonatedUserWorkspace = {
         id: impersonatedUserWorkspaceId,
-        user: { id: randomUUID() },
+        user: { id: 'valid-user-id' },
         workspace: mockWorkspace,
       };
 
@@ -811,6 +860,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
@@ -822,7 +872,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should successfully validate workspace level impersonation with permission', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
@@ -852,7 +902,7 @@ describe('JwtAuthStrategy', () => {
 
       const mockImpersonatorUserWorkspace = {
         id: impersonatorUserWorkspaceId,
-        user: { id: randomUUID(), canImpersonate: false },
+        user: { id: 'valid-user-id', canImpersonate: false },
         workspace: mockWorkspace, // Same workspace
       };
 
@@ -875,6 +925,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       const result = await strategy.validate(payload as JwtPayload);
@@ -891,7 +942,7 @@ describe('JwtAuthStrategy', () => {
     });
 
     it('should successfully validate server level impersonation with permission', async () => {
-      const validUserId = randomUUID();
+      const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
       const validWorkspaceId = randomUUID();
       const impersonatorUserWorkspaceId = randomUUID();
@@ -916,7 +967,7 @@ describe('JwtAuthStrategy', () => {
 
       const mockImpersonatorUserWorkspace = {
         id: impersonatorUserWorkspaceId,
-        user: { id: randomUUID(), canImpersonate: true }, // Server level permission
+        user: { id: 'valid-user-id', canImpersonate: true }, // Server level permission
         workspace: { id: differentWorkspaceId }, // Different workspace
       };
 
@@ -941,6 +992,7 @@ describe('JwtAuthStrategy', () => {
         userWorkspaceRepository,
         apiKeyRepository,
         permissionsService,
+        workspaceCacheService,
       );
 
       const result = await strategy.validate(payload as JwtPayload);

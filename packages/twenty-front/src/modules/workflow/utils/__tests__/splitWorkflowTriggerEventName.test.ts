@@ -1,4 +1,4 @@
-import { splitWorkflowTriggerEventName } from '../splitWorkflowTriggerEventName';
+import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 
 describe('splitWorkflowTriggerEventName', () => {
   it('should split a basic event name into objectType and event', () => {

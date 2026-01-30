@@ -1,0 +1,95 @@
+---
+title: Buzón
+description: Comprender las funciones de integración de correo electrónico en Twenty.
+---
+
+**Nota**: Para conectar sus cuentas de correo electrónico y configurar los ajustes de sincronización, visite [Configuración de Correo Electrónico y Calendario](/l/es/user-guide/calendar-emails/overview).
+
+## Cómo Funciona la Integración del Correo Electrónico
+
+Twenty vincula automáticamente los correos electrónicos de sus buzones conectados a los registros CRM relevantes, manteniendo todo el historial de comunicación en un solo lugar.
+
+### Objetos donde se pueden encontrar correos electrónicos
+
+Las conversaciones de correo electrónico aparecen en tres objetos principales:
+
+* **Personas**: Vea todos los correos electrónicos intercambiados con un contacto específico
+* **Empresas**: Vea todos los correos electrónicos relacionados con una empresa y sus empleados
+* **Oportunidades**: Acceda a hilos de correo electrónico relacionados con la empresa vinculada a esta oportunidad. Aún no se muestran los hilos de correo electrónico de personas individuales en la oportunidad.
+
+### Visualización de Conversaciones de Correo Electrónico
+
+1. **Navegue hacia un Registro**: Vaya a cualquier registro de Persona, Empresa u Oportunidad
+2. **Seleccione la Pestaña de Correos Electrónicos**: Haga clic en la pestaña `Correos Electrónicos` para ver los correos sincronizados
+3. **Abra un Hilo de Correo Electrónico**: Haga clic en cualquier correo electrónico para abrir y leer la conversación completa
+4. **Explorar el Historial**: Desplácese por el historial completo de correos electrónicos con ese contacto
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
+
+## Lo Que Verás
+
+### Vista de Hilo de Correo Electrónico
+
+Cuando abres un hilo de correo electrónico, puedes:
+
+* **Leer Conversaciones Completas**: Vea el intercambio completo de correos electrónicos
+* **Ver Participantes**: Vea a todas las personas involucradas en el hilo de correo electrónico
+* **Verificar Tiempos**: Sepa exactamente cuándo se envió cada correo electrónico
+* **Acceder al Contexto**: Comprenda todo el historial de comunicación
+
+### Visibilidad del Correo Electrónico
+
+Dependiendo de las configuraciones de su buzón, puede ver:
+
+* **Contenido Completo**: Texto completo del correo electrónico y detalles
+* **Asunto + Metadata**: Línea de asunto, remitente, destinatario y hora
+* **Solo Metadata**: Información básica sin contenido de correo electrónico
+
+## Comportamiento de Sincronización de Correos Electrónicos
+
+### Tasa de sincronización
+
+Twenty importa correos electrónicos a aproximadamente **400 mensajes por minuto**. Actualmente, esta tasa está limitada por la limitación de tasa de la API de Gmail (y se aplica de manera similar a otros proveedores).
+
+Como referencia:
+
+* 1,000 correos electrónicos → ~2.5 minutos
+* 10,000 correos electrónicos → ~25 minutos
+* 50,000 correos electrónicos → ~2 horas
+
+### Qué Se Sincroniza
+
+* **Correos Externos**: Todos los correos con contactos fuera de su organización
+* **Vinculación Automática**: Los correos se conectan a los registros de Personas y Empresas existentes
+* **Direcciones Múltiples**: Los correos de cualquier dirección se vinculan al mismo registro de contacto
+* **Actualizaciones**: Los nuevos correos aparecen en 5 minutos
+
+### Qué No Se Sincroniza
+
+* **Correos Internos**: Los correos entre colegas (mismo dominio) permanecen privados
+* **Correos Grupales**: No se incluyen las listas de distribución y correos grupales
+* **Carpetas Excluidas**: Carpetas que ha elegido no sincronizar (configuradas en Configuración → Cuentas → Correo Electrónico)
+
+### Sincronización selectiva de carpetas
+
+Controle qué carpetas de correo electrónico se sincronizan con Twenty:
+
+1. Ve a **Ajustes → Cuentas** y selecciona tu cuenta de correo conectada
+2. Configura las carpetas en la sección Correo
+3. Elija carpetas específicas para incluir o excluir (Bandeja de entrada, Enviados, Archivo, carpetas personalizadas)
+
+## Resolución de Problemas de Sincronización de Correos Electrónicos
+
+### Problemas Comunes de Sincronización
+
+* **Retrasos en la Sincronización**: Los correos aparecen en 5 minutos, pero las importaciones iniciales tardan más
+* **Correos Faltantes**: Compruebe si:
+  * Las carpetas están excluidas en la configuración del Carpeta de Mensajes
+  * La creación automática de contactos está desactivada (los correos necesitan registros existentes de Twenty)
+  * El correo es de colegas (mismo dominio) o listas grupales
+  * El buzón aún está completando la sincronización inicial
+
+### Limitaciones del Correo Electrónico
+
+* **Carpetas del Sistema**: Algunas carpetas de correo no están disponibles para sincronización
+* **Alias**: Solo se pueden conectar buzones verdaderos (no alias de correo electrónico)

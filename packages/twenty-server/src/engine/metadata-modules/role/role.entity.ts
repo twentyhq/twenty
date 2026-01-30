@@ -4,17 +4,18 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('role')
 @Unique('IDX_ROLE_LABEL_WORKSPACE_ID_UNIQUE', ['label', 'workspaceId'])
@@ -52,9 +53,6 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
@@ -72,9 +70,6 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
 
   @Column({ nullable: false, default: true })
   canBeAssignedToApiKeys: boolean;
-
-  @Column({ nullable: false, default: true })
-  canBeAssignedToApplications: boolean;
 
   @OneToMany(
     () => RoleTargetEntity,
@@ -99,4 +94,21 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
     (fieldPermission: FieldPermissionEntity) => fieldPermission.role,
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  @OneToMany(
+    () => RowLevelPermissionPredicateEntity,
+    (rowLevelPermissionPredicate: RowLevelPermissionPredicateEntity) =>
+      rowLevelPermissionPredicate.role,
+  )
+  rowLevelPermissionPredicates: Relation<RowLevelPermissionPredicateEntity[]>;
+
+  @OneToMany(
+    () => RowLevelPermissionPredicateGroupEntity,
+    (
+      rowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroupEntity,
+    ) => rowLevelPermissionPredicateGroup.role,
+  )
+  rowLevelPermissionPredicateGroups: Relation<
+    RowLevelPermissionPredicateGroupEntity[]
+  >;
 }

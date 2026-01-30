@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,7 +20,10 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'calendarChannel'>, 'context'>): Record<
+}: Omit<
+  CreateStandardFieldArgs<'calendarChannel', FieldMetadataType>,
+  'context'
+>): Record<
   AllStandardObjectFieldName<'calendarChannel'>,
   FlatFieldMetadata
 > => ({
@@ -54,7 +58,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -73,7 +77,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       defaultValue: 'now',
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -91,7 +95,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isNullable: true,
       isUIReadOnly: true,
-      settings: { displayFormat: 'RELATIVE' },
+      settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -108,6 +112,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Handle',
       icon: 'IconAt',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -124,6 +129,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Visibility',
       icon: 'IconEyeglass',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'SHARE_EVERYTHING'",
       options: [
         { value: 'METADATA', label: 'Metadata', position: 0, color: 'green' },
@@ -150,6 +156,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Is Contact Auto Creation Enabled',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -168,6 +175,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
         'Automatically create records for people you participated with in an event.',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'AS_PARTICIPANT_AND_ORGANIZER'",
       options: [
         {
@@ -206,6 +214,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Is Sync Enabled',
       icon: 'IconRefresh',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -224,6 +233,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
         'Sync Cursor. Used for syncing events from the calendar provider',
       icon: 'IconReload',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -240,6 +250,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Sync status',
       icon: 'IconStatusChange',
       isNullable: true,
+      isUIReadOnly: true,
       options: [
         { value: 'ONGOING', label: 'Ongoing', position: 1, color: 'yellow' },
         {
@@ -278,6 +289,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Sync stage',
       icon: 'IconStatusChange',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'PENDING_CONFIGURATION'",
       options: [
         {
@@ -340,6 +352,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Sync stage started at',
       icon: 'IconHistory',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -356,6 +369,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Last sync date',
       icon: 'IconHistory',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -372,6 +386,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Throttle Failure Count',
       icon: 'IconX',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: 0,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -390,6 +405,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Connected Account',
       icon: 'IconUserCircle',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'connectedAccount',
       targetFieldName: 'calendarChannels',
       settings: {
@@ -414,6 +430,7 @@ export const buildCalendarChannelStandardFlatFieldMetadatas = ({
       description: 'Calendar Channel Event Associations',
       icon: 'IconCalendar',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'calendarChannelEventAssociation',
       targetFieldName: 'calendarChannel',
       settings: {

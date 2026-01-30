@@ -28,6 +28,7 @@ export type {
   ColorSampleProps,
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
+export { CommandBlock } from './command-block/components/CommandBlock';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
@@ -45,6 +46,7 @@ export { IllustrationIconArray } from './icon/components/IllustrationIconArray';
 export { IllustrationIconCalendarEvent } from './icon/components/IllustrationIconCalendarEvent';
 export { IllustrationIconCalendarTime } from './icon/components/IllustrationIconCalendarTime';
 export { IllustrationIconCurrency } from './icon/components/IllustrationIconCurrency';
+export { IllustrationIconFile } from './icon/components/IllustrationIconFile';
 export { IllustrationIconJson } from './icon/components/IllustrationIconJson';
 export { IllustrationIconLink } from './icon/components/IllustrationIconLink';
 export { IllustrationIconMail } from './icon/components/IllustrationIconMail';
@@ -100,6 +102,7 @@ export {
   IconBookmark,
   IconBookmarkPlus,
   IconBox,
+  IconBoxMultiple,
   IconBrackets,
   IconBracketsAngle,
   IconBracketsContain,
@@ -153,6 +156,8 @@ export {
   IconCodeCircle,
   IconCoins,
   IconColorSwatch,
+  IconColumns,
+  IconCommand,
   IconComment,
   IconCopy,
   IconCopyPlus,
@@ -218,7 +223,9 @@ export {
   IconDoorEnter,
   IconDotsVertical,
   IconDownload,
+  IconEdit,
   IconEditCircle,
+  IconEraser,
   IconExclamationCircle,
   IconExternalLink,
   IconEye,
@@ -228,6 +235,7 @@ export {
   IconFileCheck,
   IconFileExport,
   IconFileImport,
+  IconFileInfo,
   IconFilePencil,
   IconFileText,
   IconFileUpload,
@@ -282,6 +290,7 @@ export {
   IconLayersLinked,
   IconLayout,
   IconLayoutDashboard,
+  IconLayoutGrid,
   IconLayoutKanban,
   IconLayoutList,
   IconLayoutNavbar,
@@ -381,8 +390,13 @@ export {
   IconShield,
   IconSitemap,
   IconSlash,
+  IconSortAscending,
+  IconSortAscendingLetters,
+  IconSortAscendingNumbers,
   IconSortAZ,
   IconSortDescending,
+  IconSortDescendingLetters,
+  IconSortDescendingNumbers,
   IconSortZA,
   IconSparkles,
   IconSpy,
@@ -422,6 +436,7 @@ export {
   IconTimeDuration60,
   IconTimelineEvent,
   IconTool,
+  IconTransform,
   IconTrash,
   IconTrashOff,
   IconTrashX,

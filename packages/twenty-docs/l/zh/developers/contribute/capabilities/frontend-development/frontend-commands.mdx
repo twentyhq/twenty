@@ -1,0 +1,90 @@
+---
+title: 前端命令
+---
+
+## 实用命令
+
+### 启动应用
+
+```bash
+npx nx start twenty-front
+```
+
+### 根据API graphql schema重新生成graphql schema
+
+```bash
+npx nx run twenty-front:graphql:generate --configuration=metadata
+```
+
+或
+
+```bash
+npx nx run twenty-front:graphql:generate
+```
+
+### Lint
+
+```bash
+npx nx run twenty-front:lint # pass --fix to fix lint errors
+```
+
+## 翻译
+
+```bash
+npx nx run twenty-front:lingui:extract
+npx nx run twenty-front:lingui:compile
+```
+
+### 测试
+
+```bash
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
+```
+
+## 技术栈
+
+项目有一个干净且简单的技术栈，使用最少的样板代码。
+
+**应用**
+
+* [React](https://react.dev/)
+* [Apollo](https://www.apollographql.com/docs/)
+* [GraphQL 代码生成](https://the-guild.dev/graphql/codegen)
+* [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+* [TypeScript](https://www.typescriptlang.org/)
+
+**测试**
+
+* [Jest](https://jestjs.io/)
+* [Storybook](https://storybook.js.org/)
+
+**工具**
+
+* [Yarn](https://yarnpkg.com/)
+* [Craco](https://craco.js.org/docs/)
+* [ESLint](https://eslint.org/)
+
+## 架构
+
+### 路由
+
+[React Router](https://reactrouter.com/) 负责处理路由。
+
+To avoid unnecessary [re-renders](/l/zh/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
+
+### 状态管理
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) 处理状态管理。
+
+查看[最佳实践](/l/zh/developers/contribute/capabilities/frontend-development/best-practices-front#state-management)以获取有关状态管理的更多信息。
+
+## 测试
+
+[Jest](https://jestjs.io/) 用于单元测试，而 [Storybook](https://storybook.js.org/) 用于组件测试。
+
+Jest 主要用于测试工具函数，而不是组件本身。
+
+Storybook 用于测试隔离组件的行为，以及展示设计系统。

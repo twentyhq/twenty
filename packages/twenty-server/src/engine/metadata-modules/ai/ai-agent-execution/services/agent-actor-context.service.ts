@@ -20,7 +20,7 @@ export type AgentActorContext = {
 };
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
+// eslint-disable-next-line twenty/inject-workspace-repository
 export class AgentActorContextService {
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -46,7 +46,6 @@ export class AgentActorContextService {
 
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -61,6 +60,7 @@ export class AgentActorContextService {
             },
           });
         },
+        authContext,
       );
 
     if (!workspaceMember) {

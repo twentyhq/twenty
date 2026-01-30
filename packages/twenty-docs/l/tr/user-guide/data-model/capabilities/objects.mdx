@@ -1,0 +1,91 @@
+---
+title: Nesneler
+description: Twenty'de standart ve özel nesneler hakkında bilgi edinin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Standart Nesneler
+
+Standart nesneler, işe başlamanıza yardımcı olmak için çalışma alanınızda önceden tanımlanmış varlıklardır. Bunlar, Twenty kullanıcıları tarafından erişilebilen, paylaşılan bir veri modelinin parçasıdır. Onları olduğu gibi kullanabilir, özelleştirebilir veya devre dışı bırakabilirsiniz.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### İnsanlar
+
+`İnsanlar` nesnesi, kişilerinizi saklar. Bu nesne, iletişim detayları ve etkileşim geçmişini içerir, böylece tüm müşteri etkileşimlerinizi tek bir yerde görebilirsiniz.
+
+### Şirket
+
+`Şirketler` nesnesi, iş hesaplarınızı saklar. Endüstri, boyut ve konum gibi detayları içerir. Şirketler, hem `İnsanlar` hem de `Fırsatlar` nesnelerine bağlanır.
+
+### Fırsatlar
+
+`Fırsatlar` nesnesi, işle ilgili verileri saklar. Potansiyel satışların araştırmadan kapanışa kadar olan ilerlemesini izler; aşamaları, fırsat tutarlarını, ilişkili hesabı ve beklenen kapanış tarihini kaydeder. Satış boru hattınızı kanban düzeninde görüntüleyebilirsiniz.
+
+### Notlar
+
+`Notes` nesnesi, Kişiler, Şirketler, Fırsatlar ve diğer kayıtlara eklenebilen serbest biçimli notları saklar. Toplantı özetlerini, önemli ayrıntıları veya bağlamsal bilgileri kaydetmek için notları kullanın.
+
+### Görevler
+
+`Tasks` nesnesi, yapılacaklar ve eylem öğelerini saklar. Görevler Kişiler, Şirketler, Fırsatlar ve diğer kayıtlara bağlanabilir. Takiplerinizi etkin şekilde sürdürebilmek için son tarihleri, atanan kişileri ve tamamlama durumunu izleyin.
+
+## Özel Nesneler
+
+Özel nesneler, standart nesnelerin işleyemediği, kuruluşunuza özgü bilgileri saklamanıza olanak tanır. Örneğin, SpaceX iseniz, Roketler ve Fırlatmalar için özel bir nesne oluşturmak isteyebilirsiniz.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Yeni Bir Özel Nesne Oluşturma
+
+Yeni bir özel nesne oluşturmak için:
+
+1. Soldaki kenar çubuğundan Ayarlar'a gidin.
+2. Çalışma Alanı altında, Veri modeline gidin. Burada mevcut Standart ve Özel nesnelerinizin (aktif ve devre dışı) genel görünümünü görebilirsiniz.
+
+<VimeoEmbed videoId="926288174" title="Video gösterimi" />
+
+3. Üstteki `+ Yeni nesne` butonuna tıklayın. Adı (tekil ve çoğul olarak), bir simge seçip özel nesneniz için bir açıklama ekleyin ve Kaydet'e tıklayın (sağ üstte). Özel nesne olarak ilanı kullanarak, tekil "ilan" ve çoğul "ilanlar" olur, "Ev sahiplerinin mülklerini sergilemek için oluşturdukları ilanlar." gibi bir açıklamayla.
+
+4. Özel nesneniz oluşturuldu ve kenar çubuğunuzda görünecek. Hemen ona kayıt eklemeye başlayabilirsiniz.
+
+## Nesneleri Yönetme
+
+### Nesneleri Devre Dışı Bırakma
+
+Standart veya özel bir nesneye ihtiyacınız yoksa:
+
+1. Ayarlar → Veri Modeli'ne gidin
+2. Devre dışı bırakmak istediğiniz nesneyi bulun
+3. Devre dışı bırakmak için geçiş düğmesine tıklayın
+4. Nesne çalışma alanınızdan gizlenecek ancak veriler korunur
+
+### Nesneleri Yeniden Etkinleştirme
+
+Devre dışı bırakılmış bir nesneyi geri getirmek için:
+
+1. Ayarlar → Veri Modeli'ne gidin
+2. Devre dışı bırakılmış nesneleri arayın (gri renkte görüneceklerdir)
+3. Yeniden etkinleştirmek için geçiş düğmesine tıklayın
+4. Nesne ve tüm verileri geri yüklenecektir
+
+## En İyi Uygulamalar
+
+### Özel Nesneleri Ne Zaman Oluşturmalısınız
+
+* **Benzersiz iş varlıkları**: Sektörünüze veya sürecinize özgü unsurlar
+* **Karmaşık ilişkiler**: Birden çok varlık arasındaki bağlantıları izlemeniz gerektiğinde
+* **Ölçeklenebilir veriler**: Bir şeyin çok sayıda örneğine sahip olabileceğiniz durumlarda
+
+### Bunun Yerine Alanları Ne Zaman Kullanmalısınız
+
+* **Basit öznitelikler**: Mevcut nesneleri tanımlayan özellikler
+* **Kategoriler veya etiketler**: Mevcut kayıtları sınıflandırma yöntemleri
+* **Tekil değerler**: Kendi yaşam döngüsüne ihtiyaç duymayan bilgiler
+
+### Nesne Adlandırma
+
+* **Açık, açıklayıcı adlar kullanın**: Nesnenin neyi temsil ettiğini açıkça belli edin
+* **Kurallara uyun**: Nesne adı için tekil, koleksiyon için çoğul kullanın
+* **Ekibinizi dikkate alın**: Herkesin anlayacağı adları seçin

@@ -1,3 +1,4 @@
+import { type Decorator } from '@storybook/react-vite';
 import {
   createMemoryRouter,
   createRoutesFromElements,
@@ -5,14 +6,13 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
-import { type Decorator } from '@storybook/react';
 
 import {
   computeLocation,
   isRouteParams,
 } from '~/testing/decorators/PageDecorator';
 
-import { ComponentStorybookLayout } from '../ComponentStorybookLayout';
+import { ComponentStorybookLayout } from '~/testing/ComponentStorybookLayout';
 
 interface StrictArgs {
   [name: string]: unknown;

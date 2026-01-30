@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { PagePanel } from './PagePanel';
 
 type PageBodyProps = {
@@ -21,11 +20,6 @@ const StyledMainContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(3)};
   padding-left: 0;
   width: 100%;
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: ${({ theme }) => theme.spacing(3)};
-    padding-bottom: 0;
-  }
 `;
 
 type LeftContainerProps = {

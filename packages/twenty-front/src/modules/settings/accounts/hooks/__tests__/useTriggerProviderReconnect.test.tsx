@@ -7,7 +7,7 @@ import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
 } from '~/generated-metadata/graphql';
-import { useTriggerProviderReconnect } from '../useTriggerProviderReconnect';
+import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
 
 const mockTriggerApisOAuth = jest.fn();
 const mockNavigate = jest.fn();
@@ -216,6 +216,34 @@ describe('useTriggerProviderReconnect', () => {
       expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
         ConnectedAccountProvider.GOOGLE,
         {
+          redirectLocation: '/settings/accounts',
+        },
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should pass skipMessageChannelConfiguration option to OAuth providers', async () => {
+      const { result } = renderHook(() => useTriggerProviderReconnect(), {
+        wrapper: Wrapper,
+      });
+
+      const options = {
+        skipMessageChannelConfiguration: true,
+        messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      };
+
+      await act(async () => {
+        await result.current.triggerProviderReconnect(
+          ConnectedAccountProvider.GOOGLE,
+          undefined,
+          options,
+        );
+      });
+
+      expect(mockTriggerApisOAuth).toHaveBeenCalledWith(
+        ConnectedAccountProvider.GOOGLE,
+        {
+          ...options,
           redirectLocation: '/settings/accounts',
         },
       );

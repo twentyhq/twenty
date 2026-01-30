@@ -25,11 +25,10 @@ export const useDeleteStep = () => {
   const deleteStep = async (stepId: string) => {
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    const isAiAgentStep =
-      isDefined(workflow?.currentVersion?.steps) &&
-      workflow.currentVersion.steps.some(
-        (step) => step.id === stepId && step.type === 'AI_AGENT',
-      );
+    const steps = workflow?.currentVersion?.steps;
+    const stepToDelete = isDefined(steps)
+      ? steps.find((step) => step.id === stepId)
+      : undefined;
 
     await deleteWorkflowVersionStep({
       workflowVersionId,
@@ -43,7 +42,7 @@ export const useDeleteStep = () => {
       workflowVersionId,
     });
 
-    if (isAiAgentStep) {
+    if (isDefined(stepToDelete) && stepToDelete.type === 'AI_AGENT') {
       resetPermissionState();
     }
   };

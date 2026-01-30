@@ -1,5 +1,5 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { type RoleWithPartialMembers } from '../types/RoleWithPartialMembers';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
 export const settingsDraftRoleFamilyState = createFamilyState<
   RoleWithPartialMembers,
@@ -23,6 +23,8 @@ export const settingsDraftRoleFamilyState = createFamilyState<
     permissionFlags: [],
     objectPermissions: [],
     fieldPermissions: [],
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
     canBeAssignedToAgents: false,
     canBeAssignedToApiKeys: false,
     canBeAssignedToUsers: false,

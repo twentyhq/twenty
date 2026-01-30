@@ -2,7 +2,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilValue } from 'recoil';
-import { CalendarStartDay } from 'twenty-shared';
+import { CalendarStartDay } from 'twenty-shared/constants';
 import { type FirstDayOfTheWeek } from 'twenty-shared/types';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 

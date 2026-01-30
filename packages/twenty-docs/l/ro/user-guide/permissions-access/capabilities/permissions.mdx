@@ -1,0 +1,198 @@
+---
+title: Permisiuni
+description: Controlați accesul la obiecte, câmpuri și setări cu permisiuni bazate pe roluri.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Sistemul de permisiuni al Twenty vă permite să controlați accesul la trei domenii principale:
+
+* **Obiecte și Câmpuri**: Controlați cine poate vizualiza, edita sau șterge înregistrările și câmpurile individuale
+* **Setări**: Gestionați accesul la configurația workspace-ului și funcțiile administrative
+* **Acțiuni**: Controlați acțiunile generale ale workspace-ului cum ar fi importarea datelor sau trimiterea e-mailurilor
+
+## Creează Rol
+
+Pentru a crea un rol nou:
+
+1. Accesați **Setări → Roluri**
+2. Sub **Toate Rolurile**, faceți clic pe **+ Creează Rol**
+3. Introduceți un nume de rol
+4. În fila implicită **Permisiuni**, [configurați permisiunile](#customize-permissions)
+5. Faceți clic pe **Salvare** pentru a termina
+
+## Ștergeți un Rol
+
+Pentru a șterge un rol:
+
+1. Accesați **Setări → Roluri**
+2. Faceți clic pe rolul pe care doriți să-l eliminați
+3. Deschideți tab-ul **Setări**, apoi faceți clic pe **Șterge Rol**
+4. Faceți clic pe **Confirmă** în fereastra modală
+
+<Note>
+  Dacă un rol este șters, orice membru al workspace-ului alocat acestuia va fi reatribuit automat rolului implicit. Toate, cu excepția rolului **Admin**, pot fi șterse. Trebuie să existe întotdeauna cel puțin un membru alocat rolului **Admin**.
+</Note>
+
+## Atribuiți Roluri Membrilor
+
+### Vizualizați Atribuirile Curente
+
+* Accesați **Setări → Roluri**
+* Vedeți toate rolurile și câți membri sunt alocați fiecăruia
+* Vizualizați ce membri au ce roluri
+
+### Atribuiți un Rol unui Membru
+
+1. Accesați **Setări → Roluri**
+2. Faceți clic pe rolul pe care doriți să-l atribuiți
+3. Deschideți fila **Atribuire**
+4. Faceți clic pe **+ Atribuie membrului**
+5. Selectați membrul workspace-ului din listă
+6. Confirmați atribuirea
+
+### Setați Rolul Implicit
+
+1. Accesați **Setări → Roluri**
+2. În secțiunea **Opțiuni**, găsiți **Rol Implicit**
+3. Selectați ce rol ar trebui să primească automat noii membri
+4. Noii membri ai workspace-ului vor primi acest rol când se alătură
+
+<Note>
+  Puteți atribui roluri doar membrilor existenți ai workspace-ului. Pentru a invita noi membri, utilizați [Gestionarea Membrelor](/l/ro/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Personalizați Permisiunile
+
+Permisiunile determină ce poate accesa sau modifica fiecare rol în cadrul workspace-ului dvs., incluzând înregistrările, setările și acțiunile obiectelor workspace-ului.
+
+### Permisiuni pentru obiecte
+
+Secțiunea **Obiecte** controlează ce poate face acest rol cu înregistrările din întreg workspace-ul.
+
+#### Stabiliți permisiunile implicite (Toate obiectele)
+
+Mai întâi, configurați permisiunile de bază care se aplică în mod implicit **tuturor obiectelor**:
+
+| Permisiune                                         | Descriere                                                     |
+| -------------------------------------------------- | ------------------------------------------------------------- |
+| **Vezi înregistrări pentru toate obiectele**       | Vizualizați înregistrările în liste și pe paginile de detalii |
+| **Editează înregistrări pentru toate obiectele**   | Modificați înregistrările existente                           |
+| **Șterge înregistrări pentru toate obiectele**     | Ștergeți temporar înregistrările (pot fi restaurate)          |
+| **Distruge înregistrările pentru toate obiectele** | Ștergeți definitiv înregistrările                             |
+
+Selectați sau deselectați în funcție de comportamentul implicit dorit pentru acest rol.
+
+<Note>
+  **Exemplu — rol Intern**: Un intern ar trebui să poată vedea toate obiectele, dar să nu le poată edita în mod implicit. Activați "See Records on All Objects", dar lăsați "Edit Records on All Objects" debifat.
+</Note>
+
+#### Adăugați excepții la nivel de obiect
+
+După setarea valorilor implicite, folosiți subsecțiunea **La nivel de obiect** pentru a adăuga reguli care suprascriu valorile implicite pentru obiecte specifice.
+
+Faceți clic pe **+ Add rule** și selectați un obiect pentru a crea o excepție.
+
+**Exemple de reguli pentru un rol Intern:**
+
+| Regulă                                    | Efect                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------- |
+| Opportunities → dezactivați "See Records" | Internul nu poate vedea deloc obiectul Opportunities                |
+| People → activați "Edit Records"          | Internul poate edita înregistrările People (dar nu și alte obiecte) |
+
+### Permisiuni pentru câmpuri
+
+În cadrul fiecărei reguli la nivel de obiect, puteți merge mai departe și configura **permisiuni la nivel de câmp** pentru a controla accesul la câmpuri specifice.
+
+| Permisiune        | Descriere                     |
+| ----------------- | ----------------------------- |
+| **Vezi câmp**     | Vizualizați valoarea câmpului |
+| **Editează câmp** | Modificați valoarea câmpului  |
+| **Fără acces**    | Câmpul este complet ascuns    |
+
+**Exemplu — Restricționați câmpurile sensibile:**
+
+Pentru rolul Intern cu acces de editare la People, este posibil să doriți să restricționați anumite câmpuri:
+
+* People → Email → doar **Vezi câmp** (nu poate edita)
+* People → Address → **Fără acces** (complet ascuns)
+
+Acest lucru îi permite internului să editeze majoritatea câmpurilor People, protejând în același timp informațiile sensibile.
+
+### Cum funcționează moștenirea permisiunilor
+
+Permisiunile se propagă în cascadă de la general la specific:
+
+1. **All Objects** → stabilește configurația de bază pentru toate obiectele
+2. **Object-Level rules** → suprascriu configurația de bază pentru obiecte specifice
+3. **Field-Level rules** → suprascriu setarea la nivel de obiect pentru câmpuri specifice
+
+Setările mai specifice au întotdeauna prioritate.
+
+### Gestionați Suprascrierile de Permisiuni
+
+Pentru a suprascrie permisiunile moștenite:
+
+1. Faceți clic pe **X** pentru a elimina regula moștenită
+2. Selectați permisiunile specifice dorite
+3. Faceți clic pe pictograma portocalie **Anulează** (săgeată circulară) pentru a reveni la modificări
+
+Când ați terminat, faceți clic pe **Finalizare**, apoi **Salvare** odată ce ați fost redirecționat la pagina rolului.
+
+### Permisiuni pentru Setările Workspace-ului
+
+Controlați accesul la setările workspace-ului în două moduri:
+
+* Comutați **Setări Tot Acces** pentru a oferi acces complet
+* Sau activați permisiuni specifice (de ex., generarea de chei API, preferințele workspace-ului, atribuirea de roluri, configurația modelului de date, setările de securitate și gestionarea fluxurilor de lucru)
+
+<Note>
+  **Limitare actuală**: Accesul la gestionarea fluxurilor de lucru este în prezent necesar pentru a declanșa manual fluxurile de lucru. Acest comportament se poate schimba în versiunile viitoare.
+</Note>
+
+### Permisiuni de Acțiune în Workspace
+
+Controlați accesul la acțiunile generale ale workspace-ului:
+
+* Comutați **Aplicare Tot Acces** pentru a oferi permisiuni complete
+* Sau activați acțiuni individuale cum ar fi **Trimite E-mail**, **Importă CSV** și **Exportă CSV**
+
+## Atribuirea de roluri pentru chei API și agenți AI
+
+Pe lângă membrii workspace-ului, rolurile pot fi atribuite și cheilor API și agenților AI. Acest lucru este deosebit de util pentru echipele care doresc să controleze exact "cine" poate face ce în workspace-ul lor — inclusiv procese automate și integrări.
+
+### De ce să atribuiți roluri cheilor API și agenților AI?
+
+* **Securitate**: Limitați ceea ce pot accesa sau modifica procesele automate
+* **Conformitate**: Asigurați-vă că integrările accesează doar datele de care au nevoie
+* **Control**: Preveniți modificările accidentale ale datelor cauzate de automatizări configurate greșit
+* **Auditabilitate**: Urmăriți ce acțiuni au fost efectuate de fiecare integrare sau agent
+
+### Atribuiți un rol unei chei API
+
+1. Accesați **Setări → Roluri**
+2. Faceți clic pe rolul pe care doriți să-l atribuiți
+3. Deschideți fila **Atribuire**
+4. În **API Keys**, faceți clic pe **+ Assign to API key**
+5. Selectați cheia API din listă
+6. Confirmați atribuirea
+
+Cheia API va moșteni acum toate permisiunile definite de acel rol. Orice apeluri API efectuate cu această cheie vor fi restricționate în consecință.
+
+<Note>
+  Cheile API fără un rol atribuit folosesc permisiunile implicite. Pentru o securitate sporită, atribuiți întotdeauna un rol specific cheilor API din producție.
+</Note>
+
+### Atribuiți un rol unui agent AI
+
+1. Accesați **Setări → Roluri**
+2. Faceți clic pe rolul pe care doriți să-l atribuiți
+3. Deschideți fila **Atribuire**
+4. În **AI Agents**, faceți clic pe **+ Assign to AI agent**
+5. Selectați agentul AI din listă
+6. Confirmați atribuirea
+
+Agentul AI va putea accesa date și executa doar acțiunile permise de rolul său atribuit.
+
+<Note>
+  Pentru agenții AI care rulează în cadrul fluxurilor de lucru, acest lucru asigură că agentul nu poate accesa sau modifica date în afara ariei sale intenționate — chiar dacă fluxul de lucru are permisiuni mai largi.
+</Note>

@@ -4,18 +4,18 @@ import { useRecordsFieldVisibleGqlFields } from '@/object-record/record-field/ho
 
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
-import { dataLoadingStatusByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilyState';
+import { dataLoadingStatusByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentState';
 import { dataPagesLoadedComponentState } from '@/object-record/record-table/virtualization/states/dataPagesLoadedComponentState';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
-import { recordIdByRealIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentFamilyState';
+import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
 
 export const useResetVirtualizationBecauseDataChanged = (
@@ -25,8 +25,9 @@ export const useResetVirtualizationBecauseDataChanged = (
     objectNameSingular,
   });
 
-  const params = useFindManyRecordIndexTableParams(objectNameSingular);
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
+
+  const params = useFindManyRecordIndexTableParams(objectNameSingular);
 
   // TODO: we could optimize this by using an aggregate or using only id: true in recordGqlFields
   const recordGqlFields = useRecordsFieldVisibleGqlFields({
@@ -49,21 +50,18 @@ export const useResetVirtualizationBecauseDataChanged = (
     dataPagesLoadedComponentState,
   );
 
+  const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
+
   const lastScrollPositionCallbackState = useRecoilComponentCallbackState(
     lastScrollPositionComponentState,
   );
 
-  const recordIdByRealIndexCallbackState =
-    useRecoilComponentFamilyCallbackState(
-      recordIdByRealIndexComponentFamilyState,
-    );
+  const recordIdByRealIndexCallbackState = useRecoilComponentCallbackState(
+    recordIdByRealIndexComponentState,
+  );
 
   const dataLoadingStatusByRealIndexCallbackState =
-    useRecoilComponentCallbackState(
-      dataLoadingStatusByRealIndexComponentFamilyState,
-    );
-
-  const { triggerFetchPagesWithoutDebounce } = useTriggerFetchPages();
+    useRecoilComponentCallbackState(dataLoadingStatusByRealIndexComponentState);
 
   const resetVirtualization = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -93,27 +91,51 @@ export const useResetVirtualizationBecauseDataChanged = (
           totalNumberOfRecordsToVirtualize,
         );
 
-        for (let i = 0; i < totalNumberOfRecordsToVirtualize; i++) {
-          const indexIsInOverscanWindow =
-            i >= firstRealIndexInOverscanWindow &&
-            i <= lastRealIndexInOverscanWindow;
+        const recordIdByRealIndex = getSnapshotValue(
+          snapshot,
+          recordIdByRealIndexCallbackState,
+        );
 
-          if (!indexIsInOverscanWindow) {
-            set(
-              dataLoadingStatusByRealIndexCallbackState({
-                realIndex: i,
-              }),
-              null,
-            );
+        const dataLoadingStatusByRealIndex = getSnapshotValue(
+          snapshot,
+          dataLoadingStatusByRealIndexCallbackState,
+        );
 
-            set(
-              recordIdByRealIndexCallbackState({
-                realIndex: i,
-              }),
-              null,
+        const lengthOfOverscanWindow =
+          lastRealIndexInOverscanWindow - firstRealIndexInOverscanWindow + 1;
+
+        const newRecordIdByRealIndex = new Map<number, string>();
+        const newDataLoadingStatusByRealIndex = new Map<
+          number,
+          'loaded' | 'not-loaded'
+        >();
+
+        for (let i = 0; i < lengthOfOverscanWindow; i++) {
+          const realIndex = firstRealIndexInOverscanWindow + i;
+
+          const existingRecordId = recordIdByRealIndex.get(realIndex);
+
+          if (isDefined(existingRecordId)) {
+            newRecordIdByRealIndex.set(realIndex, existingRecordId);
+          }
+
+          const existingDataLoadingStatus =
+            dataLoadingStatusByRealIndex.get(realIndex);
+
+          if (isDefined(existingDataLoadingStatus)) {
+            newDataLoadingStatusByRealIndex.set(
+              realIndex,
+              existingDataLoadingStatus,
             );
           }
         }
+
+        set(recordIdByRealIndexCallbackState, newRecordIdByRealIndex);
+        set(
+          dataLoadingStatusByRealIndexCallbackState,
+          newDataLoadingStatusByRealIndex,
+        );
+
         set(dataPagesLoadedCallbackState, []);
         set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
       },

@@ -1,15 +1,13 @@
+import { buildDateFilterForDayGranularity } from '@/page-layout/widgets/graph/utils/buildDateFilterForDayGranularity';
 import { buildFiltersFromDateRange } from '@/page-layout/widgets/graph/utils/buildFiltersFromDateRange';
-import { calculateQuarterDateRange } from '@/page-layout/widgets/graph/utils/calculateQuarterDateRange';
-import { TZDate } from '@date-fns/tz';
+import { type Temporal } from 'temporal-polyfill';
 import {
+  type FirstDayOfTheWeek,
   ObjectRecordGroupByDateGranularity,
   type ViewFilterOperand,
 } from 'twenty-shared/types';
-import {
-  getEndUnitOfDateTime,
-  getStartUnitOfDateTime,
-} from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { getNextPeriodStart, getPeriodStart } from 'twenty-shared/utils';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type RangeChartFilter = {
   fieldName: string;
@@ -18,50 +16,51 @@ export type RangeChartFilter = {
 };
 
 export const buildDateRangeFiltersForGranularity = (
-  parsedBucketDate: Date,
+  referenceDayWithTimeZone: Temporal.ZonedDateTime,
   dateGranularity: ObjectRecordGroupByDateGranularity,
   fieldType: FieldMetadataType,
   fieldName: string,
-  timezone?: string,
+  firstDayOfTheWeek?: FirstDayOfTheWeek,
 ): RangeChartFilter[] => {
-  const dateInTimezone =
-    fieldType === FieldMetadataType.DATE_TIME && timezone
-      ? new TZDate(parsedBucketDate, timezone)
-      : parsedBucketDate;
-
-  if (dateGranularity === ObjectRecordGroupByDateGranularity.WEEK) {
-    return buildFiltersFromDateRange(
-      getStartUnitOfDateTime(dateInTimezone, 'WEEK'),
-      getEndUnitOfDateTime(dateInTimezone, 'WEEK'),
-      fieldType,
-      fieldName,
-    );
+  switch (dateGranularity) {
+    case ObjectRecordGroupByDateGranularity.WEEK: {
+      return buildFiltersFromDateRange(
+        getPeriodStart(referenceDayWithTimeZone, 'WEEK', firstDayOfTheWeek),
+        getNextPeriodStart(referenceDayWithTimeZone, 'WEEK', firstDayOfTheWeek),
+        fieldType,
+        fieldName,
+      );
+    }
+    case ObjectRecordGroupByDateGranularity.MONTH: {
+      return buildFiltersFromDateRange(
+        getPeriodStart(referenceDayWithTimeZone, 'MONTH'),
+        getNextPeriodStart(referenceDayWithTimeZone, 'MONTH'),
+        fieldType,
+        fieldName,
+      );
+    }
+    case ObjectRecordGroupByDateGranularity.QUARTER: {
+      return buildFiltersFromDateRange(
+        getPeriodStart(referenceDayWithTimeZone, 'QUARTER'),
+        getNextPeriodStart(referenceDayWithTimeZone, 'QUARTER'),
+        fieldType,
+        fieldName,
+      );
+    }
+    case ObjectRecordGroupByDateGranularity.YEAR: {
+      return buildFiltersFromDateRange(
+        getPeriodStart(referenceDayWithTimeZone, 'YEAR'),
+        getNextPeriodStart(referenceDayWithTimeZone, 'YEAR'),
+        fieldType,
+        fieldName,
+      );
+    }
+    case ObjectRecordGroupByDateGranularity.DAY:
+    default:
+      return buildDateFilterForDayGranularity(
+        referenceDayWithTimeZone,
+        fieldType,
+        fieldName,
+      );
   }
-
-  if (dateGranularity === ObjectRecordGroupByDateGranularity.MONTH) {
-    return buildFiltersFromDateRange(
-      getStartUnitOfDateTime(dateInTimezone, 'MONTH'),
-      getEndUnitOfDateTime(dateInTimezone, 'MONTH'),
-      fieldType,
-      fieldName,
-    );
-  }
-
-  if (dateGranularity === ObjectRecordGroupByDateGranularity.QUARTER) {
-    const quarterRange = calculateQuarterDateRange(dateInTimezone, timezone);
-
-    return buildFiltersFromDateRange(
-      quarterRange.rangeStartDate,
-      quarterRange.rangeEndDate,
-      fieldType,
-      fieldName,
-    );
-  }
-
-  return buildFiltersFromDateRange(
-    getStartUnitOfDateTime(dateInTimezone, 'YEAR'),
-    getEndUnitOfDateTime(dateInTimezone, 'YEAR'),
-    fieldType,
-    fieldName,
-  );
 };

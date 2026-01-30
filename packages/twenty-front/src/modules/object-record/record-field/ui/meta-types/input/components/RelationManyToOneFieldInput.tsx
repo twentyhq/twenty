@@ -1,5 +1,5 @@
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useRelationField } from '../../hooks/useRelationField';
+import { useRelationField } from '@/object-record/record-field/ui/meta-types/hooks/useRelationField';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -110,7 +110,11 @@ export const RelationManyToOneFieldInput = () => {
       EmptyIcon={IconForbid}
       emptyLabel={t`No ${fieldLabel}`}
       onCancel={onCancel}
-      onCreate={handleCreateNew}
+      onCreate={
+        isDefined(createNewRecordAndOpenRightDrawer)
+          ? handleCreateNew
+          : undefined
+      }
       onMorphItemSelected={handleMorphItemSelected}
       objectNameSingulars={[
         fieldDefinition.metadata.relationObjectMetadataNameSingular,

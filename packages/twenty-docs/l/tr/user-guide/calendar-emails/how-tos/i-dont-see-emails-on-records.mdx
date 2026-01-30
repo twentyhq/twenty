@@ -1,0 +1,53 @@
+---
+title: Kayıtlarda e-postaları görmüyorum
+description: Kayıtlarda görünmeyen e-postalar için sorun giderme.
+---
+
+## Yaygın Nedenler
+
+### 1. İlk senkronizasyon hâlâ devam ediyor
+
+E-posta senkronizasyonu zaman alır, özellikle büyük posta kutularında. Twenty, e-postaları yaklaşık olarak dakikada **400 ileti** hızında içe aktarır (Gmail API hız sınırlaması tarafından kısıtlanır).
+
+* **Takvim senkronizasyonu**: Dakikalar içinde tamamlanır
+* **E-posta senkronizasyonu**: Posta kutusu boyutuna bağlıdır (ör. 10.000 e-posta ≈ 25 dakika, 50.000 e-posta ≈ 2 saat)
+
+**Çözüm**: İlk içe aktarmanın tamamlanmasını bekleyin. Zamanlamayı posta kutunuzun boyutuna göre tahmin edebilirsiniz.
+
+### 2. Kişi Twenty'de mevcut değil
+
+E-postalar yalnızca mevcut kişi kayıtlarında görünür. Kişi henüz oluşturulmadıysa:
+
+* Posta kutusu ayarlarınızda **Kişi Otomatik Oluşturma** özelliğini etkinleştirin
+* Veya önce Kişi kaydını manuel olarak oluşturun
+
+**Çözüm**: **Ayarlar → Hesaplar** bölümüne gidin, posta kutunuzu seçin ve kişi otomatik oluşturmayı etkinleştirin.
+
+### 3. Dahili E-postalar Hariç Tutulur
+
+Gizliliği korumak için çalışma arkadaşları arasındaki e-postalar (aynı etki alanı) asla senkronize edilmez.
+
+**Çözüm**: Bu beklenen bir davranıştır. Yalnızca harici e-postalar senkronize edilir.
+
+### 4. E-posta bir grup veya dağıtım listesinden geliyor
+
+Grup e-postaları ve dağıtım listeleri senkronizasyondan hariç tutulur.
+
+**Çözüm**: Bu beklenen bir davranıştır.
+
+### 5. Senkronizasyon için klasör seçilmemiş
+
+Mesaj Klasörü özelliğini kullanıyorsanız, bazı klasörler hariç tutulmuş olabilir.
+
+**Çözüm**: **Ayarlar → Hesaplar** bölümüne gidin, posta kutunuzu seçin ve klasör senkronizasyon ayarlarını kontrol edin.
+
+### 6. Kayıtta Yanlış E-posta Adresi
+
+Kişi kaydında, e-postada kullanılan adresten farklı bir e-posta adresi olabilir.
+
+**Çözüm**: Doğru e-posta adresini Kişi kaydına ekleyin.
+
+## Hâlâ Çalışmıyor mu?
+
+1. Posta kutunuzun bağlantısını kesip yeniden bağlamayı deneyin
+2. Sorunlar devam ederse destekle iletişime geçin

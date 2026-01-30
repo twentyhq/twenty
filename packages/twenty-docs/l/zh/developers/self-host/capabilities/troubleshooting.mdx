@@ -1,0 +1,226 @@
+---
+title: 故障排除
+---
+
+## 故障排除
+
+如果您在设置开发环境、升级实例或自托管时遇到任何问题，这里有一些常见问题的解决方案。
+
+### 自托管
+
+#### 首次安装时出现“密码认证失败，用户为"postgres"”
+
+🚨 **重要：此解决方案仅适用于全新安装** 🚨
+如果您有一个现有的 Twenty 实例和生产数据，请**不要**按照这些步骤操作，因为这些步骤会永久删除您的数据库！
+
+在首次安装 Twenty 时，您可能想更改默认的数据库密码。
+您在首次安装时设置的密码会永久存储在数据库卷中。 如果以后尝试在配置中更改此密码而不移除旧卷，则会出现身份验证错误，因为数据库仍在使用原密码。
+
+⚠️ 警告：以下步骤将永久删除所有数据库数据！ ⚠️
+仅在这是一项没有重要数据的新安装时继续。
+
+为了更新 `PG_DATABASE_PASSWORD`，您需要：
+
+```sh
+# 在 .env 中更新 PG_DATABASE_PASSWORD
+docker compose down --volumes
+docker compose up -d
+```
+
+#### 发现 CR 换行符 [Windows]
+
+这是由于 Windows 的换行符以及 git 配置。 尝试运行：
+
+```
+git config --global core.autocrlf false
+```
+
+然后删除存储库并再次克隆。
+
+#### 缺少元数据架构
+
+在安装 Twenty 时，您需要为您的 postgres 数据库提供正确的模式、扩展和用户。
+如果您成功进行了此配置，数据库中应有 `default` 和 `metadata` 模式。
+如果没有，请确保您的计算机上没有运行多个 postgres 实例。
+
+#### 找不到模块 'twenty-emails' 或其相应的类型声明。
+
+在运行 `npx nx run twenty-emails:build`来初始化数据库之前，您必须构建 `twenty-emails` 包。
+
+#### 缺少 twenty-x 包
+
+确保在根目录运行 yarn，然后运行 `npx nx server:dev twenty-server`。 如果这依然不工作，尝试手动构建缺失的包。
+
+#### 保存时 Lint 不起作用
+
+这应在安装了 eslint 扩展后即可正常工作。 如果这不起作用，请尝试将此添加到您的 vscode 设置（在开发容器范围内）：
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### 运行 `npx nx start` 或 `npx nx start twenty-front` 时，出现内存不足错误
+
+在 `packages/twenty-front/.env` 中取消注释 `VITE_DISABLE_TYPESCRIPT_CHECKER=true` 以禁用后台检查，从而减少所需的 RAM 量。
+
+**如果不起作用：**
+仅运行您需要的服务，而不是 `npx nx start`。 例如，如果您在服务器上工作，仅运行 `npx nx worker twenty-server`
+
+**如果不起作用：**
+如果您尝试在 WSL 上仅运行 `npx nx run twenty-server:start` 但因以下内存错误而失败：
+
+`致命错误：无效标记-压缩接近堆限制 分配失败 - JavaScript 堆内存不足`
+
+解决方法是在终端中执行以下命令或将其添加到 .bashrc 配置中以便自动设置：
+
+`export NODE_OPTIONS="--max-old-space-size=8192"`
+
+\--max-old-space-size=8192 标志为 Node.js 堆设置了 8GB 的上限；使用会根据应用程序需求进行扩展。
+参考：https://stackoverflow.com/questions/56982005/where-do-i-set-node-options-max-old-space-size-2048
+
+**如果不起作用：**
+调查哪些进程消耗了您机器的大部分内存。 在 Twenty，我们注意到一些 VScode 扩展占用了大量的内存，因此我们暂时禁用了它们。
+
+**如果不起作用：**
+重启机器有助于清除幽灵进程。
+
+#### 运行 `npx nx start` 时日志中出现奇怪的 [0] 和 [1]
+
+预期的情况，由于 npx nx start 命令在后台运行更多命令
+
+#### 没有发送电子邮件
+
+大多数情况下，是因为 `worker` 没有在后台运行。 尝试运行
+
+```
+npx nx worker twenty-server
+```
+
+#### 无法连接我的 Microsoft 365 账户
+
+大多数情况下，这是因为管理员没有为您的账户启用 Microsoft 365 许可证。 访问 [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home)。
+
+如果您收到错误代码 `AADSTS50020`，这可能意味着您正在使用个人 Microsoft 账户。 这尚不支持。 更多信息 [请访问这里](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
+
+#### 运行 `yarn` 时控制台出现警告
+
+警告信息是为了告知您正在拉取额外且未在 `package.json` 中明确声明的依赖，只要没有发生严重错误，一切应该会按预期工作。
+
+#### 用户访问登录页面时，日志中出现关于未授权用户尝试访问工作区的错误
+
+这是预期的情况，因为用户未经授权注销时会显示身份验证错误。
+
+#### 如何检查您的 worker 是否在运行？
+
+* 访问 [webhook-test.com](https://webhook-test.com/) 并复制 **您的唯一 Webhook URL**。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook 测试" />
+</div>
+
+* 打开您的 Twenty 应用，导航到 `/settings`，并在屏幕左下角启用 **高级** 切换。
+* 创建一个新的 webhook。
+* 把 **您的唯一 Webhook URL** 粘贴在 Twenty 的 **Endpoint Url** 字段中。 将 **筛选器** 设置为 `Companies` 和 `Created`。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook 设置" />
+</div>
+
+* 转到 `/objects/companies` 并创建一个新的公司记录。
+* 返回 [webhook-test.com](https://webhook-test.com/) ，查看是否收到新的 **POST 请求**。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook 测试结果" />
+</div>
+
+* 如果收到 **POST 请求**，则说明您的 worker 正在成功运行。 否则，您需要对 worker 进行故障排除。
+
+#### 前端启动失败，并返回错误 TS5042：选项“项目”不能与命令行上的源文件混用
+
+注释掉 `packages/twenty-ui/vite-config.ts` 中的 checker 插件，如下面示例所示
+
+```
+plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths(),
+      svgr(),
+      dts(dtsConfig),
+      // checker(checkersConfig),
+      wyw({
+        include: [
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/Avatar.tsx',
+          '**/AvatarChip.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
+    ],
+```
+
+#### 无法访问管理面板
+
+在数据库容器中运行 `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` 以访问管理面板。
+
+### 一键使用 Docker Compose
+
+#### 无法登录
+
+如果您在设置后无法登录：
+
+1. 运行以下命令：
+   ```bash
+   docker exec -it twenty-server-1 yarn
+   docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
+   ```
+2. 重启 Docker 容器：
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
+
+注意 database:reset 命令将完全擦除您的数据库并从头重建。
+
+#### 反向代理后面的连接问题
+
+如果您在反向代理之后运行 Twenty 并遇到连接问题：
+
+1. **验证 SERVER_URL：**
+
+   确保 `.env` 文件中的 `SERVER_URL` 与您的外部访问 URL 匹配，如果启用 SSL，请包含 `https`。
+
+2. **检查反向代理设置：**
+
+   * 确认您的反向代理正确地将请求转发到 Twenty 服务器。
+   * 确保正确设置了像 `X-Forwarded-For` 和 `X-Forwarded-Proto` 这样的标头。
+
+3. **重启服务：**
+
+   在进行更改后，重启反向代理和 Twenty 容器。
+
+#### 上传图像时出错 - 权限被拒绝
+
+将主机上的数据文件夹所有权从 root 切换到其他用户和组可以解决此问题。
+
+## 获取帮助
+
+如果您遇到本指南未涵盖的问题：
+
+* 检查日志：
+
+  查看容器日志以获取错误消息：
+
+  ```bash
+  docker compose logs
+  ```
+
+* 社区支持：
+
+  联系 [Twenty 社区](https://github.com/twentyhq/twenty/issues) 或 [支持渠道](https://discord.gg/cx5n4Jzs57) 以获得帮助。

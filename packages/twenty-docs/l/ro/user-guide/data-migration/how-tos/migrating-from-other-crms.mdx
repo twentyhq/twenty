@@ -1,0 +1,293 @@
+---
+title: Migrarea de la alte CRM-uri
+description: Ghid pas cu pas pentru migrarea datelor din orice CRM către Twenty.
+---
+
+## Prezentare generală
+
+Acest ghid vă ghidează prin procesul de migrare a datelor din orice CRM către Twenty. Procesul implică auditarea datelor, pregătirea spațiului de lucru Twenty, exportul din sistemul curent și importul în Twenty.
+
+<Note>Vizualizările, fluxurile de lucru și permisiunile trebuie recreate manual după migrare. Planificați timp pentru această muncă de configurare.</Note>
+
+## Pasul 1: Auditați datele curente
+
+Migrarea este o oportunitate pentru un nou început. Nu transferați date inutile.
+
+**Ce să păstrați:**
+
+* Contacte și companii active
+* Oportunități și tranzacții deschise
+* Note și activități importante
+* Câmpuri personalizate pe care le utilizați efectiv
+
+**Ce să lăsați în urmă:**
+
+* Contacte învechite (fără activitate de peste 2 ani)
+* Înregistrări duplicate
+* Date de test
+* Câmpuri personalizate neutilizate
+
+## Pasul 2: Mapați modelul de date
+
+Creați un document de mapare între CRM-ul curent și Twenty:
+
+| CRM-ul dvs.               | Twenty                   |
+| ------------------------- | ------------------------ |
+| Cont / Organizație        | **Companie**             |
+| Contact / Persoană        | **Persoane**             |
+| Tranzacție / Oportunitate | **Oportunitate**         |
+| Activitate                | **Sarcină** sau **Notă** |
+| Obiect personalizat       | **Obiect personalizat**  |
+
+**Pentru fiecare câmp, documentați:**
+
+* Numele câmpului sursă
+* Câmpul țintă din Twenty
+* Orice transformări de format necesare (date, numere de telefon etc.)
+
+<Note>Păstrați acest document de mapare la îndemână în timpul importului — îl veți folosi când mapați coloanele.</Note>
+
+## Pasul 3: Configurați spațiul dvs. de lucru Twenty
+
+Înainte de a importa date, pregătiți spațiul dvs. de lucru Twenty:
+
+### Creați obiecte și câmpuri personalizate
+
+1. Accesați **Setări → Model de date**
+2. Creați obiectele personalizate de care aveți nevoie
+3. Adăugați câmpuri personalizate la obiectele standard și personalizate
+4. Configurați setările câmpurilor (unic, obligatoriu, opțiuni de selectare etc.)
+
+<Warning>
+  **Câmpurile trebuie să existe înainte de import.**
+
+  Importul CSV creează înregistrări, nu câmpuri. Creați toate câmpurile personalizate în Setări → Model de date înainte de import.
+</Warning>
+
+### Invitați-vă echipa
+
+<Warning>
+  **Invitați utilizatorii ÎNAINTE de a importa datele.**
+
+  Dacă datele dvs. includ referințe la utilizatori (Proprietar cont, Atribuit etc.), acei utilizatori trebuie să existe în Twenty înainte de import. În caz contrar, acele relații nu pot fi mapate.
+</Warning>
+
+1. Mergi la **Setări → Membri**
+2. Invitați toți membrii echipei
+3. **Așteptați ca toți să accepte** invitațiile
+4. Verificați că toți utilizatorii apar în lista de Membri
+
+## Pasul 4: Exportați din CRM-ul dvs. actual
+
+Exportați datele din CRM-ul dvs. actual:
+
+1. Căutați o funcție **Export** (de obicei la Setări, Gestionare date sau Admin)
+2. Exportați în **format CSV** când este posibil
+3. Exportați fiecare tip de obiect separat (Companii, Contacte, Tranzacții/Oportunități etc.)
+4. Includeți toate câmpurile pe care doriți să le migrați
+
+**Exportați aceste obiecte (în această ordine, pentru referință):**
+
+1. Companii / Conturi / Organizații
+2. Contacte / Persoane
+3. Tranzacții / Oportunități
+4. Note și activități
+5. Obiecte personalizate
+
+## Pasul 5: Curățați și formatați datele
+
+Deschideți fiecare CSV exportat într-o aplicație de calcul tabelar și pregătiți-l pentru Twenty.
+
+### Eliminați duplicatele
+
+1. Sortați după câmpul unic (e-mail pentru Persoane, domeniu pentru Companii)
+2. Eliminați sau îmbinați rândurile duplicate
+3. Verificați că nu există deja duplicate în Twenty
+
+### Formatați corect câmpurile
+
+| Tipul câmpului           | Format necesar                                      |
+| ------------------------ | --------------------------------------------------- |
+| **Domeniu**              | `https://domain.com`                                |
+| **Email**                | `name@domain.com` (trebuie să fie unic)             |
+| **Dată**                 | `YYYY-MM-DD`                                        |
+| **Telefon**              | Trei coloane: Număr, Codul țării, Prefix de apelare |
+| **Boolean**              | `TRUE` sau `FALSE` (majuscule)                      |
+| **Câmpuri de selectare** | Folosiți numele API, nu etichetele de afișare       |
+
+<Warning>
+  **Formatul domeniului este critic.**
+
+  Folosiți `https://domain.com` (nu `domain.com` sau `www.domain.com`). Acest lucru corespunde formatului Twenty și previne duplicatele când conectați sincronizarea e-mailului/calendarului.
+</Warning>
+
+Consultați [Cum să vă pregătiți fișierele CSV](/l/ro/user-guide/data-migration/how-tos/prepare-your-csv-files) pentru cerințe complete de formatare pentru toate tipurile de câmpuri.
+
+### Adăugați coloane de relație
+
+Pentru a lega înregistrări (de ex., Persoane la Companii), adăugați o coloană cu identificatorul unic al părintelui.
+
+**Exemplu: CSV Persoane cu legătură la Companie**
+
+```csv
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+Consultați [Cum să importați relații](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pentru instrucțiuni detaliate despre asocierea înregistrărilor.
+
+### Actualizați referințele la utilizatori
+
+Dacă datele dvs. includ atribuiri de utilizator (Proprietar, Atribuit):
+
+1. Adăugați o coloană cu **e-mailul utilizatorului** (nu doar ID-ul lor din vechiul sistem)
+2. Folosiți aceleași adrese de e-mail pe care utilizatorii le-au folosit pentru a se alătura spațiului dvs. de lucru Twenty
+
+Consultați [Cum să vă pregătiți fișierele CSV](/l/ro/user-guide/data-migration/how-tos/prepare-your-csv-files) pentru ghidul complet de formatare.
+
+## Pasul 6: Importați în Twenty
+
+<Warning>
+  **Ordinea de import contează!**
+
+  Importați întotdeauna în această ordine:
+
+  1. **Companii** mai întâi (fără dependențe)
+  2. **Persoane** în al doilea rând (legate de Companii)
+  3. **Oportunități** în al treilea rând (legate de Companii/Persoane)
+  4. **Note și sarcini** (legate de înregistrări)
+  5. **Obiecte personalizate** respectând dependențele lor
+
+  Înregistrarea părinte trebuie să existe înainte de a o putea referi.
+</Warning>
+
+### Importați fiecare obiect
+
+Pentru fiecare fișier CSV, în ordine:
+
+1. Navigați la obiect în Twenty
+2. Faceți clic pe **⋮ → Import records**
+3. Încărcați fișierul CSV
+4. Mapați coloanele la câmpuri:
+   * Mapați coloanele cu e-mailurile utilizatorilor la câmpurile de relație corespunzătoare
+   * Mapați coloanele de relație (precum `companyDomain`) la câmpurile de relație
+5. Revizuiți și remediați eventualele erori în interfață
+6. Confirmați importul
+7. Verificați câteva înregistrări înainte de a trece la următorul fișier
+
+**Ghiduri detaliate:**
+
+* [Cum să importați companii](/l/ro/user-guide/data-migration/how-tos/import-companies-via-csv)
+* [Cum să importați contacte](/l/ro/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Cum să importați relații](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+
+## Pasul 7: Migrații de volum mare (peste 50.000 de înregistrări)
+
+Pentru migrațiile de volum mare:
+
+| Volum                           | Abordare recomandată               |
+| ------------------------------- | ---------------------------------- |
+| Sub 10.000 de înregistrări      | Import CSV unic                    |
+| 10.000 - 50.000 de înregistrări | Împărțiți în mai multe fișiere CSV |
+| Peste 50.000 de înregistrări    | Folosiți API-ul                    |
+
+**Pentru importuri prin API:**
+
+* Mai rapid și mai fiabil pentru seturi mari de date
+* Suportă operațiuni în lot (până la 60 de înregistrări per apel)
+* Consultați [Cum să importați date prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api)
+
+## Pasul 8: Configurare post-migrare
+
+După importul datelor, finalizați configurarea spațiului de lucru:
+
+### Recreați vizualizări
+
+* Configurați vizualizări salvate cu filtre, sortări și configurații de coloane
+* Creați orice vizualizări kanban sau calendar de care aveți nevoie
+
+### Recrearea fluxurilor de lucru
+
+* Recreați automatizările în **Setări → Fluxuri de lucru**
+* Începeți cu cele mai critice fluxuri de lucru
+* Testați fiecare înainte de a vă baza pe el
+
+### Configurați roluri și permisiuni
+
+* Configurați rolurile în **Setări → Roluri**
+* Atribuiți utilizatorilor rolurile corespunzătoare
+
+### Conectați e-mailul și calendarul
+
+* Fiecare utilizator își conectează propriul cont în **Setări → Conturi**
+* Twenty va începe să sincronizeze e-mailurile cu înregistrările de contact
+* Consultați [E-mail și calendar](/l/ro/user-guide/calendar-emails/overview)
+
+### Instruiți-vă echipa
+
+* Parcurgeți împreună noua interfață
+* Documentați orice procese specifice echipei
+
+## Probleme comune și soluții
+
+| Problemă                               | Cauză                                | Soluție                                                                                                          |
+| -------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| **Erori de duplicate**                 | E-mail/domeniu există deja           | Eliminați duplicatele din fișier sau includeți un identificator unic pentru a actualiza înregistrările existente |
+| **Relația nu a fost găsită**           | Înregistrarea părinte nu există      | Importați mai întâi obiectele părinte (Companii înaintea Persoanelor)                                            |
+| **Câmpuri lipsă**                      | Câmpul personalizat nu există        | Creați câmpul în Setări → Model de date înainte de import                                                        |
+| **Erori la câmpuri de selectare**      | Utilizarea etichetelor de afișare    | Folosiți numele API (activați modul Avansat în Setări pentru a le găsi)                                          |
+| **Relația cu utilizatorul este goală** | Utilizatorul nu a acceptat invitația | Asigurați-vă că toți utilizatorii acceptă invitațiile înainte de a importa                                       |
+
+Consultați [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors) pentru pași detaliați de depanare.
+
+## Lista de Verificare Post-Migrare
+
+### Integritatea datelor
+
+<Check>Toate înregistrările sunt importate (comparați numărul cu cel din sistemul sursă)</Check>
+<Check>Relațiile funcționează corect (Persoane legate de Companii)</Check>
+<Check>Atribuirile de utilizator sunt mapate corect (Proprietar, Atribuit)</Check>
+<Check>Câmpuri personalizate populate</Check>
+<Check>Niciun duplicat neașteptat</Check>
+
+### Configurație
+
+<Check>Vizualizări recreate</Check>
+<Check>Fluxuri de lucru recreate și testate</Check>
+<Check>Roluri și permisiuni configurate</Check>
+<Check>Sincronizarea e-mailului/calendarului conectată</Check>
+
+### Pregătirea echipei
+
+<Check>Echipa instruită pe noul sistem</Check>
+<Check>Planul de acces la vechiul CRM stabilit (păstrat pentru referință? Când se dezactivează?)</Check>
+
+## Întrebări frecvente
+
+<AccordionGroup>
+  <Accordion title="Pot migra fluxurile de lucru automat?">
+    Momentan, nu. Fluxurile de lucru trebuie recreate manual în Twenty.
+  </Accordion>
+
+  <Accordion title="Cum rămâne cu atașamentele de fișiere?">
+    Atașamentele de fișiere nu sunt incluse în exporturile CSV. Va trebui să le reîncărcați manual, să le migrați prin API sau să contactați echipa noastră pentru asistență.
+  </Accordion>
+
+  <Accordion title="Pot păstra ambele sisteme în funcțiune în timpul migrării?">
+    Da, recomandăm să păstrați vechiul CRM în funcțiune până când ați verificat că migrarea este completă. Aveți grijă să nu creați date noi în ambele locuri.
+  </Accordion>
+
+  <Accordion title="Cât durează de obicei migrarea?">
+    Depinde de volumul și complexitatea datelor. Migrațiile mici (sub 10.000 de înregistrări) pot fi realizate în câteva ore. Migrațiile mari pot dura câteva zile, incluzând curățarea datelor și testarea.
+  </Accordion>
+</AccordionGroup>
+
+## Ai nevoie de ajutor?
+
+Pentru migrații complexe sau seturi mari de date:
+
+* **Configurare ghidată:** Rezervați un pachet de onboarding de 4 ore
+* **Serviciu complet de migrare:** Partenerii noștri pot gestiona întreaga migrare
+
+Contactați [contact@twenty.com](mailto:contact@twenty.com) sau explorați [Serviciile noastre de implementare](/l/ro/user-guide/getting-started/capabilities/implementation-services).

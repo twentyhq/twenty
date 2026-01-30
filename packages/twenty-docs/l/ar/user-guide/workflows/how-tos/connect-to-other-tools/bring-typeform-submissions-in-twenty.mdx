@@ -1,0 +1,130 @@
+---
+title: جلب عمليات إرسال Typeform إلى Twenty
+description: التعامل مع حمولة webhook الخاصة بـ Typeform لإنشاء عملاء محتملين من عمليات إرسال النماذج.
+---
+
+لإعداد webhook القياسي، راجع [إعداد مشغّل Webhook](/l/ar/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). يتناول هذا المقال المعالجة المحددة المطلوبة لبنية الحمولة المخصصة الخاصة بـ Typeform.
+
+### الخطوة 1: إنشاء سير عمل Webhook
+
+1. انتقل إلى **الإعدادات → سير العمل**
+2. انقر **+ سير عمل جديد**
+3. حدد **Webhook** كمشغّل
+4. انسخ عنوان URL الخاص بالـ webhook
+
+### الخطوة 2: تهيئة Typeform
+
+1. في Typeform، افتح نموذجك
+2. انتقل إلى **Connect → Webhooks**
+3. الصق عنوان URL للـ webhook الخاص بـ Twenty
+4. حفظ
+
+### الخطوة 3: فهم حمولة Typeform
+
+يرسل Typeform بنية JSON متداخلة. إليك مثال مبسط:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+أمور رئيسية يجب ملاحظتها:
+
+* بيانات النموذج متداخلة تحت `form_response`
+* **تُعاد الإجابات كمصفوفة**، وليست كحقول مسماة
+* تتضمن كل إجابة نوع الحقل وعنوانه للرجوع إليه
+
+### الخطوة 4: استخراج الحقول من مصفوفة الإجابات
+
+بما أن `answers` مصفوفة، يمكنك اختيار المصفوفة كاملة فقط في الخطوات اللاحقة — وليس حقول فردية. أضف إجراء **Code** لاستخراج الحقول التي تحتاجها:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+الآن في الخطوات اللاحقة، يمكنك تحديد `contact.firstName` و`contact.email` وغيرها من منتقي المتغيرات.
+
+<Tip>
+  لمزيد من التفاصيل حول التعامل مع المصفوفات في إجراءات Code، راجع [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+### الخطوة 5: إنشاء السجل
+
+أضف إجراء **Create Record**:
+
+| الحقل                 | القيمة                                           |
+| --------------------- | ------------------------------------------------ |
+| **الكائن**            | الأشخاص                                          |
+| **الاسم الأول**       | `{{code.contact.firstName}}`                     |
+| **الاسم الأخير**      | `{{code.contact.lastName}}`                      |
+| **البريد الإلكتروني** | `{{code.contact.email}}`                         |
+| **الشركة**            | ابحث أو أنشئ بناء على `{{code.contact.company}}` |
+
+### الخطوة 6: الاختبار والتفعيل
+
+1. أرسل ردا تجريبيا في Typeform
+2. تحقق من تشغيل سير العمل للتأكد من التقاط البيانات
+3. فعّل سير العمل
+
+## ذات صلة
+
+* [إعداد مشغّل Webhook](/l/ar/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

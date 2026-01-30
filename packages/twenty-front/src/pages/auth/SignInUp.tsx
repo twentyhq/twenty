@@ -20,7 +20,6 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
-import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
@@ -101,6 +100,8 @@ export const SignInUp = () => {
     setSignInUpStep(SignInUpStep.Init);
   };
 
+  const isGlobalScope = isDefaultDomain && isMultiWorkspaceEnabled;
+
   const title = useMemo(() => {
     if (isDefined(workspaceInviteHash)) {
       const workspaceName = workspaceFromInviteHash?.displayName ?? '';
@@ -119,17 +120,22 @@ export const SignInUp = () => {
       return t`Verify code from the app`;
     }
 
-    const workspaceName = !isDefined(workspacePublicData?.displayName)
-      ? DEFAULT_WORKSPACE_NAME
-      : workspacePublicData?.displayName === ''
-        ? t`Your Workspace`
-        : workspacePublicData?.displayName;
+    if (isGlobalScope) {
+      return t`Welcome to Twenty`;
+    }
 
-    return t`Welcome to ${workspaceName}`;
+    const workspaceName = workspacePublicData?.displayName;
+
+    if (!workspaceName) {
+      return t`Welcome to your workspace`;
+    }
+
+    return t`Welcome, ${workspaceName}.`;
   }, [
     workspaceInviteHash,
     signInUpStep,
     workspacePublicData?.displayName,
+    isGlobalScope,
     t,
     workspaceFromInviteHash?.displayName,
   ]);

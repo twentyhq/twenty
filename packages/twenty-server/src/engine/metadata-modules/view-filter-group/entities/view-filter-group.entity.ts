@@ -8,22 +8,19 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
+  type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'viewFilterGroup', schema: 'core' })
 @Index('IDX_VIEW_FILTER_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-@Index('IDX_VIEW_FILTER_GROUP_VIEW_ID', ['viewId'], {
-  where: '"deletedAt" IS NULL',
-})
+@Index('IDX_VIEW_FILTER_GROUP_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_FILTER_GROUP_PARENT_ID', ['parentViewFilterGroupId'])
 export class ViewFilterGroupEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -45,9 +42,6 @@ export class ViewFilterGroupEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
 
-  @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
@@ -57,10 +51,6 @@ export class ViewFilterGroupEntity extends SyncableEntity {
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date | null;
 
-  @ManyToOne(() => WorkspaceEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<WorkspaceEntity>;
-
   @ManyToOne(() => ViewEntity, (view) => view.viewFilterGroups, {
     onDelete: 'CASCADE',
   })
@@ -68,7 +58,7 @@ export class ViewFilterGroupEntity extends SyncableEntity {
   view: Relation<ViewEntity>;
 
   @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.viewFilterGroup)
-  viewFilters: Relation<ViewFilterEntity>[];
+  viewFilters: Relation<ViewFilterEntity[]>;
 
   @ManyToOne(
     () => ViewFilterGroupEntity,
@@ -84,5 +74,5 @@ export class ViewFilterGroupEntity extends SyncableEntity {
     () => ViewFilterGroupEntity,
     (viewFilterGroup) => viewFilterGroup.parentViewFilterGroup,
   )
-  childViewFilterGroups: Relation<ViewFilterGroupEntity>[];
+  childViewFilterGroups: Relation<ViewFilterGroupEntity[]>;
 }

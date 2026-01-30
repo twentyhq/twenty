@@ -62,6 +62,7 @@ type FormFieldInputProps = {
   placeholder?: string;
   error?: string;
   onError?: (error: string | undefined) => void;
+  timeZone?: string;
 };
 
 export const FormFieldInput = ({
@@ -73,6 +74,7 @@ export const FormFieldInput = ({
   placeholder,
   error,
   onError,
+  timeZone,
 }: FormFieldInputProps) => {
   return isFieldNumber(field) || field.type === FieldMetadataType.NUMERIC ? (
     <FormNumberFieldInput
@@ -167,6 +169,7 @@ export const FormFieldInput = ({
       onChange={onChange}
       VariablePicker={VariablePicker}
       readonly={readonly}
+      timeZone={timeZone}
     />
   ) : isFieldMultiSelect(field) ? (
     <FormMultiSelectFieldInput

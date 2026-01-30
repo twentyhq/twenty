@@ -1,0 +1,170 @@
+---
+title: Afișarea datelor din înregistrări asociate
+description: Afișați date din înregistrări asociate (de ex., informații despre Companie pe Oportunități) folosind fluxuri de lucru.
+---
+
+Afișați date din înregistrări asociate direct pe înregistrările dvs. — de exemplu, afișați numărul de angajați al unei Companii pe Oportunitățile sale. Această soluție de ocolire prin fluxuri de lucru este utilă până când câmpurile imbricate vor fi disponibile nativ.
+
+## Cazuri de Utilizare Comune
+
+| Sursa        | Destinație   | Câmpuri de copiat                                          |
+| ------------ | ------------ | ---------------------------------------------------------- |
+| Companie     | Oportunitate | Industrie, Dimensiunea Companiei, ARR                      |
+| Persoană     | Oportunitate | Email, Telefon, Funcție                                    |
+| Oportunitate | Companie     | Suma ultimei tranzacții, Data ultimei tranzacții câștigate |
+
+## Copiere de câmpuri de bază
+
+### Exemplu: Copiați Emailul Contactului în Oportunitate
+
+**Obiectiv**: Atunci când setați un Punct de Contact pe o oportunitate, copiați emailul persoanei în oportunitate pentru acces facil.
+
+### Condiție prealabilă
+
+Creați câmpurile destinație în **Settings → Data Model → Opportunities** înainte de a construi fluxul de lucru:
+
+* Email Contact (tip: Email)
+* Telefon Contact (tip: Phone)
+
+### Configurare
+
+1. **Declanșator**: Înregistrarea este actualizată (Oportunități, câmp Punct de Contact)
+
+2. **Filtru**: Verificați că Punctul de Contact nu este gol
+
+3. **Căutare înregistrări**: Găsiți persoana asociată
+   * Obiect: Persoane
+   * Filtru: ID egal cu `{{trigger.object.pointOfContact.id}}`
+
+4. **Actualizați Înregistrarea**:
+   * Obiect: Oportunități
+   * Înregistrare: `{{trigger.object.id}}`
+   * Email Contact: `{{searchRecords[0].email}}`
+   * Telefon Contact: `{{searchRecords[0].phone}}`
+
+## Copierea mai multor câmpuri
+
+### Exemplu: Sincronizați informațiile Companiei cu toate Oportunitățile asociate
+
+**Obiectiv**: Când se schimbă detaliile companiei, actualizați toate oportunitățile asociate.
+
+### Configurare
+
+1. **Declanșator**: Înregistrarea este actualizată (Companii)
+   * Câmpuri: Industrie, Dimensiunea Companiei, Venit Anual
+
+2. **Căutare înregistrări**: Găsiți toate oportunitățile pentru această companie
+   * Obiect: Oportunități
+   * Filtru: ID Companie egal cu `{{trigger.object.id}}`
+
+3. **Iterator**: Parcurgeți fiecare oportunitate
+
+4. **Actualizați Înregistrarea** (în interiorul iteratorului):
+   * Obiect: Oportunități
+   * Înregistrare: `{{iterator.currentItem.id}}`
+   * Industria Companiei: `{{trigger.object.industry}}`
+   * Dimensiunea Companiei: `{{trigger.object.companySize}}`
+   * ARR al Companiei: `{{trigger.object.annualRevenue}}`
+
+## Copiere la crearea înregistrării
+
+### Exemplu: Precompletați Oportunitatea cu datele Companiei
+
+**Obiectiv**: La crearea unei oportunități legate de o companie, copiați automat informațiile esențiale ale companiei.
+
+### Condiție prealabilă
+
+Creați câmpurile destinație în **Settings → Data Model → Opportunities**:
+
+* Industria Companiei (tip: Text)
+* Dimensiunea Companiei (tip: Number)
+
+### Configurare
+
+1. **Declanșator**: Înregistrarea este creată (Oportunități)
+   * Filtru: Compania nu este goală
+
+2. **Căutare înregistrări**: Obțineți detaliile companiei asociate
+   * Obiect: Companii
+   * Filtru: ID egal cu `{{trigger.object.company.id}}`
+
+3. **Actualizați Înregistrarea**:
+   * Obiect: Oportunități
+   * Înregistrare: `{{trigger.object.id}}`
+   * Industria Companiei: `{{searchRecords[0].industry}}`
+   * Dimensiunea Companiei: `{{searchRecords[0].employees}}`
+
+<Note>
+  **Limitare Tasks and Notes**: Relațiile pentru Tasks și Notes sunt codificate ca many-to-many și nu sunt încă disponibile în declanșatoare sau acțiuni de flux de lucru. Pentru a accesa aceste relații, utilizați [API-ul](/l/ro/developers/extend/capabilities/apis) în schimb.
+</Note>
+
+## Sincronizare bidirecțională
+
+### Exemplu: Mențineți contactul principal sincronizat
+
+**Obiectiv**: Când se schimbă contactul principal al unei companii, actualizați contactul. Când o persoană devine principală, actualizați compania.
+
+### Flux de lucru 1: Companie → Persoană
+
+1. **Declanșator**: Înregistrarea este actualizată (Companii, câmp Contact principal)
+2. **Actualizați Înregistrarea**: Setați "Is Primary Contact" al persoanei la true
+3. **Căutare înregistrări**: Găsiți contactul principal anterior
+4. **Actualizați Înregistrarea**: Setați "Is Primary Contact" al contactului anterior la false
+
+### Flux de lucru 2: Persoană → Companie
+
+1. **Declanșator**: Înregistrarea este actualizată (Persoane, Is Primary Contact = true)
+2. **Actualizați Înregistrarea**: Setați Contactul principal al companiei la această persoană
+
+<Note>
+  Aveți grijă cu sincronizările bidirecționale pentru a evita buclele infinite. Folosiți filtre pentru a verifica dacă valoarea chiar s-a schimbat înainte de a actualiza.
+</Note>
+
+## Utilizarea codului pentru mapare complexă
+
+### Exemplu: Transformați datele în timpul copierii
+
+**Obiectiv**: Copiați și formatați numărul de telefon de la persoană în oportunitate.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Cele mai bune practici
+
+### Evitați buclele
+
+* Nu creați fluxuri de lucru care se declanșează reciproc la nesfârșit
+* Folosiți condiții specifice pe câmpuri
+* Adăugați verificări pentru a vedea dacă valoarea chiar s-a schimbat
+
+### Gestionați datele lipsă
+
+* Verificați întotdeauna dacă înregistrarea sursă există înainte de copiere
+* Furnizați valori implicite pentru câmpurile opționale
+* Folosiți filtre pentru a omite atunci când câmpul sursă este gol
+
+### Performanță
+
+* Grupați actualizările când copiați către multe înregistrări
+* Utilizați fluxuri de lucru programate pentru operațiuni de sincronizare în masă
+* Luați în considerare utilizarea Iterator pentru actualizări multiple ale înregistrărilor
+
+## Conexe
+
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)

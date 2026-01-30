@@ -1,0 +1,78 @@
+---
+title: Fehlermeldungen, Anfragen & Pull Requests
+info: Probleme melden, Funktionen vorschlagen und Code beisteuern
+---
+
+## Fehler melden
+
+Um einen Fehler zu melden, [erstellen Sie bitte ein Issue auf GitHub](https://github.com/twentyhq/twenty/issues/new).
+
+Sie können auch um Hilfe auf [Discord](https://discord.gg/cx5n4Jzs57) bitten.
+
+## Feature-Anfragen
+
+Wenn Sie sich nicht sicher sind, ob es sich um einen Fehler handelt, und glauben, dass es eher eine Funktionsanforderung ist, sollten Sie wahrscheinlich [stattdessen eine Diskussion eröffnen](https://github.com/twentyhq/twenty/discussions/new).
+
+## Einen Pull Request einreichen
+
+Codebeiträge zu Twenty beginnen mit einem Pull Request (PR).
+
+### Bevor Sie beginnen
+
+1. Prüfen Sie [bestehende Issues](https://github.com/twentyhq/twenty/issues) auf verwandte Arbeiten
+2. Für neue Features zunächst ein Issue eröffnen, um dies zu besprechen
+3. Lesen Sie unseren [Verhaltenskodex](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+### Forken und klonen
+
+1. Das Repository auf GitHub forken
+2. Ihren Fork klonen:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. Upstream-Remote hinzufügen:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### Einen Branch erstellen
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+Verwenden Sie aussagekräftige Branch-Namen:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### Nehmen Sie Ihre Änderungen vor
+
+1. Schreiben Sie sauberen, gut dokumentierten Code
+2. Befolgen Sie den bestehenden Code-Stil
+3. Fügen Sie Tests für neue Funktionalität hinzu
+4. Aktualisieren Sie bei Bedarf die Dokumentation
+
+### Reichen Sie Ihren PR ein
+
+1. Pushen Sie Ihren Branch:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Öffnen Sie einen PR auf GitHub
+3. Füllen Sie die PR-Vorlage aus
+4. Verknüpfen Sie zugehörige Issues
+
+### PR-Checkliste
+
+* [ ] Der Code entspricht den Stilrichtlinien des Projekts
+* [ ] Die Tests bestehen lokal
+* [ ] Die Dokumentation ist aktualisiert
+* [ ] Die PR-Beschreibung erläutert die Änderungen

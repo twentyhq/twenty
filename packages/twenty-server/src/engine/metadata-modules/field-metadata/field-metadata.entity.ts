@@ -1,4 +1,5 @@
 import {
+  FieldMetadataDefaultValue,
   FieldMetadataOptions,
   FieldMetadataSettings,
   FieldMetadataType,
@@ -19,9 +20,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
-
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
 import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
@@ -31,7 +29,11 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
+// This entity is used as a reference test case for type utilities in:
+// Modifying relations or properties may require updating type test expectations for Typecheck to pass.
 @Entity('fieldMetadata')
 @Check(
   'CHK_FIELD_METADATA_MORPH_RELATION_REQUIRES_MORPH_ID',
@@ -52,6 +54,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
   'objectMetadataId',
   'workspaceId',
 ])
+@Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 export class FieldMetadataEntity<
     TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
   >
@@ -88,7 +91,7 @@ export class FieldMetadataEntity<
   label: string;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: FieldMetadataDefaultValue<TFieldMetadataType>;
+  defaultValue: JsonbProperty<FieldMetadataDefaultValue<TFieldMetadataType>>;
 
   @Column({ nullable: true, type: 'text' })
   description: string | null;
@@ -97,13 +100,13 @@ export class FieldMetadataEntity<
   icon: string | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  standardOverrides: FieldStandardOverridesDTO | null;
+  standardOverrides: JsonbProperty<FieldStandardOverridesDTO> | null;
 
   @Column('jsonb', { nullable: true })
-  options: FieldMetadataOptions<TFieldMetadataType>;
+  options: JsonbProperty<FieldMetadataOptions<TFieldMetadataType>>;
 
   @Column('jsonb', { nullable: true })
-  settings: FieldMetadataSettings<TFieldMetadataType>;
+  settings: JsonbProperty<FieldMetadataSettings<TFieldMetadataType>>;
 
   @Column({ default: false })
   isCustom: boolean;
@@ -124,10 +127,6 @@ export class FieldMetadataEntity<
   // Is this really nullable ?
   @Column({ nullable: true, default: false, type: 'boolean' })
   isUnique: boolean | null;
-
-  @Column({ nullable: false, type: 'uuid' })
-  @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
-  workspaceId: string;
 
   @Column({ default: false })
   isLabelSyncedWithName: boolean;
@@ -180,7 +179,7 @@ export class FieldMetadataEntity<
       cascade: true,
     },
   )
-  indexFieldMetadatas: Relation<IndexFieldMetadataEntity>;
+  indexFieldMetadatas: Relation<IndexFieldMetadataEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

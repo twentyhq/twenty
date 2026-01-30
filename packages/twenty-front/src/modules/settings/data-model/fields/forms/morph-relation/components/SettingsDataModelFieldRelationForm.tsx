@@ -17,6 +17,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -55,6 +56,12 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   ),
   targetFieldLabel: z.string().min(1),
   iconOnDestination: z.string().min(1),
+  settings: z
+    .object({
+      junctionTargetFieldId: z.string().optional(),
+    })
+    .catchall(z.unknown())
+    .optional(),
 });
 
 export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
@@ -62,17 +69,27 @@ export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldRelationFormProps = {
+  sourceObjectMetadataId: string;
   existingFieldMetadataId: string;
   disabled?: boolean;
 };
 
 export const SettingsDataModelFieldRelationForm = ({
   existingFieldMetadataId,
+  sourceObjectMetadataId,
   disabled = false,
 }: SettingsDataModelFieldRelationFormProps) => {
   const { t } = useLingui();
-  const { control } =
-    useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
+  const { control, watch } = useFormContext();
+
+  const currentIds = watch('morphRelationObjectMetadataIds') as
+    | string[]
+    | undefined;
+
+  const isSelfInDestinationForMorphRelation =
+    isDefined(currentIds) &&
+    currentIds.length > 1 &&
+    currentIds.includes(sourceObjectMetadataId);
 
   const { fieldMetadataItem: existingFieldMetadataItem } =
     useFieldMetadataItemById(existingFieldMetadataId);
@@ -85,11 +102,11 @@ export const SettingsDataModelFieldRelationForm = ({
   const initialRelationObjectMetadataItems =
     useRelationSettingsFormInitialTargetObjectMetadatas({
       fieldMetadataItem: existingFieldMetadataItem,
+      sourceObjectMetadataId,
     });
 
   const initialRelationType =
-    existingFieldMetadataItem?.settings?.relationType ??
-    RelationType.ONE_TO_MANY;
+    existingFieldMetadataItem?.relation?.type ?? RelationType.ONE_TO_MANY;
 
   const { label: defaultLabelOnDestination, icon: defaultIconOnDestination } =
     useRelationSettingsFormDefaultValuesTargetFieldMetadata({
@@ -98,10 +115,14 @@ export const SettingsDataModelFieldRelationForm = ({
       relationType: initialRelationType,
     });
 
-  const initialMorphRelationsObjectMetadataIds =
-    initialRelationObjectMetadataItems.map(
-      (relationObjectMetadataItem) => relationObjectMetadataItem.id,
-    );
+  const initialMorphRelationsObjectMetadataIds = useMemo(
+    () =>
+      initialRelationObjectMetadataItems.map(
+        (relationObjectMetadataItem) => relationObjectMetadataItem.id,
+      ),
+    [initialRelationObjectMetadataItems],
+  );
+
   const isMobile = useIsMobile();
 
   return (
@@ -137,6 +158,11 @@ export const SettingsDataModelFieldRelationForm = ({
               selectedObjectMetadataIds={value}
               withSearchInput={true}
               onChange={onChange}
+              error={
+                isSelfInDestinationForMorphRelation
+                  ? t`Relations cannot include the source object when multiple destinations are selected.`
+                  : undefined
+              }
             />
           )}
         />

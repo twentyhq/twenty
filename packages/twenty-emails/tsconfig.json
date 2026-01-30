@@ -1,20 +1,20 @@
 {
-  "type": "module",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "types": ["vite/client"],
-    "baseUrl": ".",
-  },
-  "files": [],
-  "include": ["vite.config.ts"],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "src/*": ["./src/*"]
     }
-  ],
-  "extends": "../../tsconfig.base.json"
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts"
+  ]
 }

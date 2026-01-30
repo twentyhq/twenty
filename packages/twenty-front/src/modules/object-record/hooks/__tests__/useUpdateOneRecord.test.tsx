@@ -7,7 +7,6 @@ import {
 } from '@/object-record/hooks/__mocks__/useUpdateOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { expect } from '@storybook/test';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const person = { id: '36abbb63-34ed-4a16-89f5-f549ac55d0f9' };
@@ -54,15 +53,13 @@ describe('useUpdateOneRecord', () => {
     jest.clearAllMocks();
   });
   it('works as expected', async () => {
-    const { result } = renderHook(
-      () => useUpdateOneRecord({ objectNameSingular: 'person' }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+    const { result } = renderHook(() => useUpdateOneRecord(), {
+      wrapper: Wrapper,
+    });
 
     await act(async () => {
       const res = await result.current.updateOneRecord({
+        objectNameSingular: 'person',
         idToUpdate,
         updateOneRecordInput: updateInput,
       });

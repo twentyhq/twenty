@@ -1,7 +1,7 @@
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useGraphWidgetAggregateQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetAggregateQuery';
 import { assertAggregateChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertAggregateChartWidget';
+import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { lazy, Suspense } from 'react';
 
 const GraphWidgetAggregateChart = lazy(() =>
@@ -12,11 +12,9 @@ const GraphWidgetAggregateChart = lazy(() =>
   })),
 );
 
-export const GraphWidgetAggregateChartRenderer = ({
-  widget,
-}: {
-  widget: PageLayoutWidget;
-}) => {
+export const GraphWidgetAggregateChartRenderer = () => {
+  const widget = useCurrentWidget();
+
   assertAggregateChartWidgetOrThrow(widget);
 
   const { value, loading } = useGraphWidgetAggregateQuery({
@@ -25,11 +23,11 @@ export const GraphWidgetAggregateChartRenderer = ({
   });
 
   if (loading) {
-    return <ChartSkeletonLoader />;
+    return <WidgetSkeletonLoader />;
   }
 
   return (
-    <Suspense fallback={<ChartSkeletonLoader />}>
+    <Suspense fallback={<WidgetSkeletonLoader />}>
       <GraphWidgetAggregateChart
         value={value ?? '-'}
         prefix={widget.configuration.prefix ?? undefined}

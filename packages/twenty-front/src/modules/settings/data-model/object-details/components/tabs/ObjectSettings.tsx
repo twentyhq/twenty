@@ -1,9 +1,8 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { isObjectMetadataSettingsReadOnly } from '@/object-record/read-only/utils/isObjectMetadataSettingsReadOnly';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -11,7 +10,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { H2Title, IconArchive, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -47,17 +45,13 @@ export const ObjectSettings = ({
   setIsDeleting,
 }: ObjectSettingsProps) => {
   const { t } = useLingui();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const readonly = isObjectMetadataSettingsReadOnly({
-    objectMetadataItem,
-    workspaceCustomApplicationId:
-      currentWorkspace?.workspaceCustomApplication?.id,
-  });
   const navigate = useNavigateSettings();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
+
+  const isReadOnly = isObjectMetadataReadOnly({ objectMetadataItem });
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -115,7 +109,7 @@ export const ObjectSettings = ({
           />
         </Section>
       </StyledFormSection>
-      {!readonly && (
+      {!isReadOnly && (
         <StyledFormSection>
           <Section>
             <H2Title

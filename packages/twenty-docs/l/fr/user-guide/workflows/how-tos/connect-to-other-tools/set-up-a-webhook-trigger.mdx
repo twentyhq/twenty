@@ -1,0 +1,171 @@
+---
+title: Configurer un déclencheur de webhook
+description: Recevez des données de services externes pour déclencher des flux de travail.
+image: /images/user-guide/workflows/workflow.png
+---
+
+Les déclencheurs de webhook permettent à des services externes de démarrer vos flux de travail en envoyant des données vers une URL unique. Utilisez-les pour connecter des formulaires, des applications tierces et des intégrations personnalisées.
+
+## Quand utiliser les webhooks
+
+| Cas d'utilisation               | Exemple                                                        |
+| ------------------------------- | -------------------------------------------------------------- |
+| **Formulaires web**             | Les soumissions de formulaires de contact créent des prospects |
+| **Applications tierces**        | Paiement Stripe → création d'un enregistrement client          |
+| **Intégrations personnalisées** | Votre application → automatisation dans Twenty                 |
+| **Outils sans code**            | Connexions Zapier, Make, n8n                                   |
+
+## Configuration pas à pas
+
+### Étape 1 : Créer le flux de travail
+
+1. Allez dans **Paramètres → Flux de travail**
+2. Cliquez sur **+ Nouveau flux de travail**
+3. Nommez-le (par exemple, "Soumission de formulaire de site web")
+
+### Étape 2 : Configurer le déclencheur de webhook
+
+1. Cliquez sur le bloc de déclenchement
+2. Sélectionnez **Webhook**
+3. Vous recevrez une URL de webhook unique, par exemple :
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. Copiez cette URL — vous en aurez besoin pour votre service externe
+
+### Étape 3 : Définir la structure de données attendue
+
+Pour les requêtes **POST**, définissez la structure du corps attendue :
+
+1. Cliquez sur **Définir le corps attendu**
+2. Saisissez un JSON d'exemple correspondant à ce que votre service enverra :
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. Cliquez sur **Enregistrer** — cela crée des variables que vous pouvez utiliser dans les étapes suivantes
+
+### Étape 4 : Ajouter des actions
+
+Ajoutez maintenant des actions qui utilisent les données du webhook :
+
+**Exemple : Créer un enregistrement de personne**
+
+1. Ajoutez l'action **Créer un enregistrement**
+2. Sélectionnez l'objet **People**
+3. Associez les champs :
+
+| Champ          | Valeur                                                        |
+| -------------- | ------------------------------------------------------------- |
+| Prénom         | `{{trigger.body.firstName}}`                                  |
+| Nom de famille | `{{trigger.body.lastName}}`                                   |
+| E-mail         | `{{trigger.body.email}}`                                      |
+| Entreprise     | Rechercher ou créer en fonction de `{{trigger.body.company}}` |
+
+### Étape 5 : Tester le webhook
+
+Avant l'activation, testez votre webhook :
+
+**Avec cURL** :
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Avec Postman ou équivalent** :
+
+1. Créez une requête POST vers votre URL de webhook
+2. Définissez l'en-tête Content-Type sur `application/json`
+3. Ajoutez votre corps JSON de test
+4. Envoyez et vérifiez les exécutions du flux de travail
+
+### Étape 6 : Activer
+
+Une fois testé, cliquez sur **Activer** pour rendre le flux de travail actif.
+
+## Gestion de différentes structures de données
+
+### Données imbriquées
+
+Si votre webhook envoie des données imbriquées :
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+Faites référence avec : `{{trigger.body.contact.email}}`
+
+### Tableaux
+
+Si les données comprennent des tableaux :
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+La manière de gérer les tableaux dépend de votre cas d'utilisation :
+
+**Nombre d'éléments inconnu → Utilisez Iterator**
+
+Si vous devez traiter chaque élément du tableau (par exemple, créer un enregistrement pour chacun), ajoutez une action **Code** pour analyser le tableau, puis utilisez **Iterator** :
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+Utilisez ensuite Iterator pour itérer sur : `{{code.items}}`
+
+**Champs connus/spécifiques → Extraire dans des champs nommés**
+
+Si le tableau contient des champs spécifiques auxquels vous souhaitez accéder individuellement (par exemple, des réponses de formulaire où la position 0 est toujours "prénom", la position 1 est toujours "nom"), ajoutez une action **Code** pour les extraire :
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+Vous pouvez maintenant sélectionner `product.name` et `product.qty` individuellement dans les étapes suivantes.
+
+<Tip>
+  Pour plus de détails sur la gestion des tableaux, voir [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+## Connexes
+
+* [Déclencheurs de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+* [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions)

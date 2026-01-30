@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
@@ -18,8 +18,8 @@ import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewFilterService {
@@ -68,16 +68,11 @@ export class ViewFilterService {
       );
 
     if (isDefined(buildAndRunResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         buildAndRunResult,
         'Multiple validation errors occurred while creating view filter',
       );
     }
-
-    this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-      workspaceId,
-      flatMapsKeys: ['flatViewFilterMaps'],
-    });
 
     const { flatViewFilterMaps: recomputedExistingFlatViewFilterMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -132,7 +127,7 @@ export class ViewFilterService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating view filter',
       );
@@ -193,7 +188,7 @@ export class ViewFilterService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting view filter',
       );
@@ -252,7 +247,7 @@ export class ViewFilterService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying view filter',
       );

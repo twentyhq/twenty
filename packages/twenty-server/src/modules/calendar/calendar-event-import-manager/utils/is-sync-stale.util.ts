@@ -1,6 +1,12 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-import-ongoing-sync-timeout.constant';
 
-export const isSyncStale = (syncStageStartedAt: string): boolean => {
+export const isSyncStale = (syncStageStartedAt?: string | null): boolean => {
+  if (!isDefined(syncStageStartedAt)) {
+    return false;
+  }
+
   const syncStageStartedTime = new Date(syncStageStartedAt).getTime();
 
   if (isNaN(syncStageStartedTime)) {

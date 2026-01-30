@@ -1,5 +1,5 @@
 import { ROTATION_THRESHOLD_WIDTH } from '@/page-layout/widgets/graph/constants/RotationThresholdWidth';
-import { computeChartCategoryTickValues } from '../computeChartCategoryTickValues';
+import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
 
 describe('computeChartCategoryTickValues', () => {
   it('should return all values when available size allows', () => {

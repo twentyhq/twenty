@@ -7,6 +7,4 @@
  *                              |___/
  */
 
-export { CalendarStartDay } from './constants';
-
 export default {};

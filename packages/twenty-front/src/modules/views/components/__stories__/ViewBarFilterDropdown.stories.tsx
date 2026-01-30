@@ -1,6 +1,5 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { type TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -16,16 +15,12 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
-import {
-  ComponentDecorator,
-  getCanvasElementForDropdownTesting,
-} from 'twenty-ui/testing';
+import { userEvent, within } from 'storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -104,7 +99,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
             componentInstanceId={instanceId}
           >
             <ObjectFilterDropdownComponentInstanceContext.Provider
-              value={{ instanceId: VIEW_BAR_FILTER_DROPDOWN_ID }}
+              value={{ instanceId: ViewBarFilterDropdownIds.MAIN }}
             >
               <RecordTableComponentInstanceContext.Provider
                 value={{
@@ -125,59 +120,58 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
     SnackBarDecorator,
     ComponentDecorator,
     IconsProviderDecorator,
-    I18nFrontDecorator,
   ],
 };
 
 export default meta;
-type Story = StoryObj<typeof TaskGroups>;
+type Story = StoryObj<typeof ViewBarFilterDropdown>;
 
 export const Default: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const filterButton = await canvas.findByText('Filter');
 
-    filterButton.click();
+    await userEvent.click(filterButton);
 
     const textFilter = await canvas.findByText('Tagline');
 
-    textFilter.click();
+    await userEvent.click(textFilter);
 
     const operatorDropdown = await canvas.findByText('Contains');
 
-    operatorDropdown.click();
+    await userEvent.click(operatorDropdown);
 
     const containsOption = await canvas.findByText("Doesn't contain");
 
-    containsOption.click();
+    await userEvent.click(containsOption);
   },
 };
 
 export const Date: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const filterButton = await canvas.findByText('Filter');
 
-    filterButton.click();
+    await userEvent.click(filterButton);
 
     const dateFilter = await canvas.findByText('Last update');
 
-    dateFilter.click();
+    await userEvent.click(dateFilter);
   },
 };
 
 export const Number: Story = {
-  play: async () => {
-    const canvas = within(getCanvasElementForDropdownTesting());
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const filterButton = await canvas.findByText('Filter');
 
-    filterButton.click();
+    await userEvent.click(filterButton);
 
     const dateFilter = await canvas.findByText('Employees');
 
-    dateFilter.click();
+    await userEvent.click(dateFilter);
   },
 };

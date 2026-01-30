@@ -8,6 +8,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { SYSTEM_OBJECTS_WITH_TIMELINE_ACTIVITIES } from 'src/modules/timeline/constants/system-objects-with-timeline-activities.constant';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -28,46 +29,44 @@ export class UpsertTimelineActivityFromInternalEvent {
 
     if (
       workspaceEventBatch.objectMetadata.isSystem &&
-      workspaceEventBatch.objectMetadata.nameSingular !== 'noteTarget' &&
-      workspaceEventBatch.objectMetadata.nameSingular !== 'taskTarget'
+      !SYSTEM_OBJECTS_WITH_TIMELINE_ACTIVITIES.includes(
+        workspaceEventBatch.objectMetadata.nameSingular,
+      )
     ) {
       return;
     }
 
     const authContext = buildSystemAuthContext(workspaceEventBatch.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceEventBatch.workspaceId,
-            WorkspaceMemberWorkspaceEntity,
-            {
-              shouldBypassPermissionChecks: true,
-            },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceEventBatch.workspaceId,
+          WorkspaceMemberWorkspaceEntity,
+          {
+            shouldBypassPermissionChecks: true,
+          },
+        );
 
-        const userIds = workspaceEventBatch.events
-          .map((event) => event.userId)
-          .filter(isDefined);
+      const userIds = workspaceEventBatch.events
+        .map((event) => event.userId)
+        .filter(isDefined);
 
-        const workspaceMembers = await workspaceMemberRepository.findBy({
-          userId: In(userIds),
-        });
+      const workspaceMembers = await workspaceMemberRepository.findBy({
+        userId: In(userIds),
+      });
 
-        for (const eventData of workspaceEventBatch.events) {
-          const workspaceMember = workspaceMembers.find(
-            (workspaceMember) => workspaceMember.userId === eventData.userId,
-          );
+      for (const eventData of workspaceEventBatch.events) {
+        const workspaceMember = workspaceMembers.find(
+          (workspaceMember) => workspaceMember.userId === eventData.userId,
+        );
 
-          if (eventData.userId && workspaceMember) {
-            eventData.workspaceMemberId = workspaceMember.id;
-          }
+        if (eventData.userId && workspaceMember) {
+          eventData.workspaceMemberId = workspaceMember.id;
         }
+      }
 
-        await this.timelineActivityService.upsertEvents(workspaceEventBatch);
-      },
-    );
+      await this.timelineActivityService.upsertEvents(workspaceEventBatch);
+    }, authContext);
   }
 }

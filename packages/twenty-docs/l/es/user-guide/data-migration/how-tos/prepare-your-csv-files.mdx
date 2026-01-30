@@ -1,0 +1,270 @@
+---
+title: Prepara tus archivos CSV},{
+description: Guía completa paso a paso para dar formato a tus datos para importarlos en Twenty.
+---
+
+## Resumen
+
+Esta guía te explica cómo preparar tu archivo CSV para una importación exitosa. Sigue estos pasos para evitar errores.
+
+## Paso 1: Comprueba los requisitos del archivo
+
+Antes de empezar, asegúrate de que tu archivo cumpla estos requisitos:
+
+| Requisito            | Detalles                      |
+| -------------------- | ----------------------------- |
+| **Formato**          | CSV, XLSX o XLS               |
+| **Límite de tamaño** | 10.000 registros por archivo  |
+| **Codificación**     | Se recomienda UTF-8           |
+| **Estructura**       | Un tipo de objeto por archivo |
+
+<Note>Para conjuntos de datos de más de 10.000 registros, divídelos en varios archivos o usa la [importación por API](/l/es/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+
+## Paso 2: Descarga el archivo de ejemplo
+
+**Este es el paso más importante.** El archivo de ejemplo te muestra los nombres de columna y el formato exactos que Twenty espera.
+
+1. Ve a la vista del objeto (Personas, Empresas, etc.)
+2. Haz clic en **⋮** → **Importar registros**
+3. Haz clic en **Descargar archivo de ejemplo**
+4. Utiliza este archivo como plantilla
+
+<Note>**Consejo práctico:** En su lugar, exporta algunos registros existentes. Esto te proporciona ejemplos reales de cómo debe darse formato a los datos, y los nombres de las columnas se asignarán automáticamente durante la importación.</Note>
+
+## Paso 3: Eliminar valores duplicados
+
+Twenty exige unicidad en determinados campos. Los duplicados provocarán errores de importación.
+
+| Objeto                     | Campos únicos                                                |
+| -------------------------- | ------------------------------------------------------------ |
+| **Personas**               | `id`, `email`                                                |
+| **Empresas**               | `id`, `domain`                                               |
+| **Objetos personalizados** | `id`, además de cualquier campo que hayas marcado como único |
+
+**Antes de importar:**
+
+1. Ordena tu hoja de cálculo por el campo único (correo electrónico o dominio)
+2. Elimina o fusiona las filas duplicadas
+3. Comprueba si hay duplicados que ya existan en Twenty
+
+<Warning>**Los registros eliminados lógicamente cuentan para la unicidad.** Los registros en Menú de comandos → Ver registros eliminados provocarán errores de duplicados. Elimínalos de forma permanente o restáuralos y actualízalos.</Warning>
+
+## Paso 4: Formatea correctamente cada tipo de campo
+
+Los distintos tipos de campos requieren formatos específicos. Aquí tienes la referencia completa:
+
+### Campos de texto
+
+* No se requiere un formato especial
+* Los espacios iniciales y finales se eliminan automáticamente
+
+### Campos de correo electrónico
+
+* Debe tener un formato de correo electrónico válido: `name@domain.com`
+* Debe ser único (sin duplicados en el archivo ni en Twenty)
+* Para correos electrónicos adicionales, utiliza este formato en la columna **Emails / Additional Emails**:
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### Campos de dominio
+
+* **Formato recomendado**: `https://domain.com`
+* Esto coincide con el formato usado por la sincronización del buzón/calendario (evita duplicados)
+* Rellena ambas columnas:
+  * **Domain / Domain Label**: `domain.com`
+  * **Domain / Domain URL**: `https://domain.com`
+* Debe ser único dentro de tu archivo y en Twenty
+
+### Campos de teléfono
+
+El campo de teléfono es un **campo anidado** que requiere varias columnas:
+
+| Columna                                 | Ejemplo      |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### Campos de dirección
+
+Dirección es un **campo anidado** con varias columnas (algunas pueden dejarse en blanco):
+
+* **Dirección / Dirección 1**: Línea 1 de la dirección
+* **Dirección / Dirección 2**: Línea 2 de la dirección (opcional)
+* **Dirección / Ciudad**: Nombre de la ciudad
+* **Dirección / Estado**: Estado o provincia
+* **Dirección / País**: Nombre del país
+* **Dirección / Código postal**: Código postal/ZIP
+
+### Campos de fecha
+
+Usa un formato coherente en todo tu archivo:
+
+* `YYYY-MM-DD` (recomendado): `2024-03-15`
+* `MM/DD/YYYY`: `03/15/2024`
+* `DD/MM/YYYY`: `15/03/2024`
+* ISO 8601: `2024-03-15T10:30:00Z`
+
+### Campos numéricos
+
+* Solo números (sin texto)
+* Usa punto para decimales: `1234.56`
+* Sin separadores de miles (no `1,234.56`)
+
+### Campos de moneda
+
+Moneda es un **campo anidado** que requiere dos columnas que **ambas deben completarse**:
+
+| Columna               | Ejemplo   |
+| --------------------- | --------- |
+| **Importe / Importe** | `1234.56` |
+| **Importe / Moneda**  | `USD`     |
+
+### Campos booleanos
+
+Usa mayúsculas: `TRUE` o `FALSE`
+
+<Warning>Las minúsculas `true` o `false` no funcionarán.</Warning>
+
+### Campos de Selección
+
+Usa el **nombre de la API** de la opción, no la etiqueta visible.
+
+**Cómo encontrar los nombres de la API:**
+
+1. Ve a **Configuración → Modelo de datos**
+2. Selecciona el objeto y el campo
+3. Activa el **modo Avanzado** (conmutador en la parte inferior derecha)
+4. Copia el nombre de la API (p. ej., `OPTION_1`, no "Option 1")
+
+<Note>Las nuevas opciones de selección no se crean automáticamente. Agrégalas en **Configuración → Modelo de datos** antes de importar.</Note>
+
+### Campos de selección múltiple
+
+Usa nombres de API en formato de arreglo:
+
+```
+["VALUE1","VALUE2"]
+```
+
+### Campos de arreglo
+
+Usa el formato de arreglo JSON:
+
+```
+["value1","value2"]
+```
+
+### Campos de calificación
+
+Usa el formato: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` o `RATING_5`
+
+### Campos de enlaces/URL
+
+Completa ambas columnas:
+
+* **Enlaces / Etiqueta del enlace**: `Twenty`
+* **Enlaces / URL del enlace**: `https://twenty.com`
+
+Para enlaces secundarios, usa la columna **Enlaces / Enlaces secundarios**:
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### Campos JSON
+
+Usa un formato JSON válido:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### Campos de ID
+
+* **Opcional**: Twenty genera IDs automáticamente si no se proporcionan
+* **Formato**: UUID (p. ej., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Caso de uso**: Incluye el ID para actualizar registros existentes en lugar de crear nuevos
+
+## Paso 5: Agrega columnas de relación (si se vinculan registros)
+
+Para vincular registros con otros objetos (p. ej., Personas con Empresas), agrega una columna con el identificador único del registro relacionado.
+
+**Ejemplo**: Vincular Personas con Empresas
+
+Agrega una columna a tu CSV de Personas:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Reglas importantes para las relaciones:**
+
+* El registro padre debe existir previamente en Twenty
+* Usa el formato de **URL de dominio** (`https://domain.com`), no la etiqueta
+* Mapea solo UN identificador único (no incluyas `companyId` Y `companyDomain`)
+* Para los miembros del espacio de trabajo, usa su **email** (no el nombre)
+
+<Warning>
+  **¡El orden de importación importa!**
+
+  Importa el lado "uno" antes del lado "muchos":
+
+  1. **Empresas** primero
+  2. **Personas** después (con referencia a la empresa)
+  3. **Oportunidades** en tercer lugar
+
+  El registro padre debe existir antes de poder referenciarlo.
+</Warning>
+
+Consulta [Cómo importar relaciones](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) para obtener instrucciones detalladas.
+
+## Paso 6: Asegúrate de que los campos existan en Twenty
+
+La importación crea **registros**, no **campos**. Todos los campos que quieras importar deben existir ya en tu modelo de datos.
+
+**Antes de importar:**
+
+1. Ve a **Configuración → Modelo de datos**
+2. Selecciona tu objeto
+3. Crea los campos personalizados que necesites
+4. Anota los nombres exactos de los campos (deben coincidir con los encabezados de tus columnas)
+
+## Paso 7: Lista de comprobación final
+
+Antes de subir tu archivo, verifica:
+
+<Check>El archivo está en formato CSV, XLSX o XLS</Check>
+<Check>El archivo tiene menos de 10,000 registros</Check>
+<Check>La codificación es UTF-8</Check>
+<Check>No hay correos electrónicos duplicados (para Personas) ni dominios duplicados (para Empresas)</Check>
+<Check>Las fechas usan un formato coherente en todo el archivo</Check>
+<Check>Los dominios usan el formato `https://domain.com`</Check>
+<Check>Los campos booleanos usan `TRUE` o `FALSE` (en mayúsculas)</Check>
+<Check>Los campos de selección usan nombres de API, no etiquetas visibles</Check>
+<Check>Todos los campos personalizados existen en Configuración → Modelo de datos</Check>
+<Check>Los registros padre importados antes que los registros hijo</Check>
+<Check>Las columnas de relación hacen referencia a registros existentes</Check>
+
+## Errores comunes a evitar
+
+| Error                                             | Solución                                        |
+| ------------------------------------------------- | ----------------------------------------------- |
+| Usar `true` en lugar de `TRUE`                    | Los valores booleanos deben estar en mayúsculas |
+| Usar etiquetas visibles para campos de selección  | Busca y usa los nombres de API en Configuración |
+| Importar Personas antes que Empresas              | Importa siempre primero los objetos padre       |
+| Falta el código de moneda en los campos de moneda | Completa las columnas de Importe y Moneda       |
+| Formato de dominio incorrecto                     | Usa `https://domain.com` de forma coherente     |
+| Mapear varios campos únicos para las relaciones   | Mapea solo UNO (dominio O ID, no ambos)         |
+
+## Próximos Pasos
+
+¡Tu archivo está listo! Ahora:
+
+* [Importar empresas](/l/es/user-guide/data-migration/how-tos/import-companies-via-csv) (importa estas primero)
+* [Importar contactos](/l/es/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Corregir errores de importación](/l/es/user-guide/data-migration/how-tos/fix-import-errors)

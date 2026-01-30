@@ -1,0 +1,147 @@
+---
+title: APIs
+description: Abfragen und ändern Sie Ihre CRM-Daten programmatisch mit REST oder GraphQL.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty wurde so entwickelt, dass es entwicklerfreundlich ist und leistungsstarke APIs bietet, die sich an Ihr individuelles Datenmodell anpassen. Wir bieten vier verschiedene API-Typen, um unterschiedlichen Integrationsanforderungen gerecht zu werden.
+
+## Entwickler-Erst-Ansatz
+
+Twenty generiert APIs speziell für Ihr Datenmodell:
+
+* **Keine langen IDs erforderlich**: Verwenden Sie Ihre Objekt- und Feldnamen direkt in Endpunkten
+* **Standard- und benutzerdefinierte Objekte werden gleich behandelt**: Ihre benutzerdefinierten Objekte erhalten dieselbe API-Behandlung wie integrierte
+* **Dedizierte Endpunkte**: Jedes Objekt und Feld erhält seinen eigenen API-Endpunkt
+* **Benutzerdefinierte Dokumentation**: Speziell für das Datenmodell Ihres Arbeitsplatzes generiert
+
+<Note>
+  Ihre personalisierte API-Dokumentation ist nach dem Erstellen eines API-Schlüssels unter **Einstellungen → API & Webhooks** verfügbar. Da Twenty APIs erzeugt, die Ihrem benutzerdefinierten Datenmodell entsprechen, ist die Dokumentation für Ihren Arbeitsbereich einzigartig.
+</Note>
+
+## Die beiden API-Typen
+
+### Core API
+
+Zugriff auf `/rest/` oder `/graphql/`
+
+Arbeiten Sie mit Ihren tatsächlichen **Datensätzen** (den Daten):
+
+* Personen, Unternehmen, Opportunities usw. erstellen, lesen, aktualisieren und löschen
+* Daten abfragen und filtern
+* Verwalten von Datensatzbeziehungen
+
+### Metadata API
+
+Zugriff auf `/rest/metadata/` oder `/metadata/`
+
+Verwalten Sie Ihren **Arbeitsbereich und Ihr Datenmodell**:
+
+* Objekte und Felder erstellen, ändern oder löschen
+* Konfigurieren der Arbeitsbereichseinstellungen
+* Beziehungen zwischen Objekten definieren
+
+## REST vs GraphQL
+
+Sowohl Core- als auch Metadata-APIs sind in REST- und GraphQL-Formaten verfügbar:
+
+| Format      | Verfügbare Vorgänge                                                 |
+| ----------- | ------------------------------------------------------------------- |
+| **REST**    | CRUD, Batch-Vorgänge, Upserts                                       |
+| **GraphQL** | Dasselbe plus **Batch-Upserts**, Beziehungsabfragen in einem Aufruf |
+
+Wählen Sie je nach Bedarf — beide Formate greifen auf dieselben Daten zu.
+
+## API-Endpunkte
+
+| Umgebung          | Basis-URL                 |
+| ----------------- | ------------------------- |
+| **Cloud**         | `https://api.twenty.com/` |
+| **Selbsthosting** | `https://{your-domain}/`  |
+
+## Authentifizierung
+
+Jede API-Anfrage erfordert einen API-Schlüssel im Header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+### API-Schlüssel erstellen
+
+1. Gehen Sie zu **Einstellungen → APIs & Webhooks**
+2. Klicken Sie auf **+ Schlüssel erstellen**
+3. Konfigurieren:
+   * **Name**: Beschreibender Name für den Schlüssel
+   * **Ablaufdatum**: Wann der Schlüssel abläuft
+4. Klicken Sie auf **Speichern**
+5. **Sofort kopieren** — der Schlüssel wird nur einmal angezeigt
+
+<VimeoEmbed videoId="928786722" title="API-Schlüssel erstellen" />
+
+<Warning>
+  Ihr API-Schlüssel gewährt Zugriff auf sensible Daten. Teilen Sie ihn nicht mit nicht vertrauenswürdigen Diensten. Wenn er kompromittiert wurde, deaktivieren Sie ihn umgehend und erstellen Sie einen neuen.
+</Warning>
+
+### Einem API-Schlüssel eine Rolle zuweisen
+
+Für mehr Sicherheit weisen Sie eine spezifische Rolle zu, um den Zugriff zu beschränken:
+
+1. Gehen Sie zu **Einstellungen → Rollen**
+2. Klicken Sie auf die Rolle, die Sie zuweisen möchten
+3. Öffnen Sie den Tab **Zuweisungen**
+4. Unter **API-Schlüssel** auf **+ API-Schlüssel zuweisen** klicken
+5. Wählen Sie den API-Schlüssel aus
+
+Der Schlüssel übernimmt die Berechtigungen dieser Rolle. Siehe [Berechtigungen](/l/de/user-guide/permissions-access/capabilities/permissions) für Details.
+
+### API-Schlüssel verwalten
+
+**Neu generieren**: Einstellungen → APIs & Webhooks → Schlüssel anklicken → **Neu generieren**
+
+**Löschen**: Einstellungen → APIs & Webhooks → Schlüssel anklicken → **Löschen**
+
+## API-Playground
+
+Testen Sie Ihre APIs direkt im Browser mit unserem integrierten Playground — verfügbar für **REST** und **GraphQL**.
+
+### Auf den Playground zugreifen
+
+1. Gehen Sie zu **Einstellungen → APIs & Webhooks**
+2. API-Schlüssel erstellen (erforderlich)
+3. Klicken Sie auf **REST API** oder **GraphQL API**, um den Playground zu öffnen
+
+### Was Sie erhalten
+
+* **Interaktive Dokumentation**: Für Ihr spezifisches Datenmodell generiert
+* **Live-Tests**: Führen Sie echte API-Aufrufe gegen Ihren Arbeitsbereich aus
+* **Schema-Explorer**: Verfügbare Objekte, Felder und Beziehungen durchsuchen
+* **Request-Builder**: Abfragen mit Autovervollständigung erstellen
+
+Der Playground spiegelt Ihre benutzerdefinierten Objekte und Felder wider, sodass die Dokumentation für Ihren Arbeitsbereich stets korrekt ist.
+
+## Batch-Vorgänge
+
+Sowohl REST als auch GraphQL unterstützen Batch-Vorgänge:
+
+* **Batch-Größe**: Bis zu 60 Datensätze pro Anfrage
+* **Vorgänge**: Mehrere Datensätze erstellen, aktualisieren, löschen
+
+**GraphQL-Exklusivfunktionen:**
+
+* **Batch-Upsert**: Erstellen oder Aktualisieren in einem Aufruf
+* Verwenden Sie Pluralobjektnamen (z. B. `CreateCompanies` statt `CreateCompany`)
+
+## Rate Limits
+
+API-Anfragen werden gedrosselt, um die Stabilität der Plattform zu gewährleisten:
+
+| Limit           | Wert                     |
+| --------------- | ------------------------ |
+| **Anfragen**    | 100 Aufrufe pro Minute   |
+| **Batch-Größe** | 60 Datensätze pro Aufruf |
+
+<Tip>
+  Verwenden Sie Batch-Vorgänge, um den Durchsatz zu maximieren — verarbeiten Sie bis zu 60 Datensätze in einem einzelnen API-Aufruf, statt einzelne Anfragen zu senden.
+</Tip>

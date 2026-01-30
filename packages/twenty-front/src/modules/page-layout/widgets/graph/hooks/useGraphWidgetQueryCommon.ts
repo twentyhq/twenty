@@ -1,4 +1,5 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -35,9 +36,13 @@ export const useGraphWidgetQueryCommon = ({
     throw new Error('Aggregate field not found');
   }
 
+  const { userTimezone } = useUserTimezone();
+
   const gqlOperationFilter = computeRecordGqlOperationFilter({
     fields: objectMetadataItem.fields,
-    filterValueDependencies: {},
+    filterValueDependencies: {
+      timeZone: userTimezone,
+    },
     recordFilters: configuration.filter?.recordFilters ?? [],
     recordFilterGroups: configuration.filter?.recordFilterGroups ?? [],
   });

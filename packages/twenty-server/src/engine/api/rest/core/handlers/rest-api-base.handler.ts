@@ -7,17 +7,19 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest-to-common-args-handlers/selected-fields-handler';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { CreatedByFromAuthContextService } from 'src/engine/core-modules/actor/services/created-by-from-auth-context.service';
+import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -35,8 +37,6 @@ import {
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -57,7 +57,7 @@ export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
   @Inject()
-  protected readonly createdByFromAuthContextService: CreatedByFromAuthContextService;
+  protected readonly actorFromAuthContextService: ActorFromAuthContextService;
   @Inject()
   protected readonly workspaceCacheStorageService: WorkspaceCacheStorageService;
   @Inject()
@@ -81,28 +81,15 @@ export abstract class RestApiBaseHandler {
     FormatResult | { data: FormatResult[] } | CommonGroupByOutputItem[]
   >;
 
-  public getAuthContextFromRequest(
-    request: AuthenticatedRequest,
-  ): WorkspaceAuthContext {
-    return request;
-  }
-
   private getObjectsPermissions = async (authContext: WorkspaceAuthContext) => {
     let roleId: string;
 
-    if (isDefined(authContext.apiKey)) {
+    if (isApiKeyAuthContext(authContext)) {
       roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         authContext.workspace.id,
       );
-    } else {
-      if (!isDefined(authContext.userWorkspaceId)) {
-        throw new PermissionsException(
-          'No user workspace ID found in authentication context',
-          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
-        );
-      }
-
+    } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,
@@ -117,6 +104,11 @@ export abstract class RestApiBaseHandler {
       }
 
       roleId = userWorkspaceRoleId;
+    } else {
+      throw new PermissionsException(
+        'Authentication context is invalid',
+        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      );
     }
 
     const { rolesPermissions } =
@@ -163,7 +155,7 @@ export abstract class RestApiBaseHandler {
       objectIdByNameSingular,
     } = await this.getObjectMetadata(request, parsedObject);
 
-    const authContext = this.getAuthContextFromRequest(request);
+    const authContext = getWorkspaceAuthContext();
 
     return {
       authContext,
@@ -251,22 +243,6 @@ export abstract class RestApiBaseHandler {
 
       throw new BadRequestException(
         `object '${parsedObject}' not found. ${hint}`,
-      );
-    }
-
-    const workspaceFeatureFlagsMap =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspace.id);
-
-    // Check if this entity is workspace-gated and should be blocked from workspace API
-    if (
-      shouldExcludeFromWorkspaceApi(
-        flatObjectMetadataItem,
-        standardObjectMetadataDefinitions,
-        workspaceFeatureFlagsMap,
-      )
-    ) {
-      throw new BadRequestException(
-        `object '${parsedObject}' not found. ${parsedObject} is not available via REST API.`,
       );
     }
 

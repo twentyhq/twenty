@@ -17,16 +17,19 @@ import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT } from '@/page-layout/constants/Defaul
 import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowRunPageLayoutId';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowVersionPageLayout';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowVersionPageLayoutId';
+import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useQuery } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -64,7 +67,9 @@ export const PageLayoutInitializationQueryEffect = ({
   pageLayoutId,
   onInitialized,
 }: PageLayoutInitializationQueryEffectProps) => {
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useRecoilComponentState(
+    pageLayoutIsInitializedComponentState,
+  );
 
   const isDefaultLayout =
     pageLayoutId === DEFAULT_RECORD_PAGE_LAYOUT_ID ||
@@ -84,11 +89,13 @@ export const PageLayoutInitializationQueryEffect = ({
     skip: isDefaultLayout,
   });
 
-  const pageLayout: PageLayout | undefined = isDefaultLayout
+  const basePageLayout: PageLayout | undefined = isDefaultLayout
     ? getDefaultLayoutById(pageLayoutId)
     : data?.getPageLayout
       ? transformPageLayout(data.getPageLayout)
       : undefined;
+
+  const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
 
   const pageLayoutPersistedComponentCallbackState =
     useRecoilComponentCallbackState(pageLayoutPersistedComponentState);
@@ -135,7 +142,13 @@ export const PageLayoutInitializationQueryEffect = ({
       onInitialized?.(pageLayout);
       setIsInitialized(true);
     }
-  }, [initializePageLayout, isInitialized, pageLayout, onInitialized]);
+  }, [
+    initializePageLayout,
+    isInitialized,
+    pageLayout,
+    onInitialized,
+    setIsInitialized,
+  ]);
 
   return null;
 };

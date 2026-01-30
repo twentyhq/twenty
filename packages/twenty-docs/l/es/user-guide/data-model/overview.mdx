@@ -1,0 +1,180 @@
+---
+title: Modelo de datos
+description: Aprende qué es un modelo de datos y cómo diseñar uno que se adapte a tu empresa.
+image: /images/user-guide/fields/custom_data_model.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Modelo de datos" />
+</Frame>
+
+## ¿Qué es un modelo de datos?
+
+Un modelo de datos es la estructura que define cómo se organiza la información en tu CRM. Piénsalo como el **plano** de tus datos de clientes — lo diseñas una vez y luego lo completas con tus datos reales.
+
+## Conceptos clave
+
+### Objetos
+
+Los **objetos** son las categorías principales de datos en tu CRM. Cada objeto representa un tipo de elemento del que quieres hacer seguimiento.
+
+Twenty incluye objetos estándar:
+
+* **Personas** — individuos (contactos, clientes potenciales, socios)
+* **Empresas** — organizaciones
+* **Oportunidades** — negocios o ventas
+* **Notas** — notas adjuntas en los registros
+* **Tareas** — tareas pendientes vinculadas a los registros
+
+También puedes crear **objetos personalizados** para cualquier aspecto específico de tu empresa (p. ej., Proyectos, Suscripciones, Eventos).
+
+### Campos
+
+Los **campos** son las propiedades o atributos que describen cada objeto. Almacenan la información real.
+
+Por ejemplo, el objeto **Personas** tiene campos como:
+
+* Nombre
+* Correo electrónico
+* Teléfono
+* Título del puesto
+* Empresa (una relación con el objeto Empresas)
+
+Los campos tienen diferentes **tipos**: texto, número, fecha, selección, selección múltiple, relación y más. Puedes añadir campos personalizados a cualquier objeto.
+
+### Registros
+
+Los **registros** son las entradas individuales dentro de un objeto — los datos reales que creas y gestionas.
+
+Por ejemplo:
+
+* "John Smith" es un **registro** en el objeto Personas
+* "Acme Corp" es un **registro** en el objeto Empresas
+
+**Una analogía:**
+
+| Concepto de modelo de datos | Analogía del mundo real                            |
+| --------------------------- | -------------------------------------------------- |
+| **Objetos**                 | Secciones en un libro (las categorías)             |
+| **Campos**                  | Columnas en una hoja de cálculo (las propiedades)  |
+| **Registros**               | Filas en una hoja de cálculo (las entradas reales) |
+
+Diseñas el modelo de datos (objetos + campos) una vez y luego creas muchos registros dentro de esa estructura.
+
+## ¿Por qué personalizar tu modelo de datos?
+
+Cada empresa funciona de manera diferente. Personalizar tu modelo de datos significa que puedes adaptar Twenty a **tus** procesos en lugar de forzar los tuyos en un sistema rígido.
+
+Twenty ofrece total flexibilidad:
+
+* Crea los objetos personalizados que necesites
+* Añade campos personalizados ilimitados
+* El precio no cambia en función de la personalización
+
+## Consejos para diseñar tu modelo de datos
+
+### 1. Empieza con tus objetos principales
+
+Identifica los conceptos principales con los que trabajas. Twenty ya ofrece:
+
+* **Personas** — tus contactos
+* **Empresas** — tus cuentas
+* **Oportunidades** — tus negocios
+
+Piensa qué más podrías necesitar:
+
+* Stripe necesitaría un objeto `Subscriptions`
+* Airbnb necesitaría un objeto `Trips`
+* Una aceleradora necesitaría un objeto `Batches`
+
+### 2. Usa campos para variaciones, no nuevos objetos
+
+Si algo es solo una característica de un objeto existente, conviértelo en un **campo**.
+
+**Usa campos para:**
+
+* Categorías y etiquetas (p. ej., `Industry` para Empresas)
+* Valores de estado (p. ej., `Stage` para Oportunidades)
+* Atributos y propiedades
+
+### 3. Crea un objeto cuando sea independiente
+
+Si el concepto tiene su propio ciclo de vida, propiedades o relaciones, merece un objeto.
+
+**Crea un objeto para:**
+
+* **Proyectos** — tienen plazos, propietarios y tareas
+* **Suscripciones** — conectan empresas, productos y facturas
+* **Eventos** — involucran a asistentes y acciones de seguimiento
+
+Estos van más allá de un solo campo porque tienen su propio conjunto de datos y relaciones.
+
+### 4. Crea un objeto cuando la cantidad de registros sea indefinida
+
+Si algo puede vincularse varias veces y no sabes cuántas, usa un objeto.
+
+**Mal enfoque:**
+Crear campos como `Product 1`, `Product 2`, `Product 3`...
+
+**Buen enfoque:**
+Crea un objeto `Products` y relaciónalo con los registros. De esta manera, puedes admitir uno, dos o cien productos sin cambiar tu modelo.
+
+### 5. Manténlo simple al principio
+
+Empieza con los campos. Pasa a nuevos objetos solo cuando notes las limitaciones:
+
+* Demasiados campos en un solo objeto
+* Registros repetidos que deberían estar separados
+* Relaciones que no encajan bien
+
+## Nota especial sobre Personas, Empresas y Oportunidades
+
+<Warning>
+  **La sincronización de correo y calendario solo funciona con Personas, Empresas y Oportunidades.**
+
+  Estos son los únicos objetos en los que puedes acceder a correos y reuniones sincronizados desde tu buzón/calendario. Recomendamos usarlos tanto como sea posible.
+</Warning>
+
+**Mejores prácticas:**
+
+* Si necesitas categorías de Personas, usa campos (no nuevos objetos)
+* Ejemplo: Usa un campo `Person Type` con valores "Prospecto" y "Socio" en lugar de crear objetos separados
+* Crea diferentes **vistas** para filtrar: una que muestre socios, otra que muestre prospectos
+
+**Está bien tener campos que no se apliquen a todos los registros.** Por ejemplo, un campo `Referral Link` en Personas que solo aplica cuando `Person Type = Partner`. Oculta este campo en las vistas donde no sea relevante.
+
+## Preguntas para guiar tu elección
+
+Pregúntate:
+
+<Check>¿Es esto solo una propiedad de algo que ya tengo o necesita sus propias propiedades?</Check>
+<Check>¿Alguna vez necesitaré hacer seguimiento de varios de estos por registro, sin saber cuántos?</Check>
+<Check>¿Este concepto se conecta a varios objetos diferentes, no solo a uno?</Check>
+<Check>¿Tendrá su propio ciclo de vida (etapas, fechas de inicio/fin)?</Check>
+
+Si la respuesta es "sí" a una o más, probablemente es hora de un nuevo objeto.
+
+## Acceder a tu modelo de datos
+
+1. Ve a **Configuración** en la barra lateral izquierda
+2. Haz clic en **Modelo de datos**
+3. Visualiza todos tus objetos (estándar y personalizados)
+4. Haz clic en cualquier objeto para ver y editar sus campos
+
+<Note>
+  **¿No ves Modelo de datos en Configuración?**
+
+  El acceso al modelo de datos suele estar restringido a los administradores. Contacta con el administrador de tu espacio de trabajo si necesitas acceso.
+</Note>
+
+## Próximos Pasos
+
+Una vez que hayas planificado tu modelo de datos:
+
+* [Cómo crear objetos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-objects)
+* [Cómo crear campos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-fields)
+* [Cómo crear campos de relación](/l/es/user-guide/data-model/how-tos/create-relation-fields)
+
+## ¿Necesitas Ayuda?
+
+Nuestro equipo puede ayudarte a diseñar y crear el modelo de datos que necesitas. Descubre nuestros [Servicios de implementación](/l/es/user-guide/getting-started/capabilities/implementation-services).

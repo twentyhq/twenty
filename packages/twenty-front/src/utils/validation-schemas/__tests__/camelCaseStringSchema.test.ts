@@ -1,6 +1,6 @@
 import { type ZodSafeParseError } from 'zod';
 
-import { camelCaseStringSchema } from '../camelCaseStringSchema';
+import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 describe('camelCaseStringSchema', () => {
   it('validates a camel case string', () => {

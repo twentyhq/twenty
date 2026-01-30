@@ -1,0 +1,41 @@
+---
+title: 消息队列
+---
+
+队列支持异步操作的执行。 它们可用于执行后台任务，例如在注册时发送欢迎邮件。
+每个用例都将拥有一个继承自 `MessageQueueServiceBase` 的队列类。
+
+当前，我们仅支持使用 `bull-mq`[bull-mq](https://bullmq.io/) 作为队列驱动。
+
+## 创建和使用新队列的步骤
+
+1. 在枚举 `MESSAGE_QUEUES` 下为您的新队列添加队列名称。
+2. 提供以队列名称为依赖令牌的队列工厂实现。
+3. 在所需模块/服务中以队列名称作为依赖令牌注入您创建的队列。
+4. 添加与生产者相同令牌注入的工作类。
+
+### 示例用法
+
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+```

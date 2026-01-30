@@ -2,12 +2,14 @@ import { forceRegisteredActionsByKeyState } from '@/action-menu/actions/states/f
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { usePrefetchedNavigationMenuItemsData } from '@/navigation-menu-item/hooks/usePrefetchedNavigationMenuItemsData';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
@@ -15,8 +17,9 @@ import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/r
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useShouldActionBeRegisteredParams = ({
@@ -25,9 +28,10 @@ export const useShouldActionBeRegisteredParams = ({
   objectMetadataItem?: ObjectMetadataItem;
 }): ShouldBeRegisteredFunctionParams => {
   const { sortedFavorites: favorites } = useFavorites();
-  const isWorkflowRunStoppageEnabled =
-    useIsFeatureEnabled(FeatureFlagKey.IS_WORKFLOW_RUN_STOPPAGE_ENABLED) ??
-    false;
+  const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
+  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  );
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
@@ -38,11 +42,31 @@ export const useShouldActionBeRegisteredParams = ({
       ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
       : undefined;
 
-  const foundFavorite = favorites?.find(
-    (favorite) => favorite.recordId === recordId,
-  );
+  const isFavorite = useMemo(() => {
+    if (!isDefined(recordId)) {
+      return false;
+    }
 
-  const isFavorite = !!foundFavorite;
+    if (isNavigationMenuItemEnabled && isDefined(objectMetadataItem)) {
+      const foundNavigationMenuItem = navigationMenuItems?.find(
+        (item) =>
+          item.targetRecordId === recordId &&
+          item.targetObjectMetadataId === objectMetadataItem.id,
+      );
+      return !!foundNavigationMenuItem;
+    }
+
+    const foundFavorite = favorites?.find(
+      (favorite) => favorite.recordId === recordId,
+    );
+    return !!foundFavorite;
+  }, [
+    recordId,
+    isNavigationMenuItemEnabled,
+    objectMetadataItem,
+    navigationMenuItems,
+    favorites,
+  ]);
 
   const selectedRecord =
     useRecoilValue(recordStoreFamilyState(recordId ?? '')) || undefined;
@@ -78,6 +102,8 @@ export const useShouldActionBeRegisteredParams = ({
     contextStoreTargetedRecordsRule,
   );
 
+  const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
+
   const getObjectReadPermission = useRecoilCallback(
     ({ snapshot }) =>
       (objectMetadataNameSingular: string) => {
@@ -110,6 +136,16 @@ export const useShouldActionBeRegisteredParams = ({
     forceRegisteredActionsByKeyState,
   );
 
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
+    const featureFlag = currentWorkspace?.featureFlags?.find(
+      (flag) => flag.key === featureFlagKey,
+    );
+
+    return featureFlag?.value === true;
+  };
+
   return {
     objectMetadataItem,
     isFavorite,
@@ -118,12 +154,13 @@ export const useShouldActionBeRegisteredParams = ({
     isInRightDrawer,
     hasAnySoftDeleteFilterOnView,
     isShowPage,
+    isSelectAll,
     selectedRecord,
     numberOfSelectedRecords,
     viewType: viewType ?? undefined,
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
     forceRegisteredActionsByKey,
-    isWorkflowRunStoppageEnabled,
+    isFeatureFlagEnabled,
   };
 };

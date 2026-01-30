@@ -1,6 +1,6 @@
 import { ApolloProvider } from '@apollo/client';
 import { loadDevMessages } from '@apollo/client/dev';
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { HelmetProvider } from 'react-helmet-async';
 import {
   createMemoryRouter,
@@ -15,7 +15,7 @@ import { ClientConfigProviderEffect } from '@/client-config/components/ClientCon
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { UserAndViewsProviderEffect } from '@/users/components/UserAndViewsProviderEffect';
+import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -32,8 +32,8 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { IconsProvider } from 'twenty-ui/display';
+import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 
 export type PageDecoratorArgs = {
   routePath: string;
@@ -85,7 +85,7 @@ const Providers = () => {
             <ApolloStorybookDevLogEffect />
             <ClientConfigProviderEffect />
             <ClientConfigProvider>
-              <UserAndViewsProviderEffect />
+              <MetadataProviderEffect />
               <WorkspaceProviderEffect />
               <UserProvider>
                 <ApolloCoreClientMockedProvider>

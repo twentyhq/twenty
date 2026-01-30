@@ -9,17 +9,17 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { PageLayoutTabException } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-tab.exception';
-import { PageLayoutWidgetException } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout-widget.exception';
+import { PageLayoutTabException } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
+import { PageLayoutWidgetException } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { PageLayoutException } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { pageLayoutGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception-handler.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 @Catch(
   PageLayoutException,
   PageLayoutTabException,
   PageLayoutWidgetException,
-  WorkspaceMigrationBuilderExceptionV2,
+  WorkspaceMigrationBuilderException,
 )
 @Injectable()
 export class PageLayoutGraphqlApiExceptionFilter implements ExceptionFilter {
@@ -30,7 +30,7 @@ export class PageLayoutGraphqlApiExceptionFilter implements ExceptionFilter {
       | PageLayoutException
       | PageLayoutTabException
       | PageLayoutWidgetException
-      | WorkspaceMigrationBuilderExceptionV2,
+      | WorkspaceMigrationBuilderException,
     host: ExecutionContext,
   ) {
     const gqlContext = GqlExecutionContext.create(host);

@@ -1,9 +1,9 @@
 import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, within } from '@storybook/test';
+import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
+import { expect, fn, within } from 'storybook/test';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -15,7 +15,6 @@ import {
   mockedConnectedAccounts,
 } from '~/testing/mock-data/connected-accounts';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
-import { WorkflowEditActionSendEmail } from '../WorkflowEditActionSendEmail';
 
 const DEFAULT_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),
@@ -25,7 +24,11 @@ const DEFAULT_ACTION: WorkflowSendEmailAction = {
   settings: {
     input: {
       connectedAccountId: '',
-      email: '',
+      recipients: {
+        to: '',
+        cc: '',
+        bcc: '',
+      },
       subject: '',
       body: '',
       files: [],
@@ -50,7 +53,11 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
   settings: {
     input: {
       connectedAccountId: mockedConnectedAccounts[0].accountOwnerId,
-      email: 'test@twenty.com',
+      recipients: {
+        to: 'test@twenty.com',
+        cc: '',
+        bcc: '',
+      },
       subject: 'Welcome to Twenty!',
       body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
       files: [],
@@ -95,7 +102,6 @@ const meta: Meta<typeof WorkflowEditActionSendEmail> = {
     SnackBarDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    I18nFrontDecorator,
   ],
 };
 
@@ -113,8 +119,10 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('To')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
+    expect(await canvas.findByText('Advanced options')).toBeVisible();
   },
 };
 
@@ -129,8 +137,7 @@ export const Configured: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Account')).toBeVisible();
-    expect(await canvas.findByText('Subject')).toBeVisible();
-    expect(await canvas.findByText('Body')).toBeVisible();
+    expect(await canvas.findByText('To')).toBeVisible();
 
     const emailInput = await canvas.findByText('tim@twenty.com');
     expect(emailInput).toBeVisible();

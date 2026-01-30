@@ -4,67 +4,61 @@ image: /images/user-guide/notes/notes_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/notes/notes_header.png" alt="Header" />
+  <img src="/images/user-guide/notes/notes_header.png" alt="Cabeçalho" />
 </Frame>
 
 ## Entrada de Texto
 
-Permite que os usuários insiram e editem texto.
+Permite aos usuários inserir e editar texto.
 
 <Tabs>
+  <Tab title="Uso">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { TextInput } from "@/ui/input/components/TextInput";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      const handleChange = (text) => {
+        console.log("Input changed:", text);
+      };
 
-```jsx
-import { RecoilRoot } from "recoil";
-import { TextInput } from "@/ui/input/components/TextInput";
+      const handleKeyDown = (event) => {
+        console.log("Key pressed:", event.key);
+      };
 
-export const MyComponent = () => {
-  const handleChange = (text) => {
-    console.log("Input changed:", text);
-  };
+      return (
+        <RecoilRoot>
+          <TextInput
+            className
+            label="Username"
+            onChange={handleChange}
+            fullWidth={false}
+            disableHotkeys={false}
+            error="Invalid username"
+            onKeyDown={handleKeyDown}
+            RightIcon={null}
+          />
+        </RecoilRoot>
+      );
+    };
 
-  const handleKeyDown = (event) => {
-    console.log("Key pressed:", event.key);
-  };
+    ```
+  </Tab>
 
-  return (
-    <RecoilRoot>
-      <TextInput
-        className
-        label="Username"
-        onChange={handleChange}
-        fullWidth={false}
-        disableHotkeys={false}
-        error="Invalid username"
-        onKeyDown={handleKeyDown}
-        RightIcon={null}
-      />
-    </RecoilRoot>
-  );
-};
+  <Tab title="Propriedades">
+    | Propriedades            | Tipo            | Descrição                                                                                                                      |
+    | ----------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+    | className               | string          | Nome opcional para estilização adicional                                                                                       |
+    | etiqueta                | string          | Representa o rótulo do campo de entrada                                                                                        |
+    | onChange                | função          | A função chamada quando o valor do campo de entrada é alterado                                                                 |
+    | larguraCompleta         | booleano        | Indica se a entrada deve ocupar 100% da largura                                                                                |
+    | desativarTeclasDeAtalho | booleano        | Indica se as teclas de atalho estão habilitadas para a entrada                                                                 |
+    | erro                    | string          | Representa a mensagem de erro a ser exibida. Quando fornecido, também adiciona um ícone de erro no lado direito da entrada     |
+    | aoPressionarTecla       | função          | Chamado quando uma tecla é pressionada enquanto o campo de entrada está focado. Recebe um `React.KeyboardEvent` como argumento |
+    | ÍconeDireito            | ComponenteÍcone | Um componente de ícone opcional exibido no lado direito da entrada                                                             |
 
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Props          | Tipo                                     | Descrição                                                                                                                                      |
-| -------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| className      | Nome opcional para estilização adicional | Nome opcional para estilização adicional                                                                                                       |
-| etiqueta       | Nome opcional para estilização adicional | Representa a etiqueta do campo de entrada                                                                                                      |
-| onChange       | funções                                  | A função chamada quando o valor da entrada é alterado                                                                                          |
-| fullWidth      | booleano                                 | Indica se a entrada deve ocupar 100% da largura                                                                                                |
-| disableHotkeys | booleano                                 | Indica se as teclas de atalho estão habilitadas para a entrada                                                                                 |
-| erro           | Nome opcional para estilização adicional | Representa a mensagem de erro a ser exibida. Quando fornecido, também adiciona um ícone de erro no lado direito da entrada     |
-| onKeyDown      | função                                   | Chamado quando uma tecla é pressionada enquanto o campo de entrada está focado. Recebe um `React.KeyboardEvent` como argumento |
-| RightIcon      | ComponenteÍcone                          | An optional icon component displayed on the right side of the input                                                                            |
-
-O componente também aceita outras propriedades do elemento de entrada HTML.
-
-</Tab>
-
+    O componente também aceita outras propriedades de elemento de entrada HTML.
+  </Tab>
 </Tabs>
 
 ## Entrada de Texto com Tamanho Automático
@@ -72,82 +66,72 @@ O componente também aceita outras propriedades do elemento de entrada HTML.
 Componente de entrada de texto que ajusta automaticamente sua altura com base no conteúdo.
 
 <Tabs>
+  <Tab title="Uso">
+    ```jsx
+    import { RecoilRoot } from "recoil";
+    import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
 
-<Tab title="Usage">
+    export const MyComponent = () => {
+      return (
+        <RecoilRoot>
+          <AutosizeTextInput
+            onValidate={() => console.log("onValidate function fired")}
+            minRows={1}
+            placeholder="Write a comment"
+            onFocus={() => console.log("onFocus function fired")}
+            variant="icon"
+            buttonTitle
+            value="Task: "
+          />
+        </RecoilRoot>
+      );
+    };
+    ```
+  </Tab>
 
-```jsx
-import { RecoilRoot } from "recoil";
-import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
-
-export const MyComponent = () => {
-  return (
-    <RecoilRoot>
-      <AutosizeTextInput
-        onValidate={() => console.log("onValidate function fired")}
-        minRows={1}
-        placeholder="Write a comment"
-        onFocus={() => console.log("onFocus function fired")}
-        variant="icon"
-        buttonTitle
-        value="Task: "
-      />
-    </RecoilRoot>
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Props         | Tipo                                     | Descrição                                                                                              |
-| ------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| onValidate    | função                                   | A função de retorno de chamada que você deseja acionar quando o usuário valida a entrada               |
-| minRows       | número                                   | O número mínimo de linhas para a área de texto                                                         |
-| placeholder   | Nome opcional para estilização adicional | O texto do placeholder que você deseja exibir quando a área de texto estiver vazia                     |
-| onFocus       | função                                   | A função de retorno de chamada que você deseja acionar quando a área de texto ganha foco               |
-| variante      | Nome opcional para estilização adicional | A variante da entrada. As opções incluem: `default`, `icon` e `button` |
-| títuloDoBotão | Nome opcional para estilização adicional | O título para o botão (aplicável apenas para a variante de botão)                   |
-| valor         | Nome opcional para estilização adicional | O valor inicial para a área de texto                                                                   |
-
-</Tab>
-
+  <Tab title="Propriedades">
+    | Propriedades    | Tipo   | Descrição                                                                                |
+    | --------------- | ------ | ---------------------------------------------------------------------------------------- |
+    | aoValidar       | função | A função de retorno de chamada que você deseja acionar quando o usuário valida a entrada |
+    | linhasMínimas   | número | O número mínimo de linhas para a área de texto                                           |
+    | espaçoReservado | string | O texto do espaço reservado que você deseja exibir quando a área de texto estiver vazia  |
+    | aoFocar         | função | A função de retorno de chamada que você deseja acionar quando a área de texto ganha foco |
+    | variante        | string | A variante da entrada. As opções incluem: `default`, `icon` e `button`                   |
+    | títuloDoBotão   | string | O título para o botão (aplicável apenas para a variante botão)                           |
+    | valor           | string | O valor inicial para a área de texto                                                     |
+  </Tab>
 </Tabs>
 
 ## Área de Texto
 
-Permite criar entradas de texto com várias linhas.
+Permite criar entradas de texto de várias linhas.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Uso">
+    ```jsx
+    import { TextArea } from "@/ui/input/components/TextArea";
 
-```jsx
-import { TextArea } from "@/ui/input/components/TextArea";
+    export const MyComponent = () => {
+      return (
+        <TextArea
+        disabled={false}
+        minRows={4}
+        onChange={()=>console.log('On change function fired')}
+        placeholder="Enter text here"
+        value=""
+        />
+      );
+    };
+    ```
+  </Tab>
 
-export const MyComponent = () => {
-  return (
-    <TextArea
-    disabled={false}
-    minRows={4}
-    onChange={()=>console.log('On change function fired')}
-    placeholder="Enter text here"
-    value=""
-    />
-  );
-};
-```
-
-</Tab>
-
-<Tab title="Props">
-
-| Props       | Tipo                                     | Descrição                                                                           |
-| ----------- | ---------------------------------------- | ----------------------------------------------------------------------------------- |
-| desativado  | booleano                                 | Indica se a área de texto está desativada                                           |
-| minRows     | número                                   | Número mínimo de linhas visíveis para a área de texto.              |
-| onChange    | função                                   | Função de retorno de chamada acionada quando o conteúdo da área de texto é alterado |
-| placeholder | Nome opcional para estilização adicional | Texto do marcador de posição exibido quando a área de texto está vazia              |
-| valor       | Nome opcional para estilização adicional | O valor atual da área de texto                                                      |
-
-</Tab>
+  <Tab title="Propriedades">
+    | Propriedades           | Tipo     | Descrição                                                                     |
+    | ---------------------- | -------- | ----------------------------------------------------------------------------- |
+    | desativado             | booleano | Indica se a área de texto está desativada                                     |
+    | linhasMínimas          | número   | Número mínimo de linhas visíveis para a área de texto.                        |
+    | aoAlterar              | função   | Função de retorno de chamada acionada quando o conteúdo da área de texto muda |
+    | texto de preenchimento | string   | Texto de preenchimento exibido quando a área de texto está vazia              |
+    | valor                  | string   | O valor atual da área de texto                                                |
+  </Tab>
 </Tabs>

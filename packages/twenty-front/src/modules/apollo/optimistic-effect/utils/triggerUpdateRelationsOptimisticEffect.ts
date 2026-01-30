@@ -36,7 +36,7 @@ type TriggerUpdateRelationsOptimisticEffectArgs = {
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 };
 
 export const triggerUpdateRelationsOptimisticEffect = ({
@@ -108,7 +108,7 @@ const triggerUpdateRelationOptimisticEffect = ({
   sourceObjectMetadataItem: ObjectMetadataItem;
   cache: ApolloCache<unknown>;
   isDeletion: boolean;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }
@@ -264,7 +264,7 @@ const triggerUpdateMorphRelationOptimisticEffect = ({
   sourceObjectMetadataItem: ObjectMetadataItem;
   cache: ApolloCache<unknown>;
   isDeletion: boolean;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }

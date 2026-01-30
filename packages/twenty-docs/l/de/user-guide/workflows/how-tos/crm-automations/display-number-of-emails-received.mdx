@@ -1,0 +1,74 @@
+---
+title: Anzahl empfangener E-Mails anzeigen
+description: Erstellen Sie einen Workflow, der automatisch die Anzahl der von jedem Kontakt empfangenen E-Mails zählt und anzeigt.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
+
+## Übersicht
+
+Dieser Workflow wird jedes Mal ausgelöst, wenn eine neue E-Mail eingeht, und aktualisiert ein benutzerdefiniertes Feld im Personendatensatz mit der Gesamtanzahl der E-Mails dieses Absenders.
+
+## Voraussetzungen
+
+Erstellen Sie vor der Einrichtung dieses Workflows ein benutzerdefiniertes Feld am Objekt **People**:
+
+1. Gehen Sie zu **Einstellungen → Datenmodell → People**
+2. Fügen Sie ein neues Feld vom Typ **Number** hinzu
+3. Nennen Sie es etwa "Anzahl der von dieser Person empfangenen E-Mails"
+
+## Schritt-für-Schritt-Einrichtung
+
+<VimeoEmbed videoId="1148700336" title="Video-Demonstration" />
+
+### Schritt 1: Trigger konfigurieren
+
+1. Gehen Sie zu **Workflows** und erstellen Sie einen neuen Workflow
+2. Wählen Sie **Record is Created** als Auslöser
+3. Wählen Sie **Message Participants** (verfügbar unter Advanced objects)
+
+<Note>
+  Ein Message Participant ist eine Kombination aus einer Nachrichten-ID und einer Personen-ID und erzeugt einen eindeutigen Datensatz pro Nachricht. Dies ist einfacher nachzuverfolgen als die Nachrichten direkt, da wir auf das Feld `handle` zugreifen können, das die E-Mail-Adresse des Absenders (oder Empfängers) enthält.
+</Note>
+
+### Schritt 2: Nach Rolle filtern
+
+1. Fügen Sie eine **Filter**-Aktion hinzu
+2. Legen Sie die Bedingung fest: **Role** ist gleich **FROM**
+
+So stellen Sie sicher, dass Sie nur Nachrichten zählen, die von dieser Person gesendet wurden, nicht Nachrichten, die an sie gesendet wurden.
+
+### Schritt 3: Alle Message Participants mit demselben Handle suchen
+
+1. Fügen Sie eine **Datensätze suchen**-Aktion hinzu
+2. Wählen Sie **Message Participants** als Objekt
+3. Fügen Sie Filter hinzu: **Handle** entspricht dem Handle aus dem Trigger (der E-Mail-Adresse des Absenders) und **Role** ist gleich **FROM**
+4. Erhöhen Sie das **Limit** von 1 auf **200** (das Maximum)
+
+Dadurch werden alle Nachrichten von dieser E-Mail-Adresse gefunden, um die Gesamtanzahl zu erhalten.
+
+<Note>
+  Die Aktion Datensätze suchen ist auf die Rückgabe von maximal 200 Datensätzen beschränkt. Da Sie jedoch nur den Wert `totalCount` verwenden (nicht die einzelnen Datensätze), liefert dieser Schritt die Gesamtanzahl der von dieser Person gesendeten E-Mails.
+</Note>
+
+### Schritt 4: Den Personendatensatz mit einer Create or Update Record-Aktion aktualisieren
+
+1. Fügen Sie eine **Create or Update Record**-Aktion hinzu
+
+<Warning>
+  Verwenden Sie hier **Upsert Record** anstelle von **Update Record**. Dadurch können Sie die Person über ihre E-Mail-Adresse (das Feld `handle`) identifizieren, ohne eine Datensatz-ID aus einem vorherigen Schritt zu benötigen.
+</Warning>
+
+2. Wählen Sie **People** als Objekt
+3. Finden Sie die Person, indem Sie ihre E-Mail-Adresse mit dem `handle` des Message Participant abgleichen.
+4. Setzen Sie Ihr benutzerdefiniertes Feld "Anzahl empfangener E-Mails" auf `{{searchRecords.totalCount}}`
+
+Der Wert `totalCount` aus der Aktion Datensätze suchen steht für die Gesamtanzahl der von dieser Person empfangenen E-Mails.
+
+## Verwandt
+
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [Benutzerdefinierte Felder erstellen](/l/de/user-guide/data-model/how-tos/customize-your-data-model)
+* [Aktion Datensätze suchen](/l/de/user-guide/workflows/capabilities/workflow-actions#search-records)

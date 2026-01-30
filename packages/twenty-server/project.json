@@ -19,7 +19,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx jest --config ./jest-integration.config.ts"
+          "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288 --import tsx/esm\" nx jest --config ./jest-integration.config.ts"
         ]
       },
       "parallel": false,
@@ -27,7 +27,7 @@
         "with-db-reset": {
           "cwd": "packages/twenty-server",
           "commands": [
-            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288\" nx jest --config ./jest-integration.config.ts"
+            "NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288 --import tsx/esm\" nx database:reset > reset-logs.log && NODE_ENV=test NODE_OPTIONS=\"--max-old-space-size=12288 --import tsx/esm\" nx jest --config ./jest-integration.config.ts"
           ]
         }
       }
@@ -41,7 +41,9 @@
         "updateBuildableProjectDepsInPackageJson": true
       }
     },
-    "typecheck": {},
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
     "start": {
       "executor": "nx:run-commands",
       "cache": false,
@@ -122,7 +124,8 @@
       "options": {
         "cwd": "packages/twenty-server",
         "command": "ts-node --transpile-only -P tsconfig.json ../../node_modules/typeorm/cli.js"
-      }
+      },
+      "dependsOn": ["build"]
     },
     "ts-node": {
       "executor": "nx:run-commands",
@@ -156,20 +159,9 @@
         "fix": {}
       }
     },
-    "lint:changed": {
-      "executor": "nx:run-commands",
-      "cache": false,
+    "lint:diff-with-main": {
       "options": {
-        "command": "git diff --name-only --diff-filter=d {args.base} | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint",
-        "base": "main"
-      },
-      "configurations": {
-        "fix": {
-          "command": "git diff --name-only --diff-filter=d {args.base} | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint --fix"
-        },
-        "staged": {
-          "command": "git diff --cached --name-only --diff-filter=d | grep -E '\\.(ts|tsx|js|jsx|json)$' | grep '^packages/twenty-server/' | xargs -r npx eslint"
-        }
+        "pattern": "\\.(ts|tsx|js|jsx|json)$"
       }
     },
     "test": {},

@@ -1,0 +1,147 @@
+---
+title: API'ler
+description: CRM verilerinizi REST veya GraphQL kullanarak programatik olarak sorgulayın ve değiştirin.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty, geliştirici dostu olacak şekilde tasarlanmıştır ve özel veri modelinize uyum sağlayan güçlü API'ler sunar. Farklı entegrasyon ihtiyaçlarını karşılamak üzere dört farklı API türü sunuyoruz.
+
+## Öncelik Geliştiricide Yaklaşımı
+
+Twenty, veri modeliniz için özel olarak API'ler oluşturur:
+
+* **Uzun kimlik numaralarına gerek yok**: Uç noktalarda nesne ve alan adlarınızı doğrudan kullanın
+* **Standart ve özel nesneler eşit şekilde ele alınır**: Özel nesneleriniz yerleşik olanlarla aynı API muamelesini görür.
+* **Özel uç noktalar**: Her nesne ve alan kendi API uç noktasına sahiptir
+* **Özel dokümantasyon**: Çalışma alanınızın veri modeli için özel olarak üretilmiştir.
+
+<Note>
+  Bir API anahtarı oluşturduktan sonra kişiselleştirilmiş API dokümantasyonunuz **Ayarlar → API ve Webhook'lar** altında mevcuttur. Twenty, özel veri modelinize uyan API'ler oluşturduğundan, dokümantasyon çalışma alanınıza özeldir.
+</Note>
+
+## İki API Türü
+
+### Temel API
+
+`/rest/` veya `/graphql/` üzerinden erişilebilir.
+
+Gerçek **kayıtlarınızla** (verilerin kendisiyle) çalışın:
+
+* People, Companies, Opportunities vb. oluşturun, okuyun, güncelleyin, silin.
+* Verileri sorgulayın ve filtreleyin
+* Kayıt ilişkilerini yönetin
+
+### Meta Veriler API
+
+`/rest/metadata/` veya `/metadata/` üzerinden erişilebilir.
+
+**Çalışma alanınızı ve veri modelinizi** yönetin:
+
+* Nesne ve alanlar oluşturun, değiştirin veya silin
+* Çalışma alanı ayarlarını yapılandırın
+* Nesneler arasındaki ilişkileri tanımlayın
+
+## REST ve GraphQL
+
+Hem Core hem de Metadata API'leri, REST ve GraphQL formatlarında mevcuttur:
+
+| Biçim       | Kullanılabilir İşlemler                                                          |
+| ----------- | -------------------------------------------------------------------------------- |
+| **REST**    | CRUD, toplu işlemler, ekleme-güncelleme işlemleri                                |
+| **GraphQL** | Aynısı + **toplu ekleme-güncelleme işlemleri**, tek bir çağrıda ilişki sorguları |
+
+İhtiyaçlarınıza göre seçin — her iki format da aynı verilere erişir.
+
+## API Uç Noktaları
+
+| Ortam                        | Temel URL                 |
+| ---------------------------- | ------------------------- |
+| **Bulut**                    | `https://api.twenty.com/` |
+| **Kendi Kendine Barındırma** | `https://{your-domain}/`  |
+
+## Kimlik Doğrulama
+
+Her API isteği, başlıkta bir API anahtarı gerektirir:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Bir API Anahtarı Oluştur
+
+1. **Ayarlar → API ve Webhook'lar**'a gidin
+2. **+ Anahtar oluştur**'a tıklayın
+3. Alanı Yapılandır:
+   * **Ad**: Anahtar için açıklayıcı bir ad
+   * **Son Kullanma Tarihi**: Anahtarın ne zaman sona ereceği
+4. **Kaydet**'e tıklayın
+5. **Hemen kopyalayın** — anahtar yalnızca bir kez gösterilir
+
+<VimeoEmbed videoId="928786722" title="API anahtarı oluşturma" />
+
+<Warning>
+  API anahtarınız hassas verilere erişim sağlar. Güvenilmeyen hizmetlerle paylaşmayın. Tehlikeye girerse, onu hemen devre dışı bırakın ve yenisini oluşturun.
+</Warning>
+
+### Bir API Anahtarına Rol Atama
+
+Daha iyi güvenlik için, erişimi sınırlamak amacıyla belirli bir rol atayın:
+
+1. **Ayarlar → Roller** bölümüne gidin
+2. Atamak istediğiniz role tıklayın
+3. **Atama** sekmesini açın
+4. **API Anahtarları** altında, **+ API anahtarına ata**'ya tıklayın
+5. API anahtarını seçin
+
+Anahtar, o rolün izinlerini devralacaktır. Ayrıntılar için [İzinler](/l/tr/user-guide/permissions-access/capabilities/permissions) bölümüne bakın.
+
+### API Anahtarlarını Yönet
+
+**Yeniden Oluştur**: Ayarlar → API ve Webhook'lar → Anahtara tıklayın → **Yeniden Oluştur**
+
+**Sil**: Ayarlar → API ve Webhook'lar → Anahtara tıklayın → **Sil**
+
+## API Oyun Alanı
+
+Yerleşik oyun alanımız ile API'lerinizi doğrudan tarayıcıda test edin — hem **REST** hem de **GraphQL** için kullanılabilir.
+
+### Oyun Alanına Erişin
+
+1. **Ayarlar → API ve Webhook'lar**'a gidin
+2. Bir API anahtarı oluşturun (gerekli)
+3. Oyun alanını açmak için **REST API** veya **GraphQL API**'ye tıklayın
+
+### Elde Edecekleriniz
+
+* **Etkileşimli dokümantasyon**: Belirli veri modeliniz için oluşturulur
+* **Canlı test**: Çalışma alanınıza karşı gerçek API çağrılarını gerçekleştirin
+* **Şema gezgini**: Kullanılabilir nesnelere, alanlara ve ilişkilere göz atın
+* **İstek oluşturucu**: Otomatik tamamlama ile sorgular oluşturun
+
+Oyun alanı, özel nesnelerinizi ve alanlarınızı yansıtır, bu nedenle dokümantasyon çalışma alanınız için her zaman doğrudur.
+
+## Toplu İşlemler
+
+Hem REST hem de GraphQL, toplu işlemleri destekler:
+
+* **Toplu boyut**: İstek başına 60 kayıt kadar
+* **İşlemler**: Birden çok kaydı oluşturma, güncelleme, silme
+
+**Yalnızca GraphQL Özellikleri:**
+
+* **Toplu Ekleme-Güncelleme**: Tek bir çağrıda oluşturun veya güncelleyin
+* Çoğul nesne adlarını kullanın (ör. `CreateCompany` yerine `CreateCompanies`)
+
+## Hız Sınırları
+
+Platform kararlılığını sağlamak için API istekleri kısıtlanır:
+
+| Sınır            | Değer                 |
+| ---------------- | --------------------- |
+| **İstekler**     | Dakikada 100 çağrı    |
+| **Toplu boyutu** | Çağrı başına 60 kayıt |
+
+<Tip>
+  Verimi en üst düzeye çıkarmak için toplu işlemleri kullanın — tekil istekler yapmak yerine tek bir API çağrısında 60 kayda kadar işleyin.
+</Tip>

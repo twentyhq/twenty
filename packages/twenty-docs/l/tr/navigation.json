@@ -1,40 +1,142 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "Kullanıcı Rehberi",
       "groups": {
-        "gettingStarted": {
-          "label": "Getting Started"
+        "discoverTwenty": {
+          "label": "Twenty'yi Keşfedin",
+          "groups": {
+            "gettingStartedCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "gettingStartedHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         },
         "dataModel": {
-          "label": "Veri modeli"
+          "label": "Veri modeli",
+          "groups": {
+            "dataModelCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "dataModelHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         },
-        "crmEssentials": {
-          "label": "CRM Temelleri"
+        "dataMigration": {
+          "label": "Veri Geçişi",
+          "groups": {
+            "dataMigrationCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "dataMigrationHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         },
-        "views": {
-          "label": "Görünümler"
+        "calendarEmails": {
+          "label": "Takvim ve E-postalar",
+          "groups": {
+            "calendarEmailsCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "calendarEmailsHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         },
         "workflows": {
-          "label": "İş Akışları"
+          "label": "İş Akışları",
+          "groups": {
+            "workflowsCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "workflowsHowTos": {
+              "label": "Nasıl Yapılırlar",
+              "groups": {
+                "crmAutomations": {
+                  "label": "CRM Otomasyonları"
+                },
+                "connectToOtherTools": {
+                  "label": "Diğer Araçlara Bağlan"
+                },
+                "advancedConfigurations": {
+                  "label": "Gelişmiş Yapılandırmalar"
+                },
+                "needMoreHelp": {
+                  "label": "Daha Fazla Yardım mı İhtiyacınız Var"
+                }
+              }
+            }
+          }
         },
-        "collaboration": {
-          "label": "İşbirliği"
+        "ai": {
+          "label": "AI",
+          "groups": {
+            "aiCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "aiHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         },
-        "integrationsApi": {
-          "label": "Integrations & API"
+        "viewsPipelines": {
+          "label": "Görünümler ve Boru Hatları",
+          "groups": {
+            "viewsPipelinesCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "viewsPipelinesHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         },
-        "reporting": {
-          "label": "Raporlama"
+        "dashboards": {
+          "label": "Gösterge Panelleri",
+          "groups": {
+            "dashboardsCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "dashboardsHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "İzinler ve Erişim",
+          "groups": {
+            "permissionsAccessCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "permissionsAccessHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
+        },
+        "billing": {
+          "label": "Faturalandırma",
+          "groups": {
+            "billingCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "billingHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         },
         "settings": {
-          "label": "Ayarlar"
-        },
-        "pricing": {
-          "label": "Fiyatlandırma"
-        },
-        "resources": {
-          "label": "Kaynaklar"
+          "label": "Ayarlar",
+          "groups": {
+            "settingsCapabilities": {
+              "label": "Yetkinlikler"
+            },
+            "settingsHowTos": {
+              "label": "Nasıl Yapılırlar"
+            }
+          }
         }
       }
     },
@@ -44,44 +146,54 @@
         "developersGroup": {
           "label": "Geliştiriciler"
         },
-        "devGettingStarted": {
-          "label": "Getting Started",
+        "extend": {
+          "label": "Genişlet",
           "groups": {
-            "selfHosting": {
-              "label": "Self-Hosting"
-            },
-            "apiAndWebhooks": {
-              "label": "API and Webhooks"
+            "extendCapabilities": {
+              "label": "Yetkinlikler"
             }
           }
         },
-        "contributing": {
-          "label": "Katkıda Bulunma",
+        "selfHost": {
+          "label": "Kendi Kendine Barındırma",
           "groups": {
-            "frontendDevelopment": {
-              "label": "Frontend Geliştirme",
+            "selfHostCapabilities": {
+              "label": "Yetkinlikler"
+            }
+          }
+        },
+        "contribute": {
+          "label": "Katkıda Bulunun",
+          "groups": {
+            "contributeCapabilities": {
+              "label": "Yetkinlikler",
               "groups": {
-                "twentyUi": {
-                  "label": "Twenty UI",
+                "frontendDevelopment": {
+                  "label": "Frontend Geliştirme",
                   "groups": {
-                    "display": {
-                      "label": "Görüntüle"
-                    },
-                    "feedback": {
-                      "label": "Geri Bildirim"
-                    },
-                    "input": {
-                      "label": "Girdi"
-                    },
-                    "navigation": {
-                      "label": "Gezinme"
+                    "twentyUi": {
+                      "label": "Twenty UI",
+                      "groups": {
+                        "display": {
+                          "label": "Görüntüle"
+                        },
+                        "feedback": {
+                          "label": "Geri Bildirim"
+                        },
+                        "input": {
+                          "label": "Girdi"
+                        },
+                        "navigation": {
+                          "label": "Gezinme"
+                        }
+                      }
                     }
                   }
+                },
+                "backendDevelopment": {
+                  "label": "Backend Geliştirme"
                 }
               }
-            },
-            "backendDevelopment": {
-              "label": "Backend Geliştirme"
             }
           }
         }

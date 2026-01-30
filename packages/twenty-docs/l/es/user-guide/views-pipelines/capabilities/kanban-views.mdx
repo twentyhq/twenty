@@ -1,0 +1,99 @@
+---
+title: Vistas del tablero Kanban
+description: Aprende a usar las vistas Kanban para visualizar y gestionar tus flujos de trabajo.
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Acerca de las vistas Kanban
+
+Las vistas Kanban mapean visualmente los flujos de proceso, donde cada columna representa una etapa distinta y cada tarjeta representa un registro.
+
+## Mover tarjetas entre etapas
+
+Puedes mover cada tarjeta entre etapas a medida que pasa por tu flujo de trabajo arrastrando y soltando. Para continuar, mantén presionado el clic en una tarjeta y muévela a la siguiente etapa.
+
+<VimeoEmbed videoId="927888627" title="Demostración en video" />
+
+## Agregar y eliminar etapas
+
+Puedes adaptar tu flujo de trabajo a tus necesidades usando etapas, que representan un valor en un campo de selección:
+
+### Agregar Etapas
+
+Para agregar una etapa, accede a la configuración del campo de selección navegando a Configuración > Modelo de Datos, seleccionando tu objeto, y luego el campo del que depende tu tablero Kanban.
+
+<VimeoEmbed videoId="927890428" title="Demostración en video" />
+
+### Eliminar Etapas
+
+Para eliminar una etapa, pasa el cursor sobre el nombre de la etapa o el ícono `⋮`, haz clic en `Editar desde configuración` en la configuración del campo Select, y luego haz clic en **Eliminar** junto a la etapa correspondiente.
+
+## Mostrar campos
+
+Puedes configurar tu tablero Kanban para mostrar algunos campos y ocultar otros. Para ocultar un campo, haz clic en **Opciones** en la parte superior derecha, luego en **Campos** para mostrar la lista de opciones. Busca el campo necesario en la sección Campos ocultos y haz clic en el botón del ojo para mostrar el campo.
+
+También puedes reorganizar el orden de los campos manteniendo presionado el nombre del campo y arrastrándolo a donde desees.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+## Vista compacta
+
+Puedes ocultar todos los campos y obtener una visión general de todos los registros de un vistazo. Para activar:
+
+1. Haz clic en **Opciones** en la parte superior derecha
+2. Activa la opción de **Vista compacta**
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+## Agregaciones por columna
+
+Cada columna en una vista Kanban puede mostrar valores agregados en la parte superior, lo que te ayuda a comprender tus datos de un vistazo.
+
+### Agregaciones disponibles
+
+| Agregación   | Descripción                                               |
+| ------------ | --------------------------------------------------------- |
+| **Recuento** | Número de registros en la columna                         |
+| **Suma**     | Total de un campo numérico (p. ej., importes de acuerdos) |
+| **Promedio** | Valor promedio de un campo numérico                       |
+| **Mín**      | Valor más bajo                                            |
+| **Máx**      | Valor más alto                                            |
+
+### Configuración de agregaciones
+
+1. Haz clic en el número que se muestra junto al valor de la etapa, en la parte superior de una columna
+2. Selecciona el tipo de agregación
+3. Elige el campo para la agregación
+
+**Ejemplo:** Muestra el valor total de los acuerdos por etapa agregando el campo Importe con Suma.
+
+## Cuándo usar las vistas Kanban
+
+Las vistas Kanban son ideales para:
+
+* **Embudos de ventas**: haz seguimiento de los acuerdos a través de las etapas, desde el prospecto hasta el cierre
+* **Gestión de proyectos**: monitorea las tareas a través de los estados del flujo de trabajo
+* **Reclutamiento**: haz seguimiento de los candidatos a través de las etapas de contratación
+* **Cualquier proceso por etapas**: visualiza cualquier flujo de trabajo con etapas definidas
+
+## Mejores prácticas
+
+### Organiza tus etapas
+
+* **Limita las etapas**: lo ideal para la visibilidad es tener entre 5 y 7 etapas
+* **Nombres claros**: usa nombres de etapa descriptivos
+* **Orden lógico**: organiza las etapas en el orden del proceso
+
+### Optimiza la visualización de tarjetas
+
+* **Muestra los campos clave**: muestra solo la información más importante
+* **Usa la vista compacta**: para obtener una visión general de alto nivel
+* **Codificación por colores**: usa los colores de etapa para identificar rápidamente el estado
+
+### Mantén la calidad de los datos
+
+* **Actualiza con regularidad**: mantén las tarjetas moviéndose a través de las etapas
+* **Archiva lo completado**: mueve los elementos cerrados fuera de la vista activa
+* **Revisa las tarjetas estancadas**: da seguimiento a las tarjetas atascadas en etapas

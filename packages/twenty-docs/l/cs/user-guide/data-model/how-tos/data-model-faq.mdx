@@ -1,0 +1,155 @@
+---
+title: Nejčastější dotazy k datovému modelu
+description: Často kladené otázky k datovému modelu Twenty.
+---
+
+## Správa objektů
+
+<AccordionGroup>
+  <Accordion title="Mohu smazat vlastní objekt?">
+    Ano, vlastní objekty lze smazat. Můžete je také nejprve deaktivovat, čímž se objekt a jeho data skryjí v rozhraní, přičemž data zůstanou zachována.
+  </Accordion>
+
+  <Accordion title="Mohu smazat standardní objekty (Lidé, Společnosti, atd.)?">
+    Ne, standardní objekty nelze smazat. Můžete je pouze deaktivovat, což je skryje v rozhraní, ale zachová data.
+  </Accordion>
+
+  <Accordion title="Kolik vlastních objektů mohu vytvořit?">
+    Můžete vytvořit tolik vlastních objektů a polí, kolik potřebujete — cena se nemění.
+  </Accordion>
+
+  <Accordion title="Mohu přejmenovat standardní objekt?">
+    U standardních objektů (Lidé, Společnosti, Příležitosti) můžete přejmenovat štítek, ale ne jejich názvy API. Názvy API jsou pevně dané kvůli konzistenci napříč všemi pracovními prostory Twenty.
+  </Accordion>
+
+  <Accordion title="Mohu změnit ikonu objektu?">
+    Ano, ikonu pro standardní i vlastní objekty můžete změnit v **Nastavení → Datový model**.
+  </Accordion>
+
+  <Accordion title="Mohu přerovnat objekty v levém navigačním panelu?">
+    Ještě ne. Pořadí objektů v navigaci je aktuálně pevně nastavené, ale tato funkce je plánována pro budoucí vydání.
+  </Accordion>
+
+  <Accordion title="Mohu skrýt objekty z levého navigačního panelu?">
+    Všechny aktivní objekty se zobrazují v navigaci. Objekty, které nepotřebujete, můžete deaktivovat v **Nastavení → Datový model**.
+  </Accordion>
+</AccordionGroup>
+
+## Možnosti polí
+
+<AccordionGroup>
+  <Accordion title="Mohu po vytvoření změnit typ pole?">
+    Ne, typy polí nelze po vytvoření změnit. Pokud potřebujete jiný typ, vytvořte nové pole se správným typem, migrujte svá data a poté staré pole deaktivujte.
+  </Accordion>
+
+  <Accordion title="Proč potřebuji různé jednotné a množné názvy?">
+    Naše API GraphQL používá obě formy pro různé operace:
+
+    * `createPerson` (jednotné) pro akce na jednotlivých záznamech
+    * `createPeople` (množné) pro hromadné operace
+
+    To vytváří omezení, když jsou jednotné a množné formy stejné, ale zlepšuje to zkušenost vývojářů.
+  </Accordion>
+
+  <Accordion title="Proč jsou některé názvy polí chráněné?">
+    Některé názvy polí, jako `Typ` nebo `Aplikace`, jsou vyhrazeny pro systémové použití. Zvolte alternativní názvy jako `Kategorie` nebo `Klasifikace`.
+  </Accordion>
+
+  <Accordion title="Co se stane, když deaktivuji pole?">
+    * Pole je skryto v rozhraní
+    * Stávající data jsou zachována
+    * K poli můžete nadále přistupovat přes API
+    * Stávající relace zůstávají, ale nemůžete vytvářet nové
+    * Pole můžete později znovu aktivovat
+  </Accordion>
+
+  <Accordion title="Mohu nastavit pole jako povinné?">
+    Aktuálně nelze nastavit vlastní pole jako povinná. Všechna pole přijímají prázdné hodnoty. Pomocí pracovních postupů můžete vynucovat povinná pole zasíláním upozornění nebo blokováním akcí, když jsou pole prázdná.
+  </Accordion>
+
+  <Accordion title="Jaký je rozdíl mezi jedinečným a povinným?">
+    * **Jedinečné**: Žádné dva záznamy nemohou mít v tomto poli stejnou hodnotu
+    * **Povinné**: Pole musí mít hodnotu (aktuálně není podporováno pro vlastní pole)
+  </Accordion>
+
+  <Accordion title="Mohu vytvořit vzorcová pole?">
+    Vzorcová pole přijdou v **Q1 2026**. Mezitím můžete použít pracovní postupy pro automatické výpočty a aktualizace hodnot polí.
+  </Accordion>
+
+  <Accordion title="Mohu mít v mých objektech vnořená pole?">
+    Vnořená pole přijdou v **Q1 2026**. Aktuálně můžete použít pracovní postupy k přenesení hodnot polí z příbuzných objektů. Například k zobrazení odvětví společnosti na záznamu Osoby vytvořte vlastní pole pro Lidi a použijte pracovní postup k synchronizaci hodnoty.
+  </Accordion>
+
+  <Accordion title="Mohu přerovnat pole v objektech?">
+    Přerovnávání polí bude dostupné s vlastními rozloženími ve **Q4 2025**. Aktuálně se pole zobrazují v abecedním pořadí.
+  </Accordion>
+</AccordionGroup>
+
+## Vztahy
+
+<AccordionGroup>
+  <Accordion title="Mohu mít relaci odkazující na tentýž objekt?">
+    Ano! Samo-referenční relace jsou podporovány a doporučeny pro případy použití, jako jsou hierarchie účtů. Například vytvořte relaci ze Společností na Společnosti, abyste sledovali nadřazené/podřízené účty.
+  </Accordion>
+
+  <Accordion title="Mohu vytvořit mnoho-mnoho vztahů?">
+    Vztahy mnoho-mnoho přijdou v **H1 2026**. Aktuálně jako řešení vytvořte mezilehlý objekt se dvěma vztahy jedno-mnoho.
+
+    Například pro propojení Lidí a Projektů (mnoho-mnoho) vytvořte objekt "Přiřazení k projektům" s:
+
+    * Relaci k Lidem (mnoho přiřazení → jedna osoba)
+    * Relaci k Projektům (mnoho přiřazení → jeden projekt)
+  </Accordion>
+
+  <Accordion title="Co jsou relace k více typům objektů (morfní relace)?">
+    Umožňují jednomu objektu navázat vztah k více různým typům objektů prostřednictvím jediného pole. Například Poznámky lze současně připojit k Lidem, Společnostem a Příležitostem.
+
+    Každá Poznámka je současně propojena s jednou Osobou, jednou Společností a jednou Příležitostí.
+
+    Více se dozvíte v [Relačních polích](/l/cs/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="Mohu mít více relací mezi stejnými objekty?">
+    Ano, můžete vytvořit více relací mezi stejnými dvěma objekty. Například Společnost může mít k Lidem relaci jak "Primární kontakt", tak "Fakturační kontakt".
+  </Accordion>
+
+  <Accordion title="Co se stane s relacemi, když smažu záznam?">
+    Když smažete záznam, odkaz relace je z příslušných záznamů odstraněn. Samotné související záznamy nejsou smazány.
+  </Accordion>
+
+  <Accordion title="Mohu vytvořit kruhové relace?">
+    Ačkoliv jsou technicky možné, kruhovým relacím (A → B → C → A) je vhodné se vyhnout, protože mohou způsobovat nejasnosti a potenciální problémy s výkonem.
+  </Accordion>
+</AccordionGroup>
+
+## Přístup a oprávnění
+
+<AccordionGroup>
+  <Accordion title="Kde mohu vidět a editovat svůj model dat?">
+    Přejděte do **Nastavení → Datový model**, kde můžete zobrazit a upravovat všechny své objekty a pole.
+  </Accordion>
+
+  <Accordion title="Proč nevidím model dat v Nastavení?">
+    Obraťte se na administrátora svého pracovního prostoru. Přístup k modelu dat je obvykle omezen pouze na správce.
+  </Accordion>
+</AccordionGroup>
+
+## Správa dat
+
+<AccordionGroup>
+  <Accordion title="Existuje nějaký limit počtu záznamů, které mohu mít?">
+    Neexistuje pevný limit počtu záznamů. Velmi velké datové sady však mohou ovlivnit výkon v některých zobrazeních. K efektivní správě velkých datových sad použijte filtry a zobrazení.
+  </Accordion>
+
+  <Accordion title="Mohu importovat data do vlastních objektů?">
+    Ano, data CSV můžete importovat do libovolného objektu, včetně vlastních objektů. Proces importu podporuje mapování polí pro vlastní pole. Viz [Jak připravit své soubory CSV](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="Mohu exportovat konfiguraci svého datového modelu?">
+    Aktuálně neexistuje vestavěný export konfigurace datového modelu. Pokud potřebujete migrovat svůj datový model mezi pracovními prostory, kontaktujte podporu.
+  </Accordion>
+</AccordionGroup>
+
+## Potřebujete další pomoc?
+
+Podívejte se na naše [implementační služby](/l/cs/user-guide/getting-started/capabilities/implementation-services) pro pomoc s návrhem komplexního datového modelu.

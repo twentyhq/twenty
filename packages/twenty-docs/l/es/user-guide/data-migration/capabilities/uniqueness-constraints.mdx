@@ -1,0 +1,72 @@
+---
+title: Restricciones de unicidad
+description: Cómo Twenty garantiza la unicidad de los datos durante la importación.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Resumen
+
+Twenty aplica unicidad en ciertos campos para evitar registros duplicados y garantizar la integridad de los datos. Comprender estas restricciones es esencial para realizar importaciones exitosas.
+
+## Campos únicos predeterminados
+
+| Objeto                     | Campos únicos                       |
+| -------------------------- | ----------------------------------- |
+| **Personas**               | `id`, `email`                       |
+| **Empresas**               | `id`, `domain`                      |
+| **Objetos personalizados** | solo `id` (de forma predeterminada) |
+
+<Note>El campo `id` es el identificador interno de Twenty, generado automáticamente para cada registro. Utiliza el formato UUID (p. ej., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+## Campos únicos personalizados
+
+Puedes definir campos únicos adicionales en **Configuración → Modelo de datos**:
+
+1. Ve a **Configuración → Modelo de datos**
+2. Selecciona el objeto
+3. Haz clic en un campo
+4. Activa **Único** en la configuración del campo
+
+### Casos de uso de campos únicos personalizados
+
+* **ID externos**: Almacenar ID de otros sistemas (Salesforce ID, HubSpot ID)
+* **Identificadores empresariales**: Números de empleado, códigos de cliente
+* **Información de contacto alternativa**: Perfil de LinkedIn, número de teléfono
+
+<Note>El nombre de campo `id` está reservado para el ID interno de Twenty. Usa un nombre diferente como `externalId` o `legacyId` para los identificadores externos.</Note>
+
+## Comportamiento de la importación
+
+### Creación de nuevos registros
+
+Si el valor de un campo único no existe, se crea un nuevo registro.
+
+### Actualización de registros existentes
+
+Si el valor de un campo único coincide con un registro existente, ese registro se **actualiza** con los nuevos datos.
+<Warning>Para **actualizar registros existentes**, se recomienda **hacer coincidir solo un campo único**.</Warning>
+
+### Registros eliminados lógicamente
+
+<Warning>
+  **Los registros eliminados de forma lógica cuentan para la unicidad.**
+
+  Los registros eliminados de forma lógica (visibles en Menú de comandos → Ver registros eliminados) se incluyen en las verificaciones de unicidad. Si importas un registro con el mismo valor único que un registro eliminado, el registro eliminado se **restaurará** con los nuevos datos.
+</Warning>
+
+## Detección de duplicados durante la importación
+
+Durante la fase de validación:
+
+* Los duplicados dentro de tu archivo se resaltan en amarillo
+* Puedes editar o eliminar filas duplicadas desde la interfaz antes de iniciar la importación
+
+<VimeoEmbed videoId="1145246326" title="Demostración en video" />
+
+## Mejores prácticas
+
+1. **Elimina los duplicados** de tu archivo antes de importar
+2. **Comprueba si existen registros** en Twenty antes de importar
+3. **Usa ID externos** al migrar desde otros sistemas
+4. **Incluye campos únicos** si quieres actualizar registros existentes

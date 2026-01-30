@@ -13,7 +13,7 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 
 import { useRecoilCallback } from 'recoil';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
@@ -68,7 +68,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
 
             if (filterType === 'RELATION' || filterType === 'SELECT') {
               pushFocusItemToFocusStack({
-                focusId: VIEW_BAR_FILTER_DROPDOWN_ID,
+                focusId: ViewBarFilterDropdownIds.MAIN,
                 component: {
                   type: FocusComponentType.DROPDOWN,
                   instanceId: fieldMetadataItem.id,

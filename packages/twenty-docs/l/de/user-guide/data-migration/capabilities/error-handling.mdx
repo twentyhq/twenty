@@ -1,0 +1,76 @@
+---
+title: Fehlerbehandlung und Validierung
+description: Überprüfen und beheben Sie Importfehler direkt in der Benutzeroberfläche, bevor Sie den Import bestätigen.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Vorabvalidierung
+
+Nachdem Sie Ihre Datei hochgeladen und die Felder zugeordnet haben, validiert Twenty Ihre Daten, **bevor** sie importiert werden. So können Sie Fehler erkennen und beheben, ohne Ihre vorhandenen Daten zu beeinträchtigen.
+
+## Wie es funktioniert
+
+1. **Hochladen** Ihrer CSV-Datei
+2. **Zuordnen** Ihrer Spalten zu Twenty-Feldern
+3. **Überprüfen** der gelb hervorgehobenen potenziellen Fehler
+4. **Fehlerbehebung** direkt in der Benutzeroberfläche
+5. **Bestätigen** des Imports
+
+<VimeoEmbed videoId="1145273857" title="Video-Demonstration" />
+
+## Fehleranzeige
+
+Zeilen mit Fehlern sind **gelb** hervorgehoben. Sie können:
+
+* **Die Zelle direkt bearbeiten**, um den Fehler zu beheben
+* **Die Zeile entfernen**, um sie vollständig zu überspringen
+
+Diese Inline-Bearbeitung spart Zeit—Sie müssen nicht zu Ihrer Tabellenkalkulation zurückkehren, Fehler beheben und erneut hochladen.
+
+## Häufige Fehlertypen
+
+### Doppelte Werte
+
+**Ursache**: Ein eindeutiges Feld (E-Mail, Domain) existiert bereits in Twenty oder kommt in Ihrer Datei doppelt vor.
+
+**Lösung**:
+
+* Bearbeiten Sie den doppelten Wert in der Import-Benutzeroberfläche
+* Entfernen Sie eine der doppelten Zeilen
+
+Weitere Details dazu, wie die Eindeutigkeit erzwungen wird, finden Sie unter [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints).
+
+### Ungültiges Format
+
+**Ursache**: Daten entsprechen nicht dem erwarteten Format (z. B. ungültige E-Mail, falsches Datumsformat).
+
+**Lösung**: Bearbeiten Sie die Zelle, um das korrekte Format zu verwenden.
+
+Siehe [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping) für das erwartete Format jedes Feldtyps.
+
+### Erforderliche Felder fehlen
+
+**Ursache**: Ein erforderliches Feld ist leer.
+
+**Lösung**: Geben Sie im erforderlichen Feld einen Wert ein oder entfernen Sie die Zeile.
+
+### Beziehung nicht gefunden
+
+**Ursache**: Der referenzierte Datensatz existiert nicht (z. B. eine Unternehmensdomain, die nicht importiert wurde).
+
+**Lösung**:
+
+* Importieren Sie zuerst die übergeordneten Datensätze
+* Oder korrigieren Sie den Referenzwert
+
+Siehe [Beziehungen importieren](/l/de/user-guide/data-migration/capabilities/import-relations) für die korrekte Importreihenfolge und wie Datensätze verknüpft werden.
+
+## Tipps für weniger Fehler
+
+1. **Laden Sie die Vorlage herunter**, um das erwartete Format vor dem Import Ihrer Datei zu sehen
+2. **Bereinigen Sie Ihre Daten** zunächst in der Tabellenkalkulation
+3. **Importieren Sie Dateien in der richtigen Reihenfolge**, um Beziehungen zu importieren (Unternehmen → Personen → Verkaufschancen)
+4. **Testen Sie mit kleinen Stapeln** vor dem vollständigen Import
+5. **Auf Duplikate prüfen** vor dem Hochladen
+6. **Begrenzen Sie die Größe Ihrer Datei auf 10.000 Datensätze** pro Datei

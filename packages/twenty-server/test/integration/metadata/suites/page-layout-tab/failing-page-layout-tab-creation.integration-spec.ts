@@ -4,7 +4,7 @@ import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-la
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 
-import { type CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
+import { type CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 
 describe('Page layout tab creation should fail', () => {
   let testPageLayoutId: string;

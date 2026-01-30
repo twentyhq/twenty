@@ -23,7 +23,7 @@ export const RecordDetailRelationRecordsListItemEffect = ({
 
   useEffect(() => {
     if (isDefined(record)) {
-      upsertRecordsInStore([record]);
+      upsertRecordsInStore({ partialRecords: [record] });
     }
   }, [record, upsertRecordsInStore]);
 

@@ -1,0 +1,99 @@
+---
+title: Vizualizări pentru tabloul Kanban
+description: Aflați cum să utilizați vizualizările Kanban pentru a vizualiza și gestiona fluxurile de lucru.
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Despre vizualizările Kanban
+
+Vizualizările Kanban cartografiază vizual fluxurile de proces, unde fiecare coloană reprezintă o etapă distinctă și fiecare card reprezintă o înregistrare.
+
+## Mută Carduri între Etape
+
+Puteți muta fiecare card între etape pe măsură ce parcurge fluxul de lucru, prin glisare și fixare. Pentru a continua, ține apăsat pe un card și mută-l la etapa următoare.
+
+<VimeoEmbed videoId="927888627" title="Demonstrație video" />
+
+## Adăugați și ștergeți etape
+
+Poți personaliza fluxul de lucru pentru a se potrivi nevoilor tale folosind etape, care reprezintă o valoare într-un Câmp Selectează:
+
+### Adaugă Etape
+
+Pentru a adăuga o etapă, accesează setările câmpului Selectează navigând la Setări > Model de Date, selectând obiectul tău și apoi câmpul de care depinde tabloul Kanban.
+
+<VimeoEmbed videoId="927890428" title="Demonstrație video" />
+
+### Elimină Etape
+
+Pentru a elimina o etapă, treceți cursorul peste numele etapei sau pictograma `⋮`, faceți clic pe `Edit from settings` în setările câmpului Select și apoi faceți clic pe **Șterge** lângă etapa relevantă.
+
+## Afișare câmpuri
+
+Poți configura panoul Kanban pentru a afișa unele câmpuri și a ascunde altele. Pentru a ascunde un câmp, faceți clic pe **Opțiuni** în colțul din dreapta sus, apoi pe **Câmpuri** pentru a deschide lista de opțiuni. Căutați câmpul necesar în secțiunea Câmpuri ascunse și faceți clic pe butonul în formă de ochi pentru a afișa câmpul.
+
+Poți, de asemenea, să rearanjezi ordinea câmpurilor ținând apăsat numele câmpului și trăgându-l acolo unde îl dorești.
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+## Vizualizare Compactă
+
+Puteți ascunde toate câmpurile și obține o imagine de ansamblu a tuturor înregistrărilor dintr-o privire. Pentru activare:
+
+1. Faceți clic pe **Opțiuni** în dreapta sus
+2. Activați comutatorul pentru **Vizualizare compactă**
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+## Agregări pe coloană
+
+Fiecare coloană dintr-o vizualizare Kanban poate afișa valori agregate în partea de sus, ajutându-vă să înțelegeți datele dintr-o privire.
+
+### Agregări disponibile
+
+| Agregare  | Descriere                                                |
+| --------- | -------------------------------------------------------- |
+| **Număr** | Numărul de înregistrări din coloană                      |
+| **Sumă**  | Totalul unui câmp numeric (de ex., sumele tranzacțiilor) |
+| **Medie** | Valoarea medie a unui câmp numeric                       |
+| **Minim** | Cea mai mică valoare                                     |
+| **Maxim** | Cea mai mare valoare                                     |
+
+### Configurarea agregărilor
+
+1. Faceți clic pe numărul afișat lângă valoarea etapei, în partea de sus a unei coloane
+2. Selectați tipul de agregare
+3. Alegeți câmpul pe care să îl agregați
+
+**Exemplu:** Afișați valoarea totală a tranzacțiilor pe etapă prin agregarea câmpului Sumă cu operația Sumă.
+
+## Când să utilizați vizualizările Kanban
+
+Vizualizările Kanban sunt ideale pentru:
+
+* **Pipeline-uri de vânzări**: Urmăriți tranzacțiile prin etape, de la lead până la închidere
+* **Managementul proiectelor**: Monitorizați sarcinile prin stările fluxului de lucru
+* **Recrutare**: Urmăriți candidații prin etapele de angajare
+* **Orice proces etapizat**: Vizualizați orice flux de lucru cu etape definite
+
+## Cele mai bune practici
+
+### Organizați-vă etapele
+
+* **Limitați etapele**: 5-7 etape sunt ideale pentru vizibilitate
+* **Denumire clară**: Folosiți denumiri de etape descriptive
+* **Ordine logică**: Aranjați etapele în ordinea procesului
+
+### Optimizați afișarea cardurilor
+
+* **Afișați câmpurile cheie**: Afișați doar cele mai importante informații
+* **Utilizați vizualizarea compactă**: Pentru vederi de ansamblu la nivel înalt
+* **Coduri de culoare**: Folosiți culorile etapelor pentru a identifica rapid starea
+
+### Mențineți calitatea datelor
+
+* **Actualizați regulat**: Mențineți cardurile în mișcare prin etape
+* **Arhivați elementele finalizate**: Mutați elementele închise în afara vizualizării active
+* **Revizuiți cardurile învechite**: Reluați urmărirea cardurilor blocate în etape

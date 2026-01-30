@@ -1,4 +1,4 @@
-import { cookieStorageEffect } from '~/utils/recoil-effects';
+import { cookieStorageEffect } from '~/utils/recoil/cookieStorageEffect';
 import { createState } from 'twenty-ui/utilities';
 
 export const lastAuthenticatedWorkspaceDomainState = createState<

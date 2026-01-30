@@ -8,6 +8,7 @@ import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-one-logic-function.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -188,6 +189,16 @@ describe('Successful user and workspace creation', () => {
       expectToFail: false,
     });
 
+    // Create a logic function for workspace deletion test
+    await createOneLogicFunction({
+      input: {
+        name: 'test-function-for-deletion',
+        description: 'A test logic function for workspace deletion test',
+      },
+      token: newWorkspaceAccessToken,
+      expectToFail: false,
+    });
+
     const workspaceBeforeDeletion = await testDataSource.query(
       'SELECT * FROM core.workspace WHERE id = $1',
       [workspaceId],
@@ -201,26 +212,20 @@ describe('Successful user and workspace creation', () => {
       'fieldMetadata',
       'indexMetadata',
       'searchFieldMetadata',
-      'workspaceMigration',
       'role',
       'roleTarget',
       'objectPermission',
       'fieldPermission',
       'permissionFlag',
-      'serverlessFunction',
-      'serverlessFunctionLayer',
+      'logicFunction',
+      'logicFunctionLayer',
       'agent',
-      'remoteServer',
-      'remoteTable',
-      'databaseEventTrigger',
       'view',
       'viewField',
       'viewFilter',
       'viewFilterGroup',
       'viewGroup',
       'viewSort',
-      'cronTrigger',
-      'routeTrigger',
     ];
 
     let totalRecordsBefore = 0;

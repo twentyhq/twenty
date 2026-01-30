@@ -1,0 +1,198 @@
+---
+title: Permissions
+description: Contrôlez l'accès aux objets, aux champs et aux paramètres avec des autorisations basées sur les rôles.
+image: /images/user-guide/permissions/permissions.png
+---
+
+Le système d'autorisations de Twenty vous permet de contrôler l'accès à trois domaines principaux :
+
+* **Objets et champs** : Contrôlez qui peut afficher, modifier ou supprimer des enregistrements et des champs individuels
+* **Paramètres** : Gérez l'accès à la configuration de l'espace de travail et aux fonctions administratives
+* **Actions** : Contrôlez les actions générales de l'espace de travail comme l'importation de données ou l'envoi d'e-mails
+
+## Créer un Rôle
+
+Pour créer un nouveau rôle :
+
+1. Allez dans **Paramètres → Rôles**
+2. Sous **Tous les rôles**, cliquez sur **+ Créer un rôle**
+3. Entrez un nom de rôle
+4. Dans l'onglet **Autorisations** par défaut, [configurez les autorisations](#customize-permissions)
+5. Cliquez sur **Enregistrer** pour terminer
+
+## Supprimer un Rôle
+
+Pour supprimer un rôle :
+
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle que vous souhaitez supprimer
+3. Ouvrez l'onglet **Paramètres**, puis cliquez sur **Supprimer le rôle**
+4. Cliquez sur **Confirmer** dans la fenêtre modale
+
+<Note>
+  Si un rôle est supprimé, tout membre de l'espace de travail qui lui est attribué sera automatiquement réattribué au rôle par défaut. Tous sauf le rôle **Admin** peuvent être supprimés. Il doit toujours y avoir au moins un membre assigné au rôle **Admin**.
+</Note>
+
+## Attribuer des Rôles aux Membres
+
+### Voir les Attributions Actuelles
+
+* Allez dans **Paramètres → Rôles**
+* Voir tous les rôles et combien de membres sont assignés à chacun
+* Voir quels membres ont quels rôles
+
+### Attribuer un Rôle à un Membre
+
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle que vous souhaitez attribuer
+3. Ouvrez l'onglet **Attribution**
+4. Cliquez sur **+ Attribuer à un membre**
+5. Sélectionnez le membre de l'espace de travail dans la liste
+6. Confirmez l'attribution
+
+### Définir le Rôle par Défaut
+
+1. Allez dans **Paramètres → Rôles**
+2. Dans la section **Options**, trouvez **Rôle par Défaut**
+3. Sélectionnez le rôle que les nouveaux membres devraient automatiquement recevoir
+4. Les nouveaux membres de l'espace de travail seront assignés à ce rôle lorsqu'ils rejoindront
+
+<Note>
+  Vous ne pouvez attribuer des rôles qu'aux membres existants de l'espace de travail. Pour inviter de nouveaux membres, utilisez [Gestion des Membres](/l/fr/user-guide/settings/capabilities/member-management).
+</Note>
+
+## Personnaliser les Autorisations
+
+Les autorisations déterminent ce que chaque rôle peut accéder ou modifier dans votre espace de travail, y compris les enregistrements d'objets de l'espace de travail, les paramètres et les actions.
+
+### Autorisations des objets
+
+La section **Objets** contrôle ce que ce rôle peut faire avec les enregistrements dans l'ensemble de votre espace de travail.
+
+#### Définir les autorisations par défaut (tous les objets)
+
+Commencez par configurer les autorisations de base qui s'appliquent par défaut à **tous les objets** :
+
+| Autorisation                                          | Description                                                         |
+| ----------------------------------------------------- | ------------------------------------------------------------------- |
+| **Voir les enregistrements sur tous les objets**      | Afficher les enregistrements dans les listes et les pages de détail |
+| **Modifier les enregistrements sur tous les objets**  | Modifier les enregistrements existants                              |
+| **Supprimer les enregistrements sur tous les objets** | Supprimer logiquement les enregistrements (peuvent être restaurés)  |
+| **Détruire les enregistrements sur tous les objets**  | Supprimer définitivement les enregistrements                        |
+
+Sélectionnez ou désélectionnez selon le comportement par défaut souhaité pour ce rôle.
+
+<Note>
+  **Exemple — rôle de stagiaire** : Un stagiaire doit pouvoir voir tous les objets mais ne pas les modifier par défaut. Activez "Voir les enregistrements sur tous les objets" mais laissez "Modifier les enregistrements sur tous les objets" décoché.
+</Note>
+
+#### Ajouter des exceptions au niveau de l'objet
+
+Après avoir défini les valeurs par défaut, utilisez la sous-section **Niveau objet** pour ajouter des règles qui remplacent les valeurs par défaut pour des objets spécifiques.
+
+Cliquez sur **+ Ajouter une règle** et sélectionnez un objet pour créer une exception.
+
+**Exemples de règles pour un rôle de stagiaire :**
+
+| Règle                                                | Effet                                                                                 |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Opportunités → désactiver "Voir les enregistrements" | Le stagiaire ne peut pas du tout voir l'objet Opportunités                            |
+| Personnes → activer "Modifier les enregistrements"   | Le stagiaire peut modifier les enregistrements Personnes (mais pas les autres objets) |
+
+### Autorisations des champs
+
+Dans chaque règle au niveau de l'objet, vous pouvez aller plus loin et configurer des **autorisations au niveau du champ** pour contrôler l'accès à des champs spécifiques.
+
+| Autorisation          | Description                      |
+| --------------------- | -------------------------------- |
+| **Voir le champ**     | Afficher la valeur du champ      |
+| **Modifier le champ** | Modifier la valeur du champ      |
+| **Aucun accès**       | Le champ est complètement masqué |
+
+**Exemple — Restreindre les champs sensibles :**
+
+Pour le rôle de stagiaire avec l'accès de modification sur Personnes, il peut être souhaitable de restreindre certains champs :
+
+* Personnes → E-mail → **Voir le champ** uniquement (impossible de modifier)
+* Personnes → Adresse → **Aucun accès** (complètement masquée)
+
+Cela permet au stagiaire de modifier la plupart des champs de Personnes tout en protégeant les informations sensibles.
+
+### Fonctionnement de l'héritage des autorisations
+
+Les autorisations se propagent du général vers le spécifique :
+
+1. **Tous les objets** → définit la base pour tous les objets
+2. **Règles au niveau de l'objet** → remplacent la base pour des objets spécifiques
+3. **Règles au niveau du champ** → remplacent le paramètre de l'objet pour des champs spécifiques
+
+Les paramètres plus spécifiques prévalent toujours.
+
+### Gestion des Exceptions d'Autorisations
+
+Pour remplacer les autorisations héritées :
+
+1. Cliquez sur **X** pour supprimer la règle héritée
+2. Sélectionnez les autorisations spécifiques que vous souhaitez
+3. Cliquez sur l'icône orange **Annuler** (flèche circulaire) pour revenir aux modifications
+
+Lorsque terminé, cliquez sur **Terminer**, puis **Enregistrer** une fois redirigé vers la page de rôle.
+
+### Autorisations des Paramètres de l'Espace de Travail
+
+Contrôlez l'accès aux paramètres de l'espace de travail de deux manières :
+
+* Activez **Accès Complet aux Paramètres** pour accorder un accès total
+* Ou activez des autorisations spécifiques (par exemple, génération de clé API, préférences de l'espace de travail, attribution de rôles, configuration du modèle de données, paramètres de sécurité et gestion des workflows)
+
+<Note>
+  **Limitation actuelle** : L'accès à la gestion des workflows est actuellement requis pour déclencher manuellement des workflows. Ce comportement pourrait changer dans de prochaines versions.
+</Note>
+
+### Autorisations des Actions de l'Espace de Travail
+
+Contrôlez l'accès aux actions générales de l'espace de travail :
+
+* Activez **Accès Complet à l'Application** pour accorder toutes les autorisations
+* Ou activez des actions individuelles telles que **Envoyer un Email**, **Importer CSV** et **Exporter CSV**
+
+## Attribution de rôles aux clés API et aux agents IA
+
+Au-delà des membres de l'espace de travail, des rôles peuvent également être attribués aux **clés API** et aux **agents IA**. C'est particulièrement utile pour les équipes qui veulent contrôler précisément "qui" peut faire quoi dans leur espace de travail — y compris les processus automatisés et les intégrations.
+
+### Pourquoi attribuer des rôles aux clés API et aux agents IA ?
+
+* **Sécurité** : Limitez ce à quoi les processus automatisés peuvent accéder ou ce qu'ils peuvent modifier
+* **Conformité** : Assurez-vous que les intégrations n'accèdent qu'aux données dont elles ont besoin
+* **Contrôle** : Empêchez les modifications accidentelles de données dues à des automatisations mal configurées
+* **Auditabilité** : Suivez quelles actions ont été effectuées par quelle intégration ou quel agent
+
+### Attribuer un rôle à une clé API
+
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle que vous souhaitez attribuer
+3. Ouvrez l'onglet **Attribution**
+4. Sous **Clés API**, cliquez sur **+ Attribuer à une clé API**
+5. Sélectionnez la clé API dans la liste
+6. Confirmez l'attribution
+
+La clé API héritera désormais de toutes les autorisations définies par ce rôle. Toute requête API effectuée avec cette clé sera restreinte en conséquence.
+
+<Note>
+  Les clés API sans rôle attribué utilisent les autorisations par défaut. Pour une sécurité renforcée, attribuez toujours un rôle spécifique aux clés API de production.
+</Note>
+
+### Attribuer un rôle à un agent IA
+
+1. Allez dans **Paramètres → Rôles**
+2. Cliquez sur le rôle que vous souhaitez attribuer
+3. Ouvrez l'onglet **Attribution**
+4. Sous **Agents IA**, cliquez sur **+ Attribuer à un agent IA**
+5. Sélectionnez l'agent IA dans la liste
+6. Confirmez l'attribution
+
+L'agent IA ne pourra accéder aux données et effectuer des actions que celles autorisées par le rôle qui lui est attribué.
+
+<Note>
+  Pour les agents IA exécutés au sein de workflows, cela garantit que l'agent ne peut ni accéder ni modifier des données en dehors de sa portée prévue — même si le workflow dispose d'autorisations plus larges.
+</Note>

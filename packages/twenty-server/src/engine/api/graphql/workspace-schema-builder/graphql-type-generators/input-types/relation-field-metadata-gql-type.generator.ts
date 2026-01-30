@@ -45,10 +45,10 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
-    const type = this.typeMapperService.mapToScalarType(
-      fieldMetadata.type,
+    const type = this.typeMapperService.mapToPreBuiltGraphQLInputType({
+      fieldMetadataType: fieldMetadata.type,
       typeOptions,
-    );
+    });
 
     if (!isDefined(type)) {
       const message = `Could not find a GraphQL input type for ${type} field metadata`;

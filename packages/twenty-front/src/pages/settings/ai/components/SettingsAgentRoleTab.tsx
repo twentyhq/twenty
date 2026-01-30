@@ -18,7 +18,7 @@ import {
   useCreateOneRoleMutation,
   useGetRolesQuery,
 } from '~/generated-metadata/graphql';
-import { type SettingsAIAgentFormValues } from '../hooks/useSettingsAgentFormState';
+import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 
 const StyledWarningText = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -128,6 +128,8 @@ export const SettingsAgentRoleTab = ({
           objectPermissions: [],
           fieldPermissions: [],
           permissionFlags: [],
+          rowLevelPermissionPredicateGroups: [],
+          rowLevelPermissionPredicates: [],
         });
       }
     } finally {

@@ -1,7 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -32,7 +31,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     WorkspaceCacheStorageModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceFeatureFlagsMapCacheModule,
-    FeatureFlagModule,
     TwentyConfigModule,
     WorkspaceEventEmitterModule,
     WorkspaceCacheModule,

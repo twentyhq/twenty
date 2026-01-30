@@ -1,0 +1,170 @@
+---
+title: İş Akışı Sorun Giderme
+description: Yaygın iş akışı sorunları ve bunları çözme yöntemleri.
+---
+
+## Sık Görülen Sorunlar ve Çözümleri
+
+### İş Akışı Tetiklenmiyor
+
+**Belirtiler**: İş akışınız beklediğinizde çalışmıyor.
+
+**Olası Nedenler**:
+
+1. **İş akışı etkinleştirilmemiş**: İş akışının "Draft" değil "Active" olarak ayarlandığından emin olun
+2. **Tetikleyici koşulları karşılanmıyor**: Tetikleyicinin beklediğiniz olaya uyduğunu doğrulayın
+3. **Alan izlenmiyor**: "Record is Updated" tetikleyicileri için, belirli alanın izlendiğinden emin olun
+4. **İzinler**: İş akışlarını çalıştırma iznine sahip olduğunuzu kontrol edin
+
+**Çözümler**:
+
+* İş akışı listesindeki iş akışı durumunu doğrulayın
+* Tetiklemesini beklediğiniz belirli işlemle test edin
+* Tetikleyici yapılandırmasını gözden geçirin
+* İzinler konusunda yöneticinizle iletişime geçin
+
+### İş Akışı Çok Erken Tetikleniyor (Boş Alanlar)
+
+**Belirtiler**: Kullanıcı arayüzünde (UI) bir kaydı manuel olarak oluştururken, tüm alanları dolduracak zamanınız olmadan iş akışınız tetikleniyor. İş akışı, alan değerlerinin çoğu boşken çalışır.
+
+**Bunun nedeni**: Twenty her şeyi gerçek zamanlı olarak kaydeder — ayrı bir "düzenleme" ve "okuma" modu yoktur. Bir kayıt oluşturduğunuzda, ek alanları doldurmadan önce "Record is created" olayını tetikleyerek hemen kaydedilir.
+
+**"Record is created" ne zaman iyi çalışır**:
+
+* API çağrılarıyla oluşturulan kayıtlar (alanlar tek bir istekte doldurulur)
+* İçe aktarma yoluyla oluşturulan kayıtlar
+* Diğer iş akışlarından otomatik kayıt oluşturma
+
+**Çözüm**: UI'da manuel olarak oluşturulan kayıtlar için tetikleyici olarak **"Record is created or updated"** kullanın. Bu şekilde:
+
+* Kullanıcı alanları doldurup kaydetmeyi bitirdikten sonra iş akışı tetiklenir
+* Boş değerler yerine eksiksiz verileri alırsınız
+
+<Tip>
+  Kayıt başına iş akışının yalnızca bir kez çalışmasını istiyorsanız, `createdAt equals updatedAt` (ilk kaydetme) gibi bir alanı kontrol etmek için bir Filtre eylemi ekleyin veya iş akışının daha önce çalışıp çalışmadığını izlemek için özel bir onay kutusu alanı kullanın.
+</Tip>
+
+### Eylemler Başarısız Oluyor
+
+**Belirtiler**: İş akışı çalışıyor ancak bazı eylemler başarısız oluyor.
+
+**Olası Nedenler**:
+
+1. **Eksik veri**: Gerekli alanlar boş
+2. **Geçersiz başvurular**: Önceki adımlardan gelen değişkenler mevcut değil
+3. **API hataları**: Dış hizmetler hata döndürüyor
+4. **İzin sorunları**: Eylem, sahip olmadığınız izinler gerektiriyor
+
+**Çözümler**:
+
+* Hata mesajları için iş akışı çalıştırma ayrıntılarını kontrol edin
+* Gerekli tüm alanların dolu olduğunu doğrulayın
+* API bağlantılarını bağımsız olarak test edin
+* Rol izinlerini gözden geçirin
+
+### HTTP İstek Hataları
+
+**Belirtiler**: HTTP Request eylemleri başarısız oluyor veya beklenmeyen sonuçlar döndürüyor.
+
+**Yaygın Hata Kodları**:
+
+* **400**: Hatalı istek - istek gövdesi biçiminizi kontrol edin
+* **401**: Yetkisiz - API anahtarını doğrulayın
+* **403**: Yasak - API izinlerini kontrol edin
+* **404**: Bulunamadı - endpoint URL'sini doğrulayın
+* **429**: Çok fazla istek - hız sınırlaması uygulayın
+* **500**: Sunucu hatası - harici hizmet sorunu
+
+**Çözümler**:
+
+* API endpoint URL'sini doğrulayın
+* Kimlik doğrulama başlıklarını kontrol edin
+* Önce API çağrısını Twenty dışında test edin
+* Code eylemlerine hata işleme ekleyin
+
+### Code Eylemi Hataları
+
+**Belirtiler**: JavaScript kodu yürütülemiyor.
+
+**Yaygın Sorunlar**:
+
+1. **Sözdizimi hataları**: Yazım hataları veya geçersiz JavaScript
+2. **Tanımsız değişkenler**: Var olmayan değişkenlere başvurma
+3. **Tür hataları**: Yanlış veri türleri üzerinde işlemler
+4. **Zaman aşımı**: Kodun çalıştırılması çok uzun sürüyor
+
+**Çözümler**:
+
+* Yerleşik kod düzenleyicisi doğrulamasını kullanın
+* Önce JavaScript konsolunda kod mantığını test edin
+* Hata ayıklama için console.log ifadeleri ekleyin
+* Karmaşık işlemleri basitleştirin
+
+### E-posta Gönderilmiyor
+
+**Belirtiler**: Send Email eylemi e-postaları göndermiyor.
+
+**Olası Nedenler**:
+
+1. **Bağlı e-posta hesabı yok**: Settings → Accounts'ı kontrol edin
+2. **Geçersiz e-posta adresi**: Alıcı e-posta adresi hatalı biçimlendirilmiş
+3. **Gönderim sınırları**: E-posta sağlayıcısının hız sınırı aşıldı
+4. **Spam filtreleri**: E-postalar engelleniyor
+
+**Çözümler**:
+
+* E-posta hesabı bağlantısını doğrulayın
+* Alıcı e-posta adreslerini doğrulayın
+* E-posta sağlayıcısı limitlerini kontrol edin
+* Spam tetikleyicileri açısından e-posta içeriğini gözden geçirin
+
+## İş Akışlarında Hata Ayıklama
+
+### İş Akışı Çalıştırmalarını Kullanma
+
+1. İş akışı düzenleyicisine gidin
+2. **Runs** panelini açın
+3. Başarısız olan çalıştırmayı bulun
+4. Adım adım ayrıntıları görmek için tıklayın
+5. Hata mesajlarını ve çıktı verilerini gözden geçirin
+
+### Bireysel Adımları Test Etme
+
+1. Code eylemleri için **Test** düğmesini kullanın
+2. HTTP istekleri için endpoint'i ayrı olarak test edin
+3. İş akışlarını tetiklemek için test kayıtları oluşturun
+4. Kontrollü test için manuel tetikleyiciler kullanın
+
+### Yaygın Hata Ayıklama Kalıpları
+
+**Günlükleme ekleyin**:
+Hata ayıklama için ara değerleri kaydetmek üzere Code eylemlerini kullanın.
+
+**Adımları izole edin**:
+Hataları belirlemek için her adımı bağımsız olarak test edin.
+
+**Veri akışını kontrol edin**:
+Her adımın beklenen giriş verilerini aldığını doğrulayın.
+
+## Sorunlardan Kaçınmak İçin En İyi Uygulamalar
+
+### Etkinleştirmeden Önce
+
+* Taslak modunda kapsamlı şekilde test edin
+* Tüm API bağlantılarını doğrulayın
+* Tetikleyici koşullarını dikkatlice gözden geçirin
+* Beklenen davranışı belgeleyin
+
+### Geliştirme Sırasında
+
+* Açıklayıcı adım adları kullanın
+* Code eylemlerine yorum ekleyin
+* Gerçekçi verilerle test edin
+* Uç durumlar için plan yapın
+
+### Etkinleştirmeden Sonra
+
+* İlk çalıştırmaları yakından izleyin
+* Başarısızlıklar için uyarılar ayarlayın
+* Çalıştırma geçmişini düzenli olarak gözden geçirin
+* Mümkün olduğunda iş akışlarını basit tutun

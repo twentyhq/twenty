@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 
 import { type PageDecoratorArgs } from '~/testing/decorators/PageDecorator';
@@ -9,7 +9,7 @@ import {
 } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
-import { RecordShowPage } from '../RecordShowPage';
+import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 
 const personRecord = allMockPersonRecords[0];
 const meta: Meta<PageDecoratorArgs> = {

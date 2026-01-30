@@ -1,6 +1,7 @@
-import { useCallback, useContext } from 'react';
+import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useUpdateMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateMorphRelationOneToManyFieldInput';
@@ -24,7 +25,14 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
-export const RecordDetailMorphRelationSectionDropdownOneToMany = () => {
+type RecordDetailMorphRelationSectionDropdownOneToManyProps = {
+  dropdownTriggerClickableComponent?: ReactNode;
+};
+
+export const RecordDetailMorphRelationSectionDropdownOneToMany = ({
+  dropdownTriggerClickableComponent,
+}: RecordDetailMorphRelationSectionDropdownOneToManyProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
@@ -55,6 +63,7 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = () => {
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
     recordId,
+    instanceId: scopeInstanceId,
   });
 
   const { closeDropdown } = useCloseDropdown();
@@ -150,11 +159,13 @@ export const RecordDetailMorphRelationSectionDropdownOneToMany = () => {
       onClose={handleCloseRelationPickerDropdown}
       onOpen={handleOpenRelationPickerDropdown}
       clickableComponent={
-        <LightIconButton
-          className="displayOnHover"
-          Icon={IconPlus}
-          accent="tertiary"
-        />
+        dropdownTriggerClickableComponent ?? (
+          <LightIconButton
+            className="displayOnHover"
+            Icon={IconPlus}
+            accent="tertiary"
+          />
+        )
       }
       dropdownComponents={
         <MultipleRecordPicker

@@ -1,0 +1,275 @@
+---
+title: Paramètres du graphique
+description: Configurez vos graphiques pour afficher les données exactement selon vos besoins.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Accéder aux paramètres du graphique
+
+1. Cliquez sur le bouton **Edit** situé dans l'angle supérieur droit de votre tableau de bord
+
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Mode édition" />
+
+2. Le tableau de bord passe en mode édition
+3. Cliquez sur n'importe quel widget pour le sélectionner
+4. Le panneau des paramètres s'ouvre à droite
+
+Les paramètres sont organisés en sections :
+
+* **Données** : Quelles données récupérer et comment les filtrer
+* **Axe X** : Comment regrouper et trier les catégories (graphiques à barres/lignes)
+* **Axe Y** : Que mesurer et comment l'afficher (graphiques à barres/lignes)
+* **Style** : Couleurs, libellés et options visuelles
+
+<Note>
+  Certains paramètres n'apparaissent que lorsque d'autres paramètres sont configurés. Par exemple, **Granularité de date** n'apparaît que lorsque vous sélectionnez un champ de date.
+</Note>
+
+---
+
+## Paramètres des données
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Source </span>
+
+Choisissez à partir de quel objet récupérer les données.
+
+1. Cliquez sur **Source**
+2. Sélectionnez un objet (Opportunités, Personnes, Entreprises, etc.)
+
+Tous vos objets standard et personnalisés sont disponibles. Modifier la source réinitialise d'autres paramètres, car les options de champ dépendent de l'objet sélectionné.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Source" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtre </span>
+
+Limitez les enregistrements inclus dans le graphique.
+
+1. Cliquez sur **Filtre**
+2. Le générateur de filtres s'ouvre
+3. Cliquez sur **+ Add filter**
+4. Sélectionnez un champ, une condition et une valeur
+5. Ajoutez d'autres filtres selon vos besoins
+
+Les filtres fonctionnent de la même manière que dans les vues en tableau. Utilisez-les pour vous concentrer sur des segments spécifiques de vos données.
+
+**Exemple** : Filtrez les opportunités où Stage est égal à "Won" pour n'afficher que les affaires clôturées.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtre" />
+
+<Tip>
+  Pour les champs de date, essayez **Is relative** pour créer des filtres dynamiques comme "Past 7 days" ou "This month" qui se mettent à jour automatiquement.
+</Tip>
+
+<Tip>
+  Les filtres avancés sont pris en charge — ajoutez plusieurs règles de filtre et combinez-les avec la logique **And** ou **Or**.
+</Tip>
+
+---
+
+## Paramètres de l'axe X
+
+Ces paramètres contrôlent l'axe horizontal des graphiques à barres et à lignes — généralement la manière dont vos données sont regroupées en catégories.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Données affichées </span>
+
+Sélectionnez le champ par lequel regrouper vos données. Cela détermine les catégories affichées sur l'axe X.
+
+**Exemple** : Sélectionnez "Stage" pour voir les données regroupées par étape du pipeline, ou "Created date" pour voir les données dans le temps.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Données affichées" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularité de date </span>
+
+Lors d'un regroupement par un champ de date, choisissez la période de regroupement.
+
+| Option                   | Regroupe les données par    | Exemple de résultat                                     |
+| ------------------------ | --------------------------- | ------------------------------------------------------- |
+| **Jour**                 | Chaque jour du calendrier   | 1 janv., 2 janv., 3 janv....                            |
+| **Semaine**              | Semaines calendaires        | Semaine 1, Semaine 2, Semaine 3...                      |
+| **Mois**                 | Mois calendaires            | janvier, février, mars...                               |
+| **Trimestre**            | Trimestres fiscaux          | Q1, Q2, Q3, Q4                                          |
+| **Année**                | Années civiles              | 2023, 2024, 2025                                        |
+| **Jour de la semaine**   | Jour de la semaine (agrégé) | lundi, mardi... (tous les lundis combinés)              |
+| **Mois de l'année**      | Mois (agrégé)               | janvier, février... (tous les mois de janvier combinés) |
+| **Trimestre de l'année** | Trimestre (agrégé)          | Q1, Q2, Q3, Q4 (tous les Q1 combinés)                   |
+
+Les options "de la semaine/de l'année" agrègent sur l'ensemble des périodes. Utilisez **Jour de la semaine** pour voir quel jour reçoit généralement le plus d'affaires. Utilisez **Mois** pour voir les tendances mois par mois.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Trier par </span>
+
+Contrôlez l'ordre des catégories sur l'axe X.
+
+* **Position** – Utilise l'ordre défini dans les paramètres de votre champ Select
+* **Alphabétique** – A à Z (ou chronologique pour les dates)
+* **Par valeur** – Ordonné selon la métrique (du plus élevé au plus faible ou l'inverse)
+* **Manuel** – Faites glisser pour définir votre propre ordre
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Trier par" />
+
+**Astuce** : Pour les étapes du pipeline, utilisez **Position** pour afficher les étapes dans l'ordre de votre processus commercial (Lead → Qualified → Proposal → Won).
+
+<Note>
+  Les options affichées dépendent du type de votre champ. Les champs Select disposent de toutes les options ; les champs de date et de texte en affichent moins.
+</Note>
+
+<Tip>
+  Avec le tri **Manuel**, faites glisser les catégories pour créer un ordre personnalisé — idéal pour mettre en avant des segments spécifiques ou raconter une histoire avec vos données.
+</Tip>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Omettre les valeurs nulles </span>
+
+Masquez les catégories qui ont une valeur nulle ou aucune donnée.
+
+* **Activé** : Les catégories sans enregistrements sont masquées
+* **Désactivé** : Toutes les catégories sont affichées, même si elles sont vides
+
+Utilisez ceci pour épurer les graphiques avec des données clairsemées.
+
+---
+
+## Paramètres de l'axe Y
+
+Ces paramètres déterminent ce que vous mesurez et comment c'est affiché.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Données affichées </span>
+
+Sélectionnez le champ et l'opération pour calculer votre métrique.
+
+* **Comptages** – Compter tout, Compter les vides, Compter les non vides, Compter les valeurs uniques
+* **Math** – Somme, Moyenne, Min, Max (champs numériques)
+* **Pourcentages** – Pourcentage vide, Pourcentage non vide
+
+Les champs booléens ajoutent Compter true/false. Les graphiques agrégés avec des champs de date affichent Earliest/Latest.
+
+**Exemple** : Sélectionnez "Amount" avec Sum pour voir la valeur totale des affaires par catégorie, ou Count all pour voir le nombre d'affaires.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Données affichées" />
+
+<Note>
+  Les options affichées dépendent de votre champ et du type de graphique. Si vous ne voyez pas une opération attendue, vérifiez le type de votre champ.
+</Note>
+
+### Ratio
+
+Pour les champs Select, Multi-select ou booléens, vous pouvez calculer le pourcentage d'une valeur spécifique.
+
+1. Sélectionnez un champ Select, Multi-select ou booléen
+2. Activez **Ratio**
+3. Choisissez l'option à mesurer
+
+**Exemple** : Affichez les affaires "Won" en pourcentage de toutes les opportunités. Si vous avez 10 Won sur 50 au total, le graphique affiche 20 %.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Regrouper par </span>
+
+Ajoutez une deuxième dimension pour créer plusieurs séries (plusieurs barres ou lignes).
+
+1. Définissez d'abord le champ de l'axe X
+2. Cliquez sur **Regrouper par**
+3. Sélectionnez un deuxième champ
+
+**Exemple** : Regroupez les affaires par Stage (axe X) ET par Owner (Regrouper par) pour voir, côte à côte, la répartition du pipeline de chaque personne.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Grouper par" />
+
+Lorsque Regrouper par est activé, vous verrez plusieurs couleurs dans votre graphique et une légende apparaît.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularité de date </span>
+
+Lorsque Regrouper par est un champ de date, choisissez la période (mêmes options que pour l'axe X).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Trier par </span>
+
+Lorsque **Regrouper par** est défini, contrôlez l'ordre des séries regroupées (p. ex., quelle barre du propriétaire apparaît en premier dans chaque catégorie).
+
+Mêmes options que le tri de l'axe X — Position, Alphabétique et Manuel — sauf que **le tri basé sur la valeur n'est pas disponible** pour le regroupement secondaire.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Cumulatif </span>
+
+Affichez des totaux cumulés au lieu de valeurs individuelles.
+
+* **Désactivé** : Chaque barre/point affiche sa propre valeur
+* **Activé** : Chaque barre/point affiche la somme de toutes les valeurs précédentes plus la sienne
+
+**Exemple** : janvier = 10, février = 15
+
+* Cumulatif désactivé : Affiche 10 et 15
+* Cumulatif activé : Affiche 10 et 25 (10 + 15)
+
+Utilisez le cumulatif pour suivre la progression vers un objectif dans le temps.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Cumulé" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Plage minimale / <ChartIcon icon="math-max" />Plage maximale </span>
+
+Définissez des valeurs minimales et maximales fixes pour l'axe Y.
+
+* Laissez vide pour un ajustement automatique
+* Saisissez un nombre pour fixer la limite
+
+**Quand l'utiliser :**
+
+* Définissez Min à 0 pour des comparaisons visuelles précises
+* Définissez les deux pour des échelles cohérentes entre plusieurs graphiques
+* Concentrez-vous sur une plage de valeurs spécifique en définissant les deux
+
+---
+
+## Paramètres de style
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Couleurs </span>
+
+Définissez le jeu de couleurs de votre graphique. Choisissez parmi une variété de palettes de couleurs.
+
+<Note>
+  Lors d'un regroupement par un champ Select, le graphique utilise automatiquement les couleurs définies pour chaque option dans les paramètres de votre champ.
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Nom de l'axe </span>
+
+Choisissez quels libellés d'axe afficher : **Aucun**, **Axe X**, **Axe Y** ou **Les deux** (graphiques à barres et à lignes uniquement).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Barres empilées / Lignes empilées </span>
+
+Lorsque Regrouper par est défini, choisissez comment plusieurs séries sont affichées.
+
+* **Désactivé (Groupé)** : Les séries apparaissent côte à côte. À utiliser pour comparer des valeurs exactes entre des groupes.
+* **Activé (Empilé)** : Les séries s'empilent les unes sur les autres. À utiliser pour montrer la composition — comment les parties constituent un tout.
+
+**Exemple** : Affaires par étape, regroupées par propriétaire
+
+* Groupé : Voir côte à côte les chiffres exacts de chaque propriétaire
+* Empilé : Voir le total des affaires par étape, avec la contribution de chaque propriétaire empilée
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Libellés de données </span>
+
+Affichez les valeurs directement sur les éléments du graphique (barres, points, secteurs).
+
+* **Activé** : Les valeurs apparaissent sur le graphique
+* **Désactivé** : Aucune valeur affichée (apparence plus sobre)
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Légende </span>
+
+Afficher ou masquer la légende (apparaît uniquement lorsque Regrouper par est défini).
+
+* **Activé** : La légende indique ce que représente chaque couleur
+* **Désactivé** : Aucune légende affichée
+
+<Tip>
+  **Survolez** un élément de la légende pour mettre ce groupe en évidence. **Cliquez** pour le masquer temporairement du graphique.
+</Tip>
+
+---
+
+## Notes spécifiques au graphique
+
+### Diagrammes en secteurs
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Chaque secteur représente** – Définissez la façon dont les secteurs sont regroupés
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Masquer la catégorie vide** – Supprimer les secteurs à valeur zéro
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Afficher la valeur au centre** – Afficher la valeur agrégée (somme, moyenne, comptage, etc.)
+
+### Graphiques agrégés
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Préfixe** – Ajoutez du texte avant le nombre (p. ex., `$`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffixe** – Ajoutez du texte après le nombre (p. ex., `%`)

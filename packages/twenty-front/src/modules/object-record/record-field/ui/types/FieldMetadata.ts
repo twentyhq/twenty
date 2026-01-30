@@ -6,6 +6,7 @@ import {
   ConnectedAccountProvider,
   type AllowedAddressSubField,
   type FieldMetadataMultiItemSettings,
+  type FileCategory,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -91,6 +92,7 @@ export type FieldCurrencyMetadata = BaseFieldMetadata & {
   isPositive?: boolean;
   settings?: {
     format: FieldCurrencyFormat | null;
+    decimals?: number;
   };
 };
 
@@ -141,6 +143,15 @@ export type FieldPositionMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+export type FieldRelationMetadataSettings = {
+  relationType?: RelationType;
+  // Join column name for the foreign key (e.g., "petId" for a "pet" relation)
+  joinColumnName?: string | null;
+  // Points to the target field on the junction object
+  // For MORPH_RELATION fields, morphRelations already contains all targets
+  junctionTargetFieldId?: string;
+} | null;
+
 // for later: refactor this in order to directly use relation without mapping
 export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
@@ -150,14 +161,14 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationType?: RelationType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
-  settings?: null;
+  settings?: FieldRelationMetadataSettings;
 };
 
 export type FieldMorphRelationMetadata = BaseFieldMetadata & {
   morphRelations: FieldMetadataItemRelation[];
   relationType: RelationType;
   useEditButton?: boolean;
-  settings?: null;
+  settings?: FieldRelationMetadataSettings;
 };
 
 export type FieldSelectMetadata = BaseFieldMetadata & {
@@ -188,6 +199,10 @@ export type FieldTsVectorMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+export type FieldFilesMetadata = BaseFieldMetadata & {
+  settings?: FieldMetadataMultiItemSettings | null;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -195,6 +210,7 @@ export type FieldMetadata =
   | FieldDateMetadata
   | FieldEmailMetadata
   | FieldEmailsMetadata
+  | FieldFilesMetadata
   | FieldFullNameMetadata
   | FieldLinkMetadata
   | FieldLinksMetadata
@@ -318,3 +334,11 @@ export type FieldPhonesValue = {
   primaryPhoneCallingCode?: string;
   additionalPhones?: PhoneRecord[] | null;
 };
+
+export type FieldFileValue = {
+  fileId: string;
+  label: string;
+  fileCategory: FileCategory;
+};
+
+export type FieldFilesValue = FieldFileValue[];

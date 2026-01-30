@@ -1,0 +1,130 @@
+---
+title: Calendário e emails
+description: Conecte as suas contas de email e calendário ao Twenty.
+image: /images/user-guide/emails/emails_header.png
+---
+
+<Frame>
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendário e emails" />
+</Frame>
+
+## Opções de Conexão
+
+### Conta do Google (Gmail & Google Calendar)
+
+1. Vá para **Configurações → Contas**
+2. Clique em **Adicionar conta**
+3. Selecione **Continuar com o Google**
+4. Autorize o Twenty a aceder ao seu Gmail e Google Calendar
+5. Configure as definições de sincronização de email (visibilidade, criação automática) → clique em **Seguinte**
+6. Configure as definições de sincronização do calendário (visibilidade, criação automática) → clique em **Adicionar conta**
+7. Seus emails e eventos de calendário começarão a sincronizar automaticamente
+
+### Conta Microsoft (Outlook & Microsoft Calendar)
+
+1. Vá para **Configurações → Contas**
+2. Clique em **Adicionar conta**
+3. Selecione **Continuar com Microsoft**
+4. Autorize o Twenty a acessar seu Outlook e Microsoft Calendar
+5. Configure as definições de sincronização de email (visibilidade, criação automática) → clique em **Seguinte**
+6. Configure as definições de sincronização do calendário (visibilidade, criação automática) → clique em **Adicionar conta**
+7. Seus emails e eventos de calendário começarão a sincronizar automaticamente
+
+### Configuração SMTP/CalDAV (Outros Provedores)
+
+Para outros provedores de email e calendário:
+
+1. Vá para **Configurações → Contas**
+2. Configure as definições SMTP para email
+3. Configure as definições CalDAV para o calendário
+4. Teste a ligação
+
+### Caixas de Correio Múltiplas
+
+* **Contas Ilimitadas**: Conectar múltiplas contas de email por usuário
+* **Gestão de Contas**: Alternar entre diferentes caixas de correio
+* **Definições de sincronização**: Configure definições diferentes por caixa de correio
+
+<Warning>
+  Apenas caixas de correio verdadeiras podem ser conectadas (ex.: suporte@dominio.com com sua própria caixa de entrada). Aliases de email que redirecionam para outra caixa de correio não podem ser conectados ao Twenty.
+</Warning>
+
+## Configuração de Email
+
+### Visibilidade da Mensagem
+
+Escolha diferentes níveis de visibilidade para seus emails:
+
+* **Apenas Metadados**: Compartilhar apenas informação básica (remetente, destinatário, data, hora)
+* **Assunto e Metadados**: Compartilhar linha de assunto junto com metadados
+* **Todo o Conteúdo do Email**: Compartilhar o conteúdo inteiro do email incluindo anexos
+
+### Criação automática de contactos
+
+* **Desativado**: Nenhuma criação automática de contato
+* **Para mensagens enviadas & recebidas**: Criar contatos para todas as interações de email externos
+* **Somente para mensagens enviadas**: Criar contatos apenas para emails que você envia
+* **Nota**: Emails internos (mesmo domínio) nunca são sincronizados para manter a privacidade
+
+<Note>Quando ativado, os contactos são automaticamente associados aos respetivos registos de Empresa com base no domínio de email. Se a empresa ainda não existir, o Twenty cria-a por si.</Note>
+
+### Controle quais emails são sincronizados com a Seleção de Pastas de Mensagens
+
+Controle quais pastas de email sincronizam com o Twenty:
+
+1. Vá para **Configurações → Contas** e selecione sua conta de email conectada
+2. Escolha quais pastas sincronizar:
+   * **Caixa de Entrada**: Principais emails recebidos
+   * **Enviado**: Emails de saída que você enviou
+   * **Pastas Personalizadas**: Quaisquer pastas específicas que você deseja incluir
+   * **Excluir Pastas**: Pule pastas como Spam, Lixo, ou pastas pessoais
+
+Isso lhe dá controle preciso sobre quais emails aparecem no seu CRM sem sincronizar tudo.
+
+**O Que é Sincronizado:**
+
+* **Emails Externos**: Todos os emails com contatos externos das pastas selecionadas
+* **Emails Internos**: Não sincronizados (emails do mesmo domínio permanecem privados)
+* **Anexos**: Disponível em H1 2026
+
+**Nota**: Não fornecemos um endereço de email CC para sincronização seletiva. Em vez disso, use o recurso Pasta de Mensagem acima para conseguir o mesmo nível de controle sobre quais emails sincronizam com o Twenty.
+
+## Configuração do Calendário
+
+### Visibilidade do Evento
+
+Escolha o que ficará visível para outros utilizadores no seu espaço de trabalho:
+
+* **Tudo**: Todos os detalhes do evento serão compartilhados com sua equipe
+* **Metadados**: Apenas data & participantes serão compartilhados com sua equipe
+
+### Criação Automática de Contato para Reuniões
+
+* **Sim**: Criar contatos automaticamente para participantes de reuniões que não estão no seu CRM
+* **Não**: Apenas vincula reuniões a contatos existentes
+
+<Note>Quando ativado, os contactos são automaticamente associados aos respetivos registos de Empresa com base no domínio de email. Se a empresa ainda não existir, o Twenty cria-a por si.</Note>
+
+### Controle quais eventos serão sincronizados
+
+* **Importação de Reuniões**: Importar automaticamente eventos de calendário
+* **Vinculação de Contatos**: Vincular reuniões a registros de Pessoas e Empresas
+
+**O Que é Sincronizado:**
+
+* **Reuniões**: Eventos de calendário com participantes externos
+* **Vinculação de Contatos**: Eventos automaticamente vinculados aos registros do CRM
+* **Eventos de Equipe**: Visibilidade de calendário compartilhada
+
+## Frequência de Sincronização
+
+**Atualizações a cada 5 minutos**: Tanto os dados de email quanto de calendário são sincronizados automaticamente a cada 5 minutos após a importação inicial.
+
+<Note>
+  **Tempo de sincronização inicial**: A sincronização do calendário é concluída rapidamente (geralmente em poucos minutos), enquanto a sincronização de emails leva mais tempo para caixas de correio grandes. Twenty importa emails a uma taxa de aproximadamente **400 mensagens por minuto** (limitado pela restrição de taxa da API do Gmail), por isso uma caixa de correio com 10.000 emails leva cerca de 25 minutos. Não se preocupe se vir contactos de eventos do calendário a aparecer antes dos seus contactos de email; isto é um comportamento normal.
+</Note>
+
+## Próximos Passos
+
+* [Funcionalidades da caixa de correio](/l/pt/user-guide/calendar-emails/capabilities/mailbox)
+* [Resolver problemas de emails em falta](/l/pt/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

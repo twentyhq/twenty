@@ -1,0 +1,136 @@
+---
+title: 오래된 기회 감지
+description: 기회가 업데이트되지 않았을 때 관리자에게 자동으로 알립니다.
+---
+
+기회가 오래되면 관리자에게 알림을 보내 파이프라인을 건강하게 유지하세요. 이 워크플로우는 지정한 일수 동안 업데이트되지 않은 기회를 확인합니다.
+
+## 문제
+
+업데이트 없이 방치된 기회는 다음을 초래합니다:
+
+* 거래가 식어감
+* 신뢰할 수 없는 매출 예측
+* 매출 손실
+
+## 해결책
+
+오래된 기회를 찾아 해당 관리자에게 이메일을 보내는 예약 워크플로우를 만듭니다.
+
+## 단계별 설정
+
+### 1단계: 워크플로우 생성
+
+1. **설정 → 워크플로우**로 이동
+2. **+ 새 워크플로우**를 클릭
+3. 이름을 "오래된 기회 경고"로 지정
+
+### 2단계: 트리거 구성
+
+1. **On a Schedule**를 선택
+2. 매일 실행되도록 설정합니다(예: 매일 오전 8시).
+
+### 3단계: 오래된 기회 검색
+
+1. **레코드 검색** 액션을 추가합니다
+2. 구성:
+
+| 필드     | 값                                          |
+| ------ | ------------------------------------------ |
+| **객체** | 기회                                         |
+| **필터** | Updated At이 (오늘 - 7일) 이전                   |
+| **필터** | Stage가 "Closed Won"이 아니며 "Closed Lost"도 아님 |
+| **제한** | 100                                        |
+
+### 4단계: 발견된 항목이 있는지 확인
+
+1. **필터** 액션을 추가합니다
+2. 조건: `{{searchRecords.length}}`가 0보다 큼
+3. 오래된 기회가 없으면 워크플로우는 여기서 중지됩니다
+
+### 5단계: 경고 형식 지정(코드 액션)
+
+이메일을 형식 지정하기 위해 **코드** 액션을 추가합니다:
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### 6단계: 경고 이메일 보내기
+
+이메일 보내기 액션 추가:
+
+| 필드        | 값                                            |
+| --------- | -------------------------------------------- |
+| **받는 사람** | sales-manager@yourcompany.com                |
+| **제목**    | `🚨 {{code.totalCount}}건의 오래된 기회에 주의가 필요합니다` |
+| **본문**    | `{{code.summary}}`                           |
+
+### 7단계: 테스트 및 활성화
+
+1. 워크플로우를 실행하려면 **Test**를 클릭합니다
+2. 이메일에 올바른 데이터가 포함되어 있는지 확인합니다
+3. 준비되면 활성화합니다
+
+## 맞춤 설정 옵션
+
+### 정체 임계값 변경
+
+레코드 검색 필터를 수정하여 7일을 원하는 기간으로 변경합니다:
+
+* 고속 영업의 경우 3일
+* 엔터프라이즈 거래의 경우 14일
+* 긴 영업 주기의 경우 30일
+
+### 개별 영업 담당자 알림
+
+관리자에게 보내는 단일 이메일 대신 **Iterator**를 사용하여 각 영업 담당자에게 자신의 오래된 거래에 대한 개인화된 이메일을 보냅니다.
+
+### 에스컬레이션 추가
+
+심각도가 점차 높아지도록 여러 개의 워크플로우를 만듭니다:
+
+1. 7일차: 영업 담당자에게 이메일
+2. 14일차: 영업 담당자 및 관리자에게 이메일
+3. 21일차: 관리자가 개입할 수 있도록 작업 생성
+
+### Slack에 포함
+
+이메일 대신 또는 추가로 **HTTP Request**를 사용해 Slack 웹훅으로 게시합니다.
+
+## 관련 항목
+
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [워크플로우에서 이메일 보내기](/l/ko/user-guide/workflows/capabilities/send-emails-from-workflows)

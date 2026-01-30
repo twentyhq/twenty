@@ -1,0 +1,120 @@
+---
+title: Nastavte prodejní pipeline
+description: Nakonfigurujte svou prodejní pipeline pro sledování příležitostí napříč fázemi.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Prodejní pipeline v Twenty je kanbanové zobrazení vašeho objektu Příležitosti, kde každý sloupec představuje fázi ve vašem prodejním procesu.
+
+## Krok 1: Nakonfigurujte své fáze
+
+Fáze jsou definovány v objektu Příležitosti v poli **Stage**.
+
+1. Přejděte na **Nastavení → Datový model**
+2. Vyberte **Příležitosti**
+3. Najděte a klikněte na pole **Stage**
+4. Přidejte, odeberte nebo přejmenujte fáze tak, aby odpovídaly vašemu procesu
+
+<VimeoEmbed videoId="927890428" title="Ukázka videa" />
+
+### Doporučené fáze
+
+| Fáze                    | Účel                             |
+| ----------------------- | -------------------------------- |
+| **Nový**                | Nově identifikované příležitosti |
+| **Kvalifikovaný**       | Potvrzeno jako vhodné            |
+| **Schůzka**             | Probíhají jednání                |
+| **Nabídka**             | Nabídka odeslána                 |
+| **Vyjednávání**         | Dolaďování podmínek              |
+| **Uzavřeno – vyhráno**  | Obchod úspěšný                   |
+| **Uzavřeno – prohráno** | Obchod neúspěšný                 |
+
+<Note>
+  **5–7 fází je optimálních.** Příliš mnoho fází ztěžuje rychlé procházení pipeline; příliš málo snižuje přehled o postupu obchodu.
+</Note>
+
+## Krok 2: Vytvořte zobrazení pipeline
+
+1. Přejděte na **Příležitosti**
+2. Klikněte na rozbalovací nabídku zobrazení → **+ Přidat zobrazení**
+3. Pojmenujte jej "Sales Pipeline"
+4. Klikněte na **Vytvořit**
+5. Otevřete **Možnosti** a jako rozvržení vyberte **Kanban**
+
+Zobrazení automaticky používá pro sloupce pole Stage.
+
+## Krok 3: Nakonfigurujte své zobrazení
+
+### Zobrazte klíčová pole
+
+1. Klikněte na **Možnosti → Pole**
+2. Vyhledejte pole v sekci "Skrytá pole"
+3. Klikněte na **ikonu oka** a zobrazte: Společnost, Částka, Datum uzavření, Vlastník
+
+### Povolte agregace
+
+Zobrazte součty v horní části každého sloupce:
+
+1. Klikněte na číslo zobrazené vedle názvu fáze v horní části sloupce
+2. Vyberte typ agregace (Počet, Součet, Průměr atd.)
+3. Zvolte pole pro agregaci (např. Částka)
+
+**Příklad:** Zobrazte celkovou hodnotu obchodu podle fází agregováním pole Částka pomocí Součtu.
+
+### Použijte kompaktní zobrazení (volitelné)
+
+Pro přehled na vysoké úrovni s minimálním obsahem karet:
+
+1. Klikněte na **Možnosti**
+2. Zapněte přepínač **Kompaktní zobrazení**
+
+## Krok 4: Vytvořte osobní a týmová zobrazení
+
+### "Moje pipeline"
+
+* **Filtr**: Vlastník = Já
+* **Viditelnost**: Neveřejné (osobní zobrazení)
+
+### "Týmová pipeline"
+
+* **Filtr**: Žádný (zobrazit vše)
+* **Viditelnost**: Workspace (sdílené zobrazení)
+
+### "Uzavření tento měsíc"
+
+* **Typ**: Tabulka
+* **Filtr**: Datum uzavření = Tento měsíc, Stage ≠ Closed Won, Stage ≠ Closed Lost
+* **Řazení**: Datum uzavření vzestupně
+
+## Práce s příležitostmi
+
+### Vytváření příležitostí
+
+* Klikněte na **+ New** v zobrazení Příležitostí
+* Nebo klikněte na **+** ve sloupci konkrétní fáze
+
+### Přesun mezi fázemi
+
+Přetažením karet příležitostí mezi sloupci aktualizujte jejich fázi.
+
+<VimeoEmbed videoId="927888627" title="Ukázka videa" />
+
+## Osvědčené postupy
+
+### Hygiena pipeline
+
+* Denně aktualizujte obchody podle jejich postupu
+* Zastaralé obchody rychle přesouvejte nebo uzavírejte
+* Udržujte realistická data uzavření
+
+### Disciplína fází
+
+* Definujte jasná kritéria pro každou fázi
+* Jakmile jsou kritéria splněna, obchody neprodleně přesouvejte
+* Nenechávejte obchody ve fázích příliš dlouho
+
+## Související
+
+* [Kanban zobrazení](/l/cs/user-guide/views-pipelines/capabilities/kanban-views) — agregace a kompaktní zobrazení
+* [Filtry a řazení](/l/cs/user-guide/views-pipelines/capabilities/filters-and-sorting) — tvorba filtrovaných zobrazení

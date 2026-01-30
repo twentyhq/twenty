@@ -3,9 +3,9 @@ import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
 import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
 import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
-import { ApolloFactory, type Options } from '../apollo.factory';
 
 enableFetchMocks();
 
@@ -45,6 +45,7 @@ const mockWorkspace = {
   allowImpersonation: false,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   billingSubscriptions: [],
+  billingEntitlements: [],
   currentBillingSubscription: null,
   workspaceMembersCount: 0,
   isPublicInviteLinkEnabled: false,

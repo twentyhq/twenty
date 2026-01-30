@@ -1,87 +1,199 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "用户指南",
       "groups": {
-        "gettingStarted": {
-          "label": "Getting Started"
+        "discoverTwenty": {
+          "label": "发现 Twenty",
+          "groups": {
+            "gettingStartedCapabilities": {
+              "label": "功能"
+            },
+            "gettingStartedHowTos": {
+              "label": "操作指南"
+            }
+          }
         },
         "dataModel": {
-          "label": "數據模型"
+          "label": "数据模型",
+          "groups": {
+            "dataModelCapabilities": {
+              "label": "功能"
+            },
+            "dataModelHowTos": {
+              "label": "操作指南"
+            }
+          }
         },
-        "crmEssentials": {
-          "label": "CRM 基礎知識"
+        "dataMigration": {
+          "label": "数据迁移",
+          "groups": {
+            "dataMigrationCapabilities": {
+              "label": "功能"
+            },
+            "dataMigrationHowTos": {
+              "label": "操作指南"
+            }
+          }
         },
-        "views": {
-          "label": "視圖"
+        "calendarEmails": {
+          "label": "日历与电子邮件",
+          "groups": {
+            "calendarEmailsCapabilities": {
+              "label": "功能"
+            },
+            "calendarEmailsHowTos": {
+              "label": "操作指南"
+            }
+          }
         },
         "workflows": {
-          "label": "Workflow"
+          "label": "工作流",
+          "groups": {
+            "workflowsCapabilities": {
+              "label": "功能"
+            },
+            "workflowsHowTos": {
+              "label": "操作指南",
+              "groups": {
+                "crmAutomations": {
+                  "label": "CRM 自动化"
+                },
+                "connectToOtherTools": {
+                  "label": "连接到其他工具"
+                },
+                "advancedConfigurations": {
+                  "label": "高级配置"
+                },
+                "needMoreHelp": {
+                  "label": "需要更多帮助"
+                }
+              }
+            }
+          }
         },
-        "collaboration": {
-          "label": "協作"
+        "ai": {
+          "label": "AI",
+          "groups": {
+            "aiCapabilities": {
+              "label": "功能"
+            },
+            "aiHowTos": {
+              "label": "操作指南"
+            }
+          }
         },
-        "integrationsApi": {
-          "label": "Integrations & API"
+        "viewsPipelines": {
+          "label": "视图与管道",
+          "groups": {
+            "viewsPipelinesCapabilities": {
+              "label": "功能"
+            },
+            "viewsPipelinesHowTos": {
+              "label": "操作指南"
+            }
+          }
         },
-        "reporting": {
-          "label": "報告"
+        "dashboards": {
+          "label": "仪表板",
+          "groups": {
+            "dashboardsCapabilities": {
+              "label": "功能"
+            },
+            "dashboardsHowTos": {
+              "label": "操作指南"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "权限与访问",
+          "groups": {
+            "permissionsAccessCapabilities": {
+              "label": "功能"
+            },
+            "permissionsAccessHowTos": {
+              "label": "操作指南"
+            }
+          }
+        },
+        "billing": {
+          "label": "账单",
+          "groups": {
+            "billingCapabilities": {
+              "label": "功能"
+            },
+            "billingHowTos": {
+              "label": "操作指南"
+            }
+          }
         },
         "settings": {
-          "label": "設置"
-        },
-        "pricing": {
-          "label": "定價"
-        },
-        "resources": {
-          "label": "資源"
+          "label": "设置",
+          "groups": {
+            "settingsCapabilities": {
+              "label": "功能"
+            },
+            "settingsHowTos": {
+              "label": "操作指南"
+            }
+          }
         }
       }
     },
     "developers": {
-      "label": "開發人員",
+      "label": "开发者",
       "groups": {
         "developersGroup": {
-          "label": "開發人員"
+          "label": "开发者"
         },
-        "devGettingStarted": {
-          "label": "Getting Started",
+        "extend": {
+          "label": "扩展",
           "groups": {
-            "selfHosting": {
-              "label": "Self-Hosting"
-            },
-            "apiAndWebhooks": {
-              "label": "API 和 Webhooks"
+            "extendCapabilities": {
+              "label": "功能"
             }
           }
         },
-        "contributing": {
-          "label": "貢獻",
+        "selfHost": {
+          "label": "自托管",
           "groups": {
-            "frontendDevelopment": {
-              "label": "前端開發",
+            "selfHostCapabilities": {
+              "label": "功能"
+            }
+          }
+        },
+        "contribute": {
+          "label": "贡献",
+          "groups": {
+            "contributeCapabilities": {
+              "label": "功能",
               "groups": {
-                "twentyUi": {
-                  "label": "Twenty UI",
+                "frontendDevelopment": {
+                  "label": "前端开发",
                   "groups": {
-                    "display": {
-                      "label": "顯示"
-                    },
-                    "feedback": {
-                      "label": "反饋"
-                    },
-                    "input": {
-                      "label": "輸入"
-                    },
-                    "navigation": {
-                      "label": "導航"
+                    "twentyUi": {
+                      "label": "Twenty UI",
+                      "groups": {
+                        "display": {
+                          "label": "展示"
+                        },
+                        "feedback": {
+                          "label": "反馈"
+                        },
+                        "input": {
+                          "label": "输入"
+                        },
+                        "navigation": {
+                          "label": "导航"
+                        }
+                      }
                     }
                   }
+                },
+                "backendDevelopment": {
+                  "label": "后端开发"
                 }
               }
-            },
-            "backendDevelopment": {
-              "label": "後端開發"
             }
           }
         }

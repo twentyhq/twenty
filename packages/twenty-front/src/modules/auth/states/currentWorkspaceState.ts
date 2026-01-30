@@ -15,6 +15,7 @@ export type CurrentWorkspace = Pick<
   | 'featureFlags'
   | 'activationStatus'
   | 'billingSubscriptions'
+  | 'billingEntitlements'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'

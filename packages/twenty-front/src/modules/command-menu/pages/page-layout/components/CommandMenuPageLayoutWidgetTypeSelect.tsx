@@ -5,13 +5,17 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
-import { useCompanyDefaultChartConfig } from '@/page-layout/hooks/useCompanyDefaultChartConfig';
+import { isExistingWidgetMissingOrDifferentType } from '@/command-menu/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
+import { useOpportunityDefaultChartConfig } from '@/page-layout/hooks/useOpportunityDefaultChartConfig';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useCreatePageLayoutStandaloneRichTextWidget } from '@/page-layout/hooks/useCreatePageLayoutStandaloneRichTextWidget';
+import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hooks/useRemovePageLayoutWidgetAndPreservePosition';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -19,7 +23,7 @@ import {
   IconChartPie,
   IconFrame,
 } from 'twenty-ui/display';
-import { GraphType } from '~/generated-metadata/graphql';
+import { WidgetType } from '~/generated/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -28,7 +32,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  const { buildBarChartFieldSelection } = useCompanyDefaultChartConfig();
+  const { buildBarChartFieldSelection } = useOpportunityDefaultChartConfig();
 
   const { createPageLayoutGraphWidget } =
     useCreatePageLayoutGraphWidget(pageLayoutId);
@@ -39,20 +43,39 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { createPageLayoutStandaloneRichTextWidget } =
     useCreatePageLayoutStandaloneRichTextWidget(pageLayoutId);
 
+  const { removePageLayoutWidgetAndPreservePosition } =
+    useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
+
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
       pageLayoutEditingWidgetIdComponentState,
       pageLayoutId,
     );
 
-  const handleNavigateToGraphTypeSelect = () => {
-    if (!isDefined(pageLayoutEditingWidgetId)) {
-      const fieldSelection = buildBarChartFieldSelection();
-      const newWidget = createPageLayoutGraphWidget({
-        graphType: GraphType.VERTICAL_BAR,
-        fieldSelection,
-      });
+  const draftPageLayout = useRecoilComponentValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
 
+  const existingWidget = isDefined(pageLayoutEditingWidgetId)
+    ? draftPageLayout.tabs
+        .flatMap((tab) => tab.widgets)
+        .find((widget) => widget.id === pageLayoutEditingWidgetId)
+    : undefined;
+
+  const handleNavigateToGraphTypeSelect = () => {
+    if (
+      isExistingWidgetMissingOrDifferentType(
+        existingWidget?.type,
+        WidgetType.GRAPH,
+      )
+    ) {
+      if (isDefined(pageLayoutEditingWidgetId)) {
+        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
+      }
+
+      const fieldSelection = buildBarChartFieldSelection();
+      const newWidget = createPageLayoutGraphWidget({ fieldSelection });
       setPageLayoutEditingWidgetId(newWidget.id);
     }
 
@@ -63,9 +86,17 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   };
 
   const handleNavigateToIframeSettings = () => {
-    if (!isDefined(pageLayoutEditingWidgetId)) {
-      const newWidget = createPageLayoutIframeWidget(t`Untitled iFrame`, null);
+    if (
+      isExistingWidgetMissingOrDifferentType(
+        existingWidget?.type,
+        WidgetType.IFRAME,
+      )
+    ) {
+      if (isDefined(pageLayoutEditingWidgetId)) {
+        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
+      }
 
+      const newWidget = createPageLayoutIframeWidget(t`Untitled iFrame`, null);
       setPageLayoutEditingWidgetId(newWidget.id);
     }
 
@@ -76,7 +107,16 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   };
 
   const handleNavigateToRichTextSettings = () => {
-    if (!isDefined(pageLayoutEditingWidgetId)) {
+    if (
+      isExistingWidgetMissingOrDifferentType(
+        existingWidget?.type,
+        WidgetType.STANDALONE_RICH_TEXT,
+      )
+    ) {
+      if (isDefined(pageLayoutEditingWidgetId)) {
+        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
+      }
+
       const newWidget = createPageLayoutStandaloneRichTextWidget({
         blocknote: '',
         markdown: null,

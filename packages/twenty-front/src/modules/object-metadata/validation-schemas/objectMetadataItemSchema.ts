@@ -14,6 +14,7 @@ export const objectMetadataItemSchema = z.object({
   updatableFields: z.array(fieldMetadataItemSchema()),
   indexMetadatas: z.array(indexMetadataItemSchema),
   icon: z.string().startsWith('Icon').trim(),
+  applicationId: z.uuid(),
   id: z.uuid(),
   duplicateCriteria: z.array(z.array(z.string())),
   imageIdentifierFieldMetadataId: z.uuid().nullable(),

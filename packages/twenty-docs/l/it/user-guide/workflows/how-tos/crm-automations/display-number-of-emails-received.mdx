@@ -1,0 +1,74 @@
+---
+title: Visualizza il numero di email ricevute
+description: Crea un flusso di lavoro per contare e visualizzare automaticamente il numero di email ricevute da ciascun contatto.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
+
+## Panoramica
+
+Questo flusso di lavoro si attiva ogni volta che viene ricevuta una nuova email e aggiorna un campo personalizzato sul record Persona con il conteggio totale delle email provenienti da quel mittente.
+
+## Prerequisiti
+
+Prima di configurare questo flusso di lavoro, crea un campo personalizzato sull'oggetto **People**:
+
+1. Vai a **Impostazioni → Modello dati → People**
+2. Aggiungi un nuovo campo **Number**
+3. Assegnagli un nome come "Numero di email ricevute da questa persona"
+
+## Configurazione passo-passo
+
+<VimeoEmbed videoId="1148700336" title="Dimostrazione video" />
+
+### Passaggio 1: Configura il trigger
+
+1. Vai su **Flussi di lavoro** e crea un nuovo flusso di lavoro
+2. Seleziona **Record is Created** come trigger
+3. Scegli **Message Participants** (disponibile sotto Oggetti avanzati)
+
+<Note>
+  Un Message Participant è una combinazione di un ID messaggio e di un ID persona, che crea un record univoco per ogni messaggio. Questo è più semplice da tracciare rispetto ai Messaggi direttamente perché possiamo accedere al campo `handle`, che contiene l'indirizzo email del mittente (o del destinatario).
+</Note>
+
+### Passaggio 2: Filtra per ruolo
+
+1. Aggiungi l'azione **Filter**
+2. Imposta la condizione: **Role** uguale a **FROM**
+
+Questo garantisce che tu conteggi solo i messaggi inviati da questa persona, non quelli inviati a questa persona.
+
+### Passaggio 3: Cerca tutti i Message Participants con lo stesso handle
+
+1. Aggiungi un'azione **Search Records**
+2. Seleziona **Message Participants** come oggetto
+3. Aggiungi dei filtri: **Handle** uguale all'handle del trigger (l'indirizzo email del mittente) e **Role** uguale a **FROM**
+4. Aumenta il **Limit** da 1 a **200** (il massimo)
+
+In questo modo si trovano tutti i messaggi provenienti da questo indirizzo email per ottenere il conteggio totale.
+
+<Note>
+  L'azione Search Records è limitata a restituire al massimo 200 record. Tuttavia, poiché stai usando solo il valore `totalCount` (non i singoli record), questo passaggio restituirà il numero totale di email inviate da questa persona.
+</Note>
+
+### Passaggio 4: Aggiorna il record Persona con un'azione Create or Update Record
+
+1. Aggiungi un'azione **Create or Update Record**
+
+<Warning>
+  Usa **Upsert Record** invece di **Update Record** qui. Questo ti permette di identificare la persona tramite il suo indirizzo email (il campo `handle`) invece di richiedere un ID record da un passaggio precedente.
+</Warning>
+
+2. Seleziona **People** come oggetto
+3. Trova la persona facendo corrispondere la sua email all'`handle` del Message Participant
+4. Imposta il tuo campo personalizzato "Numero di email ricevute" su `{{searchRecords.totalCount}}`
+
+Il valore `totalCount` dell'azione Search Records rappresenta il numero totale di email ricevute da questa persona.
+
+## Correlati
+
+* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+* [Crea campi personalizzati](/l/it/user-guide/data-model/how-tos/customize-your-data-model)
+* [Azione Search Records](/l/it/user-guide/workflows/capabilities/workflow-actions#search-records)

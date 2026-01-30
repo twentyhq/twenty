@@ -3,7 +3,7 @@ import {
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataSettings,
-  FieldMetadataType,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -70,6 +70,7 @@ export const createStandardRelationFieldFlatMetadata = <
     settings,
     options: fieldOptions = null,
     morphId,
+    type,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -82,14 +83,18 @@ export const createStandardRelationFieldFlatMetadata = <
   const targetFieldIds =
     standardObjectMetadataRelatedEntityIds[targetObjectName].fields;
 
+  const targetObjectFields = STANDARD_OBJECTS[targetObjectName].fields;
+  const targetFieldDefinition =
+    targetObjectFields[targetFieldName as keyof typeof targetObjectFields];
+
   return {
     id: fieldIds[fieldName as keyof typeof fieldIds].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
-    standardId: null,
+    standardId: fieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
-    type: FieldMetadataType.RELATION,
+    type,
     name: fieldName.toString(),
     label,
     description,
@@ -116,5 +121,18 @@ export const createStandardRelationFieldFlatMetadata = <
     mainGroupByFieldMetadataViewIds: [],
     createdAt: now,
     updatedAt: now,
+    applicationUniversalIdentifier: twentyStandardApplicationId,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[objectName].universalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[targetObjectName].universalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier:
+      targetFieldDefinition.universalIdentifier,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 };

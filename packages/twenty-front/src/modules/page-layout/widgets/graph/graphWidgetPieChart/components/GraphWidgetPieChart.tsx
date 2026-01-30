@@ -1,5 +1,6 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { CustomArcsLayer } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/CustomArcsLayer';
 import { GraphPieChartTooltip } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/GraphPieChartTooltip';
 import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graphWidgetPieChart/components/PieChartCenterMetricLayer';
@@ -7,8 +8,9 @@ import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graphWid
 import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graphWidgetPieChart/constants/PieChartMargins';
 import { usePieChartData } from '@/page-layout/widgets/graph/graphWidgetPieChart/hooks/usePieChartData';
 import { graphWidgetPieTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetPieChart/states/graphWidgetPieTooltipComponentState';
-import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { getPieChartFormattedValue } from '@/page-layout/widgets/graph/graphWidgetPieChart/utils/getPieChartFormattedValue';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
@@ -26,20 +28,24 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type PieChartConfiguration } from '~/generated/graphql';
+import {
+  type PieChartConfiguration,
+  type PieChartDataItem,
+} from '~/generated/graphql';
 
 type GraphWidgetPieChartProps = {
-  data: PieChartDataItem[];
+  data: PieChartDataItemWithColor[];
   showLegend?: boolean;
   id: string;
   objectMetadataItemId: string;
   configuration: PieChartConfiguration;
-  onSliceClick?: (datum: PieChartDataItem) => void;
+  colorMode: GraphColorMode;
+  onSliceClick?: (datum: PieChartDataItemWithColor) => void;
   showDataLabels?: boolean;
   showCenterMetric?: boolean;
 } & GraphValueFormatOptions;
 
-const emptyStateData: PieChartDataItem[] = [{ id: 'empty', value: 1 }];
+const emptyStateData: PieChartDataItemWithColor[] = [{ id: 'empty', value: 1 }];
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -72,6 +78,7 @@ export const GraphWidgetPieChart = ({
   id,
   objectMetadataItemId,
   configuration,
+  colorMode,
   displayType,
   decimals,
   prefix,
@@ -99,12 +106,13 @@ export const GraphWidgetPieChart = ({
   const { enrichedData, legendItems } = usePieChartData({
     data,
     colorRegistry,
+    colorMode,
   });
 
   const handleSliceMove = useCallback(
     (
-      datum: ComputedDatum<PieChartDataItem>,
-      event: ReactMouseEvent<SVGPathElement>,
+      datum: ComputedDatum<PieChartDataItemWithColor>,
+      event: ReactMouseEvent<SVGElement>,
     ) => {
       if (!isDefined(containerRef.current)) return;
 
@@ -133,14 +141,16 @@ export const GraphWidgetPieChart = ({
   const chartColors = hasNoData
     ? [theme.background.tertiary]
     : enrichedData.map((item) => item.colorScheme.solid);
+  const pieChartPadAngle = hasNoData || enrichedData.length <= 1 ? 0 : 0.4;
 
   const ArcsLayer = useCallback(
-    (props: PieCustomLayerProps<PieChartDataItem>) => (
+    (props: PieCustomLayerProps<PieChartDataItemWithColor>) => (
       <CustomArcsLayer
         dataWithArc={props.dataWithArc}
         arcGenerator={props.arcGenerator}
         centerX={props.centerX}
         centerY={props.centerY}
+        padAngle={pieChartPadAngle}
         onMouseMove={hasNoData ? undefined : handleSliceMove}
         onMouseLeave={hasNoData ? undefined : handleSliceLeave}
         onClick={
@@ -154,7 +164,13 @@ export const GraphWidgetPieChart = ({
         }
       />
     ),
-    [hasNoData, handleSliceMove, handleSliceLeave, onSliceClick],
+    [
+      hasNoData,
+      handleSliceMove,
+      handleSliceLeave,
+      onSliceClick,
+      pieChartPadAngle,
+    ],
   );
 
   return (
@@ -170,8 +186,9 @@ export const GraphWidgetPieChart = ({
             data={chartData}
             margin={showDataLabels && !hasNoData ? PIE_CHART_MARGINS : {}}
             innerRadius={0.8}
-            padAngle={hasNoData ? 0 : 0.4}
             colors={chartColors}
+            animate
+            motionConfig={CHART_MOTION_CONFIG}
             enableArcLinkLabels={showDataLabels && !hasNoData}
             enableArcLabels={false}
             tooltip={() => null}

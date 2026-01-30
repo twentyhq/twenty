@@ -1,0 +1,209 @@
+---
+title: Esporta i tuoi dati
+description: Guida completa passo per passo all'esportazione dei dati da Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Panoramica
+
+Esporta i dati del tuo spazio di lavoro in CSV per backup, reportistica o migrazione.
+
+**Casi di utilizzo:**
+
+* **Backup regolari** — conserva copie dei tuoi dati
+* **Reportistica esterna** — analizza i dati in Excel, Google Sheets o strumenti BI
+* **Migrazione** — sposta i dati in un altro sistema
+* **Aggiornamenti massivi** — esporta, modifica e reimporta per aggiornare i record
+
+## Cosa devi sapere
+
+### Limiti di esportazione
+
+* **Massimo 20.000 record** per esportazione
+* Vengono esportate solo le **colonne visibili**
+* Vengono esportati solo i **record filtrati** (in base alla vista corrente)
+
+<Note>Per esportazioni più grandi (oltre 20.000 record), usa i filtri per esportare a lotti oppure usa le [API](/l/it/developers/extend/capabilities/apis).</Note>
+
+### Permessi
+
+Hai bisogno dell'autorizzazione **"Esporta CSV"** per esportare i dati. Contatta l'amministratore del tuo spazio di lavoro se non hai questa opzione.
+
+## Passaggio 1: Vai all'oggetto
+
+Vai all'oggetto che vuoi esportare:
+
+* **Persone** — per i contatti
+* **Aziende** — per le organizzazioni
+* **Opportunità** — per le trattative
+* **Oggetti personalizzati** — qualsiasi oggetto che hai creato
+
+## Passaggio 2: Configura la tua vista
+
+**Importante:** L'esportazione include solo ciò che è visibile nella vista corrente.
+
+### Aggiungi/Rimuovi colonne
+
+1. Fai clic su **Opzioni → Campi** (oppure sul **+** alla fine delle colonne)
+2. Seleziona i campi che vuoi esportare
+3. Deseleziona i campi di cui non hai bisogno
+
+### Filtra i record (opzionale)
+
+Se ti serve solo un sottoinsieme di dati:
+
+1. Fai clic su **Filtro**
+2. Aggiungi condizioni di filtro (es., "Data di creazione > 1 gennaio 2024")
+3. Verranno esportati solo i record corrispondenti
+
+### Ordina i record (opzionale)
+
+1. Fai clic sull'intestazione di una colonna per ordinare
+2. L'esportazione seguirà il tuo ordinamento
+
+<Note>**Crea una vista dedicata all'esportazione.** Salva una vista configurata specificamente per le esportazioni così da non dover riconfigurare ogni volta.</Note>
+
+## Passaggio 3: Esporta i dati
+
+1. Fai clic sull'icona **⋮** in alto a destra della tabella
+2. Seleziona **Esporta vista**
+3. Scegli dove salvare il file CSV
+4. Attendi il completamento del download
+
+## Cosa viene esportato
+
+| Incluso                                     | Non incluso                    |
+| ------------------------------------------- | ------------------------------ |
+| Tutte le colonne visibili                   | Colonne nascoste               |
+| Record che corrispondono ai filtri correnti | Record esclusi dai filtri      |
+| Valori dei campi personalizzati             | Campi non presenti nella vista |
+| ID dei record                               | File allegati                  |
+| ID delle relazioni                          | Immagini                       |
+
+### Campi di Relazione
+
+Gli ID delle relazioni vengono esportati solo sul **lato "many"** di una relazione:
+
+* **L'esportazione Persone** include una colonna `companyId` (relazione Persone → Azienda)
+* **L'esportazione Aziende** NON include `peopleIds` (Aziende è il lato "one")
+
+Ciò significa che puoi usare l'esportazione Persone per reimportare e mantenere il collegamento con l'Azienda, ma dovrai reimportare Persone dopo Aziende per ricreare le relazioni.
+
+## Esportazione per scopi specifici
+
+### Per i backup
+
+1. Crea una vista con **tutti i campi** visibili
+2. Rimuovi tutti i filtri per includere tutti i record
+3. Esporta ogni tipo di oggetto separatamente
+4. Conserva le esportazioni in una posizione sicura
+5. Imposta un promemoria ricorrente (settimanale/mensile)
+
+### Per la reportistica esterna
+
+1. Includi solo i campi necessari all'analisi
+2. Applica filtri per concentrarti sui dati rilevanti
+3. Valuta di ordinare in base al campo che analizzerai
+
+### Per aggiornamenti massivi
+
+1. Esporta i record che vuoi aggiornare
+2. Includi l'identificatore univoco (`email`, `domain` o `id`)
+3. Modifica il file esportato
+4. Reimporta per aggiornare i record
+   Vedi: [Come aggiornare i record esistenti](/l/it/user-guide/data-migration/how-tos/update-existing-records-via-import)
+
+### Per la migrazione
+
+Se stai esportando per migrare a un altro sistema:
+
+1. **Esporta ogni oggetto separatamente** — Persone, Aziende, Opportunità, ecc.
+2. **Includi i campi ID** — aiutano a mantenere le relazioni
+3. **Documenta le mappature dei campi** — annota come i campi di Twenty corrispondono al tuo sistema di destinazione
+
+## Gestione di set di dati di grandi dimensioni (oltre 20.000 record)
+
+Il limite di esportazione è di 20.000 record. Per set di dati più grandi:
+
+### Opzione 1: Esporta a lotti
+
+1. Aggiungi un filtro (ad es., intervalli di "Data di creazione")
+2. Esporta il primo lotto
+3. Modifica il filtro
+4. Esporta il lotto successivo
+5. Unisci i file nel tuo foglio di calcolo
+
+**Esempi di filtri per i lotti:**
+
+* Per intervallo di date (gennaio, febbraio, marzo...)
+* Per proprietario (membro del team A, membro del team B...)
+* Per stato (attivo, inattivo...)
+
+### Opzione 2: Usa le API
+
+Le API non hanno un limite di record:
+
+1. Ottieni la tua chiave API da **Impostazioni → Sviluppatori**
+2. Usa le API GraphQL per interrogare i record
+3. Elabora i risultati nella tua applicazione
+
+Vedi: [Documentazione API](/l/it/developers/extend/capabilities/apis)
+
+## Suggerimenti e buone pratiche
+
+### Crea viste di esportazione
+
+Salva viste configurate specificamente per le esportazioni:
+
+1. Configura colonne e filtri
+2. Fai clic su **Opzioni vista** → **Salva come nuova vista**
+3. Assegnale il nome "Export - [Scopo]"
+
+### Proteggi le tue esportazioni
+
+I file esportati possono contenere dati sensibili:
+
+* Conservali in posizioni sicure
+* Elimina le esportazioni vecchie quando non sono più necessarie
+* Fai attenzione quando condividi i file di esportazione
+
+### Verifica prima di esportare
+
+<Check>Le colonne corrette sono visibili</Check>
+<Check>I filtri sono impostati correttamente (o rimossi per l'esportazione completa)</Check>
+<Check>Hai l'autorizzazione di esportazione</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Perché mancano alcune colonne nella mia esportazione?">
+    Vengono esportate solo le colonne visibili. Aggiungi le colonne necessarie tramite **Opzioni → Campi** prima di esportare.
+  </Accordion>
+
+  <Accordion title="Perché la mia esportazione non include tutti i record?">
+    Controlla i tuoi filtri. L'esportazione include solo i record che corrispondono ai filtri della vista corrente. Rimuovi i filtri per esportare tutti i record.
+  </Accordion>
+
+  <Accordion title="Posso esportare più di 20.000 record?">
+    Non in un'unica esportazione. Usa i filtri per esportare a lotti oppure usa le API per set di dati più grandi.
+  </Accordion>
+
+  <Accordion title="Qual è il formato del file di esportazione?">
+    CSV (valori separati da virgola). Si apre in Excel, Google Sheets o in qualsiasi applicazione per fogli di calcolo.
+  </Accordion>
+
+  <Accordion title="Gli ID delle relazioni sono inclusi?">
+    Sì, ma solo sul lato "many" delle relazioni. Ad esempio, un'esportazione Persone include `companyId`, ma un'esportazione Aziende non include gli ID delle persone.
+  </Accordion>
+
+  <Accordion title="Posso automatizzare le esportazioni?">
+    Non direttamente tramite l'interfaccia utente. Usa le API per creare flussi di lavoro di esportazione automatizzati.
+  </Accordion>
+</AccordionGroup>
+
+## Prossimi Passi
+
+* [Come aggiornare i record esistenti](/l/it/user-guide/data-migration/how-tos/update-existing-records-via-import) — modifica e reimporta la tua esportazione
+* [Come importare i dati tramite API](/l/it/user-guide/data-migration/how-tos/import-data-via-api) — per set di dati di grandi dimensioni
+* [Documentazione API](/l/it/developers/extend/capabilities/apis) — crea flussi di lavoro di esportazione personalizzati

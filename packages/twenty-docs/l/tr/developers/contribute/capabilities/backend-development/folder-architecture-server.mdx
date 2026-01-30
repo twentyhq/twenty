@@ -1,0 +1,125 @@
+---
+title: Klasör Mimarisi
+info: Sunucu klasör mimarimize detaylı bir bakış
+---
+
+Arka uç dizin yapısı aşağıdaki gibidir:
+
+```
+server
+  └───ability
+  └───constants
+  └───core
+  └───database
+  └───decorators
+  └───filters
+  └───guards
+  └───health
+  └───integrations
+  └───metadata
+  └───workspace
+  └───utils
+```
+
+## Yetkiler
+
+İzinleri tanımlar ve her bir varlık için işleyiciler içerir.
+
+## Dekoratörler
+
+Ek işlevsellik için NestJS'te özel dekoratörleri tanımlar.
+
+Daha fazla bilgi için [özel dekoratörler](https://docs.nestjs.com/custom-decorators) sayfasına bakın.
+
+## Filtreler
+
+GraphQL uç noktalarında oluşabilecek istisnaları ele almak için istisna filtreleri içerir.
+
+## Guard'lar
+
+Daha fazla bilgi için [guard'lar](https://docs.nestjs.com/guards) sayfasına bakın.
+
+## Sağlık
+
+Veritabanının beklendiği gibi çalışıp çalışmadığını doğrulamak için JSON döndüren, herkese açık bir REST API'si (healthz) içerir.
+
+## Meta Veriler
+
+Özel nesneleri tanımlar ve bir GraphQL API'sini (graphql/metadata) kullanıma sunar.
+
+## İş Alanı
+
+Meta verilere dayalı özel GraphQL şeması oluşturur ve sunar.
+
+### Çalışma Alanı Dizin Yapısı
+
+```
+workspace
+
+  └───workspace-schema-builder
+    └───factories
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───workspace-resolver-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-builder
+    └───factories
+    └───interfaces
+  └───workspace-query-runner
+    └───interfaces
+    └───utils
+  └───workspace-datasource
+  └───workspace-manager
+  └───workspace-migration-runner
+  └───utils
+  └───workspace.module.ts
+  └───workspace.factory.spec.ts
+  └───workspace.factory.ts
+```
+
+Çalışma alanı dizininin kökünde, `createGraphQLSchema` fonksiyonunu içeren `workspace.factory.ts` dosyası bulunur. Bu fonksiyon, meta verileri kullanarak her bir çalışma alanına özgü bir şema üretir. Şema ve resolver oluşturmayı ayırarak, bu ayrık bileşenleri birleştiren `makeExecutableSchema` fonksiyonunu kullanırız.
+
+Bu strateji sadece düzenle ilgili değildir; aynı zamanda performans ve ölçeklenebilirliği artırmak için oluşturulan tür tanımlarının önbelleğe alınması gibi optimizasyonlara da yardımcı olur.
+
+### Çalışma Alanı Şema Oluşturucu
+
+GraphQL şemasını oluşturur ve şunları içerir:
+
+#### Factory'ler:
+
+GraphQL ile ilgili yapıları oluşturmak için özelleşmiş kurucular.
+
+* type.factory, alan meta verilerini `TypeMapperService` kullanarak GraphQL türlerine dönüştürür.
+* type-definition.factory, `objectMetadata` temel alınarak GraphQL girdi veya çıktı nesneleri oluşturur.
+
+#### GraphQL Türleri
+
+Numaralandırmalar, girdiler, nesneler ve skalerleri içerir ve şema oluşturmanın yapı taşları olarak hizmet eder.
+
+#### Arayüzler ve Nesne Tanımları
+
+GraphQL varlıkları için şablonları içerir ve `MONEY` veya `URL` gibi hem önceden tanımlı hem de özel türleri kapsar.
+
+#### Servisler
+
+FieldMetadataType ile uygun GraphQL skalerini veya sorgu değiştiricilerini ilişkilendirmekten sorumlu servisi içerir.
+
+#### Depolama
+
+Yeniden kullanılabilir tür tanımlarını barındıran ve GraphQL türlerinin yinelenmesini önleyen `TypeDefinitionsStorage` sınıfını içerir.
+
+### Çalışma Alanı Resolver Oluşturucu
+
+GraphQL şemasında sorgulama ve mutasyon için resolver fonksiyonları oluşturur.
+
+Bu dizindeki her bir factory, çeşitli tablolar genelinde uyarlanabilir kullanım için tasarlanmış `FindManyResolverFactory` gibi, farklı bir resolver türü üretmekten sorumludur.
+
+### Çalışma Alanı Sorgu Çalıştırıcı
+
+Veritabanında oluşturulan sorguları çalıştırır ve sonucu çözümleyip getirir.

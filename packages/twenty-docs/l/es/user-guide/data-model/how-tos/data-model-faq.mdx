@@ -1,0 +1,155 @@
+---
+title: Preguntas Frecuentes del Modelo de Datos
+description: Preguntas frecuentes sobre el modelo de datos de Twenty.
+---
+
+## Gestión de Objetos
+
+<AccordionGroup>
+  <Accordion title="¿Puedo eliminar un objeto personalizado?">
+    Sí, los objetos personalizados se pueden eliminar. También puedes desactivarlos primero, lo que oculta el objeto y sus datos de la interfaz a la vez que conserva los datos.
+  </Accordion>
+
+  <Accordion title="¿Puedo eliminar objetos estándar (Personas, Empresas, etc.)?">
+    No, los objetos estándar no se pueden eliminar. Solo puedes desactivarlos, lo que los oculta de la interfaz pero conserva los datos.
+  </Accordion>
+
+  <Accordion title="¿Cuántos objetos personalizados puedo crear?">
+    Puedes crear tantos objetos y campos personalizados como necesites — el precio no cambiará.
+  </Accordion>
+
+  <Accordion title="¿Puedo cambiar el nombre de un objeto estándar?">
+    Puedes cambiar la etiqueta de los objetos estándar (Personas, Empresas, Oportunidades), pero no sus nombres de API. Los nombres de API son fijos para mantener la coherencia en todos los espacios de trabajo de Twenty.
+  </Accordion>
+
+  <Accordion title="¿Puedo cambiar el icono de un objeto?">
+    Sí, puedes cambiar el icono tanto de los objetos estándar como de los personalizados en **Settings → Data Model**.
+  </Accordion>
+
+  <Accordion title="¿Puedo reorganizar objetos en la barra de navegación izquierda?">
+    Aún no. La ordenación de objetos en la navegación está actualmente fijada, pero esta función está prevista para una futura versión.
+  </Accordion>
+
+  <Accordion title="¿Puedo ocultar objetos de la barra de navegación izquierda?">
+    Todos los objetos activos aparecen en la navegación. Puedes desactivar los objetos que no necesites en **Configuración → Modelo de Datos**.
+  </Accordion>
+</AccordionGroup>
+
+## Capacidades de Campos
+
+<AccordionGroup>
+  <Accordion title="¿Puedo cambiar el tipo de un campo después de crearlo?">
+    No, los tipos de campo no se pueden cambiar después de su creación. Si necesitas un tipo diferente, crea un campo nuevo con el tipo correcto, migra tus datos y luego desactiva el campo anterior.
+  </Accordion>
+
+  <Accordion title="¿Por qué necesito nombres singulares y plurales diferentes?">
+    Nuestra API de GraphQL usa ambas formas para diferentes operaciones:
+
+    * `createPerson` (singular) para acciones de registro único
+    * `createPeople` (plural) para operaciones en masa
+
+    Esto crea limitaciones cuando las formas singulares y plurales son iguales, pero mejora la experiencia del desarrollador.
+  </Accordion>
+
+  <Accordion title="¿Por qué algunos nombres de campos están protegidos?">
+    Ciertos nombres de campo como `Tipo` o `Aplicación` están reservados para uso del sistema. Elige nombres alternativos como `Categoría` o `Clasificación`.
+  </Accordion>
+
+  <Accordion title="¿Qué ocurre cuando desactivo un campo?">
+    * El campo se oculta en la interfaz
+    * Los datos existentes se conservan
+    * Aún puedes acceder al campo mediante la API
+    * Las relaciones existentes se mantienen, pero no puedes crear nuevas
+    * Puedes reactivar el campo más tarde
+  </Accordion>
+
+  <Accordion title="¿Puedo hacer que un campo sea obligatorio?">
+    Actualmente, no puedes hacer que los campos personalizados sean obligatorios. Todos los campos aceptan valores vacíos. Puedes usar flujos de trabajo para aplicar campos obligatorios enviando alertas o bloqueando acciones cuando los campos estén vacíos.
+  </Accordion>
+
+  <Accordion title="¿Cuál es la diferencia entre único y obligatorio?">
+    * **Único**: No puede haber dos registros con el mismo valor en este campo
+    * **Obligatorio**: El campo debe tener un valor (actualmente no es compatible con los campos personalizados)
+  </Accordion>
+
+  <Accordion title="¿Puedo crear campos de fórmula?">
+    Los campos de fórmula llegarán en **Q1 2026**. Mientras tanto, puedes usar flujos de trabajo para calcular y actualizar automáticamente los valores de los campos.
+  </Accordion>
+
+  <Accordion title="¿Puedo tener campos anidados en mis objetos?">
+    Los campos anidados llegarán en **Q1 2026**. Actualmente, puedes usar flujos de trabajo para traer valores de campo de objetos relacionados. Por ejemplo, para mostrar la industria de una empresa en un registro de Persona, crea un campo personalizado en Personas y usa un flujo de trabajo para sincronizar el valor.
+  </Accordion>
+
+  <Accordion title="¿Puedo reorganizar campos en objetos?">
+    El reordenamiento de campos estará disponible con diseños personalizados en **Q4 2025**. Actualmente, los campos aparecen en orden alfabético.
+  </Accordion>
+</AccordionGroup>
+
+## Relaciones
+
+<AccordionGroup>
+  <Accordion title="¿Puedo tener una relación que apunte al mismo objeto?">
+    ¡Sí! Se admiten las relaciones autorreferenciadas y se recomiendan para casos como jerarquías de cuentas. Por ejemplo, crea una relación de Empresas a Empresas para realizar el seguimiento de cuentas padre/hija.
+  </Accordion>
+
+  <Accordion title="¿Puedo crear relaciones de muchos a muchos?">
+    Las relaciones de muchos a muchos llegarán en **H1 2026**. Actualmente, crea un objeto intermedio con dos relaciones de uno a muchos como solución alternativa.
+
+    Por ejemplo, para vincular Personas y Proyectos (muchos a muchos), crea un objeto "Asignaciones de proyecto" con:
+
+    * Una relación con Personas (muchas asignaciones → una persona)
+    * Una relación con Proyectos (muchas asignaciones → un proyecto)
+  </Accordion>
+
+  <Accordion title="¿Qué son las relaciones a múltiples tipos de objetos (relaciones Morph)?">
+    Estas permiten que un objeto se relacione con múltiples tipos de objetos diferentes mediante un único campo. Por ejemplo, las Notas pueden adjuntarse a Personas Y a Empresas Y a Oportunidades simultáneamente.
+
+    Cada Nota se vincula a una Persona, una Empresa y una Oportunidad al mismo tiempo.
+
+    Obtén más información en [Campos de relación](/l/es/user-guide/data-model/capabilities/relation-fields).
+  </Accordion>
+
+  <Accordion title="¿Puedo tener varias relaciones entre los mismos objetos?">
+    Sí, puedes crear varias relaciones entre los mismos dos objetos. Por ejemplo, una Empresa podría tener con Personas tanto una relación de "Contacto principal" como otra de "Contacto de facturación".
+  </Accordion>
+
+  <Accordion title="¿Qué ocurre con las relaciones cuando elimino un registro?">
+    Cuando eliminas un registro, el vínculo de la relación se elimina de los registros relacionados. Los propios registros relacionados no se eliminan.
+  </Accordion>
+
+  <Accordion title="¿Puedo crear relaciones circulares?">
+    Aunque técnicamente es posible, se deben evitar las relaciones circulares (A → B → C → A), ya que pueden causar confusión y posibles problemas de rendimiento.
+  </Accordion>
+</AccordionGroup>
+
+## Acceso y Permisos
+
+<AccordionGroup>
+  <Accordion title="¿Dónde puedo ver y editar mi modelo de datos?">
+    Ve a **Settings → Data Model** para ver y editar todos tus objetos y campos.
+  </Accordion>
+
+  <Accordion title="¿Por qué no puedo ver el Modelo de Datos en Configuración?">
+    Comunícate con tu administrador de espacio de trabajo. El acceso al modelo de datos suele estar restringido solo a administradores.
+  </Accordion>
+</AccordionGroup>
+
+## Gestión de datos
+
+<AccordionGroup>
+  <Accordion title="¿Existe un límite a la cantidad de registros que puedo tener?">
+    No hay un límite estricto en la cantidad de registros. Sin embargo, conjuntos de datos muy grandes pueden afectar el rendimiento en algunas vistas. Usa filtros y vistas para gestionar conjuntos de datos grandes de forma eficaz.
+  </Accordion>
+
+  <Accordion title="¿Puedo importar datos en objetos personalizados?">
+    Sí, puedes importar datos CSV en cualquier objeto, incluidos los objetos personalizados. El proceso de importación admite la asignación de campos para campos personalizados. Consulta [Cómo preparar tus archivos CSV](/l/es/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  </Accordion>
+
+  <Accordion title="¿Puedo exportar la configuración de mi modelo de datos?">
+    Actualmente, no hay una exportación integrada para la configuración del modelo de datos. Contacta con soporte si necesitas migrar tu modelo de datos entre espacios de trabajo.
+  </Accordion>
+</AccordionGroup>
+
+## ¿Necesitas más ayuda?
+
+Consulta nuestros [Servicios de implementación](/l/es/user-guide/getting-started/capabilities/implementation-services) para obtener ayuda con el diseño de modelos de datos complejos.

@@ -1,4 +1,4 @@
-import { type Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react-vite';
 
 import { mockRsiValues } from '@/spreadsheet-import/__mocks__/mockRsiValues';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
@@ -6,7 +6,6 @@ import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/S
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof MatchColumnsStep> = {
@@ -15,7 +14,7 @@ const meta: Meta<typeof MatchColumnsStep> = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [SnackBarDecorator, I18nFrontDecorator],
+  decorators: [SnackBarDecorator],
 };
 
 export default meta;

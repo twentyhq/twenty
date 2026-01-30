@@ -1,18 +1,17 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
-import { WorkflowDiagramEmptyTriggerEditable } from '../../workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
 
 const meta: Meta<typeof WorkflowDiagramEmptyTriggerEditable> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTriggerEditable',
   component: WorkflowDiagramEmptyTriggerEditable,
-  decorators: [I18nFrontDecorator],
+  decorators: [],
 };
 
 export default meta;

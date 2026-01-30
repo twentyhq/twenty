@@ -1,0 +1,148 @@
+---
+title: Importer des relations entre objets
+description: Importer des relations entre enregistrements via CSV.
+---
+
+## Vue d'ensemble
+
+Twenty prend en charge l'importation de relations entre objets lors de l'importation CSV. Cela vous permet de lier des enregistrements (p. ex., associer des Personnes à des Entreprises) dans le cadre de votre migration de données.
+
+<Note>**Actuellement pris en charge pour l'importation** : Relations un-à-plusieurs pointant vers un seul type d'objet de chaque côté (p. ex., Personnes → Entreprises). Les relations pointant vers plusieurs types d'objet ne sont pas encore prises en charge pour l'import/export.</Note>
+
+## Fonctionnement des relations dans Twenty
+
+### Un à plusieurs / Plusieurs à un
+
+Twenty prend en charge des relations standard où un enregistrement est lié à plusieurs autres :
+
+* **Une Entreprise → Plusieurs Personnes** : Une entreprise peut avoir plusieurs employés, mais chaque personne appartient à une seule entreprise
+* **Une Entreprise → Plusieurs Opportunités** : Une entreprise peut avoir plusieurs affaires, mais chaque opportunité appartient à une seule entreprise
+
+### Relations pouvant pointer vers plusieurs types d'objet
+
+Certaines relations peuvent se connecter à différents types d'objets. Cela fonctionne de deux façons :
+
+**Modèle 1 : De nombreux enregistrements liés chacun à un enregistrement provenant de différents types d'objets**
+
+Plusieurs Notes, Tâches ou Activités peuvent chacune être rattachées simultanément à plusieurs types d'objets :
+
+* **Notes** peuvent être liées à une Personne, une Entreprise et une Opportunité simultanément
+* **Tâches** peuvent être liées à une Personne, une Entreprise et une Opportunité simultanément
+
+Ici, les Notes/Tâches sont du côté "plusieurs". Chacune est liée à un enregistrement par type d'objet.
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+**Modèle 2 : Un enregistrement recevant des liens de nombreux enregistrements de différents types d'objets**
+
+Un Projet peut recevoir des liens de plusieurs enregistrements provenant de différents types d'objets :
+
+* **Un Projet** peut avoir de nombreuses Personnes qui lui sont liées, de nombreuses Entreprises qui lui sont liées, et de nombreuses Notes qui y sont rattachées
+
+Ici, le Projet est du côté "un". Plusieurs enregistrements issus d'objets différents peuvent tous être liés au même Projet.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Limitation d'import/export** : Les relations qui pointent vers plusieurs types d'objet (comme Notes → Personnes/Entreprises/Opportunités) ne sont **pas encore prises en charge** lors de l'import ou de l'export CSV.
+
+  * **Import** : Seules les relations un-à-plusieurs pointant vers un seul type d'objet de chaque côté peuvent être importées
+  * **Export** : Les colonnes pour les relations pointant vers plusieurs types d'objet sont actuellement laissées vides
+
+  C'est sur notre feuille de route.
+</Warning>
+
+### Ce qui n'est pas pris en charge aujourd'hui
+
+**Les relations plusieurs à plusieurs** ne sont pas encore disponibles. Par exemple, vous ne pouvez pas actuellement créer une relation où :
+
+* De nombreuses Personnes sont liées à de nombreux Projets
+
+<Note>Les relations plusieurs à plusieurs sont prévues pour S1 2026.</Note>
+
+## Lier des enregistrements lors de l'importation
+
+<Note>**Rappel** : Seules les relations un-à-plusieurs pointant vers un seul type d'objet peuvent être importées (p. ex., Personnes → Entreprises). Les relations pointant vers plusieurs types d'objet (p. ex., Notes → Personnes/Entreprises/Opportunités) ne sont pas encore prises en charge.</Note>
+
+### Étape 1 : Identifier les côtés "un" et "plusieurs"
+
+Commencez par déterminer quel objet est du côté "un" et lequel est du côté "plusieurs" de la relation.
+
+**Exemple**:
+
+* **Entreprise** est le côté "un" (une entreprise a de nombreux employés)
+* **Personnes** est le côté "plusieurs" (chaque personne appartient à une seule entreprise)
+
+### Étape 2 : Assurez-vous que les enregistrements du côté "un" existent
+
+Avant d'importer le côté "plusieurs", les enregistrements du côté "un" doivent déjà exister dans Twenty.
+
+* Importez ou créez d'abord les enregistrements du côté "un" (p. ex., Entreprises)
+* Validez leur identifiant unique. Cela peut être :
+  * L'`id` (UUID de Twenty)
+  * Un champ défini comme unique (p. ex., `domain` pour les Entreprises, ou un identifiant externe provenant de votre système précédent)
+
+<Warning>L'importation échouera si une référence est faite à un enregistrement inexistant.</Warning>
+
+### Étape 3 : Préparer votre fichier CSV
+
+Ajoutez une colonne dans votre fichier CSV du côté "plusieurs" qui référence l'enregistrement du côté "un".
+
+**Exemple** : Pour un fichier CSV Personnes lié aux Entreprises :
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Important** :
+
+* La valeur doit **correspondre exactement** au champ unique de l'enregistrement de l'Entreprise
+* Pour les domaines, utilisez l'**URL de domaine** (p. ex., `https://acme.com`), pas le libellé de domaine
+* N'associez qu'**un seul** identifiant unique par relation : cela rendra l'importation plus fluide
+
+### Étape 4 : Vérifier que le champ de relation existe
+
+Avant de téléverser votre fichier, assurez-vous que le champ de relation existe entre vos objets.
+
+S'il n'existe pas :
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez votre objet (p. ex., Personnes)
+3. Créez un champ de relation pointant vers l'objet cible (p. ex., Entreprise)
+
+### Étape 5 : Téléverser et associer la relation
+
+1. Téléversez votre fichier CSV via l'interface d'importation
+2. À l'étape de correspondance des champs, trouvez votre colonne de relation (p. ex., `companyDomain`)
+3. Associez-la au champ de relation (p. ex., Entreprise)
+4. Twenty liera automatiquement chaque enregistrement au parent correspondant
+
+### Champs uniques disponibles pour les relations
+
+| Objet                                       | Champs uniques disponibles                     |
+| ------------------------------------------- | ---------------------------------------------- |
+| **Entreprises**                             | `id`, `domain`, tout champ unique personnalisé |
+| **Personnes**                               | `id`, `email`, tout champ unique personnalisé  |
+| **Membres de l'espace de travail**          | `id`, `email` (pas le nom)                     |
+| **Autres objets standard et personnalisés** | `id`, tout champ marqué comme unique           |
+
+<Note>**Liaison vers les membres de l'espace de travail** : Lorsque la relation pointe vers des membres de l'espace de travail (votre équipe se connectant à Twenty), référencez-les par leur **adresse e-mail**, et non par leur nom.</Note>
+
+<Note>Nous recommandons d'utiliser `domain` pour les Entreprises et `email` pour les Personnes, car ces valeurs sont lisibles par l'humain et faciles à maintenir dans les feuilles de calcul.</Note>
+
+<Note>**Rappel** : Les enregistrements supprimés de manière logique (visibles sous Menu Commandes → Voir les enregistrements supprimés) comptent pour les critères d'unicité. Si vous importez un enregistrement avec la même valeur unique qu'un enregistrement supprimé, l'enregistrement supprimé sera restauré. Voir [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints) pour plus de détails.</Note>
+
+## Règle d'ordre d'importation
+
+<Warning>
+  **Importez toujours d'abord le côté "un" !**
+
+  1. **Entreprises** d'abord (aucune dépendance)
+  2. **Personnes** en second (liées aux Entreprises)
+  3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
+  4. **Objets personnalisés** en suivant leurs dépendances
+
+  L'enregistrement parent doit exister avant que vous puissiez y faire référence.
+</Warning>

@@ -1,0 +1,270 @@
+---
+title: Préparez vos fichiers CSV
+description: Guide complet étape par étape pour formater vos données en vue de leur importation dans Twenty.
+---
+
+## Vue d'ensemble
+
+Ce guide vous explique comment préparer votre fichier CSV pour un import réussi. Suivez ces étapes afin d’éviter les erreurs.
+
+## Étape 1 : Vérifiez les exigences du fichier
+
+Avant de commencer, assurez-vous que votre fichier répond à ces exigences :
+
+| Exigence             | Détails                            |
+| -------------------- | ---------------------------------- |
+| **Format**           | CSV, XLSX ou XLS                   |
+| **Limite de taille** | 10 000 enregistrements par fichier |
+| **Encodage**         | UTF-8 recommandé                   |
+| **Structure**        | Un type d’objet par fichier        |
+
+<Note>Pour les ensembles de données supérieurs à 10 000 enregistrements, divisez-les en plusieurs fichiers ou utilisez l’[importation via l’API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+
+## Étape 2 : Téléchargez le fichier d’exemple
+
+**C’est l’étape la plus importante.** Le fichier d’exemple vous indique exactement les noms de colonnes et le format attendus par Twenty.
+
+1. Accédez à la vue d’objet (Personnes, Entreprises, etc.)
+2. Cliquez sur **⋮** → **Importer des enregistrements**
+3. Cliquez sur **Télécharger le fichier d’exemple**
+4. Utilisez ce fichier comme modèle
+
+<Note>**Astuce pro :** Exportez plutôt quelques enregistrements existants. Cela vous donne des exemples réels de la manière dont les données doivent être formatées, et les noms de colonnes seront mis en correspondance automatiquement lors de l’import.</Note>
+
+## Étape 3 : Supprimez les valeurs en double
+
+Twenty impose l’unicité sur certains champs. Les doublons provoqueront des erreurs d’import.
+
+| Objet                    | Champs uniques                                          |
+| ------------------------ | ------------------------------------------------------- |
+| **Personnes**            | `id`, `email`                                           |
+| **Entreprises**          | `id`, `domain`                                          |
+| **Objets personnalisés** | `id`, plus tout champ que vous avez marqué comme unique |
+
+**Avant l’import :**
+
+1. Triez votre feuille de calcul par le champ unique (email ou domaine)
+2. Supprimez ou fusionnez les lignes en double
+3. Vérifiez les doublons qui existent déjà dans Twenty
+
+<Warning>**Les enregistrements supprimés logiquement comptent pour l’unicité.** Les enregistrements dans Command Menu → See deleted records provoqueront des erreurs de doublon. Supprimez-les définitivement ou restaurez-les et mettez-les à jour.</Warning>
+
+## Étape 4 : Formatez correctement chaque type de champ
+
+Différents types de champs nécessitent des formats spécifiques. Voici la référence complète :
+
+### Champs texte
+
+* Aucun formatage particulier requis
+* Les espaces en début/fin sont automatiquement supprimés
+
+### Champs e-mail
+
+* Doit avoir un format d’e-mail valide : `name@domain.com`
+* Doit être unique (aucun doublon dans le fichier ni dans Twenty)
+* Pour les e-mails supplémentaires, utilisez ce format dans la colonne **Emails / Additional Emails** :
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### Champs de domaine
+
+* **Format recommandé** : `https://domain.com`
+* Cela correspond au format utilisé par la synchronisation boîte mail/calendrier (évite les doublons)
+* Renseignez les deux colonnes :
+  * **Domain / Domain Label** : `domain.com`
+  * **Domain / Domain URL** : `https://domain.com`
+* Doit être unique dans votre fichier et dans Twenty
+
+### Champs de téléphone
+
+Le téléphone est un **champ imbriqué** qui nécessite plusieurs colonnes :
+
+| Colonne                                 | Exemple      |
+| --------------------------------------- | ------------ |
+| **Phones / Primary Phone Number**       | `4159095555` |
+| **Phones / Primary Phone Country Code** | `US`         |
+| **Phones / Primary Phone Calling Code** | `+1`         |
+
+### Champs d'adresse
+
+Le champ Adresse est un **champ imbriqué** avec plusieurs colonnes (certaines peuvent être laissées vides):
+
+* **Adresse / Adresse 1**: Première ligne de l’adresse
+* **Adresse / Adresse 2**: Deuxième ligne de l’adresse (facultatif)
+* **Adresse / Ville**: Nom de la ville
+* **Adresse / État**: État ou province
+* **Adresse / Pays**: Nom du pays
+* **Adresse / Code postal**: Code postal/ZIP
+
+### Champs de date
+
+Utilisez un format cohérent dans tout votre fichier:
+
+* `YYYY-MM-DD` (recommandé): `2024-03-15`
+* `MM/DD/YYYY`: `03/15/2024`
+* `DD/MM/YYYY`: `15/03/2024`
+* ISO 8601: `2024-03-15T10:30:00Z`
+
+### Champs numériques
+
+* Uniquement des nombres (pas de texte)
+* Utilisez le point pour les décimales: `1234.56`
+* Aucun séparateur de milliers (pas `1,234.56`)
+
+### Champs de devise
+
+La devise est un **champ imbriqué** nécessitant deux colonnes qui doivent **toutes deux être renseignées**:
+
+| Colonne               | Exemple   |
+| --------------------- | --------- |
+| **Montant / Montant** | `1234.56` |
+| **Montant / Devise**  | `USD`     |
+
+### Champs booléens
+
+Utilisez des majuscules: `TRUE` ou `FALSE`
+
+<Warning>Les minuscules `true` ou `false` ne fonctionneront pas.</Warning>
+
+### Champs de sélection
+
+Utilisez le **nom d’API** de l’option, et non le libellé affiché.
+
+**Comment trouver les noms d’API:**
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez l’objet et le champ
+3. Activez le **mode avancé** (bascule en bas à droite)
+4. Copiez le nom d’API (par ex., `OPTION_1`, pas "Option 1")
+
+<Note>Les nouvelles options de sélection ne sont pas créées automatiquement. Ajoutez-les dans **Paramètres → Modèle de données** avant l’importation.</Note>
+
+### Champs à sélection multiple
+
+Utilisez les noms d’API au format de tableau:
+
+```
+["VALUE1","VALUE2"]
+```
+
+### Champs de tableau
+
+Utilisez le format de tableau JSON:
+
+```
+["value1","value2"]
+```
+
+### Champs d’évaluation
+
+Utilisez le format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` ou `RATING_5`
+
+### Champs de liens/URL
+
+Renseignez les deux colonnes:
+
+* **Liens / Libellé du lien**: `Twenty`
+* **Liens / URL du lien**: `https://twenty.com`
+
+Pour les liens secondaires, utilisez la colonne **Liens / Liens secondaires**:
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### Champs JSON
+
+Utilisez un format JSON valide:
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### Champs d’ID
+
+* **Optionnel**: Twenty génère automatiquement des ID s’ils ne sont pas fournis
+* **Format**: UUID (par ex. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+* **Cas d’usage**: Incluez l’ID pour mettre à jour des enregistrements existants au lieu d’en créer de nouveaux
+
+## Étape 5: Ajouter des colonnes de relation (si vous liez des enregistrements)
+
+Pour lier des enregistrements à d’autres objets (par ex., Personnes à Entreprises), ajoutez une colonne contenant l’identifiant unique de l’enregistrement associé.
+
+**Exemple**: Lier des Personnes à des Entreprises
+
+Ajoutez une colonne à votre CSV Personnes:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Règles importantes pour les relations:**
+
+* L’enregistrement parent doit déjà exister dans Twenty
+* Utilisez le format **URL de domaine** (`https://domain.com`), pas le libellé
+* Associez UN SEUL identifiant unique (n’incluez pas à la fois `companyId` ET `companyDomain`)
+* Pour les membres de l’espace de travail, utilisez leur **adresse e-mail** (et non le nom)
+
+<Warning>
+  **L’ordre d’importation est important !**
+
+  Importez le côté « un » avant le côté « plusieurs »:
+
+  1. **Entreprises** d’abord
+  2. **Personnes** ensuite (avec référence à l’entreprise)
+  3. **Opportunités** en troisième
+
+  L’enregistrement parent doit exister avant que vous puissiez y faire référence.
+</Warning>
+
+Consultez [Comment importer des relations](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pour des instructions détaillées.
+
+## Étape 6: Vérifiez que les champs existent dans Twenty
+
+L’import crée des **enregistrements**, pas des **champs**. Tous les champs que vous souhaitez importer doivent déjà exister dans votre modèle de données.
+
+**Avant l’importation:**
+
+1. Allez dans **Paramètres → Modèle de données**
+2. Sélectionnez votre objet
+3. Créez les champs personnalisés dont vous avez besoin
+4. Notez les noms de champs exacts (ils doivent correspondre aux en-têtes de vos colonnes)
+
+## Étape 7: Liste de contrôle finale
+
+Avant de téléverser votre fichier, vérifiez:
+
+<Check>Le fichier est au format CSV, XLSX ou XLS</Check>
+<Check>Le fichier contient moins de 10 000 enregistrements</Check>
+<Check>L’encodage est UTF-8</Check>
+<Check>Aucune adresse e-mail en double (pour les Personnes) ni domaine en double (pour les Entreprises)</Check>
+<Check>Les dates utilisent un format cohérent partout</Check>
+<Check>Les domaines utilisent le format `https://domain.com`</Check>
+<Check>Les champs booléens utilisent `TRUE` ou `FALSE` (majuscules)</Check>
+<Check>Les champs de sélection utilisent les noms d’API, pas les libellés affichés</Check>
+<Check>Tous les champs personnalisés existent dans Paramètres → Modèle de données</Check>
+<Check>Enregistrements parents importés avant les enregistrements enfants</Check>
+<Check>Les colonnes de relation font référence à des enregistrements existants</Check>
+
+## Erreurs courantes à éviter
+
+| Erreur                                                      | Solution                                              |
+| ----------------------------------------------------------- | ----------------------------------------------------- |
+| Utiliser `true` au lieu de `TRUE`                           | Les valeurs booléennes doivent être en majuscules     |
+| Utiliser des libellés affichés pour les champs de sélection | Recherchez et utilisez les noms d’API dans Paramètres |
+| Importer les Personnes avant les Entreprises                | Importez toujours d’abord les objets parents          |
+| Code de devise manquant pour les champs de devise           | Renseignez les colonnes Montant et Devise             |
+| Format de domaine incorrect                                 | Utilisez systématiquement `https://domain.com`        |
+| Associer plusieurs champs uniques pour les relations        | N’associez qu’UN SEUL (domaine OU ID, pas les deux)   |
+
+## Prochaines étapes
+
+Votre fichier est prêt ! Maintenant:
+
+* [Importer des entreprises](/l/fr/user-guide/data-migration/how-tos/import-companies-via-csv) (importez-les d’abord)
+* [Importer des contacts](/l/fr/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [Corriger les erreurs d’importation](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)

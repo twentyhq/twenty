@@ -4,31 +4,28 @@ image: /images/user-guide/api/api.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/api/api.png" alt="Header" />
+  <img src="/images/user-guide/api/api.png" alt="Cabeçalho" />
 </Frame>
 
-Usa um editor de texto rico baseado em blocos da [BlockNote](https://www.blocknotejs.org/) para permitir que os usuários editem e visualizem blocos de conteúdo.
+Usa um editor de texto rico baseado em blocos do [BlockNote](https://www.blocknotejs.org/) para permitir que os usuários editem e vejam blocos de conteúdo.
 
 <Tabs>
-<Tab title="Usage">
+  <Tab title="Uso">
+    ```jsx
+    import { useBlockNote } from "@blocknote/react";
+    import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
 
-```jsx
-import { useBlockNote } from "@blocknote/react";
-import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+    export const MyComponent = () => {
+      const BlockNoteEditor = useBlockNote();
 
-export const MyComponent = () => {
-  const BlockNoteEditor = useBlockNote();
+      return <BlockEditor editor={BlockNoteEditor} />;
+    };
+    ```
+  </Tab>
 
-  return <BlockEditor editor={BlockNoteEditor} />;
-};
-```
-
-</Tab>
-<Tab title="Props">
-
-| Props  | Tipo              | Descrição                                       |
-| ------ | ----------------- | ----------------------------------------------- |
-| editor | `EditorBlockNote` | A instância ou configuração do editor de blocos |
-
-</Tab>
+  <Tab title="Propriedades">
+    | Propriedades | Tipo              | Descrição                                       |
+    | ------------ | ----------------- | ----------------------------------------------- |
+    | editor       | `BlockNoteEditor` | A instância ou configuração do editor de blocos |
+  </Tab>
 </Tabs>

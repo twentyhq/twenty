@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
@@ -22,6 +23,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
   );
 
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
+  const { closeCommandMenu } = useCommandMenu();
 
   const handleEditWidget = useCallback(
     ({
@@ -39,6 +41,7 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           pageTitle: t`Edit iFrame`,
           resetNavigationStack: true,
         });
+        return;
       }
 
       if (widgetType === WidgetType.GRAPH) {
@@ -47,9 +50,16 @@ export const useEditPageLayoutWidget = (pageLayoutIdFromProps?: string) => {
           pageTitle: t`Edit Graph`,
           resetNavigationStack: true,
         });
+        return;
       }
+
+      closeCommandMenu();
     },
-    [setPageLayoutEditingWidgetId, navigatePageLayoutCommandMenu],
+    [
+      setPageLayoutEditingWidgetId,
+      navigatePageLayoutCommandMenu,
+      closeCommandMenu,
+    ],
   );
 
   return {

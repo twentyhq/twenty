@@ -25,6 +25,7 @@ type RecordInlineCellAnchoredPortalProps = {
   recordId: string;
   instanceIdPrefix: string;
   children: React.ReactNode;
+  onCloseEditMode?: () => void;
 };
 
 export const RecordInlineCellAnchoredPortal = ({
@@ -33,6 +34,7 @@ export const RecordInlineCellAnchoredPortal = ({
   recordId,
   instanceIdPrefix,
   children,
+  onCloseEditMode,
 }: RecordInlineCellAnchoredPortalProps) => {
   const fieldInstanceId = getRecordFieldInputInstanceId({
     recordId,
@@ -50,13 +52,12 @@ export const RecordInlineCellAnchoredPortal = ({
     recordId: recordId ?? '',
   });
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const { updateOneRecord } = useUpdateOneRecord();
 
   const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRecord?.({
+      updateOneRecord({
+        objectNameSingular: objectMetadataItem.nameSingular,
         idToUpdate: variables.where.id as string,
         updateOneRecordInput: variables.updateOneRecordInput,
       });
@@ -87,6 +88,7 @@ export const RecordInlineCellAnchoredPortal = ({
           useUpdateRecord: useUpdateOneObjectRecordMutation,
           isDisplayModeFixHeight: true,
           isRecordFieldReadOnly,
+          onCloseEditMode,
         }}
       >
         <>
@@ -98,8 +100,9 @@ export const RecordInlineCellAnchoredPortal = ({
             >
               <RecordInlineCellAnchoredPortalContext>
                 {children}
+
+                <RecordInlineCellCloseOnCommandMenuOpeningEffect />
               </RecordInlineCellAnchoredPortalContext>
-              <RecordInlineCellCloseOnCommandMenuOpeningEffect />
             </RecordFieldComponentInstanceContext.Provider>,
             anchorElement,
           )}

@@ -1,0 +1,182 @@
+---
+title: Importați datele despre produse în Twenty
+description: Sincronizați datele catalogului de produse dintr-un depozit de date în CRM-ul dvs., conform unui program.
+---
+
+Folosiți acest model pentru a menține Twenty sincronizat cu datele despre produse din depozitul dvs. de date (de ex., Snowflake, BigQuery, PostgreSQL).
+
+## Structura fluxului de lucru
+
+1. **Declanșator**: Conform unui program
+2. **Code**: Interogați depozitul de date
+3. **Code** (opțional): Formatați datele ca tablou
+4. **Iterator**: Parcurgeți fiecare produs
+5. **Upsert Record**: Creați sau actualizați în Twenty
+
+<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+
+## Pasul 1: Programați declanșatorul
+
+Configurați fluxul de lucru să ruleze la o frecvență care corespunde nevoilor dvs. privind actualitatea datelor:
+
+* La fiecare 5 minute pentru sincronizare aproape în timp real
+* La fiecare oră pentru date mai puțin critice
+* Zilnic pentru actualizări în lot
+
+## Pasul 2: Interogați depozitul dvs. de date
+
+Adăugați o acțiune **Code** pentru a prelua datele recente:
+
+```javascript
+export const main = async () => {
+  const intervalMinutes = 10; // Match your schedule frequency
+  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+
+  // Replace with your actual data warehouse connection
+  const response = await fetch("https://your-warehouse-api.com/query", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      query: `
+        SELECT id, name, sku, price, stock_quantity, updated_at
+        FROM products
+        WHERE updated_at >= '${cutoffTime}'
+      `
+    })
+  });
+
+  const data = await response.json();
+  return { products: data.results };
+};
+```
+
+<Tip>
+  Filtrați după `updated_at >= last X minutes` pentru a prelua doar înregistrările modificate recent. Acest lucru menține sincronizarea eficientă.
+</Tip>
+
+## Pasul 3: Formatați datele (opțional)
+
+Dacă depozitul dvs. de date returnează date într-un format care necesită transformare, adăugați o altă acțiune **Code**. Transformările uzuale includ conversii de tip, redenumirea câmpurilor și curățarea datelor.
+
+### Exemplu: Date despre utilizatori cu câmpuri booleene și de stare
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Convert string "true"/"false" to actual booleans
+  const toBool = (v: any) => v === true || v === "true";
+
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+      isActiveLast30d: toBool(user.isActiveLast30d),
+      isActiveLast7d: toBool(user.isActiveLast7d),
+      isActiveLast24h: toBool(user.isActiveLast24h),
+      isTwenty: toBool(user.isTwenty),
+    })),
+  };
+};
+```
+
+### Exemplu: Date de produs cu conversii de tip
+
+```javascript
+export const main = async (params: { products: any }) => {
+  const products = typeof params.products === "string"
+    ? JSON.parse(params.products)
+    : params.products;
+
+  return {
+    products: products.map(product => ({
+      externalId: product.id,
+      name: product.name,
+      sku: product.sku,
+      price: parseFloat(product.price),        // String → Number
+      stockQuantity: parseInt(product.stock_quantity),
+      isActive: product.status === "active"    // String → Boolean
+    }))
+  };
+};
+```
+
+### Exemplu: Formatarea datelor calendaristice și a valorilor monetare
+
+```javascript
+export const main = async (params: { deals: any }) => {
+  const deals = typeof params.deals === "string"
+    ? JSON.parse(params.deals)
+    : params.deals;
+
+  return {
+    deals: deals.map(deal => ({
+      ...deal,
+      // Convert Unix timestamp to ISO date
+      closedAt: deal.closed_timestamp
+        ? new Date(deal.closed_timestamp * 1000).toISOString()
+        : null,
+      // Ensure amount is a number (remove currency symbols)
+      amount: parseFloat(String(deal.amount).replace(/[^0-9.-]/g, "")),
+      // Normalize stage names
+      stage: deal.stage?.toLowerCase().replace(/_/g, " ")
+    }))
+  };
+};
+```
+
+### Transformări uzuale
+
+| Format sursă         | Format țintă     | Cod                                      |
+| -------------------- | ---------------- | ---------------------------------------- |
+| `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
+| `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
+| `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
+| `1704067200` (Unix)  | Dată ISO         | `new Date(v * 1000).toISOString()`       |
+| `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
+| `null` / `undefined` | `""`             | `value \|\| ""`                          |
+
+## Pasul 4: Parcurgeți produsele
+
+Adăugați o acțiune **Iterator**:
+
+* Intrare: `{{code.products}}`
+
+Aceasta parcurge fiecare produs din array.
+
+## Pasul 5: Efectuați upsert pentru fiecare înregistrare
+
+În interiorul iteratorului, adăugați o acțiune **Upsert Record**:
+
+| Setare             | Valoare                                |
+| ------------------ | -------------------------------------- |
+| **Obiect**         | Obiectul dvs. Product personalizat     |
+| **Potrivire după** | ID extern sau SKU (identificator unic) |
+| **Nume**           | `{{iterator.item.name}}`               |
+| **SKU**            | `{{iterator.item.sku}}`                |
+| **Preț**           | `{{iterator.item.price}}`              |
+
+<Tip>
+  Utilizați **Upsert** (actualizare sau creare) în loc să construiți ramuri separate pentru creare vs. actualizare. Se construiește mai rapid și este mai ușor de depanat.
+</Tip>
+
+## Exemple de cazuri de utilizare
+
+| Sursa                       | Date                                        |
+| --------------------------- | ------------------------------------------- |
+| **Sistem ERP**              | Catalog de produse, prețuri, stocuri        |
+| **Platformă de e-commerce** | Comenzi, clienți, actualizări de produse    |
+| **Depozit de date**         | Metrici agregate, date îmbogățite           |
+| **Sistem de inventar**      | Niveluri de stoc, alerte de reaprovizionare |
+
+## Conexe
+
+* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+* [Gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

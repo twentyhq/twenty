@@ -195,6 +195,12 @@ export class ClientConfig {
   @Field(() => Boolean)
   isImapSmtpCaldavEnabled: boolean;
 
+  @Field(() => Boolean)
+  allowRequestsToTwentyIcons: boolean;
+
   @Field(() => String, { nullable: true })
   calendarBookingPageId?: string;
+
+  @Field(() => Boolean)
+  isCloudflareIntegrationEnabled: boolean;
 }

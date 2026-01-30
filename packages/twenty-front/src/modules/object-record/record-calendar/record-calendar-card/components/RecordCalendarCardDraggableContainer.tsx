@@ -9,6 +9,7 @@ import { RecordCalendarCard } from '@/object-record/record-calendar/record-calen
 import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
 import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
 import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledDraggableContainer = styled.div`
   position: relative;
@@ -26,7 +27,7 @@ export const RecordCalendarCardDraggableContainer = ({
 }) => {
   const { objectMetadataItem } = useRecordCalendarContextOrThrow();
 
-  const isRecordReadOnly = useIsRecordReadOnly({
+  const recordIsReadOnly = useIsRecordReadOnly({
     recordId,
     objectMetadataId: objectMetadataItem.id,
   });
@@ -43,14 +44,24 @@ export const RecordCalendarCardDraggableContainer = ({
     (field) => field.id === recordIndexCalendarFieldMetadataId,
   );
 
-  const isCalendarFieldReadOnly = calendarFieldMetadataItem
+  const calendarFieldMetadataItemIsUIReadOnly =
+    calendarFieldMetadataItem?.isUIReadOnly === true;
+
+  const calendarFieldMetadataItemIsRestrictedForUpdate = isDefined(
+    calendarFieldMetadataItem,
+  )
     ? isFieldMetadataReadOnlyByPermissions({
         objectPermissions,
         fieldMetadataId: calendarFieldMetadataItem.id,
       })
     : false;
 
-  const isDragDisabled = isRecordReadOnly || isCalendarFieldReadOnly;
+  const calendarFieldMetadataItemIsReadOnly =
+    calendarFieldMetadataItemIsUIReadOnly ||
+    calendarFieldMetadataItemIsRestrictedForUpdate;
+
+  const dragIsDisabled =
+    recordIsReadOnly || calendarFieldMetadataItemIsReadOnly;
 
   return (
     <RecordCalendarCardComponentInstanceContext.Provider
@@ -60,7 +71,7 @@ export const RecordCalendarCardDraggableContainer = ({
         key={recordId}
         draggableId={recordId}
         index={index}
-        isDragDisabled={isDragDisabled}
+        isDragDisabled={dragIsDisabled}
       >
         {(draggableProvided) => (
           <StyledDraggableContainer

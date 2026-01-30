@@ -148,12 +148,14 @@ export const useActivateWorkflowVersion = () => {
               statuses: () => Array.from(newStatuses),
             },
           });
-          upsertRecordsInStore([
-            {
-              ...cachedWorkflow,
-              statuses: Array.from(newStatuses) as WorkflowStatus[],
-            },
-          ]);
+          upsertRecordsInStore({
+            partialRecords: [
+              {
+                ...cachedWorkflow,
+                statuses: Array.from(newStatuses) as WorkflowStatus[],
+              },
+            ],
+          });
         }
       },
     });

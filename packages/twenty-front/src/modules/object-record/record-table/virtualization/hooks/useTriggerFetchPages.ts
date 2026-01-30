@@ -172,7 +172,7 @@ export const useTriggerFetchPages = () => {
                   startingRealIndex: startingRealIndexInThisUIPage,
                 });
 
-                upsertRecordsInStore(recordsSlice);
+                upsertRecordsInStore({ partialRecords: recordsSlice });
               }
             }
 

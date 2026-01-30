@@ -1,16 +1,15 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormMultiSelectFieldInput } from '../FormMultiSelectFieldInput';
 
 const meta: Meta<typeof FormMultiSelectFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormMultiSelectFieldInput',
   component: FormMultiSelectFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;

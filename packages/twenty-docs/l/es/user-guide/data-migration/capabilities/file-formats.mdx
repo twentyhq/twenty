@@ -1,0 +1,48 @@
+---
+title: Formatos de archivo compatibles
+description: Formatos de archivo compatibles para la importación de datos en Twenty.
+---
+
+## Formatos compatibles
+
+Twenty admite tres formatos de archivo para la importación:
+
+| Formato              | Extensión | Notas                          |
+| -------------------- | --------- | ------------------------------ |
+| **CSV**              | .csv      | Recomendado, el más compatible |
+| **Excel**            | .xlsx     | Formato de Excel moderno       |
+| **Excel (heredado)** | .xls      | Formato de Excel antiguo       |
+
+## Requisitos del archivo
+
+| Requisito               | Valor                                                    |
+| ----------------------- | -------------------------------------------------------- |
+| **Codificación**        | Se recomienda UTF-8                                      |
+| **Límite de registros** | 10.000 registros por archivo                             |
+| **Estructura**          | La primera fila debe contener los encabezados de columna |
+| **Contenido**           | Un tipo de objeto por archivo                            |
+
+## Mejores prácticas para CSV
+
+* **Delimitador**: Use coma (`,`) o punto y coma (`;`)
+* **Calificador de texto**: Use comillas dobles (`"`) para texto que contenga comas
+* **Finales de línea**: Windows (CRLF) o Unix (LF), ambos compatibles
+* **Valores vacíos**: Deje las celdas vacías; no use "NULL" ni "N/A"
+
+## Mejores prácticas para Excel
+
+Al exportar desde Excel:
+
+* Elimine las fórmulas (exporte solo valores)
+* Elimine las filas vacías al final
+* Asegúrese de que no haya celdas combinadas
+* Use solo la primera hoja
+
+## Conjuntos de datos grandes
+
+Para conjuntos de datos de más de 10.000 registros:
+
+* Divídalos en varios archivos
+* O use la [importación mediante API](/l/es/user-guide/data-migration/how-tos/import-data-via-api) para registros ilimitados
+
+<Note>Para migraciones muy grandes (100.000+ registros), la API es significativamente más rápida y más fiable que las importaciones CSV.</Note>

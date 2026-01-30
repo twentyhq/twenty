@@ -1,0 +1,95 @@
+---
+title: Caixa de entrada
+description: Entendendo os recursos de integração de e-mail no Twenty.
+---
+
+**Nota**: Para conectar suas contas de email e configurar as configurações de sincronização, visite [Configuração de Email & Calendário](/l/pt/user-guide/calendar-emails/overview).
+
+## Como Funciona a Integração de Email
+
+Twenty vincula automaticamente os emails de suas caixas de correio conectadas aos registros de CRM relevantes, mantendo todo o histórico de comunicação em um só lugar.
+
+### Objetos onde os e-mails podem ser encontrados
+
+As conversas de email aparecem em três objetos principais:
+
+* **Pessoas**: Visualize todos os emails trocados com um contato específico
+* **Empresas**: Veja todos os emails relacionados a uma empresa e seus funcionários
+* **Oportunidades**: Acesse as conversas de email relacionadas à empresa vinculada a esta oportunidade. As conversas de e-mail de pessoas específicas na oportunidade ainda não são exibidas.
+
+### Visualizando conversas de e-mail
+
+1. **Navegue até um Registro**: Vá para qualquer registro de Pessoa, Empresa ou Oportunidade
+2. **Selecione a Aba de Emails**: Clique na aba `Emails` para visualizar os emails sincronizados
+3. **Abrir uma conversa de e-mail**: Clique em qualquer e-mail para abrir e ler a conversa completa
+4. **Navegue pelo Histórico**: Role pelo histórico completo de emails com aquele contato
+
+<img src="/images/user-guide/emails/show-inbox.png" style={{width:'100%'}} />
+
+## O Que Você Verá
+
+### Visualização do Fio de Email
+
+Ao abrir um fio de email, você pode:
+
+* **Leia Conversas Completas**: Veja a troca completa de emails
+* **Visualize Participantes**: Veja todas as pessoas envolvidas no fio de email
+* **Verificar carimbos de data e hora**: Saiba exatamente quando cada e-mail foi enviado
+* **Acesse o Contexto**: Entenda o histórico completo de comunicação
+
+### Visibilidade de Email
+
+Dependendo das suas configurações de caixa de correio, você pode ver:
+
+* **Conteúdo Completo**: Texto e detalhes completos do email
+* **Assunto + Metadados**: Linha de assunto, remetente, destinatário e carimbo de data/hora
+* **Apenas Metadados**: Informações básicas sem conteúdo de email
+
+## Comportamento de Sincronização de Email
+
+### Taxa de sincronização
+
+Twenty importa emails a cerca de **400 mensagens por minuto**. Atualmente, essa taxa é limitada pela limitação de taxa da API do Gmail (e aplica-se de forma semelhante a outros provedores).
+
+Para referência:
+
+* 1.000 emails → ~2,5 minutos
+* 10.000 emails → ~25 minutos
+* 50.000 emails → ~2 horas
+
+### O Que É Sincronizado
+
+* **Emails Externos**: Todos os emails com contatos fora da sua organização
+* **Vinculação Automática**: Emails conectam-se aos registros de Pessoas e Empresas existentes
+* **Múltiplos Endereços**: Emails de qualquer endereço vinculam-se ao mesmo registro de contato
+* **Atualizações**: Novos emails aparecem em até 5 minutos
+
+### O Que Não É Sincronizado
+
+* **Emails Internos**: Emails entre colegas (mesmo domínio) permanecem privados
+* **Emails de Grupo**: Listas de distribuição e emails de grupo são excluídos
+* **Pastas Excluídas**: Pastas que você escolheu não sincronizar (configuradas em Configurações → Contas → Email)
+
+### Sincronização seletiva de pastas
+
+Controle quais pastas de email sincronizam com o Twenty:
+
+1. Vá para **Configurações → Contas** e selecione sua conta de email conectada
+2. Configure as pastas na seção Email
+3. Escolha pastas específicas para incluir ou excluir (Caixa de Entrada, Enviados, Arquivo, pastas personalizadas)
+
+## Solução de Problemas de Sincronização de Email
+
+### Problemas Comuns de Sincronização
+
+* **Atrasos na Sincronização**: Emails aparecem em até 5 minutos, mas as importações iniciais levam mais tempo
+* **Emails Ausentes**: Verifique se:
+  * As pastas são excluídas nas configurações de Pasta de Mensagens
+  * A criação automática de contatos está desativada (os emails precisam de registros existentes no Twenty)
+  * O email é de colegas (mesmo domínio) ou listas de grupo
+  * A caixa de correio ainda está concluindo a sincronização inicial
+
+### Limitações de Email
+
+* **Pastas do Sistema**: Algumas pastas de email podem não estar disponíveis para sincronização
+* **Apelidos de Email**: Somente as caixas de correio verdadeiras podem ser conectadas (não alias de email)

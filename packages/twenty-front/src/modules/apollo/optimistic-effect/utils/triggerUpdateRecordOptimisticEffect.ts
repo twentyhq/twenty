@@ -34,7 +34,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   triggerUpdateRelationsOptimisticEffect({
     cache,

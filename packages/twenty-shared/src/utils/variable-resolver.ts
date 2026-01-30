@@ -1,10 +1,7 @@
-import Handlebars from 'handlebars';
+import { evalFromContext } from '@/utils/evalFromContext';
+import { isDefined } from '@/utils/validation';
 
-const isNil = (value: any): value is null | undefined => {
-  return value === null || value === undefined;
-};
-
-const isString = (value: any): value is string => {
+const isString = (value: unknown): value is string => {
   return typeof value === 'string';
 };
 
@@ -14,7 +11,7 @@ export const resolveInput = (
   unresolvedInput: unknown,
   context: Record<string, unknown>,
 ): unknown => {
-  if (isNil(unresolvedInput)) {
+  if (!isDefined(unresolvedInput)) {
     return unresolvedInput;
   }
 
@@ -83,24 +80,4 @@ const resolveString = (
 
     return processedToken;
   });
-};
-
-const evalFromContext = (input: string, context: Record<string, unknown>) => {
-  try {
-    Handlebars.registerHelper('json', (input: string) => JSON.stringify(input));
-
-    const inputWithHelper = input
-      .replace('{{', '{{{ json ')
-      .replace('}}', ' }}}');
-
-    const inferredInput = Handlebars.compile(inputWithHelper)(context, {
-      helpers: {
-        json: (input: string) => JSON.stringify(input),
-      },
-    });
-
-    return JSON.parse(inferredInput);
-  } catch {
-    return undefined;
-  }
 };

@@ -6,8 +6,14 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import {
+  MessageFolderImportPolicy,
+  type MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageFolderPendingSyncAction,
+  type MessageFolderWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -51,6 +57,7 @@ describe('MessagingMessageListFetchService', () => {
           messageChannelId: 'microsoft-message-channel-id',
         } as MessageFolderWorkspaceEntity,
       ],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     } as MessageChannelWorkspaceEntity;
 
     mockGoogleMessageChannel = {
@@ -64,7 +71,9 @@ describe('MessagingMessageListFetchService', () => {
         handleAliases: '',
       },
       syncCursor: 'google-sync-cursor',
-    } as MessageChannelWorkspaceEntity;
+      messageFolders: [],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
+    } as unknown as MessageChannelWorkspaceEntity;
   });
 
   beforeEach(async () => {
@@ -204,7 +213,7 @@ describe('MessagingMessageListFetchService', () => {
             executeInWorkspaceContext: jest
               .fn()
 
-              .mockImplementation((_authContext: any, fn: () => any) => fn()),
+              .mockImplementation((fn: () => any, _authContext?: any) => fn()),
             getRepository: jest.fn().mockImplementation((workspaceId, name) => {
               if (name === 'messageChannel') {
                 return {
@@ -248,7 +257,16 @@ describe('MessagingMessageListFetchService', () => {
         {
           provide: SyncMessageFoldersService,
           useValue: {
-            syncMessageFolders: jest.fn().mockResolvedValue(undefined),
+            syncMessageFolders: jest.fn().mockResolvedValue([
+              {
+                id: 'inbox-folder-id',
+                name: 'inbox',
+                syncCursor: 'inbox-sync-cursor',
+                messageChannelId: 'microsoft-message-channel-id',
+                isSynced: true,
+                pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+              },
+            ]),
           },
         },
         {
@@ -323,6 +341,7 @@ describe('MessagingMessageListFetchService', () => {
           syncCursor: 'inbox-sync-cursor',
           messageChannelId: 'microsoft-message-channel-id',
           isSynced: true,
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
     );
@@ -384,6 +403,7 @@ describe('MessagingMessageListFetchService', () => {
           syncCursor: 'inbox-sync-cursor',
           messageChannelId: 'microsoft-message-channel-id',
           isSynced: true,
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
         },
       ],
     );

@@ -1,5 +1,5 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { SettingsServerlessFunctionsTable } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTable';
+import { SettingsLogicFunctionsTable } from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,10 +22,10 @@ export const SettingsApplicationDetailContentTab = ({
     return null;
   }
 
-  const { serverlessFunctions, agents, objects } = application;
+  const { logicFunctions, agents, objects } = application;
 
-  const shouldDisplayServerlessFunctions =
-    isDefined(serverlessFunctions) && serverlessFunctions?.length > 0;
+  const shouldDisplayLogicFunctions =
+    isDefined(logicFunctions) && logicFunctions?.length > 0;
 
   const shouldDisplayAgents = isDefined(agents) && agents.length > 0;
 
@@ -39,36 +39,34 @@ export const SettingsApplicationDetailContentTab = ({
 
   return (
     <>
-      {shouldDisplayServerlessFunctions && (
-        <Section>
-          <H2Title
-            title={t`Application serverless functions`}
-            description={t`Serverless functions created by application`}
-          />
-          <SettingsServerlessFunctionsTable
-            serverlessFunctions={serverlessFunctions}
-          />
-        </Section>
-      )}
-      {shouldDisplayAgents && (
-        <Section>
-          <H2Title
-            title={t`Application agents`}
-            description={t`Agents created by application`}
-          />
-          <SettingsAIAgentsTable />
-        </Section>
-      )}
       {shouldDisplayObjects && (
         <Section>
           <H2Title
-            title={t`Application objects`}
-            description={t`Objects created by application`}
+            title={t`Objects`}
+            description={t`Objects managed by this app`}
           />
           <SettingsObjectTable
             objectMetadataItems={applicationObjectMetadataItems}
             withSearchBar={false}
           />
+        </Section>
+      )}
+      {shouldDisplayLogicFunctions && (
+        <Section>
+          <H2Title
+            title={t`Functions`}
+            description={t`Logic functions powering this app`}
+          />
+          <SettingsLogicFunctionsTable logicFunctions={logicFunctions} />
+        </Section>
+      )}
+      {shouldDisplayAgents && (
+        <Section>
+          <H2Title
+            title={t`Agents`}
+            description={t`Agents powering this app`}
+          />
+          <SettingsAIAgentsTable />
         </Section>
       )}
     </>

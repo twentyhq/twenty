@@ -1,0 +1,201 @@
+---
+title: Importujte společnosti pomocí CSV
+description: Kompletní podrobný návod krok za krokem k importu společností do Twenty.
+---
+
+## Přehled
+
+Tento průvodce vás provede importem vašich společností do Twenty. **Společnosti by se měly importovat jako první**, protože Osoby a Příležitosti se propojují se Společnostmi.
+
+## Než začnete
+
+### Kontrolní seznam předpokladů
+
+<Check>
+  Váš soubor je ve formátu CSV, XLSX nebo XLS
+</Check>
+
+<Check>
+  Soubor obsahuje méně než 10 000 záznamů
+</Check>
+
+<Check>
+  Žádné duplicitní domény ve vašem souboru
+</Check>
+
+<Check>
+  Všechna vlastní pole existují v **Settings → Data Model**
+</Check>
+
+<Note>
+  Potřebujete importovat více než 10 000 společností? Rozdělte do více souborů nebo použijte [import přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api).
+</Note>
+
+## Krok 1: Připravte si data společností
+
+### Povinná a doporučená pole
+
+| Pole             | Povinné?   | Formát               | Poznámky                        |
+| ---------------- | ---------- | -------------------- | ------------------------------- |
+| **Name**         | Doporučeno | Text                 | Zobrazovaný název společnosti   |
+| **Doména**       | Doporučeno | `https://domain.com` | Jedinečný identifikátor         |
+| **Adresa**       | Volitelné  | Více sloupců         | Viz níže                        |
+| **Zaměstnanci**  | Volitelné  | Číslo                | Počet zaměstnanců               |
+| **Vlastní pole** | Volitelné  | Různé                | Musí existovat v Datovém modelu |
+
+### Formát domény
+
+<Warning>
+  **Pro domény použijte formát `https://domain.com`.**
+
+  To odpovídá formátu používanému při automatickém vytváření Společností ze synchronizace e-mailu/kalendáře, což později zabrání duplicitám.
+</Warning>
+
+**Sloupce domény:**
+
+* **Domain / Domain Label**: `acme.com`
+* **Domain / Domain URL**: `https://acme.com`
+
+### Formát adresy
+
+Adresa je vnořené pole s více sloupci:
+
+```
+Address / Address 1,Address / City,Address / State,Address / Country,Address / Post Code
+123 Main Street,San Francisco,CA,USA,94105
+```
+
+### Ukázková struktura CSV
+
+```csv
+name,Domain / Domain URL,Domain / Domain Label,Address / City,Address / Country,employees
+Acme Corp,https://acme.com,acme.com,San Francisco,USA,250
+Widget Co,https://widgets.co,widgets.co,New York,USA,50
+```
+
+<Note>
+  **Tip pro profíky:** Během importu klikněte na **Download sample file**, abyste viděli přesné názvy sloupců, které Twenty očekává.
+</Note>
+
+## Krok 2: Přejděte na funkci importu
+
+**Možnost 1: Z pohledu Companies**
+
+1. Přejděte na **Companies** v levém postranním panelu
+2. Klikněte na ikonu **⋮** vpravo nahoře
+3. Vyberte **Import records**
+
+**Možnost 2: Pomocí příkazové nabídky**
+
+1. Stiskněte `Cmd + K` (Mac) nebo `Ctrl + K` (Windows)
+2. Napište "import"
+3. Vyberte **Import records**
+4. Zvolte **Companies**
+
+## Krok 3: Nahrajte svůj soubor
+
+1. Klikněte na **Select file**
+2. Vyberte svůj soubor CSV, XLSX nebo XLS
+3. Počkejte, až Twenty analyzuje váš soubor
+
+## Krok 4: Namapujte své sloupce
+
+Twenty se automaticky pokusí přiřadit vaše sloupce k polím. Zkontrolujte a upravte:
+
+1. **Zkontrolujte automatická mapování** — ověřte, že jsou správná
+2. **Opravte nesprávná mapování** — klikněte na rozbalovací nabídku a vyberte správné pole
+3. **Přeskočte sloupce** — vyberte **Do not map** u sloupců, které nechcete importovat
+
+### Důležitá pravidla mapování
+
+* **Doména**: Namapujte na **Domain / Domain URL** (ne na Domain Label)
+* **Adresa**: Namapujte každou část do jejího konkrétního sloupce (City, State atd.)
+* **Pole typu Select**: Hodnoty se musí shodovat s existujícími možnostmi (nebo je namapujete v dalším kroku)
+
+<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+
+## Krok 5: Mapujte hodnoty polí typu Select
+
+Pokud máte pole typu Select nebo Multi-Select:
+
+1. Twenty zobrazí vaše hodnoty vedle stávajících možností
+2. Spárujte každou hodnotu ve svém souboru s možností v Twenty
+3. Nebo podle potřeby vytvořte nové možnosti
+
+<Note>
+  Možnosti typu Select používají **názvy API**, nikoli zobrazované štítky. V části **Nastavení → Datový model** → povolte **Pokročilý režim**, abyste viděli názvy API.
+</Note>
+
+## Krok 6: Zkontrolujte a opravte chyby
+
+Před dokončením importu Twenty ověří vaše data:
+
+1. Klikněte na **Další kroky**
+2. Řádky s chybami jsou zvýrazněny **žlutě**
+3. **Opravte chyby přímo** — klikněte na buňku a upravte hodnotu
+4. **Odstraňte problematické řádky** — klikněte na X a řádek přeskočte
+
+### Běžné chyby při importu společností
+
+| Chyba                      | Příčina                      | Řešení                                                   |
+| -------------------------- | ---------------------------- | -------------------------------------------------------- |
+| **Duplicitní doména**      | Doména již existuje v Twenty | Odstraňte ze souboru nebo aktualizujte existující záznam |
+| **Neplatný formát domény** | Nesprávný formát             | Použijte `https://domain.com`                            |
+| **Chybí povinné pole**     | Povinné pole je prázdné      | Doplňte hodnotu nebo řádek odstraňte                     |
+
+## Krok 7: Dokončete import
+
+1. Zkontrolujte souhrn importu
+2. Klikněte na **Potvrdit** pro import
+3. Počkejte na dokončení importu
+4. Ověřte zkontrolováním několika záznamů
+
+## Po importu společností
+
+Nyní můžete importovat záznamy, které se propojují se Společnostmi:
+
+1. **[Import Osob](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)** — propojte je se Společnostmi pomocí domény
+2. **Importujte Příležitosti** — propojte je se Společnostmi
+3. **Ověřte import** — namátkově zkontrolujte několik záznamů, abyste se ujistili, že data jsou správná
+
+## Aktualizace stávajících společností
+
+Chcete-li aktualizovat společnosti místo vytváření nových:
+
+1. Zahrňte do svého souboru sloupec `domain` nebo `id`
+2. Twenty páruje záznamy podle tohoto jedinečného identifikátoru
+3. Existující společnosti se aktualizují; nové se vytvoří
+
+Podrobnosti viz [Jak aktualizovat existující záznamy](/l/cs/user-guide/data-migration/how-tos/update-existing-records-via-import).
+
+## Časté dotazy
+
+<AccordionGroup>
+  <Accordion title="Proč nemohou mít dvě Společnosti stejnou doménu?">
+    Doména je v Twenty jedinečný identifikátor. Tím se předchází duplicitním společnostem a zajišťuje se, že synchronizace e-mailů správně propojí e-maily se správnou společností.
+  </Accordion>
+
+  <Accordion title="Co když mám společnosti bez domény?">
+    Doménu můžete nechat prázdnou. Doporučujeme však domény přidat, kdykoli je to možné, pro lepší kvalitu dat a automatické propojování e-mailů.
+  </Accordion>
+
+  <Accordion title="Mohu importovat společnosti bez jakýchkoli propojených Osob?">
+    Ano! Nejprve můžete importovat společnosti, poté importovat osoby a propojit je pomocí firemní domény.
+  </Accordion>
+
+  <Accordion title="Co se stane, když naimportuji doménu, která už existuje?">
+    Pokud zahrnete jedinečný identifikátor (doménu nebo id), který odpovídá existující společnosti, Twenty tuto společnost aktualizuje místo vytvoření duplikátu.
+  </Accordion>
+
+  <Accordion title="Jak opravím chyby 'duplicate domain'?">
+    Buď odstraňte duplikát ze svého souboru, nebo uveďte `id` společnosti, abyste místo toho aktualizovali existující záznam.
+  </Accordion>
+</AccordionGroup>
+
+## Řešení potíží
+
+Máte potíže? Podívejte se na:
+
+* [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+* [Referenční příručka mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)
+* [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)

@@ -1,4 +1,5 @@
 import {
+  DateDisplayFormat,
   FieldMetadataType,
   RelationOnDeleteAction,
   RelationType,
@@ -19,10 +20,10 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardFieldArgs<'blocklist'>, 'context'>): Record<
-  AllStandardObjectFieldName<'blocklist'>,
-  FlatFieldMetadata
-> => ({
+}: Omit<
+  CreateStandardFieldArgs<'blocklist', FieldMetadataType>,
+  'context'
+>): Record<AllStandardObjectFieldName<'blocklist'>, FlatFieldMetadata> => ({
   // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
@@ -56,7 +57,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -77,7 +78,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       defaultValue: 'now',
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -97,7 +98,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       isNullable: true,
       isUIReadOnly: true,
       settings: {
-        displayFormat: 'RELATIVE',
+        displayFormat: DateDisplayFormat.RELATIVE,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -117,6 +118,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       description: 'Handle',
       icon: 'IconAt',
       isNullable: true,
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -136,6 +138,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       description: 'WorkspaceMember',
       icon: 'IconCircleUser',
       isNullable: false,
+      isUIReadOnly: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'blocklist',
       settings: {

@@ -1,0 +1,106 @@
+---
+title: Enviar alertas por correo electrónico sobre tareas con fecha de vencimiento
+description: Notifica automáticamente a los miembros del equipo sobre sus tareas próximas o vencidas.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+Enviar recordatorios diarios por correo electrónico a cada miembro del equipo sobre sus tareas que vencen hoy.
+
+## Resumen
+
+Este flujo de trabajo se ejecuta según una programación y:
+
+1. Obtiene todos los miembros del espacio de trabajo
+2. Itera por cada miembro
+3. Encuentra sus tareas que vencen hoy
+4. Da formato y envía un correo electrónico personalizado
+
+## Configuración paso a paso
+
+<VimeoEmbed videoId="1147463514" title="Demostración en video" />
+
+### Paso 1: Configurar el disparador
+
+1. Ve a **Configuración → Flujos de trabajo** y crea un nuevo flujo de trabajo
+2. Selecciona **On a Schedule** como el disparador
+3. Usa una expresión cron para ejecutar diariamente a las 8:00 a. m.: `0 8 * * *`
+
+### Paso 2: Buscar a todos los miembros del espacio de trabajo
+
+1. Añade la acción **Search Records**
+2. Selecciona **Workspace Members** (en objetos avanzados)
+3. No se necesitan filtros — esto devuelve a todos los miembros
+
+### Paso 3: Añadir un iterador
+
+1. Añade la acción **Iterator**
+2. Configura el arreglo de entrada con los miembros del espacio de trabajo del paso anterior
+3. Todas las acciones dentro del iterador se ejecutarán una vez por miembro
+
+### Paso 4: Buscar tareas que vencen hoy (dentro del iterador)
+
+1. Dentro del iterador, añade una acción **Search Records**
+2. Selecciona **Tasks** como el objeto
+3. Agregar filtros:
+   * **Assignee** = miembro actual del espacio de trabajo (del iterador)
+   * **Due Date** = hoy
+
+### Paso 5: Formatear las tareas para el cuerpo del correo (dentro del iterador)
+
+Añade una acción **Code** para dar formato a las tareas como una lista legible con enlaces:
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  Reemplaza `yourSubDomain` por el subdominio real de tu espacio de trabajo de Twenty.
+</Note>
+
+### Paso 6: Enviar correo electrónico (dentro del iterador)
+
+1. Añade una acción **Send Email** (aún dentro del iterador)
+2. Configurar:
+
+| Campo      | Valor                                                                                        |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| **Para**   | `{{iterator.currentItem.userEmail}}` (correo electrónico del miembro del espacio de trabajo) |
+| **Asunto** | Tus tareas que vencen hoy                                                                    |
+| **Cuerpo** | `{{code.formattedTasks}}`                                                                    |
+
+### Paso 7: Probar y activar
+
+1. Haz clic en **Test** para ejecutar el flujo de trabajo manualmente
+2. Revisa las bandejas de entrada para ver los correos electrónicos
+3. Activa el flujo de trabajo
+
+## Relacionado
+
+* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+* [Enviar correos electrónicos desde flujos de trabajo](/l/es/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Manejar arreglos en acciones de código](/l/es/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

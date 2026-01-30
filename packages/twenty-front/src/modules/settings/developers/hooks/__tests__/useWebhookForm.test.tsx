@@ -9,7 +9,7 @@ import { CREATE_WEBHOOK } from '@/settings/developers/graphql/mutations/createWe
 import { DELETE_WEBHOOK } from '@/settings/developers/graphql/mutations/deleteWebhook';
 import { UPDATE_WEBHOOK } from '@/settings/developers/graphql/mutations/updateWebhook';
 import { GET_WEBHOOK } from '@/settings/developers/graphql/queries/getWebhook';
-import { useWebhookForm } from '../useWebhookForm';
+import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 
 const mockNavigateSettings = jest.fn();
 const mockEnqueueSuccessSnackBar = jest.fn();
@@ -61,11 +61,13 @@ const createSuccessfulUpdateMock = (webhookId: string, webhookData = {}) => ({
     variables: {
       input: {
         id: webhookId,
-        targetUrl: 'https://updated.com/webhook',
-        operations: ['person.updated'],
-        description: 'Updated webhook',
-        secret: 'updated-secret',
-        ...webhookData,
+        update: {
+          targetUrl: 'https://updated.com/webhook',
+          operations: ['person.updated'],
+          description: 'Updated webhook',
+          secret: 'updated-secret',
+          ...webhookData,
+        },
       },
     },
   },
@@ -87,16 +89,12 @@ const createSuccessfulDeleteMock = (webhookId: string) => ({
   request: {
     query: DELETE_WEBHOOK,
     variables: {
-      input: {
-        id: webhookId,
-      },
+      id: webhookId,
     },
   },
   result: {
     data: {
-      deleteWebhook: {
-        id: webhookId,
-      },
+      deleteWebhook: createMockWebhookData({ id: webhookId }),
     },
   },
 });
@@ -105,9 +103,7 @@ const createGetWebhookMock = (webhookId: string, webhookData = {}) => ({
   request: {
     query: GET_WEBHOOK,
     variables: {
-      input: {
-        id: webhookId,
-      },
+      id: webhookId,
     },
   },
   result: {
@@ -329,10 +325,12 @@ describe('useWebhookForm', () => {
           variables: {
             input: {
               id: webhookId,
-              targetUrl: 'https://test.com/webhook',
-              operations: ['person.created'],
-              description: 'Test webhook',
-              secret: 'test-secret',
+              update: {
+                targetUrl: 'https://test.com/webhook',
+                operations: ['person.created'],
+                description: 'Test webhook',
+                secret: 'test-secret',
+              },
             },
           },
         },
@@ -464,9 +462,7 @@ describe('useWebhookForm', () => {
         request: {
           query: DELETE_WEBHOOK,
           variables: {
-            input: {
-              id: webhookId,
-            },
+            id: webhookId,
           },
         },
         error: new Error('Deletion failed'),

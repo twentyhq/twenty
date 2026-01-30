@@ -1,0 +1,178 @@
+---
+title: 快捷键
+---
+
+## 介绍
+
+当你需要监听一个快捷键时，通常会使用 `onKeyDown` 事件监听器。
+
+然而，在 `twenty-front` 中，你可能会遇到用于不同组件的相同快捷键之间的冲突，这些组件同时挂载。
+
+例如，如果你有一个页面监听回车键，而一个包含选择组件的模态框也监听回车键，在所有这些组件同时挂载时可能会发生冲突。
+
+## `useScopedHotkeys` hook
+
+为了解决这个问题，我们有一个自定义的 hook，可以在不产生冲突的情况下监听快捷键。
+
+您可以将它放在组件中，它只会在组件挂载并且指定的 **快捷键范围** 激活时监听快捷键。
+
+## 在实践中如何监听快捷键？
+
+设置快捷键监听涉及两个步骤：
+
+1. 设置将会监听快捷键的[快捷键范围](#what-is-a-hotkey-scope-)
+2. 使用 `useScopedHotkeys` hook 来监听快捷键
+
+即使在简单的页面中，也需要设置快捷键范围，因为其他界面元素如左侧菜单或命令菜单也可能监听快捷键。
+
+## 快捷键的使用案例
+
+通常情况下，会有两种需要快捷键的使用案例：
+
+1. 在页面或页面中挂载的组件中
+2. 在由于用户操作而获得焦点的模态组件中
+
+第二种使用情况可以递归发生：例如，在模态框中的下拉框。
+
+### 在页面中监听快捷键
+
+示例：
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### 在模态类型组件中监听快捷键
+
+在这个示例中，我们将使用一个模态组件，该组件监听 Esc 键来告诉其父组件关闭自己。
+
+这里用户交互正在改变范围。
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+然后在模态组件中：
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## 什么是快捷键范围？
+
+快捷键范围是表示快捷键激活上下文的字符串。 通常编码为枚举。
+
+当你更改快捷键范围时，监听此范围的快捷键将启用，监听其他范围的快捷键将被禁用。
+
+一次只能设置一个范围。
+
+例如，每个页面的快捷键范围在 `PageHotkeyScope` 枚举中定义：
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+在内部，当前选择的范围存储在整个应用程序共享的 Recoil 状态中：
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+但这个 Recoil 状态不应该手动处理！ 我们将在下一节中学习如何使用它。
+
+## 内部是如何运作的？
+
+我们在 [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) 之上制作了一个薄包装，使其性能更高并避免不必要的重新渲染。
+
+我们还创建了一个 Recoil 状态来处理快捷键范围状态，并使其在整个应用程序中可用。

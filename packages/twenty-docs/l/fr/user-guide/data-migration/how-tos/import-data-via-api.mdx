@@ -1,0 +1,176 @@
+---
+title: Importer des données via l'API
+description: Quand et comment utiliser les API de Twenty pour des importations de données à grande échelle.
+---
+
+## Vue d'ensemble
+
+Twenty propose des **API GraphQL** et **REST** pour l'importation programmatique de données. Utilisez l'API lorsque l'importation CSV n'est pas pratique pour votre volume de données ou lorsque vous avez besoin d'importations automatisées et récurrentes.
+
+## Quand utiliser l'importation via l'API
+
+| Scénario                               | Méthode recommandée                             |
+| -------------------------------------- | ----------------------------------------------- |
+| Moins de 10 000 enregistrements        | Importation CSV                                 |
+| 10 000 - 50 000 enregistrements        | Importation CSV (divisée en plusieurs fichiers) |
+| **50 000+ enregistrements**            | **Importation via l'API**                       |
+| Migration ponctuelle                   | L'un ou l'autre (selon le volume)               |
+| **Importations récurrentes**           | **Importation via l'API**                       |
+| **Synchronisation en temps réel**      | **Importation via l'API**                       |
+| **Intégration avec d'autres systèmes** | **Importation via l'API**                       |
+
+<Note>Pour des jeux de données comptant des centaines de milliers d'éléments, l'API est nettement plus rapide et plus fiable que plusieurs importations CSV.</Note>
+
+## Limites de débit de l'API
+
+Twenty applique des limites de débit pour garantir la stabilité du système :
+
+| Limite                                 | Valeur                        |
+| -------------------------------------- | ----------------------------- |
+| **Requêtes par minute**                | 100                           |
+| **Enregistrements par appel par lots** | 60                            |
+| **Débit maximal**                      | ~6 000 enregistrements/minute |
+
+<Warning>
+  **Planifiez votre importation en fonction de ces limites.**
+
+  Pour 100 000 enregistrements au débit maximal, prévoyez environ 17 minutes d'importation. Ajoutez une marge pour la gestion des erreurs et les nouvelles tentatives.
+</Warning>
+
+## Prise en main
+
+### Étape 1 : Obtenez votre clé API
+
+1. Allez dans **Paramètres → Développeurs**
+2. Cliquez sur **+ Créer une clé API**
+3. Donnez à votre clé un nom descriptif
+4. Copiez immédiatement la clé API (elle ne sera plus affichée)
+5. Stockez-la en toute sécurité
+
+<Warning>
+  **Gardez votre clé API secrète.**
+
+  Toute personne disposant de votre clé API peut accéder aux données de votre espace de travail et les modifier. Ne la validez jamais dans des dépôts de code et ne la partagez pas publiquement.
+</Warning>
+
+### Étape 2 : Choisissez votre API
+
+Twenty prend en charge deux types d'API :
+
+| API         | Idéal pour                                                              | Documentation                                                  |
+| ----------- | ----------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **GraphQL** | Requêtes flexibles, récupération de données liées, opérations complexes | [Documentation de l'API](/l/fr/developers/extend/capabilities/apis) |
+| **REST**    | Opérations CRUD simples, modèles REST familiers                         | [Documentation de l'API](/l/fr/developers/extend/capabilities/apis) |
+
+Les deux API prennent en charge :
+
+* Créer, lire, mettre à jour et supprimer des enregistrements
+* **Opérations par lots** — créez ou mettez à jour jusqu'à 60 enregistrements par appel
+
+**Pour les importations, utilisez les opérations par lots** afin de maximiser le débit tout en respectant les limites de débit.
+
+### Étape 3 : Planifiez l'ordre d'importation
+
+Comme pour les importations CSV, **l'ordre compte** pour les relations :
+
+1. **Entreprises** d'abord (aucune dépendance)
+2. **Personnes** ensuite (peuvent être liées aux Entreprises)
+3. **Opportunités** en troisième (peuvent être liées aux Entreprises et aux Personnes)
+4. **Tâches/Notes** (peuvent être liées à l'un des éléments ci-dessus)
+5. **Objets personnalisés** (en suivant leurs dépendances)
+
+## Meilleures pratiques
+
+### Regroupez vos requêtes par lots
+
+* N'envoyez pas les enregistrements un par un
+* Regroupez jusqu'à **60 enregistrements par appel d'API**
+* Cela maximise le débit tout en respectant les limites de débit
+
+### Gérez les limites de débit
+
+* Mettez en place des délais entre les requêtes (600 ms minimum pour des importations soutenues)
+* Utilisez un backoff exponentiel lorsque vous atteignez les limites
+* Surveillez les réponses 429 (Too Many Requests)
+
+### Validez d'abord les données
+
+* Nettoyez et validez vos données avant l'importation
+* Vérifiez que les champs obligatoires sont renseignés
+* Vérifiez que les formats correspondent aux exigences de Twenty (voir [Correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping))
+
+### Consignez tout
+
+* Consignez chaque enregistrement importé (y compris les identifiants)
+* Consignez les erreurs avec tout le contexte
+* Cela aide à déboguer les problèmes et à vérifier l'achèvement
+
+### Testez d'abord
+
+* Testez avec un petit lot (10 à 20 enregistrements)
+* Vérifiez que les données s'affichent correctement dans Twenty
+* Exécutez ensuite l'importation complète
+
+### Upsert pour éviter les doublons
+
+L'API GraphQL prend en charge l'**upsert par lots** — mise à jour si l'enregistrement existe, création sinon. Cela évite les doublons lors de la réexécution des importations.
+
+## Trouver les noms d'objets et de champs
+
+Pour voir les objets et champs disponibles :
+
+1. Allez dans **Paramètres → API et Webhooks**
+2. Parcourez l'**API de métadonnées**
+3. Affichez tous les objets standard et personnalisés avec leurs champs
+
+La documentation présente tous les objets standard et personnalisés, leurs champs et les types de données attendus.
+
+## Services Professionnels
+
+Pour des migrations API complexes, nos partenaires peuvent vous aider :
+
+| Service                             | Ce qui est inclus                                |
+| ----------------------------------- | ------------------------------------------------ |
+| **Conception du modèle de données** | concevoir votre structure de données optimale    |
+| **Scripts de migration**            | écrire et exécuter les scripts d'importation     |
+| **Transformation des données**      | gérer la correspondance complexe et le nettoyage |
+| **Validation et assurance qualité** | vérifier que la migration est complète           |
+
+**Idéal pour :**
+
+* Migrations de plus de 100 000 enregistrements
+* Transformations de données complexes
+* Délais serrés
+* Équipes sans ressources de développement
+
+Contactez-nous à [contact@twenty.com](mailto:contact@twenty.com) ou découvrez nos [services de mise en œuvre](/l/fr/user-guide/getting-started/capabilities/implementation-services).
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Quelle est la différence entre GraphQL et REST ?">
+    GraphQL vous permet de demander exactement les données dont vous avez besoin en une seule requête et est mieux adapté aux opérations complexes. REST utilise les méthodes HTTP standard (GET, POST, PUT, DELETE) et peut être plus familier si vous avez travaillé avec des API traditionnelles.
+  </Accordion>
+
+  <Accordion title="Puis-je mettre à jour des enregistrements existants via l'API ?">
+    Oui! Utilisez des mutations de mise à jour (GraphQL) ou des requêtes PUT/PATCH (REST) avec l'`id` de l'enregistrement.
+  </Accordion>
+
+  <Accordion title="Comment gérer les doublons ?">
+    Recherchez d'abord les enregistrements existants en utilisant des identifiants uniques (e-mail, domaine). Mettez à jour s'il existe, créez s'il n'existe pas.
+  </Accordion>
+
+  <Accordion title="Puis-je supprimer des enregistrements via l'API ?">
+    Oui, utilisez des mutations de suppression (GraphQL) ou des requêtes DELETE (REST).
+  </Accordion>
+
+  <Accordion title="Existe-t-il un SDK Python ou Node.js ?">
+    Pas pour le moment, mais les deux API fonctionnent avec n'importe quel client HTTP dans n'importe quel langage.
+  </Accordion>
+</AccordionGroup>
+
+## Documentation de l'API
+
+Pour les détails complets de mise en œuvre, des exemples de code et la référence du schéma :
+
+* [Documentation de l'API](/l/fr/developers/extend/capabilities/apis)

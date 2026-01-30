@@ -3,38 +3,140 @@
     "userGuide": {
       "label": "Guide de l'utilisateur",
       "groups": {
-        "gettingStarted": {
-          "label": "Commencer"
+        "discoverTwenty": {
+          "label": "Découvrez Twenty",
+          "groups": {
+            "gettingStartedCapabilities": {
+              "label": "Capacités"
+            },
+            "gettingStartedHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         },
         "dataModel": {
-          "label": "Modèle de données"
+          "label": "Modèle de données",
+          "groups": {
+            "dataModelCapabilities": {
+              "label": "Capacités"
+            },
+            "dataModelHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         },
-        "crmEssentials": {
-          "label": "Essentiels du CRM"
+        "dataMigration": {
+          "label": "Migration de données",
+          "groups": {
+            "dataMigrationCapabilities": {
+              "label": "Capacités"
+            },
+            "dataMigrationHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         },
-        "views": {
-          "label": "Vues"
+        "calendarEmails": {
+          "label": "Calendrier et e-mails",
+          "groups": {
+            "calendarEmailsCapabilities": {
+              "label": "Capacités"
+            },
+            "calendarEmailsHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         },
         "workflows": {
-          "label": "Flux de travail"
+          "label": "Flux de travail",
+          "groups": {
+            "workflowsCapabilities": {
+              "label": "Capacités"
+            },
+            "workflowsHowTos": {
+              "label": "Guides pratiques",
+              "groups": {
+                "crmAutomations": {
+                  "label": "Automatisations CRM"
+                },
+                "connectToOtherTools": {
+                  "label": "Connexion à d'autres outils"
+                },
+                "advancedConfigurations": {
+                  "label": "Configurations avancées"
+                },
+                "needMoreHelp": {
+                  "label": "Besoin de plus d'aide"
+                }
+              }
+            }
+          }
         },
-        "collaboration": {
-          "label": "Collaboration"
+        "ai": {
+          "label": "IA",
+          "groups": {
+            "aiCapabilities": {
+              "label": "Capacités"
+            },
+            "aiHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         },
-        "integrationsApi": {
-          "label": "Intégrations & API"
+        "viewsPipelines": {
+          "label": "Vues et pipelines",
+          "groups": {
+            "viewsPipelinesCapabilities": {
+              "label": "Capacités"
+            },
+            "viewsPipelinesHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         },
-        "reporting": {
-          "label": "Rapports"
+        "dashboards": {
+          "label": "Tableaux de bord",
+          "groups": {
+            "dashboardsCapabilities": {
+              "label": "Capacités"
+            },
+            "dashboardsHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "Autorisations et accès",
+          "groups": {
+            "permissionsAccessCapabilities": {
+              "label": "Capacités"
+            },
+            "permissionsAccessHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
+        },
+        "billing": {
+          "label": "Facturation",
+          "groups": {
+            "billingCapabilities": {
+              "label": "Capacités"
+            },
+            "billingHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         },
         "settings": {
-          "label": "Paramètres"
-        },
-        "pricing": {
-          "label": "Tarifs"
-        },
-        "resources": {
-          "label": "Ressources"
+          "label": "Paramètres",
+          "groups": {
+            "settingsCapabilities": {
+              "label": "Capacités"
+            },
+            "settingsHowTos": {
+              "label": "Guides pratiques"
+            }
+          }
         }
       }
     },
@@ -44,44 +146,54 @@
         "developersGroup": {
           "label": "Développeurs"
         },
-        "devGettingStarted": {
-          "label": "Commencer",
+        "extend": {
+          "label": "Étendre",
           "groups": {
-            "selfHosting": {
-              "label": "Auto-hébergement"
-            },
-            "apiAndWebhooks": {
-              "label": "API et webhooks"
+            "extendCapabilities": {
+              "label": "Capacités"
             }
           }
         },
-        "contributing": {
+        "selfHost": {
+          "label": "Auto-hébergement",
+          "groups": {
+            "selfHostCapabilities": {
+              "label": "Capacités"
+            }
+          }
+        },
+        "contribute": {
           "label": "Contribuer",
           "groups": {
-            "frontendDevelopment": {
-              "label": "Développement du frontend",
+            "contributeCapabilities": {
+              "label": "Capacités",
               "groups": {
-                "twentyUi": {
-                  "label": "Twenty UI",
+                "frontendDevelopment": {
+                  "label": "Développement frontend",
                   "groups": {
-                    "display": {
-                      "label": "Afficher"
-                    },
-                    "feedback": {
-                      "label": "Vos commentaires"
-                    },
-                    "input": {
-                      "label": "Input"
-                    },
-                    "navigation": {
-                      "label": "Navigation"
+                    "twentyUi": {
+                      "label": "Twenty UI",
+                      "groups": {
+                        "display": {
+                          "label": "Afficher"
+                        },
+                        "feedback": {
+                          "label": "Retour d'information"
+                        },
+                        "input": {
+                          "label": "Entrée "
+                        },
+                        "navigation": {
+                          "label": "Navigation"
+                        }
+                      }
                     }
                   }
+                },
+                "backendDevelopment": {
+                  "label": "Développement backend"
                 }
               }
-            },
-            "backendDevelopment": {
-              "label": "Développement du backend"
             }
           }
         }

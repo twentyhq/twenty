@@ -1,0 +1,182 @@
+---
+title: Ürün Verilerini Twenty'ye Aktarın
+description: Ürün katalog verilerini bir veri ambarından CRM'inize bir programa göre eşitleyin.
+---
+
+Veri ambarınızdaki ürün verileriyle Twenty'yi senkron tutmak için bu kalıbı kullanın (örn. Snowflake, BigQuery, PostgreSQL).
+
+## İş Akışı Yapısı
+
+1. **Tetikleyici**: Zamanlanmış
+2. **Kod**: Veri ambarınızı sorgulayın
+3. **Kod** (isteğe bağlı): Veriyi dizi olarak biçimlendirin
+4. **Yineleyici**: Her ürün üzerinde döngü kurun
+5. **Kaydı Ekle/Güncelle**: Twenty'de oluşturun veya güncelleyin
+
+<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+
+## Adım 1: Tetiklemeyi Zamanlayın
+
+İş akışını, veri tazelik gereksinimlerinize uygun bir sıklıkta çalışacak şekilde ayarlayın:
+
+* Neredeyse gerçek zamanlı eşitleme için her 5 dakikada bir
+* Daha az kritik veriler için saatte bir
+* Toplu güncellemeler için günlük
+
+## Adım 2: Veri Ambarınızı Sorgulayın
+
+En son verileri almak için bir **Kod** eylemi ekleyin:
+
+```javascript
+export const main = async () => {
+  const intervalMinutes = 10; // Match your schedule frequency
+  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+
+  // Replace with your actual data warehouse connection
+  const response = await fetch("https://your-warehouse-api.com/query", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      query: `
+        SELECT id, name, sku, price, stock_quantity, updated_at
+        FROM products
+        WHERE updated_at >= '${cutoffTime}'
+      `
+    })
+  });
+
+  const data = await response.json();
+  return { products: data.results };
+};
+```
+
+<Tip>
+  `updated_at >= last X minutes` ile filtreleyerek yalnızca yakın zamanda değişen kayıtları alın. Bu, eşitlemeyi verimli tutar.
+</Tip>
+
+## Adım 3: Verileri Biçimlendirin (İsteğe Bağlı)
+
+Veri ambarınız dönüştürme gerektiren bir biçimde veri döndürüyorsa, başka bir **Kod** eylemi ekleyin. Yaygın dönüşümler arasında tür dönüştürmeleri, alan yeniden adlandırma ve veri temizleme bulunur.
+
+### Örnek: Boolean ve Durum Alanlarına Sahip Kullanıcı Verileri
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Convert string "true"/"false" to actual booleans
+  const toBool = (v: any) => v === true || v === "true";
+
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+      isActiveLast30d: toBool(user.isActiveLast30d),
+      isActiveLast7d: toBool(user.isActiveLast7d),
+      isActiveLast24h: toBool(user.isActiveLast24h),
+      isTwenty: toBool(user.isTwenty),
+    })),
+  };
+};
+```
+
+### Örnek: Tür Dönüşümleri Olan Ürün Verileri
+
+```javascript
+export const main = async (params: { products: any }) => {
+  const products = typeof params.products === "string"
+    ? JSON.parse(params.products)
+    : params.products;
+
+  return {
+    products: products.map(product => ({
+      externalId: product.id,
+      name: product.name,
+      sku: product.sku,
+      price: parseFloat(product.price),        // String → Number
+      stockQuantity: parseInt(product.stock_quantity),
+      isActive: product.status === "active"    // String → Boolean
+    }))
+  };
+};
+```
+
+### Örnek: Tarih ve Para Birimi Biçimlendirme
+
+```javascript
+export const main = async (params: { deals: any }) => {
+  const deals = typeof params.deals === "string"
+    ? JSON.parse(params.deals)
+    : params.deals;
+
+  return {
+    deals: deals.map(deal => ({
+      ...deal,
+      // Convert Unix timestamp to ISO date
+      closedAt: deal.closed_timestamp
+        ? new Date(deal.closed_timestamp * 1000).toISOString()
+        : null,
+      // Ensure amount is a number (remove currency symbols)
+      amount: parseFloat(String(deal.amount).replace(/[^0-9.-]/g, "")),
+      // Normalize stage names
+      stage: deal.stage?.toLowerCase().replace(/_/g, " ")
+    }))
+  };
+};
+```
+
+### Yaygın Dönüşümler
+
+| Kaynak Format        | Hedef Format     | Kod                                      |
+| -------------------- | ---------------- | ---------------------------------------- |
+| `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
+| `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
+| `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
+| `1704067200` (Unix)  | ISO tarihi       | `new Date(v * 1000).toISOString()`       |
+| `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
+| `null` / `undefined` | `""`             | `value \|\| ""`                          |
+
+## Adım 4: Ürünler Üzerinde Yineleyin
+
+Bir **Iterator** eylemi ekleyin:
+
+* Girdi: `{{code.products}}`
+
+Bu, dizideki her ürün üzerinde döngü kurar.
+
+## Adım 5: Her Kaydı Ekle/Güncelleyin
+
+Yineleyici içinde bir **Kaydı Ekle/Güncelle** eylemi ekleyin:
+
+| Ayar                   | Değer                                      |
+| ---------------------- | ------------------------------------------ |
+| **Nesne**              | Özel Ürün nesneniz                         |
+| **Şuna göre eşleştir** | Harici ID veya SKU (benzersiz tanımlayıcı) |
+| **Ad**                 | `{{iterator.item.name}}`                   |
+| **SKU**                | `{{iterator.item.sku}}`                    |
+| **Fiyat**              | `{{iterator.item.price}}`                  |
+
+<Tip>
+  Oluşturma ve güncelleme için ayrı dallar oluşturmak yerine **Upsert** (güncelle veya oluştur) kullanın. Oluşturmak daha hızlı ve hata ayıklamak daha kolaydır.
+</Tip>
+
+## Örnek Kullanım Durumları
+
+| Kaynak                  | Veri                                           |
+| ----------------------- | ---------------------------------------------- |
+| **ERP sistemi**         | Ürün kataloğu, fiyatlandırma, envanter         |
+| **E-ticaret platformu** | Siparişler, müşteriler, ürün güncellemeleri    |
+| **Veri ambarı**         | Toplanmış metrikler, zenginleştirilmiş veriler |
+| **Envanter sistemi**    | Stok seviyeleri, yeniden sipariş uyarıları     |
+
+## İlgili
+
+* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+* [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

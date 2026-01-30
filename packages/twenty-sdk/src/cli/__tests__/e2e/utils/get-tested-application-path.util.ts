@@ -1,10 +1,7 @@
 import path from 'path';
 
-export const getTestedApplicationPath = (relativePath: string): string => {
-  const twentyAppsPath = path.resolve(
-    __dirname,
-    '../../../../../../twenty-apps',
-  );
+export const getTestedApplicationPath = (appName: string): string => {
+  const appsPath = path.resolve(__dirname, '../../apps');
 
-  return path.join(twentyAppsPath, relativePath);
+  return path.join(appsPath, appName);
 };

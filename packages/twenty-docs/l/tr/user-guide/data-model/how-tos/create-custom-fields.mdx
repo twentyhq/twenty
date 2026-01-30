@@ -1,0 +1,72 @@
+---
+title: Özel Alanlar Oluşturma
+description: Herhangi bir nesneye özel alan eklemeye yönelik adım adım kılavuz.
+---
+
+Özel alanlar, işinize özgü bilgileri kaydetmenize olanak tanır. Standart ya da özel fark etmeksizin bunları herhangi bir nesneye ekleyin.
+
+## Adımlar
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Alan eklemek istediğiniz nesneyi seçin
+3. **+ Alan Ekle**'ye tıklayın
+4. **alan türü** seçin (tüm türler için [Alanlar](/l/tr/user-guide/data-model/capabilities/fields) bölümüne bakın)
+5. **alan adını** ve isteğe bağlı açıklamayı girin
+6. Alana özel ayarları yapılandırın (aşağıya bakın)
+7. **Kaydet**'e tıklayın
+
+**Hızlı yöntem:** Herhangi bir tablo görünümünde sütun başlıklarının sonundaki **+** simgesine tıklayın → **Alanları özelleştir**.
+
+## Alanı Görünümlerde Göster
+
+Yeni alanlar otomatik olarak görünmez. Görüntülemek için:
+
+1. Nesnenin tablo görünümünü açın
+2. **Seçenekler → Alanlar**'a tıklayın
+3. Alanınızın yanındaki **göz simgesine** tıklayarak gösterin
+4. Yeniden sıralamak için sürükleyin
+
+## Yapılandırma Seçenekleri
+
+### Seçim / Çoklu Seçim için
+
+1. Seçenekler oluşturmak için **+ Seçenek Ekle**'ye tıklayın
+2. İsterseniz bir **varsayılan seçenek** belirleyin
+3. Seçenekleri yeniden sıralamak için sürükleyin
+
+<Note>
+  **İçe aktarmalar için API adlarını kullanın.** API adlarını görmek için Ayarlar'da **Gelişmiş modu** etkinleştirin. Bkz. [Alan Eşleme](/l/tr/user-guide/data-migration/capabilities/field-mapping).
+</Note>
+
+### Para Birimi Alanları için
+
+**varsayılan para birimini** ayarlayın (USD, EUR vb.) yeni kayıtlar için.
+
+### Telefon Alanları için
+
+Yeni telefon numaraları için önceden doldurulacak **varsayılan ülke kodunu** ayarlayın.
+
+### Bir Alanı Benzersiz Yapma
+
+Kayıtlar arasında yinelenen değerleri önlemek için **Benzersiz** seçeneğini etkinleştirin.
+
+<Note>
+  Yinelenenler varsa (silinmiş kayıtlardakiler dahil) bir hata alırsınız. Önce yinelenenleri temizleyin.
+</Note>
+
+### Varsayılan Değerleri Ayarlama
+
+Seçim alanlarında yeni kayıtlar için önceden seçilecek seçeneği belirleyebilirsiniz. Onay kutusu alanlarında, varsayılan olarak işaretli mi işaretsiz mi olacağını ayarlayın.
+
+## Bir Alanı Devre Dışı Bırakma
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Alanı bulun
+3. **⋮ → Devre Dışı Bırak**'a tıklayın
+
+Veriler korunur. Daha sonra yeniden etkinleştirebilir veya kalıcı olarak silebilirsiniz.
+
+## İlgili
+
+* [Alanlar](/l/tr/user-guide/data-model/capabilities/fields) — tüm alan türleri açıklanır
+* [Veri Modeli SSS](/l/tr/user-guide/data-model/how-tos/data-model-faq) — sık sorulan sorular

@@ -1,0 +1,109 @@
+---
+title: Architecture des Dossiers
+info: Un aperçu détaillé de notre architecture de dossiers
+---
+
+Dans ce guide, vous explorerez les détails de la structure du répertoire de projet et comment elle contribue à l'organisation et à la maintenabilité de Twenty.
+
+En suivant cette convention d'architecture de dossiers, il est plus facile de trouver les fichiers liés à des fonctionnalités spécifiques et de s'assurer que l'application est évolutive et maintenable.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Pages
+
+Comprend les composants de haut niveau définis par les routes de l'application. Ils importent des composants de plus bas niveau depuis le dossier `modules` (plus de détails ci-dessous).
+
+## Modules
+
+Chaque module représente une fonctionnalité ou un groupe de fonctionnalités, comprenant ses composants spécifiques, ses états, et sa logique opérationnelle.
+Ils doivent tous suivre la structure ci-dessous. Vous pouvez imbriquer des modules dans des modules (appelés sous-modules) et les mêmes règles s'appliqueront.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Contextes
+
+Un contexte est un moyen de transmettre des données à travers l'arborescence de composants sans avoir à transmettre les propriétés manuellement à chaque niveau.
+
+Voir [React Context](https://react.dev/reference/react#context-hooks) pour plus de détails.
+
+### GraphQL
+
+Comprend des fragments, des requêtes et des mutations.
+
+Voir [GraphQL](https://graphql.org/learn/) pour plus de détails.
+
+* Fragments
+
+Un fragment est une partie réutilisable d'une requête, que vous pouvez utiliser dans différents endroits. En utilisant des fragments, il est plus facile d'éviter de dupliquer du code.
+
+Voir [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) pour plus de détails.
+
+* Requêtes
+
+Voir [GraphQL Queries](https://graphql.org/learn/queries/) pour plus de détails.
+
+* Mutations
+
+Voir [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) pour plus de détails.
+
+### Hooks
+
+Voir [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) pour plus de détails.
+
+### États
+
+Contient la logique de gestion des états. [RecoilJS](https://recoiljs.org) gère cela.
+
+* Sélecteurs : Voir [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) pour plus de détails.
+
+La gestion de l'état intégrée de React gère toujours l'état au sein d'un composant.
+
+### Utilitaires
+
+Devrait juste contenir des fonctions pures réutilisables. Autrement, créez des hooks personnalisés dans le dossier `hooks`.
+
+## UI
+
+Contient tous les composants d'interface utilisateur réutilisables utilisés dans l'application.
+
+Ce dossier peut contenir des sous-dossiers, comme `data`, `display`, `feedback`, et `input` pour des types de composants spécifiques. Chaque composant doit être autonome et réutilisable, de sorte que vous puissiez l'utiliser dans différentes parties de l'application.
+
+En séparant les composants UI des autres composants dans le dossier `modules`, il est plus facile de maintenir un design cohérent et d'effectuer des changements de l'interface utilisateur sans affecter d'autres parties (logique métier) de la base de code.
+
+## Interface et dépendances
+
+Vous pouvez importer le code d'autres modules depuis n'importe quel module, sauf le dossier `ui`. Cela permettra de garder son code facile à tester.
+
+### Interne
+
+Chaque partie (hooks, états, ...) d'un module peut avoir un dossier `internal`, qui contient des parties utilisées uniquement au sein du module.

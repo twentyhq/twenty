@@ -1,0 +1,109 @@
+---
+title: Arquitetura de Pastas
+info: Um olhar detalhado sobre nossa arquitetura de pastas
+---
+
+Neste guia, você explorará os detalhes da estrutura de diretórios do projeto e como isso contribui para a organização e manutenção do Twenty.
+
+Seguindo esta convenção de arquitetura de pastas, é mais fácil encontrar os arquivos relacionados a funcionalidades específicas e garantir que a aplicação seja escalável e manutenível.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Páginas
+
+Inclui os componentes de nível superior definidos pelas rotas da aplicação. Elas importam componentes de nível mais baixo da pasta `modules` (mais detalhes abaixo).
+
+## Módulos
+
+Cada módulo representa uma funcionalidade ou um grupo de funcionalidades, compreendendo seus componentes específicos, estados e lógica operacional.
+Todos devem seguir a estrutura abaixo. Você pode aninhar módulos dentro de módulos (referidos como submódulos) e as mesmas regras se aplicarão.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Contextos
+
+Um contexto é uma maneira de passar dados através da árvore de componentes sem ter que passar propriedades manualmente em cada nível.
+
+Veja [React Context](https://react.dev/reference/react#context-hooks) para mais detalhes.
+
+### GraphQL
+
+Inclui fragmentos, consultas e mutações.
+
+Veja [GraphQL](https://graphql.org/learn/) para mais detalhes.
+
+* Fragmentos
+
+Um fragmento é uma parte reutilizável de uma consulta, que você pode usar em diferentes lugares. Usando fragmentos, é mais fácil evitar duplicar código.
+
+Veja [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) para mais detalhes.
+
+* Consultas
+
+Veja [GraphQL Queries](https://graphql.org/learn/queries/) para mais detalhes.
+
+* Mutações
+
+Veja [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) para mais detalhes.
+
+### Hooks
+
+Veja [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) para mais detalhes.
+
+### Estados
+
+Contém a lógica de gerenciamento de estado. [RecoilJS](https://recoiljs.org) lida com isso.
+
+* Seletores: Veja [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) para mais detalhes.
+
+O gerenciamento de estado embutido do React ainda lida com o estado dentro de um componente.
+
+### Utilitários
+
+Deve conter apenas funções puras reutilizáveis. Caso contrário, crie hooks personalizados na pasta `hooks`.
+
+## UI
+
+Contém todos os componentes reutilizáveis de UI usados na aplicação.
+
+Esta pasta pode conter subpastas, como `data`, `display`, `feedback` e `input` para tipos específicos de componentes. Cada componente deve ser autocontido e reutilizável, de modo que você possa usá-lo em diferentes partes da aplicação.
+
+Ao separar os componentes de UI dos outros componentes na pasta `modules`, é mais fácil manter um design consistente e fazer alterações na UI sem afetar outras partes (lógica de negócios) do código.
+
+## Interface e dependências
+
+Você pode importar código de outros módulos, exceto da pasta `ui`. Isso manterá seu código fácil de testar.
+
+### Interno
+
+Cada parte (hooks, estados, ...) de um módulo pode ter uma pasta `internal`, que contém partes que são usadas apenas dentro do módulo.

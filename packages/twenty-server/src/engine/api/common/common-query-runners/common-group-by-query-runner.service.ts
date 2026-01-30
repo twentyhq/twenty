@@ -15,14 +15,15 @@ import {
 } from 'twenty-shared/utils';
 import { ObjectLiteral } from 'typeorm';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { getGroupByDefinitions } from 'src/engine/api/common/common-query-runners/utils/get-group-by-definitions.util';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -71,6 +72,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }
 
   protected readonly operationName = CommonQueryNames.GROUP_BY;
+  protected readonly isReadOnly = true;
 
   async run(
     args: CommonExtendedInput<GroupByQueryArgs>,
@@ -213,6 +215,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         throw new CommonQueryRunnerException(
           `Field metadata not found for field ${viewFilter.fieldMetadataId}`,
           CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       }
 
@@ -252,7 +255,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       recordFilters,
       recordFilterGroups: recordFilterGroups,
       fields,
-      filterValueDependencies: {},
+      filterValueDependencies: {
+        timeZone: 'UTC', // TODO: see if we use workspace member timezone here
+      },
     });
 
     let view: ViewEntity | null = viewFilters[0]?.view;
@@ -360,6 +365,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
           throw new CommonQueryRunnerException(
             `Field metadata settings are missing or invalid for field ${groupByField.fieldMetadata.name}`,
             CommonQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -404,6 +410,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   protected override computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonInput<GroupByQueryArgs>,
+    _queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
     const groupByQueryComplexity = 1;
     const simpleFieldsComplexity = 1;

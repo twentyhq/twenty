@@ -1,0 +1,126 @@
+---
+title: FAQ sur les autorisations
+description: Foire aux questions sur les rôles et les autorisations.
+---
+
+## Rôles
+
+<AccordionGroup>
+  <Accordion title="Quels rôles sont inclus par défaut avec Twenty ?">
+    Twenty inclut par défaut les rôles **Admin** et **Member**. Vous pouvez créer des rôles personnalisés supplémentaires selon les besoins de votre équipe (par ex., Représentant commercial, Responsable, Utilisateur en lecture seule).
+  </Accordion>
+
+  <Accordion title="Puis-je supprimer le rôle Admin ?">
+    Non, le rôle Admin ne peut pas être supprimé. Il doit toujours y avoir au moins un membre assigné au rôle Admin.
+  </Accordion>
+
+  <Accordion title="Que se passe-t-il lorsque je supprime un rôle ?">
+    Tout membre de l'espace de travail assigné à ce rôle sera automatiquement réattribué au rôle par défaut.
+  </Accordion>
+
+  <Accordion title="Comment définir un rôle par défaut pour les nouveaux membres ?">
+    Allez dans **Paramètres → Rôles**, trouvez l'option **Rôle par défaut**, puis sélectionnez le rôle que les nouveaux membres doivent recevoir automatiquement lorsqu'ils rejoignent.
+  </Accordion>
+
+  <Accordion title="Puis-je attribuer plusieurs rôles à un même utilisateur ?">
+    Non, chaque utilisateur ne peut avoir qu'un seul rôle à la fois. Créez un rôle personnalisé si vous avez besoin d'une combinaison d'autorisations.
+  </Accordion>
+</AccordionGroup>
+
+## Autorisations
+
+<AccordionGroup>
+  <Accordion title="Quelle est la différence entre les autorisations d'objet et de champ ?">
+    * **Autorisations d'objet** : Contrôlent l'accès aux enregistrements entiers (par ex., voir/modifier/supprimer des enregistrements People)
+    * **Autorisations de champ** : Contrôlent l'accès à des champs spécifiques au sein d'un objet (par ex., voir mais ne pas modifier le champ Salaire)
+
+    Les autorisations de champ permettent un contrôle plus fin des données sensibles.
+  </Accordion>
+
+  <Accordion title="Comment fonctionnent les remplacements d'autorisations ?">
+    Les autorisations se propagent du global vers le spécifique :
+
+    1. **Tous les objets** définit la base pour tous les objets
+    2. **Autorisations au niveau de l'objet** peuvent remplacer le paramètre global pour des objets spécifiques
+    3. **Autorisations au niveau du champ** peuvent remplacer le paramètre de l'objet pour des champs spécifiques
+
+    Les paramètres plus spécifiques prévalent toujours.
+  </Accordion>
+
+  <Accordion title="Que signifient les différents niveaux d'autorisation ?">
+    Pour les objets :
+
+    * **Voir les enregistrements** : Afficher les enregistrements dans les listes et les pages de détail
+    * **Modifier les enregistrements** : Modifier les enregistrements existants
+    * **Supprimer les enregistrements** : Suppression logique des enregistrements (peuvent être restaurés)
+    * **Détruire les enregistrements** : Supprimer définitivement les enregistrements
+
+    Pour les champs :
+
+    * **Voir le champ** : Afficher la valeur du champ
+    * **Modifier le champ** : Modifier la valeur du champ
+    * **Aucun accès** : Le champ est complètement masqué
+  </Accordion>
+
+  <Accordion title="Puis-je restreindre l'accès à des enregistrements spécifiques (autorisations au niveau des lignes) ?">
+    Les autorisations au niveau des lignes seront disponibles sur l'offre **Organization** d'ici le 1er trimestre 2026. Cela vous permet de restreindre l'accès à des enregistrements spécifiques selon des critères (par ex., voir uniquement vos propres opportunités).
+  </Accordion>
+
+  <Accordion title="Comment rendre un champ en lecture seule pour certains utilisateurs ?">
+    1. Allez dans **Paramètres → Rôles**
+    2. Sélectionnez le rôle
+    3. Accédez à l'objet contenant le champ
+    4. Définissez l'autorisation du champ sur **Voir le champ** (sans Modifier le champ)
+  </Accordion>
+</AccordionGroup>
+
+## Paramètres et actions
+
+<AccordionGroup>
+  <Accordion title="Quelles autorisations liées aux paramètres sont disponibles ?">
+    Vous pouvez contrôler l'accès à :
+
+    * Génération de clés API
+    * Préférences de l'espace de travail
+    * Attribution des rôles
+    * Configuration du modèle de données
+    * Paramètres de sécurité
+    * Gestion des flux de travail
+
+    Utilisez **Accès total aux paramètres** pour accorder un accès complet, ou activez des autorisations spécifiques.
+  </Accordion>
+
+  <Accordion title="Quelles autorisations d'actions sont disponibles ?">
+    Vous pouvez contrôler :
+
+    * **Envoyer des e-mails** : Possibilité d'envoyer des e-mails depuis Twenty
+    * **Importer un CSV** : Possibilité d'importer des données via CSV
+    * **Exporter en CSV** : Possibilité d'exporter des données en CSV
+
+    Utilisez **Accès total à l'application** pour autoriser toutes les actions, ou activez des actions spécifiques.
+  </Accordion>
+</AccordionGroup>
+
+## SSO
+
+<AccordionGroup>
+  <Accordion title="Le SSO est-il disponible sur toutes les offres ?">
+    Non, le SSO est une fonctionnalité Premium disponible uniquement sur l'offre **Organization**.
+  </Accordion>
+
+  <Accordion title="Quels fournisseurs d'identité sont pris en charge ?">
+    Twenty prend en charge :
+
+    * **SAML 2.0** (fonctionne avec la plupart des fournisseurs d'identité d'entreprise)
+    * **Google Workspace**
+    * **Microsoft Entra ID** (anciennement Azure AD)
+  </Accordion>
+
+  <Accordion title="Qu'est-ce que l'approvisionnement Just-in-Time (JIT) ?">
+    Avec l'approvisionnement JIT, les comptes utilisateur sont automatiquement créés dans Twenty lorsqu'une personne se connecte via SSO pour la première fois. Le rôle par défaut leur est attribué automatiquement.
+  </Accordion>
+
+  <Accordion title="Puis-je exiger le SSO pour tous les utilisateurs ?">
+    Oui, une fois le SSO configuré, vous pouvez désactiver la connexion par mot de passe pour les utilisateurs SSO afin d'imposer l'authentification via votre fournisseur d'identité.
+  </Accordion>
+</AccordionGroup>

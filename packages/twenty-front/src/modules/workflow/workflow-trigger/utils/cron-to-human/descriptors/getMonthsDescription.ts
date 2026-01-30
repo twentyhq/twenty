@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
-import { type CronDescriptionOptions } from '../types/cronDescriptionOptions';
+import { type CronDescriptionOptions } from '@/workflow/workflow-trigger/utils/cron-to-human/types/cronDescriptionOptions';
 
 const getMonthName = (
   monthNum: number,

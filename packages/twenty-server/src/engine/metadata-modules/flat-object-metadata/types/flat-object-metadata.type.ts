@@ -1,29 +1,12 @@
-import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity.type';
+import { type FlatEntityFromV2 } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from-v2.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type ExtractRecordTypeOrmRelationProperties } from 'src/engine/workspace-manager/workspace-migration-v2/types/extract-record-typeorm-relation-properties.type';
-import { type MetadataEntitiesRelationTarget } from 'src/engine/workspace-manager/workspace-migration-v2/types/metadata-entities-relation-targets.type';
 
-export const objectMetadataEntityRelationProperties = [
-  'fields',
-  'indexMetadatas',
-  'targetRelationFields',
-  'dataSource',
-  'application',
-  'objectPermissions',
-  'fieldPermissions',
-  'views',
-] as const satisfies ObjectMetadataRelationProperties[];
-
-type ObjectMetadataRelationProperties = ExtractRecordTypeOrmRelationProperties<
-  ObjectMetadataEntity,
-  MetadataEntitiesRelationTarget
+type BaseFlatObjectMetadata = FlatEntityFromV2<
+  Omit<ObjectMetadataEntity, 'targetRelationFields' | 'dataSourceId'>
 >;
-
-export type FlatObjectMetadata = FlatEntityFrom<
-  ObjectMetadataEntity,
-  ObjectMetadataRelationProperties | 'dataSourceId'
-> & {
-  fieldMetadataIds: string[];
-  indexMetadataIds: string[];
-  viewIds: string[];
+export type FlatObjectMetadata = BaseFlatObjectMetadata & {
+  // NOTE: below fields are not reflected on the final UniversalFlatEntity either they should we should define a common source
+  // TODO remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+  labelIdentifierFieldMetadataUniversalIdentifier: string | null;
+  imageIdentifierFieldMetadataUniversalIdentifier: string | null;
 };

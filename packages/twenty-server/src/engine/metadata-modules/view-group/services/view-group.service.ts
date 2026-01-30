@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -23,8 +23,8 @@ import {
   ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewGroupService {
@@ -121,7 +121,7 @@ export class ViewGroupService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating view groups',
       );
@@ -178,7 +178,7 @@ export class ViewGroupService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating view group',
       );
@@ -239,7 +239,7 @@ export class ViewGroupService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting view group',
       );
@@ -298,7 +298,7 @@ export class ViewGroupService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying view group',
       );

@@ -1,0 +1,106 @@
+---
+title: E-Mail-Benachrichtigungen zu fälligen Aufgaben senden
+description: Benachrichtigen Sie Teammitglieder automatisch über ihre anstehenden oder überfälligen Aufgaben.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+
+Senden Sie tägliche E-Mail-Erinnerungen an jedes Teammitglied zu den heute fälligen Aufgaben.
+
+## Übersicht
+
+Dieser Workflow läuft nach einem Zeitplan und:
+
+1. Ruft alle Mitglieder des Arbeitsbereichs ab
+2. Durchläuft jedes Mitglied
+3. Ermittelt deren heute fällige Aufgaben
+4. Formatiert und sendet eine personalisierte E-Mail
+
+## Schritt-für-Schritt-Einrichtung
+
+<VimeoEmbed videoId="1147463514" title="Video-Demonstration" />
+
+### Schritt 1: Trigger konfigurieren
+
+1. Gehen Sie zu **Einstellungen → Workflows** und erstellen Sie einen neuen Workflow
+2. Wählen Sie **Nach Zeitplan** als Trigger
+3. Verwenden Sie einen Cron-Ausdruck für täglich um 8:00 Uhr: `0 8 * * *`
+
+### Schritt 2: Nach allen Arbeitsbereichsmitgliedern suchen
+
+1. Fügen Sie eine **Datensätze suchen**-Aktion hinzu
+2. Wählen Sie **Arbeitsbereichsmitglieder** (unter Erweiterten Objekten)
+3. Keine Filter erforderlich — dadurch werden alle Mitglieder zurückgegeben
+
+### Schritt 3: Einen Iterator hinzufügen
+
+1. Fügen Sie eine **Iterator**-Aktion hinzu
+2. Setzen Sie das Eingabearray auf die Arbeitsbereichsmitglieder aus dem vorherigen Schritt
+3. Alle Aktionen innerhalb des Iterators werden einmal pro Mitglied ausgeführt
+
+### Schritt 4: Nach heute fälligen Aufgaben suchen (im Iterator)
+
+1. Fügen Sie im Iterator eine **Datensätze suchen**-Aktion hinzu
+2. Wählen Sie **Aufgaben** als Objekt
+3. Filter hinzufügen:
+   * **Zuständige Person** = aktuelles Arbeitsbereichsmitglied (aus dem Iterator)
+   * **Fälligkeitsdatum** = heute
+
+### Schritt 5: Aufgaben in E-Mail-Inhalt formatieren (im Iterator)
+
+Fügen Sie eine **Code**-Aktion hinzu, um die Aufgaben in eine lesbare Liste mit Links zu formatieren:
+
+```javascript
+export const main = async (params: {
+  tasksDue?: Array<{ id: string; title: string }> | null | string;
+}) => {
+  const tasksDue =
+    typeof params.tasksDue === "string"
+      ? JSON.parse(params.tasksDue)
+      : params.tasksDue;
+
+  if (!Array.isArray(tasksDue) || tasksDue.length === 0) {
+    return {
+      formattedTasks: "No tasks due today."
+    };
+  }
+
+  const formattedTasks = tasksDue
+    .map(
+      t =>
+        `${t.title}\nhttps://yourSubDomain.twenty.com/object/task/${t.id}`
+    )
+    .join("\n\n");
+
+  return { formattedTasks };
+};
+```
+
+<Note>
+  Ersetzen Sie `yourSubDomain` durch die tatsächliche Twenty-Arbeitsbereichs-Subdomain.
+</Note>
+
+### Schritt 6: E-Mail senden (im Iterator)
+
+1. Fügen Sie eine **E-Mail senden**-Aktion hinzu (weiterhin im Iterator)
+2. Konfigurieren:
+
+| Feld        | Wert                                                                               |
+| ----------- | ---------------------------------------------------------------------------------- |
+| **An**      | `{{iterator.currentItem.userEmail}}` (E-Mail-Adresse des Arbeitsbereichsmitglieds) |
+| **Betreff** | Ihre heute fälligen Aufgaben                                                       |
+| **Inhalt**  | `{{code.formattedTasks}}`                                                          |
+
+### Schritt 7: Testen und aktivieren
+
+1. Klicken Sie auf **Test**, um den Workflow manuell auszuführen
+2. Überprüfen Sie die Posteingänge auf E-Mails
+3. Aktivieren Sie den Workflow
+
+## Verwandt
+
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [Arrays in Code-Aktionen verarbeiten](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -1,0 +1,275 @@
+---
+title: チャート設定
+description: チャートが必要なとおりにデータを表示するように設定します。
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## チャート設定にアクセス
+
+1. ダッシュボード右上の **編集** ボタンをクリック
+
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="編集モード" />
+
+2. ダッシュボードが編集モードになります。
+3. 任意のウィジェットをクリックして選択します。
+4. 右側に設定パネルが開きます。
+
+設定は次のセクションに分かれています。
+
+* **データ**: 取得するデータとその絞り込み方法
+* **X 軸**: カテゴリのグループ化と並べ替え方法（棒グラフ/折れ線グラフ）
+* **Y 軸**: 何を測定し、どのように表示するか（棒グラフ/折れ線グラフ）
+* **スタイル**: 色、ラベル、表示オプション
+
+<Note>
+  一部の設定は、他の設定を構成したときにのみ表示されます。 たとえば、日付フィールドを選択した場合にのみ **日付の粒度** が表示されます。
+</Note>
+
+---
+
+## データ設定
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />ソース </span>
+
+データを取得するオブジェクトを選択します。
+
+1. **ソース** をクリック
+2. オブジェクトを選択します（商談、人物、会社など）。
+
+標準オブジェクトとカスタムオブジェクトのすべてが利用できます。 ソースを変更すると、フィールドの選択肢は選択したオブジェクトに依存するため、他の設定がリセットされます。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="ソース" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />フィルター </span>
+
+チャートに含めるレコードを制限します。
+
+1. **フィルター** をクリックします
+2. フィルタービルダーが開きます。
+3. **+ Add filter** をクリック
+4. フィールド、条件、値を選択します。
+5. 必要に応じてフィルターを追加します。
+
+フィルターの動作はテーブルビューと同様です。 データの特定のセグメントに焦点を当てるために使用します。
+
+**例**: ステージが「受注」に等しい商談でフィルターし、クローズ済みの商談のみを表示します。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="フィルター" />
+
+<Tip>
+  日付フィールドでは、**Is relative** を使うと「過去7日間」や「今月」のような自動更新される動的フィルターを作成できます。
+</Tip>
+
+<Tip>
+  高度なフィルターに対応しています — 複数のフィルタールールを追加し、**And** または **Or** ロジックで組み合わせます。
+</Tip>
+
+---
+
+## X 軸の設定
+
+これらの設定は棒グラフと折れ線グラフの横軸を制御します。通常、データをカテゴリにどのようにグループ化するかを決定します。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />表示データ </span>
+
+データをグループ化する基準のフィールドを選択します。 X 軸に表示されるカテゴリが決まります。
+
+**例**: 「ステージ」を選択するとパイプラインのステージ別にグループ化されたデータを表示できます。「作成日」を選択すると時間の経過に沿ったデータを表示できます。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="表示中のデータ" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />日付の粒度 </span>
+
+日付フィールドでグループ化する場合、グループ化の期間を選択します。
+
+| オプション     | グループ化の基準 | 出力例                     |
+| --------- | -------- | ----------------------- |
+| **日**     | 各日       | 1月1日、1月2日、1月3日...       |
+| **週**     | カレンダー週   | 第1週、第2週、第3週...          |
+| **月**     | 各月       | 1月、2月、3月...             |
+| **四半期**   | 会計四半期    | Q1、Q2、Q3、Q4             |
+| **年**     | 各年       | 2023、2024、2025          |
+| **曜日**    | 曜日（集計）   | 月曜日、火曜日... （すべての月曜日を集計） |
+| **年の月**   | 月（集計）    | 1月、2月... （すべての1月を集計）    |
+| **年の四半期** | 四半期（集計）  | Q1、Q2、Q3、Q4（すべてのQ1を集計）  |
+
+「曜日」「年の月」などのオプションは、全期間を横断して集計します。 「曜日」を使うと、通常どの曜日に最も多くの商談があるかが分かります。 「月」を使うと、月ごとの傾向を確認できます。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />並べ替え </span>
+
+X 軸上のカテゴリの順序を制御します。
+
+* **Position** – Select フィールド設定で定義された順序を使用
+* **Alphabetical** – A から Z（または日付の場合は時系列）
+* **By value** – 指標の値で順序付け（高い/低いの順）
+* **Manual** – ドラッグして任意の順序に設定
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="並べ替え" />
+
+**ヒント**: パイプラインのステージには、**Position** を使用して営業プロセスの順序（見込み → 資格判定 → 提案 → 受注）のとおりに表示します。
+
+<Note>
+  表示されるオプションはフィールドタイプによって異なります。 Select フィールドにはすべてのオプションがありますが、日付フィールドやテキストフィールドでは表示されるオプションが少なくなります。
+</Note>
+
+<Tip>
+  **Manual** 並べ替えでは、カテゴリをドラッグして任意の順序を作成できます。特定のセグメントを強調したり、データでストーリーを伝えたりするのに最適です。
+</Tip>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />ゼロ値を除外 </span>
+
+ゼロまたはデータのないカテゴリを非表示にします。
+
+* **オン**: レコードのないカテゴリを非表示にする
+* **オフ**: 空でもすべてのカテゴリを表示する
+
+データがまばらなチャートを見やすくするために使用します。
+
+---
+
+## Y 軸の設定
+
+何を測定し、どのように表示するかを制御します。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />表示データ </span>
+
+指標を計算するフィールドと演算を選択します。
+
+* **カウント** – すべてをカウント、空をカウント、空以外をカウント、一意の値をカウント
+* **数値演算** – 合計、平均、最小、最大（数値フィールド）
+* **パーセンテージ** – 空の割合、空以外の割合
+
+ブール値フィールドでは、True/False のカウントが追加されます。 日付フィールドを含む集計チャートでは、最古/最新を表示できます。
+
+**例**: 「金額」を合計で選択するとカテゴリごとの商談総額を表示できます。Count all を選択すると商談件数を表示できます。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="表示中のデータ" />
+
+<Note>
+  表示されるオプションはフィールドとチャートの種類によって異なります。 期待する演算が見つからない場合は、フィールドタイプを確認してください。
+</Note>
+
+### 比率
+
+Select、Multi-select、またはブール値フィールドでは、特定の値の割合を計算できます。
+
+1. Select、Multi-select、またはブール値フィールドを選択します
+2. **Ratio** を有効にする
+3. 測定するオプションを選択します
+
+**例**: すべての商談に対する「受注」商談の割合を表示します。 合計50件中受注が10件なら、チャートには20%と表示されます。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />グループ化 </span>
+
+第2の次元を追加して複数の系列（複数のバーや線）を作成します。
+
+1. 先に X 軸のフィールドを設定します
+2. **Group by** をクリック
+3. 2 つ目のフィールドを選択します
+
+**例**: ステージ（X 軸）とオーナー（グループ化）の両方で商談をグループ化し、各担当者のパイプラインの内訳を並べて表示します。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="グループ化" />
+
+Group by を設定すると、チャートに複数の色が表示され、凡例が現れます。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />日付の粒度 </span>
+
+Group by が日付フィールドの場合、期間を選択します（X 軸と同じオプション）。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />並べ替え </span>
+
+Group by 設定時、グループ化された系列の順序（各カテゴリ内でどのオーナーのバーを先頭にするかなど）を制御します。
+
+X 軸の並べ替えと同じオプション（**Position**、**Alphabetical**、**Manual**）ですが、第二のグループ化では「値に基づく並べ替え」は利用できません。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />累積 </span>
+
+個別値の代わりに累計を表示します。
+
+* **オフ**: 各バー/ポイントがそれ自身の値を表示
+* **オン**: 各バー/ポイントが、それ以前のすべての値の合計に自身の値を加えたものを表示
+
+**例**: 1月 = 10、2月 = 15
+
+* 累積オフ: 10 と 15 を表示
+* 累積オン: 10 と 25（10 + 15）を表示
+
+累積を使うと、目標に向けた進捗を経時的に追跡できます。
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="累積" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />最小値 / <ChartIcon icon="math-max" />最大値 </span>
+
+Y 軸の最小値と最大値を固定します。
+
+* 空欄のままにすると自動調整されます
+* 数値を入力すると境界が固定されます
+
+**使用する場面:**
+
+* 視覚的に正確な比較のために最小値を 0 に設定する
+* 複数のチャートでスケールを統一するため両方を設定する
+* 両方を設定して特定の値の範囲に焦点を当てる
+
+---
+
+## スタイル設定
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />色 </span>
+
+チャートの配色を設定します。 さまざまなカラーパレットから選択できます。
+
+<Note>
+  選択フィールドでグループ化している場合、フィールド設定で各オプションに定義した色が自動的に使用されます。
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />軸名 </span>
+
+表示する軸ラベルを選択します: **なし**、**X 軸**、**Y 軸**、**両方**（棒グラフと折れ線グラフのみ）。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />積み上げ棒 / 積み上げ折れ線 </span>
+
+Group by が設定されている場合、複数系列の表示方法を選択します。
+
+* **オフ（グループ）**: 系列が横に並びます。 グループ間の正確な値を比較するときに使用します。
+* **オン（積み上げ）**: 系列が重なって表示されます。 構成（全体に対する内訳）を示すときに使用します。
+
+**例**: ステージ別の商談（オーナー別にグループ化）
+
+* グループ: 各オーナーの正確な数値を横並びで確認
+* 積み上げ: ステージごとの商談合計と各オーナーの内訳を積み上げで表示
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />データラベル </span>
+
+棒、点、スライスなどのチャート要素に値を直接表示します。
+
+* **オン**: 値をチャートに表示
+* **オフ**: 値を表示しない（すっきりした見た目）
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />凡例 </span>
+
+凡例を表示/非表示にします（Group by 設定時のみ表示）。
+
+* **オン**: 各色が何を表すかを凡例に表示
+* **オフ**: 凡例を表示しない
+
+<Tip>
+  **ホバー** すると、そのグループを強調表示します。 **クリック** すると、一時的にチャートから非表示にします。
+</Tip>
+
+---
+
+## チャート固有の注意事項
+
+### パイチャート
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **各スライスが表すもの** – スライスのグループ化方法を定義
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **空のカテゴリを非表示** – 値が 0 のスライスを除外
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **中央に値を表示** – 集計値（合計、平均、件数など）を表示
+
+### 集計チャート
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **接頭辞** – 数値の前に文字を追加（例: `$`）
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **接尾辞** – 数値の後に文字を追加（例: `%`）

@@ -1,0 +1,149 @@
+---
+title: パイプラインに Expected Amount を表示する。
+description: ステージの確率に基づいて商談額に重み付けを行い、計算して表示します。
+---
+
+Expected Amount は計算値です：**Amount × Probability**。 これにより、成約見込みに基づいて商談に重み付けを行い、売上を予測できます。
+
+<Tip>
+  これは、ワークフローを使用して[数式フィールド](/l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields)を作成する例です。
+</Tip>
+
+このガイドでは、パイプラインで Expected Amount を計算・表示するために必要なカスタムフィールドとワークフローの設定手順を説明します。
+
+## ステップ1：カスタムフィールドを作成
+
+Opportunities オブジェクトに2つのカスタムフィールドが必要です。
+
+### Probability フィールドを作成
+
+1. **Settings → Data Model → Opportunities** に移動します
+2. **+ Add Field** をクリックします
+3. 設定:
+   * **名前**: Probability
+   * **タイプ**: Number
+   * **説明**: ステージに基づく確率（0〜100%）
+4. **保存**をクリック
+
+### Expected Amount フィールドを作成
+
+1. **+ Add Field** をクリックします
+2. 設定:
+   * **名前**: Expected Amount
+   * **タイプ**: Currency
+   * **説明**: 計算式: Amount × Probability
+3. **保存**をクリック
+
+### 任意：ユーザー向けにフィールドを読み取り専用にする
+
+ユーザーにこれらの計算フィールドを手動編集させたくない場合：
+
+1. **設定 → 役割** に移動
+2. 設定するロールを選択
+3. Opportunities オブジェクトを探す
+4. **Probability** と **Expected Amount** フィールドを読み取り専用に設定
+
+これにより、これらの値を更新できるのはワークフローのみになります。
+
+## ステップ2：ワークフロー #1 を作成 — ステージ変更時に Probability を更新
+
+このワークフローは、商談が新しいステージへ移動したときに Probability を自動設定します。
+
+### ワークフローを作成
+
+1. **Workflows** に移動します
+2. **+ New Workflow** をクリックします
+3. 名前を「Update Probability on Stage Change」にします
+
+### トリガーを設定
+
+1. **Record Created or Updated** トリガーを追加
+2. オブジェクトとして **Opportunities** を選択
+3. フィルター: **Stage** フィールドが更新されたとき
+
+### 各ステージごとに分岐を追加
+
+各ステージに対して、対応する確率のブランチを作成します。
+
+| ステージ        | "確率" |
+| ----------- | ---- |
+| 新規          | 10%  |
+| 適格          | 25%  |
+| Meeting     | 40%  |
+| Proposal    | 60%  |
+| Negotiation | 80%  |
+| Closed Won  | 100% |
+| Closed Lost | 0%   |
+
+<Note>
+  新しいブランチを作成するには、ワークフローキャンバスを右クリックし、**New action** をクリックします。 次に、前のノードからこの新しいアクションに矢印をドラッグして接続します。
+</Note>
+
+各ステージについて：
+
+1. **Filter** ノードを追加: Stage = [stage name]
+2. **Update Record** アクションを追加：
+   * レコード: トリガーとなった Opportunity
+   * フィールド: Probability
+   * 値: [そのステージの確率]
+
+### Expected Amount を計算
+
+ブランチを再結合した後：
+
+1. **Filter** ノードを追加: Amount が空でない
+2. **Update Record** アクションを追加：
+   * レコード: トリガーとなった Opportunity
+   * フィールド: Expected Amount
+   * 値: Amount × Probability
+
+## ステップ3：ワークフロー #2 を作成 — Amount 変更時に再計算
+
+このワークフローは、商談の Amount が変更されたときに Expected Amount を更新します。
+
+### ワークフローを作成
+
+1. **Workflows** に移動します
+2. **+ New Workflow** をクリックします
+3. 名前を「Recalculate Expected Amount on Amount Change」にします
+
+### トリガーを設定
+
+1. **Record Created or Updated** トリガーを追加
+2. オブジェクトとして **Opportunities** を選択
+3. フィルター: **Amount** フィールドが更新されたとき
+
+### ロジックを追加
+
+1. **Filter** ノードを追加: Amount が空でない
+2. **Update Record** アクションを追加：
+   * レコード: トリガーとなった Opportunity
+   * フィールド: Expected Amount
+   * 値: Amount × Probability
+
+## ステップ4：パイプラインに表示
+
+カンバンビューに Expected Amount の合計を表示します：
+
+1. お使いの **Sales Pipeline** のカンバンビューを開きます
+2. 列の上部にある任意のステージ名の横の **数値** をクリックします
+3. **Sum** を選択します
+4. **Expected Amount** を選択します
+
+各列には、そのステージの重み付け済みパイプライン合計が表示されます。
+
+## 概要
+
+| コンポーネント                   | 目的                                                         |
+| ------------------------- | ---------------------------------------------------------- |
+| **Probability フィールド**     | ステージに基づく受注確率を保存します                                         |
+| **Expected Amount フィールド** | Amount × Probability を保存します                                |
+| **ワークフロー #1**             | ステージが変更されたときに Probability を更新し、その後 Expected Amount を再計算します |
+| **ワークフロー #2**             | Amount が変更されたときに Expected Amount を再計算します                   |
+| **集計**                    | ステージごとに Expected Amount の合計を表示します                          |
+
+## 関連情報
+
+* [数式フィールド](/l/ja/user-guide/workflows/how-tos/crm-automations/formula-fields) — ワークフローを使って計算フィールドを作成
+* [カンバンビュー](/l/ja/user-guide/views-pipelines/capabilities/kanban-views) — 列の集計
+* [カスタムフィールドの作成方法](/l/ja/user-guide/data-model/how-tos/create-custom-fields) — フィールド設定

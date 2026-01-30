@@ -1,0 +1,149 @@
+---
+title: 小部件
+description: 探索 Twenty 中的小部件类型和可视化选项。
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## 可用小部件
+
+Twenty 提供多种小部件类型，用于可视化您的 CRM 数据。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />条形图</span>
+
+以水平或垂直条形显示数据。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="条形图" />
+</Frame>
+
+**适用于：**
+
+* 比较不同类别的数值
+* 显示排名
+* 按时间段跟踪指标
+
+**示例用法：**
+
+* 按阶段的交易
+* 按销售代表的收入
+* 每月新增联系人
+
+<Note>
+  **显示限制**：使用 Group By 时，条形图最多可显示 100 个条形，每个条形最多 50 个分组。 如果您看到警告 "未显示的数据：每个图表最多 X 个条形"，请添加筛选器以缩小数据范围，或更改分组方式（例如按周分组而非按天）。
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />饼图</span>
+
+显示整体中各部分所占比例。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="饼图" />
+</Frame>
+
+**适用于：**
+
+* 展示构成或分布
+* 比较部分与整体
+* 突出显示主要部分
+
+**示例用法：**
+
+* 按来源划分的交易分布
+* 联系人按行业细分
+* 按负责人划分的销售管道构成
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />折线图</span>
+
+显示随时间变化的趋势。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="折线图" />
+</Frame>
+
+**适用于：**
+
+* 跟踪随时间的变化
+* 识别趋势
+* 比较多个指标
+
+**示例用法：**
+
+* 每月交易数量趋势
+* 各季度收入增长
+* 随时间变化的活动水平
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />汇总图表</span>
+
+以醒目方式显示单个关键数值。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="汇总图表" />
+</Frame>
+
+**适用于：**
+
+* 突出显示 KPI
+* 显示总计或平均值
+* 快速查看状态
+
+**示例用法：**
+
+* 销售管道总价值
+* 未关闭的商机数量
+* 转化率
+
+**高级选项：**
+
+* **比例**：对于 Select 字段，计算各值之间的比例。 转到 **显示的数据** → 选择您的字段 → 启用 **比例** 选项。
+* **前缀与后缀**：在数字前或后添加自定义文本（例如 "$" 前缀或 "%" 后缀），以提升可读性。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrame</span>
+
+将外部工具和内容直接嵌入到仪表板中。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**适用于：**
+
+* 显示外部报告或仪表板
+* 集成第三方销售工具
+* 显示来自其他系统的实时内容
+
+**示例用法：**
+
+* 来自支持工具的指标
+* 来自拨号器的指标
+* 来自销售序列工具的实时内容
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />富文本</span>
+
+在仪表板中直接添加格式化文本和内容。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="富文本" />
+</Frame>
+
+**适用于：**
+
+* 添加上下文或说明
+* 仪表板描述
+* 备注和注释
+
+**功能:**
+
+* 富文本格式（加粗、斜体、列表等）
+* 图片和文件上传
+* Markdown 风格编辑
+
+<Note>
+  **即将推出**：仪表图和表格暂不可用，但已在我们的路线图中。
+</Note>
+
+### 复制小部件
+
+1. 单击该小部件
+2. 打开 **选项**
+3. 单击 **复制小部件**

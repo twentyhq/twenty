@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Field metadata relation update should fail relation when name is not in camel case 1`] = `
 [
@@ -6,9 +6,6 @@ exports[`Field metadata relation update should fail relation when name is not in
     "extensions": {
       "code": "METADATA_VALIDATION_FAILED",
       "errors": {
-        "agent": [],
-        "cronTrigger": [],
-        "databaseEventTrigger": [],
         "fieldMetadata": [
           {
             "errors": [
@@ -29,47 +26,60 @@ exports[`Field metadata relation update should fail relation when name is not in
               "id": Any<String>,
               "name": "New Name",
               "objectMetadataId": Any<String>,
+              "universalIdentifier": Any<String>,
             },
+            "metadataName": "fieldMetadata",
             "status": "fail",
-            "type": "update_field",
+            "type": "update",
           },
         ],
-        "index": [],
-        "objectMetadata": [],
-        "pageLayout": [],
-        "pageLayoutTab": [],
-        "pageLayoutWidget": [],
-        "role": [],
-        "roleTarget": [],
-        "routeTrigger": [],
-        "serverlessFunction": [],
-        "view": [],
-        "viewField": [],
-        "viewFilter": [],
-        "viewGroup": [],
       },
-      "message": "Validation failed for 0 object(s) and 0 field(s)",
+      "message": "Validation failed for 1 fieldMetadata",
       "summary": {
-        "invalidAgent": 0,
-        "invalidCronTrigger": 0,
-        "invalidDatabaseEventTrigger": 0,
-        "invalidFieldMetadata": 0,
-        "invalidIndex": 0,
-        "invalidObjectMetadata": 0,
-        "invalidPageLayout": 0,
-        "invalidPageLayoutTab": 0,
-        "invalidPageLayoutWidget": 0,
-        "invalidRole": 0,
-        "invalidRoleTarget": 0,
-        "invalidRouteTrigger": 0,
-        "invalidServerlessFunction": 0,
-        "invalidView": 0,
-        "invalidViewField": 0,
-        "invalidViewFilter": 0,
-        "invalidViewGroup": 0,
-        "totalErrors": 0,
+        "fieldMetadata": 1,
+        "totalErrors": 1,
       },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
+      "userFriendlyMessage": "Metadata validation failed",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Field metadata relation update should fail relation when updating ONE_TO_MANY relation with onDelete action 1`] = `
+[
+  {
+    "extensions": {
+      "code": "METADATA_VALIDATION_FAILED",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "On delete action is only supported for many to one relations",
+                "userFriendlyMessage": "On delete action is only supported for many to one relations",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "id": Any<String>,
+              "name": "staff",
+              "objectMetadataId": Any<String>,
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadata",
+            "status": "fail",
+            "type": "update",
+          },
+        ],
+      },
+      "message": "Validation failed for 1 fieldMetadata",
+      "summary": {
+        "fieldMetadata": 1,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Metadata validation failed",
     },
     "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",

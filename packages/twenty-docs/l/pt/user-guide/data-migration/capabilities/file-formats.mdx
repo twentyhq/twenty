@@ -1,0 +1,48 @@
+---
+title: Formatos de Ficheiro Suportados
+description: Formatos de ficheiro suportados para importação de dados no Twenty.
+---
+
+## Formatos Suportados
+
+O Twenty suporta três formatos de ficheiro para importação:
+
+| Formato            | Extensão | Notas                        |
+| ------------------ | -------- | ---------------------------- |
+| **CSV**            | .csv     | Recomendado, mais compatível |
+| **Excel**          | .xlsx    | Formato moderno do Excel     |
+| **Excel (Legado)** | .xls     | Formato antigo do Excel      |
+
+## Requisitos do Ficheiro
+
+| Requisito              | Valor                                                  |
+| ---------------------- | ------------------------------------------------------ |
+| **Codificação**        | UTF-8 recomendado                                      |
+| **Limite de registos** | 10 000 registos por ficheiro                           |
+| **Estrutura**          | A primeira linha deve conter os cabeçalhos das colunas |
+| **Conteúdo**           | Um tipo de objeto por ficheiro                         |
+
+## Melhores Práticas para CSV
+
+* **Delimitador**: Utilize vírgula (`,`) ou ponto e vírgula (`;`)
+* **Qualificador de texto**: Utilize aspas duplas (`\"`) para texto que contenha vírgulas
+* **Finais de linha**: Windows (CRLF) ou Unix (LF), ambos são suportados
+* **Valores vazios**: Deixe as células em branco, não utilize "NULL" ou "N/A"
+
+## Melhores Práticas para o Excel
+
+Ao exportar do Excel:
+
+* Remova as fórmulas (exporte apenas valores)
+* Elimine as linhas vazias no final
+* Garanta que não existam células combinadas
+* Utilize apenas a primeira folha
+
+## Grandes Conjuntos de Dados
+
+Para conjuntos de dados com mais de 10 000 registos:
+
+* Divida em vários ficheiros
+* Ou utilize a [importação via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api) para registos ilimitados
+
+<Note>Para migrações muito grandes (100 000+ registos), a API é significativamente mais rápida e fiável do que as importações em CSV.</Note>

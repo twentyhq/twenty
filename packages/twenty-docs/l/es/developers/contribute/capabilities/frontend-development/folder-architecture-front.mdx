@@ -1,0 +1,109 @@
+---
+title: Arquitectura de Carpetas
+info: Una mirada detallada a nuestra arquitectura de carpetas
+---
+
+En esta guía, explorarás los detalles de la estructura del directorio del proyecto y cómo contribuye a la organización y mantenibilidad de Twenty.
+
+Siguiendo esta convención de arquitectura de carpetas, es más fácil encontrar los archivos relacionados con funciones específicas y asegurar que la aplicación sea escalable y mantenible.
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## Páginas
+
+Incluye los componentes de alto nivel definidos por las rutas de la aplicación. Importan más componentes de bajo nivel de la carpeta de módulos (más detalles abajo).
+
+## Módulos
+
+Cada módulo representa una función o un grupo de funciones, comprendiendo sus componentes específicos, estados y lógica operativa.
+Todos deberían seguir la estructura siguiente. Puedes anidar módulos dentro de módulos (denominados submódulos) y se aplicarán las mismas reglas.
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### Contextos
+
+Un contexto es una manera de pasar datos a través del árbol de componentes sin tener que pasar propiedades manualmente en cada nivel.
+
+Ver [React Context](https://react.dev/reference/react#context-hooks) para más detalles.
+
+### GraphQL
+
+Incluye fragmentos, consultas y mutaciones.
+
+Ver [GraphQL](https://graphql.org/learn/) para más detalles.
+
+* Fragmentos
+
+Un fragmento es una parte reutilizable de una consulta, que puedes usar en diferentes lugares. Usando fragmentos, es más fácil evitar la duplicación de código.
+
+Ver [GraphQL Fragments](https://graphql.org/learn/queries/#fragments) para más detalles.
+
+* Consultas
+
+Ver [GraphQL Queries](https://graphql.org/learn/queries/) para más detalles.
+
+* Mutaciones
+
+Ver [GraphQL Mutations](https://graphql.org/learn/queries/#mutations) para más detalles.
+
+### Hooks
+
+Ver [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) para más detalles.
+
+### Estados
+
+Contiene la lógica de gestión de estado. [RecoilJS](https://recoiljs.org) maneja esto.
+
+* Selectores: Ver [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors) para más detalles.
+
+La gestión de estado incorporada de React todavía maneja el estado dentro de un componente.
+
+### Utilidades
+
+Debería contener solo funciones puras reutilizables. De lo contrario, crea hooks personalizados en la carpeta `hooks`.
+
+## Interfaz de usuario
+
+Contiene todos los componentes de interfaz de usuario reutilizables utilizados en la aplicación.
+
+Esta carpeta puede contener subcarpetas, como `datos`, `visualización`, `retroalimentación` y `entrada` para tipos específicos de componentes. Cada componente debe ser autónomo y reutilizable, para que puedas usarlo en diferentes partes de la aplicación.
+
+Al separar los componentes de la interfaz de usuario de otros componentes en la carpeta `modules`, es más fácil mantener un diseño consistente y realizar cambios en la interfaz de usuario sin afectar otras partes (lógica de negocio) del código base.
+
+## Interfaz y dependencias
+
+Puedes importar otro código de módulo desde cualquier módulo excepto desde la carpeta `ui`. Esto mantendrá su código fácil de probar.
+
+### Interno
+
+Cada parte (hooks, estados, ...) de un módulo puede tener una carpeta `internal`, que contiene partes que se usan solo dentro del módulo.

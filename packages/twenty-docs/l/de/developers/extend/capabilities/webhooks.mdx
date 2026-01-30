@@ -1,0 +1,112 @@
+---
+title: Webhooks
+description: Erhalten Sie Benachrichtigungen in Echtzeit, wenn Ereignisse in Ihrem CRM auftreten.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Webhooks übermitteln Daten in Echtzeit an Ihre Systeme, wenn Ereignisse in Twenty auftreten — kein Polling erforderlich. Verwenden Sie sie, um externe Systeme synchron zu halten, Automatisierungen auszulösen oder Benachrichtigungen zu senden.
+
+## Webhook erstellen
+
+1. Gehen Sie zu **Einstellungen → APIs & Webhooks → Webhooks**
+2. Klicken Sie auf **+ Webhook erstellen**
+3. Geben Sie Ihre Webhook-URL ein (muss öffentlich zugänglich sein)
+4. Klicken Sie auf **Speichern**
+
+Der Webhook wird sofort aktiviert und beginnt, Benachrichtigungen zu senden.
+
+<VimeoEmbed videoId="928786708" title="Webhook erstellen" />
+
+### Webhooks verwalten
+
+**Bearbeiten**: Klicken Sie auf den Webhook → URL aktualisieren → **Speichern**
+
+**Löschen**: Klicken Sie auf den Webhook → **Löschen** → Bestätigen
+
+## Ereignisse
+
+Twenty sendet Webhooks für diese Ereignistypen:
+
+| Ereignis                   | Beispiel                                                   |
+| -------------------------- | ---------------------------------------------------------- |
+| **Datensatz erstellt**     | `person.created`, `company.created`, `note.created`        |
+| **Datensatz aktualisiert** | `person.updated`, `company.updated`, `opportunity.updated` |
+| **Datensatz gelöscht**     | `person.deleted`, `company.deleted`                        |
+
+Alle Ereignistypen werden an Ihre Webhook-URL gesendet. Eine Ereignisfilterung kann in zukünftigen Versionen hinzugefügt werden.
+
+## Payload-Format
+
+Jeder Webhook sendet eine HTTP-POST-Anfrage mit einem JSON-Body:
+
+```json
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+| Feld          | Beschreibung                                                         |
+| ------------- | -------------------------------------------------------------------- |
+| `ereignis`    | Was passiert ist (z. B. `person.created`)                            |
+| `daten`       | Der vollständige Datensatz, der erstellt/aktualisiert/gelöscht wurde |
+| `zeitstempel` | Wann das Ereignis auftrat (UTC)                                      |
+
+<Note>
+  Antworten Sie mit einem **2xx-HTTP-Status** (200-299), um den Empfang zu bestätigen. Nicht-2xx-Antworten werden als Zustellfehler protokolliert.
+</Note>
+
+## Webhook-Validierung
+
+Twenty signiert jede Webhook-Anfrage zu Sicherheitszwecken. Validieren Sie die Signaturen, um sicherzustellen, dass die Anfragen authentisch sind.
+
+### Header
+
+| Kopfzeile                    | Beschreibung            |
+| ---------------------------- | ----------------------- |
+| `X-Twenty-Webhook-Signature` | HMAC-SHA256-Signatur    |
+| `X-Twenty-Webhook-Timestamp` | Zeitstempel der Anfrage |
+
+### Validierungsschritte
+
+1. Den Zeitstempel aus `X-Twenty-Webhook-Timestamp` abrufen
+2. Zeichenfolge erstellen: `{timestamp}:{JSON payload}`
+3. Den HMAC-SHA256-Hash mit Ihrem Webhook-Geheimnis berechnen
+4. Mit `X-Twenty-Webhook-Signature` vergleichen
+
+### Beispiel (Node.js)
+
+```javascript
+const crypto = require("crypto");
+
+const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const payload = JSON.stringify(req.body);
+const secret = "your-webhook-secret";
+
+const stringToSign = `${timestamp}:${payload}`;
+const expectedSignature = crypto
+  .createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+
+const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
+```
+
+## Webhooks vs Workflows
+
+| Methode                      | Richtung | Anwendungsfall                                                                   |
+| ---------------------------- | -------- | -------------------------------------------------------------------------------- |
+| **Webhooks**                 | OUT      | Externe Systeme automatisch über jede Datensatzänderung benachrichtigen          |
+| **Workflow + HTTP-Anfrage**  | OUT      | Daten mit benutzerdefinierter Logik (Filter, Transformationen) nach außen senden |
+| **Workflow-Webhook-Trigger** | IN       | Daten aus externen Systemen in Twenty empfangen                                  |
+
+Für den Empfang externer Daten siehe [Webhook-Trigger einrichten](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).

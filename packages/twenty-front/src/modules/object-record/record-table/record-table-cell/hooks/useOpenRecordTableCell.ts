@@ -1,10 +1,9 @@
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
-import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/FocusClickOutsideListenerId';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -16,13 +15,13 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
@@ -37,15 +36,14 @@ export type OpenTableCellArgs = {
   initialValue?: string;
   cellPosition: TableCellPosition;
   isReadOnly: boolean;
-  pathToShowPage: string;
-  objectNameSingular: string;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   recordId: string;
-  isActionButtonClick: boolean;
   isNavigating: boolean;
 };
 
 export const useOpenRecordTableCell = (recordTableId: string) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+
   const clickOutsideListenerIsActivatedState = useRecoilComponentCallbackState(
     clickOutsideListenerIsActivatedComponentState,
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
@@ -63,11 +61,6 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
   );
 
   const initDraftValue = useInitDraftValue();
-
-  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
-  const setViewableRecordNameSingular = useSetRecoilState(
-    viewableRecordNameSingularState,
-  );
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
@@ -94,16 +87,10 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         initialValue,
         cellPosition,
         isReadOnly,
-        objectNameSingular,
         fieldDefinition,
         recordId,
-        isActionButtonClick,
         isNavigating,
       }: OpenTableCellArgs) => {
-        if (isReadOnly) {
-          return;
-        }
-
         set(clickOutsideListenerIsActivatedState, false);
 
         const isFirstColumnCell = cellPosition.column === 0;
@@ -121,10 +108,7 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
           fieldValue,
         });
 
-        if (
-          (isFirstColumnCell && !isEmpty && !isActionButtonClick) ||
-          isNavigating
-        ) {
+        if ((isFirstColumnCell && !isEmpty) || isNavigating) {
           leaveTableFocus();
 
           const openRecordIn = snapshot
@@ -141,11 +125,8 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
           return;
         }
 
-        if (isFirstColumnCell && !isEmpty && isActionButtonClick) {
-          leaveTableFocus();
-          setViewableRecordId(recordId);
-          setViewableRecordNameSingular(objectNameSingular);
-
+        // Block editing for read-only records, but allow navigation (handled above)
+        if (isReadOnly) {
           return;
         }
 
@@ -179,11 +160,12 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         toggleClickOutside(false);
 
         setActiveDropdownFocusIdAndMemorizePrevious(
-          getDropdownFocusIdForRecordField(
+          getDropdownFocusIdForRecordField({
             recordId,
-            fieldDefinition.fieldMetadataId,
-            'table-cell',
-          ),
+            fieldMetadataId: fieldDefinition.fieldMetadataId,
+            componentType: 'table-cell',
+            instanceId: scopeInstanceId,
+          }),
         );
       },
     [
@@ -197,12 +179,11 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       initDraftValue,
       toggleClickOutside,
       setActiveDropdownFocusIdAndMemorizePrevious,
+      scopeInstanceId,
       leaveTableFocus,
+      openRecordFromIndexView,
       activateRecordTableRow,
       unfocusRecordTableRow,
-      setViewableRecordId,
-      setViewableRecordNameSingular,
-      openRecordFromIndexView,
     ],
   );
 

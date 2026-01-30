@@ -11,6 +11,8 @@ import unicornPlugin from 'eslint-plugin-unicorn';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
 import jsoncParser from 'jsonc-eslint-parser';
 
+const twentyRules = await nxPlugin.loadWorkspaceRules('packages/twenty-eslint-rules');
+
 export default [
   // Base JavaScript configuration
   js.configs.recommended,
@@ -34,6 +36,7 @@ export default [
       'unused-imports': unusedImportsPlugin,
       'unicorn': unicornPlugin,
       '@next/next': nextPlugin,
+      'twenty': { rules: twentyRules },
     },
     rules: {
       // Next.js recommended rules
@@ -41,7 +44,7 @@ export default [
 
       // Lingui rules
       'lingui/no-single-variables-to-translate': 'off',
-      
+
       // General rules
       'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
       'no-console': 'off', // Allow console in website
@@ -119,7 +122,7 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'error',
       '@typescript-eslint/consistent-type-imports': [
         'error',
-        { 
+        {
           prefer: 'type-imports',
           fixStyle: 'inline-type-imports'
         },
@@ -127,10 +130,10 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
-      '@typescript-eslint/no-empty-interface': [
+      '@typescript-eslint/no-empty-object-type': [
         'error',
         {
-          allowSingleExtends: true,
+          allowInterfaces: 'with-single-extends',
         },
       ],
       '@typescript-eslint/no-explicit-any': 'off',
@@ -190,7 +193,7 @@ export default [
           },
         },
       ],
-      '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+      'twenty/max-consts-per-file': ['error', { max: 1 }],
     },
   },
 

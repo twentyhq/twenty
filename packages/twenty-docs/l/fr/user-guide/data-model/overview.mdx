@@ -1,0 +1,180 @@
+---
+title: Modèle de données
+description: Découvrez ce qu'est un modèle de données et comment en concevoir un qui correspond à votre entreprise.
+image: /images/user-guide/fields/custom_data_model.png
+---
+
+<Frame>
+  <img src="/images/user-guide/fields/custom_data_model.png" alt="Modèle de données" />
+</Frame>
+
+## Qu'est-ce qu'un modèle de données ?
+
+Un modèle de données est la structure qui définit comment l’information est organisée dans votre CRM. Considérez-le comme le **plan** de vos données clients — vous le concevez une fois, puis vous le remplissez avec vos données réelles.
+
+## Concepts clés
+
+### Objets
+
+Les **objets** sont les principales catégories de données dans votre CRM. Chaque objet représente un type d'élément que vous souhaitez suivre.
+
+Twenty inclut des objets standard :
+
+* **People** — individus (contacts, prospects, partenaires)
+* **Companies** — organisations
+* **Opportunities** — affaires ou ventes
+* **Notes** — notes jointes aux enregistrements
+* **Tasks** — tâches liées aux enregistrements
+
+Vous pouvez également créer des **objets personnalisés** pour tout ce qui est propre à votre entreprise (p. ex., Projets, Abonnements, Événements).
+
+### Champs
+
+Les **champs** sont les propriétés ou attributs qui décrivent chaque objet. Ils stockent les informations réelles.
+
+Par exemple, l'objet **People** comporte des champs tels que :
+
+* Nom
+* E-mail
+* Téléphone
+* Titre du poste
+* Company (une relation avec l'objet Companies)
+
+Les champs ont différents **types** : texte, nombre, date, sélection, sélection multiple, relation, etc. Vous pouvez ajouter des champs personnalisés à n'importe quel objet.
+
+### Enregistrements
+
+Les **enregistrements** sont les entrées individuelles au sein d'un objet — les données proprement dites que vous créez et gérez.
+
+Par exemple :
+
+* "John Smith" est un **enregistrement** dans l'objet People
+* "Acme Corp" est un **enregistrement** dans l'objet Companies
+
+**Une analogie :**
+
+| Concept du modèle de données | Analogie dans le monde réel                                      |
+| ---------------------------- | ---------------------------------------------------------------- |
+| **Objets**                   | Sections d'un livre (les catégories)                             |
+| **Champs**                   | Colonnes dans une feuille de calcul (les propriétés)             |
+| **Enregistrements**          | Lignes dans une feuille de calcul (les entrées proprement dites) |
+
+Vous concevez le modèle de données (objets + champs) une fois, puis vous créez de nombreux enregistrements dans cette structure.
+
+## Pourquoi personnaliser votre modèle de données ?
+
+Chaque entreprise fonctionne différemment. La personnalisation de votre modèle de données vous permet de façonner Twenty autour de **vos** processus au lieu de forcer les vôtres dans un système rigide.
+
+Twenty offre une flexibilité totale :
+
+* Créez tous les objets personnalisés dont vous avez besoin
+* Ajoutez un nombre illimité de champs personnalisés
+* Le prix ne change pas en fonction de la personnalisation
+
+## Conseils pour concevoir votre modèle de données
+
+### 1. Commencez par vos objets principaux
+
+Identifiez les principaux concepts avec lesquels vous travaillez. Twenty propose déjà :
+
+* **People** — vos contacts
+* **Companies** — vos comptes
+* **Opportunities** — vos affaires
+
+Réfléchissez à ce dont vous pourriez avoir besoin :
+
+* Stripe aurait besoin d'un objet `Subscriptions`
+* Airbnb aurait besoin d'un objet `Trips`
+* Un accélérateur aurait besoin d'un objet `Batches`
+
+### 2. Utilisez des champs pour les variantes plutôt que de nouveaux objets
+
+Si quelque chose n'est qu'une caractéristique d'un objet existant, faites-en un **champ**.
+
+**Utilisez des champs pour :**
+
+* Catégories et libellés (p. ex., `Industry` pour Companies)
+* Valeurs de statut (p. ex., `Stage` pour Opportunities)
+* Attributs et propriétés
+
+### 3. Créez un objet lorsqu'il est autonome
+
+Si le concept a son propre cycle de vie, ses propriétés ou ses relations, il mérite un objet.
+
+**Créez un objet pour :**
+
+* **Projets** — ont des échéances, des responsables et des tâches
+* **Abonnements** — relient des entreprises, des produits et des factures
+* **Événements** — impliquent des participants et des actions de suivi
+
+Ceux-ci vont au-delà d'un seul champ car ils transportent leurs propres données et relations.
+
+### 4. Créez un objet lorsque le nombre d'enregistrements est indéterminé
+
+Si quelque chose peut être lié plusieurs fois et que vous ne savez pas combien, utilisez un objet.
+
+**Mauvaise approche :**
+Créer des champs comme `Product 1`, `Product 2`, `Product 3`...
+
+**Bonne approche :**
+Créez un objet `Products` et reliez-le aux enregistrements. Ainsi, vous pouvez prendre en charge un, deux ou cent produits sans changer votre modèle.
+
+### 5. Commencez par faire simple
+
+Commencez par les champs. Passez à de nouveaux objets seulement lorsque vous en ressentez les limites :
+
+* Trop de champs sur un seul objet
+* Enregistrements en double qui devraient être distincts
+* Relations qui ne s'intègrent pas parfaitement
+
+## Note spéciale sur les personnes, les entreprises et les opportunités
+
+<Warning>
+  **La synchronisation des e-mails et du calendrier ne fonctionne qu'avec les Personnes, les Entreprises et les Opportunités.**
+
+  Ce sont les seuls objets où vous pouvez accéder aux e-mails et aux réunions synchronisés depuis votre boîte aux lettres/calendrier. Nous recommandons de les utiliser autant que possible.
+</Warning>
+
+**Meilleures pratiques:**
+
+* Si vous avez besoin de catégories de Personnes, utilisez des champs (pas de nouveaux objets)
+* Exemple : utilisez un champ `Person Type` avec les valeurs "Prospect" et "Partner" au lieu de créer des objets distincts
+* Créez différentes **vues** pour filtrer : l'une montrant les partenaires, l'autre montrant les prospects
+
+**Il est acceptable d'avoir des champs qui ne s'appliquent pas à chaque enregistrement.** Par exemple, un champ `Referral Link` sur Personnes qui ne s'applique que lorsque `Person Type = Partner`. Masquez ce champ dans les vues où il n'est pas pertinent.
+
+## Questions pour guider votre choix
+
+Demandez-vous :
+
+<Check>Est-ce simplement une propriété de quelque chose que j'ai déjà, ou a-t-il besoin de ses propres propriétés ?</Check>
+<Check>Aurai-je jamais besoin d'en suivre plusieurs par enregistrement, sans savoir combien ?</Check>
+<Check>Ce concept se connecte-t-il à plusieurs objets différents, pas seulement un ?</Check>
+<Check>Aura-t-il son propre cycle de vie (étapes, dates de début/fin) ?</Check>
+
+Si la réponse est "oui" à l'une ou plusieurs de ces questions, il est probablement temps de créer un nouvel objet.
+
+## Accéder à votre modèle de données
+
+1. Accédez à **Paramètres** dans la barre latérale gauche
+2. Cliquez sur **Modèle de données**
+3. Affichez tous vos objets (standards et personnalisés)
+4. Cliquez sur n'importe quel objet pour voir et modifier ses champs
+
+<Note>
+  **Vous ne voyez pas le Modèle de données dans Paramètres ?**
+
+  L'accès au modèle de données est généralement limité aux administrateurs. Contactez l'administrateur de votre espace de travail si vous avez besoin d'un accès.
+</Note>
+
+## Prochaines étapes
+
+Une fois que vous avez planifié votre modèle de données :
+
+* [Comment créer des objets personnalisés](/l/fr/user-guide/data-model/how-tos/create-custom-objects)
+* [Comment créer des champs personnalisés](/l/fr/user-guide/data-model/how-tos/create-custom-fields)
+* [Comment créer des champs de relation](/l/fr/user-guide/data-model/how-tos/create-relation-fields)
+
+## Besoin d'aide ?
+
+Notre équipe peut vous aider à concevoir et créer le modèle de données dont vous avez besoin. Découvrez nos [services d'implémentation](/l/fr/user-guide/getting-started/capabilities/implementation-services).

@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import {
   MUTATION_MAX_MERGE_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import {
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
@@ -14,13 +15,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -135,24 +136,33 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatFieldMetadataMaps: context.flatFieldMetadataMaps,
     });
 
-    const recordsToMerge = await context.repository.find({
+    const fetchedRecords = (await context.repository.find({
       where: { id: In(args.ids) },
       select: columnsToSelect,
-    });
+    })) as ObjectRecord[];
 
-    if (recordsToMerge.length !== args.ids.length) {
+    if (fetchedRecords.length !== args.ids.length) {
       throw new CommonQueryRunnerException(
         'One or more records not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        { userFriendlyMessage: msg`One or more records were not found.` },
       );
     }
+
+    const orderIndex = new Map(args.ids.map((id, index) => [id, index]));
+
+    fetchedRecords.sort(
+      (a, b) => (orderIndex.get(a.id) ?? 0) - (orderIndex.get(b.id) ?? 0),
+    );
+
+    const recordsToMerge = fetchedRecords;
 
     if (args.dryRun && args.selectedFieldsResult.relations) {
       await this.processNestedRelationsHelper.processNestedRelations({
         flatObjectMetadataMaps: context.flatObjectMetadataMaps,
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
         parentObjectMetadataItem: context.flatObjectMetadata,
-        parentObjectRecords: recordsToMerge as ObjectRecord[],
+        parentObjectRecords: recordsToMerge,
         relations: args.selectedFieldsResult.relations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
@@ -165,7 +175,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       });
     }
 
-    return recordsToMerge as ObjectRecord[];
+    return recordsToMerge;
   }
 
   private validateAndGetPriorityRecord(
@@ -182,6 +192,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       throw new CommonQueryRunnerException(
         'Priority record not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This record does not exist or has been deleted.`,
+        },
       );
     }
 
@@ -242,8 +255,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
         const relationType =
           isDryRun && fieldMetadata.type === FieldMetadataType.RELATION
-            ? (fieldMetadata.settings as FieldMetadataRelationSettings)
-                ?.relationType
+            ? (
+                fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION']
+              )?.relationType
             : undefined;
 
         mergedResult[fieldName] = mergeFieldValues(
@@ -323,6 +337,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       throw new CommonQueryRunnerException(
         'Failed to update record',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 
@@ -361,7 +376,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       }
 
       const relationSettings = field.settings as
-        | FieldMetadataRelationSettings
+        | FieldMetadataSettingsMapping['RELATION']
         | undefined;
 
       if (
@@ -482,6 +497,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       throw new CommonQueryRunnerException(
         `Merge is only available for objects with duplicate criteria. Object '${flatObjectMetadata.nameSingular}' does not have duplicate criteria defined.`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: msg`This type of record cannot be merged.` },
       );
     }
 
@@ -491,6 +507,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       throw new CommonQueryRunnerException(
         'At least 2 record IDs are required for merge',
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`Please select at least 2 records to merge.`,
+        },
       );
     }
 
@@ -498,6 +517,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       throw new CommonQueryRunnerException(
         `Maximum ${MUTATION_MAX_MERGE_RECORDS} records can be merged at once`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`You can merge up to ${MUTATION_MAX_MERGE_RECORDS} records at once.`,
+        },
       );
     }
 
@@ -505,6 +527,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       throw new CommonQueryRunnerException(
         `Invalid conflict priority '${conflictPriorityIndex}'. Valid options for ${ids.length} records: 0-${ids.length - 1}`,
         CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
   }

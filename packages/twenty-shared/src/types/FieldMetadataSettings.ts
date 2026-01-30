@@ -1,9 +1,10 @@
 import { type AllowedAddressSubField } from '@/types/AddressFieldsType';
 import { type FieldMetadataMultiItemSettings } from '@/types/FieldMetadataMultiItemSettings';
-import { type RelationType } from '@/types/RelationType';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
 import { type RelationOnDeleteAction } from '@/types/RelationOnDeleteAction.type';
+import { type RelationType } from '@/types/RelationType';
+import { type SerializedRelation } from '@/types/SerializedRelation.type';
 
 export enum NumberDataType {
   FLOAT = 'float',
@@ -19,39 +20,47 @@ export enum DateDisplayFormat {
 
 export type FieldNumberVariant = 'number' | 'percentage';
 
-export type FieldMetadataNumberSettings = {
+type FieldMetadataNumberSettings = {
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
 };
 
-export type FieldMetadataTextSettings = {
+type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
 };
 
-export type FieldMetadataDateSettings = {
+type FieldMetadataDateSettings = {
   displayFormat?: DateDisplayFormat;
 };
 
-export type FieldMetadataDateTimeSettings = {
+type FieldMetadataDateTimeSettings = {
   displayFormat?: DateDisplayFormat;
 };
 
-export type FieldMetadataRelationSettings = {
+type FieldMetadataRelationSettings = {
   relationType: RelationType;
   onDelete?: RelationOnDeleteAction;
   joinColumnName?: string | null;
+  // Points to the target field on the junction object
+  // For MORPH_RELATION fields, morphRelations already contains all targets
+  junctionTargetFieldId?: SerializedRelation;
 };
-export type FieldMetadataAddressSettings = {
+
+type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
 };
 
-export type FieldMetadataTsVectorSettings = {
+type FieldMetadataFilesSettings = {
+  maxNumberOfValues: number;
+};
+
+type FieldMetadataTsVectorSettings = {
   asExpression?: string;
   generatedType?: 'STORED' | 'VIRTUAL';
 };
 
-type FieldMetadataSettingsMapping = {
+export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
@@ -64,6 +73,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.EMAILS]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.LINKS]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.FILES]: FieldMetadataFilesSettings;
 };
 
 export type AllFieldMetadataSettings =
@@ -73,7 +83,7 @@ export type FieldMetadataSettings<
   T extends FieldMetadataType = FieldMetadataType,
 > =
   IsExactly<T, FieldMetadataType> extends true
-    ? null | AllFieldMetadataSettings // Could be improved to be | unknown
+    ? null | AllFieldMetadataSettings
     : T extends keyof FieldMetadataSettingsMapping
       ? FieldMetadataSettingsMapping[T]
       : never | null;

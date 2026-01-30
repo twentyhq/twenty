@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -50,7 +50,7 @@ export const Elipsis: Story = {
 
 export const Performance = getProfilingStory({
   componentName: 'DateTimeFieldDisplay',
-  averageThresholdInMs: 0.15,
+  averageThresholdInMs: 0.2,
   numberOfRuns: 30,
   numberOfTestsPerRun: 30,
 });

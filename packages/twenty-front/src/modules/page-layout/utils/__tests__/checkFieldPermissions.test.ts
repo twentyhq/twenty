@@ -1,5 +1,5 @@
+import { checkFieldPermissions } from '@/page-layout/utils/checkFieldPermissions';
 import { type ObjectPermissions } from 'twenty-shared/types';
-import { checkFieldPermissions } from '../checkFieldPermissions';
 
 describe('checkFieldPermissions', () => {
   const mockObjectPermissions: ObjectPermissions = {
@@ -8,6 +8,8 @@ describe('checkFieldPermissions', () => {
     canSoftDeleteObjectRecords: true,
     canDestroyObjectRecords: true,
     restrictedFields: {},
+    rowLevelPermissionPredicates: [],
+    rowLevelPermissionPredicateGroups: [],
   };
 
   it('should return true when no fields are restricted', () => {

@@ -1,0 +1,53 @@
+---
+title: Não vejo emails nos registos
+description: Resolução de problemas de emails em falta nos registos.
+---
+
+## Causas comuns
+
+### 1. A sincronização inicial ainda está em curso
+
+A sincronização de emails leva tempo, especialmente para caixas de correio grandes. Twenty importa emails a uma taxa de aproximadamente **400 mensagens por minuto** (limitado pela restrição de taxa da API do Gmail).
+
+* **Sincronização do calendário**: Conclui em minutos
+* **Sincronização de email**: Depende do tamanho da caixa de correio (por exemplo, 10.000 emails ≈ 25 minutos, 50.000 emails ≈ 2 horas)
+
+**Solução**: Aguarde a conclusão da importação inicial. Você pode estimar o tempo com base no tamanho da sua caixa de correio.
+
+### 2. O contacto não existe no Twenty
+
+Os emails só aparecem em registos de Pessoas existentes. Se o contacto ainda não foi criado:
+
+* Ative a **Criação automática de contactos** nas definições da sua caixa de correio
+* Ou crie manualmente o registo da Pessoa primeiro
+
+**Solução**: Vá a **Settings → Accounts**, selecione a sua caixa de correio e ative a criação automática de contactos.
+
+### 3. Os emails internos são excluídos
+
+Emails entre colegas (mesmo domínio de email) nunca são sincronizados para manter a privacidade.
+
+**Solução**: Este é o comportamento esperado. Apenas emails externos são sincronizados.
+
+### 4. O email é de um grupo ou lista de distribuição
+
+Emails de grupo e listas de distribuição são excluídos da sincronização.
+
+**Solução**: Este é o comportamento esperado.
+
+### 5. Pasta não selecionada para sincronização
+
+Se estiver a usar a funcionalidade Message Folder, algumas pastas podem estar excluídas.
+
+**Solução**: Vá a **Settings → Accounts**, selecione a sua caixa de correio e verifique as definições de sincronização de pastas.
+
+### 6. Endereço de email incorreto no registo
+
+O registo da Pessoa pode ter um endereço de email diferente do utilizado no email.
+
+**Solução**: Adicione o endereço de email correto ao registo da Pessoa.
+
+## Ainda não está a funcionar?
+
+1. Tente desligar e voltar a ligar a sua caixa de correio
+2. Contacte o suporte se os problemas persistirem

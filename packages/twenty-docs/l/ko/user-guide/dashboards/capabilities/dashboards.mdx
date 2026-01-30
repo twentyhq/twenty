@@ -1,0 +1,92 @@
+---
+title: 대시보드
+description: CRM 데이터를 시각화하기 위해 탭으로 대시보드를 생성하고 구성합니다.
+---
+
+## 개요
+
+Twenty의 대시보드는 계층 구조로 구성됩니다: **대시보드 → 탭 → 위젯**. 각 대시보드에는 여러 개의 탭을 포함할 수 있으며, 각 탭에는 위젯(차트, 숫자, iFrames)이 포함됩니다.
+
+## 새 대시보드 생성
+
+1. 내비게이션에서 **대시보드**로 이동합니다
+2. **+ 새 레코드**를 클릭합니다
+
+<img src="/images/user-guide/dashboard/dashboard-create-new.png" alt="Create a new dashboard" />
+
+3. 대시보드에 이름을 지정합니다
+4. 탭과 위젯을 추가하기 시작합니다
+
+## 탭으로 작업하기
+
+탭은 대시보드를 논리적인 섹션으로 구성하는 데 도움이 됩니다.
+
+### 탭 만들기
+
+1. In edit mode, click **+** in the tab bar, side panel will open on the right
+2. 탭의 이름을 지정합니다(예: "파이프라인 개요", "팀 성과")
+3. 탭에 위젯을 추가합니다
+
+### Reordering Tabs
+
+1. In edit mode, click and hold on the tab you want to move
+2. Drag and drop to the new position
+3. You can also click on the tab and use the command menu to move the tab to left or right
+
+### Deleting Tabs
+
+1. In edit mode, click on the tab you want to delete
+2. Click the **Delete** button in the command menu
+
+### 탭 복제
+
+1. 복제하려는 탭을 클릭합니다
+2. 사이드 패널에서 **복제** 버튼을 클릭합니다
+
+<img src="/images/user-guide/dashboard/dashboard-tabs.png" alt="Dashboard tab" />
+
+## 대시보드 레이아웃
+
+### 위젯 배치
+
+* 드래그 앤 드롭하여 위치를 지정합니다
+* 강조를 위해 크기를 조정합니다
+* 관련 차트를 함께 그룹화합니다
+
+### 대시보드 복제
+
+1. Select the dashboard you want to duplicate
+2. **Cmd + K**(Windows에서는 **Ctrl + K**)로 명령 표시줄을 엽니다
+3. **대시보드 복제**를 선택합니다
+
+<img src="/images/user-guide/dashboard/dashboard-duplicate.png" alt="Duplicate a dashboard" />
+
+### 모범 사례
+
+* **논리적 흐름**: 개요에서 세부 정보 순으로 배열합니다
+* **시각적 위계**: 핵심 지표에는 더 큰 차트를 사용합니다
+* **일관된 스타일**: 일치하는 색상과 글꼴을 사용합니다
+
+## 가시성 및 액세스
+
+### 대시보드 가시성
+
+대시보드는 Twenty 워크스페이스에 액세스 권한이 있는 모든 사용자에게 표시됩니다. 현재는 비공개 대시보드 옵션이 없습니다.
+
+### 즐겨찾기
+
+빠르게 액세스할 수 있도록 대시보드를 즐겨찾기에 추가할 수 있습니다. 이는 개인 설정—사용자의 즐겨찾기는 다른 사용자에게 표시되지 않습니다.
+
+대시보드를 즐겨찾기에 추가하려면 대시보드를 열고 별 아이콘을 클릭합니다.
+
+### 시간대 동작 방식
+
+현재 대시보드는 보는 사람의 시간대를 기준으로 데이터를 표시합니다. 즉, 동일한 대시보드라도 지역이 다른 팀 구성원에게는 서로 다른 지표가 표시될 수 있습니다(예: APAC vs. US).
+
+<Note>
+  **곧 제공 예정**: 모든 사용자가 위치와 관계없이 일관된 데이터를 볼 수 있도록 대시보드별로 특정 시간대를 설정하는 기능을 추가할 예정입니다.
+</Note>
+
+<Note>
+  **곧 제공 예정**: 대시보드 수준의 필터를 통해 모든 위젯에 한 번에 필터를 적용할 수 있어 데이터를 더 빠르게 탐색할 수 있습니다.
+</Note>

@@ -1,21 +1,28 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataDefaultValue,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
-import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';
 import {
+  computeAggregateParameters,
   computeDepthParameters,
   computeEndingBeforeParameters,
   computeFilterParameters,
+  computeGroupByParameters,
   computeIdPathParameter,
+  computeIncludeRecordsSampleParameters,
   computeLimitParameters,
+  computeOrderByForRecordsParameters,
   computeOrderByParameters,
   computeSoftDeleteParameters,
   computeStartingAfterParameters,
   computeUpsertParameters,
+  computeViewIdParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -231,7 +238,7 @@ export const computeSchemaComponents = (
       const flatFieldMetadatas =
         findManyFlatEntityByIdInFlatEntityMapsOrThrow<FlatFieldMetadata>({
           flatEntityMaps: flatFieldMetadataMaps,
-          flatEntityIds: item.fieldMetadataIds,
+          flatEntityIds: item.fieldIds,
         });
 
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
@@ -277,6 +284,11 @@ export const computeParameterComponents = (
     softDelete: computeSoftDeleteParameters(),
     orderBy: computeOrderByParameters(),
     limit: computeLimitParameters(fromMetadata),
+    groupBy: computeGroupByParameters(),
+    viewId: computeViewIdParameters(),
+    aggregate: computeAggregateParameters(),
+    includeRecordsSample: computeIncludeRecordsSampleParameters(),
+    orderByForRecords: computeOrderByForRecordsParameters(),
   };
 };
 

@@ -1,0 +1,89 @@
+---
+title: Migração de dados
+description: Importe e exporte os seus dados de CRM através de ficheiros CSV ou da API.
+image: /images/user-guide/import-export-data/cloud.png
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Frame>
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="Migração de dados" />
+</Frame>
+
+## Métodos de importação
+
+A Twenty suporta dois métodos principais para importar dados:
+
+| Método                 | Melhor para                               | Limite de volume             |
+| ---------------------- | ----------------------------------------- | ---------------------------- |
+| **Importação de CSV**  | Migrações padrão, atualizações regulares  | 10 000 registos por ficheiro |
+| **Importação via API** | Migrações em grande escala, automatização | Sem limite                   |
+
+<Note>Para conjuntos de dados muito grandes (centenas de milhares de registos), utilize a API. Os nossos [parceiros de implementação](/l/pt/user-guide/getting-started/capabilities/implementation-services) podem ajudar a executar estes scripts, se necessário.</Note>
+
+## Noções básicas da importação de CSV
+
+Pode importar dados para qualquer objeto utilizando ficheiros CSV, XLSX ou XLS. Cada ficheiro deve conter **apenas um tipo de objeto** (por exemplo, apenas registos de Pessoas).
+
+<Note>**Os campos têm de existir antes da importação.** Carregar um CSV cria registos, mas não cria campos. Se precisar de campos personalizados, crie-os primeiro em **Definições → Modelo de dados**.</Note>
+
+### Passos
+
+1. Navegue até ao objeto onde pretende importar dados
+2. Clique no ícone **⋮** no canto superior direito (este é o Menu de Comandos) e clique em **Importar registos**
+3. Descarregue o ficheiro de modelo para garantir que os seus dados estão no formato esperado
+4. Carregue o seu ficheiro CSV formatado
+5. Mapeie as suas colunas para os campos da Twenty
+6. Revise os erros (realçados a amarelo) e corrija-os, editando diretamente na interface
+7. Confirme a importação
+
+### Importar relações entre objetos
+
+Pode importar relações entre objetos utilizando a função de importação de CSV. Tem de referenciar o objeto relacionado utilizando um campo único desse objeto: o `id`, o `email` para Pessoas e Membros do espaço de trabalho, o `domain` para empresas, ou qualquer outro campo definido como único no modelo de dados para qualquer outro objeto.
+
+<Note>**Os registos eliminados contam para a unicidade.** Os registos eliminados logicamente (visíveis no Menu de Comandos → Ver registos eliminados) são incluídos nas verificações de unicidade. Se importar um registo com o mesmo valor único que um registo eliminado, o registo eliminado será restaurado.</Note>
+
+<Warning>
+  **A ordem de importação é importante!**
+
+  Ao importar objetos relacionados, carregue os ficheiros por esta ordem:
+
+  1. **Empresas** primeiro (o lado "um" das relações)
+  2. **Pessoas** em segundo (ligadas às empresas via companyId)
+  3. **Oportunidades** em terceiro (ligadas a empresas/pessoas)
+  4. **Objetos personalizados** com relações por último
+
+  Porquê? O lado "um" de uma relação um-para-muitos tem de existir antes de o poder referenciar. Por exemplo, o registo da Empresa tem de existir antes de importar uma Pessoa com o ID dessa empresa.
+</Warning>
+
+Consulte [este artigo](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) para um guia passo a passo sobre como proceder.
+
+## Exportar Dados
+
+Exporte os dados do seu espaço de trabalho para cópias de segurança, relatórios ou migração.
+
+### Passos
+
+1. Navegue até ao objeto que pretende exportar
+2. Configure a visualização com as colunas de que necessita
+3. Clique em **⋮** → **Exportar visualização**
+4. Guarde o ficheiro CSV
+
+<Note>**Apenas as colunas visíveis são exportadas.** O ficheiro CSV conterá apenas as colunas apresentadas na sua visualização atual. Adicione ou oculte colunas antes de exportar para controlar que dados são incluídos.</Note>
+
+<Note>**Limites de exportação**: Até 20 000 registos por exportação.</Note>
+
+## Permissões
+
+A importação e a exportação de dados requerem permissões específicas:
+
+* **Importar**: Requer a permissão "Import CSV"
+* **Exportar**: Requer a permissão "Export CSV"
+
+Contacte o administrador do seu espaço de trabalho se não tiver estas permissões.
+
+## Próximos Passos
+
+* [Prepare os seus ficheiros CSV](/l/pt/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [Importar relações entre objetos](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [Importar via API para conjuntos de dados de grande dimensão](/l/pt/user-guide/data-migration/how-tos/import-data-via-api)

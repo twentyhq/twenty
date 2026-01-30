@@ -27,7 +27,6 @@ export const createGetDashboardTool = (
 
       const dashboard =
         await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          authContext,
           async () => {
             const repo = await deps.globalWorkspaceOrmManager.getRepository(
               context.workspaceId,
@@ -37,6 +36,7 @@ export const createGetDashboardTool = (
 
             return repo.findOne({ where: { id: parameters.dashboardId } });
           },
+          authContext,
         );
 
       if (!isDefined(dashboard)) {
@@ -55,10 +55,10 @@ export const createGetDashboardTool = (
         };
       }
 
-      const pageLayout = await deps.pageLayoutService.findByIdOrThrow(
-        dashboard.pageLayoutId,
-        context.workspaceId,
-      );
+      const pageLayout = await deps.pageLayoutService.findByIdOrThrow({
+        id: dashboard.pageLayoutId,
+        workspaceId: context.workspaceId,
+      });
 
       const tabs =
         pageLayout.tabs?.map((tab) => ({

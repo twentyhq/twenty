@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import {
@@ -18,6 +19,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 describe('ViewSortService', () => {
   let viewSortService: ViewSortService;
   let viewSortRepository: Repository<ViewSortEntity>;
+  let applicationService: ApplicationService;
 
   const mockViewSort = {
     id: 'view-sort-id',
@@ -51,6 +53,12 @@ describe('ViewSortService', () => {
             flushGraphQLOperation: jest.fn(),
           },
         },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -58,6 +66,7 @@ describe('ViewSortService', () => {
     viewSortRepository = module.get<Repository<ViewSortEntity>>(
       getRepositoryToken(ViewSortEntity),
     );
+    applicationService = module.get<ApplicationService>(ApplicationService);
   });
 
   it('should be defined', () => {
@@ -151,12 +160,26 @@ describe('ViewSortService', () => {
     };
 
     it('should create a view sort successfully', async () => {
+      const mockApplicationId = 'application-id';
+
+      jest
+        .spyOn(
+          applicationService,
+          'findWorkspaceTwentyStandardAndCustomApplicationOrThrow',
+        )
+        .mockResolvedValue({
+          workspaceCustomFlatApplication: { id: mockApplicationId },
+        } as any);
       jest.spyOn(viewSortRepository, 'create').mockReturnValue(mockViewSort);
       jest.spyOn(viewSortRepository, 'save').mockResolvedValue(mockViewSort);
 
       const result = await viewSortService.create(validViewSortData);
 
-      expect(viewSortRepository.create).toHaveBeenCalledWith(validViewSortData);
+      expect(viewSortRepository.create).toHaveBeenCalledWith({
+        ...validViewSortData,
+        universalIdentifier: expect.any(String),
+        applicationId: mockApplicationId,
+      });
       expect(viewSortRepository.save).toHaveBeenCalledWith(mockViewSort);
       expect(result).toEqual(mockViewSort);
     });
@@ -182,6 +205,15 @@ describe('ViewSortService', () => {
     it('should throw exception when viewId is missing', async () => {
       const invalidData = { ...validViewSortData, viewId: undefined };
 
+      jest
+        .spyOn(
+          applicationService,
+          'findWorkspaceTwentyStandardAndCustomApplicationOrThrow',
+        )
+        .mockResolvedValue({
+          workspaceCustomFlatApplication: { id: 'application-id' },
+        } as any);
+
       await expect(viewSortService.create(invalidData)).rejects.toThrow(
         new ViewSortException(
           generateViewSortExceptionMessage(
@@ -199,6 +231,15 @@ describe('ViewSortService', () => {
 
     it('should throw exception when fieldMetadataId is missing', async () => {
       const invalidData = { ...validViewSortData, fieldMetadataId: undefined };
+
+      jest
+        .spyOn(
+          applicationService,
+          'findWorkspaceTwentyStandardAndCustomApplicationOrThrow',
+        )
+        .mockResolvedValue({
+          workspaceCustomFlatApplication: { id: 'application-id' },
+        } as any);
 
       await expect(viewSortService.create(invalidData)).rejects.toThrow(
         new ViewSortException(

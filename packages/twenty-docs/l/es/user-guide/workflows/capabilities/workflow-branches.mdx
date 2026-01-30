@@ -1,0 +1,66 @@
+---
+title: Ramas del flujo de trabajo},{
+description: Crea rutas paralelas y lógica condicional en tus flujos de trabajo.
+---
+
+Las ramas te permiten dividir tu flujo de trabajo en varias rutas que pueden ejecutarse simultáneamente o de forma condicional según tus datos.
+
+<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+
+## Cómo funcionan las ramas
+
+Cuando creas varias conexiones desde un único nodo, cada ruta se convierte en una rama. De forma predeterminada, **todas las ramas se ejecutan en paralelo**—no esperan unas a otras.
+
+## Crear ramas
+
+### Añadir una nueva rama
+
+1. Haz **clic con el botón derecho en el lienzo principal** del flujo de trabajo (no en un nodo existente)
+2. Haz clic en **Añadir nodo**
+3. Elige el tipo de nodo para tu nueva rama
+4. Arrastra una flecha desde la parte inferior del paso anterior hasta la parte superior de esta nueva acción
+5. Repite para añadir más ramas desde el mismo nodo
+
+<Note>
+  Cada rama es independiente. Añadir una rama no afecta a otras rutas existentes desde ese nodo.
+</Note>
+
+### Diseño visual
+
+Las ramas aparecen como rutas paralelas en el editor de flujos de trabajo. Puedes arrastrar nodos para reorganizar el diseño visual sin afectar la ejecución.
+
+## Ramas condicionales
+
+Dado que todas las ramas se ejecutan de forma predeterminada, usa nodos **Filter** para controlar qué rutas se ejecutan realmente:
+
+| Rama | Condición del filtro  | Acción                        |
+| ---- | --------------------- | ----------------------------- |
+| A    | Etapa = "Ganada"      | Enviar correo de felicitación |
+| B    | Etapa = "Perdida"     | Crear tarea de seguimiento    |
+| C    | Etapa = "Negociación" | Notificar al gerente          |
+
+1. Crea ramas desde tu disparador o acción
+2. Añade un nodo **Filter** como el primer paso de cada rama
+3. Configura cada filtro con condiciones mutuamente excluyentes
+4. Añade tus acciones después de cada filtro
+
+Solo continuarán ejecutándose las ramas en las que se cumpla la condición del filtro.
+
+## Combinar ramas
+
+**Las ramas no se combinan automáticamente.** Cada rama se ejecuta de forma independiente hasta que termina. Tienes total flexibilidad para gestionar esto:
+
+* **Opción 1: Mantener las ramas separadas**
+  Cada rama gestiona sus propias acciones de seguimiento de forma independiente. Este es el enfoque más sencillo cuando las ramas no necesitan converger.
+
+* **Opción 2: Combinar ramas manualmente**
+  Al crear tu flujo de trabajo, puedes conectar manualmente varias ramas a la misma acción posterior. Simplemente arrastra flechas desde el final de cada rama hasta un nodo común.
+
+<Note>
+  Aunque puedes usar un nodo [Delay](/l/es/user-guide/workflows/capabilities/workflow-actions#delay) para pausar la ejecución, actualmente no se puede configurar para esperar "hasta que otra rama termine".
+</Note>
+
+## Relacionado
+
+* [Cómo usar las ramas en flujos de trabajo](/l/es/user-guide/workflows/capabilities/use-branches-in-workflows) - Guía paso a paso
+* [Acciones de flujo de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions) - Acciones disponibles, incluyendo Filter

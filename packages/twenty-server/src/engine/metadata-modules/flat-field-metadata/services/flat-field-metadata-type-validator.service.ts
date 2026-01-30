@@ -9,9 +9,10 @@ import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-en
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
+import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
 import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util';
 import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-entity-validation-args.type';
+import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 
 const DEFAULT_NO_VALIDATION = (): FlatFieldMetadataValidationError[] => [];
 
@@ -60,6 +61,7 @@ export class FlatFieldMetadataTypeValidatorService {
       DATE: DEFAULT_NO_VALIDATION,
       DATE_TIME: DEFAULT_NO_VALIDATION,
       EMAILS: DEFAULT_NO_VALIDATION,
+      FILES: validateFilesFlatFieldMetadata,
       FULL_NAME: DEFAULT_NO_VALIDATION,
       LINKS: DEFAULT_NO_VALIDATION,
       NUMBER: DEFAULT_NO_VALIDATION,

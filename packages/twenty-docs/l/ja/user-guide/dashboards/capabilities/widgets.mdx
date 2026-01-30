@@ -1,0 +1,149 @@
+---
+title: ウィジェット
+description: Twentyのウィジェットの種類と可視化オプションを確認します。
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## 利用可能なウィジェット
+
+Twentyは、CRMデータを可視化するためのさまざまなウィジェットタイプを提供します。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
+
+データを横棒または縦棒で表示します。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+</Frame>
+
+**最適な用途:**
+
+* カテゴリ間の値を比較する
+* ランキングを表示する
+* 期間別の指標を追跡する
+
+**使用例:**
+
+* ステージ別の商談
+* 営業担当者別の売上
+* 月別のコンタクト追加数
+
+<Note>
+  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. 警告 "Undisplayed data: max X bars per chart" が表示された場合は、フィルターを追加してデータを絞り込むか、グルーピングを変更します（例: 日単位ではなく週単位でグループ化）。
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
+
+全体に占める割合を表示します。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+</Frame>
+
+**最適な用途:**
+
+* 構成や分布を示す
+* 部分と全体を比較する
+* 主要セグメントを強調する
+
+**使用例:**
+
+* ソース別の商談分布
+* 業種別のコンタクト内訳
+* 担当者別のパイプライン構成
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
+
+時間の経過に伴う傾向を表示します。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+</Frame>
+
+**最適な用途:**
+
+* 時間経過による変化を追跡する
+* トレンドを把握する
+* 複数の指標を比較する
+
+**使用例:**
+
+* 月次の商談数の推移
+* 四半期ごとの売上成長
+* 活動量の推移
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
+
+重要な単一値を目立つ形で表示します。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+</Frame>
+
+**最適な用途:**
+
+* KPIを強調する
+* 合計や平均を表示する
+* ステータスを素早く確認する
+
+**使用例:**
+
+* パイプラインの合計金額
+* オープンな商談数
+* コンバージョン率
+
+**高度なオプション:**
+
+* **比率**: Select フィールドで、値同士の比率を計算します。 **Data on display** → フィールドを選択 → **Ratio** オプションを有効にします。
+* **Prefix & Suffix**: 可読性を高めるために、数値の前後にカスタムテキストを追加します（例: "$" のプレフィックスや "%" のサフィックス）。
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+外部ツールやコンテンツをダッシュボードに直接埋め込みます。
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**最適な用途:**
+
+* 外部のレポートやダッシュボードを表示する
+* サードパーティのセールスツールを統合する
+* 他システムのライブコンテンツを表示する
+
+**使用例:**
+
+* サポートツールの指標
+* ダイヤラーの指標
+* セールスシーケンスツールのライブコンテンツ
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+
+Add formatted text and content directly to your dashboard.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+</Frame>
+
+**最適な用途:**
+
+* Adding context or instructions
+* Dashboard descriptions
+* Notes and annotations
+
+**Features:**
+
+* Rich text formatting (bold, italic, lists, etc.)
+* Image and file uploads
+* Markdown-style editing
+
+<Note>
+  **近日提供予定**: ゲージチャートとテーブルはまだ利用できませんが、ロードマップに含まれています。
+</Note>
+
+### ウィジェットの複製
+
+1. ウィジェットをクリックします
+2. **Options** を開きます
+3. **Duplicate widget** をクリックします

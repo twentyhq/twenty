@@ -1,0 +1,293 @@
+---
+title: Migration von anderen CRMs
+description: Schritt-für-Schritt-Anleitung zur Migration Ihrer Daten von jedem CRM zu Twenty.
+---
+
+## Übersicht
+
+Diese Anleitung führt Sie durch die Migration Ihrer Daten von jedem CRM zu Twenty. Der Prozess umfasst die Überprüfung Ihrer Daten, die Vorbereitung Ihres Twenty-Arbeitsbereichs, den Export aus Ihrem aktuellen System und den Import in Twenty.
+
+<Note>Ansichten, Workflows und Berechtigungen müssen nach der Migration manuell neu erstellt werden. Planen Sie Zeit für diese Konfigurationsarbeiten ein.</Note>
+
+## Schritt 1: Überprüfen Sie Ihre aktuellen Daten
+
+Eine Migration ist eine Chance für einen Neuanfang. Übernehmen Sie keinen Ballast.
+
+**Was Sie behalten sollten:**
+
+* Aktive Kontakte und Unternehmen
+* Offene Opportunities und Deals
+* Wichtige Notizen und Aktivitäten
+* Benutzerdefinierte Felder, die Sie tatsächlich verwenden
+
+**Was Sie zurücklassen sollten:**
+
+* Veraltete Kontakte (keine Aktivität seit über 2 Jahren)
+* Doppelte Datensätze
+* Testdaten
+* Nicht verwendete benutzerdefinierte Felder
+
+## Schritt 2: Ihr Datenmodell abbilden
+
+Erstellen Sie ein Zuordnungsdokument zwischen Ihrem aktuellen CRM und Twenty:
+
+| Ihr CRM                    | Twenty                         |
+| -------------------------- | ------------------------------ |
+| Konto / Organisation       | **Unternehmen**                |
+| Kontakt / Person           | **Personen**                   |
+| Deal / Opportunity         | **Opportunity**                |
+| Aktivität                  | **Aufgabe** oder **Notiz**     |
+| Benutzerdefiniertes Objekt | **Benutzerdefiniertes Objekt** |
+
+**Dokumentieren Sie für jedes Feld:**
+
+* Name des Quellfelds
+* Das Zielfeld in Twenty
+* Erforderliche Formatumwandlungen (Datumsangaben, Telefonnummern usw.)
+
+<Note>Halten Sie dieses Mapping-Dokument während des Imports griffbereit — Sie werden darauf verweisen, wenn Sie Spalten zuordnen.</Note>
+
+## Schritt 3: Richten Sie Ihren Twenty-Arbeitsbereich ein
+
+Bereiten Sie Ihren Twenty-Arbeitsbereich vor, bevor Sie Daten importieren:
+
+### Benutzerdefinierte Objekte und Felder erstellen
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Erstellen Sie alle benötigten benutzerdefinierten Objekte
+3. Fügen Sie Standard- und benutzerdefinierten Objekten benutzerdefinierte Felder hinzu
+4. Konfigurieren Sie die Feldeinstellungen (eindeutig, erforderlich, Auswahloptionen usw.)
+
+<Warning>
+  **Felder müssen vor dem Import vorhanden sein.**
+
+  Der CSV-Import erstellt Datensätze, nicht Felder. Erstellen Sie alle benutzerdefinierten Felder vor dem Import unter Einstellungen → Datenmodell.
+</Warning>
+
+### Laden Sie Ihr Team ein
+
+<Warning>
+  **Laden Sie Benutzer ein, BEVOR Sie Daten importieren.**
+
+  Wenn Ihre Daten Benutzerreferenzen enthalten (Account Owner, Assignee usw.), müssen diese Benutzer vor dem Import in Twenty existieren. Andernfalls können diese Beziehungen nicht zugeordnet werden.
+</Warning>
+
+1. Gehen Sie zu **Einstellungen → Mitglieder**
+2. Laden Sie alle Teammitglieder ein
+3. **Warten Sie, bis alle** ihre Einladung angenommen haben
+4. Überprüfen Sie, ob alle Benutzer in Ihrer Mitgliederliste erscheinen
+
+## Schritt 4: Export aus Ihrem aktuellen CRM
+
+Exportieren Sie Ihre Daten aus Ihrem aktuellen CRM:
+
+1. Suchen Sie nach einer **Export**-Funktion (in der Regel unter Einstellungen, Datenverwaltung oder Admin)
+2. Exportieren Sie nach Möglichkeit im **CSV-Format**
+3. Exportieren Sie jeden Objekttyp separat (Unternehmen, Kontakte, Deals usw.)
+4. Schließen Sie alle Felder ein, die Sie migrieren möchten
+
+**Exportieren Sie diese Objekte (zur Referenz in dieser Reihenfolge):**
+
+1. Unternehmen / Konten / Organisationen
+2. Kontakte / Personen
+3. Deals / Opportunities
+4. Notizen und Aktivitäten
+5. Benutzerdefinierte Objekte
+
+## Schritt 5: Daten bereinigen und formatieren
+
+Öffnen Sie jede exportierte CSV in einer Tabellenkalkulationsanwendung und bereiten Sie sie für Twenty vor.
+
+### Duplikate entfernen
+
+1. Sortieren Sie nach dem eindeutigen Feld (E-Mail für Personen, Domain für Unternehmen)
+2. Doppelte Zeilen entfernen oder zusammenführen
+3. Überprüfen Sie, dass in Twenty keine Duplikate vorhanden sind
+
+### Felder korrekt formatieren
+
+| Feldtyp           | Erforderliches Format                            |
+| ----------------- | ------------------------------------------------ |
+| **Domain**        | `https://domain.com`                             |
+| **E-Mail**        | `name@domain.com` (muss eindeutig sein)          |
+| **Datum**         | `YYYY-MM-DD`                                     |
+| **Telefon**       | Drei Spalten: Nummer, Ländercode, Telefonvorwahl |
+| **Boolesch**      | `TRUE` oder `FALSE` (in Großbuchstaben)          |
+| **Auswahlfelder** | Verwenden Sie API-Namen, nicht Anzeigenamen      |
+
+<Warning>
+  **Das Domain-Format ist entscheidend.**
+
+  Verwenden Sie `https://domain.com` (nicht `domain.com` oder `www.domain.com`). Dies entspricht dem Format von Twenty und verhindert Duplikate, wenn Sie die E-Mail-/Kalendersynchronisierung verbinden.
+</Warning>
+
+Siehe [So bereiten Sie Ihre CSV-Dateien vor](/l/de/user-guide/data-migration/how-tos/prepare-your-csv-files) für vollständige Formatierungsanforderungen für alle Feldtypen.
+
+### Beziehungsspalten hinzufügen
+
+Um Datensätze zu verknüpfen (z. B. Personen mit Unternehmen), fügen Sie eine Spalte mit dem eindeutigen Bezeichner des übergeordneten Elements hinzu.
+
+**Beispiel: People-CSV mit Unternehmensverknüpfung**
+
+```csv
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+Siehe [So importieren Sie Beziehungen](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) für detaillierte Anweisungen zum Verknüpfen von Datensätzen.
+
+### Benutzerreferenzen aktualisieren
+
+Wenn Ihre Daten Benutzerzuweisungen enthalten (Eigentümer, Zuständiger):
+
+1. Fügen Sie eine Spalte mit der **E-Mail des Benutzers** hinzu (nicht nur dessen ID aus dem Altsystem)
+2. Verwenden Sie dieselben E-Mail-Adressen, mit denen die Benutzer Ihrem Twenty-Arbeitsbereich beigetreten sind
+
+Siehe [So bereiten Sie Ihre CSV-Dateien vor](/l/de/user-guide/data-migration/how-tos/prepare-your-csv-files) für den vollständigen Formatierungsleitfaden.
+
+## Schritt 6: In Twenty importieren
+
+<Warning>
+  **Die Importreihenfolge ist wichtig!**
+
+  Importieren Sie immer in dieser Reihenfolge:
+
+  1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+  2. **Personen** an zweiter Stelle (mit Unternehmen verknüpfen)
+  3. **Opportunities** an dritter Stelle (mit Unternehmen/Personen verknüpfen)
+  4. **Notizen und Aufgaben** (mit Datensätzen verknüpfen)
+  5. **Benutzerdefinierte Objekte** entsprechend ihren Abhängigkeiten
+
+  Der übergeordnete Datensatz muss existieren, bevor Sie darauf verweisen können.
+</Warning>
+
+### Jedes Objekt importieren
+
+Führen Sie Folgendes der Reihe nach für jede CSV-Datei aus:
+
+1. Navigieren Sie zum Objekt in Twenty
+2. Klicken Sie auf **⋮ → Datensätze importieren**
+3. Laden Sie die CSV-Datei hoch
+4. Ordnen Sie die Spalten den Feldern zu:
+   * Ordnen Sie die E-Mail-Spalten der Benutzer den entsprechenden Beziehungsfeldern zu
+   * Ordnen Sie Beziehungsspalten (wie `companyDomain`) den Beziehungsfeldern zu
+5. Überprüfen und beheben Sie eventuelle Fehler in der Benutzeroberfläche
+6. Bestätigen Sie den Import
+7. Überprüfen Sie einige Datensätze, bevor Sie mit der nächsten Datei fortfahren
+
+**Detaillierte Anleitungen:**
+
+* [So importieren Sie Unternehmen](/l/de/user-guide/data-migration/how-tos/import-companies-via-csv)
+* [So importieren Sie Kontakte](/l/de/user-guide/data-migration/how-tos/import-contacts-via-csv)
+* [So importieren Sie Beziehungen](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+
+## Schritt 7: Große Migrationen (50.000+ Datensätze)
+
+Für große Migrationen:
+
+| Datenmenge               | Empfohlener Ansatz               |
+| ------------------------ | -------------------------------- |
+| Unter 10.000 Datensätzen | Einzelner CSV-Import             |
+| 10.000–50.000 Datensätze | In mehrere CSV-Dateien aufteilen |
+| Über 50.000 Datensätze   | Verwenden Sie die API            |
+
+**Für API-Importe:**
+
+* Schneller und zuverlässiger für große Datensätze
+* Unterstützt Batch-Operationen (bis zu 60 Datensätze pro Aufruf)
+* Siehe [So importieren Sie Daten über die API](/l/de/user-guide/data-migration/how-tos/import-data-via-api)
+
+## Schritt 8: Einrichtung nach der Migration
+
+Schließen Sie nach dem Import der Daten die Konfiguration Ihres Arbeitsbereichs ab:
+
+### Ansichten neu erstellen
+
+* Richten Sie gespeicherte Ansichten mit Filtern, Sortierungen und Spaltenkonfigurationen ein
+* Erstellen Sie alle benötigten Kanban- oder Kalenderansichten
+
+### Workflows neu erstellen
+
+* Erstellen Sie Ihre Automatisierungen in **Einstellungen → Workflows** neu
+* Beginnen Sie mit den kritischsten Workflows
+* Testen Sie jeden Workflow, bevor Sie sich darauf verlassen
+
+### Rollen und Berechtigungen konfigurieren
+
+* Richten Sie Rollen unter **Einstellungen → Rollen** ein
+* Weisen Sie Benutzer den entsprechenden Rollen zu
+
+### E-Mail und Kalender verbinden
+
+* Jeder Benutzer verbindet sein eigenes Konto unter **Einstellungen → Konten**
+* Twenty beginnt, E-Mails mit Kontaktdatensätzen zu synchronisieren
+* Siehe [E-Mail & Kalender](/l/de/user-guide/calendar-emails/overview)
+
+### Schulen Sie Ihr Team
+
+* Gehen Sie die neue Oberfläche gemeinsam durch
+* Dokumentieren Sie alle teamspezifischen Prozesse
+
+## Häufige Probleme und Lösungen
+
+| Problem                       | Ursache                                  | Lösung                                                                                                                             |
+| ----------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Duplikatfehler**            | E-Mail/Domain existiert bereits          | Entfernen Sie Duplikate aus der Datei oder fügen Sie einen eindeutigen Bezeichner hinzu, um vorhandene Datensätze zu aktualisieren |
+| **Beziehung nicht gefunden**  | Übergeordneter Datensatz existiert nicht | Importieren Sie zuerst übergeordnete Objekte (Unternehmen vor Personen)                                                            |
+| **Fehlende Felder**           | Benutzerdefiniertes Feld existiert nicht | Erstellen Sie das Feld vor dem Import unter Einstellungen → Datenmodell                                                            |
+| **Fehler bei Auswahlfeldern** | Verwendung von Anzeigenamen              | Verwenden Sie API-Namen (aktivieren Sie den erweiterten Modus in den Einstellungen, um sie zu finden)                              |
+| **Benutzerbeziehung leer**    | Benutzer hat Einladung nicht angenommen  | Stellen Sie sicher, dass alle Benutzer ihre Einladungen annehmen, bevor Sie Daten importieren                                      |
+
+Siehe [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors) für detaillierte Schritte zur Fehlerbehebung.
+
+## Checkliste nach der Migration
+
+### Datenintegrität
+
+<Check>Alle Datensätze importiert (Anzahlen mit Quellsystem vergleichen)</Check>
+<Check>Beziehungen funktionieren korrekt (Personen mit Unternehmen verknüpft)</Check>
+<Check>Benutzerzuweisungen korrekt zugeordnet (Eigentümer, Zuständiger)</Check>
+<Check>Benutzerdefinierte Felder befüllt</Check>
+<Check>Keine unerwarteten Duplikate</Check>
+
+### Konfiguration
+
+<Check>Ansichten neu erstellt</Check>
+<Check>Workflows neu erstellt und getestet</Check>
+<Check>Rollen und Berechtigungen konfiguriert</Check>
+<Check>E-Mail-/Kalendersynchronisierung verbunden</Check>
+
+### Bereitschaft des Teams
+
+<Check>Team für neues System geschult</Check>
+<Check>Zugriffsplan für altes CRM entschieden (zur Referenz behalten? Wann deaktivieren?)</Check>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Kann ich Workflows automatisch migrieren?">
+    Derzeit nicht. Workflows müssen in Twenty manuell neu erstellt werden.
+  </Accordion>
+
+  <Accordion title="Was ist mit Dateianhängen?">
+    Dateianhänge sind in CSV-Exporten nicht enthalten. Sie müssen sie manuell erneut hochladen, über die API migrieren oder unser Team für Unterstützung kontaktieren.
+  </Accordion>
+
+  <Accordion title="Kann ich während der Migration beide Systeme weiter betreiben?">
+    Ja, wir empfehlen, Ihr altes CRM weiter zu betreiben, bis Sie überprüft haben, dass die Migration abgeschlossen ist. Achten Sie einfach darauf, nicht an beiden Orten neue Daten zu erstellen.
+  </Accordion>
+
+  <Accordion title="Wie lange dauert die Migration normalerweise?">
+    Das hängt von der Datenmenge und der Komplexität ab. Kleine Migrationen (unter 10.000 Datensätzen) können in wenigen Stunden durchgeführt werden. Große Migrationen können mehrere Tage dauern, einschließlich Datenbereinigung und Tests.
+  </Accordion>
+</AccordionGroup>
+
+## Brauchen Sie Hilfe?
+
+Für komplexe Migrationen oder große Datensätze:
+
+* **Geführte Einrichtung:** Buchen Sie ein 4-stündiges Onboarding-Paket
+* **Vollständiger Migrationsservice:** Unsere Partner können die gesamte Migration übernehmen
+
+Kontaktieren Sie [contact@twenty.com](mailto:contact@twenty.com) oder informieren Sie sich über unsere [Implementierungsservices](/l/de/user-guide/getting-started/capabilities/implementation-services).

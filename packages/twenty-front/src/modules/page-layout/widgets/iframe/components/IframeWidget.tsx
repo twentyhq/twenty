@@ -1,13 +1,14 @@
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
-import { ChartSkeletonLoader } from '@/page-layout/widgets/graph/components/ChartSkeletonLoader';
+import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ $isEditMode: boolean }>`
+  box-sizing: border-box;
   border-radius: ${({ theme }) => theme.border.radius.md};
   background: ${({ theme }) => theme.background.primary};
   display: flex;
@@ -84,7 +85,7 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
     return (
       <StyledContainer $isEditMode={isPageLayoutInEditMode}>
         <StyledErrorContainer>
-          <PageLayoutWidgetNoDataDisplay widgetId={widget.id} />
+          <PageLayoutWidgetNoDataDisplay />
         </StyledErrorContainer>
       </StyledContainer>
     );
@@ -94,7 +95,7 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
     <StyledContainer $isEditMode={isPageLayoutInEditMode}>
       {isLoading && (
         <StyledLoadingContainer>
-          <ChartSkeletonLoader />
+          <WidgetSkeletonLoader />
         </StyledLoadingContainer>
       )}
       <StyledIframe

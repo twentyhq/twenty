@@ -39,32 +39,29 @@ export class RunWorkflowJob {
   }: RunWorkflowJobData): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        try {
-          if (lastExecutedStepId) {
-            await this.resumeWorkflowExecution({
-              workspaceId,
-              workflowRunId,
-              lastExecutedStepId,
-            });
-          } else {
-            await this.startWorkflowExecution({
-              workflowRunId,
-              workspaceId,
-            });
-          }
-        } catch (error) {
-          await this.workflowRunWorkspaceService.endWorkflowRun({
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      try {
+        if (lastExecutedStepId) {
+          await this.resumeWorkflowExecution({
             workspaceId,
             workflowRunId,
-            status: WorkflowRunStatus.FAILED,
-            error: error.message,
+            lastExecutedStepId,
+          });
+        } else {
+          await this.startWorkflowExecution({
+            workflowRunId,
+            workspaceId,
           });
         }
-      },
-    );
+      } catch (error) {
+        await this.workflowRunWorkspaceService.endWorkflowRun({
+          workspaceId,
+          workflowRunId,
+          status: WorkflowRunStatus.FAILED,
+          error: error.message,
+        });
+      }
+    }, authContext);
   }
 
   private async startWorkflowExecution({
@@ -79,6 +76,13 @@ export class RunWorkflowJob {
         workflowRunId,
         workspaceId,
       });
+
+    if (
+      workflowRun.status !== WorkflowRunStatus.ENQUEUED &&
+      workflowRun.status !== WorkflowRunStatus.NOT_STARTED
+    ) {
+      return;
+    }
 
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
@@ -142,13 +146,13 @@ export class RunWorkflowJob {
       );
     }
 
-    const lastExecutedStepResult =
-      workflowRun.state?.stepInfos[lastExecutedStepId]?.result;
+    const lastExecutedStepOutput =
+      workflowRun.state?.stepInfos[lastExecutedStepId];
 
     const nextStepIdsToExecute =
       await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
         executedStep: lastExecutedStep,
-        executedStepResult: lastExecutedStepResult,
+        executedStepOutput: lastExecutedStepOutput,
       });
 
     if (!isDefined(nextStepIdsToExecute) || nextStepIdsToExecute.length === 0) {

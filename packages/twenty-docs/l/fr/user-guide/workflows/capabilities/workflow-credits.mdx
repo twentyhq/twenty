@@ -1,0 +1,76 @@
+---
+title: Crédits de flux de travail
+description: Comprendre la consommation et la gestion des crédits de flux de travail.
+---
+
+Les crédits de flux de travail alimentent vos automatisations dans Twenty. Comprendre comment ils fonctionnent vous aide à optimiser les coûts et gérer efficacement votre budget d'automatisation.
+
+## Allocation des crédits
+
+Les crédits de flux de travail sont alloués en fonction de votre cycle de facturation, et non de votre niveau de forfait :
+
+| Cycle de facturation   | Crédits                        |
+| ---------------------- | ------------------------------ |
+| **Abonnement mensuel** | 5 millions de crédits par mois |
+| **Abonnement annuel**  | 50 millions de crédits par an  |
+
+<Note>
+  5 millions de crédits mensuels suffisent largement pour les automatisations standard. La plupart des équipes ne dépasseront pas cette limite avec une utilisation typique des flux de travail. Des crédits supplémentaires sont principalement nécessaires pour les actions de Code avancées et les flux de travail alimentés par l'IA.
+</Note>
+
+## Comment fonctionne la consommation de crédits
+
+Les crédits sont consommés lors de l'exécution des flux de travail, et non lors de leur création. Chaque action du flux de travail consomme des crédits en fonction de sa complexité :
+
+### Consommation de crédits par type d'action
+
+* **Opérations internes de base** : Très faible consommation de crédits
+  * Rechercher des enregistrements
+  * Créer un enregistrement
+  * Mettre à jour un enregistrement
+  * Supprimer un enregistrement
+  * Actions de formulaire
+
+* **Opérations complexes** : Consommation de crédits plus élevée
+  * Actions de code (exécution JavaScript)
+  * Requêtes HTTP vers des services externes
+
+* **Fonctionnalités d'IA** : Consommation de crédits plus élevée
+  * Les actions de l'agent IA consomment des crédits en fonction du modèle d'IA utilisé
+  * Des requêtes plus complexes et des réponses plus longues utilisent davantage de crédits
+
+* **Actions de type Delay** : Consommation de crédits minimale
+  * Le nœud Delay consomme **1 crédit** lors de son exécution
+  * **Aucun crédit n'est consommé** pendant la période d'attente
+  * Un délai de 5 minutes coûte autant qu'un délai de 5 jours
+
+### Déduction en temps réel
+
+Les crédits sont déduits en temps réel au fur et à mesure des exécutions des flux de travail. Cela signifie :
+
+* Les flux de travail en brouillon ne consomment pas de crédits
+* Seuls les flux de travail actifs et en cours d'exécution utilisent votre allocation de crédits
+* Les flux de travail échoués consomment tout de même des crédits pour les étapes complétées
+
+## Gestion des crédits
+
+### Vérifier l'utilisation des crédits
+
+1. Allez dans **Paramètres → Facturation**
+2. Consultez votre consommation actuelle de crédits et votre solde restant
+3. Surveillez les habitudes d'utilisation pour optimiser vos flux de travail
+
+### Achat de crédits supplémentaires
+
+Si vous avez besoin de plus de crédits que votre allocation de plan :
+
+1. Allez dans **Paramètres → Facturation**
+2. Cliquez sur l'option pour acheter des crédits supplémentaires. Des forfaits de différentes tailles sont disponibles.
+3. Les crédits sont ajoutés à votre solde actuel
+
+## Meilleures pratiques
+
+* **Traitement par lots** : Utilisez efficacement les opérations en masse et les actions d'itérateur
+* **Optimisation du déclencheur manuel** : Pour les déclencheurs manuels, choisissez `Bulk` pour traiter plusieurs enregistrements en une seule exécution de flux de travail
+* Optimisez les actions de code pour l'efficacité
+* Opérations par lots pour réduire les appels d'actions individuels

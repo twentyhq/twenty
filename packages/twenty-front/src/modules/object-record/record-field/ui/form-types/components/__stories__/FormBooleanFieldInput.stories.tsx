@@ -1,17 +1,15 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
-import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
-import { FormBooleanFieldInput } from '../FormBooleanFieldInput';
 
 const meta: Meta<typeof FormBooleanFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormBooleanFieldInput',
   component: FormBooleanFieldInput,
   args: {},
   argTypes: {},
-  decorators: [WorkflowStepDecorator, I18nFrontDecorator],
+  decorators: [WorkflowStepDecorator],
 };
 
 export default meta;
@@ -119,7 +117,7 @@ export const ChangesValueToTrue: Story = {
     await userEvent.click(select);
 
     const trueOption = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('True');
 
     await userEvent.click(trueOption);
@@ -144,7 +142,7 @@ export const ChangesValueToFalse: Story = {
     await userEvent.click(select);
 
     const falseOption = await within(
-      getCanvasElementForDropdownTesting(),
+      canvasElement.ownerDocument.body,
     ).findByText('False');
 
     await userEvent.click(falseOption);

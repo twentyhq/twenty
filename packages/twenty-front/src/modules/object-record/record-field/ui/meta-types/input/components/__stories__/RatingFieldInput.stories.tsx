@@ -1,19 +1,22 @@
-import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import {
+  type Decorator,
+  type Meta,
+  type StoryObj,
+} from '@storybook/react-vite';
 import { useEffect } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
+import { useRatingField } from '@/object-record/record-field/ui/meta-types/hooks/useRatingField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
+import { RatingFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RatingFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType, type FieldRatingValue } from 'twenty-shared/types';
-import { useRatingField } from '../../../hooks/useRatingField';
-import { RatingFieldInput } from '../RatingFieldInput';
 
 const { FieldInputEventContextProviderWithJestMocks, handleSubmitMocked } =
   getFieldInputEventContextProviderWithJestMocks();
@@ -108,7 +111,7 @@ const meta: Meta = {
   argTypes: {
     onSubmit: { control: false },
   },
-  decorators: [I18nFrontDecorator, clearMocksDecorator],
+  decorators: [clearMocksDecorator],
   parameters: {
     clearMocks: true,
   },

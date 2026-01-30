@@ -7,6 +7,8 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/page-layout/constants/PageLayoutBreakpoints';
+import { PAGE_LAYOUT_GRID_ITEM_DRAGGING_Z_INDEX } from '@/page-layout/constants/PageLayoutGridItemDraggingZIndex';
+import { PAGE_LAYOUT_GRID_ITEM_Z_INDEX } from '@/page-layout/constants/PageLayoutGridItemZIndex';
 import { PAGE_LAYOUT_GRID_MARGIN } from '@/page-layout/constants/PageLayoutGridMargin';
 import { PAGE_LAYOUT_GRID_ROW_HEIGHT } from '@/page-layout/constants/PageLayoutGridRowHeight';
 import { usePageLayoutHandleLayoutChange } from '@/page-layout/hooks/usePageLayoutHandleLayoutChange';
@@ -24,6 +26,7 @@ import { WidgetPlaceholder } from '@/page-layout/widgets/components/WidgetPlaceh
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef } from 'react';
 import {
@@ -35,7 +38,7 @@ import {
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledGridContainer = styled.div`
+const StyledGridContainer = styled.div<{ $disableTransitions: boolean }>`
   box-sizing: border-box;
   flex: 1;
   min-height: 100%;
@@ -54,9 +57,33 @@ const StyledGridContainer = styled.div`
     user-select: auto;
   }
 
+  .react-grid-item {
+    z-index: ${PAGE_LAYOUT_GRID_ITEM_Z_INDEX};
+  }
+
+  .react-grid-item.react-draggable-dragging {
+    z-index: ${PAGE_LAYOUT_GRID_ITEM_DRAGGING_Z_INDEX};
+  }
+
   .react-grid-item:hover .widget-card-resize-handle {
     display: block !important;
   }
+
+  ${({ $disableTransitions }) =>
+    $disableTransitions &&
+    css`
+      .react-grid-layout {
+        transition: none !important;
+      }
+
+      .react-grid-item {
+        transition: none !important;
+      }
+
+      .react-grid-item.cssTransforms {
+        transition-property: none !important;
+      }
+    `}
 `;
 
 type ExtendedResponsiveProps = ResponsiveProps & {
@@ -110,6 +137,9 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
   const pageLayoutDraggedArea = useRecoilComponentValue(
     pageLayoutDraggedAreaComponentState,
   );
+  const draggingWidgetId = useRecoilComponentValue(
+    pageLayoutDraggingWidgetIdComponentState,
+  );
 
   const activeTab = usePageLayoutTabWithVisibleWidgetsOrThrow(tabId);
 
@@ -137,8 +167,13 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     [activeTabWidgets, hasPendingPlaceholder],
   );
 
+  const shouldDisableTransitions = !isDefined(draggingWidgetId);
+
   return (
-    <StyledGridContainer ref={gridContainerRef}>
+    <StyledGridContainer
+      ref={gridContainerRef}
+      $disableTransitions={shouldDisableTransitions}
+    >
       {isPageLayoutInEditMode && (
         <>
           <PageLayoutGridOverlay />

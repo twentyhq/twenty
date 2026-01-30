@@ -1,0 +1,148 @@
+---
+title: Importare le relazioni tra oggetti
+description: Importare le relazioni tra record tramite CSV.
+---
+
+## Panoramica
+
+Twenty supporta l'importazione delle relazioni tra oggetti durante l'importazione CSV. Ciò consente di collegare i record (ad es., associare Persone ad Aziende) come parte della migrazione dei dati.
+
+<Note>**Attualmente supportate per l'importazione**: Relazioni uno a molti che puntano a un singolo tipo di oggetto su ciascun lato (ad es., Persone → Aziende). Le relazioni che puntano a più tipi di oggetto non sono ancora supportate per importazione/esportazione.</Note>
+
+## Come funzionano le relazioni in Twenty
+
+### Uno a molti / Molti a uno
+
+Twenty supporta relazioni standard in cui un record è collegato a molti altri:
+
+* **Un'Azienda → Molte Persone**: Un'azienda può avere più dipendenti, ma ogni persona appartiene a un'unica azienda
+* **Un'Azienda → Molte Opportunità**: Un'azienda può avere più trattative, ma ogni opportunità appartiene a un'unica azienda
+
+### Relazioni che possono puntare a più tipi di oggetto
+
+Alcune relazioni possono collegarsi a diversi tipi di oggetti. Questo funziona in due modi:
+
+**Modello 1: Molti record che si collegano ognuno a un singolo record per ciascun tipo di oggetto**
+
+Diverse Note, Task o Attività possono essere collegate contemporaneamente a più tipi di oggetto:
+
+* **Le Note** possono essere collegate a una Persona, a un'Azienda e a un'Opportunità contemporaneamente
+* **I Task** possono essere collegati a una Persona, a un'Azienda e a un'Opportunità contemporaneamente
+
+Qui, le Note/i Task sono sul lato "molti". Ciascuno si collega a un record per tipo di oggetto.
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+**Modello 2: Un record che riceve collegamenti da molti record di diversi tipi di oggetto**
+
+Un Progetto può ricevere collegamenti da più record di diversi tipi di oggetto:
+
+* **Un Progetto** può avere molte Persone collegate, molte Aziende collegate e molte Note allegate
+
+Qui, il Progetto è sul lato "uno". Più record di oggetti diversi possono collegarsi tutti allo stesso Progetto.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Limitazione di import/export**: Le relazioni che puntano a più tipi di oggetto (come Note → Persone/Aziende/Opportunità) non sono ancora supportate nell'importazione o esportazione CSV.
+
+  * **Importazione**: Possono essere importate solo relazioni uno a molti che puntano a un singolo tipo di oggetto su ciascun lato
+  * **Esportazione**: Le colonne per le relazioni che puntano a più tipi di oggetto sono attualmente lasciate vuote
+
+  È nella nostra roadmap.
+</Warning>
+
+### Cosa non è supportato oggi
+
+**Relazioni molti a molti** non sono ancora disponibili. Ad esempio, attualmente non è possibile creare una relazione in cui:
+
+* Molte Persone sono collegate a molti Progetti
+
+<Note>Le relazioni molti a molti sono previste per H1 2026.</Note>
+
+## Collegare i record durante l'importazione
+
+<Note>**Promemoria**: Possono essere importate solo relazioni uno a molti che puntano a un singolo tipo di oggetto (ad es., Persone → Aziende). Le relazioni che puntano a più tipi di oggetto (ad es., Note → Persone/Aziende/Opportunità) non sono ancora supportate.</Note>
+
+### Passaggio 1: Identifica i lati "Uno" e "Molti"
+
+Per prima cosa, determina quale oggetto è sul lato "uno" e quale è sul lato "molti" della relazione.
+
+**Esempio**:
+
+* **Azienda** è il lato "uno" (un'azienda ha molti dipendenti)
+* **Persone** è il lato "molti" (ogni persona appartiene a un'unica azienda)
+
+### Passaggio 2: Assicurati che i record del lato "uno" esistano
+
+Prima di importare il lato "molti", i record del lato "uno" devono già esistere in Twenty.
+
+* Importa o crea prima i record del lato "uno" (ad es., Aziende)
+* Verifica il loro identificatore univoco. Può essere:
+  * L'`id` (UUID di Twenty)
+  * Un campo impostato come univoco (ad es., `domain` per le Aziende o un ID esterno dal tuo sistema precedente)
+
+<Warning>L'importazione non riuscirà se viene fatto riferimento a un record inesistente.</Warning>
+
+### Passaggio 3: Prepara il tuo file CSV
+
+Aggiungi una colonna nel file CSV del lato "molti" che faccia riferimento al record del lato "uno".
+
+**Esempio**: Per un file CSV di Persone collegato ad Aziende:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Importante**:
+
+* Il valore deve corrispondere **esattamente** al campo univoco del record Azienda
+* Per i domini, usa l'**URL del dominio** (ad es., `https://acme.com`), non l'etichetta del dominio
+* Mappa un solo identificatore univoco per relazione: questo rende l'importazione più fluida
+
+### Passaggio 4: Assicurati che il campo di relazione esista
+
+Prima di caricare il file, assicurati che esista il campo di relazione tra i tuoi oggetti.
+
+Se non esiste:
+
+1. Vai a **Impostazioni → Modello dati**
+2. Seleziona il tuo oggetto (ad es., Persone)
+3. Crea un campo di relazione che punti all'oggetto di destinazione (ad es., Azienda)
+
+### Passaggio 5: Carica e mappa la relazione
+
+1. Carica il file CSV tramite l'interfaccia di importazione
+2. Nel passaggio di mappatura dei campi, trova la colonna di relazione (ad es., `companyDomain`)
+3. Mappala al campo di relazione (ad es., Azienda)
+4. Twenty collegherà automaticamente ogni record al genitore corrispondente
+
+### Campi univoci disponibili per le relazioni
+
+| Oggetto                                     | Campi univoci disponibili                              |
+| ------------------------------------------- | ------------------------------------------------------ |
+| **Aziende**                                 | `id`, `domain`, qualsiasi campo univoco personalizzato |
+| **Persone**                                 | `id`, `email`, qualsiasi campo univoco personalizzato  |
+| **Membri del Workspace**                    | `id`, `email` (non il nome)                            |
+| **Altri oggetti standard e personalizzati** | `id`, qualsiasi campo contrassegnato come univoco      |
+
+<Note>**Collegamento ai membri dello Spazio di lavoro**: quando la relazione punta ai Membri dello Spazio di lavoro (il tuo team che accede a Twenty), fai riferimento al loro **indirizzo email**, non al nome.</Note>
+
+<Note>Consigliamo di usare `domain` per le Aziende ed `email` per le Persone, poiché sono leggibili e facili da mantenere nei fogli di calcolo.</Note>
+
+<Note>**Promemoria**: I record eliminati temporaneamente (visibili in Menu Comandi → Vedi record eliminati) contano ai fini dei criteri di unicità. Se importi un record con lo stesso valore univoco di un record eliminato, il record eliminato verrà ripristinato. Vedi [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints) per maggiori dettagli.</Note>
+
+## Regola dell'ordine di importazione
+
+<Warning>
+  **Importa sempre prima il lato "uno"!**
+
+  1. **Aziende** per prime (nessuna dipendenza)
+  2. **Persone** al secondo posto (collegate alle Aziende)
+  3. **Opportunità** al terzo posto (collegate ad Aziende/Persone)
+  4. **Oggetti personalizzati** seguendo le relative dipendenze
+
+  Il record padre deve esistere prima di potervi fare riferimento.
+</Warning>

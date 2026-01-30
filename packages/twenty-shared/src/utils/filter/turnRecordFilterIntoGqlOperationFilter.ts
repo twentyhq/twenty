@@ -34,30 +34,24 @@ import {
   isExpectedSubFieldName,
 } from '@/utils/filter';
 
-import {
-  endOfDay,
-  endOfMinute,
-  roundToNearestMinutes,
-  startOfDay,
-  startOfMinute,
-} from 'date-fns';
-import { z } from 'zod';
-
 import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
 import {
   checkIfShouldComputeEmptinessFilter,
   checkIfShouldSkipFiltering,
   CustomError,
   getFilterTypeFromFieldType,
-  getPlainDateFromDate,
+  getNextPeriodStart,
+  getPeriodStart,
   isDefined,
   resolveDateFilter,
   resolveDateTimeFilter,
+  resolveRelativeDateFilterStringified,
   type RecordFilter,
 } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
+import { Temporal } from 'temporal-polyfill';
 
 type FieldShared = {
   id: string;
@@ -67,7 +61,7 @@ type FieldShared = {
 };
 
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
-  filterValueDependencies?: RecordFilterValueDependencies;
+  filterValueDependencies: RecordFilterValueDependencies;
   recordFilter: RecordFilter;
   fieldMetadataItems: FieldShared[];
 };
@@ -174,198 +168,257 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           );
       }
     case 'DATE': {
-      const resolvedFilterValue = resolveDateFilter(recordFilter);
+      const itsARelativeDateFilter =
+        recordFilter.operand === RecordFilterOperand.IS_RELATIVE;
 
-      const now = new Date();
+      if (itsARelativeDateFilter) {
+        const relativeDateFilterValue = resolveRelativeDateFilterStringified(
+          recordFilter.value,
+        );
 
-      const plainDateFilter =
-        typeof resolvedFilterValue === 'string' ? resolvedFilterValue : null;
+        const defaultDateRange = resolveDateFilter({
+          value: 'PAST_1_DAY',
+          operand: RecordFilterOperand.IS_RELATIVE,
+        });
 
-      const nowAsPlainDate = getPlainDateFromDate(now);
-
-      switch (recordFilter.operand) {
-        case RecordFilterOperand.IS_AFTER: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              gt: plainDateFilter,
-            } as DateFilter,
-          };
+        if (!defaultDateRange) {
+          throw new Error('Failed to resolve default date range');
         }
-        case RecordFilterOperand.IS_BEFORE: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              lt: plainDateFilter,
-            } as DateFilter,
-          };
+
+        const start =
+          relativeDateFilterValue?.start?.toString() ?? defaultDateRange.start;
+
+        const end =
+          relativeDateFilterValue?.end?.toString() ?? defaultDateRange.end;
+
+        return {
+          and: [
+            {
+              [correspondingFieldMetadataItem.name]: {
+                gte: start,
+              } as DateFilter,
+            },
+            {
+              [correspondingFieldMetadataItem.name]: {
+                lt: end,
+              } as DateFilter,
+            },
+          ],
+        };
+      }
+
+      const operandIsTakingNowAsReference =
+        recordFilter.operand === RecordFilterOperand.IS_TODAY ||
+        recordFilter.operand === RecordFilterOperand.IS_IN_PAST ||
+        recordFilter.operand === RecordFilterOperand.IS_IN_FUTURE;
+
+      if (operandIsTakingNowAsReference) {
+        const nowAsPlainDate = Temporal.Now.plainDateISO(
+          filterValueDependencies.timeZone,
+        ).toString();
+
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS_IN_PAST:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                lt: nowAsPlainDate,
+              } as DateFilter,
+            };
+          case RecordFilterOperand.IS_IN_FUTURE:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                gte: nowAsPlainDate,
+              } as DateFilter,
+            };
+          case RecordFilterOperand.IS_TODAY: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                eq: nowAsPlainDate,
+              } as DateFilter,
+            };
+          }
         }
-        case RecordFilterOperand.IS_RELATIVE: {
-          const dateRange = z
-            .object({ start: z.string(), end: z.string() })
-            .safeParse(resolvedFilterValue).data;
+      } else {
+        const plainDateFilter = recordFilter.value;
 
-          const defaultDateRange = resolveDateFilter({
-            value: 'PAST_1_DAY',
-            operand: RecordFilterOperand.IS_RELATIVE,
-          });
-
-          if (!defaultDateRange) {
-            throw new Error('Failed to resolve default date range');
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS_AFTER: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                gte: plainDateFilter,
+              } as DateFilter,
+            };
+          }
+          case RecordFilterOperand.IS_BEFORE: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                lt: plainDateFilter,
+              } as DateFilter,
+            };
           }
 
-          const { start: startPlainDate, end: endPlainDate } =
-            dateRange ?? defaultDateRange;
-
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: startPlainDate,
-                } as DateFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lte: endPlainDate,
-                } as DateFilter,
-              },
-            ],
-          };
+          case RecordFilterOperand.IS: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                eq: plainDateFilter,
+              } as DateFilter,
+            };
+          }
         }
-        case RecordFilterOperand.IS: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              eq: plainDateFilter,
-            } as DateFilter,
-          };
-        }
-        case RecordFilterOperand.IS_IN_PAST:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              lte: nowAsPlainDate,
-            } as DateFilter,
-          };
-        case RecordFilterOperand.IS_IN_FUTURE:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              gte: nowAsPlainDate,
-            } as DateFilter,
-          };
-        case RecordFilterOperand.IS_TODAY: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              eq: nowAsPlainDate,
-            } as DateFilter,
-          };
-        }
-        default:
-          throw new Error(
-            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
-          );
       }
+
+      throw new Error(
+        `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+      );
     }
     case 'DATE_TIME': {
-      const resolvedFilterValue = resolveDateTimeFilter(recordFilter);
-      const now = roundToNearestMinutes(new Date());
-      const date =
-        resolvedFilterValue instanceof Date ? resolvedFilterValue : now;
+      const itsARelativeDateTimeFilter =
+        recordFilter.operand === RecordFilterOperand.IS_RELATIVE;
 
-      switch (recordFilter.operand) {
-        case RecordFilterOperand.IS_AFTER: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              gt: date.toISOString(),
-            } as DateTimeFilter,
-          };
-        }
-        case RecordFilterOperand.IS_BEFORE: {
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              lt: date.toISOString(),
-            } as DateTimeFilter,
-          };
-        }
-        case RecordFilterOperand.IS_RELATIVE: {
-          const dateRange = z
-            .object({ start: z.date(), end: z.date() })
-            .safeParse(resolvedFilterValue).data;
+      if (itsARelativeDateTimeFilter) {
+        const resolvedFilterValue = resolveDateTimeFilter(recordFilter);
 
-          const defaultDateRange = resolveDateTimeFilter({
-            value: 'PAST_1_DAY',
-            operand: RecordFilterOperand.IS_RELATIVE,
-          });
+        const parsedRelativeDateFilterValue =
+          isDefined(resolvedFilterValue) &&
+          typeof resolvedFilterValue === 'object'
+            ? resolvedFilterValue
+            : null;
 
-          if (!defaultDateRange) {
-            throw new Error('Failed to resolve default date range');
-          }
-
-          const { start, end } = dateRange ?? defaultDateRange;
-
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: start.toISOString(),
-                } as DateTimeFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lte: end.toISOString(),
-                } as DateTimeFilter,
-              },
-            ],
-          };
-        }
-        case RecordFilterOperand.IS: {
-          const isValid = resolvedFilterValue instanceof Date;
-          const date = isValid ? resolvedFilterValue : now;
-
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lte: endOfMinute(date).toISOString(),
-                } as DateTimeFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: startOfMinute(date).toISOString(),
-                } as DateTimeFilter,
-              },
-            ],
-          };
-        }
-        case RecordFilterOperand.IS_IN_PAST:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              lte: now.toISOString(),
-            } as DateTimeFilter,
-          };
-        case RecordFilterOperand.IS_IN_FUTURE:
-          return {
-            [correspondingFieldMetadataItem.name]: {
-              gte: now.toISOString(),
-            } as DateTimeFilter,
-          };
-        case RecordFilterOperand.IS_TODAY: {
-          return {
-            and: [
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  lte: endOfDay(now).toISOString(),
-                } as DateTimeFilter,
-              },
-              {
-                [correspondingFieldMetadataItem.name]: {
-                  gte: startOfDay(now).toISOString(),
-                } as DateTimeFilter,
-              },
-            ],
-          };
-        }
-        default:
+        if (!isDefined(parsedRelativeDateFilterValue)) {
           throw new Error(
-            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+            `Cannot parse relative date filter : "${recordFilter.value}"`,
           );
+        }
+
+        const defaultDateRange = resolveDateTimeFilter({
+          value: `PAST_1_DAY;;${filterValueDependencies.timeZone}`,
+          operand: RecordFilterOperand.IS_RELATIVE,
+        });
+
+        if (
+          !isDefined(defaultDateRange?.start) ||
+          !isDefined(defaultDateRange?.end)
+        ) {
+          throw new Error('Failed to resolve default date range');
+        }
+
+        const start =
+          parsedRelativeDateFilterValue?.start ?? defaultDateRange.start;
+
+        const end = parsedRelativeDateFilterValue?.end ?? defaultDateRange.end;
+
+        return {
+          and: [
+            {
+              [correspondingFieldMetadataItem.name]: {
+                gte: start.toInstant().toString(),
+              } as DateTimeFilter,
+            },
+            {
+              [correspondingFieldMetadataItem.name]: {
+                lt: end.toInstant().toString(),
+              } as DateTimeFilter,
+            },
+          ],
+        };
       }
+
+      const operandIsTakingNowAsReference =
+        recordFilter.operand === RecordFilterOperand.IS_TODAY ||
+        recordFilter.operand === RecordFilterOperand.IS_IN_PAST ||
+        recordFilter.operand === RecordFilterOperand.IS_IN_FUTURE;
+
+      if (operandIsTakingNowAsReference) {
+        const now = Temporal.Now.zonedDateTimeISO(
+          filterValueDependencies.timeZone,
+        );
+
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS_IN_PAST:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                lt: now.toInstant().round('minute').toString(),
+              } as DateTimeFilter,
+            };
+          case RecordFilterOperand.IS_IN_FUTURE:
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                gt: now.toInstant().round('minute').toString(),
+              } as DateTimeFilter,
+            };
+          case RecordFilterOperand.IS_TODAY: {
+            return {
+              and: [
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    gte: getPeriodStart(now, 'DAY').toInstant().toString(),
+                  } as DateTimeFilter,
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    lt: getNextPeriodStart(now, 'DAY').toInstant().toString(),
+                  } as DateTimeFilter,
+                },
+              ],
+            };
+          }
+        }
+      } else {
+        if (!isNonEmptyString(recordFilter.value)) {
+          throw new Error(`Date filter is empty`);
+        }
+
+        const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
+
+        switch (recordFilter.operand) {
+          case RecordFilterOperand.IS_AFTER: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                gte: resolvedDateTime.toString(),
+              } as DateTimeFilter,
+            };
+          }
+          case RecordFilterOperand.IS_BEFORE: {
+            return {
+              [correspondingFieldMetadataItem.name]: {
+                lt: resolvedDateTime.toString(),
+              } as DateTimeFilter,
+            };
+          }
+          case RecordFilterOperand.IS: {
+            const start = resolvedDateTime
+              .toZonedDateTimeISO('UTC')
+              .with({
+                second: 0,
+                millisecond: 0,
+                microsecond: 0,
+                nanosecond: 0,
+              })
+              .toInstant();
+
+            const end = start.add({ minutes: 1 });
+
+            return {
+              and: [
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    lt: end.toString(),
+                  } as DateTimeFilter,
+                },
+                {
+                  [correspondingFieldMetadataItem.name]: {
+                    gte: start.toString(),
+                  } as DateTimeFilter,
+                },
+              ],
+            };
+          }
+        }
+      }
+
+      throw new Error(
+        `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+      );
     }
     case 'RATING':
       switch (recordFilter.operand) {

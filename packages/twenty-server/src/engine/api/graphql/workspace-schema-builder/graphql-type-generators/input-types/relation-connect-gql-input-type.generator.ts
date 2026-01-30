@@ -9,7 +9,11 @@ import {
 } from 'graphql';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { getUniqueConstraintsFields, isDefined } from 'twenty-shared/utils';
+import {
+  getUniqueConstraintsFields,
+  isDefined,
+  pascalCase,
+} from 'twenty-shared/utils';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
@@ -18,7 +22,6 @@ import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/works
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { pascalCase } from 'src/utils/pascal-case';
 
 @Injectable()
 export class RelationConnectGqlInputTypeGenerator {
@@ -123,9 +126,10 @@ export class RelationConnectGqlInputTypeGenerator {
             > = {};
 
             uniqueProperties.forEach((property) => {
-              const scalarType = this.typeMapperService.mapToScalarType(
-                property.type,
-              );
+              const scalarType =
+                this.typeMapperService.mapToPreBuiltGraphQLInputType({
+                  fieldMetadataType: property.type,
+                });
 
               compositeFields[property.name] = {
                 type: scalarType || GraphQLString,
@@ -144,10 +148,14 @@ export class RelationConnectGqlInputTypeGenerator {
             };
           }
         } else {
-          const scalarType = this.typeMapperService.mapToScalarType(
-            field.type,
-            { settings: field.settings, isIdField: field.name === 'id' },
-          );
+          const scalarType =
+            this.typeMapperService.mapToPreBuiltGraphQLInputType({
+              fieldMetadataType: field.type,
+              typeOptions: {
+                settings: field.settings,
+                isIdField: field.name === 'id',
+              },
+            });
 
           inputFields[field.name] = {
             type: scalarType || GraphQLString,

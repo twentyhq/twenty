@@ -1,0 +1,72 @@
+---
+title: Crear campos personalizados
+description: Guía paso a paso para agregar campos personalizados a cualquier objeto.
+---
+
+Los campos personalizados le permiten capturar información específica de su negocio. Agréguelos a cualquier objeto—estándar o personalizado.
+
+## Pasos
+
+1. Vaya a **Configuración → Modelo de datos**
+2. Seleccione el objeto al que desea agregar un campo
+3. Haga clic en **+ Add Field**
+4. Elija un **tipo de campo** (consulte [Campos](/l/es/user-guide/data-model/capabilities/fields) para ver todos los tipos)
+5. Introduzca el **nombre del campo** y una descripción opcional
+6. Configure los ajustes específicos del campo (consulte más abajo)
+7. Haga clic en **Guardar**
+
+**Método rápido:** Haga clic en **+** al final de los encabezados de columna en cualquier vista de tabla → **Personalizar campos**.
+
+## Mostrar el campo en las vistas
+
+Los campos nuevos no son visibles automáticamente. Para mostrarlo:
+
+1. Abra la vista de tabla del objeto
+2. Haz clic en **Opciones → Campos**
+3. Haga clic en el **icono de ojo** junto a su campo para mostrarlo
+4. Arrastra para reordenar
+
+## Opciones de configuración
+
+### Para Selección / Selección múltiple
+
+1. Haga clic en **+ Add option** para crear opciones
+2. Defina una **opción predeterminada** si lo desea
+3. Arrastre para reordenar las opciones
+
+<Note>
+  **Utilice los nombres de la API para las importaciones.** Habilite el **modo Avanzado** en Configuración para ver los nombres de la API. Consulte [Referencia de asignación de campos](/l/es/user-guide/data-migration/capabilities/field-mapping).
+</Note>
+
+### Para campos de moneda
+
+Establezca la **moneda predeterminada** (USD, EUR, etc.) para los nuevos registros.
+
+### Para campos de teléfono
+
+Establezca el **código de país predeterminado** para rellenar previamente los nuevos números de teléfono.
+
+### Hacer que un campo sea único
+
+Active **Unique** para evitar valores duplicados entre los registros.
+
+<Note>
+  Si existen duplicados (incluidos en los registros eliminados), recibirá un error. Primero, elimine los duplicados.
+</Note>
+
+### Configuración de valores predeterminados
+
+Para los campos de Selección, puede elegir qué opción se preselecciona para los nuevos registros. Para los campos de Casilla de verificación, establezca si está marcada o desmarcada de forma predeterminada.
+
+## Desactivar un campo
+
+1. Vaya a **Configuración → Modelo de datos**
+2. Busque el campo
+3. Haz clic en **⋮ → Desactivar**
+
+Los datos se conservan. Puede reactivar o eliminar de forma permanente más tarde.
+
+## Relacionado
+
+* [Campos](/l/es/user-guide/data-model/capabilities/fields) — todos los tipos de campos explicados
+* [Preguntas frecuentes sobre el modelo de datos](/l/es/user-guide/data-model/how-tos/data-model-faq) — preguntas comunes

@@ -1,10 +1,10 @@
-import { type Meta, type StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { userEvent, within } from 'storybook/test';
 
+import { Select, type SelectProps } from '@/ui/input/components/Select';
 import { IconPlus } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { Select, type SelectProps } from '../Select';
 
 type RenderProps = SelectProps<string | number | boolean | null>;
 

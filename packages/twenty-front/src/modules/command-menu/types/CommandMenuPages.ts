@@ -2,6 +2,7 @@ export enum CommandMenuPages {
   Root = 'root',
   ViewRecord = 'view-record',
   MergeRecords = 'merge-records',
+  UpdateRecords = 'update-records',
   ViewEmailThread = 'view-email-thread',
   ViewCalendarEvent = 'view-calendar-event',
   EditRichText = 'edit-rich-text',
@@ -20,4 +21,5 @@ export enum CommandMenuPages {
   PageLayoutGraphFilter = 'page-layout-graph-filter',
   PageLayoutIframeSettings = 'page-layout-iframe-settings',
   PageLayoutTabSettings = 'page-layout-tab-settings',
+  ViewFrontComponent = 'view-front-component',
 }

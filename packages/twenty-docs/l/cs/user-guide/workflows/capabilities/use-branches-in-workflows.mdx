@@ -1,0 +1,90 @@
+---
+title: Používání větví v pracovních postupech
+description: Pochopte, jak větve fungují a jak řídit, která cesta se provede.
+---
+
+## Jak větve fungují
+
+V editoru pracovních postupů můžete vytvářet více cest (větví) vycházejících z jediného uzlu. To vám umožní vytvářet složité automatizace s různými výsledky.
+
+**Důležité**: Když se pracovní postup spustí, **všechny větve se ve výchozím nastavení spouštějí paralelně**. Neexistuje žádná vestavěná "if/else" logika pro výběr jedné větve před jinou—každá cesta poběží současně.
+
+## Řízení, která větev se spustí
+
+Chcete-li provést pouze jednu větev na základě konkrétních podmínek, **přidejte na začátek každé větve uzel Filter**.
+
+### Ukázkové nastavení
+
+1. Vytvořte pracovní postup s více větvemi z jednoho uzlu
+2. Přidejte uzel **Filter** jako první krok v každé větvi
+3. Na každém uzlu Filter nastavte podmínky, které určují, kdy má daná větev pokračovat
+4. Pokračovat bude pouze větev (případně větve), u níž jsou splněny podmínky uzlu Filter
+
+<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+
+### Jak fungují filtry
+
+* Pokud je podmínka Filter **splněna**: Větev pokračuje v provádění
+* Pokud podmínka Filter **není splněna**: Větev se zastaví na uzlu Filter
+
+Tím efektivně vytvoříte podmíněnou logiku, v níž se na základě vašich dat spustí pouze příslušná větev.
+
+## Příklad: Směrování podle výše obchodu
+
+**Scénář**: Když je obchod uzavřen, odešlete různé oznámení podle výše obchodu.
+
+1. **Spouštěč**: Příležitost aktualizována (Fáze = Uzavřeno/Vyhráno)
+2. **Větev 1**: Filter pro částku > 10 000 $ → Odeslat zprávu na Slack do #big-deals
+3. **Větev 2**: Filter pro částku ≤ 10 000 $ → Odeslat e-mail obchodnímu manažerovi
+
+Obě větve se spustí, ale za svým uzlem Filter bude pokračovat pouze ta, která odpovídá částce obchodu.
+
+## Vytváření větví
+
+<Note>
+  Chcete-li vytvořit novou větev z existujícího kroku, klikněte na tlačítko **+** u kroku a přidejte svou akci. Více větví můžete přidat opakovaným kliknutím na **+**.
+</Note>
+
+1. V editoru pracovních postupů vyberte krok, ze kterého chcete větvit
+2. Klikněte na **+** pro přidání akce
+3. Tím vytvoříte jednu větev
+4. Pro vytvoření dalších větví klikněte znovu na **+** u stejného kroku
+5. Každá větev může mít vlastní posloupnost akcí
+
+## Sloučení větví zpět do jedné
+
+Po dokončení práce paralelních větví je můžete sloučit zpět do jedné cesty:
+
+1. Dokončete akce ve větvích
+2. Přidejte nový krok, který se má spustit po všech větvích
+3. Přetáhněte spojení z posledního kroku každé větve do tohoto nového kroku
+4. Sloučený krok před spuštěním počká na dokončení všech připojených větví
+
+### Příklad: Zpracovat a poté upozornit
+
+```
+Spouštěč
+   │
+   ├── Větev A: Aktualizovat záznam zákazníka
+   │
+   └── Větev B: Vytvořit tiket podpory
+
+       ↘  ↙
+
+   Sloučený krok: Odeslat potvrzovací e-mail
+```
+
+Potvrzovací e-mail se odešle až po dokončení aktualizace zákazníka i vytvoření tiketu.
+
+## Osvědčené postupy
+
+* Na začátku větví vždy používejte **uzly Filter**, když chcete podmíněné spouštění
+* Podmínky větví udržujte **vzájemně se vylučující**, abyste předešli duplicitním akcím
+* Testujte své pracovní postupy s různými daty, abyste měli jistotu, že se spouštějí správné větve
+* **Přejmenujte kroky ve větvích** popisně, aby bylo jasné, co která cesta dělá
+* **Sloučte větve**, když po paralelním zpracování potřebujete závěrečnou akci
+
+## Související
+
+* [Často kladené dotazy k pracovním postupům](/l/cs/user-guide/workflows/how-tos/need-more-help/workflows-faq) — odpovědi týkající se paralelního provádění
+* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions) — dostupné akce pro větve

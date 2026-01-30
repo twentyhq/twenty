@@ -1,0 +1,148 @@
+---
+title: Beziehungen zwischen Objekten importieren
+description: Beziehungen zwischen Datensätzen per CSV importieren.
+---
+
+## Übersicht
+
+Twenty unterstützt das Importieren von Beziehungen zwischen Objekten beim CSV-Import. So können Sie im Rahmen Ihrer Datenmigration Datensätze verknüpfen (z. B. Personen mit Unternehmen verknüpfen).
+
+<Note>**Aktuell für den Import unterstützt**: Eins-zu-viele-Beziehungen, die auf jeder Seite auf einen einzelnen Objekttyp verweisen (z. B. Personen → Unternehmen). Beziehungen, die auf mehrere Objekttypen zeigen, werden für Import/Export noch nicht unterstützt.</Note>
+
+## Wie Beziehungen in Twenty funktionieren
+
+### Eins zu Viele / Viele zu Eins
+
+Twenty unterstützt Standardbeziehungen, bei denen ein Datensatz mit vielen anderen verknüpft wird:
+
+* **Ein Unternehmen → Viele Personen**: Ein Unternehmen kann mehrere Mitarbeitende haben, aber jede Person gehört zu einem Unternehmen
+* **Ein Unternehmen → Viele Opportunities**: Ein Unternehmen kann mehrere Deals haben, aber jede Opportunity gehört zu einem Unternehmen
+
+### Beziehungen, die auf mehrere Objekttypen zeigen können
+
+Einige Beziehungen können verschiedene Objekttypen verbinden. Dies funktioniert auf zwei Arten:
+
+**Muster 1: Viele Datensätze, die jeweils mit einem Datensatz aus unterschiedlichen Objekttypen verknüpft sind**
+
+Mehrere Notizen, Aufgaben oder Aktivitäten können jeweils gleichzeitig an mehrere Objekttypen angehängt werden:
+
+* **Notizen** können gleichzeitig mit einer Person, einem Unternehmen und einer Opportunity verknüpft werden
+* **Aufgaben** können gleichzeitig mit einer Person, einem Unternehmen und einer Opportunity verknüpft werden
+
+Hier befinden sich die Notizen/Aufgaben auf der "Viele"-Seite. Jede ist mit genau einem Datensatz pro Objekttyp verknüpft.
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+**Muster 2: Ein Datensatz, der Verknüpfungen von vielen Datensätzen unterschiedlicher Objekttypen erhält**
+
+Ein Projekt kann Verknüpfungen von mehreren Datensätzen über verschiedene Objekttypen hinweg erhalten:
+
+* **Ein Projekt** kann viele Personen mit ihm verknüpft haben, viele Unternehmen mit ihm verknüpft haben und viele Notizen, die daran angehängt sind
+
+Hier befindet sich das Projekt auf der "Eins"-Seite. Mehrere Datensätze aus verschiedenen Objekten können alle mit demselben Projekt verknüpft sein.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Einschränkung beim Import/Export**: Beziehungen, die auf mehrere Objekttypen verweisen (z. B. Notizen → Personen/Unternehmen/Opportunities), werden beim CSV-Import oder -Export **noch nicht unterstützt**.
+
+  * **Import**: Es können nur Eins-zu-viele-Beziehungen importiert werden, die auf jeder Seite auf einen einzelnen Objekttyp verweisen
+  * **Export**: Spalten für Beziehungen, die auf mehrere Objekttypen verweisen, bleiben derzeit leer
+
+  Dies steht auf unserer Roadmap.
+</Warning>
+
+### Was heute nicht unterstützt wird
+
+**Viele-zu-viele-Beziehungen** sind noch nicht verfügbar. Sie können derzeit beispielsweise keine Beziehung erstellen, bei der:
+
+* Viele Personen mit vielen Projekten verknüpft sind
+
+<Note>Viele-zu-viele-Beziehungen sind für H1 2026 geplant.</Note>
+
+## Datensätze während des Imports verknüpfen
+
+<Note>**Erinnerung**: Es können nur Eins-zu-viele-Beziehungen importiert werden, die auf einen einzelnen Objekttyp verweisen (z. B. Personen → Unternehmen). Beziehungen, die auf mehrere Objekttypen verweisen (z. B. Notizen → Personen/Unternehmen/Opportunities), werden noch nicht unterstützt.</Note>
+
+### Schritt 1: Identifizieren Sie die "Eins"- und "Viele"-Seiten
+
+Bestimmen Sie zunächst, welches Objekt auf der "Eins"-Seite und welches auf der "Viele"-Seite der Beziehung steht.
+
+**Beispiel**:
+
+* **Unternehmen** ist die "Eins"-Seite (ein Unternehmen hat viele Mitarbeitende)
+* **Personen** ist die "Viele"-Seite (jede Person gehört zu einem Unternehmen)
+
+### Schritt 2: Sicherstellen, dass die Datensätze der "Eins"-Seite existieren
+
+Bevor Sie die "Viele"-Seite importieren, müssen die Datensätze der "Eins"-Seite in Twenty bereits existieren.
+
+* Importieren oder erstellen Sie zuerst die Datensätze der "Eins"-Seite (z. B. Unternehmen)
+* Validieren Sie deren eindeutigen Bezeichner. Dies kann sein:
+  * Die `id` (Twenty-UUID)
+  * Ein als eindeutig festgelegtes Feld (z. B. `domain` für Unternehmen oder eine externe ID aus Ihrem vorherigen System)
+
+<Warning>Der Import schlägt fehl, wenn auf einen nicht vorhandenen Datensatz verwiesen wird.</Warning>
+
+### Schritt 3: Bereiten Sie Ihre CSV-Datei vor
+
+Fügen Sie in Ihrer CSV-Datei der "Viele"-Seite eine Spalte hinzu, die auf den Datensatz der "Eins"-Seite verweist.
+
+**Beispiel**: Für eine Personen-CSV-Datei, die mit Unternehmen verknüpft wird:
+
+```
+firstName,lastName,email,companyDomain
+John,Smith,john@acme.com,https://acme.com
+Jane,Doe,jane@widgets.co,https://widgets.co
+```
+
+**Wichtig**:
+
+* Der Wert muss dem eindeutigen Feld im Unternehmensdatensatz **exakt entsprechen**
+* Für Domains verwenden Sie die **Domain-URL** (z. B. `https://acme.com`), nicht das Domain-Label
+* Ordnen Sie pro Beziehung nur **einen** eindeutigen Bezeichner zu: Das führt zu einem reibungsloseren Import
+
+### Schritt 4: Stellen Sie sicher, dass das Beziehungsfeld existiert
+
+Vergewissern Sie sich vor dem Hochladen Ihrer Datei, dass das Beziehungsfeld zwischen Ihren Objekten existiert.
+
+Falls es nicht existiert:
+
+1. Gehen Sie zu **Einstellungen → Datenmodell**
+2. Wählen Sie Ihr Objekt aus (z. B. Personen)
+3. Erstellen Sie ein Beziehungsfeld, das auf das Zielobjekt zeigt (z. B. Unternehmen)
+
+### Schritt 5: Beziehung hochladen und zuordnen
+
+1. Laden Sie Ihre CSV-Datei über die Import-Benutzeroberfläche hoch
+2. Suchen Sie im Schritt der Feldzuordnung Ihre Beziehungsspalte (z. B. `companyDomain`)
+3. Ordnen Sie sie dem Beziehungsfeld zu (z. B. Unternehmen)
+4. Twenty verknüpft automatisch jeden Datensatz mit dem passenden übergeordneten Datensatz
+
+### Verfügbare eindeutige Felder für Beziehungen
+
+| Objekt                                              | Verfügbare eindeutige Felder                             |
+| --------------------------------------------------- | -------------------------------------------------------- |
+| **Unternehmen**                                     | `id`, `domain`, jedes benutzerdefinierte eindeutige Feld |
+| **Personen**                                        | `id`, `email`, jedes benutzerdefinierte eindeutige Feld  |
+| **Arbeitsbereichsmitglieder**                       | `id`, `email` (nicht Name)                               |
+| **Andere Standard- und benutzerdefinierte Objekte** | `id`, jedes als eindeutig markierte Feld                 |
+
+<Note>**Verknüpfung mit Workspace-Mitgliedern**: Wenn die Beziehung auf Workspace-Mitglieder verweist (Ihr Team, das sich bei Twenty anmeldet), referenzieren Sie sie über ihre **E-Mail-Adresse**, nicht über ihren Namen.</Note>
+
+<Note>Wir empfehlen, `domain` für Unternehmen und `email` für Personen zu verwenden, da diese menschenlesbar sind und sich in Tabellenkalkulationen leicht pflegen lassen.</Note>
+
+<Note>**Erinnerung**: Softgelöschte Datensätze (sichtbar unter Befehlsmenü → Gelöschte Datensätze anzeigen) zählen für die Einzigartigkeitskriterien. Wenn Sie einen Datensatz mit demselben eindeutigen Wert wie ein gelöschter Datensatz importieren, wird der gelöschte Datensatz wiederhergestellt. Weitere Details finden Sie unter [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints).</Note>
+
+## Regel für die Importreihenfolge
+
+<Warning>
+  **Importieren Sie immer zuerst die "Eins"-Seite!**
+
+  1. Zuerst **Unternehmen** (keine Abhängigkeiten)
+  2. **Personen** an zweiter Stelle (mit Unternehmen verknüpft)
+  3. **Opportunities** an dritter Stelle (mit Unternehmen/Personen verknüpft)
+  4. **Benutzerdefinierte Objekte** entsprechend ihren Abhängigkeiten
+
+  Der übergeordnete Datensatz muss existieren, bevor Sie darauf verweisen können.
+</Warning>

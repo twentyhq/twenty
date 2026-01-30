@@ -1,0 +1,78 @@
+---
+title: Signalements de bogues, demandes et pull requests
+info: Signalez des problèmes, demandez des fonctionnalités et contribuez au code
+---
+
+## Signaler des bogues
+
+Pour signaler un bogue, veuillez [créer un problème sur GitHub](https://github.com/twentyhq/twenty/issues/new).
+
+Vous pouvez également demander de l'aide sur [Discord](https://discord.gg/cx5n4Jzs57).
+
+## Demandes de fonctionnalités
+
+Si vous n'êtes pas sûr qu'il s'agisse d'un bogue, et que vous pensez que cela ressemble plus à une demande de fonctionnalité, alors vous devriez probablement [ouvrir une discussion à la place](https://github.com/twentyhq/twenty/discussions/new).
+
+## Soumettre une pull request
+
+La contribution au code de Twenty commence par une pull request (PR).
+
+### Avant de démarrer
+
+1. Consultez les [problèmes existants](https://github.com/twentyhq/twenty/issues) pour repérer les travaux liés
+2. Pour les nouvelles fonctionnalités, ouvrez d’abord un problème pour en discuter
+3. Consultez notre [Code de conduite](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+### Forker et cloner
+
+1. Forkez le dépôt sur GitHub
+2. Clonez votre fork:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. Ajoutez le remote upstream:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### Créer une branche
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+Utilisez des noms de branche descriptifs:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### Apportez vos modifications
+
+1. Écrivez un code propre et bien documenté
+2. Suivez le style de code existant
+3. Ajoutez des tests pour les nouvelles fonctionnalités
+4. Mettez à jour la documentation si nécessaire
+
+### Soumettez votre PR
+
+1. Poussez votre branche:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. Ouvrez une PR sur GitHub
+3. Remplissez le modèle de PR
+4. Liez les problèmes associés
+
+### Liste de contrôle de la PR
+
+* [ ] Le code respecte les directives de style du projet
+* [ ] Les tests réussissent localement
+* [ ] La documentation est à jour
+* [ ] La description de la PR explique les modifications

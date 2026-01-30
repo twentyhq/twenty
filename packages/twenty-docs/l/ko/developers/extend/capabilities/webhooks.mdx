@@ -1,0 +1,112 @@
+---
+title: Webhooks
+description: CRM에서 이벤트가 발생하면 실시간 알림을 받으세요.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+웹훅은 Twenty에서 이벤트가 발생하면 데이터를 실시간으로 귀하의 시스템으로 푸시합니다 — 폴링이 필요 없습니다. 이를 사용하여 외부 시스템을 동기화 상태로 유지하고, 자동화를 트리거하거나, 알림을 보낼 수 있습니다.
+
+## Webhook 생성
+
+1. **설정 → API 및 웹훅 → 웹훅**으로 이동
+2. **+ Webhook 생성** 클릭
+3. 웹훅 URL을 입력하세요(공개적으로 액세스 가능해야 함)
+4. **저장** 클릭
+
+웹훅이 즉시 활성화되어 알림 전송을 시작합니다.
+
+<VimeoEmbed videoId="928786708" title="웹훅 생성" />
+
+### 웹훅 관리
+
+**편집**: 웹훅을 클릭 → URL 업데이트 → **저장**
+
+**삭제**: 웹훅을 클릭 → **삭제** → 확인
+
+## 이벤트
+
+Twenty는 다음 이벤트 유형에 대해 웹훅을 전송합니다:
+
+| 이벤트           | 예시                                                         |
+| ------------- | ---------------------------------------------------------- |
+| **레코드 생성됨**   | `person.created`, `company.created`, `note.created`        |
+| **레코드 업데이트됨** | `person.updated`, `company.updated`, `opportunity.updated` |
+| **레코드 삭제됨**   | `person.deleted`, `company.deleted`                        |
+
+모든 이벤트 유형은 귀하의 웹훅 URL로 전송됩니다. 이벤트 필터링은 향후 릴리스에서 추가될 수 있습니다.
+
+## 페이로드 형식
+
+각 웹훅은 JSON 본문을 포함한 HTTP POST를 전송합니다:
+
+```json
+{
+  "event": "person.created",
+  "data": {
+    "id": "abc12345",
+    "firstName": "Alice",
+    "lastName": "Doe",
+    "email": "alice@example.com",
+    "createdAt": "2025-02-10T15:30:45Z",
+    "createdBy": "user_123"
+  },
+  "timestamp": "2025-02-10T15:30:50Z"
+}
+```
+
+| 필드      | 설명                               |
+| ------- | -------------------------------- |
+| `이벤트`   | 무슨 일이 발생했는지(예: `person.created`) |
+| `데이터`   | 생성/업데이트/삭제된 전체 레코드               |
+| `타임스탬프` | 이벤트가 발생한 시각(UTC)                 |
+
+<Note>
+  수신을 확인하기 위해 **2xx HTTP 상태**(200-299)로 응답하세요. 2xx가 아닌 응답은 전달 실패로 기록됩니다.
+</Note>
+
+## 웹훅 검증
+
+Twenty는 보안을 위해 각 웹훅 요청에 서명합니다. 요청의 진위를 보장하기 위해 서명을 검증하세요.
+
+### 헤더
+
+| 헤더                           | 설명             |
+| ---------------------------- | -------------- |
+| `X-Twenty-Webhook-Signature` | HMAC SHA256 서명 |
+| `X-Twenty-Webhook-Timestamp` | 요청 타임스탬프       |
+
+### 검증 단계
+
+1. `X-Twenty-Webhook-Timestamp`에서 타임스탬프를 가져옵니다
+2. 다음 문자열을 생성합니다: `{timestamp}:{JSON payload}`
+3. 웹훅 비밀을 사용하여 HMAC SHA256을 계산합니다
+4. `X-Twenty-Webhook-Signature`와 비교합니다
+
+### 예시(Node.js)
+
+```javascript
+const crypto = require("crypto");
+
+const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const payload = JSON.stringify(req.body);
+const secret = "your-webhook-secret";
+
+const stringToSign = `${timestamp}:${payload}`;
+const expectedSignature = crypto
+  .createHmac("sha256", secret)
+  .update(stringToSign)
+  .digest("hex");
+
+const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
+```
+
+## 웹훅 vs 워크플로
+
+| 방법                 | 방향  | 사용 사례                              |
+| ------------------ | --- | ---------------------------------- |
+| **웹훅**             | OUT | 레코드 변경 사항을 외부 시스템에 자동으로 알립니다       |
+| **워크플로 + HTTP 요청** | OUT | 사용자 지정 로직(필터, 변환)으로 데이터를 외부로 전송합니다 |
+| **워크플로 웹훅 트리거**    | IN  | 외부 시스템에서 Twenty로 데이터를 수신합니다        |
+
+외부 데이터를 수신하려면 [웹훅 트리거 설정](/l/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)을 참조하세요.

@@ -12,9 +12,13 @@ type OpportunityDataSeed = {
   position: number;
   pointOfContactId: string;
   companyId: string;
+  ownerId: string;
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
+  updatedBySource: string;
+  updatedByWorkspaceMemberId: string;
+  updatedByName: string;
 };
 
 export const OPPORTUNITY_DATA_SEED_COLUMNS: (keyof OpportunityDataSeed)[] = [
@@ -27,9 +31,13 @@ export const OPPORTUNITY_DATA_SEED_COLUMNS: (keyof OpportunityDataSeed)[] = [
   'position',
   'pointOfContactId',
   'companyId',
+  'ownerId',
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
+  'updatedBySource',
+  'updatedByWorkspaceMemberId',
+  'updatedByName',
 ];
 
 const GENERATE_OPPORTUNITY_IDS = (): Record<string, string> => {
@@ -185,9 +193,13 @@ const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
         COMPANY_DATA_SEED_IDS[
           `ID_${Math.ceil(INDEX / 2)}` as keyof typeof COMPANY_DATA_SEED_IDS
         ] || COMPANY_DATA_SEED_IDS.ID_1,
+      ownerId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdBySource: 'MANUAL',
       createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       createdByName: 'Tim Cook',
+      updatedBySource: 'MANUAL',
+      updatedByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      updatedByName: 'Tim Cook',
     });
   }
 

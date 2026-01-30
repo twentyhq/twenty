@@ -6,8 +6,6 @@ import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, InsertResult, ObjectLiteral } from 'typeorm';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
@@ -17,6 +15,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -31,6 +30,7 @@ import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runne
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -418,16 +418,24 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
     });
 
+    const orderedIds = objectRecords.generatedMaps.map((record) => record.id);
+
     const upsertedRecords = await queryBuilder
       .setFindOptions({
         select: columnsToSelect,
       })
       .where({
-        id: In(objectRecords.generatedMaps.map((record) => record.id)),
+        id: In(orderedIds),
       })
       .withDeleted()
       .take(QUERY_MAX_RECORDS)
       .getMany();
+
+    const orderIndex = new Map(orderedIds.map((id, index) => [id, index]));
+
+    upsertedRecords.sort(
+      (a, b) => (orderIndex.get(a.id) ?? 0) - (orderIndex.get(b.id) ?? 0),
+    );
 
     return upsertedRecords as ObjectRecord[];
   }
@@ -467,6 +475,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       throw new CommonQueryRunnerException(
         `Missing createdBy field metadata for object ${flatObjectMetadata.nameSingular}`,
         CommonQueryRunnerExceptionCode.MISSING_SYSTEM_FIELD,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
 

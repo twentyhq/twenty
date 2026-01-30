@@ -1,0 +1,91 @@
+---
+title: Objets
+description: Découvrez les objets standard et personnalisés dans Twenty.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Objets Standard
+
+Les objets standard sont des entités prédéfinies dans votre espace de travail pour vous aider à commencer. Ils font partie d'un modèle de données partagé accessible à tous les utilisateurs de Twenty. Vous pouvez les utiliser tels quels, les personnaliser ou les désactiver.
+
+<img src="/images/user-guide/objects/standard-objects.png" style={{width:'100%'}} />
+
+### Personnes
+
+L'objet `Personnes` stocke vos contacts. Il inclut les détails de contact et l'historique des interactions, afin que vous puissiez voir toutes vos interactions client en un seul endroit.
+
+### Entreprise
+
+L'objet `Entreprises` stocke vos comptes professionnels. Il inclut des détails tels que l'industrie, la taille et la localisation. Les entreprises se connectent aux objets `Personnes` et `Opportunités`.
+
+### Opportunités
+
+L'objet `Opportunités` stocke les données liées aux affaires. Il suit la progression des ventes potentielles, de la prospection à la clôture, en enregistrant les étapes, les tailles des affaires, le compte associé et la date prévue de clôture. Vous pouvez visualiser votre pipeline de ventes dans une mise en page kanban.
+
+### Notes
+
+L'objet `Notes` stocke des notes en texte libre qui peuvent être associées à des Personnes, des Entreprises, des Opportunités et d'autres enregistrements. Utilisez les notes pour consigner des comptes rendus de réunion, des détails importants ou toute information contextuelle.
+
+### Tâches
+
+L'objet `Tasks` stocke des tâches à faire et des actions à effectuer. Les tâches peuvent être liées à des Personnes, des Entreprises, des Opportunités et à d'autres enregistrements. Suivez les dates d'échéance, les responsables et l'état d'achèvement pour garder la maîtrise de vos suivis.
+
+## Objets personnalisés
+
+Les objets personnalisés vous permettent de stocker des informations uniques à votre organisation que les objets standards ne peuvent pas gérer. Par exemple, si vous êtes SpaceX, vous pouvez créer un objet personnalisé pour les Fusées et les Lancements.
+
+<img src="/images/user-guide/objects/custom-objects.png" style={{width:'100%'}} />
+
+### Créer un nouvel objet personnalisé
+
+Pour créer un nouvel objet personnalisé :
+
+1. Accédez à Paramètres dans la barre latérale à gauche.
+2. Sous Espace de travail, allez au Modèle de données. Ici, vous pourrez voir un aperçu de tous vos objets Standard et Personnalisés (actifs et désactivés).
+
+<VimeoEmbed videoId="926288174" title="Démonstration vidéo" />
+
+3. Cliquez sur `+ Nouvel objet` en haut. Entrez le nom (à la fois singulier et pluriel), choisissez une icône, ajoutez une description pour votre objet personnalisé et cliquez sur Enregistrer (en haut à droite). En utilisant Listing comme exemple d'objet personnalisé, le singulier serait "listing" et le pluriel serait "listings" avec une description comme "Les annonces que les hôtes ont créées pour présenter leur propriété."
+
+4. Votre objet personnalisé est maintenant créé et apparaîtra dans votre barre latérale. Vous pouvez commencer à y ajouter des enregistrements immédiatement.
+
+## Gestion des objets
+
+### Désactivation des objets
+
+Si vous n'avez pas besoin d'un objet standard ou personnalisé :
+
+1. Allez dans Paramètres → Modèle de données
+2. Recherchez l'objet que vous souhaitez désactiver
+3. Cliquez sur l'interrupteur pour le désactiver
+4. L'objet sera masqué dans votre espace de travail, mais ses données seront conservées
+
+### Réactivation des objets
+
+Pour réactiver un objet désactivé :
+
+1. Allez dans Paramètres → Modèle de données
+2. Recherchez les objets désactivés (ils seront grisés)
+3. Cliquez sur l'interrupteur pour le réactiver
+4. L'objet et toutes ses données seront restaurés
+
+## Meilleures pratiques
+
+### Quand créer des objets personnalisés
+
+* **Entités métier uniques** : Éléments spécifiques à votre secteur ou à votre processus
+* **Relations complexes** : Lorsque vous devez suivre les liens entre plusieurs entités
+* **Données évolutives** : Lorsque vous pouvez avoir de nombreuses occurrences d'un élément
+
+### Quand utiliser des champs à la place
+
+* **Attributs simples** : Propriétés qui décrivent des objets existants
+* **Catégories ou libellés** : Moyens de classer des enregistrements existants
+* **Valeurs uniques** : Informations qui n'ont pas besoin de leur propre cycle de vie
+
+### Nommage des objets
+
+* **Utilisez des noms clairs et explicites** : Indiquez clairement ce que représente l'objet
+* **Suivez les conventions** : utilisez le singulier pour le nom de l'objet, le pluriel pour la collection
+* **Tenez compte de votre équipe** : Choisissez des noms que tout le monde comprendra

@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { In, Raw } from 'typeorm';
 import {
+  ObjectRecordEvent,
   type ObjectRecordCreateEvent,
   type ObjectRecordDeleteEvent,
   type ObjectRecordDestroyEvent,
   type ObjectRecordUpdateEvent,
   type ObjectRecordUpsertEvent,
-  type ObjectRecordNonDestructiveEvent,
 } from 'twenty-shared/database-events';
+import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { In, Raw } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -24,7 +24,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import {
   AutomatedTriggerType,
   type WorkflowAutomatedTriggerWorkspaceEntity,
@@ -247,68 +247,64 @@ export class WorkflowDatabaseEventTriggerListener {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const { fieldIdByJoinColumnName } =
-          buildFieldMapsFromFlatObjectMetadata(
-            flatFieldMetadataMaps,
-            flatObjectMetadata,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const { fieldIdByJoinColumnName } = buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+      );
+
+      for (const [joinColumnName, joinFieldId] of Object.entries(
+        fieldIdByJoinColumnName,
+      )) {
+        const joinField = findFlatEntityByIdInFlatEntityMapsOrThrow({
+          flatEntityMaps: flatFieldMetadataMaps,
+          flatEntityId: joinFieldId,
+        });
+
+        const joinRecordIds = records
+          .map((record) => record[joinColumnName])
+          .filter(isDefined);
+
+        if (joinRecordIds.length === 0) {
+          continue;
+        }
+
+        const relatedObjectMetadataId =
+          joinField.relationTargetObjectMetadataId;
+
+        if (!isDefined(relatedObjectMetadataId)) {
+          continue;
+        }
+
+        const relatedObjectMetadataNameSingular =
+          flatObjectMetadataMaps.byId[relatedObjectMetadataId]?.nameSingular;
+
+        if (!isDefined(relatedObjectMetadataNameSingular)) {
+          continue;
+        }
+
+        const relatedObjectRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            relatedObjectMetadataNameSingular,
+            { shouldBypassPermissionChecks: true },
           );
 
-        for (const [joinColumnName, joinFieldId] of Object.entries(
-          fieldIdByJoinColumnName,
-        )) {
-          const joinField = findFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityMaps: flatFieldMetadataMaps,
-            flatEntityId: joinFieldId,
-          });
+        const relatedRecords = await relatedObjectRepository.find({
+          where: { id: In(joinRecordIds) },
+        });
 
-          const joinRecordIds = records
-            .map((record) => record[joinColumnName])
-            .filter(isDefined);
-
-          if (joinRecordIds.length === 0) {
-            continue;
-          }
-
-          const relatedObjectMetadataId =
-            joinField.relationTargetObjectMetadataId;
-
-          if (!isDefined(relatedObjectMetadataId)) {
-            continue;
-          }
-
-          const relatedObjectMetadataNameSingular =
-            flatObjectMetadataMaps.byId[relatedObjectMetadataId]?.nameSingular;
-
-          if (!isDefined(relatedObjectMetadataNameSingular)) {
-            continue;
-          }
-
-          const relatedObjectRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              relatedObjectMetadataNameSingular,
-              { shouldBypassPermissionChecks: true },
-            );
-
-          const relatedRecords = await relatedObjectRepository.find({
-            where: { id: In(joinRecordIds) },
-          });
-
-          for (const record of records) {
-            record[joinField.name] = relatedRecords.find(
-              (relatedRecord) => relatedRecord.id === record[joinColumnName],
-            );
-          }
+        for (const record of records) {
+          record[joinField.name] = relatedRecords.find(
+            (relatedRecord) => relatedRecord.id === record[joinColumnName],
+          );
         }
-      },
-    );
+      }
+    }, authContext);
   }
 
   private async shouldIgnoreEvent(
-    payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
+    payload: WorkspaceEventBatch<ObjectRecordEvent>,
   ) {
     const workspaceId = payload.workspaceId;
     const databaseEventName = payload.name;
@@ -330,7 +326,7 @@ export class WorkflowDatabaseEventTriggerListener {
     payload,
     action,
   }: {
-    payload: WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>;
+    payload: WorkspaceEventBatch<ObjectRecordEvent>;
     action: DatabaseEventAction;
   }) {
     const workspaceId = payload.workspaceId;
@@ -339,50 +335,47 @@ export class WorkflowDatabaseEventTriggerListener {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowAutomatedTriggerRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
-            workspaceId,
-            automatedTriggerTableName,
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowAutomatedTriggerRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+          workspaceId,
+          automatedTriggerTableName,
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const eventListeners = await workflowAutomatedTriggerRepository.find({
-          where: {
-            type: AutomatedTriggerType.DATABASE_EVENT,
-            settings: Raw(
-              () =>
-                `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
-              { eventName: databaseEventName },
-            ),
-          },
-        });
+      const eventListeners = await workflowAutomatedTriggerRepository.find({
+        where: {
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          settings: Raw(
+            () =>
+              `"${automatedTriggerTableName}"."settings"->>'eventName' = :eventName`,
+            { eventName: databaseEventName },
+          ),
+        },
+      });
 
-        for (const eventListener of eventListeners) {
-          for (const eventPayload of payload.events) {
-            const shouldTriggerJob = this.shouldTriggerJob({
-              eventPayload,
-              eventListener,
-              action,
-            });
+      for (const eventListener of eventListeners) {
+        for (const eventPayload of payload.events) {
+          const shouldTriggerJob = this.shouldTriggerJob({
+            eventPayload,
+            eventListener,
+            action,
+          });
 
-            if (shouldTriggerJob) {
-              await this.messageQueueService.add<WorkflowTriggerJobData>(
-                WorkflowTriggerJob.name,
-                {
-                  workspaceId,
-                  workflowId: eventListener.workflowId,
-                  payload: eventPayload,
-                },
-                { retryLimit: 3 },
-              );
-            }
+          if (shouldTriggerJob) {
+            await this.messageQueueService.add<WorkflowTriggerJobData>(
+              WorkflowTriggerJob.name,
+              {
+                workspaceId,
+                workflowId: eventListener.workflowId,
+                payload: eventPayload,
+              },
+              { retryLimit: 3 },
+            );
           }
         }
-      },
-    );
+      }
+    }, authContext);
   }
 
   private shouldTriggerJob({
@@ -390,7 +383,7 @@ export class WorkflowDatabaseEventTriggerListener {
     eventListener,
     action,
   }: {
-    eventPayload: ObjectRecordNonDestructiveEvent;
+    eventPayload: ObjectRecordEvent;
     eventListener: WorkflowAutomatedTriggerWorkspaceEntity;
     action: DatabaseEventAction;
   }) {

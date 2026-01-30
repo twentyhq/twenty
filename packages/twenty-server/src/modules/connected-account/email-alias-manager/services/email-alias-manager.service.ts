@@ -49,22 +49,19 @@ export class EmailAliasManagerService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-
-        await connectedAccountRepository.update(
-          { id: connectedAccount.id },
-          {
-            handleAliases: handleAliases.join(','), // TODO: modify handleAliases to be of fieldmetadatatype array
-          },
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const connectedAccountRepository =
+        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+          workspaceId,
+          'connectedAccount',
         );
-      },
-    );
+
+      await connectedAccountRepository.update(
+        { id: connectedAccount.id },
+        {
+          handleAliases: handleAliases.join(','), // TODO: modify handleAliases to be of fieldmetadatatype array
+        },
+      );
+    }, authContext);
   }
 }

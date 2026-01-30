@@ -1,0 +1,147 @@
+---
+title: API
+description: Interroga e modifica i dati del tuo CRM in modo programmatico usando REST o GraphQL.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty è stato progettato per essere adatto agli sviluppatori, offrendo potenti API che si adattano al tuo modello di dati personalizzato. Forniamo quattro tipi distinti di API per soddisfare diverse esigenze di integrazione.
+
+## Approccio incentrato sullo sviluppatore
+
+Twenty genera API specifiche per il tuo modello di dati:
+
+* **Nessun ID lungo richiesto**: Utilizza direttamente i nomi degli oggetti e dei campi negli endpoint
+* **Oggetti standard e personalizzati trattati allo stesso modo**: I tuoi oggetti personalizzati ricevono lo stesso trattamento API di quelli predefiniti
+* **Endpoint dedicati**: Ogni oggetto e campo ottiene il proprio endpoint API
+* **Documentazione personalizzata**: Generata specificamente per il modello di dati del tuo workspace
+
+<Note>
+  La documentazione personalizzata delle tue API è disponibile in **Impostazioni → API & Webhooks** dopo aver creato una chiave API. Poiché Twenty genera API che corrispondono al tuo modello di dati personalizzato, la documentazione è unica per il tuo workspace.
+</Note>
+
+## I due tipi di API
+
+### Core API
+
+Accessibile su `/rest/` o `/graphql/`
+
+Lavora con i tuoi **record** reali (i dati):
+
+* Crea, leggi, aggiorna, elimina Persone, Aziende, Opportunità, ecc.
+* Interroga e filtra i dati
+* Gestire le relazioni dei record
+
+### Metadata API
+
+Accessibile su `/rest/metadata/` o `/metadata/`
+
+Gestisci il tuo **workspace e il modello di dati**:
+
+* Crea, modifica o elimina oggetti e campi
+* Configura le impostazioni del workspace
+* Definisci le relazioni tra oggetti
+
+## REST vs GraphQL
+
+Sia le API Core che le API Metadata sono disponibili nei formati REST e GraphQL:
+
+| Formato     | Operazioni disponibili                                                                |
+| ----------- | ------------------------------------------------------------------------------------- |
+| **REST**    | CRUD, operazioni batch, upsert                                                        |
+| **GraphQL** | Stesse funzionalità + **upsert in batch**, query sulle relazioni in un'unica chiamata |
+
+Scegli in base alle tue esigenze — entrambi i formati accedono agli stessi dati.
+
+## Endpoint API
+
+| Ambiente          | URL di base               |
+| ----------------- | ------------------------- |
+| **Cloud**         | `https://api.twenty.com/` |
+| **Auto-ospitato** | `https://{your-domain}/`  |
+
+## Autenticazione
+
+Ogni richiesta API richiede una chiave API nell'intestazione:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Crea una chiave API
+
+1. Vai a **Impostazioni → APIs & Webhooks**
+2. Fai clic su **+ Crea chiave**
+3. Configura:
+   * **Nome**: Nome descrittivo per la chiave
+   * **Data di scadenza**: Quando la chiave scade
+4. Clicca su **Salva**
+5. **Copia subito** — la chiave viene mostrata una sola volta
+
+<VimeoEmbed videoId="928786722" title="Creazione della chiave API" />
+
+<Warning>
+  La tua chiave API concede l'accesso a dati sensibili. Non condividerla con servizi non affidabili. Se compromessa, disabilitala immediatamente e generane una nuova.
+</Warning>
+
+### Assegna un ruolo a una chiave API
+
+Per una maggiore sicurezza, assegna un ruolo specifico per limitare l'accesso:
+
+1. Vai a **Impostazioni → Ruoli**
+2. Fai clic sul ruolo da assegnare
+3. Apri la scheda **Assegnazione**
+4. In **Chiavi API**, fai clic su **+ Assegna alla chiave API**
+5. Seleziona la chiave API
+
+La chiave erediterà le autorizzazioni di quel ruolo. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions) per i dettagli.
+
+### Gestisci chiavi API
+
+**Rigenera**: Impostazioni → APIs & Webhooks → Fai clic sulla chiave → **Rigenera**
+
+**Elimina**: Impostazioni → APIs & Webhooks → Fai clic sulla chiave → **Elimina**
+
+## Playground API
+
+Testa le tue API direttamente nel browser con il nostro playground integrato — disponibile sia per **REST** sia per **GraphQL**.
+
+### Accedi al Playground
+
+1. Vai a **Impostazioni → APIs & Webhooks**
+2. Crea una chiave API (obbligatorio)
+3. Fai clic su **REST API** o **GraphQL API** per aprire il playground
+
+### Cosa ottieni
+
+* **Documentazione interattiva**: Generata per il tuo specifico modello di dati
+* **Test in tempo reale**: Esegui chiamate API reali sul tuo workspace
+* **Esploratore dello schema**: Sfoglia gli oggetti, i campi e le relazioni disponibili
+* **Generatore di richieste**: Crea query con completamento automatico
+
+Il playground riflette i tuoi oggetti e campi personalizzati, quindi la documentazione è sempre accurata per il tuo workspace.
+
+## Operazioni Batch
+
+Sia REST che GraphQL supportano operazioni batch:
+
+* **Dimensione batch**: Fino a 60 record per richiesta
+* **Operazioni**: Creare, aggiornare, eliminare più record
+
+**Funzionalità esclusive di GraphQL:**
+
+* **Upsert in batch**: Crea o aggiorna in un'unica chiamata
+* Usa nomi oggetto al plurale (ad es. `CreateCompanies` invece di `CreateCompany`)
+
+## Limiti di frequenza delle API
+
+Le richieste API sono limitate per garantire la stabilità della piattaforma:
+
+| Limite               | Valore                 |
+| -------------------- | ---------------------- |
+| **Richieste**        | 100 chiamate al minuto |
+| **Dimensione batch** | 60 record per chiamata |
+
+<Tip>
+  Usa le operazioni batch per massimizzare il throughput — elabora fino a 60 record in una singola chiamata API invece di effettuare richieste individuali.
+</Tip>

@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { useObjectNameSingularFromPlural } from '../useObjectNameSingularFromPlural';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 
 describe('useObjectNameSingularFromPlural', () => {
   it('should work as expected', async () => {

@@ -1,0 +1,254 @@
+---
+title: FAQ sur les flux de travail
+description: Foire aux questions sur les flux de travail dans Twenty.
+---
+
+<AccordionGroup>
+  <Accordion title="Pourquoi ne puis-je pas activer un flux de travail ?">
+    Il s'agit probablement d'un problème de permissions. Vous avez besoin d'un accès aux flux de travail pour les créer et les activer.
+
+    **Solution** : Contactez l'administrateur de votre espace de travail pour vous accorder l'accès aux flux de travail dans **Paramètres → Rôles**.
+
+    Si vous ne voyez pas du tout la section des flux de travail dans votre barre latérale, cela confirme qu'il s'agit d'un problème de permissions.
+  </Accordion>
+
+  <Accordion title="Pourquoi ne vois-je pas mon bouton de flux de travail manuel dans la barre de navigation supérieure ?">
+    Les flux de travail manuels n'apparaissent dans la barre de navigation que s'ils sont correctement configurés :
+
+    1. Le flux de travail doit être **activé** (pas en mode brouillon)
+    2. L'emplacement dans la barre de navigation doit être défini sur **Pinned**
+    3. Pour les déclencheurs Single/Bulk, vous devez vous trouver sur la page d'objet appropriée
+
+    **À vérifier** : Ouvrez le flux de travail → cliquez sur le déclencheur → vérifiez que "Navbar placement" est défini sur "Pinned".
+
+    Vous pouvez toujours accéder aux flux de travail manuels via **Cmd + K** (ou **Ctrl + K**), quels que soient les paramètres de la barre de navigation.
+  </Accordion>
+
+  <Accordion title="Quelle est la différence entre les déclencheurs manuels Single, Global et Bulk ?">
+    | Type | Enregistrements requis | Exécutions de workflows |
+    | ---- | ---------------------- | ----------------------- |
+
+    \| **Global** | Aucun | Une fois, sans saisie d'enregistrement |
+    \| **Single** | Un ou plusieurs sélectionnés | Une fois par enregistrement sélectionné |
+    \| **Bulk** | Un ou plusieurs sélectionnés | Une fois, avec tous les enregistrements sous forme de tableau |
+
+    * **Global** : À utiliser lorsque le flux de travail n'a besoin d'aucun contexte d'enregistrement (p. ex., générer un rapport)
+    * **Single** : À utiliser lorsque vous souhaitez traiter chaque enregistrement sélectionné indépendamment (p. ex., envoyer des e-mails individuels)
+    * **Bulk** : À utiliser lorsque vous devez traiter les enregistrements ensemble ou optimiser l'utilisation des crédits (nécessite l'action Iterator)
+
+    Voir [Déclencheurs de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-triggers) pour plus de détails.
+  </Accordion>
+
+  <Accordion title="Je ne vois pas de nœud If/Else. Que dois-je faire ?">
+    Un nœud If/Else explicite n'est pas encore disponible, mais il figure sur notre feuille de route.
+
+    **Solution de contournement actuelle** : Créez plusieurs branches à partir de votre étape, chacune commençant par une action **Filter** :
+
+    ```
+    Step 1
+       │
+       ├── Branch A: Filter (condition = true) → Actions...
+       │
+       └── Branch B: Filter (condition = false) → Actions...
+    ```
+
+    Seule la branche où la condition du filtre est vérifiée exécutera ses actions suivantes.
+
+    Voir [Comment utiliser les branches](/l/fr/user-guide/workflows/capabilities/workflow-branches) pour un guide étape par étape.
+  </Accordion>
+
+  <Accordion title="Les branches de flux de travail s'exécutent-elles en parallèle ?">
+    **Oui**, les branches s'exécutent par défaut en parallèle.
+
+    Si vous souhaitez qu'une seule branche s'exécute :
+
+    * Ajoutez une action **Filter** au début de chaque branche
+    * Définissez des conditions opposées (p. ex., Branche A : status = "Open", Branche B : status ≠ "Open")
+
+    Les branches qui ne satisfont pas leur condition de filtre cessent de s'exécuter, tandis que les autres continuent.
+  </Accordion>
+
+  <Accordion title="Puis-je fusionner les branches ?">
+    **Oui**. Après l'exécution de vos branches parallèles, vous pouvez ajouter une étape à laquelle les deux branches se connectent.
+
+    Dans l'éditeur de flux de travail :
+
+    1. Terminez vos actions dans les branches
+    2. Ajoutez une nouvelle étape après les branches
+    3. Faites glisser des connexions depuis la fin de chaque branche vers cette nouvelle étape
+
+    L'étape fusionnée s'exécutera après l'achèvement de toutes les branches connectées.
+  </Accordion>
+
+  <Accordion title="Quelle est la limite des résultats de Search Records ?">
+    **Search Records renvoie un maximum de 200 enregistrements.**
+
+    Si vous devez en traiter davantage :
+
+    * Ajoutez des filtres plus spécifiques pour réduire les résultats
+    * Utilisez des flux de travail planifiés pour traiter par lots
+    * Envisagez d'utiliser l'API pour des opérations en masse
+
+    Pour la plupart des flux de travail, 200 enregistrements suffisent. Si vous atteignez régulièrement cette limite, envisagez de restructurer votre automatisation.
+  </Accordion>
+
+  <Accordion title="Puis-je mettre des personnes en CC sur les e-mails de flux de travail ?">
+    **Pas encore.** Les champs CC et Cci pour l'action Send Email figurent sur notre feuille de route.
+
+    **Solution de contournement actuelle** : Ajoutez plusieurs actions Send Email pour envoyer à des destinataires supplémentaires, ou utilisez une HTTP Request pour envoyer via un service de messagerie externe qui prend en charge le CC.
+  </Accordion>
+
+  <Accordion title="Comment utiliser les sorties des étapes précédentes ?">
+    Chaque action produit des données de sortie qui peuvent être utilisées dans les étapes suivantes.
+
+    **Pour référencer les données d'une étape précédente** :
+
+    * Utilisez le sélecteur de variables lors de la configuration d'un champ
+    * Ou saisissez directement `{{stepName.fieldName}}`
+
+    **Exemples** :
+
+    * Données du déclencheur : `{{trigger.object.email}}`
+    * Résultats de la recherche : `{{searchRecords[0].name}}`
+    * Sortie du code : `{{code.calculatedValue}}`
+
+    Survolez n'importe quel champ dans la configuration de l'action pour voir les variables disponibles provenant des étapes précédentes.
+  </Accordion>
+
+  <Accordion title="Pourquoi mon Iterator échoue-t-il ?">
+    **Iterator nécessite en entrée un tableau.** Problèmes courants :
+
+    1. **L'entrée n'est pas un tableau** : Assurez-vous de transmettre les résultats de Search Records ou d'une autre action qui renvoie un tableau
+    2. **Le tableau est vide** : Ajoutez un filtre avant Iterator pour vérifier `{{searchRecords.length}} > 0`
+    3. **Mauvaise variable sélectionnée** : Assurez-vous de sélectionner le tableau lui-même, et non un seul enregistrement
+
+    **Configuration correcte** :
+
+    1. Search Records (renvoie un tableau)
+    2. Filtre : length > 0
+    3. Iterator : sélectionnez `{{searchRecords}}`
+    4. Les actions à l'intérieur d'Iterator utilisent `{{iterator.currentItem.fieldName}}`
+  </Accordion>
+
+  <Accordion title="Quel est le temps d'exécution maximal pour les actions Code ?">
+    Les actions Code (fonctions logiques) ont un **délai d'expiration par défaut de 5 minutes** (300 secondes).
+
+    Le délai d'expiration maximal configurable est de **15 minutes** (900 secondes).
+
+    Si votre code dépasse cette limite, l'action échouera avec une erreur de délai d'expiration.
+
+    **Conseils pour éviter les délais d'expiration** :
+
+    * Divisez les opérations volumineuses en plus petits blocs à l'aide d'Iterator
+    * Évitez les calculs lourds ; utilisez des services externes via HTTP Request pour les traitements intensifs
+    * Optimisez votre code pour réduire le temps d'exécution
+    * Si vous avez besoin d'un traitement plus long, envisagez d'utiliser des flux de travail planifiés qui traitent les données par lots
+  </Accordion>
+
+  <Accordion title="Comment lire les exécutions de flux de travail ?">
+    Les exécutions de flux de travail affichent l'historique d'exécution et vous aident à diagnostiquer les problèmes.
+
+    **Accéder aux exécutions** :
+
+    * Dans l'éditeur de flux de travail → volet **Runs** à droite
+    * Ou allez à **Workflow Runs** dans la barre latérale
+
+    **Comprendre une exécution** :
+
+    * **Statut** : En cours, Terminé, Échoué, En attente
+    * **Étapes** : Voyez quelles étapes ont été exécutées et leur sortie
+    * **Erreurs** : Cliquez sur les étapes en échec pour voir les messages d'erreur
+    * **Données** : Affichez les données d'entrée/sortie à chaque étape
+
+    Voir [Exécutions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-runs) pour plus de détails.
+  </Accordion>
+
+  <Accordion title="Pourquoi ne vois-je pas mes exécutions de flux de travail ?">
+    Les exécutions de flux de travail peuvent échouer immédiatement en raison des limites de débit.
+
+    **Limite stricte : 5 000 exécutions par heure et par espace de travail.**
+
+    Si vous dépassez cette limite, les flux de travail sont immédiatement marqués comme ayant échoué et n'apparaîtront pas dans votre liste d'exécutions comme prévu.
+
+    **Scénarios courants qui atteignent cette limite** :
+
+    * Sélection de plus de 5 000 enregistrements avec un déclencheur manuel Single
+    * Plusieurs flux de travail s'exécutant simultanément dans votre espace de travail
+    * Déclencheurs automatisés à haute fréquence (p. ex., Record Updated sur un objet très sollicité)
+
+    **Solutions** :
+
+    * Utilisez des déclencheurs **Bulk** plutôt que Single pour traiter de nombreux enregistrements en une seule exécution
+    * Espacez les opérations de traitement par lots
+    * Utilisez des filtres pour réduire la fréquence des déclencheurs
+    * Planifiez les flux de travail lourds pendant les heures creuses
+  </Accordion>
+
+  <Accordion title="Quelles sont les limites de débit des flux de travail ?">
+    Twenty a deux limites de débit pour garantir la stabilité du système :
+
+    | Limite | Valeur | Comportement |
+    | ------ | ------ | ------------ |
+
+    \| **Limite souple** | 100 exécutions/minute | Les exécutions sont mises en file d'attente avec le statut "Non démarré", puis traitées progressivement |
+    \| **Limite stricte** | 5 000 exécutions/heure | Les exécutions échouent immédiatement |
+
+    **Limite souple (100/min)** : Vos flux de travail n'échoueront pas — ils attendent simplement dans la file et sont traités au fil du temps. Vous pouvez déclencher plus de 100 enregistrements ; l'exécution sera plus lente.
+
+    **Limite stricte (5 000/h)** : Cela s'applique à l'ensemble de votre espace de travail. Si l'ensemble de vos flux de travail dépasse 5 000 exécutions en une heure, les exécutions supplémentaires échoueront immédiatement.
+
+    **Conseils pour rester dans les limites** :
+
+    * Utilisez des déclencheurs Bulk avec Iterator au lieu de déclencheurs Single pour les gros lots
+    * Regroupez les automatisations liées dans un nombre plus restreint de flux de travail
+    * Utilisez des flux de travail planifiés pour étaler la charge dans le temps
+  </Accordion>
+
+  <Accordion title="Puis-je relancer une exécution de flux de travail ayant échoué ?">
+    **Non, il n'existe pas de fonctionnalité de nouvelle tentative automatique pour le moment.**
+
+    Si une exécution de flux de travail échoue, vous devrez :
+
+    1. Examinez l'erreur dans **Paramètres → Flux de travail → [Votre flux de travail] → Runs**
+    2. Corrigez le problème (données, configuration ou service externe)
+    3. Déclenchez manuellement à nouveau le flux de travail sur le ou les enregistrements concernés
+
+    **Conseils pour réduire les échecs** :
+
+    * Ajoutez des nœuds **Filter** pour valider les données avant les actions
+    * Utilisez **Search Records** pour vérifier si des enregistrements liés existent
+    * Testez minutieusement avec quelques enregistrements avant les opérations en masse
+
+    La fonctionnalité de nouvelle tentative automatique figure sur notre feuille de route pour une version ultérieure.
+  </Accordion>
+
+  <Accordion title="Dois-je désactiver les flux de travail avant les importations CSV ?">
+    **Oui, si vos flux de travail sont déclenchés par la création ou la mise à jour d'enregistrements.**
+
+    Lorsque vous importez des données via CSV, chaque enregistrement créé ou mis à jour peut déclencher des flux de travail. Un import important (des milliers d'enregistrements) pourrait :
+
+    * Atteindre la limite de 5 000 exécutions/heure
+    * Consommer un nombre important de crédits de flux de travail
+    * Envoyer des e-mails ou des notifications inattendus
+    * Créer des tâches ou des enregistrements en double
+
+    **Avant un import massif** :
+
+    1. Allez dans **Paramètres → Flux de travail**
+    2. Identifiez les flux de travail déclenchés par l'objet que vous importez
+    3. **Désactivez**-les temporairement
+    4. Lancez votre import CSV
+    5. **Réactivez** les flux de travail une fois terminé
+
+    **Alternative** : Si vous avez besoin que les flux de travail s'exécutent sur les données importées, importez par plus petits lots pour rester dans les limites de débit.
+  </Accordion>
+
+  <Accordion title="Comment nettoyer la disposition de mon flux de travail ?">
+    Si votre canevas de flux de travail semble désordonné avec des nœuds disséminés, vous pouvez l'organiser automatiquement :
+
+    1. Cliquez avec le bouton droit n'importe où sur le canevas du flux de travail
+    2. Cliquez sur **Tidy up workflow**
+
+    Cela réorganisera automatiquement tous les nœuds dans une disposition propre et organisée.
+  </Accordion>
+</AccordionGroup>

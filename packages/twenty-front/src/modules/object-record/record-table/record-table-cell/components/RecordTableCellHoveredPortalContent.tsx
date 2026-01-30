@@ -18,27 +18,28 @@ import { BORDER_COMMON } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
-  isReadOnly: boolean;
+  showInteractiveStyle: boolean;
   isRowActive: boolean;
 }>`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.secondary};
   background-color: ${({ theme, isRowActive }) =>
     isRowActive ? theme.accent.quaternary : theme.background.primary};
-  border-radius: ${({ isReadOnly }) =>
-    !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
+  border-radius: ${({ showInteractiveStyle }) =>
+    showInteractiveStyle ? BORDER_COMMON.radius.sm : 'none'};
   box-sizing: border-box;
-  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
+  cursor: ${({ showInteractiveStyle }) =>
+    showInteractiveStyle ? 'pointer' : 'default'};
   display: flex;
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ theme, isReadOnly, isRowActive }) =>
+  outline: ${({ theme, showInteractiveStyle, isRowActive }) =>
     isRowActive
       ? 'none'
-      : isReadOnly
-        ? `1px solid ${theme.border.color.medium}`
-        : `1px solid ${theme.font.color.extraLight}`};
+      : showInteractiveStyle
+        ? `1px solid ${theme.font.color.extraLight}`
+        : `1px solid ${theme.border.color.medium}`};
 
   user-select: none;
 `;
@@ -57,7 +58,11 @@ export const RecordTableCellHoveredPortalContent = () => {
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const showButton =
-    !isFieldInputOnly && !isReadOnly && !(isMobile && isFirstColumn);
+    !isFieldInputOnly &&
+    (!isReadOnly || isFirstColumn) &&
+    !(isMobile && isFirstColumn);
+
+  const showInteractiveStyle = !isReadOnly || (isFirstColumn && showButton);
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
 
@@ -68,7 +73,7 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   return (
     <StyledRecordTableCellHoveredPortalContent
-      isReadOnly={isReadOnly}
+      showInteractiveStyle={showInteractiveStyle}
       isRowActive={isRowActive}
     >
       {isFieldInputOnly ? (

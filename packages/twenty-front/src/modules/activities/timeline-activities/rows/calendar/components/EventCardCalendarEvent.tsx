@@ -119,7 +119,7 @@ export const EventCardCalendarEvent = ({
       },
     },
     onCompleted: (data) => {
-      upsertRecordsInStore([data]);
+      upsertRecordsInStore({ partialRecords: [data] });
     },
   });
 

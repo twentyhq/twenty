@@ -1,5 +1,6 @@
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -12,12 +13,14 @@ import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode'
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { sleep } from '~/utils/sleep';
 
 type useDeleteManyRecordProps = {
@@ -34,7 +37,6 @@ export type DeleteManyRecordsProps = {
 export const useDeleteManyRecords = ({
   objectNameSingular,
 }: useDeleteManyRecordProps) => {
-  const { registerObjectOperation } = useRegisterObjectOperation();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const apiConfig = useRecoilValue(apiConfigState);
 
@@ -57,9 +59,12 @@ export const useDeleteManyRecords = ({
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
+  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  );
+  const { removeNavigationMenuItemsByTargetRecordIds } =
+    useRemoveNavigationMenuItemByTargetRecordId();
 
   const mutationResponseField = getDeleteManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -222,10 +227,20 @@ export const useDeleteManyRecords = ({
         await sleep(delayInMsBetweenRequests);
       }
     }
-    await refetchAggregateQueries();
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
 
-    registerObjectOperation(objectMetadataItem, {
-      type: 'delete-many',
+    if (isNavigationMenuItemEnabled) {
+      removeNavigationMenuItemsByTargetRecordIds(recordIdsToDelete);
+    }
+
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem,
+      operation: {
+        type: 'delete-many',
+        deletedRecordIds: recordIdsToDelete,
+      },
     });
 
     return deletedRecords;

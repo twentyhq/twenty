@@ -1,9 +1,9 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { fireEvent, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { fireEvent, within } from 'storybook/test';
 
 import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
@@ -15,7 +15,7 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { AppPath } from 'twenty-shared/types';
-import { SignInUp } from '../SignInUp';
+import { SignInUp } from '~/pages/auth/SignInUp';
 
 const CaptchaTokenSetterEffect = () => {
   const setCaptchaToken = useSetRecoilState(captchaTokenState);

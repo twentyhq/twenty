@@ -2,7 +2,7 @@ import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
   formatToHumanReadableTime,
-} from '../formatDate';
+} from '~/utils/format/formatDate';
 
 describe('formatToHumanReadableMonth', () => {
   it('should format the date to a human-readable month', () => {

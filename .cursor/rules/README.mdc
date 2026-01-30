@@ -13,6 +13,7 @@ This directory contains Twenty's development guidelines and best practices in th
 - **architecture.mdc** - Project overview, technology stack, and infrastructure setup (Always Applied)
 - **nx-rules.mdc** - Nx workspace guidelines and best practices (Auto-attached to Nx files)
 - **server-migrations.mdc** - Backend migration and TypeORM guidelines for `twenty-server` (Auto-attached to server entities and migration files)
+- **creating-syncable-entity.mdc** - Comprehensive guide for creating new syncable entities (with universalIdentifier and applicationId) in the workspace migration system (Agent-requested for metadata-modules and workspace-migration files)
 
 ### Code Quality
 - **typescript-guidelines.mdc** - TypeScript best practices and conventions (Auto-attached to .ts/.tsx files)
@@ -39,6 +40,7 @@ You can manually reference any rule using the `@ruleName` syntax:
 - `@nx-rules` - Include Nx-specific guidance
 - `@react-general-guidelines` - Load React best practices
 - `@testing-guidelines` - Get testing recommendations
+- `@creating-syncable-entity` - Guide for creating new syncable entities
 
 ### Rule Types Used
 - **Always Applied** - Loaded in every context (architecture.mdc, README.mdc)
@@ -53,11 +55,11 @@ You can manually reference any rule using the `@ruleName` syntax:
 # Testing
 npx nx test twenty-front                    # Run unit tests
 npx nx storybook:build twenty-front         # Build Storybook
-npx nx storybook:serve-and-test:static     # Run Storybook tests
+npx nx storybook:test                       # Run Storybook tests
 
 # Development
-npx nx lint:changed twenty-front            # Lint changed files only (fastest)
-npx nx lint:changed twenty-front --configuration=fix  # Auto-fix changed files
+npx nx lint:diff-with-main twenty-front            # Lint files changed vs main (fastest)
+npx nx lint:diff-with-main twenty-front --configuration=fix  # Auto-fix changed files
 npx nx lint twenty-front                    # Lint all files (slower)
 npx nx typecheck twenty-front               # Type checking
 npx nx run twenty-front:graphql:generate    # Generate GraphQL types
@@ -72,8 +74,8 @@ npx nx run twenty-server:database:migrate:prod # Run migrations
 
 # Development
 npx nx run twenty-server:start             # Start the server
-npx nx lint:changed twenty-server          # Lint changed files only (fastest)
-npx nx lint:changed twenty-server --configuration=fix  # Auto-fix changed files
+npx nx lint:diff-with-main twenty-server          # Lint files changed vs main (fastest)
+npx nx lint:diff-with-main twenty-server --configuration=fix  # Auto-fix changed files
 npx nx run twenty-server:lint              # Lint all files (slower)
 npx nx run twenty-server:typecheck         # Type checking
 npx nx run twenty-server:test              # Run unit tests

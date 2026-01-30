@@ -1,0 +1,177 @@
+---
+title: Hotkeys
+---
+
+
+## Introduction
+
+When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
+
+In `twenty-front` however, you might have conflicts between same hotkeys that are used in different components, mounted at the same time.
+
+For example, if you have a page that listens for the Enter key, and a modal that listens for the Enter key, with a Select component inside that modal that listens for the Enter key, you might have a conflict when all are mounted at the same time.
+
+## The `useScopedHotkeys` hook
+
+To handle this problem, we have a custom hook that makes it possible to listen to hotkeys without any conflict.
+
+You place it in a component, and it will listen to the hotkeys only when the component is mounted AND when the specified **hotkey scope** is active.
+
+## How to listen for hotkeys in practice?
+
+There are two steps involved in setting up hotkey listening :
+1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
+2. Use the `useScopedHotkeys` hook to listen to hotkeys
+
+Setting up hotkey scopes is required even in simple pages, because other UI elements like left menu or command menu might also listen to hotkeys.
+
+## Use cases for hotkeys
+
+In general, you'll have two use cases that require hotkeys :
+1. In a page or a component mounted in a page
+2. In a modal-type component that takes the focus due to a user action
+
+The second use case can happen recursively : a dropdown in a modal for example.
+
+### Listening to hotkeys in a page
+
+Example :
+
+```tsx
+const PageListeningEnter = () => {
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  // 1. Set the hotkey scope in a useEffect
+  useEffect(() => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleEnterPage,
+    );
+
+    // Revert to the previous hotkey scope when the component is unmounted
+    return () => {
+      goBackToPreviousHotkeyScope();
+    };
+  }, [goBackToPreviousHotkeyScope, setHotkeyScopeAndMemorizePreviousScope]);
+
+  // 2. Use the useScopedHotkeys hook
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      // Some logic executed on this page when the user presses Enter
+      // ...
+    },
+    ExampleHotkeyScopes.ExampleEnterPage,
+  );
+
+  return <div>My page that listens for Enter</div>;
+};
+```
+
+### Listening to hotkeys in a modal-type component
+
+For this example we'll use a modal component that listens for the Escape key to tell its parent to close it.
+
+Here the user interaction is changing the scope.
+
+```tsx
+const ExamplePageWithModal = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
+  const handleOpenModalClick = () => {
+    // 1. Set the hotkey scope when user opens the modal
+    setShowModal(true);
+    setHotkeyScopeAndMemorizePreviousScope(
+      ExampleHotkeyScopes.ExampleModal,
+    );
+  };
+
+  const handleModalClose = () => {
+    // 1. Revert to the previous hotkey scope when the modal is closed
+    setShowModal(false);
+    goBackToPreviousHotkeyScope();
+  };
+
+  return <div>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
+    {showModal && <MyModalComponent onClose={handleModalClose} />}
+  </div>;
+};
+```
+
+Then in the modal component :
+
+```tsx
+const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
+  // 2. Use the useScopedHotkeys hook to listen for Escape.
+  // Note that escape is a common hotkey that could be used by many other components
+  // So it's important to use a hotkey scope to avoid conflicts
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onClose()
+    },
+    ExampleHotkeyScopes.ExampleModal,
+  );
+
+  return <div>My modal component</div>;
+};
+```
+
+It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+
+Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+
+## What is a hotkey scope?
+
+A hotkey scope is a string that represents a context in which the hotkeys are active. It is generally encoded as an enum.
+
+When you change the hotkey scope, the hotkeys that are listening to this scope will be enabled and the hotkeys that are listening to other scopes will be disabled.
+
+You can set only one scope at a time.
+
+As an example, the hotkey scopes for each page are defined in the `PageHotkeyScope` enum:
+
+```tsx
+export enum PageHotkeyScope {
+  Settings = 'settings',
+  CreateWorkspace = 'create-workspace',
+  SignInUp = 'sign-in-up',
+  CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+  TaskPage = 'task-page',
+}
+```
+
+Internally, the currently selected scope is stored in a Recoil state that is shared across the application :
+
+```tsx
+export const currentHotkeyScopeState = createState<HotkeyScope>({
+  key: 'currentHotkeyScopeState',
+  defaultValue: INITIAL_HOTKEYS_SCOPE,
+});
+```
+
+But this Recoil state should never be handled manually ! We'll see how to use it in the next section.
+
+## How is it working internally?
+
+We made a thin wrapper on top of [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) that makes it more performant and avoids unnecessary re-renders.
+
+We also create a Recoil state to handle the hotkey scope state and make it available everywhere in the application.

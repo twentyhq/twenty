@@ -1,0 +1,198 @@
+---
+title: 字段映射
+description: 数据导入期间字段映射的工作原理。
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## 字段映射的工作原理
+
+当您上传文件时，Twenty 会分析您的列，并尝试将其与现有字段匹配。
+
+### 自动映射
+
+Twenty 将根据以下内容尝试匹配列：
+
+* 列标题名称（精确或相似匹配）
+* 数据类型检测（日期、数字、电子邮件）
+* 常见字段模式
+
+<Note>**快速提示：** 从您要导入的对象中导出几行数据。 导出的文件将包含 Twenty 期望的精确列名，从而在导入时实现无缝的自动映射。</Note>
+
+### 手动映射选项
+
+对于每一列，您可以：
+
+* **映射到字段**：从下拉列表中选择匹配的 Twenty 字段
+* **不进行映射**：完全跳过该列（不会导入数据）
+
+<Note>**字段必须在导入前已存在。** 导入会创建记录，而不是创建字段。 请在导入前于 **设置 → 数据模型** 中创建自定义字段。</Note>
+
+## 字段类型兼容性
+
+数据模型中可用的所有字段类型都支持导入。
+
+您也可以导入 `id` 值，以便为新记录指定特定 ID，或更新现有记录。
+
+<img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
+
+## 数据格式要求
+
+<Note>**某些字段有特殊语法。** 我们建议在准备导入之前下载示例文件，以查看每种字段类型的预期语法。</Note>
+
+### 地址字段
+
+地址是一个嵌套字段，包含多个列。 其中一些可以留空。
+
+* **Address / Address 1**：街道地址第 1 行
+* **Address / Address 2**：街道地址第 2 行
+* **Address / City**：城市名称
+* **Address / State**：州或省
+* **Address / Country**：国家名称
+* **Address / Post Code**：邮政/ZIP 编码
+
+### 数组字段
+
+使用以下格式：
+
+```
+["value1","value2"]
+```
+
+### 布尔字段
+
+使用 `TRUE` 或 `FALSE`（大写），不要使用 `true` 或 `false`
+
+### 货币字段
+
+货币是一个**嵌套字段**，需要两列，且**两列都必须填写**：
+
+* **Amount / Amount**：数值（例如，`1234.56`）
+* **Amount / Currency**：货币代码（例如，`USD`、`EUR`）
+
+### 日期字段
+
+支持的格式：
+
+* `YYYY-MM-DD`（推荐）
+* `MM/DD/YYYY`
+* `DD/MM/YYYY`
+* ISO 8601 格式
+
+### 域名字段
+
+* 建议使用 `https://domain.com` 格式以避免创建重复，因为通过邮箱和日历同步创建的公司会使用该格式
+* 可以填写 `Domain Label` 和 `Domain URL`：最佳做法是在标签中填写 `domain.com`，在 url 中填写 `https://domain.com`
+* 在 Companies 对象内，域名必须唯一
+* **待导入文件中的域名必须唯一**
+
+### 电子邮件字段
+
+* 必须为有效的电子邮件格式
+* 在 People 对象内，电子邮件必须唯一
+* **待导入文件中的电子邮件必须唯一**
+* 对于附加邮箱：主邮箱请使用 **Emails / Primary Email**，附加邮箱请使用 **Emails / Additional Emails**，并采用以下格式：
+
+```
+["jane@twenty.com","jane.doe@twenty.com"]
+```
+
+### ID 字段
+
+在导入过程中指定 `id` 是可选的。 如未提供，Twenty 将自动生成 ID。
+
+映射 `id` 列的用例：
+
+* **设置特定 ID**：为新创建的记录选择 UUID
+* **更新现有记录**：与现有记录进行匹配以更新它们，而不是创建重复项。 在这种情况下，建议不要映射其他唯一字段：仅映射一个唯一字段可确保导入更顺畅。
+
+<Note>如果您提供 `id`，其必须为 UUID 格式（例如，`c776ee49-f608-4a77-8cc8-6fe96ae1e43f`）。</Note>
+
+### JSON 字段
+
+使用有效的 JSON 格式：
+
+```
+{"key":"value","key2":"value2"}
+```
+
+### 链接字段
+
+与域名字段类似：
+
+* 同时填写标签和 URL 两列：**Links / Link URL** 和 **Links / Link Label**
+* 使用完整的 URL 格式：`https://example.com`
+* 对于次要链接，请使用 **Links / Secondary Links** 列，并采用以下格式：
+
+```
+[{"url":"https://twenty.com","label":"Twenty"}]
+```
+
+### 多选字段
+
+使用**API 名称**（而非显示标签），格式如下：
+
+```
+["VALUE1","VALUE2"]
+```
+
+请参见[此处](#finding-api-names-for-select-fields)了解如何查找 API 名称。
+
+<Note>新的选择项不会通过导入自动创建。 请在导入前于 **设置 → 数据模型** 中添加它们。</Note>
+
+<Warning>
+  **导入会覆盖，不会追加。**
+
+  如果一条记录已选择了 `VALUE2` 和 `VALUE3`，而您导入了 `["VALUE1"]`，则导入后该记录将只保留 `VALUE1`。 之前的选择会被替换，而不是合并。
+</Warning>
+
+### 数字字段
+
+* 仅限数字
+* 小数使用点号：`1234.56`
+* 不使用千位分隔符
+
+### 电话字段
+
+电话是一个包含多列的嵌套字段，且**必须填写**
+
+* **Phones / Primary Phone Number**：电话号码（例如，`4159095555`）
+* **Phones / Primary Phone Country Code**：国家代码（例如，`US`）
+* **Phones / Primary Phone Calling Code**：拨号代码（例如，`+1`）
+
+### 评分字段
+
+使用 API 名称格式：`RATING_1`、`RATING_2`、`RATING_3`、`RATING_4`、`RATING_5`
+
+### 关系字段
+
+请参阅我们的专门文章：[在对象之间导入关联](/l/zh/user-guide/data-migration/capabilities/import-relations)
+
+### 选择字段
+
+使用选项的**API 名称**（而不是显示标签）：
+
+```
+VALUE1
+```
+
+请参见[此处](#finding-api-names-for-select-fields)了解如何查找 API 名称。
+<Note>新的选择项不会通过导入自动创建。 请在导入前于 **设置 → 数据模型** 中添加它们。</Note>
+
+### 文本字段
+
+* 无需特殊格式
+* 首尾空格会被移除
+
+## 查找 API 名称
+
+对于具有预定义选项的 Select、Multi-Select 和 Array 字段，必须使用 **API 名称**，而不是显示标签。
+
+### 如何查找 API 名称
+
+1. 进入 **设置 → 数据模型**
+2. 选择对象和字段
+3. 启用 **高级模式**（在设置页面右下角切换）
+4. 查看每个选项的 API 名称
+
+<VimeoEmbed videoId="1144910809" title="视频演示" />

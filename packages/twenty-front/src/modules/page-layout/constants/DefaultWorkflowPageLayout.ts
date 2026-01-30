@@ -43,7 +43,11 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
             rowSpan: 12,
             columnSpan: 12,
           },
-          configuration: null,
+          configuration: {
+            __typename: 'FieldsConfiguration',
+            configurationType: 'FIELDS',
+            sections: [],
+          },
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deletedAt: null,

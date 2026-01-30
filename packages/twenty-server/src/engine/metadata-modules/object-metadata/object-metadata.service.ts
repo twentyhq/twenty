@@ -5,7 +5,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -18,6 +18,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
+import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/metadata-modules/flat-view-field/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { fromCreateViewInputToFlatViewToCreate } from 'src/engine/metadata-modules/flat-view/utils/from-create-view-input-to-flat-view-to-create.util';
@@ -34,9 +35,8 @@ import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum'
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/constants/DEFAULT_VIEW_FIELD_SIZE';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @Injectable()
@@ -81,6 +81,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const {
       otherObjectFlatFieldMetadatasToUpdate,
+      sameObjectFlatFieldMetadatasToUpdate,
       flatObjectMetadataToUpdate,
       flatIndexMetadatasToUpdate,
       flatViewFieldsToCreate,
@@ -111,7 +112,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             fieldMetadata: {
               flatEntityToCreate: [],
               flatEntityToDelete: [],
-              flatEntityToUpdate: otherObjectFlatFieldMetadatasToUpdate,
+              flatEntityToUpdate: [
+                ...otherObjectFlatFieldMetadatasToUpdate,
+                ...sameObjectFlatFieldMetadatasToUpdate,
+              ],
             },
             viewField: {
               flatEntityToCreate: flatViewFieldsToCreate,
@@ -125,7 +129,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating object',
       );
@@ -296,7 +300,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         `Multiple validation errors occurred while deleting object${deleteObjectInputs.length > 1 ? 's' : ''}`,
       );
@@ -327,10 +331,23 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       featureFlagsMap: existingFeatureFlagsMap,
+      flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'featureFlagsMap',
+      'flatApplicationMaps',
     ]);
+
+    const ownerFlatApplication = isDefined(applicationId)
+      ? flatApplicationMaps.byId[applicationId]
+      : workspaceCustomFlatApplication;
+
+    if (!isDefined(ownerFlatApplication)) {
+      throw new ObjectMetadataException(
+        `Could not find related application ${applicationId}`,
+        ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     const {
       flatObjectMetadataToCreate,
@@ -340,8 +357,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
       createObjectInput,
       workspaceId,
-      workspaceCustomApplicationId:
-        applicationId ?? workspaceCustomFlatApplication.id,
+      flatApplication: ownerFlatApplication,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       existingFeatureFlagsMap,
     });
@@ -371,6 +387,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
         viewId: flatDefaultViewToCreate.id,
         workspaceId,
+        labelIdentifierFieldMetadataId:
+          flatObjectMetadataToCreate.labelIdentifierFieldMetadataId,
       });
 
     const validateAndBuildResult =
@@ -412,7 +430,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating object',
       );
@@ -479,14 +497,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     viewId,
     workspaceId,
     workspaceCustomApplicationId,
+    labelIdentifierFieldMetadataId,
   }: {
     workspaceCustomApplicationId: string;
     objectFlatFieldMetadatas: FlatFieldMetadata[];
     viewId: string;
     workspaceId: string;
+    labelIdentifierFieldMetadataId: string | null;
   }) {
     const defaultViewFields = objectFlatFieldMetadatas
-      .filter((field) => field.name !== 'id' && field.name !== 'deletedAt')
+      .filter(
+        (field) =>
+          field.name !== 'deletedAt' &&
+          // Include 'id' only if it's the label identifier (e.g., for junction tables)
+          (field.name !== 'id' || field.id === labelIdentifierFieldMetadataId),
+      )
       .map((field, index) =>
         fromCreateViewFieldInputToFlatViewFieldToCreate({
           createViewFieldInput: {
@@ -513,23 +538,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const favoriteRepository =
-          await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-            workspaceId,
-            'favorite',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const favoriteRepository =
+        await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
+          workspaceId,
+          'favorite',
+        );
 
-        const favoriteCount = await favoriteRepository.count();
+      const favoriteCount = await favoriteRepository.count();
 
-        await favoriteRepository.insert({
-          viewId: view.id,
-          position: favoriteCount,
-        });
-      },
-    );
+      await favoriteRepository.insert({
+        viewId: view.id,
+        position: favoriteCount,
+      });
+    }, authContext);
   }
 
   public async deleteWorkspaceAllObjectMetadata({

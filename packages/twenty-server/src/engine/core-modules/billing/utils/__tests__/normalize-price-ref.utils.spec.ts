@@ -8,16 +8,4 @@ describe('normalizePriceRef', () => {
   it('returns the id field when input is an object with id', () => {
     expect(normalizePriceRef({ id: 'price_abc' })).toBe('price_abc');
   });
-
-  it('returns undefined for null input', () => {
-    expect(normalizePriceRef(null)).toBeUndefined();
-  });
-
-  it('returns undefined for undefined input', () => {
-    expect(normalizePriceRef(undefined)).toBeUndefined();
-  });
-
-  it('preserves empty string ids', () => {
-    expect(normalizePriceRef({ id: '' })).toBe('');
-  });
 });

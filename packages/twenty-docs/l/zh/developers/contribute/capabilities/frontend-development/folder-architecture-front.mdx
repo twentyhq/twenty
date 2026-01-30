@@ -1,0 +1,109 @@
+---
+title: 文件夹架构
+info: 深入了解我们的文件夹架构
+---
+
+在本指南中，您将探索项目目录结构的详细信息，以及它如何促进 Twenty 的组织和可维护性。
+
+遵循此文件夹架构约定，可以更轻松地找到与特定功能相关的文件，并确保应用程序的可扩展性和可维护性。
+
+```
+front
+└───modules
+│   └───module1
+│   │   └───submodule1
+│   └───module2
+│   └───ui
+│   │   └───display
+│   │   └───inputs
+│   │   │   └───buttons
+│   │   └───...
+└───pages
+└───...
+```
+
+## 页面
+
+包含由应用程序路由定义的顶级组件。 它们从模块文件夹中导入更多低级组件（详细信息见下文）。
+
+## 模块
+
+每个模块代表一个功能或一组功能，包括其特定组件、状态和操作逻辑。
+它们都应遵循以下结构。 您可以在模块中嵌套模块（称为子模块），同样的规则将适用。
+
+```
+module1
+  └───components
+  │   └───component1
+  │   └───component2
+  └───constants
+  └───contexts
+  └───graphql
+  │   └───fragments
+  │   └───queries
+  │   └───mutations
+  └───hooks
+  │   └───internal
+  └───states
+  │   └───selectors
+  └───types
+  └───utils
+```
+
+### 上下文
+
+上下文是一种通过组件树传递数据的方法，不必在每个级别手动传 props。
+
+详情请参阅 [React Context](https://react.dev/reference/react#context-hooks)。
+
+### GraphQL
+
+包含片段、查询和变更。
+
+详情请参阅 [GraphQL](https://graphql.org/learn/)。
+
+* 片段
+
+片段是查询的可重用部分，可以在不同地方使用。 使用片段可以更容易地避免代码重复。
+
+详情请参阅 [GraphQL Fragments](https://graphql.org/learn/queries/#fragments)。
+
+* 查询
+
+详情请参阅 [GraphQL Queries](https://graphql.org/learn/queries/)。
+
+* 变更
+
+详情请参阅 [GraphQL Mutations](https://graphql.org/learn/queries/#mutations)。
+
+### 钩子
+
+详情请参阅 [Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks)。
+
+### 状态
+
+包含状态管理逻辑。 [RecoilJS](https://recoiljs.org) 处理这部分。
+
+* 选择器：详情请参阅 [RecoilJS Selectors](https://recoiljs.org/docs/basic-tutorial/selectors)。
+
+React 内置状态管理仍然在组件内处理状态。
+
+### 工具
+
+应仅包含可重用的纯函数。 否则，请在 `hooks` 文件夹中创建自定义钩子。
+
+## UI
+
+包含应用程序中使用的所有可重用的 UI 组件。
+
+这个文件夹可以包含子文件夹，像 `data`、`display`、`feedback` 和 `input`，用于特定类型的组件。 每个组件都应是自包含和可重用的，以便您可以在应用程序的不同部分使用它。
+
+通过将 UI 组件与 `modules` 文件夹中的其他组件分开，可以更轻松地保持一致的设计，并在更改 UI 时不影响其他部分（业务逻辑）的代码库。
+
+## 接口和依赖关系
+
+您可以从任何模块中导入其他模块代码，但 `ui` 文件夹除外。 这将使代码易于测试。
+
+### 内部
+
+模块的每个部分（钩子、状态等） 都可以有一个 `internal` 文件夹，其中包含仅在模块内使用的部分。

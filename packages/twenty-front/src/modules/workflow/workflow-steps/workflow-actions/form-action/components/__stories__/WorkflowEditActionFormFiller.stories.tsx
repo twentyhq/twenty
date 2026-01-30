@@ -1,16 +1,15 @@
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
-import { type Meta, type StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { WorkflowEditActionFormFiller } from '../WorkflowEditActionFormFiller';
 
 const meta: Meta<typeof WorkflowEditActionFormFiller> = {
   title: 'Modules/Workflow/Actions/Form/WorkflowEditActionFormFiller',
@@ -21,7 +20,6 @@ const meta: Meta<typeof WorkflowEditActionFormFiller> = {
   decorators: [
     WorkflowStepActionDrawerDecorator,
     ComponentDecorator,
-    I18nFrontDecorator,
     WorkflowStepDecorator,
     RouterDecorator,
     ObjectMetadataItemsDecorator,
@@ -194,7 +192,7 @@ export const ReadonlyMode: Story = {
 
 //       await waitFor(() => {
 //         expect(
-//           within(getCanvasElementForDropdownTesting()).getByText('Louis Duss'),
+//           within(document.body).getByText('Louis Duss'),
 //         ).toBeVisible();
 //       });
 

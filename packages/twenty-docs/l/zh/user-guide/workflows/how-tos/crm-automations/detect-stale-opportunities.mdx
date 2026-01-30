@@ -1,0 +1,136 @@
+---
+title: 检测停滞商机
+description: 当商机未更新时自动通知经理。
+---
+
+通过在商机变得停滞时提醒经理，保持销售管道健康。 此工作流会检查在指定天数内未更新的商机。
+
+## 问题
+
+长期未更新的商机会导致：
+
+* 交易变冷
+* 不可靠的预测
+* 收入流失
+
+## 解决方案
+
+创建一个定时工作流，用于查找停滞商机并向其经理发送电子邮件。
+
+## 分步设置
+
+### 步骤 1：创建工作流
+
+1. 进入 **设置 → 工作流**
+2. 点击 **+ 新建工作流**
+3. 命名为 "停滞商机警报"
+
+### 步骤 2：配置触发器
+
+1. 选择 **On a Schedule**
+2. 设置为每日运行（例如，每天上午 8 点）
+
+### 步骤 3：搜索停滞商机
+
+1. 添加 **搜索记录** 操作
+2. 配置:
+
+| 字段     | 值                                   |
+| ------ | ----------------------------------- |
+| **对象** | 机会                                  |
+| **过滤** | 更新时间早于（今天 - 7 天）                    |
+| **过滤** | 阶段不为 "Closed Won" 且不为 "Closed Lost" |
+| **限制** | 100                                 |
+
+### 步骤 4：检查是否有结果
+
+1. 添加 **过滤** 操作
+2. 条件：`{{searchRecords.length}}` 大于 0
+3. 如果没有停滞商机，工作流在此停止
+
+### 步骤 5：格式化警报（代码操作）
+
+添加一个 **Code** 操作来格式化邮件：
+
+```javascript
+export const main = async (params) => {
+  const opportunities = params.opportunities;
+
+  // Group opportunities by owner
+  const byOwner = {};
+  opportunities.forEach(opp => {
+    const ownerEmail = opp.owner?.email || 'unassigned';
+    if (!byOwner[ownerEmail]) {
+      byOwner[ownerEmail] = [];
+    }
+    byOwner[ownerEmail].push({
+      name: opp.name,
+      amount: opp.amount,
+      lastUpdated: opp.updatedAt,
+      stage: opp.stage
+    });
+  });
+
+  // Format summary for manager
+  let summary = "Stale Opportunities Report\n\n";
+  Object.entries(byOwner).forEach(([owner, opps]) => {
+    summary += `${owner}: ${opps.length} stale opportunities\n`;
+    opps.forEach(opp => {
+      summary += `  - ${opp.name} (${opp.stage})\n`;
+    });
+    summary += "\n";
+  });
+
+  return {
+    summary,
+    totalCount: opportunities.length
+  };
+};
+```
+
+### 步骤 6：发送警报邮件
+
+添加 **Send Email** 操作：
+
+| 字段      | 值                                  |
+| ------- | ---------------------------------- |
+| **收件人** | sales-manager@yourcompany.com      |
+| **主题**  | `🚨 {{code.totalCount}} 个停滞商机需要关注` |
+| **正文**  | `{{code.summary}}`                 |
+
+### 步骤 7：测试并启用
+
+1. 点击 **Test** 以运行工作流
+2. 检查邮件是否包含正确的数据
+3. 准备就绪后启用
+
+## 自定义选项
+
+### 更改停滞阈值
+
+修改“搜索记录”的过滤条件，将 7 天更改为你偏好的周期：
+
+* 高节奏销售：3 天
+* 企业级交易：14 天
+* 长销售周期：30 天
+
+### 单独提醒销售代表
+
+使用 **Iterator** 向每位销售代表发送关于其自身停滞交易的个性化邮件，而不是只发一封经理邮件。
+
+### 添加升级机制
+
+创建多个工作流，并逐步提高严重性：
+
+1. 第 7 天：发送电子邮件给销售代表
+2. 第 14 天：发送电子邮件给销售代表和经理
+3. 第 21 天：为经理创建任务以便介入
+
+### 集成 Slack
+
+使用 **HTTP Request** 向 Slack 的 webhook 发送消息，替代或补充电子邮件。
+
+## 相关内容
+
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+* [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)

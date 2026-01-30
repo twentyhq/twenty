@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from 'twenty-shared';
+import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -21,13 +21,7 @@ import {
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateString } from '~/utils/string/formatDateString';
 
-type ObjectFilterDropdownDateInputProps = {
-  instanceId: string;
-};
-
-export const ObjectFilterDropdownDateInput = ({
-  instanceId,
-}: ObjectFilterDropdownDateInputProps) => {
+export const ObjectFilterDropdownDateInput = () => {
   const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useRecoilValue(dateLocaleState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -46,6 +40,7 @@ export const ObjectFilterDropdownDateInput = ({
   const handleAbsoluteDateChange = (newPlainDate: string | null) => {
     const newFilterValue = newPlainDate ?? '';
 
+    // TODO: remove this and use getDisplayValue instead
     const formattedDate = formatDateString({
       value: newPlainDate,
       timeZone,
@@ -112,10 +107,10 @@ export const ObjectFilterDropdownDateInput = ({
 
   return (
     <DatePicker
-      instanceId={instanceId}
+      instanceId={`object-filter-dropdown-date-input`}
       relativeDate={relativeDate}
       isRelative={isRelativeOperand}
-      date={plainDateValue ?? null}
+      plainDateString={plainDateValue ?? null}
       onChange={handleAbsoluteDateChange}
       onRelativeDateChange={handleRelativeDateChange}
       onClear={handleClear}

@@ -1,6 +1,6 @@
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type SearchRecord } from '~/generated-metadata/graphql';
-import { sortMorphItems } from '../sortMorphItems';
+import { sortMorphItems } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItems';
 
 const createMorphItem = (
   recordId: string,
@@ -16,6 +16,7 @@ const createSearchRecord = (recordId: string): SearchRecord => ({
   recordId,
   label: `Record ${recordId}`,
   objectNameSingular: 'person',
+  objectLabelSingular: 'Person',
   tsRank: 0,
   tsRankCD: 0,
 });

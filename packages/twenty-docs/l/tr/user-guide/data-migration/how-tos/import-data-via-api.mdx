@@ -1,0 +1,176 @@
+---
+title: API ile Veri İçe Aktarma
+description: Büyük ölçekli veri içe aktarmaları için Twenty'nin API'lerini ne zaman ve nasıl kullanacağınız.
+---
+
+## Genel Bakış
+
+Twenty, programatik veri içe aktarma için hem **GraphQL** hem de **REST API'leri** sunar. Veri hacminiz için CSV içe aktarma pratik değilse veya otomatik, yinelenen içe aktarmalara ihtiyacınız varsa API'yi kullanın.
+
+## API içe aktarması ne zaman kullanılır
+
+| Senaryo                           | Önerilen Yöntem                   |
+| --------------------------------- | --------------------------------- |
+| 10.000 kaydın altında             | CSV İçe Aktarma                   |
+| 10.000 - 50.000 kayıt             | CSV İçe Aktarma (dosyalara bölün) |
+| **50.000+ kayıt**                 | **API İçe Aktarma**               |
+| Tek seferlik geçiş                | Her ikisi de (hacme bağlı olarak) |
+| **Yinelenen içe aktarmalar**      | **API İçe Aktarma**               |
+| **Gerçek zamanlı eşitleme**       | **API İçe Aktarma**               |
+| **Diğer sistemlerle entegrasyon** | **API İçe Aktarma**               |
+
+<Note>Yüz binlerce kayıttan oluşan veri kümeleri için API, birden çok CSV içe aktarımından belirgin şekilde daha hızlı ve daha güvenilirdir.</Note>
+
+## API Hız Sınırları
+
+Twenty, sistem kararlılığını sağlamak için hız sınırlarını uygular:
+
+| Sınır                        | Değer               |
+| ---------------------------- | ------------------- |
+| **Dakika başına istek**      | 100                 |
+| **Toplu çağrı başına kayıt** | 60                  |
+| **Maksimum aktarım hızı**    | ~6.000 kayıt/dakika |
+
+<Warning>
+  **İçe aktarmanızı bu sınırlara göre planlayın.**
+
+  Maksimum aktarım hızında 100.000 kayıt için yaklaşık 17 dakikalık içe aktarma süresi bekleyin. Hata yönetimi ve yeniden denemeler için tampon süre ekleyin.
+</Warning>
+
+## Başlarken
+
+### Adım 1: API Anahtarınızı Alın
+
+1. **Ayarlar → Geliştiriciler**'e gidin
+2. **+ API anahtarı oluştur**'a tıklayın
+3. Anahtarınıza açıklayıcı bir ad verin
+4. API anahtarını hemen kopyalayın (tekrar gösterilmeyecektir)
+5. Güvenli bir şekilde saklayın
+
+<Warning>
+  **API anahtarınızı gizli tutun.**
+
+  API anahtarınıza sahip olan herkes çalışma alanı verilerinize erişebilir ve bunları değiştirebilir. Asla kod depolarına eklemeyin ve herkese açık olarak paylaşmayın.
+</Warning>
+
+### Adım 2: API'nizi Seçin
+
+Twenty iki API türünü destekler:
+
+| API         | En uygun                                                     | Dokümantasyon                                         |
+| ----------- | ------------------------------------------------------------ | ----------------------------------------------------- |
+| **GraphQL** | Esnek sorgular, ilişkili verileri getirme, karmaşık işlemler | [API Belgeleri](/l/tr/developers/extend/capabilities/apis) |
+| **REST**    | Basit CRUD işlemleri, alışıldık REST kalıpları               | [API Belgeleri](/l/tr/developers/extend/capabilities/apis) |
+
+Her iki API de şunları destekler:
+
+* Kayıt oluşturma, okuma, güncelleme ve silme
+* **Toplu işlemler** — çağrı başına en fazla 60 kayıt oluşturma veya güncelleme
+
+**İçe aktarmalar için toplu işlemleri kullanın**, hız sınırları içinde aktarım hızını en üst düzeye çıkarmak için.
+
+### Adım 3: İçe Aktarma Sıralamanızı Planlayın
+
+CSV içe aktarmalarda olduğu gibi, ilişkiler için **sıra önemlidir**:
+
+1. Önce **Şirketler** (bağımlılık yok)
+2. İkinci olarak **Kişiler** (Şirketlere bağlanabilir)
+3. Üçüncü olarak **Fırsatlar** (Şirketlere ve Kişilere bağlanabilir)
+4. **Görevler/Notlar** (yukarıdakilerin herhangi birine bağlanabilir)
+5. **Özel nesneler** (bağımlılıklarına uyarak)
+
+## En İyi Uygulamalar
+
+### İsteklerinizi Gruplandırın
+
+* Kayıtları tek tek göndermeyin
+* API çağrısı başına **en fazla 60 kaydı** gruplandırın
+* Bu, hız sınırları içinde aktarım hızını en üst düzeye çıkarır
+
+### Hız Sınırlarını Yönetme
+
+* İstekler arasında gecikmeler uygulayın (sürekli içe aktarmalar için en az 600 ms)
+* Sınırlara ulaştığınızda üstel geri çekilme kullanın
+* 429 (Too Many Requests) yanıtlarını izleyin
+
+### Önce Verileri Doğrulayın
+
+* İçe aktarmadan önce verilerinizi temizleyin ve doğrulayın
+* Gerekli alanların doldurulduğunu kontrol edin
+* Biçimlerin Twenty'nin gereksinimlerine uyduğunu doğrulayın (bkz. [Alan Eşleme](/l/tr/user-guide/data-migration/capabilities/field-mapping))
+
+### Her Şeyi Günlüğe Kaydedin
+
+* İçe aktarılan her kaydı günlüğe kaydedin (ID'ler dahil)
+* Hataları tam bağlamla günlüğe kaydedin
+* Bu, sorunları ayıklamaya ve tamamlandığını doğrulamaya yardımcı olur
+
+### Önce Test Edin
+
+* Küçük bir grupla test edin (10-20 kayıt)
+* Verilerin Twenty'de doğru göründüğünü doğrulayın
+* Ardından tam içe aktarmayı çalıştırın
+
+### Yinelenenleri Önlemek İçin Upsert Kullanın
+
+GraphQL API, **toplu upsert** destekler — kayıt varsa günceller, yoksa oluşturur. Bu, içe aktarmaları yeniden çalıştırırken yinelenenlerin oluşmasını önler.
+
+## Nesne ve Alan Adlarını Bulma
+
+Kullanılabilir nesneleri ve alanları görmek için:
+
+1. **Ayarlar → API ve Webhook'lar**'a gidin
+2. **Metadata API**'yi inceleyin
+3. Tüm standart ve özel nesneleri alanlarıyla birlikte görüntüleyin
+
+Dokümantasyon, tüm standart ve özel nesneleri, alanlarını ve beklenen veri türlerini gösterir.
+
+## Profesyonel Hizmetler
+
+Karmaşık API geçişleri için iş ortaklarımız yardımcı olabilir:
+
+| Hizmet                            | Neler Dahil                                 |
+| --------------------------------- | ------------------------------------------- |
+| **Veri Modeli Tasarımı**          | en uygun veri yapınızı tasarlama            |
+| **Geçiş Betikleri**               | içe aktarma betiklerini yazma ve çalıştırma |
+| **Veri Dönüşümü**                 | karmaşık eşlemeleri ve temizliği yönetme    |
+| **Doğrulama ve Kalite Güvencesi** | geçişin tamamlandığını doğrulama            |
+
+**En uygun:**
+
+* 100.000+ kayıttan oluşan geçişler
+* Karmaşık veri dönüşümleri
+* Sıkı zaman çizelgeleri
+* Geliştirici kaynağı olmayan ekipler
+
+[contact@twenty.com](mailto:contact@twenty.com) adresinden bizimle iletişime geçin veya [Uygulama Hizmetlerimizi](/l/tr/user-guide/getting-started/capabilities/implementation-services) keşfedin.
+
+## SSS
+
+<AccordionGroup>
+  <Accordion title="GraphQL ile REST arasındaki fark nedir?">
+    GraphQL, tek bir sorguda tam olarak ihtiyaç duyduğunuz verileri talep etmenizi sağlar ve karmaşık işlemler için daha uygundur. REST, standart HTTP yöntemlerini (GET, POST, PUT, DELETE) kullanır ve geleneksel API'lerle çalıştıysanız daha aşina gelebilir.
+  </Accordion>
+
+  <Accordion title="API aracılığıyla mevcut kayıtları güncelleyebilir miyim?">
+    Evet! Kayıdın `id`si ile güncelleme mutasyonları (GraphQL) veya PUT/PATCH isteklerini (REST) kullanın.
+  </Accordion>
+
+  <Accordion title="Yinelenenleri nasıl ele alırım?">
+    Önce benzersiz tanımlayıcıları (e-posta, etki alanı) kullanarak mevcut kayıtları sorgulayın. Varsa güncelleyin, yoksa oluşturun.
+  </Accordion>
+
+  <Accordion title="API aracılığıyla kayıtları silebilir miyim?">
+    Evet, silme mutasyonları (GraphQL) veya DELETE isteklerini (REST) kullanın.
+  </Accordion>
+
+  <Accordion title="Python veya Node.js için bir SDK var mı?">
+    Şu anda yok, ancak her iki API de herhangi bir dildeki herhangi bir HTTP istemcisiyle çalışır.
+  </Accordion>
+</AccordionGroup>
+
+## API Belgeleri
+
+Tam uygulama ayrıntıları, kod örnekleri ve şema başvurusu için:
+
+* [API Belgeleri](/l/tr/developers/extend/capabilities/apis)

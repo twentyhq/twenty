@@ -12,11 +12,11 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { ADMIN_ROLE } from 'src/engine/metadata-modules/role/constants/admin-role';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class UserRoleService {
@@ -154,7 +154,6 @@ export class UserRoleService {
       );
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -171,6 +170,7 @@ export class UserRoleService {
 
         return workspaceMembers;
       },
+      authContext,
     );
   }
 

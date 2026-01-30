@@ -28,7 +28,7 @@ npx nx run twenty-server:test:integration:with-db-reset  # Integration tests wit
 
 # Storybook
 npx nx storybook:build twenty-front         # Build Storybook
-npx nx storybook:serve-and-test:static twenty-front     # Run Storybook tests
+npx nx storybook:test twenty-front     # Run Storybook tests
 
 
 When testing the UI end to end, click on "Continue with Email" and use the prefilled credentials.
@@ -36,11 +36,10 @@ When testing the UI end to end, click on "Continue with Email" and use the prefi
 
 ### Code Quality
 ```bash
-# Linting (changed files only - fastest)
-npx nx lint:changed twenty-front           # Lint only changed files vs main
-npx nx lint:changed twenty-server          # Lint only changed files vs main
-npx nx lint:changed twenty-front --configuration=fix  # Auto-fix changed files
-npx nx lint:changed twenty-front --configuration=staged  # Lint staged files only
+# Linting (diff with main - fastest)
+npx nx lint:diff-with-main twenty-front           # Lint only files changed vs main
+npx nx lint:diff-with-main twenty-server          # Lint only files changed vs main
+npx nx lint:diff-with-main twenty-front --configuration=fix  # Auto-fix files changed vs main
 
 # Linting (full project)
 npx nx lint twenty-front      # Lint all files in frontend

@@ -10,20 +10,23 @@ export const useFieldsWidgetSectionsWithFields = (
 ) => {
   const isMobile = useIsMobile();
   const { isInRightDrawer } = useLayoutRenderingContext();
-  const fieldMetadataItems = useFieldsWidgetFieldMetadataItems({
-    objectNameSingular,
-  });
+  const { inlineFieldMetadataItems, legacyActivityTargetFieldMetadataItems } =
+    useFieldsWidgetFieldMetadataItems({
+      objectNameSingular,
+    });
   const temporaryConfiguration =
     useTemporaryFieldsConfiguration(objectNameSingular);
 
   const context = buildWidgetVisibilityContext({ isMobile, isInRightDrawer });
 
+  const allFieldMetadataItems = [
+    ...legacyActivityTargetFieldMetadataItems,
+    ...inlineFieldMetadataItems,
+  ];
+
   const sectionsWithFields = filterAndOrderFieldsFromConfiguration({
-    configuration: temporaryConfiguration ?? {
-      __typename: 'FieldsConfiguration',
-      sections: [],
-    },
-    availableFieldMetadataItems: fieldMetadataItems,
+    configuration: temporaryConfiguration,
+    availableFieldMetadataItems: allFieldMetadataItems,
     context,
   });
 

@@ -1,0 +1,170 @@
+---
+title: Workflow-Fehlerbehebung
+description: Häufige Workflow-Probleme und wie Sie sie beheben.
+---
+
+## Häufige Probleme und Lösungen
+
+### Workflow wird nicht ausgelöst
+
+**Symptome**: Ihr Workflow wird nicht ausgeführt, wenn Sie es erwarten.
+
+**Mögliche Ursachen**:
+
+1. **Workflow nicht aktiviert**: Stellen Sie sicher, dass der Workflow auf "Active" und nicht auf "Draft" gesetzt ist
+2. **Trigger-Bedingungen nicht erfüllt**: Überprüfen Sie, ob der Trigger Ihrem erwarteten Ereignis entspricht
+3. **Feld nicht überwacht**: Bei "Record is Updated"-Triggern stellen Sie sicher, dass das betreffende Feld überwacht wird
+4. **Berechtigungen**: Prüfen Sie, ob Sie die Berechtigung haben, Workflows auszuführen
+
+**Lösungen**:
+
+* Überprüfen Sie den Workflow-Status in der Workflow-Liste
+* Testen Sie mit der spezifischen Aktion, von der Sie erwarten, dass sie ihn auslöst
+* Überprüfen Sie die Trigger-Konfiguration
+* Wenden Sie sich wegen der Berechtigungen an Ihren Administrator
+
+### Workflow-Trigger zu früh (leere Felder)
+
+**Symptome**: Beim manuellen Erstellen eines Datensatzes in der UI wird Ihr Workflow ausgelöst, bevor Sie alle Felder ausfüllen konnten. Der Workflow läuft mit überwiegend leeren Feldwerten.
+
+**Warum das passiert**: Twenty speichert alles in Echtzeit — es gibt keinen separaten "edit"- vs. "read"-Modus. Wenn Sie einen Datensatz erstellen, wird er sofort gespeichert und löst das Ereignis "Record is created" aus, bevor Sie weitere Felder ausfüllen können.
+
+**Wann "Record is created" gut funktioniert**:
+
+* Über API-Aufrufe erstellte Datensätze (Felder werden in einer einzigen Anfrage befüllt)
+* Über Import erstellte Datensätze
+* Automatisches Erstellen von Datensätzen aus anderen Workflows
+
+**Lösung**: Für Datensätze, die manuell in der UI erstellt werden, verwenden Sie stattdessen **"Record is created or updated"** als Trigger. Auf diese Weise:
+
+* Der Workflow wird ausgelöst, nachdem der Benutzer das Ausfüllen und Speichern der Felder abgeschlossen hat
+* Sie erhalten die vollständigen Daten statt leerer Werte
+
+<Tip>
+  Wenn der Workflow nur einmal pro Datensatz ausgeführt werden soll, fügen Sie eine Filter-Aktion hinzu, um ein Feld wie `createdAt equals updatedAt` (erste Speicherung) zu prüfen, oder verwenden Sie ein benutzerdefiniertes Kontrollkästchen, um zu verfolgen, ob der Workflow bereits ausgeführt wurde.
+</Tip>
+
+### Fehlgeschlagene Aktionen
+
+**Symptome**: Der Workflow wird ausgeführt, aber einige Aktionen schlagen fehl.
+
+**Mögliche Ursachen**:
+
+1. **Fehlende Daten**: Erforderliche Felder sind leer
+2. **Ungültige Verweise**: Variablen aus vorherigen Schritten existieren nicht
+3. **API-Fehler**: Externe Dienste liefern Fehler zurück
+4. **Berechtigungsprobleme**: Die Aktion erfordert Berechtigungen, die Sie nicht haben
+
+**Lösungen**:
+
+* Überprüfen Sie die Details der Workflow-Ausführung auf Fehlermeldungen
+* Stellen Sie sicher, dass alle Pflichtfelder Werte haben
+* Testen Sie die API-Verbindungen separat
+* Überprüfen Sie die Rollenberechtigungen
+
+### Fehler bei HTTP-Anfragen
+
+**Symptome**: HTTP-Request-Aktionen schlagen fehl oder liefern unerwartete Ergebnisse.
+
+**Häufige Fehlercodes**:
+
+* **400**: Ungültige Anfrage - überprüfen Sie das Format des Request-Body
+* **401**: Nicht autorisiert - überprüfen Sie den API-Schlüssel
+* **403**: Verboten - überprüfen Sie die API-Berechtigungen
+* **404**: Nicht gefunden - überprüfen Sie die Endpunkt-URL
+* **429**: Zu viele Anfragen - implementieren Sie eine Ratenbegrenzung
+* **500**: Serverfehler - Problem mit dem externen Dienst
+
+**Lösungen**:
+
+* Überprüfen Sie die API-Endpunkt-URL
+* Überprüfen Sie die Authentifizierungs-Header
+* Testen Sie den API-Aufruf zunächst außerhalb von Twenty
+* Fügen Sie Fehlerbehandlung in Code-Aktionen hinzu
+
+### Fehler in Code-Aktionen
+
+**Symptome**: JavaScript-Code wird nicht ausgeführt.
+
+**Häufige Probleme**:
+
+1. **Syntaxfehler**: Tippfehler oder ungültiges JavaScript
+2. **Undefinierte Variablen**: Verweise auf Variablen, die nicht existieren
+3. **Typfehler**: Operationen auf falschen Datentypen
+4. **Timeouts**: Code benötigt zu lange zur Ausführung
+
+**Lösungen**:
+
+* Verwenden Sie die integrierte Validierung des Code-Editors
+* Testen Sie die Code-Logik zuerst in einer JavaScript-Konsole
+* Fügen Sie console.log-Anweisungen zum Debuggen hinzu
+* Vereinfachen Sie komplexe Operationen
+
+### E-Mail wird nicht gesendet
+
+**Symptome**: Die Aktion "Send Email" liefert keine E-Mails aus.
+
+**Mögliche Ursachen**:
+
+1. **Kein E-Mail-Konto verbunden**: Prüfen Sie Settings → Accounts
+2. **Ungültige E-Mail-Adresse**: Die E-Mail-Adresse des Empfängers ist fehlerhaft
+3. **Sendelimits**: Ratenbegrenzung des E-Mail-Anbieters erreicht
+4. **Spamfilter**: E-Mails werden blockiert
+
+**Lösungen**:
+
+* Überprüfen Sie die Verbindung des E-Mail-Kontos
+* Validieren Sie die E-Mail-Adressen der Empfänger
+* Überprüfen Sie die Limits des E-Mail-Anbieters
+* Überprüfen Sie den E-Mail-Inhalt auf Spam-Auslöser
+
+## Workflows debuggen
+
+### Workflow-Läufe verwenden
+
+1. Gehen Sie zum Workflow-Editor
+2. Öffnen Sie das Panel **Runs**
+3. Finden Sie den fehlgeschlagenen Lauf
+4. Klicken Sie, um die Details Schritt für Schritt zu sehen
+5. Überprüfen Sie Fehlermeldungen und Ausgabedaten
+
+### Einzelschritte testen
+
+1. Für Code-Aktionen verwenden Sie die Schaltfläche **Test**
+2. Für HTTP-Anfragen testen Sie den Endpunkt separat
+3. Erstellen Sie Testdatensätze, um Workflows auszulösen
+4. Verwenden Sie manuelle Trigger für kontrollierte Tests
+
+### Häufige Debugging-Muster
+
+**Logging hinzufügen**:
+Verwenden Sie Code-Aktionen, um Zwischenwerte zum Debuggen zu protokollieren.
+
+**Schritte isolieren**:
+Testen Sie jeden Schritt unabhängig, um Fehler zu identifizieren.
+
+**Datenfluss prüfen**:
+Stellen Sie sicher, dass jeder Schritt die erwarteten Eingabedaten erhält.
+
+## Bewährte Verfahren zur Vermeidung von Problemen
+
+### Vor der Aktivierung
+
+* Testen Sie im Entwurfsmodus gründlich
+* Validieren Sie alle API-Verbindungen
+* Überprüfen Sie die Trigger-Bedingungen sorgfältig
+* Dokumentieren Sie das erwartete Verhalten
+
+### Während der Entwicklung
+
+* Verwenden Sie aussagekräftige Schrittnamen
+* Fügen Sie Kommentare in Code-Aktionen hinzu
+* Testen Sie mit realistischen Daten
+* Planen Sie für Randfälle
+
+### Nach der Aktivierung
+
+* Überwachen Sie die ersten Läufe genau
+* Richten Sie Benachrichtigungen für Fehler ein
+* Überprüfen Sie den Ausführungsverlauf regelmäßig
+* Halten Sie Workflows nach Möglichkeit einfach

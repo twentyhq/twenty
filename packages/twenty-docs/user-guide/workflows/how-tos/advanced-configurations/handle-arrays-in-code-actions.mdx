@@ -1,0 +1,80 @@
+---
+title: Handle Arrays in Code Actions
+description: Learn how to properly handle array inputs in workflow Code actions.
+---
+
+When working with arrays in Code actions, you may encounter two common challenges:
+1. **Arrays passed as strings** — data from external systems or previous steps arrives as a string instead of an actual array
+2. **Can't select individual items** — you can only select the entire array, not specific fields within it
+
+Both can be solved with a Code node.
+
+## Parsing Arrays from Strings
+
+Arrays are often passed between workflow steps as strings or JSON rather than native arrays. This happens when:
+- Receiving data from external APIs via HTTP Request
+- Processing webhook payloads
+- Passing data between workflow steps
+
+**Solution**: Add this pattern at the start of your Code action:
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+
+  // Handle input that may come as a string or an array
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Now you can safely work with usersFormatted as an array
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+    })),
+  };
+};
+```
+
+The key line `typeof users === "string" ? JSON.parse(users) : users` checks if the input is a string, parses it if needed, or uses it directly if it's already an array.
+
+## Extracting Individual Fields from Arrays
+
+A webhook might return an array like `answers: [...]`, but in subsequent workflow steps you can only select the **entire array** — not individual items within it.
+
+**Solution**: Add a Code node to extract specific fields and return them as a structured object:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract specific fields from the array
+  const firstname = answersFormatted[0]?.text || "";
+  const name = answersFormatted[1]?.text || "";
+
+  return {
+    answer: {
+      firstname,
+      name
+    }
+  };
+};
+```
+
+The Code node returns a structured object instead of an array. In subsequent steps, you can now select individual fields like `answer.firstname` and `answer.name` from the variable picker.
+
+<Note>
+We're actively working on making array handling easier in future updates.
+</Note>
+
+<Tip>
+Click the square icon at the top right of the code editor to display it in full screen — helpful since the default editor width is limited.
+</Tip>

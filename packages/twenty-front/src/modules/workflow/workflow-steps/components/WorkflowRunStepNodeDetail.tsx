@@ -5,7 +5,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';
-import { WorkflowActionServerlessFunction } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionServerlessFunction';
+import { WorkflowActionCode } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowActionCode';
 import { WorkflowEditActionCreateRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord';
 import { WorkflowEditActionDeleteRecord } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord';
 import { WorkflowEditActionEmpty } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmpty';
@@ -17,7 +17,9 @@ import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-act
 import { WorkflowEditActionFindRecords } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowEditActionFormFiller } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFiller';
 import { WorkflowEditActionHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest';
+import { WorkflowEditActionIfElse } from '@/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElse';
 import { WorkflowEditActionIterator } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator';
+import { WorkflowEditActionLogicFunction } from '@/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManual } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerManual';
@@ -105,7 +107,18 @@ export const WorkflowRunStepNodeDetail = ({
       switch (stepDefinition.definition.type) {
         case 'CODE': {
           return (
-            <WorkflowActionServerlessFunction
+            <WorkflowActionCode
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'LOGIC_FUNCTION': {
+          return (
+            <WorkflowEditActionLogicFunction
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{
@@ -222,6 +235,17 @@ export const WorkflowRunStepNodeDetail = ({
         case 'FILTER': {
           return (
             <WorkflowEditActionFilter
+              key={stepId}
+              action={stepDefinition.definition}
+              actionOptions={{
+                readonly: true,
+              }}
+            />
+          );
+        }
+        case 'IF_ELSE': {
+          return (
+            <WorkflowEditActionIfElse
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{

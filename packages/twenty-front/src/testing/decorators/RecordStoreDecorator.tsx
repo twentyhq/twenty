@@ -1,4 +1,4 @@
-import { type Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react-vite';
 import { useEffect } from 'react';
 
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -9,7 +9,7 @@ export const RecordStoreDecorator: Decorator = (Story, context) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
-    upsertRecordsInStore(records);
+    upsertRecordsInStore({ partialRecords: records });
   });
 
   return <Story />;

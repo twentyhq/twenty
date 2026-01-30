@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNull, isUndefined } from '@sniptt/guards';
 import {
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
@@ -28,6 +29,7 @@ import { validateBooleanFieldOrThrow } from 'src/engine/api/common/common-args-p
 import { validateCurrencyFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util';
 import { validateDateAndDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util';
 import { validateEmailsFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util';
+import { validateFilesFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { validateFullNameFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util';
 import { validateLinksFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util';
 import { validateMultiSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util';
@@ -44,6 +46,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { transformEmailsValue } from 'src/engine/core-modules/record-transformer/utils/transform-emails-value.util';
@@ -112,6 +115,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Object ${flatObjectMetadata.nameSingular} doesn't have any "${key}" field.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -121,6 +125,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Field metadata not found for field ${key}`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -132,6 +137,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `Field ${key} is not nullable and has no default value.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: msg`A required field is missing.` },
           );
         }
 
@@ -212,7 +218,7 @@ export class DataArgProcessor {
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const fieldMetadataRelationSettings =
-          fieldMetadata.settings as FieldMetadataRelationSettings;
+          fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
 
         if (
           fieldMetadataRelationSettings.relationType ===
@@ -221,6 +227,7 @@ export class DataArgProcessor {
           throw new CommonQueryRunnerException(
             `One-to-many relation ${key} field does not support write operations.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
           );
         }
 
@@ -239,6 +246,15 @@ export class DataArgProcessor {
         const validatedValue = validateEmailsFieldOrThrow(value, key);
 
         return transformEmailsValue(validatedValue);
+      }
+      case FieldMetadataType.FILES: {
+        const validatedValue = validateFilesFieldOrThrow(
+          value,
+          key,
+          fieldMetadata.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES],
+        );
+
+        return transformRawJsonField(validatedValue);
       }
       case FieldMetadataType.FULL_NAME: {
         const validatedValue = validateFullNameFieldOrThrow(value, key);
@@ -276,6 +292,7 @@ export class DataArgProcessor {
         throw new CommonQueryRunnerException(
           `${key} ${fieldMetadata.type}-typed field does not support write operations`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       default:
         assertUnreachable(

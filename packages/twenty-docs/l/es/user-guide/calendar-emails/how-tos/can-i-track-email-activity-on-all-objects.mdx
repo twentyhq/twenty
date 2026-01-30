@@ -1,0 +1,35 @@
+---
+title: ¿Puedo hacer seguimiento de la actividad de correo electrónico en todos los objetos?
+description: Comprender el seguimiento de la actividad de correo electrónico en distintos objetos.
+---
+
+## Objetos compatibles
+
+La actividad de correo electrónico está disponible actualmente en **tres objetos estándar**:
+
+| Objeto            | Lo que verás                                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Personas**      | Todos los correos electrónicos intercambiados con ese contacto específico                                    |
+| **Empresas**      | Todos los correos electrónicos con cualquier persona de esa empresa (según el dominio de correo electrónico) |
+| **Oportunidades** | Correos electrónicos relacionados con la empresa vinculada a la oportunidad                                  |
+
+## ¿Por qué solo estos objetos?
+
+Personas, Empresas y Oportunidades son los objetos de relación centrales en los que el contexto del correo electrónico aporta más valor. Los hilos de correo electrónico se vinculan automáticamente según:
+
+* **Dirección de correo electrónico** → se asocia a registros de Personas
+* **Dominio de correo electrónico** → se asocia a registros de Empresas
+* **Relación con la empresa** → vinculada a Oportunidades
+
+## Objetos personalizados
+
+**El seguimiento de correo electrónico no está disponible en objetos personalizados** por el momento.
+
+Si necesita contexto de correo electrónico en un objeto personalizado, considere:
+
+* Usar un campo de relación para vincular su objeto personalizado con Personas o Empresas
+* Ver el historial de correos electrónicos en el registro vinculado de Personas o Empresas
+
+## Planes futuros
+
+Se está considerando ampliar la visibilidad del correo electrónico a los objetos personalizados. Comparta su caso de uso en nuestras [discusiones en GitHub](https://github.com/twentyhq/twenty/discussions) para ayudar a priorizar esta función.

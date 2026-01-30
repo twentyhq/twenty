@@ -1,0 +1,182 @@
+---
+title: Traga dados de produtos para o Twenty
+description: Sincronize, de forma agendada, os dados do catálogo de produtos do seu armazém de dados para o seu CRM.
+---
+
+Use este padrão para manter o Twenty sincronizado com os dados de produtos do seu armazém de dados (por exemplo, Snowflake, BigQuery, PostgreSQL).
+
+## Estrutura do Fluxo de Trabalho
+
+1. **Gatilho**: De forma agendada
+2. **Código**: Consultar seu armazém de dados
+3. **Código** (opcional): Formatar os dados como array
+4. **Iterador**: Percorrer cada produto
+5. **Inserir/atualizar registro**: Criar ou atualizar no Twenty
+
+<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+
+## Etapa 1: Agendar o gatilho
+
+Defina o fluxo de trabalho para executar em uma frequência que atenda às suas necessidades de atualização dos dados:
+
+* A cada 5 minutos para sincronização quase em tempo real
+* A cada hora para dados menos críticos
+* Diariamente para atualizações em lote
+
+## Etapa 2: Consultar seu armazém de dados
+
+Adicione uma ação de **Código** para buscar dados recentes:
+
+```javascript
+export const main = async () => {
+  const intervalMinutes = 10; // Match your schedule frequency
+  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+
+  // Replace with your actual data warehouse connection
+  const response = await fetch("https://your-warehouse-api.com/query", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      query: `
+        SELECT id, name, sku, price, stock_quantity, updated_at
+        FROM products
+        WHERE updated_at >= '${cutoffTime}'
+      `
+    })
+  });
+
+  const data = await response.json();
+  return { products: data.results };
+};
+```
+
+<Tip>
+  Filtre por `updated_at >= last X minutes` para recuperar apenas registros alterados recentemente. Isso mantém a sincronização eficiente.
+</Tip>
+
+## Etapa 3: Formatar os dados (opcional)
+
+Se o seu armazém de dados retornar dados em um formato que precise de transformação, adicione outra ação de **Código**. Transformações comuns incluem conversões de tipo, renomeação de campos e limpeza de dados.
+
+### Exemplo: Dados de usuário com campos booleanos e de status
+
+```javascript
+export const main = async (params: {
+  users: any;
+}): Promise<object> => {
+  const { users } = params;
+  const usersFormatted = typeof users === "string" ? JSON.parse(users) : users;
+
+  // Convert string "true"/"false" to actual booleans
+  const toBool = (v: any) => v === true || v === "true";
+
+  return {
+    users: usersFormatted.map((user) => ({
+      ...user,
+      activityStatus: String(user.activityStatus).toUpperCase(),
+      isActiveLast30d: toBool(user.isActiveLast30d),
+      isActiveLast7d: toBool(user.isActiveLast7d),
+      isActiveLast24h: toBool(user.isActiveLast24h),
+      isTwenty: toBool(user.isTwenty),
+    })),
+  };
+};
+```
+
+### Exemplo: Dados de produto com conversões de tipo
+
+```javascript
+export const main = async (params: { products: any }) => {
+  const products = typeof params.products === "string"
+    ? JSON.parse(params.products)
+    : params.products;
+
+  return {
+    products: products.map(product => ({
+      externalId: product.id,
+      name: product.name,
+      sku: product.sku,
+      price: parseFloat(product.price),        // String → Number
+      stockQuantity: parseInt(product.stock_quantity),
+      isActive: product.status === "active"    // String → Boolean
+    }))
+  };
+};
+```
+
+### Exemplo: Formatação de data e moeda
+
+```javascript
+export const main = async (params: { deals: any }) => {
+  const deals = typeof params.deals === "string"
+    ? JSON.parse(params.deals)
+    : params.deals;
+
+  return {
+    deals: deals.map(deal => ({
+      ...deal,
+      // Convert Unix timestamp to ISO date
+      closedAt: deal.closed_timestamp
+        ? new Date(deal.closed_timestamp * 1000).toISOString()
+        : null,
+      // Ensure amount is a number (remove currency symbols)
+      amount: parseFloat(String(deal.amount).replace(/[^0-9.-]/g, "")),
+      // Normalize stage names
+      stage: deal.stage?.toLowerCase().replace(/_/g, " ")
+    }))
+  };
+};
+```
+
+### Transformações comuns
+
+| Formato de origem    | Formato de destino | Código                                   |
+| -------------------- | ------------------ | ---------------------------------------- |
+| `"true"` / `"false"` | `true` / `false`   | `v === true \|\| v === "true"`           |
+| `"123.45"`           | `123.45`           | `parseFloat(value)`                      |
+| `"active"`           | `"ACTIVE"`         | `value.toUpperCase()`                    |
+| `1704067200` (Unix)  | Data ISO           | `new Date(v * 1000).toISOString()`       |
+| `"$1,234.56"`        | `1234.56`          | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
+| `null` / `undefined` | `""`               | `value \|\| ""`                          |
+
+## Etapa 4: Iterar pelos produtos
+
+Adicione uma ação de **Iterador**:
+
+* Entrada: `{{code.products}}`
+
+Isso percorre cada produto no array.
+
+## Etapa 5: Inserir/atualizar cada registro
+
+Dentro do iterador, adicione uma ação de **Inserir/atualizar registro**:
+
+| Configuração            | Valor                                   |
+| ----------------------- | --------------------------------------- |
+| **Objeto**              | Seu objeto Produto personalizado        |
+| **Correspondência por** | ID externo ou SKU (identificador único) |
+| **Nome**                | `{{iterator.item.name}}`                |
+| **SKU**                 | `{{iterator.item.sku}}`                 |
+| **Preço**               | `{{iterator.item.price}}`               |
+
+<Tip>
+  Use **inserir/atualizar** (atualizar ou criar) em vez de construir ramificações separadas para criação vs. atualização. É mais rápido de construir e mais fácil de depurar.
+</Tip>
+
+## Casos de uso de exemplo
+
+| Fonte                        | Data                                        |
+| ---------------------------- | ------------------------------------------- |
+| **Sistema ERP**              | Catálogo de produtos, preços, inventário    |
+| **Plataforma de e-commerce** | Pedidos, clientes, atualizações de produtos |
+| **Armazém de dados**         | Métricas agregadas, dados enriquecidos      |
+| **Sistema de inventário**    | Níveis de estoque, alertas de reposição     |
+
+## Relacionados
+
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Lidar com arrays em ações de código](/l/pt/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

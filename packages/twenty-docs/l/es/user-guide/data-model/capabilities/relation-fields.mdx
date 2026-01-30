@@ -1,0 +1,96 @@
+---
+title: Campos de Relación
+description: Conecte registros entre distintos objetos mediante campos de relación.
+---
+
+## Tipos de relaciones
+
+### Uno a muchos
+
+Un registro en el Objeto A puede vincularse a muchos registros en el Objeto B.
+
+**Ejemplo:** Una Empresa puede tener muchas Personas (empleados).
+
+### Muchos a uno
+
+Muchos registros en el Objeto A pueden vincularse a un registro en el Objeto B.
+
+**Ejemplo:** Muchas Personas pueden pertenecer a una Empresa.
+
+### Relaciones que pueden apuntar a varios tipos de objeto
+
+Algunos objetos pueden vincularse a varios tipos de objeto en un lado de la relación.
+
+**Ejemplo:** Una Nota puede adjuntarse simultáneamente a una Persona Y a una Empresa Y a una Oportunidad. La Nota está en el lado de "muchos", conectándose a varios lados de "uno".
+
+<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+
+De manera similar, un Proyecto (en el lado de "uno") podría recibir vínculos de varias Personas, varias Empresas y varias Notas.
+
+<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+
+<Warning>
+  **Limitación de importación/exportación**: Las relaciones que apuntan a varios tipos de objeto aún no son compatibles con la importación/exportación de CSV. Esto está en nuestra hoja de ruta.
+</Warning>
+
+### Muchos a muchos
+
+Muchos registros en el Objeto A pueden vincularse a muchos registros en el Objeto B.
+
+**Ejemplo:** Muchas Personas pueden vincularse a muchos Proyectos, y viceversa.
+
+Las relaciones de muchos a muchos usan un patrón de **objeto de unión**: un objeto intermedio que conecta ambos lados. Con la función de relaciones de unión, Twenty muestra directamente los registros finales vinculados, ocultando el objeto intermedio de la UI.
+
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+
+<Warning>
+  **Función de laboratorio**: Las relaciones de unión deben habilitarse en **Settings → Updates → Lab** antes de usarlas.
+</Warning>
+
+Consulta [Cómo crear relaciones de muchos a muchos](/l/es/user-guide/data-model/how-tos/create-many-to-many-relations) para obtener una guía completa paso a paso.
+
+## Creación de un campo de relación
+
+1. Vaya a **Configuración → Modelo de datos**
+2. Seleccione el objeto en el que desea agregar la relación
+3. Haga clic en **+ Add Field**
+4. Seleccione **Relation** como tipo de campo
+5. Elija el(los) objeto(s) de destino con los que relacionar
+6. Configure los ajustes de la relación:
+   * **Nombre del campo en el objeto de origen**: El nombre del campo de relación en el objeto que está editando
+   * **Nombre del campo en el objeto de destino**: El nombre del campo de relación que aparecerá en el objeto de destino
+   * Tipo de relación (uno a muchos, muchos a uno)
+7. Haga clic en **Guardar**
+
+## Relaciones estándar
+
+Twenty incluye relaciones predefinidas entre objetos estándar:
+
+| Desde el objeto | Al objeto | Tipo de relación |
+| --------------- | --------- | ---------------- |
+| Personas        | Empresas  | Muchos a uno     |
+| Oportunidades   | Empresas  | Muchos a uno     |
+| Oportunidades   | Personas  | Muchos a uno     |
+
+## Mejores prácticas
+
+### Planificación de relaciones
+
+* **Mapee su modelo de datos**: Planifique las relaciones antes de crearlas
+* **Considere la dirección**: Piense en a qué objeto "pertenece" la relación
+* **Evite las dependencias circulares**: Mantenga su modelo de datos limpio
+
+### Asignar nombres a las relaciones
+
+* **Use nombres claros**: Deje claro qué representa la relación
+* **Sea coherente**: Use patrones de nomenclatura similares en todas las relaciones
+* **Considere ambos lados**: Asigne nombres adecuados a ambos lados de la relación
+
+### Rendimiento
+
+* **No cree relaciones en exceso**: Demasiadas relaciones pueden ralentizar su espacio de trabajo
+
+## Limitaciones
+
+* **Eliminar relaciones** elimina el vínculo pero no los registros relacionados
+* **Las relaciones circulares** deben evitarse para mantener la integridad de los datos

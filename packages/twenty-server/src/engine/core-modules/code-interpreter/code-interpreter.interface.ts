@@ -6,6 +6,7 @@ import { type LocalDriverOptions } from './drivers/local.driver';
 export enum CodeInterpreterDriverType {
   LOCAL = 'LOCAL',
   E_2_B = 'E_2_B',
+  DISABLED = 'DISABLED',
 }
 
 export type LocalDriverFactoryOptions = {
@@ -18,9 +19,15 @@ export type E2BDriverFactoryOptions = {
   options: E2BDriverOptions;
 };
 
+export type DisabledDriverFactoryOptions = {
+  type: CodeInterpreterDriverType.DISABLED;
+  options: { reason: string };
+};
+
 export type CodeInterpreterModuleOptions =
   | LocalDriverFactoryOptions
-  | E2BDriverFactoryOptions;
+  | E2BDriverFactoryOptions
+  | DisabledDriverFactoryOptions;
 
 export type CodeInterpreterModuleAsyncOptions = {
   useFactory: (

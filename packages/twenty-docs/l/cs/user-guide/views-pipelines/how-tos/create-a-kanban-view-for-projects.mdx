@@ -1,0 +1,80 @@
+---
+title: Vytvořte kanbanové zobrazení pro projekty
+description: Sledujte projekty napříč fázemi pomocí vizuální nástěnky.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Použijte kanbanové zobrazení k vizualizaci svých projektů (nebo jakéhokoli objektu s fázemi) jako karet, které se přesouvají mezi sloupci.
+
+<VimeoEmbed videoId="927888627" title="Ukázka videa" />
+
+## Předpoklady
+
+Váš objekt potřebuje **pole Výběr**, které se použije jako sloupce (např. Stav, Fáze, Etapa).
+
+Pokud jej nemáte:
+
+1. Přejděte do **Nastavení → Datový model**
+2. Vyberte objekt
+3. Přidejte pole typu Výběr s možnostmi fází
+
+## Postup
+
+1. Přejděte na svůj objekt (např. Projekty, Úkoly)
+2. Klikněte na rozbalovací nabídku zobrazení → **+ Přidat zobrazení**
+3. Pojmenujte své zobrazení (např. "Projektová nástěnka")
+4. Klikněte na **Vytvořit**
+5. Klikněte na **Možnosti** a jako rozvržení vyberte **Kanban**
+6. Zobrazení automaticky použije vaše pole Výběr pro sloupce
+7. Klikněte na **Uložit**
+
+## Nakonfigurujte svou nástěnku
+
+### Zobrazte klíčová pole na kartách
+
+1. Klikněte na **Možnosti → Pole**
+2. Vyhledejte pole v sekci "Skrytá pole"
+3. Kliknutím na **ikonu oka** je zobrazíte na kartách
+4. Přetažením změňte pořadí
+
+<img src="/images/user-guide/kanban-views/filter.png" style={{width:'100%'}} />
+
+### Povolte kompaktní zobrazení
+
+Pro souhrnný přehled:
+
+1. Klikněte na **Možnosti**
+2. Zapněte **Kompaktní zobrazení**
+
+Karty zobrazují pouze název záznamu.
+
+<img src="/images/user-guide/kanban-views/compact-view.png" style={{width:'100%'}} />
+
+### Přidejte agregace
+
+Zobrazte počty nebo součty v horní části každého sloupce:
+
+1. Klikněte na číslo vedle názvu sloupce
+2. Vyberte typ agregace (Počet, Součet atd.)
+3. V případě potřeby vyberte pole
+
+## Přesouvání karet
+
+Přetažením karet mezi sloupci aktualizujte jejich stav.
+
+<VimeoEmbed videoId="927888627" title="Ukázka videa" />
+
+## Příklad: Nástěnka úkolů
+
+| Sloupec (Stav)   | Karty             |
+| ---------------- | ----------------- |
+| **K vyřízení**   | Nové úkoly        |
+| **Rozpracováno** | Aktivní práce     |
+| **Ke kontrole**  | Čeká na schválení |
+| **Hotovo**       | Dokončeno         |
+
+## Související
+
+* [Kanban zobrazení](/l/cs/user-guide/views-pipelines/capabilities/kanban-views) — agregace, kompaktní zobrazení, fáze
+* [Jak nastavit prodejní pipeline](/l/cs/user-guide/views-pipelines/how-tos/set-up-a-sales-pipeline) — Kanban pro příležitosti

@@ -1,0 +1,78 @@
+---
+title: バグ報告、要望、プルリクエスト
+info: Issue を報告し、機能を要望し、コードで貢献する
+---
+
+## バグの報告
+
+バグを報告するには、[GitHubで問題を作成](https://github.com/twentyhq/twenty/issues/new)してください。
+
+[Discord](https://discord.gg/cx5n4Jzs57)でヘルプを求めることもできます。
+
+## 機能リクエスト
+
+バグかどうか不明で、機能リクエストに近いと感じる場合は、代わりに[ディスカッションを開く](https://github.com/twentyhq/twenty/discussions/new)べきです。
+
+## プルリクエストを提出する
+
+Twentyへのコード貢献は、プルリクエスト（PR）から始まります。
+
+### 始める前に
+
+1. 関連する作業がないか[既存の Issue](https://github.com/twentyhq/twenty/issues)を確認してください
+2. 新機能については、まず Issue を作成して議論してください
+3. プロジェクトの[行動規範](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)を確認してください
+
+### フォークとクローン
+
+1. GitHubでリポジトリをフォークする
+2. フォークをクローンする:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. upstream リモートを追加する:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### ブランチを作成する
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+説明的なブランチ名を使用する:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### 変更を加える
+
+1. クリーンで適切にドキュメント化されたコードを書く
+2. 既存のコードスタイルに従う
+3. 新しい機能にはテストを追加する
+4. 必要に応じてドキュメントを更新する
+
+### プルリクエストを提出する
+
+1. ブランチをプッシュする:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. GitHubでプルリクエストを作成する
+3. PR テンプレートに記入する
+4. 関連する Issue をリンクする
+
+### PR チェックリスト
+
+* [ ] コードがプロジェクトのスタイルガイドに準拠している
+* [ ] ローカルでテストが通っている
+* [ ] ドキュメントが更新されている
+* [ ] PR の説明に変更内容が記載されている

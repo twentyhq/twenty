@@ -22,6 +22,7 @@ import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repositor
 import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
+import { applyRowLevelPermissionPredicates } from 'src/engine/twenty-orm/utils/apply-row-level-permission-predicates.util';
 import { applyTableAliasOnWhereCondition } from 'src/engine/twenty-orm/utils/apply-table-alias-on-where-condition';
 import { computeEventSelectQueryBuilder } from 'src/engine/twenty-orm/utils/compute-event-select-query-builder.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -57,7 +58,7 @@ export class WorkspaceSoftDeleteQueryBuilder<
   override clone(): this {
     const clonedQueryBuilder = super.clone();
 
-    return new WorkspaceSoftDeleteQueryBuilder(
+    const workspaceSoftDeleteQueryBuilder = new WorkspaceSoftDeleteQueryBuilder(
       clonedQueryBuilder,
       this.objectRecordsPermissions,
       this.internalContext,
@@ -65,10 +66,13 @@ export class WorkspaceSoftDeleteQueryBuilder<
       this.authContext,
       this.featureFlagMap,
     ) as this;
+
+    return workspaceSoftDeleteQueryBuilder;
   }
 
   override async execute(): Promise<UpdateResult> {
     try {
+      this.applyRowLevelPermissionPredicates();
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
         objectsPermissions: this.objectRecordsPermissions,
@@ -107,10 +111,12 @@ export class WorkspaceSoftDeleteQueryBuilder<
         aliasName: objectMetadata.nameSingular,
       }) as WhereClause[];
 
-      const after = await super.execute();
+      const typeORMSoftRemoveResultWithOnlyIdColumn = await super.execute();
+
+      const afterWithAllFields = await beforeEventSelectQueryBuilder.getMany();
 
       const formattedAfter = formatResult<T[]>(
-        after.raw,
+        afterWithAllFields,
         objectMetadata,
         this.internalContext.flatObjectMetadataMaps,
         this.internalContext.flatFieldMetadataMaps,
@@ -129,15 +135,16 @@ export class WorkspaceSoftDeleteQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedBefore,
+          recordsBefore: formattedBefore,
+          recordsAfter: formattedAfter,
           authContext: this.authContext,
         }),
       );
 
       return {
-        raw: after.raw,
+        raw: typeORMSoftRemoveResultWithOnlyIdColumn.raw,
         generatedMaps: formattedAfter,
-        affected: after.affected,
+        affected: typeORMSoftRemoveResultWithOnlyIdColumn.affected,
       };
     } catch (error) {
       throw await computeTwentyORMException(error);
@@ -183,5 +190,26 @@ export class WorkspaceSoftDeleteQueryBuilder<
     }
 
     return mainAliasTarget;
+  }
+
+  private applyRowLevelPermissionPredicates(): void {
+    if (this.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    const mainAliasTarget = this.getMainAliasTarget();
+
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    applyRowLevelPermissionPredicates({
+      queryBuilder: this as unknown as WorkspaceSelectQueryBuilder<T>,
+      objectMetadata,
+      internalContext: this.internalContext,
+      authContext: this.authContext,
+      featureFlagMap: this.featureFlagMap,
+    });
   }
 }

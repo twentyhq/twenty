@@ -1,0 +1,78 @@
+---
+title: الأخطاء والطلبات وطلبات السحب
+info: أبلغ عن المشكلات، واطلب الميزات، وساهم بالشفرة البرمجية
+---
+
+## الإبلاغ عن الأخطاء
+
+للإبلاغ عن خطأ، يرجى [إنشاء مشكلة على GitHub](https://github.com/twentyhq/twenty/issues/new).
+
+يمكنك أيضًا طلب المساعدة عبر [Discord](https://discord.gg/cx5n4Jzs57).
+
+## طلبات الميزات
+
+إذا لم تكن متأكدًا مما إذا كانت مشكلة أو إذا كنت تشعر بأنها مجرد طلب ميزة، فيمكنك على الأرجح [فتح نقاش بدلاً من ذلك](https://github.com/twentyhq/twenty/discussions/new).
+
+## أرسل طلب سحب
+
+تبدأ المساهمة بالشفرة في Twenty بطلب سحب (PR).
+
+### قبل أن تبدأ
+
+1. تحقق من [المشكلات القائمة](https://github.com/twentyhq/twenty/issues) للعمل ذي الصلة
+2. بالنسبة للميزات الجديدة، افتح مشكلة أولًا للنقاش
+3. راجع [مدونة قواعد السلوك](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)
+
+### التفريع والاستنساخ
+
+1. فرّع المستودع على GitHub
+2. استنسخ تفريعك:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. أضف المستودع البعيد upstream:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### إنشاء فرع
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+استخدم أسماء فروع وصفية:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### أجرِ تعديلاتك
+
+1. اكتب شفرة نظيفة وموثقة جيدًا
+2. اتبع أسلوب الشفرة المعمول به
+3. أضف اختبارات للوظائف الجديدة
+4. حدّث الوثائق عند الحاجة
+
+### أرسل طلب السحب الخاص بك
+
+1. ادفع فرعك:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. افتح طلب سحب على GitHub
+3. املأ قالب طلب السحب
+4. اربط المشكلات ذات الصلة
+
+### قائمة التحقق لطلب السحب
+
+* [ ] الشفرة تتبع إرشادات أسلوب المشروع
+* [ ] تجتاز الاختبارات محليًا
+* [ ] الوثائق محدّثة
+* [ ] وصف طلب السحب يوضح التغييرات

@@ -1,0 +1,72 @@
+---
+title: Benzersizlik Kısıtlamaları
+description: Twenty'nin içe aktarma sırasında veri benzersizliğini nasıl sağladığı.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Genel Bakış
+
+Yinelenen kayıtları önlemek ve veri bütünlüğünü sağlamak için Twenty bazı alanlarda benzersizliği uygular. Başarılı içe aktarmalar için bu kısıtlamaları anlamak kritiktir.
+
+## Varsayılan Benzersiz Alanlar
+
+| Nesne             | Benzersiz Alanlar                 |
+| ----------------- | --------------------------------- |
+| **Kişiler**       | `id`, `email`                     |
+| **Şirketler**     | `id`, `domain`                    |
+| **Özel nesneler** | Yalnızca `id` (varsayılan olarak) |
+
+<Note>`id` alanı Twenty'nin dahili tanımlayıcısıdır, her kayıt için otomatik olarak oluşturulur. UUID biçimini kullanır (ör. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+
+## Özel Benzersiz Alanlar
+
+Ek benzersiz alanları **Ayarlar → Veri Modeli** altında tanımlayabilirsiniz:
+
+1. **Ayarlar → Veri Modeli** bölümüne gidin
+2. Nesneyi seçin
+3. Bir alana tıklayın
+4. Alan ayarlarında **Unique** özelliğini etkinleştirin
+
+### Özel Benzersiz Alanlar için Kullanım Senaryoları
+
+* **Harici ID'ler**: Diğer sistemlerden gelen ID'leri saklayın (Salesforce ID, HubSpot ID)
+* **İş tanımlayıcıları**: Çalışan numaraları, müşteri kodları
+* **Alternatif iletişim bilgileri**: LinkedIn profili, telefon numarası
+
+<Note>`id` alan adı Twenty'nin dahili ID'si için ayrılmıştır. Harici tanımlayıcılar için `externalId` veya `legacyId` gibi farklı bir ad kullanın.</Note>
+
+## İçe Aktarma Davranışı
+
+### Yeni Kayıtlar Oluşturma
+
+Benzersiz alan değeri mevcut değilse yeni bir kayıt oluşturulur.
+
+### Mevcut Kayıtları Güncelleme
+
+Benzersiz alan değeri mevcut bir kayıtla eşleşirse, o kayıt yeni verilerle **güncellenir**.
+<Warning>**Mevcut kayıtları güncellemek** için, **yalnızca bir benzersiz alanı** eşleştirmeniz önerilir.</Warning>
+
+### Yumuşak Silinmiş Kayıtlar
+
+<Warning>
+  **Silinmiş kayıtlar benzersizliğe dahildir.**
+
+  Yumuşak silinmiş kayıtlar (Komut Menüsü → Silinen kayıtları görüntüle altında görünür) benzersizlik kontrollerine dahildir. Silinmiş bir kayıtla aynı benzersiz değere sahip bir kaydı içe aktarırsanız, silinmiş kayıt yeni verilerle **geri yüklenir**.
+</Warning>
+
+## İçe Aktarma Sırasında Yinelenenleri Tespit Etme
+
+Doğrulama aşamasında:
+
+* Dosyanızdaki yinelenenler sarı renkle vurgulanır
+* İçe aktarmayı başlatmadan önce yinelenen satırları arayüzden düzenleyebilir veya kaldırabilirsiniz
+
+<VimeoEmbed videoId="1145246326" title="Video gösterimi" />
+
+## En İyi Uygulamalar
+
+1. İçe aktarmadan önce dosyanızdan **yinelenenleri kaldırın**
+2. İçe aktarmadan önce Twenty'de **mevcut kayıtları kontrol edin**
+3. Diğer sistemlerden geçiş yaparken **harici ID'leri kullanın**
+4. Mevcut kayıtları güncellemek istiyorsanız **benzersiz alanları dahil edin**

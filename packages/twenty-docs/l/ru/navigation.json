@@ -3,38 +3,140 @@
     "userGuide": {
       "label": "Руководство пользователя",
       "groups": {
-        "gettingStarted": {
-          "label": "Начало работы"
+        "discoverTwenty": {
+          "label": "Откройте Twenty",
+          "groups": {
+            "gettingStartedCapabilities": {
+              "label": "Возможности"
+            },
+            "gettingStartedHowTos": {
+              "label": "Инструкции"
+            }
+          }
         },
         "dataModel": {
-          "label": "Модель данных"
+          "label": "Модель данных",
+          "groups": {
+            "dataModelCapabilities": {
+              "label": "Возможности"
+            },
+            "dataModelHowTos": {
+              "label": "Инструкции"
+            }
+          }
         },
-        "crmEssentials": {
-          "label": "Основы CRM"
+        "dataMigration": {
+          "label": "Миграция данных",
+          "groups": {
+            "dataMigrationCapabilities": {
+              "label": "Возможности"
+            },
+            "dataMigrationHowTos": {
+              "label": "Инструкции"
+            }
+          }
         },
-        "views": {
-          "label": "Представления"
+        "calendarEmails": {
+          "label": "Календарь и электронная почта",
+          "groups": {
+            "calendarEmailsCapabilities": {
+              "label": "Возможности"
+            },
+            "calendarEmailsHowTos": {
+              "label": "Инструкции"
+            }
+          }
         },
         "workflows": {
-          "label": "Рабочие процессы"
+          "label": "Рабочие процессы",
+          "groups": {
+            "workflowsCapabilities": {
+              "label": "Возможности"
+            },
+            "workflowsHowTos": {
+              "label": "Инструкции",
+              "groups": {
+                "crmAutomations": {
+                  "label": "Автоматизации CRM"
+                },
+                "connectToOtherTools": {
+                  "label": "Подключение к другим инструментам"
+                },
+                "advancedConfigurations": {
+                  "label": "Расширенные настройки"
+                },
+                "needMoreHelp": {
+                  "label": "Нужна дополнительная помощь"
+                }
+              }
+            }
+          }
         },
-        "collaboration": {
-          "label": "Сотрудничество"
+        "ai": {
+          "label": "ИИ",
+          "groups": {
+            "aiCapabilities": {
+              "label": "Возможности"
+            },
+            "aiHowTos": {
+              "label": "Инструкции"
+            }
+          }
         },
-        "integrationsApi": {
-          "label": "Интеграции и API"
+        "viewsPipelines": {
+          "label": "Представления и воронки",
+          "groups": {
+            "viewsPipelinesCapabilities": {
+              "label": "Возможности"
+            },
+            "viewsPipelinesHowTos": {
+              "label": "Инструкции"
+            }
+          }
         },
-        "reporting": {
-          "label": "Отчеты"
+        "dashboards": {
+          "label": "Панели управления",
+          "groups": {
+            "dashboardsCapabilities": {
+              "label": "Возможности"
+            },
+            "dashboardsHowTos": {
+              "label": "Инструкции"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "Разрешения и доступ",
+          "groups": {
+            "permissionsAccessCapabilities": {
+              "label": "Возможности"
+            },
+            "permissionsAccessHowTos": {
+              "label": "Инструкции"
+            }
+          }
+        },
+        "billing": {
+          "label": "Биллинг",
+          "groups": {
+            "billingCapabilities": {
+              "label": "Возможности"
+            },
+            "billingHowTos": {
+              "label": "Инструкции"
+            }
+          }
         },
         "settings": {
-          "label": "Настройки"
-        },
-        "pricing": {
-          "label": "Цены"
-        },
-        "resources": {
-          "label": "Ресурсы"
+          "label": "Настройки",
+          "groups": {
+            "settingsCapabilities": {
+              "label": "Возможности"
+            },
+            "settingsHowTos": {
+              "label": "Инструкции"
+            }
+          }
         }
       }
     },
@@ -44,44 +146,54 @@
         "developersGroup": {
           "label": "Разработчики"
         },
-        "devGettingStarted": {
-          "label": "Начало работы",
+        "extend": {
+          "label": "Расширяйте",
           "groups": {
-            "selfHosting": {
-              "label": "Самостоятельный хостинг"
-            },
-            "apiAndWebhooks": {
-              "label": "API и вебхуки"
+            "extendCapabilities": {
+              "label": "Возможности"
             }
           }
         },
-        "contributing": {
-          "label": "Вклад",
+        "selfHost": {
+          "label": "Самостоятельный хостинг",
           "groups": {
-            "frontendDevelopment": {
-              "label": "Разработка интерфейса",
+            "selfHostCapabilities": {
+              "label": "Возможности"
+            }
+          }
+        },
+        "contribute": {
+          "label": "Внести вклад",
+          "groups": {
+            "contributeCapabilities": {
+              "label": "Возможности",
               "groups": {
-                "twentyUi": {
-                  "label": "Twenty UI",
+                "frontendDevelopment": {
+                  "label": "Разработка интерфейса",
                   "groups": {
-                    "display": {
-                      "label": "Отображение"
-                    },
-                    "feedback": {
-                      "label": "Обратная связь"
-                    },
-                    "input": {
-                      "label": "Ввод"
-                    },
-                    "navigation": {
-                      "label": "Навигация"
+                    "twentyUi": {
+                      "label": "Twenty UI",
+                      "groups": {
+                        "display": {
+                          "label": "Отображение"
+                        },
+                        "feedback": {
+                          "label": "Обратная связь"
+                        },
+                        "input": {
+                          "label": "Ввод"
+                        },
+                        "navigation": {
+                          "label": "Навигация"
+                        }
+                      }
                     }
                   }
+                },
+                "backendDevelopment": {
+                  "label": "Разработка серверной части"
                 }
               }
-            },
-            "backendDevelopment": {
-              "label": "Бэкенд разработка"
             }
           }
         }

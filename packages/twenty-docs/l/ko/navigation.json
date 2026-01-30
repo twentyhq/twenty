@@ -1,40 +1,142 @@
 {
   "tabs": {
     "userGuide": {
-      "label": "User Guide",
+      "label": "사용자 안내서",
       "groups": {
-        "gettingStarted": {
-          "label": "시작하기"
+        "discoverTwenty": {
+          "label": "Twenty 알아보기",
+          "groups": {
+            "gettingStartedCapabilities": {
+              "label": "기능"
+            },
+            "gettingStartedHowTos": {
+              "label": "사용 방법"
+            }
+          }
         },
         "dataModel": {
-          "label": "데이터 모델"
+          "label": "데이터 모델",
+          "groups": {
+            "dataModelCapabilities": {
+              "label": "기능"
+            },
+            "dataModelHowTos": {
+              "label": "사용 방법"
+            }
+          }
         },
-        "crmEssentials": {
-          "label": "CRM 필수 요소"
+        "dataMigration": {
+          "label": "데이터 마이그레이션",
+          "groups": {
+            "dataMigrationCapabilities": {
+              "label": "기능"
+            },
+            "dataMigrationHowTos": {
+              "label": "사용 방법"
+            }
+          }
         },
-        "views": {
-          "label": "보기들"
+        "calendarEmails": {
+          "label": "캘린더 및 이메일",
+          "groups": {
+            "calendarEmailsCapabilities": {
+              "label": "기능"
+            },
+            "calendarEmailsHowTos": {
+              "label": "사용 방법"
+            }
+          }
         },
         "workflows": {
-          "label": "Workflows"
+          "label": "워크플로우",
+          "groups": {
+            "workflowsCapabilities": {
+              "label": "기능"
+            },
+            "workflowsHowTos": {
+              "label": "사용 방법",
+              "groups": {
+                "crmAutomations": {
+                  "label": "CRM 자동화"
+                },
+                "connectToOtherTools": {
+                  "label": "다른 도구에 연결하기"
+                },
+                "advancedConfigurations": {
+                  "label": "고급 설정"
+                },
+                "needMoreHelp": {
+                  "label": "추가 도움이 필요하십니까"
+                }
+              }
+            }
+          }
         },
-        "collaboration": {
-          "label": "협업"
+        "ai": {
+          "label": "AI",
+          "groups": {
+            "aiCapabilities": {
+              "label": "기능"
+            },
+            "aiHowTos": {
+              "label": "사용 방법"
+            }
+          }
         },
-        "integrationsApi": {
-          "label": "Integrations & API"
+        "viewsPipelines": {
+          "label": "뷰 및 파이프라인",
+          "groups": {
+            "viewsPipelinesCapabilities": {
+              "label": "기능"
+            },
+            "viewsPipelinesHowTos": {
+              "label": "사용 방법"
+            }
+          }
         },
-        "reporting": {
-          "label": "Reporting"
+        "dashboards": {
+          "label": "대시보드",
+          "groups": {
+            "dashboardsCapabilities": {
+              "label": "기능"
+            },
+            "dashboardsHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "permissionsAccess": {
+          "label": "권한 및 접근",
+          "groups": {
+            "permissionsAccessCapabilities": {
+              "label": "기능"
+            },
+            "permissionsAccessHowTos": {
+              "label": "사용 방법"
+            }
+          }
+        },
+        "billing": {
+          "label": "청구",
+          "groups": {
+            "billingCapabilities": {
+              "label": "기능"
+            },
+            "billingHowTos": {
+              "label": "사용 방법"
+            }
+          }
         },
         "settings": {
-          "label": "설정"
-        },
-        "pricing": {
-          "label": "가격"
-        },
-        "resources": {
-          "label": "자료"
+          "label": "설정",
+          "groups": {
+            "settingsCapabilities": {
+              "label": "기능"
+            },
+            "settingsHowTos": {
+              "label": "사용 방법"
+            }
+          }
         }
       }
     },
@@ -44,44 +146,54 @@
         "developersGroup": {
           "label": "개발자"
         },
-        "devGettingStarted": {
-          "label": "시작하기",
+        "extend": {
+          "label": "확장",
           "groups": {
-            "selfHosting": {
-              "label": "셀프 호스팅"
-            },
-            "apiAndWebhooks": {
-              "label": "API 및 웹훅"
+            "extendCapabilities": {
+              "label": "기능"
             }
           }
         },
-        "contributing": {
+        "selfHost": {
+          "label": "셀프 호스팅",
+          "groups": {
+            "selfHostCapabilities": {
+              "label": "기능"
+            }
+          }
+        },
+        "contribute": {
           "label": "기여",
           "groups": {
-            "frontendDevelopment": {
-              "label": "프론트엔드 개발",
+            "contributeCapabilities": {
+              "label": "기능",
               "groups": {
-                "twentyUi": {
-                  "label": "Twenty UI",
+                "frontendDevelopment": {
+                  "label": "프론트엔드 개발",
                   "groups": {
-                    "display": {
-                      "label": "표시"
-                    },
-                    "feedback": {
-                      "label": "피드백"
-                    },
-                    "input": {
-                      "label": "입력"
-                    },
-                    "navigation": {
-                      "label": "네비게이션"
+                    "twentyUi": {
+                      "label": "Twenty UI",
+                      "groups": {
+                        "display": {
+                          "label": "표시"
+                        },
+                        "feedback": {
+                          "label": "피드백"
+                        },
+                        "input": {
+                          "label": "입력"
+                        },
+                        "navigation": {
+                          "label": "네비게이션"
+                        }
+                      }
                     }
                   }
+                },
+                "backendDevelopment": {
+                  "label": "백엔드 개발"
                 }
               }
-            },
-            "backendDevelopment": {
-              "label": "백엔드 개발"
             }
           }
         }

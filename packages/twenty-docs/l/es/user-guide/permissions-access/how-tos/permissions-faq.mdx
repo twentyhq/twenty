@@ -1,0 +1,126 @@
+---
+title: Preguntas frecuentes sobre permisos
+description: Preguntas frecuentes sobre roles y permisos.
+---
+
+## Roles
+
+<AccordionGroup>
+  <Accordion title="¿Qué roles incluye Twenty por defecto?">
+    Twenty incluye los roles **Admin** y **Member** por defecto. Puedes crear roles personalizados adicionales según las necesidades de tu equipo (p. ej., Representante de ventas, Gerente, Usuario de solo lectura).
+  </Accordion>
+
+  <Accordion title="¿Puedo eliminar el rol de Admin?">
+    No, el rol de Admin no se puede eliminar. Siempre debe haber al menos un miembro asignado al rol de Admin.
+  </Accordion>
+
+  <Accordion title="¿Qué ocurre cuando elimino un rol?">
+    Cualquier miembro del espacio de trabajo asignado a ese rol será reasignado automáticamente al rol predeterminado.
+  </Accordion>
+
+  <Accordion title="¿Cómo configuro un rol predeterminado para los nuevos miembros?">
+    Ve a **Ajustes → Roles**, busca la opción **Rol predeterminado** y selecciona qué rol deben recibir automáticamente los nuevos miembros cuando se unan.
+  </Accordion>
+
+  <Accordion title="¿Puedo asignar varios roles a un usuario?">
+    No, cada usuario solo puede tener un rol a la vez. Crea un rol personalizado si necesitas una combinación de permisos.
+  </Accordion>
+</AccordionGroup>
+
+## Permisos
+
+<AccordionGroup>
+  <Accordion title="¿Cuál es la diferencia entre los permisos de objeto y de campo?">
+    * **Permisos de objeto**: Controlan el acceso a registros completos (p. ej., ver/editar/eliminar registros de Personas)
+    * **Permisos de campo**: Controlan el acceso a campos específicos dentro de un objeto (p. ej., ver pero no editar el campo Salario)
+
+    Los permisos de campo permiten un control más granular sobre los datos sensibles.
+  </Accordion>
+
+  <Accordion title="¿Cómo funcionan las anulaciones de permisos?">
+    Los permisos se aplican en cascada de lo global a lo específico:
+
+    1. **Todos los objetos** establece la base para todos los objetos
+    2. **Permisos a nivel de objeto** pueden anular la configuración global para objetos específicos
+    3. **Permisos a nivel de campo** pueden anular la configuración del objeto para campos específicos
+
+    Las configuraciones más específicas siempre tienen prioridad.
+  </Accordion>
+
+  <Accordion title="¿Qué significan los distintos niveles de permisos?">
+    Para objetos:
+
+    * **Ver registros**: Ver registros en listas y páginas de detalle
+    * **Editar registros**: Modificar registros existentes
+    * **Eliminar registros**: Eliminación lógica de registros (se pueden restaurar)
+    * **Destruir registros**: Eliminar registros de forma permanente
+
+    Para campos:
+
+    * **Ver campo**: Ver el valor del campo
+    * **Editar campo**: Modificar el valor del campo
+    * **Sin acceso**: El campo está completamente oculto
+  </Accordion>
+
+  <Accordion title="¿Puedo restringir el acceso a registros específicos (permisos a nivel de fila)?">
+    Los permisos a nivel de fila estarán disponibles en el plan **Organization** para el primer trimestre de 2026. Esto te permite restringir el acceso a registros específicos según criterios (p. ej., ver solo tus propias oportunidades).
+  </Accordion>
+
+  <Accordion title="¿Cómo hago que un campo sea de solo lectura para ciertos usuarios?">
+    1. Ve a **Ajustes → Roles**
+    2. Selecciona el rol
+    3. Navega hasta el objeto que contiene el campo
+    4. Configura el permiso del campo en **See Field** (sin Edit Field)
+  </Accordion>
+</AccordionGroup>
+
+## Ajustes y acciones
+
+<AccordionGroup>
+  <Accordion title="¿Qué permisos de configuración están disponibles?">
+    Puedes controlar el acceso a:
+
+    * Generación de claves de API
+    * Preferencias del espacio de trabajo
+    * Asignación de roles
+    * Configuración del modelo de datos
+    * Configuración de seguridad
+    * Gestión de flujos de trabajo
+
+    Usa **Settings All Access** para otorgar acceso total o habilita permisos específicos.
+  </Accordion>
+
+  <Accordion title="¿Qué permisos de acción están disponibles?">
+    Puedes controlar:
+
+    * **Send Email**: Capacidad para enviar correos desde Twenty
+    * **Import CSV**: Capacidad para importar datos mediante CSV
+    * **Export CSV**: Capacidad para exportar datos a CSV
+
+    Usa **Application All Access** para otorgar todas las acciones o habilitar acciones específicas.
+  </Accordion>
+</AccordionGroup>
+
+## SSO
+
+<AccordionGroup>
+  <Accordion title="¿Está disponible el SSO en todos los planes?">
+    No, SSO es una función Premium disponible solo en el plan **Organization**.
+  </Accordion>
+
+  <Accordion title="¿Qué proveedores de identidad son compatibles?">
+    Twenty es compatible con:
+
+    * **SAML 2.0** (funciona con la mayoría de los proveedores de identidad empresariales)
+    * **Google Workspace**
+    * **Microsoft Entra ID** (anteriormente Azure AD)
+  </Accordion>
+
+  <Accordion title="¿Qué es el aprovisionamiento Just-in-Time (JIT)?">
+    Con el aprovisionamiento JIT, las cuentas de usuario se crean automáticamente en Twenty cuando alguien inicia sesión mediante SSO por primera vez. Se les asigna automáticamente el rol predeterminado.
+  </Accordion>
+
+  <Accordion title="¿Puedo exigir SSO para todos los usuarios?">
+    Sí, una vez configurado SSO, puedes desactivar el inicio de sesión con contraseña para los usuarios de SSO y forzar la autenticación a través de tu proveedor de identidad.
+  </Accordion>
+</AccordionGroup>

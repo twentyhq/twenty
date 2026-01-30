@@ -7,13 +7,16 @@ import {
   type workflowCreateRecordActionSchema,
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
+  type workflowDelayActionSchema,
   type workflowDeleteRecordActionSchema,
   type workflowEmptyActionSchema,
   type workflowFilterActionSchema,
   type workflowFindRecordsActionSchema,
   type workflowFormActionSchema,
   type workflowHttpRequestActionSchema,
+  type workflowIfElseActionSchema,
   type workflowIteratorActionSchema,
+  type workflowLogicFunctionActionSchema,
   type workflowManualTriggerSchema,
   type workflowRunSchema,
   type workflowRunStateSchema,
@@ -24,11 +27,13 @@ import {
   type workflowUpdateRecordActionSchema,
   type workflowUpsertRecordActionSchema,
   type workflowWebhookTriggerSchema,
-  type workflowDelayActionSchema,
 } from 'twenty-shared/workflow';
 import { type z } from 'zod';
 
 export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;
+export type WorkflowLogicFunctionAction = z.infer<
+  typeof workflowLogicFunctionActionSchema
+>;
 export type WorkflowSendEmailAction = z.infer<
   typeof workflowSendEmailActionSchema
 >;
@@ -50,6 +55,7 @@ export type WorkflowFindRecordsAction = z.infer<
 export type WorkflowDelayAction = z.infer<typeof workflowDelayActionSchema>;
 export type WorkflowFilterAction = z.infer<typeof workflowFilterActionSchema>;
 export type WorkflowFormAction = z.infer<typeof workflowFormActionSchema>;
+export type WorkflowIfElseAction = z.infer<typeof workflowIfElseActionSchema>;
 export type WorkflowHttpRequestAction = z.infer<
   typeof workflowHttpRequestActionSchema
 >;
@@ -61,6 +67,7 @@ export type WorkflowEmptyAction = z.infer<typeof workflowEmptyActionSchema>;
 
 export type WorkflowAction =
   | WorkflowCodeAction
+  | WorkflowLogicFunctionAction
   | WorkflowSendEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
@@ -68,6 +75,7 @@ export type WorkflowAction =
   | WorkflowUpsertRecordAction
   | WorkflowFindRecordsAction
   | WorkflowFilterAction
+  | WorkflowIfElseAction
   | WorkflowFormAction
   | WorkflowHttpRequestAction
   | WorkflowAiAgentAction

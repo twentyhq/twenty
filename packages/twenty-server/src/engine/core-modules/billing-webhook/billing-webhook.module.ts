@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingWebhookController } from 'src/engine/core-modules/billing-webhook/billing-webhook.controller';
 import { BillingWebhookAlertService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-alert.service';
+import { BillingWebhookCreditGrantService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-credit-grant.service';
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
@@ -26,6 +27,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 
 @Module({
   imports: [
@@ -47,6 +49,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       UserWorkspaceEntity,
       FeatureFlagEntity,
     ]),
+    RowLevelPermissionModule,
   ],
   controllers: [BillingWebhookController],
   providers: [
@@ -58,6 +61,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingWebhookSubscriptionService,
     BillingWebhookSubscriptionScheduleService,
     BillingWebhookEntitlementService,
+    BillingWebhookCreditGrantService,
   ],
 })
 export class BillingWebhookModule {}

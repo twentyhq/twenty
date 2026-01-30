@@ -1,0 +1,171 @@
+---
+title: 웹훅 트리거 설정
+description: 외부 서비스에서 데이터를 받아 워크플로우를 트리거합니다.
+image: /images/user-guide/workflows/workflow.png
+---
+
+웹훅 트리거는 고유한 URL로 데이터를 보내 외부 서비스가 워크플로우를 시작할 수 있게 합니다. 양식, 서드파티 앱 및 커스텀 통합과 연결하는 데 사용하세요.
+
+## 웹훅을 언제 사용할지
+
+| 사용 사례      | 예시                    |
+| ---------- | --------------------- |
+| **웹 폼**    | 문의 폼 제출 시 리드가 생성됩니다   |
+| **서드파티 앱** | Stripe 결제 → 고객 레코드 생성 |
+| **커스텀 통합** | 사용자 앱 → Twenty 자동화    |
+| **노코드 도구** | Zapier, Make, n8n 연결  |
+
+## 단계별 설정
+
+### 1단계: 워크플로우 생성
+
+1. **설정 → 워크플로우**로 이동
+2. **+ 새 워크플로우**를 클릭
+3. 이름을 지정합니다(예: "웹사이트 폼 제출")
+
+### 2단계: 웹훅 트리거 구성
+
+1. 트리거 블록을 클릭하세요
+2. **웹훅**을 선택
+3. 다음과 같은 고유한 웹훅 URL이 제공됩니다:
+   ```
+   https://api.twenty.com/webhooks/workflow/abc123...
+   ```
+4. 이 URL을 복사하세요—외부 서비스에 필요합니다
+
+### 3단계: 예상 데이터 구조 정의
+
+**POST** 요청의 경우, 예상 본문 구조를 정의하세요:
+
+1. **예상 본문 정의**를 클릭
+2. 서비스가 보내는 형식과 일치하는 샘플 JSON을 입력하세요:
+
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "company": "Acme Inc",
+  "message": "Interested in your product"
+}
+```
+
+3. **저장**을 클릭하세요—이렇게 하면 이후 단계에서 사용할 수 있는 변수가 생성됩니다
+
+### 4단계: 액션 추가
+
+이제 웹훅 데이터를 사용하는 액션을 추가하세요:
+
+**예시: 사람 레코드 생성**
+
+1. **레코드 생성** 액션을 추가
+2. **People** 객체를 선택
+3. 필드 매핑:
+
+| 필드  | 값                                        |
+| --- | ---------------------------------------- |
+| 이름  | `{{trigger.body.firstName}}`             |
+| 성   | `{{trigger.body.lastName}}`              |
+| 이메일 | `{{trigger.body.email}}`                 |
+| 회사  | `{{trigger.body.company}}` 기준으로 검색 또는 생성 |
+
+### 5단계: 웹훅 테스트
+
+활성화하기 전에 웹훅을 테스트하세요:
+
+**cURL 사용**:
+
+```bash
+curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","email":"test@example.com"}'
+```
+
+**Postman 등 사용**:
+
+1. 웹훅 URL로 POST 요청을 생성
+2. Content-Type 헤더를 `application/json`으로 설정
+3. 테스트 JSON 본문을 추가
+4. 전송하고 워크플로우 실행을 확인하세요.
+
+### 6단계: 활성화
+
+테스트가 완료되면 **활성화**를 클릭하여 워크플로우를 라이브로 전환하세요.
+
+## 다양한 데이터 구조 처리
+
+### 중첩 데이터
+
+웹훅이 중첩 데이터를 보내는 경우:
+
+```json
+{
+  "contact": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "source": "website"
+}
+```
+
+다음과 같이 참조: `{{trigger.body.contact.email}}`
+
+### 배열
+
+데이터에 배열이 포함된 경우:
+
+```json
+{
+  "items": [
+    {"name": "Product A", "qty": 2},
+    {"name": "Product B", "qty": 1}
+  ]
+}
+```
+
+배열 처리 방식은 사용 사례에 따라 다릅니다:
+
+**항목 개수를 알 수 없음 → Iterator 사용**
+
+배열의 각 항목을 처리해야 하는 경우(예: 각 항목마다 레코드 생성), 배열을 파싱하기 위해 **Code** 액션을 추가한 다음 **Iterator**를 사용하세요:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+  return { items };
+};
+```
+
+그런 다음 Iterator로 순회합니다: `{{code.items}}`
+
+**알려진/특정 필드 → 명명된 필드로 추출**
+
+배열에 개별적으로 접근하려는 특정 필드가 포함되어 있다면(예: 위치 0은 항상 "first name", 위치 1은 항상 "last name"인 폼 답변), 이를 추출하기 위해 **Code** 액션을 추가하세요:
+
+```javascript
+export const main = async (params: { items: any }) => {
+  const items = typeof params.items === "string"
+    ? JSON.parse(params.items)
+    : params.items;
+
+  return {
+    product: {
+      name: items[0]?.name || "",
+      qty: items[0]?.qty || 0
+    }
+  };
+};
+```
+
+이제 이후 단계에서 `product.name` 및 `product.qty`를 개별적으로 선택할 수 있습니다.
+
+<Tip>
+  배열 처리에 대한 자세한 내용은 [Code 액션에서 배열 처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)를 참조하세요.
+</Tip>
+
+## 관련 항목
+
+* [워크플로우 트리거](/l/ko/user-guide/workflows/capabilities/workflow-triggers)
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)

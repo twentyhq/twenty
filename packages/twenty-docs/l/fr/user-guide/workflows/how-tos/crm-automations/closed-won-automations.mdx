@@ -1,0 +1,179 @@
+---
+title: Automatisations « Closed Won »
+description: Automatisez les activités post-gain lorsque des opportunités sont clôturées.
+---
+
+Lorsqu'une affaire se clôture, plusieurs actions doivent avoir lieu : mettre à jour le statut de l'entreprise, notifier les membres de l'équipe, créer des tâches d'intégration. Automatisez tout cela avec un seul flux de travail.
+
+## Le problème
+
+Lorsqu'une opportunité passe à "Closed Won":
+
+* Le type d'entreprise doit passer de "Prospect" à "Customer"
+* Des tâches d'intégration doivent être créées
+* L'équipe Customer Success doit être informée
+* Le commercial a besoin d'une confirmation
+
+Faire cela manuellement est chronophage et sujet aux erreurs.
+
+## La solution
+
+Créez un flux de travail qui gère automatiquement toutes les activités post-gain.
+
+## Configuration complète du flux de travail
+
+### Étape 1 : Créer le flux de travail
+
+1. Allez dans **Paramètres → Flux de travail**
+2. Cliquez sur **+ Nouveau flux de travail**
+3. Nommez-le "Affaire gagnée - Automatisation post-gain"
+
+### Étape 2 : Configurer le déclencheur
+
+1. Sélectionnez **L'enregistrement est mis à jour**
+2. Choisissez **Opportunités**
+3. Dans "Champs à surveiller", sélectionnez **Étape**
+
+### Étape 3 : Ajouter un filtre d'étape
+
+1. Ajoutez l'action **Filtre**
+2. Condition : `{{trigger.object.stage}}` est égal à "Closed Won"
+
+### Étape 4 : Mettre à jour le type d'entreprise
+
+1. Ajoutez l'action **Mettre à jour l'enregistrement**
+2. Configurer:
+
+| Champ                           | Valeur                          |
+| ------------------------------- | ------------------------------- |
+| **Objet**                       | Entreprises                     |
+| **Enregistrement**              | `{{trigger.object.company.id}}` |
+| **Type**                        | Client                          |
+| **Date de la première affaire** | `{{trigger.object.closedAt}}`   |
+| **Propriétaire du compte**      | `{{trigger.object.owner.id}}`   |
+
+### Étape 5 : Créer une tâche d'intégration
+
+1. Ajoutez l'action **Créer un enregistrement**
+2. Configurer:
+
+| Champ                    | Valeur                                                                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| **Objet**                | Tâches                                                                                                                  |
+| **Titre**                | `Onboarding: {{trigger.object.name}}`                                                                                   |
+| **Assigné(e)**           | Membre de l'équipe Customer Success                                                                                     |
+| **Date d'échéance**      | Dans 3 jours                                                                                                            |
+| **Priorité**             | Élevée                                                                                                                  |
+| **Entreprise associée**  | `{{trigger.object.company.id}}`                                                                                         |
+| **Opportunité associée** | `{{trigger.object.id}}`                                                                                                 |
+| **Description**          | `Intégration d'un nouveau client pour {{trigger.object.company.name}}. Valeur de l'affaire : {{trigger.object.amount}}` |
+
+### Étape 6 : Informer Customer Success
+
+1. Ajoutez l'action **Envoyer un e-mail**
+2. Configurer:
+
+| Champ                | Valeur                                             |
+| -------------------- | -------------------------------------------------- |
+| **À**                | customer-success@yourcompany.com                   |
+| **Objet**            | `🎉 New Customer: {{trigger.object.company.name}}` |
+| **Corps du message** | Voir l'exemple ci-dessous                          |
+
+**Exemple de corps de l'e-mail** :
+
+```
+Hi CS Team,
+
+We have a new customer!
+
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
+
+An onboarding task has been created automatically.
+
+Let's give them a great start!
+```
+
+### Étape 7 : Confirmer au commercial
+
+1. Ajoutez une autre action **Envoyer un e-mail**
+2. Configurer:
+
+| Champ                | Valeur                                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **À**                | `{{trigger.object.owner.email}}`                                                                                   |
+| **Objet**            | `✅ Deal Closed: {{trigger.object.name}}`                                                                           |
+| **Corps du message** | Félicitations ! Votre affaire a été traitée. L'équipe Customer Success a été informée et l'intégration a commencé. |
+
+### Étape 8 : Tester et activer
+
+1. Testez en déplaçant une opportunité de test vers "Closed Won"
+2. Vérifier:
+   * Type d'entreprise modifié en "Customer"
+   * Tâche d'intégration créée
+   * L'équipe CS a reçu l'e-mail
+   * Le commercial a reçu la confirmation
+3. Activez lorsque vous êtes prêt
+
+## Gestion de "Closed Lost"
+
+Créez un flux de travail similaire pour les affaires perdues :
+
+### Déclencheur
+
+* Enregistrement mis à jour (Opportunités, Étape = "Closed Lost")
+
+### Actions
+
+1. **Créer un enregistrement** : Tâche pour "Analyse d'affaire perdue"
+2. **Mettre à jour l'enregistrement** : Ajouter la raison de perte à l'enregistrement de l'entreprise
+3. **Envoyer un e-mail** : Informer le responsable de l'affaire perdue
+
+## Avancé : intégration en plusieurs étapes
+
+Pour une intégration complexe, créez plusieurs tâches :
+
+```javascript
+export const main = async (params) => {
+  const tasks = [
+    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
+    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
+    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
+    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+  ];
+
+  return { tasks };
+};
+```
+
+Utilisez **Iterator** pour créer chaque tâche à partir du tableau.
+
+## Idées de personnalisation
+
+### Maintenez vos autres outils à jour
+
+* Créez un client dans le système de facturation avec une action **HTTP Request**
+
+### Actions conditionnelles
+
+Utilisez des actions **Filtre** pour :
+
+* Intégration différente pour entreprises vs PME
+* Assignés différents selon la région
+* Ignorer les notifications pour les petites affaires
+
+### Inclure les détails de l'affaire
+
+Utilisez l'action **Code** pour formater :
+
+* Documents de synthèse de l'affaire
+* Notes de passation pour l'équipe CS
+* Listes de contrôle d'intégration personnalisées
+
+## Articles connexes
+
+* [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Envoyer des e-mails depuis des flux de travail](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)

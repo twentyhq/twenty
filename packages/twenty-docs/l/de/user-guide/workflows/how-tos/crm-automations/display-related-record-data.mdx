@@ -1,0 +1,170 @@
+---
+title: Daten verknüpfter Datensätze anzeigen
+description: Zeigen Sie mithilfe von Workflows Daten aus verknüpften Datensätzen an (z. B. Unternehmensinformationen in Opportunities).
+---
+
+Zeigen Sie Daten aus verknüpften Datensätzen direkt in Ihren Datensätzen an — zum Beispiel die Mitarbeiterzahl eines Unternehmens in dessen Opportunities. Dieser Workflow-Workaround ist hilfreich, bis verschachtelte Felder nativ verfügbar sind.
+
+## Häufige Anwendungsfälle
+
+| Quelle      | Ziel        | Zu kopierende Felder                                |
+| ----------- | ----------- | --------------------------------------------------- |
+| Unternehmen | Opportunity | Branche, Unternehmensgröße, ARR                     |
+| Person      | Opportunity | E-Mail, Telefon, Position                           |
+| Opportunity | Unternehmen | Betrag des letzten Deals, Datum des letzten Gewinns |
+
+## Einfache Feldkopie
+
+### Beispiel: Kontakt-E-Mail in die Opportunity kopieren
+
+**Ziel**: Wenn bei einer Opportunity ein Ansprechpartner festgelegt wird, soll dessen E-Mail für den schnellen Zugriff in die Opportunity kopiert werden.
+
+### Voraussetzung
+
+Erstellen Sie die Zielfelder in **Settings → Data Model → Opportunities**, bevor Sie den Workflow erstellen:
+
+* Kontakt-E-Mail (Typ: E-Mail)
+* Kontakt-Telefon (Typ: Telefon)
+
+### Einrichtung
+
+1. **Auslöser**: Datensatz wird aktualisiert (Opportunities, Feld Ansprechpartner)
+
+2. **Filter**: Prüfen, dass der Ansprechpartner nicht leer ist
+
+3. **Datensätze durchsuchen**: Verknüpfte Person finden
+   * Objekt: People
+   * Filter: ID entspricht `{{trigger.object.pointOfContact.id}}`
+
+4. **Datensatz aktualisieren**:
+   * Objekt: Opportunities
+   * Datensatz: `{{trigger.object.id}}`
+   * Kontakt-E-Mail: `{{searchRecords[0].email}}`
+   * Kontakt-Telefon: `{{searchRecords[0].phone}}`
+
+## Mehrere Felder kopieren
+
+### Beispiel: Unternehmensinformationen mit allen verknüpften Opportunities synchronisieren
+
+**Ziel**: Wenn sich Unternehmensdetails ändern, alle verknüpften Opportunities aktualisieren.
+
+### Einrichtung
+
+1. **Auslöser**: Datensatz wird aktualisiert (Companies)
+   * Felder: Branche, Unternehmensgröße, Jahresumsatz
+
+2. **Datensätze durchsuchen**: Alle Opportunities für dieses Unternehmen finden
+   * Objekt: Opportunities
+   * Filter: Unternehmens-ID entspricht `{{trigger.object.id}}`
+
+3. **Iterator**: Jede Opportunity durchlaufen
+
+4. **Datensatz aktualisieren** (innerhalb des Iterators):
+   * Objekt: Opportunities
+   * Datensatz: `{{iterator.currentItem.id}}`
+   * Unternehmensbranche: `{{trigger.object.industry}}`
+   * Unternehmensgröße: `{{trigger.object.companySize}}`
+   * Unternehmens-ARR: `{{trigger.object.annualRevenue}}`
+
+## Kopieren bei der Datensatzerstellung
+
+### Beispiel: Opportunity mit Unternehmensdaten vorbefüllen
+
+**Ziel**: Beim Erstellen einer Opportunity, die mit einem Unternehmen verknüpft ist, werden wichtige Unternehmensinformationen automatisch kopiert.
+
+### Voraussetzung
+
+Erstellen Sie die Zielfelder in **Settings → Data Model → Opportunities**:
+
+* Unternehmensbranche (Typ: Text)
+* Unternehmensgröße (Typ: Zahl)
+
+### Einrichtung
+
+1. **Auslöser**: Datensatz wird erstellt (Opportunities)
+   * Filter: Unternehmen ist nicht leer
+
+2. **Datensätze durchsuchen**: Details des verknüpften Unternehmens abrufen
+   * Objekt: Companies
+   * Filter: ID entspricht `{{trigger.object.company.id}}`
+
+3. **Datensatz aktualisieren**:
+   * Objekt: Opportunities
+   * Datensatz: `{{trigger.object.id}}`
+   * Unternehmensbranche: `{{searchRecords[0].industry}}`
+   * Unternehmensgröße: `{{searchRecords[0].employees}}`
+
+<Note>
+  **Einschränkung bei Aufgaben und Notizen**: Beziehungen bei Aufgaben und Notizen sind fest als Viele-zu-Viele implementiert und stehen in Workflow-Auslösern oder -Aktionen noch nicht zur Verfügung. Um auf diese Beziehungen zuzugreifen, verwenden Sie stattdessen die [API](/l/de/developers/extend/capabilities/apis).
+</Note>
+
+## Bidirektionale Synchronisierung
+
+### Beispiel: Hauptansprechpartner synchron halten
+
+**Ziel**: Wenn sich der Hauptansprechpartner eines Unternehmens ändert, den Kontakt aktualisieren. Wenn eine Person zum Hauptansprechpartner wird, das Unternehmen aktualisieren.
+
+### Workflow 1: Unternehmen → Person
+
+1. **Auslöser**: Datensatz wird aktualisiert (Companies, Feld Hauptansprechpartner)
+2. **Datensatz aktualisieren**: Beim Kontakt "Is Primary Contact" auf true setzen
+3. **Datensätze durchsuchen**: Vorherigen Hauptansprechpartner finden
+4. **Datensatz aktualisieren**: Beim vorherigen Kontakt "Is Primary Contact" auf false setzen
+
+### Workflow 2: Person → Unternehmen
+
+1. **Auslöser**: Datensatz wird aktualisiert (People, Is Primary Contact = true)
+2. **Datensatz aktualisieren**: Den Hauptansprechpartner des Unternehmens auf diese Person setzen
+
+<Note>
+  Seien Sie bei bidirektionalen Synchronisierungen vorsichtig, um Endlosschleifen zu vermeiden. Verwenden Sie Filter, um vor dem Aktualisieren zu prüfen, ob sich der Wert tatsächlich geändert hat.
+</Note>
+
+## Code für komplexe Zuordnungen verwenden
+
+### Beispiel: Daten beim Kopieren transformieren
+
+**Ziel**: Telefonnummer von Person zur Opportunity kopieren und formatieren.
+
+```javascript
+export const main = async (params) => {
+  const { phone } = params;
+
+  if (!phone) return { formattedPhone: null };
+
+  // Remove non-numeric characters
+  const digits = phone.replace(/\D/g, '');
+
+  // Format as (XXX) XXX-XXXX
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+    : phone;
+
+  return { formattedPhone: formatted };
+};
+```
+
+## Beste Praktiken
+
+### Schleifen vermeiden
+
+* Erstellen Sie keine Workflows, die sich gegenseitig endlos auslösen
+* Spezifische Feldbedingungen verwenden
+* Prüfungen hinzufügen, ob sich der Wert tatsächlich geändert hat
+
+### Fehlende Daten behandeln
+
+* Vor dem Kopieren stets prüfen, ob der Quelldatensatz existiert
+* Standardwerte für optionale Felder bereitstellen
+* Filter verwenden, um zu überspringen, wenn das Quellfeld leer ist
+
+### Leistung
+
+* Updates bündeln, wenn in viele Datensätze kopiert wird
+* Geplante Workflows für Massensynchronisierungen verwenden
+* Erwägen Sie die Verwendung von Iterator für mehrere Datensatzaktualisierungen
+
+## Verwandt
+
+* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)

@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entities-by-universal-identifier.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
@@ -24,8 +24,8 @@ import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/upda
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class RoleService {
@@ -86,10 +86,10 @@ export class RoleService {
         },
       );
 
-    const flatRoleEntity = getFlatEntityByUniversalIdentifier(
-      flatRoleMaps,
+    const flatRoleEntity = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatRoleMaps,
       universalIdentifier,
-    );
+    });
 
     return isDefined(flatRoleEntity)
       ? fromFlatRoleToRoleDto(flatRoleEntity)
@@ -127,7 +127,7 @@ export class RoleService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating role',
       );
@@ -185,7 +185,7 @@ export class RoleService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating role',
       );
@@ -307,7 +307,7 @@ export class RoleService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         `Multiple validation errors occurred while deleting role${ids.length > 1 ? 's' : ''}`,
       );

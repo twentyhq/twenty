@@ -5,7 +5,7 @@ import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -22,8 +22,8 @@ import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewService {
@@ -91,7 +91,7 @@ export class ViewService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while creating view',
       );
@@ -167,7 +167,7 @@ export class ViewService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while updating view',
       );
@@ -226,7 +226,7 @@ export class ViewService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while deleting view',
       );
@@ -284,7 +284,7 @@ export class ViewService {
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(
+      throw new WorkspaceMigrationBuilderException(
         validateAndBuildResult,
         'Multiple validation errors occurred while destroying view',
       );

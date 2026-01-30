@@ -1,0 +1,83 @@
+---
+title: Zapier 앱
+---
+
+[Zapier](https://zapier.com/)을 사용하여 Twenty를 3000개 이상의 앱과 손쉽게 동기화하세요. 작업을 자동화하고 생산성을 높여 고객 관계를 강화하세요!
+
+## Zapier 소개
+
+Zapier는 팀이 매일 사용하는 앱을 연결하여 워크플로우를 자동화할 수 있게 하는 도구입니다. Zapier의 기본 개념은 자동화 워크플로우인 Zaps이며, 이는 트리거와 액션을 포함합니다.
+
+Zapier 작동 방식에 대해 [여기](https://zapier.com/how-it-works)에서 더 알아볼 수 있습니다.
+
+## 설정
+
+### 1단계: Zapier 패키지 설치
+
+```bash
+cd packages/twenty-zapier
+
+yarn
+```
+
+### 2단계: CLI로 로그인
+
+Zapier 자격 증명을 사용하여 CLI로 로그인하세요:
+
+```bash
+zapier login
+```
+
+### 3단계: 환경 변수 설정
+
+`packages/twenty-zapier` 폴더에서 아래 명령을 실행하세요:
+
+```bash
+cp .env.example .env
+```
+
+애플리케이션을 로컬로 실행하고, [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks)에 접속하여 API 키를 생성하세요.
+
+.env 파일의 **YOUR_API_KEY** 값을 방금 생성한 API 키로 바꾸세요.
+
+## 개발
+
+<Warning>
+  `zapier` 명령어를 실행하기 전에 반드시 `yarn build`를 실행하세요.
+</Warning>
+
+### 테스트
+
+```bash
+yarn test
+```
+
+### Lint
+
+```bash
+yarn format
+```
+
+### 코드를 편집할 때 감시 및 컴파일
+
+```bash
+yarn watch
+```
+
+### Zapier 앱 검증
+
+```bash
+yarn validate
+```
+
+### Zapier 앱 배포
+
+```bash
+yarn deploy
+```
+
+### 모든 Zapier CLI 명령 목록
+
+```bash
+zapier
+```

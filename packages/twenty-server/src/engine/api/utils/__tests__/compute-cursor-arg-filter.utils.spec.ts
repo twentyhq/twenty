@@ -101,7 +101,7 @@ describe('computeCursorArgFilter', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     universalIdentifier: objectMetadataId,
-    fieldMetadataIds: ['name-id', 'age-id', 'fullname-id'],
+    fieldIds: ['name-id', 'age-id', 'fullname-id'],
     indexMetadataIds: [],
     viewIds: [],
     applicationId: null,

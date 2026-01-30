@@ -11,7 +11,14 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 @InputType()
 export class CreateFieldInput extends OmitType(
   FieldMetadataDTO,
-  ['id', 'createdAt', 'updatedAt', 'standardOverrides'] as const,
+  [
+    'id',
+    'createdAt',
+    'updatedAt',
+    'standardOverrides',
+    'applicationId',
+    'morphId',
+  ] as const,
   InputType,
 ) {
   @IsUUID()

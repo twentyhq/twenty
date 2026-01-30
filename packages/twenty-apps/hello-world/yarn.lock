@@ -1083,7 +1083,7 @@ __metadata:
   resolution: "hello-world@workspace:."
   dependencies:
     "@types/node": "npm:^24.7.2"
-    twenty-sdk: "npm:0.2.1"
+    twenty-sdk: "npm:0.2.4"
   languageName: unknown
   linkType: soft
 
@@ -1904,9 +1904,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:0.2.1":
-  version: 0.2.1
-  resolution: "twenty-sdk@npm:0.2.1"
+"twenty-sdk@npm:0.2.4":
+  version: 0.2.4
+  resolution: "twenty-sdk@npm:0.2.4"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     axios: "npm:^1.6.0"
@@ -1927,7 +1927,7 @@ __metadata:
     uuid: "npm:^13.0.0"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/5a4f4674129cc747e8e5091bf75025260db20087f76f1cee49896a073c8cf83b8c95e1dce3f2f2cbaaf9570aa1886c4c9a5585f0e61e0ee79552eab4d292fb4e
+  checksum: 10c0/91bcc2c6a96d8bb7997c6584de338d370ffd4cebbc052ffdd5dd8bb8894f1851c039601a2ce0bb0f3b97e210f3bc877de0572125b8c3b601f6e1baac2f99a8c5
   languageName: node
   linkType: hard
 

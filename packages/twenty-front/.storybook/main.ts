@@ -1,9 +1,4 @@
-import { type StorybookConfig } from '@storybook/react-vite';
-import { dirname, join } from 'path';
-
-const getAbsolutePath = (value: string): any => {
-  return dirname(require.resolve(join(value, 'package.json')));
-};
+import type { StorybookConfig } from '@storybook/react-vite';
 
 const computeStoriesGlob = () => {
   if (process.env.STORYBOOK_SCOPE === 'pages') {
@@ -35,7 +30,6 @@ const computeStoriesGlob = () => {
 
 const config: StorybookConfig = {
   stories: computeStoriesGlob(),
-  staticDirs: ['../public'],
 
   build: {
     test: {
@@ -47,32 +41,22 @@ const config: StorybookConfig = {
   },
 
   addons: [
-    getAbsolutePath('@storybook/addon-links'),
-    getAbsolutePath('@storybook/addon-essentials'),
-    getAbsolutePath('@storybook/addon-interactions'),
-    getAbsolutePath('@storybook/addon-coverage'),
-    // getAbsolutePath("storybook-dark-mode"),
-    getAbsolutePath('storybook-addon-cookie'),
-    getAbsolutePath('storybook-addon-pseudo-states'),
-    getAbsolutePath('storybook-addon-mock-date'),
-    // getAbsolutePath("@chromatic-com/storybook")
+    // '@chromatic-com/storybook',
+    '@storybook-community/storybook-addon-cookie',
+    '@storybook/addon-links',
+    '@storybook/addon-coverage',
+    'storybook-addon-pseudo-states',
+    // 'storybook-dark-mode',
+    'storybook-addon-mock-date',
+    '@storybook/addon-vitest',
   ],
 
-  framework: {
-    name: getAbsolutePath('@storybook/react-vite'),
-    options: {},
-  },
+  framework: '@storybook/react-vite',
 
-  viteFinal: async (config) => {
-    // Merge custom configuration into the default config
+  viteFinal: async (viteConfig) => {
     const { mergeConfig } = await import('vite');
 
-    return mergeConfig(config, {
-      resolve: {
-        alias: {
-          'react-dom/client': 'react-dom/profiling',
-        },
-      },
+    return mergeConfig(viteConfig, {
       logLevel: 'warn',
     });
   },
@@ -81,4 +65,5 @@ const config: StorybookConfig = {
 
   docs: {},
 };
+
 export default config;

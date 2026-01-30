@@ -83,6 +83,7 @@ export const parseGroupByArgs = (
             fieldMetadata,
             dateGranularity: fieldGroupByDefinition.granularity,
             weekStartDay: fieldGroupByDefinition.weekStartDay,
+            timeZone: fieldGroupByDefinition.timeZone,
           });
           continue;
         }

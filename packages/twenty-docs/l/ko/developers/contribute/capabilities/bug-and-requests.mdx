@@ -1,0 +1,78 @@
+---
+title: 버그, 요청 및 Pull Request
+info: 이슈를 보고하고, 기능을 요청하고, 코드에 기여하세요
+---
+
+## 버그 신고
+
+버그를 보고하려면 [GitHub에서 이슈를 생성해 주세요](https://github.com/twentyhq/twenty/issues/new).
+
+[Discord](https://discord.gg/cx5n4Jzs57)에서 도움을 요청할 수도 있습니다.
+
+## 기능 요청
+
+버그인지 확신이 없고 기능 요청에 더 가깝다고 느끼신다면, 대신 [토론을 열어 주세요](https://github.com/twentyhq/twenty/discussions/new).
+
+## Pull Request 제출하기
+
+Twenty에 코드로 기여하는 첫 단계는 Pull Request(PR)입니다.
+
+### 시작하기 전에
+
+1. 관련 작업이 있는지 [기존 이슈](https://github.com/twentyhq/twenty/issues)를 확인하세요
+2. 새 기능의 경우 먼저 이슈를 열어 논의하세요
+3. 우리의 [행동 강령](https://github.com/twentyhq/twenty/blob/main/CODE_OF_CONDUCT.md)을 검토하세요
+
+### 포크하고 클론하기
+
+1. GitHub에서 저장소를 포크하세요
+2. 포크한 저장소를 클론하세요:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/twenty.git
+cd twenty
+```
+
+3. upstream 원격을 추가하세요:
+
+```bash
+git remote add upstream https://github.com/twentyhq/twenty.git
+```
+
+### 브랜치 만들기
+
+```bash
+git checkout -b feature/your-feature-name
+```
+
+알기 쉬운 브랜치 이름을 사용하세요:
+
+* `feature/add-export-button`
+* `fix/login-redirect-issue`
+* `docs/update-api-guide`
+
+### 변경 사항 적용하기
+
+1. 깔끔하고 문서화가 잘 된 코드를 작성하세요
+2. 기존 코드 스타일을 따르세요
+3. 새 기능에 대한 테스트를 추가하세요
+4. 필요하다면 문서를 업데이트하세요
+
+### PR 제출하기
+
+1. 브랜치를 푸시하세요:
+
+```bash
+git push origin feature/your-feature-name
+```
+
+2. GitHub에서 PR을 열어 주세요
+3. PR 템플릿을 작성하세요
+4. 관련 이슈를 연결하세요
+
+### PR 체크리스트
+
+* [ ] 코드가 프로젝트 스타일 가이드라인을 따릅니다
+* [ ] 로컬에서 테스트가 통과합니다
+* [ ] 문서가 업데이트되었습니다
+* [ ] PR 설명이 변경 사항을 설명합니다

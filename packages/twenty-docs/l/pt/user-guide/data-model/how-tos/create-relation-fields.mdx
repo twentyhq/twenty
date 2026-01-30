@@ -1,0 +1,60 @@
+---
+title: Criar Campos de Relação
+description: Guia passo a passo para conectar objetos com campos de relação.
+---
+
+Campos de relação conectam registros de objetos diferentes — por exemplo, vinculando Pessoas a Empresas.
+
+<Note>
+  **Os nomes das relações não podem ser alterados após a criação** (eles afetam a API). Planeje os nomes com cuidado.
+</Note>
+
+## Antes de Começar
+
+Decida:
+
+* Quais objetos você está conectando? (por exemplo, Pessoas → Empresas)
+* Qual é o lado "um"? (por exemplo, Empresa)
+* Qual é o lado "muitos"? (por exemplo, Pessoas — muitas pessoas trabalham em uma empresa)
+* Como o campo deve ser nomeado em cada lado?
+
+Veja [Campos de relação](/l/pt/user-guide/data-model/capabilities/relation-fields) para entender os tipos de relação.
+
+## Etapas
+
+1. Vá para **Configurações → Modelo de Dados**
+2. Selecione o objeto no qual você deseja a relação (normalmente o lado "muitos")
+3. Clique em **+ Adicionar campo**
+4. Selecione **Relação** como o tipo de campo
+5. Escolha o **objeto de destino**
+6. Selecione **Um-para-muitos** ou **Muitos-para-um**
+7. Insira os nomes dos campos para **ambos os lados** da relação
+8. Clique em **Salvar**
+
+## Exemplo: Pessoas → Empresas
+
+* Vá para **Configurações → Modelo de Dados → Pessoas**
+* Adicione um campo de Relação
+* Destino: **Empresas**
+* Tipo: **Muitos-para-um**
+* Campo em Pessoas: **Empresa**
+* Campo em Empresas: **Funcionários**
+
+Agora, cada Pessoa pode ser vinculada a uma Empresa, e cada Empresa mostra suas Pessoas.
+
+## Excluindo uma Relação
+
+1. Vá para **Configurações → Modelo de Dados**
+2. Encontre o campo de relação
+3. Clique em **⋮ → Desativar**
+
+Os vínculos são preservados, mas ficam ocultos. Reative para restaurar.
+
+<Note>
+  **Excluir uma relação não exclui registros.** Apenas o vínculo entre eles é removido.
+</Note>
+
+## Relacionados
+
+* [Campos de relação](/l/pt/user-guide/data-model/capabilities/relation-fields) — tipos e limitações
+* [Como importar relações](/l/pt/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — importar em massa registros vinculados

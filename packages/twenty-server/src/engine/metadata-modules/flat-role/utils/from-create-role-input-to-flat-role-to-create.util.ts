@@ -44,17 +44,17 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     canBeAssignedToUsers: createRoleInput.canBeAssignedToUsers ?? true,
     canBeAssignedToAgents: createRoleInput.canBeAssignedToAgents ?? true,
     canBeAssignedToApiKeys: createRoleInput.canBeAssignedToApiKeys ?? true,
-    canBeAssignedToApplications:
-      createRoleInput.canBeAssignedToApplications ?? true,
     isEditable: true,
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    universalIdentifier: createRoleInput.universalIdentifier ?? id,
+    universalIdentifier: createRoleInput.universalIdentifier ?? v4(),
     applicationId,
     roleTargetIds: [],
     objectPermissionIds: [],
     permissionFlagIds: [],
     fieldPermissionIds: [],
+    rowLevelPermissionPredicateIds: [],
+    rowLevelPermissionPredicateGroupIds: [],
   };
 };

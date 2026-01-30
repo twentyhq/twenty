@@ -13,7 +13,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-tab-with-widgets.input';
+import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
 @InputType()

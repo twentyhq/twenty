@@ -1,3 +1,4 @@
+import { CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT } from '@/command-menu/pages/page-layout/constants/ChartSettingsPaletteColorGroupCount';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import { generateGroupColor } from '@/page-layout/widgets/graph/utils/generateGroupColor';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -24,8 +25,6 @@ const StyledColorSamplesContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-const COLOR_GROUP_COUNT = 5;
-
 export const ChartColorGradientOption = ({
   colorOption,
   selectedItemId,
@@ -38,18 +37,21 @@ export const ChartColorGradientOption = ({
 
   const colorSamples = (
     <StyledColorSamplesContainer>
-      {Array.from({ length: COLOR_GROUP_COUNT }).map((_, index) => {
-        const colorScheme = colorRegistry[colorName];
-        const reversedIndex = COLOR_GROUP_COUNT - 1 - index;
-        const groupColor = generateGroupColor({
-          colorScheme,
-          groupIndex: reversedIndex,
-          totalGroups: COLOR_GROUP_COUNT,
-        });
-        return (
-          <ColorSample key={index} colorName={colorName} color={groupColor} />
-        );
-      })}
+      {Array.from({ length: CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT }).map(
+        (_, index) => {
+          const colorScheme = colorRegistry[colorName];
+          const reversedIndex =
+            CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT - 1 - index;
+          const groupColor = generateGroupColor({
+            colorScheme,
+            groupIndex: reversedIndex,
+            totalGroups: CHART_SETTINGS_PALETTE_COLOR_GROUP_COUNT,
+          });
+          return (
+            <ColorSample key={index} colorName={colorName} color={groupColor} />
+          );
+        },
+      )}
     </StyledColorSamplesContainer>
   );
 

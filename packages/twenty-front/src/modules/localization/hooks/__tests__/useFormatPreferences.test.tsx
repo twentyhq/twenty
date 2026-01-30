@@ -3,7 +3,6 @@ import { type ReactNode } from 'react';
 import { RecoilRoot, type MutableSnapshot } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CalendarStartDay } from 'twenty-shared';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
@@ -16,6 +15,8 @@ import { detectTimeFormat } from '@/localization/utils/detection/detectTimeForma
 import { detectTimeZone } from '@/localization/utils/detection/detectTimeZone';
 import { getWorkspaceMemberUpdateFromFormatPreferences } from '@/localization/utils/format-preferences/getWorkspaceMemberUpdateFromFormatPreferences';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { CalendarStartDay } from 'twenty-shared/constants';
+import { FirstDayOfTheWeek } from 'twenty-shared/types';
 
 jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   useUpdateOneRecord: jest.fn(),
@@ -93,7 +94,7 @@ describe('useFormatPreferences', () => {
     mockDetectDateFormat.mockReturnValue('MONTH_FIRST');
     mockDetectTimeFormat.mockReturnValue('HOUR_24');
     mockDetectNumberFormat.mockReturnValue('COMMAS_AND_DOT');
-    mockDetectCalendarStartDay.mockReturnValue('MONDAY');
+    mockDetectCalendarStartDay.mockReturnValue(FirstDayOfTheWeek.MONDAY);
     mockGetWorkspaceMemberUpdateFromFormatPreferences.mockReturnValue({});
 
     mockUpdateOneRecord.mockResolvedValue({});
@@ -144,6 +145,7 @@ describe('useFormatPreferences', () => {
 
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: mockCurrentWorkspaceMember.id,
+      objectNameSingular: 'workspaceMember',
       updateOneRecordInput: { timeZone: newTimeZone },
     });
   });
@@ -165,6 +167,7 @@ describe('useFormatPreferences', () => {
     expect(mockDetectTimeZone).toHaveBeenCalled();
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: mockCurrentWorkspaceMember.id,
+      objectNameSingular: 'workspaceMember',
       updateOneRecordInput: { timeZone: 'SYSTEM' },
     });
   });
@@ -189,6 +192,7 @@ describe('useFormatPreferences', () => {
 
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: mockCurrentWorkspaceMember.id,
+      objectNameSingular: 'workspaceMember',
       updateOneRecordInput: { timeZone: 'Europe/Paris' },
     });
   });

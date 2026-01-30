@@ -1,0 +1,92 @@
+---
+title: Exécutions de workflows
+description: Surveiller et gérer les exécutions de flux de travail.
+image: /images/user-guide/workflows/workflow.png
+---
+
+## À propos des Exécutions
+
+Une **Exécution** est un enregistrement de l'exécution du flux de travail. Chaque fois qu'un flux de travail est déclenché — qu'il s'agisse d'un événement d'enregistrement, d'une planification, d'une action manuelle ou d'un webhook — une nouvelle exécution est créée.
+
+## Visualisation des exécutions
+
+### Depuis l'éditeur de flux de travail
+
+1. Ouvrez le flux de travail que vous souhaitez surveiller
+2. Cliquez sur le panneau **Exécutions** à droite
+3. Affichez une liste des exécutions récentes avec leur statut
+
+### Depuis la vue Exécutions de flux de travail
+
+1. Accédez à **Exécutions de flux de travail** dans la barre latérale
+2. Affichez les exécutions dans l'ensemble des flux de travail
+3. Filtrez par statut, flux de travail ou date
+
+## Statuts des exécutions
+
+| Statut                 | Description                                                                                                |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Exécution en cours** | Le flux de travail est en cours d'exécution                                                                |
+| **Terminé**            | Le flux de travail s'est terminé avec succès                                                               |
+| **Échec**              | Le flux de travail a rencontré une erreur et s'est arrêté                                                  |
+| **En attente**         | Le flux de travail est en pause (par exemple, en attente d'une action Delay ou de l'envoi d'un formulaire) |
+
+## Détails de l'exécution
+
+Cliquez sur une exécution pour voir :
+
+* **Statut** : État actuel de l'exécution
+* **Heure de début** : Moment où l'exécution a commencé
+* **Durée** : Temps nécessaire à l'exécution
+* **Données du déclencheur** : Les données qui ont déclenché le flux de travail
+* **Résultats des étapes** : Données renvoyées par chaque étape
+* **Messages d'erreur** : Si l'exécution a échoué, ce qui s'est mal passé
+
+## Exécution étape par étape
+
+Chaque exécution montre la progression au sein de votre flux de travail :
+
+1. Voir quelles étapes se sont terminées avec succès
+2. Identifier où les échecs se sont produits
+3. Afficher les données transmises entre les étapes
+4. Déboguez les problèmes en examinant les entrées et sorties des étapes
+
+## Gestion des erreurs
+
+Lorsqu'une exécution échoue :
+
+1. Ouvrez l'exécution échouée
+2. Trouvez l'étape à l'origine de l'échec
+3. Consultez le message d'erreur pour plus de détails
+4. Problèmes courants :
+   * Champs obligatoires manquants
+   * Format de données invalide
+   * Erreurs d'API externes
+   * Problèmes d'autorisations
+
+## Réexécuter les flux de travail
+
+Si une exécution échoue, vous pouvez :
+
+* Corrigez le problème sous-jacent et attendez le prochain déclenchement
+* Pour les flux de travail manuels, déclenchez à nouveau avec les mêmes données ou des données mises à jour
+* Révisez la logique du flux de travail pour éviter de futurs échecs
+
+## Conseils de performances
+
+### Gestion de l'historique des exécutions
+
+* Les exécutions sont conservées à des fins d'historique
+* Les exécutions très anciennes peuvent être archivées automatiquement
+* Exportez les données d'exécution si vous devez conserver des enregistrements
+
+### Meilleures pratiques de surveillance
+
+* Vérifiez régulièrement les exécutions après l'activation de nouveaux flux de travail
+* Passez en revue les exécutions échouées pour identifier des tendances
+
+## Articles connexes
+
+* [Déclencheurs de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+* [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+* [Dépannage des flux de travail](/l/fr/user-guide/workflows/how-tos/need-more-help/workflow-troubleshooting)

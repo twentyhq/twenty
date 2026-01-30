@@ -35,7 +35,7 @@ type TriggerCreateRecordsOptimisticEffectArgs = {
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  upsertRecordsInStore: (records: ObjectRecord[]) => void;
+  upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 };
 
 export const triggerCreateRecordsOptimisticEffect = ({

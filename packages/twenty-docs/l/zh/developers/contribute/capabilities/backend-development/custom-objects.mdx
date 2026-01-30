@@ -1,0 +1,39 @@
+---
+title: 自定义对象
+---
+
+对象是存储特定于组织的数据（记录、属性和值）的结构。 Twenty 提供标准对象和自定义对象。
+
+标准对象是为所有用户提供特定属性的内置对象。 Twenty 的标准对象示例包括“公司”和“人员”。 标准对象具有对所有 Twenty 用户可用的标准字段，如 Company.displayName。
+
+自定义对象是您可以创建的对象，用于存储专属于您组织的信息。 它们不是内置的；您可以创建和自定义自定义对象来保存标准对象不适合存储的信息。
+
+## 高级模式
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="高级模式" />
+</div>
+
+<br />
+
+## 工作原理
+
+自定义对象来自确定对象形状、名称和类型的元数据表。 所有这些信息都存在于元数据模式数据库中，由表组成：
+
+* **DataSource**：说明数据所在的详细信息。
+* **Object**：描述对象并链接到数据源。
+* **Field**：列出对象的字段并连接到对象。
+
+要添加自定义对象，工作空间成员将查询 /metadata API。 这将相应地更新元数据，并根据元数据计算 GraphQL 架构，将其存储在 GQL 缓存中以备后用。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/add-custom-objects.jpeg" alt="查询 /metadata API 以添加自定义对象" />
+</div>
+
+<br />
+
+要获取数据，流程涉及通过 /graphql 端点进行查询并通过查询解析器传递。
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/server/custom-object-schema.png" alt="查询 /graphql 端点以获取数据" />
+</div>

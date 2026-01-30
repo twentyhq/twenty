@@ -6,13 +6,18 @@ import {
   generateText,
   jsonSchema,
   stepCountIs,
-  ToolSet,
+  type ToolSet,
 } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { type Repository } from 'typeorm';
 
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import { ToolProviderService } from 'src/engine/core-modules/tool-provider/services/tool-provider.service';
+import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import {
   AgentException,
@@ -20,7 +25,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
-import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
@@ -38,7 +43,7 @@ export class AgentAsyncExecutorService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly agentModelConfigService: AgentModelConfigService,
-    private readonly toolProvider: ToolProviderService,
+    private readonly toolRegistry: ToolRegistryService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
   ) {}
@@ -93,11 +98,13 @@ export class AgentAsyncExecutorService {
     userPrompt,
     actorContext,
     rolePermissionConfig,
+    authContext,
   }: {
     agent: AgentEntity | null;
     userPrompt: string;
     actorContext?: ActorMetadata;
     rolePermissionConfig?: RolePermissionConfig;
+    authContext?: WorkspaceAuthContext;
   }): Promise<AgentExecutionResult> {
     try {
       const registeredModel =
@@ -115,20 +122,34 @@ export class AgentAsyncExecutorService {
 
         // Workflow context: DATABASE_CRUD, ACTION, and NATIVE_MODEL tools only
         // Workflow tools are excluded to prevent circular dependencies
-        tools = await this.toolProvider.getTools({
-          workspaceId: agent.workspaceId,
-          categories: [
-            ToolCategory.DATABASE_CRUD,
-            ToolCategory.ACTION,
-            ToolCategory.NATIVE_MODEL,
-          ],
-          rolePermissionConfig: effectiveRoleConfig,
-          actorContext,
-          agent: agent as unknown as Parameters<
-            typeof this.toolProvider.getTools
-          >[0]['agent'],
-          wrapWithErrorContext: false,
-        });
+        const roleId = this.extractRoleIds(effectiveRoleConfig)[0] ?? '';
+
+        tools = await this.toolRegistry.getToolsByCategories(
+          {
+            workspaceId: agent.workspaceId,
+            roleId,
+            rolePermissionConfig: effectiveRoleConfig ?? { unionOf: [] },
+            authContext,
+            actorContext,
+            agent: agent as unknown as ToolProviderContext['agent'],
+            userId:
+              isDefined(authContext) && isUserAuthContext(authContext)
+                ? authContext.user.id
+                : undefined,
+            userWorkspaceId:
+              isDefined(authContext) && isUserAuthContext(authContext)
+                ? authContext.userWorkspaceId
+                : undefined,
+          },
+          {
+            categories: [
+              ToolCategory.DATABASE_CRUD,
+              ToolCategory.ACTION,
+              ToolCategory.NATIVE_MODEL,
+            ],
+            wrapWithErrorContext: false,
+          },
+        );
 
         providerOptions = this.agentModelConfigService.getProviderOptions(
           registeredModel,

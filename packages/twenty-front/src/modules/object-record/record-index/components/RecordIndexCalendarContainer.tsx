@@ -2,7 +2,9 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordCalendar } from '@/object-record/record-calendar/components/RecordCalendar';
+import { RecordCalendarSSESubscribeEffect } from '@/object-record/record-calendar/components/RecordCalendarSSESubscribeEffect';
 import { RecordIndexCalendarDataLoaderEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarDataLoaderEffect';
+import { RecordIndexCalendarSelectedDateInitEffect } from '@/object-record/record-calendar/components/RecordIndexCalendarSelectedDateInitEffect';
 import { RecordCalendarContextProvider } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -51,7 +53,9 @@ export const RecordIndexCalendarContainer = ({
         }}
       >
         <RecordCalendar />
+        <RecordCalendarSSESubscribeEffect />
         <RecordIndexCalendarDataLoaderEffect />
+        <RecordIndexCalendarSelectedDateInitEffect />
       </RecordCalendarContextProvider>
     </RecordComponentInstanceContextsWrapper>
   );

@@ -1,0 +1,130 @@
+---
+title: Importa las respuestas de Typeform a Twenty
+description: Gestiona la carga útil del webhook de Typeform para crear clientes potenciales a partir de envíos de formularios.
+---
+
+Para la configuración estándar de webhooks, consulta [Configurar un disparador de Webhook](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger). Este artículo cubre el manejo específico requerido para la estructura de carga útil personalizada de Typeform.
+
+### Paso 1: Crear un flujo de trabajo de Webhook
+
+1. Ve a **Configuración → Flujos de trabajo**
+2. Haz clic en **+ Nuevo flujo de trabajo**
+3. Selecciona **Webhook** como el disparador
+4. Copia la URL del webhook
+
+### Paso 2: Configura Typeform
+
+1. En Typeform, abre tu formulario
+2. Ve a **Conectar → Webhooks**
+3. Pega tu URL de webhook de Twenty
+4. Guardar
+
+### Paso 3: Comprender la carga útil de Typeform
+
+Typeform envía una estructura JSON anidada. Aquí hay un ejemplo simplificado:
+
+```json
+{
+  "event_type": "form_response",
+  "form_response": {
+    "form_id": "abc123",
+    "submitted_at": "2025-01-15T10:30:00Z",
+    "answers": [
+      {
+        "text": "Jane",
+        "type": "text",
+        "field": { "id": "field1", "type": "short_text", "title": "First Name" }
+      },
+      {
+        "text": "Smith",
+        "type": "text",
+        "field": { "id": "field2", "type": "short_text", "title": "Last Name" }
+      },
+      {
+        "text": "Acme Corp",
+        "type": "text",
+        "field": { "id": "field3", "type": "short_text", "title": "Company" }
+      },
+      {
+        "email": "jane@acme.com",
+        "type": "email",
+        "field": { "id": "field4", "type": "email", "title": "Email" }
+      },
+      {
+        "type": "choice",
+        "field": { "id": "field5", "type": "dropdown", "title": "Team Size" },
+        "choice": { "label": "10-50" }
+      }
+    ]
+  }
+}
+```
+
+Aspectos clave a tener en cuenta:
+
+* Los datos del formulario están anidados bajo `form_response`
+* **Las respuestas se devuelven como un arreglo**, no como campos con nombre
+* Cada respuesta incluye el tipo y el título del campo como referencia
+
+### Paso 4: Extraer campos del arreglo de respuestas
+
+Dado que `answers` es un arreglo, en los pasos posteriores solo puedes seleccionar el arreglo completo — no campos individuales. Añade una acción **Code** para extraer los campos que necesitas:
+
+```javascript
+export const main = async (params: {
+  answers: any;
+}): Promise<object> => {
+  const { answers } = params;
+
+  // Handle input that may come as a string or an array
+  const answersFormatted = typeof answers === "string"
+    ? JSON.parse(answers)
+    : answers;
+
+  // Extract fields by position or by finding the field type
+  const firstName = answersFormatted[0]?.text || "";
+  const lastName = answersFormatted[1]?.text || "";
+  const company = answersFormatted[2]?.text || "";
+  const email = answersFormatted.find(a => a.type === "email")?.email || "";
+  const teamSize = answersFormatted.find(a => a.type === "choice")?.choice?.label || "";
+
+  return {
+    contact: {
+      firstName,
+      lastName,
+      company,
+      email,
+      teamSize
+    }
+  };
+};
+```
+
+Ahora, en los pasos posteriores, puedes seleccionar `contact.firstName`, `contact.email`, etc., desde el selector de variables.
+
+<Tip>
+  Para más detalles sobre cómo manejar arreglos en acciones de código, consulta [Cómo manejar arreglos en acciones de código](/l/es/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+</Tip>
+
+### Paso 5: Crear el registro
+
+Añade una acción **Create Record**:
+
+| Campo                  | Valor                                           |
+| ---------------------- | ----------------------------------------------- |
+| **Objeto**             | Personas                                        |
+| **Nombre**             | `{{code.contact.firstName}}`                    |
+| **Apellidos**          | `{{code.contact.lastName}}`                     |
+| **Correo electrónico** | `{{code.contact.email}}`                        |
+| **Empresa**            | Buscar o crear según `{{code.contact.company}}` |
+
+### Paso 6: Probar y activar
+
+1. Envía una respuesta de prueba en Typeform
+2. Revisa la ejecución del flujo de trabajo para verificar que se capturaron los datos
+3. Activa el flujo de trabajo
+
+## Relacionado
+
+* [Configurar un disparador de Webhook](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+* [Manejar arreglos en acciones de código](/l/es/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -1,0 +1,149 @@
+---
+title: Widgets
+description: Explorez les types de widgets et les options de visualisation dans Twenty.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Widgets disponibles
+
+Twenty propose différents types de widgets pour visualiser vos données CRM.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Diagrammes en barres</span>
+
+Affichez les données sous forme de barres horizontales ou verticales.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Diagramme en barres" />
+</Frame>
+
+**Idéal pour :**
+
+* Comparer des valeurs entre catégories
+* Afficher des classements
+* Suivre des indicateurs par période
+
+**Exemples d'utilisation :**
+
+* Opportunités par étape
+* Revenus par commercial
+* Contacts ajoutés par mois
+
+<Note>
+  **Limites d'affichage** : Les diagrammes en barres peuvent afficher au maximum 100 barres, et 50 groupes par barre lors de l'utilisation de Group By. Si vous voyez l'avertissement "Données non affichées : X barres max par graphique", ajoutez des filtres pour restreindre vos données ou modifiez le regroupement (par ex., regroupez par semaine plutôt que par jours).
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Diagrammes en secteurs</span>
+
+Affichez les proportions d'un ensemble.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Diagramme en secteurs" />
+</Frame>
+
+**Idéal pour :**
+
+* Afficher la composition ou la répartition
+* Comparer les parties au tout
+* Mettre en évidence les principaux segments
+
+**Exemples d'utilisation :**
+
+* Répartition des opportunités par source
+* Répartition des contacts par secteur
+* Composition du pipeline par propriétaire
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Graphiques linéaires</span>
+
+Affichez les tendances au fil du temps.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Graphique linéaire" />
+</Frame>
+
+**Idéal pour :**
+
+* Suivre les évolutions au fil du temps
+* Identifier les tendances
+* Comparer plusieurs indicateurs
+
+**Exemples d'utilisation :**
+
+* Tendance du nombre d'opportunités par mois
+* Croissance des revenus par trimestre
+* Niveaux d'activité au fil du temps
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Graphiques agrégés</span>
+
+Affichez clairement des valeurs clés uniques.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Graphique agrégé" />
+</Frame>
+
+**Idéal pour :**
+
+* Mettre en évidence des indicateurs clés de performance (KPI)
+* Afficher des totaux ou des moyennes
+* Vérifications rapides de l'état
+
+**Exemples d'utilisation :**
+
+* Valeur totale du pipeline
+* Nombre d'opportunités ouvertes
+* Taux de conversion
+
+**Options avancées :**
+
+* **Ratio** : Pour les champs de type Sélection, calculez des ratios entre les valeurs. Accédez à **Données affichées** → sélectionnez votre champ → activez l'option **Ratio**.
+* **Préfixe et suffixe** : Ajoutez du texte personnalisé avant ou après le nombre (par ex., préfixe "$" ou suffixe "%") pour une meilleure lisibilité.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+
+Intégrez des outils et du contenu externes directement dans votre tableau de bord.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+</Frame>
+
+**Idéal pour :**
+
+* Afficher des rapports ou tableaux de bord externes
+* Intégrer des outils de vente tiers
+* Afficher du contenu en direct provenant d'autres systèmes
+
+**Exemples d'utilisation :**
+
+* Indicateurs de votre outil d'assistance
+* Indicateurs de votre composeur d'appels
+* Contenu en direct de votre outil de séquences de vente
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Texte enrichi</span>
+
+Ajoutez du texte et du contenu mis en forme directement dans votre tableau de bord.
+
+<Frame>
+  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Texte enrichi" />
+</Frame>
+
+**Idéal pour :**
+
+* Ajout de contexte ou d'instructions
+* Descriptions du tableau de bord
+* Notes et annotations
+
+**Fonctionnalités:**
+
+* Mise en forme de texte enrichi (gras, italique, listes, etc.)
+* Importation d'images et de fichiers
+* Édition de type Markdown
+
+<Note>
+  **Bientôt disponible** : Les jauges et les tableaux ne sont pas encore disponibles, mais figurent sur notre feuille de route.
+</Note>
+
+### Duplication de widgets
+
+1. Cliquez sur le widget
+2. Ouvrez **Options**
+3. Cliquez sur **Dupliquer le widget**
