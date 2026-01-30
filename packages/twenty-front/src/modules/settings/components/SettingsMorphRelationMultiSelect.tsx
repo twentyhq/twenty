@@ -118,7 +118,7 @@ export const SettingsMorphRelationMultiSelect = ({
     }));
 
   const selectedOptions = options.filter((option) =>
-    (selectedObjectMetadataIds ?? []).includes(option.objectMetadataId),
+    localSelectedObjectMetadataIds.includes(option.objectMetadataId),
   );
 
   const filteredOptions = useMemo(
