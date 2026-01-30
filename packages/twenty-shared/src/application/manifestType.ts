@@ -1,5 +1,4 @@
 import {
-  type PackageJson,
   type ApplicationManifest,
   type ObjectManifest,
   type LogicFunctionManifest,
@@ -19,6 +18,6 @@ export type Manifest = {
   roles: RoleManifest[];
   publicAssets: AssetManifest[];
   sources: Sources;
-  packageJson: PackageJson;
-  yarnLock: string;
+  packageJsonChecksum: string | null;
+  yarnLockChecksum: string | null;
 };

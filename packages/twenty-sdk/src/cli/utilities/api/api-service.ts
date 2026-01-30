@@ -109,8 +109,8 @@ export class ApiService {
 
       const variables = {
         manifest,
-        packageJson: manifest.packageJson,
-        yarnLock: manifest.yarnLock,
+        packageJson: {},
+        yarnLock: '',
       };
 
       const response: AxiosResponse = await this.client.post(
@@ -137,7 +137,7 @@ export class ApiService {
       return {
         success: true,
         data: response.data.data.syncApplication,
-        message: `Successfully synced application: ${manifest.packageJson.name}`,
+        message: `Successfully synced application: ${manifest.application.displayName}`,
       };
     } catch (error) {
       return {
