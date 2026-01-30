@@ -1,12 +1,4 @@
-import { type JSONB_PROPERTY_BRAND } from './jsonb-property.type';
-
-export type HasJsonbPropertyBrand<T> =
-  typeof JSONB_PROPERTY_BRAND extends keyof T ? true : false;
-
-// Distributive check: returns `true` if any member of a union has the brand
-type HasJsonbBrandInUnion<T> = T extends unknown
-  ? HasJsonbPropertyBrand<T>
-  : never;
+import { type HasJsonbBrandInUnion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/has-jsonb-brand-in-union.type';
 
 export type ExtractJsonbProperties<T> = NonNullable<
   {
