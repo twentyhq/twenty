@@ -5,7 +5,6 @@ export const workflowCodeActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       logicFunctionId: z.string(),
-      logicFunctionVersion: z.string(),
       logicFunctionInput: z.record(z.string(), z.any()),
     }),
   });

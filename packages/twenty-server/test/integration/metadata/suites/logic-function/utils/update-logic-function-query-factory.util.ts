@@ -14,7 +14,6 @@ const DEFAULT_LOGIC_FUNCTION_GQL_FIELDS = `
   id
   name
   description
-  latestVersion
 `;
 
 export const updateLogicFunctionQueryFactory = ({

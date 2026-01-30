@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-delete-all-files.command';
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -28,6 +30,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
       FeatureFlagEntity,
       AttachmentWorkspaceEntity,
       WebhookEntity,
+      FileEntity,
     ]),
     DataSourceModule,
     WorkspaceCacheStorageModule,
@@ -42,11 +45,13 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     MigrateAttachmentToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    DeleteFileRecordsCommand,
   ],
   exports: [
     MigrateAttachmentToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+    DeleteFileRecordsCommand,
   ],
 })
 export class V1_17_UpgradeVersionCommandModule {}

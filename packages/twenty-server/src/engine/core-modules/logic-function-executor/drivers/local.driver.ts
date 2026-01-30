@@ -66,13 +66,11 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     flatLogicFunction,
     flatLogicFunctionLayer,
     payload,
-    version,
     env,
   }: {
     flatLogicFunction: FlatLogicFunction;
     flatLogicFunctionLayer: FlatLogicFunctionLayer;
     payload: object;
-    version: string;
     env?: Record<string, string>;
   }): Promise<LogicFunctionExecuteResult> {
     await this.build(flatLogicFunctionLayer);
@@ -81,7 +79,6 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
 
     const builtHandlerFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      version,
       fileFolder: FileFolder.BuiltLogicFunction,
     });
 

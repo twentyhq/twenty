@@ -49,7 +49,6 @@ export class CodeWorkflowAction implements WorkflowAction {
         id: workflowActionInput.logicFunctionId,
         workspaceId,
         payload: workflowActionInput.logicFunctionInput,
-        version: workflowActionInput.logicFunctionVersion,
       });
 
       if (result.error) {

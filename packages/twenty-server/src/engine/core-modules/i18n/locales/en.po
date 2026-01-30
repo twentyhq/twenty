@@ -1305,6 +1305,11 @@ msgstr "FieldMetadataId is required to create a view sort."
 msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 msgstr "File {fileId} is already associated with a permanent files field. Please re-upload the file."
 
+#. js-lingui-id: pFq+yh
+#: src/engine/core-modules/file/files-field/files-field.service.ts
+msgid "File {fileId} is not associated with a files field. It can't be downloaded."
+msgstr "File {fileId} is not associated with a files field. It can't be downloaded."
+
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
@@ -1407,11 +1412,6 @@ msgstr "Function is not ready."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "Function not found."
-
-#. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
-msgid "Function version not found."
-msgstr "Function version not found."
 
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts

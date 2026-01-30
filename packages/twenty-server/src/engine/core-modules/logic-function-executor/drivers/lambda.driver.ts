@@ -314,13 +314,11 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     flatLogicFunction,
     flatLogicFunctionLayer,
     payload,
-    version,
     env,
   }: {
     flatLogicFunction: FlatLogicFunction;
     flatLogicFunctionLayer: FlatLogicFunctionLayer;
     payload: object;
-    version: string;
     env?: Record<string, string>;
   }): Promise<LogicFunctionExecuteResult> {
     await this.build(flatLogicFunction, flatLogicFunctionLayer);
@@ -331,7 +329,6 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     const builtHandlerFolderPath = getLogicFunctionFolderOrThrow({
       flatLogicFunction,
-      version,
       fileFolder: FileFolder.BuiltLogicFunction,
     });
 
@@ -389,7 +386,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     } catch (error) {
       if (error instanceof ResourceNotFoundException) {
         throw new LogicFunctionException(
-          `Function Version '${version}' does not exist`,
+          `Function '${flatLogicFunction.id}' does not exist`,
           LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
         );
       }

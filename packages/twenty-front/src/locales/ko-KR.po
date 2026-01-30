@@ -9293,6 +9293,11 @@ msgstr "우선 순위"
 msgid "Priority"
 msgstr "우선 순위"
 
+#. js-lingui-id: k62X/2
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "Priority support"
+msgstr ""
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx

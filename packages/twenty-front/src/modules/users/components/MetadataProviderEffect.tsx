@@ -10,6 +10,7 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
+import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -24,13 +25,14 @@ import {
   type WorkspaceMember,
   useFindAllCoreViewsQuery,
   useGetCurrentUserQuery,
+  useGetManyLogicFunctionsQuery,
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-export const UserAndViewsProviderEffect = () => {
+export const MetadataProviderEffect = () => {
   const location = useLocation();
 
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
@@ -45,6 +47,7 @@ export const UserAndViewsProviderEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setCurrentUserWorkspace = useSetRecoilState(currentUserWorkspaceState);
   const setAvailableWorkspaces = useSetRecoilState(availableWorkspacesState);
+  const setLogicFunctions = useSetRecoilState(logicFunctionsState);
   const { initializeFormatPreferences } = useInitializeFormatPreferences();
   const isLoggedIn = useIsLogged();
 
@@ -103,6 +106,16 @@ export const UserAndViewsProviderEffect = () => {
     useFindAllCoreViewsQuery({
       skip: shouldSkip,
     });
+
+  const { data: logicFunctionsData } = useGetManyLogicFunctionsQuery({
+    skip: !isLoggedIn,
+  });
+
+  useEffect(() => {
+    if (isDefined(logicFunctionsData?.findManyLogicFunctions)) {
+      setLogicFunctions(logicFunctionsData.findManyLogicFunctions);
+    }
+  }, [logicFunctionsData?.findManyLogicFunctions, setLogicFunctions]);
 
   useEffect(() => {
     if (!userQueryLoading) {

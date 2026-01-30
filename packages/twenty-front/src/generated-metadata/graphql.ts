@@ -1145,12 +1145,10 @@ export type CreateWorkflowVersionEdgeInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Default settings for the step */
+  defaultSettings?: InputMaybe<Scalars['JSON']>;
   /** Step ID */
   id?: InputMaybe<Scalars['String']>;
-  /** Logic function ID */
-  logicFunctionId?: InputMaybe<Scalars['UUID']>;
-  /** Step name */
-  name?: InputMaybe<Scalars['String']>;
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
@@ -1387,8 +1385,6 @@ export type ExecuteLogicFunctionInput = {
   id: Scalars['UUID'];
   /** Payload in JSON format */
   payload: Scalars['JSON'];
-  /** Version of the logic function to execute */
-  version?: Scalars['String'];
 };
 
 export type FeatureFlag = {
@@ -1638,8 +1634,6 @@ export type GetAuthorizationUrlForSsoOutput = {
 export type GetLogicFunctionSourceCodeInput = {
   /** The id of the function. */
   id: Scalars['ID'];
-  /** The version of the function */
-  version?: Scalars['String'];
 };
 
 /** Order by options for graph widgets */
@@ -1921,9 +1915,7 @@ export type LogicFunction = {
   httpRouteTriggerSettings?: Maybe<Scalars['JSON']>;
   id: Scalars['UUID'];
   isTool: Scalars['Boolean'];
-  latestVersion?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  publishedVersions: Array<Scalars['String']>;
   runtime: Scalars['String'];
   sourceHandlerPath: Scalars['String'];
   timeoutSeconds: Scalars['Float'];
@@ -5560,7 +5552,7 @@ export type UpdateOneApplicationVariableMutationVariables = Exact<{
 
 export type UpdateOneApplicationVariableMutation = { __typename?: 'Mutation', updateOneApplicationVariable: boolean };
 
-export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+export type ApplicationFieldsFragment = { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5572,7 +5564,7 @@ export type FindOneApplicationQueryVariables = Exact<{
 }>;
 
 
-export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> } };
+export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description: string, version: string, universalIdentifier: string, canBeUninstalled: boolean, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -6272,21 +6264,21 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean } };
 
-export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
+export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
 
 export type CreateOneLogicFunctionItemMutationVariables = Exact<{
   input: CreateLogicFunctionInput;
 }>;
 
 
-export type CreateOneLogicFunctionItemMutation = { __typename?: 'Mutation', createOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type CreateOneLogicFunctionItemMutation = { __typename?: 'Mutation', createOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type DeleteOneLogicFunctionMutationVariables = Exact<{
   input: LogicFunctionIdInput;
 }>;
 
 
-export type DeleteOneLogicFunctionMutation = { __typename?: 'Mutation', deleteOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type DeleteOneLogicFunctionMutation = { __typename?: 'Mutation', deleteOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type ExecuteOneLogicFunctionMutationVariables = Exact<{
   input: ExecuteLogicFunctionInput;
@@ -6300,14 +6292,14 @@ export type PublishOneLogicFunctionMutationVariables = Exact<{
 }>;
 
 
-export type PublishOneLogicFunctionMutation = { __typename?: 'Mutation', publishLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type PublishOneLogicFunctionMutation = { __typename?: 'Mutation', publishLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UpdateOneLogicFunctionMutationVariables = Exact<{
   input: UpdateLogicFunctionInput;
 }>;
 
 
-export type UpdateOneLogicFunctionMutation = { __typename?: 'Mutation', updateOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type UpdateOneLogicFunctionMutation = { __typename?: 'Mutation', updateOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type FindManyAvailablePackagesQueryVariables = Exact<{
   input: LogicFunctionIdInput;
@@ -6319,14 +6311,14 @@ export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailabl
 export type GetManyLogicFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+export type GetManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type GetOneLogicFunctionQueryVariables = Exact<{
   input: LogicFunctionIdInput;
 }>;
 
 
-export type GetOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type GetOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type FindOneLogicFunctionSourceCodeQueryVariables = Exact<{
   input: GetLogicFunctionSourceCodeInput;
@@ -7140,8 +7132,6 @@ export const LogicFunctionFieldsFragmentDoc = gql`
   description
   runtime
   timeoutSeconds
-  latestVersion
-  publishedVersions
   sourceHandlerPath
   builtHandlerPath
   handlerName

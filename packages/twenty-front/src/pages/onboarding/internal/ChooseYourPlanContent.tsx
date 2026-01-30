@@ -59,6 +59,16 @@ const StyledBenefitsContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
 `;
 
+const StyledOrganizationBenefitsContainer = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+  padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(3)};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+`;
+
 const StyledChooseTrialContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -107,28 +117,37 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
 
   const getPlanBenefits = (planKey: BillingPlanKey) => {
     if (planKey === BillingPlanKey.ENTERPRISE) {
-      return [
+      return {
+        organizationBenefits: [
+          t`SSO (SAML / OIDC)`,
+          t`20,000 workflow node executions`,
+          t`Priority support`,
+        ],
+        standardBenefits: [
+          t`Full access`,
+          t`Unlimited contacts`,
+          t`Email integration`,
+          t`Custom objects`,
+          t`API & Webhooks`,
+        ],
+      };
+    }
+
+    return {
+      organizationBenefits: [],
+      standardBenefits: [
         t`Full access`,
         t`Unlimited contacts`,
         t`Email integration`,
         t`Custom objects`,
         t`API & Webhooks`,
-        t`20,000 workflow node executions`,
-        t`SSO (SAML / OIDC)`,
-      ];
-    }
-
-    return [
-      t`Full access`,
-      t`Unlimited contacts`,
-      t`Email integration`,
-      t`Custom objects`,
-      t`API & Webhooks`,
-      t`10,000 workflow node executions`,
-    ];
+        t`10,000 workflow node executions`,
+      ],
+    };
   };
 
-  const benefits = getPlanBenefits(currentPlanKey);
+  const { organizationBenefits, standardBenefits } =
+    getPlanBenefits(currentPlanKey);
 
   const baseProduct = getBaseProductByPlanKey(currentPlanKey);
   const baseProductPrice = getBaseLicensedPriceByPlanKeyAndInterval(
@@ -195,8 +214,15 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
             price={baseProductPrice.unitAmount / 100}
           />
         </StyledSubscriptionPriceContainer>
+        {organizationBenefits.length > 0 && (
+          <StyledOrganizationBenefitsContainer>
+            {organizationBenefits.map((benefit) => (
+              <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
+            ))}
+          </StyledOrganizationBenefitsContainer>
+        )}
         <StyledBenefitsContainer>
-          {benefits.map((benefit) => (
+          {standardBenefits.map((benefit) => (
             <SubscriptionBenefit key={benefit}>{benefit}</SubscriptionBenefit>
           ))}
         </StyledBenefitsContainer>

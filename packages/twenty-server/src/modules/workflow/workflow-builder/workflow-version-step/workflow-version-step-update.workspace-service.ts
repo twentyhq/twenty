@@ -8,8 +8,8 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
-import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
+import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
@@ -114,6 +114,7 @@ export class WorkflowVersionStepUpdateWorkspaceService {
           workspaceId,
           position: newStep.position,
           workflowVersionId,
+          defaultSettings: newStep.settings,
         },
       );
 
