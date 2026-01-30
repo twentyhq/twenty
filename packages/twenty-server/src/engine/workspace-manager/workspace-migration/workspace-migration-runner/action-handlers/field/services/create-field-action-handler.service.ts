@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -21,7 +22,6 @@ import {
   EnumOperation,
   executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
-import { v4 } from 'uuid';
 
 @Injectable()
 export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -37,7 +37,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps, workspaceId } = context;
+    const { action, queryRunner, allFlatEntityMaps } = context;
     const { universalFlatFieldMetadatas } = action;
 
     const fieldMetadataRepository =
@@ -53,7 +53,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
       allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
         universalFlatFieldMetadata.universalIdentifier,
-        v4(),  // TODO should be configurable for API_METADATA
+        v4(), // TODO should be configurable for API_METADATA
       );
     }
 
@@ -66,6 +66,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           context,
         }),
     );
+
     await fieldMetadataRepository.insert(nakedFlatFieldMetadatas);
   }
 
