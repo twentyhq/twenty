@@ -12,9 +12,9 @@ import { type DeleteObjectAction } from 'src/engine/workspace-manager/workspace-
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
-  collectEnumOperationsForObject,
-  EnumOperation,
-  executeBatchEnumOperations,
+    collectEnumOperationsForObject,
+    EnumOperation,
+    executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
 
 @Injectable()
@@ -85,7 +85,7 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     );
 
     const enumOperations = collectEnumOperationsForObject({
-      flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
+      universalFlatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
       tableName,
       operation: EnumOperation.DROP,
     });

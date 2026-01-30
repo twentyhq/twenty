@@ -7,9 +7,10 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
-import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -45,12 +46,12 @@ export enum EnumOperation {
 }
 
 const collectEnumOperationsForBasicEnumField = ({
-  flatFieldMetadata,
+  universalFlatFieldMetadata,
   tableName,
   operation,
   options,
 }: {
-  flatFieldMetadata: FlatFieldMetadata<
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata<
     | FieldMetadataType.SELECT
     | FieldMetadataType.MULTI_SELECT
     | FieldMetadataType.RATING
@@ -61,7 +62,7 @@ const collectEnumOperationsForBasicEnumField = ({
 }): EnumOperationSpec[] => {
   const enumName = computePostgresEnumName({
     tableName,
-    columnName: flatFieldMetadata.name,
+    columnName: universalFlatFieldMetadata.name,
   });
 
   switch (operation) {
@@ -71,7 +72,7 @@ const collectEnumOperationsForBasicEnumField = ({
           operation: EnumOperation.CREATE,
           enumName,
           values:
-            flatFieldMetadata.options?.map((option) => option.value) ?? [],
+            universalFlatFieldMetadata.options?.map((option) => option.value) ?? [],
         },
       ];
     case EnumOperation.DROP:
@@ -79,7 +80,7 @@ const collectEnumOperationsForBasicEnumField = ({
     case EnumOperation.RENAME: {
       const newEnumName = computePostgresEnumName({
         tableName: options?.newTableName ?? tableName,
-        columnName: options?.newFieldName ?? flatFieldMetadata.name,
+        columnName: options?.newFieldName ?? universalFlatFieldMetadata.name,
       });
 
       return [
@@ -150,17 +151,17 @@ const collectEnumOperationsForCompositeField = ({
 };
 
 export const collectEnumOperationsForField = ({
-  flatFieldMetadata,
+  universalFlatFieldMetadata,
   tableName,
   operation,
   options,
 }: {
-  flatFieldMetadata: FlatFieldMetadata;
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata;
   tableName: string;
   operation: EnumOperation;
   options?: { newTableName?: string; newFieldName?: string };
 }): EnumOperationSpec[] => {
-  if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
+  if (isCompositeUniversalFlatFieldMetadata(universalFlatFieldMetadata)) {
     return collectEnumOperationsForCompositeField({
       flatFieldMetadata,
       tableName,
@@ -168,9 +169,9 @@ export const collectEnumOperationsForField = ({
       options,
     });
   }
-  if (isEnumFlatFieldMetadata(flatFieldMetadata)) {
+  if (isEnumUniversalFlatFieldMetadata(universalFlatFieldMetadata)) {
     return collectEnumOperationsForBasicEnumField({
-      flatFieldMetadata,
+      universalFlatFieldMetadata: flatFieldMetadata,
       tableName,
       operation,
       options,
@@ -183,17 +184,17 @@ export const collectEnumOperationsForField = ({
 export const collectEnumOperationsForObject = ({
   tableName,
   operation,
-  flatFieldMetadatas,
+  universalFlatFieldMetadatas,
   options,
 }: {
   tableName: string;
   operation: EnumOperation;
-  flatFieldMetadatas: FlatFieldMetadata[];
+  universalFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   options?: { newTableName?: string; newFieldName?: string };
 }): EnumOperationSpec[] => {
-  return flatFieldMetadatas.flatMap((flatFieldMetadata) =>
+  return universalFlatFieldMetadatas.flatMap((universalFlatFieldMetadata) =>
     collectEnumOperationsForField({
-      flatFieldMetadata,
+      universalFlatFieldMetadata,
       tableName,
       operation,
       options,
