@@ -7,6 +7,10 @@
  *                              |___/
  */
 
+export type {
+  ApplicationMarketplaceData,
+  ApplicationManifest,
+} from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -16,18 +20,18 @@ export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
-  FieldManifest,
   RegularFieldManifest,
   RelationFieldManifest,
+  FieldManifest,
 } from './fieldManifestType';
 export type { FrontComponentManifest } from './frontComponentManifestType';
 export type {
-  CronTrigger,
-  DatabaseEventTrigger,
   InputJsonSchema,
   LogicFunctionManifest,
-  LogicFunctionTriggerManifest,
+  DatabaseEventTrigger,
+  CronTrigger,
   RouteTrigger,
+  LogicFunctionTriggerManifest,
 } from './logicFunctionManifestType';
 export type { Manifest } from './manifestType';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
