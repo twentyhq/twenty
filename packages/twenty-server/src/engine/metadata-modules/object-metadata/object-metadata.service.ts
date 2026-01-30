@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { type APP_LOCALES } from 'twenty-shared/translations';
+import { AppLocale } from 'twenty-shared/translations';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 
@@ -61,7 +61,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }: {
     workspaceId: string;
     updateObjectInput: UpdateOneObjectInput;
-    locale?: keyof typeof APP_LOCALES;
+    locale?: AppLocale;
   }): Promise<FlatObjectMetadata> {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
