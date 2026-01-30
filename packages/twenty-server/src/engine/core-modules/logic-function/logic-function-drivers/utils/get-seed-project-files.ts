@@ -32,7 +32,7 @@ const getAllFiles = async (
 export const getSeedProjectFiles = (async () => {
   const seedProjectPath = join(
     ASSET_PATH,
-    `engine/core-modules/logic-function-executor/drivers/constants/seed-project`,
+    `engine/core-modules/logic-function/logic-function-drivers/constants/seed-project`,
   );
 
   return await getAllFiles(seedProjectPath);

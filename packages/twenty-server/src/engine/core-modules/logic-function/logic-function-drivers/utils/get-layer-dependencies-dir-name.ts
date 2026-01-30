@@ -7,7 +7,7 @@ export const getLayerDependenciesDirName = (
 ): string => {
   const baseTypescriptProjectPath = path.join(
     ASSET_PATH,
-    `engine/core-modules/logic-function-executor/drivers/layers/${version}`,
+    `engine/core-modules/logic-function/logic-function-drivers/layers/${version}`,
   );
 
   return path.resolve(__dirname, baseTypescriptProjectPath);
