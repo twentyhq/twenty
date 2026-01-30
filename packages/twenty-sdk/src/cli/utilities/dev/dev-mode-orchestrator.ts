@@ -1,7 +1,7 @@
 import {
   type ManifestBuildResult,
-  updateManifestChecksums,
-} from '@/cli/utilities/build/manifest/update-manifest-checksums';
+  manifestUpdateChecksums,
+} from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
@@ -10,7 +10,7 @@ import type { Location } from 'esbuild';
 import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 import { type EventName } from 'chokidar/handler.js';
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
-import { validateManifest } from '@/cli/utilities/build/manifest/validate-manifest';
+import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 
 export type DevModeOrchestratorOptions = {
   appPath: string;
@@ -248,7 +248,7 @@ export class DevModeOrchestrator {
         return;
       }
 
-      const validation = validateManifest(result.manifest);
+      const validation = manifestValidate(result.manifest);
 
       if (!validation.isValid) {
         for (const e of validation.errors) {
@@ -306,7 +306,7 @@ export class DevModeOrchestrator {
         await Promise.all(this.activeUploads);
       }
 
-      const manifest = updateManifestChecksums({
+      const manifest = manifestUpdateChecksums({
         manifest: result.manifest,
         builtFileInfos: this.builtFileInfos,
       });
