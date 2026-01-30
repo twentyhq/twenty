@@ -9,7 +9,7 @@ import { HTTPMethod } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { LogicFunctionExecutionOrchestratorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-execution-orchestrator.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
@@ -21,7 +21,7 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 export class RouteTriggerService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly logicFunctionExecutionOrchestratorService: LogicFunctionExecutionOrchestratorService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
@@ -147,13 +147,11 @@ export class RouteTriggerService {
     });
 
     const result =
-      await this.logicFunctionExecutionOrchestratorService.executeOneLogicFunction(
-        {
-          id: logicFunction.id,
-          workspaceId: logicFunction.workspaceId,
-          payload: event,
-        },
-      );
+      await this.logicFunctionExecutorService.executeOneLogicFunction({
+        id: logicFunction.id,
+        workspaceId: logicFunction.workspaceId,
+        payload: event,
+      });
 
     if (!isDefined(result)) {
       return result;

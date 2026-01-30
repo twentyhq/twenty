@@ -15,8 +15,8 @@ import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-fu
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
-  LogicFunctionExecutionOrchestratorService,
-} from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-execution-orchestrator.service';
+  LogicFunctionExecutorService,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -41,7 +41,7 @@ export class LogicFunctionService {
     private readonly fileStorageService: FileStorageService,
     private readonly functionBuildService: LogicFunctionBuildService,
     private readonly logicFunctionLayerService: LogicFunctionLayerService,
-    private readonly logicFunctionExecutionOrchestratorService: LogicFunctionExecutionOrchestratorService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -105,13 +105,11 @@ export class LogicFunctionService {
     payload: object;
   }): Promise<LogicFunctionExecuteResult> {
     try {
-      return await this.logicFunctionExecutionOrchestratorService.executeOneLogicFunction(
-        {
-          id,
-          workspaceId,
-          payload,
-        },
-      );
+      return await this.logicFunctionExecutorService.executeOneLogicFunction({
+        id,
+        workspaceId,
+        payload,
+      });
     } catch (error) {
       if (error instanceof LogicFunctionExecutionException) {
         switch (error.code) {
