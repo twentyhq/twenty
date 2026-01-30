@@ -91,6 +91,11 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };
