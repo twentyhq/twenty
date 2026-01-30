@@ -52,7 +52,7 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: {
         flatIndexMaps,
         flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
+        flatFieldMetadataMaps: universalFlatFieldMetadataMaps,
       },
       queryRunner,
       workspaceId,
@@ -79,15 +79,16 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     });
 
     // Create new index
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: updatedFlatEntity.objectMetadataId,
-    });
+    const universalFlatObjectMetadata =
+      findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: updatedFlatEntity.objectMetadataId,
+      });
 
     await createIndexInWorkspaceSchema({
       flatIndexMetadata: updatedFlatEntity,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
+      universalFlatObjectMetadata,
+      universalFlatFieldMetadataMaps,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
       queryRunner,
       workspaceId,
