@@ -1,175 +1,191 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isMorhphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type AggregateOrchestratorActionsReportArgs } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-aggregate-orchestrator-actions-report-args.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 
 type AggregatedActions = {
-  createdFieldActionByObjectMetadataId: Record<string, CreateFieldAction>;
-  createdObjectActionByObjectMetadataId: Record<string, CreateObjectAction>;
+  createdFieldActionByObjectMetadataUniversalIdentifier: Record<
+    string,
+    CreateFieldAction
+  >;
+  createdObjectActionByObjectMetadataUniversalIdentifier: Record<
+    string,
+    CreateObjectAction
+  >;
 };
 
 export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions =
   ({
     orchestratorActionsReport,
   }: AggregateOrchestratorActionsReportArgs): OrchestratorActionsReport => {
-    const initialCreatedObjectActionByObjectMetadataId = (
+    const initialCreatedObjectActionByObjectMetadataUniversalIdentifier = (
       orchestratorActionsReport.objectMetadata.create as CreateObjectAction[]
     ).reduce(
       (acc, createObjectAction) => ({
         ...acc,
-        [createObjectAction.flatEntity.id]: createObjectAction,
+        [createObjectAction.flatEntity.universalIdentifier]: createObjectAction,
       }),
       {} as Record<string, CreateObjectAction>,
     );
+
     const initialAccumulator: AggregatedActions = {
-      createdFieldActionByObjectMetadataId: {},
-      createdObjectActionByObjectMetadataId:
-        initialCreatedObjectActionByObjectMetadataId,
+      createdFieldActionByObjectMetadataUniversalIdentifier: {},
+      createdObjectActionByObjectMetadataUniversalIdentifier:
+        initialCreatedObjectActionByObjectMetadataUniversalIdentifier,
     };
 
     const {
-      createdFieldActionByObjectMetadataId,
-      createdObjectActionByObjectMetadataId,
+      createdFieldActionByObjectMetadataUniversalIdentifier,
+      createdObjectActionByObjectMetadataUniversalIdentifier,
     } = (
       orchestratorActionsReport.fieldMetadata.create as CreateFieldAction[]
     ).reduce<AggregatedActions>(
       (
         {
-          createdObjectActionByObjectMetadataId,
-          createdFieldActionByObjectMetadataId,
+          createdObjectActionByObjectMetadataUniversalIdentifier,
+          createdFieldActionByObjectMetadataUniversalIdentifier,
         },
         createFieldAction,
       ) => {
         const existingCreateObjectAction =
-          createdObjectActionByObjectMetadataId[
-            createFieldAction.objectMetadataId
+          createdObjectActionByObjectMetadataUniversalIdentifier[
+            createFieldAction.objectMetadataUniversalIdentifier
           ];
 
         const existingCreateFieldAction =
-          createdFieldActionByObjectMetadataId[
-            createFieldAction.objectMetadataId
+          createdFieldActionByObjectMetadataUniversalIdentifier[
+            createFieldAction.objectMetadataUniversalIdentifier
           ];
 
-        const initialAccumulator: {
-          morphOrRelationFlatFieldMetadatas: FlatFieldMetadata[];
-          otherFlatFieldMetadatas: FlatFieldMetadata[];
+        const fieldAccumulator: {
+          morphOrRelationUniversalFlatFieldMetadatas: UniversalFlatFieldMetadata[];
+          otherUniversalFlatFieldMetadatas: UniversalFlatFieldMetadata[];
         } = {
-          morphOrRelationFlatFieldMetadatas: [],
-          otherFlatFieldMetadatas: [],
+          morphOrRelationUniversalFlatFieldMetadatas: [],
+          otherUniversalFlatFieldMetadatas: [],
         };
-        const { morphOrRelationFlatFieldMetadatas, otherFlatFieldMetadatas } =
-          createFieldAction.flatFieldMetadatas.reduce(
-            (acc, flatFieldMetadata) => {
-              if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-                return {
-                  ...acc,
-                  morphOrRelationFlatFieldMetadatas: [
-                    ...acc.morphOrRelationFlatFieldMetadatas,
-                    flatFieldMetadata,
-                  ],
-                };
-              }
 
+        const {
+          morphOrRelationUniversalFlatFieldMetadatas,
+          otherUniversalFlatFieldMetadatas,
+        } = createFieldAction.universalFlatFieldMetadatas.reduce(
+          (acc, universalFlatFieldMetadata) => {
+            if (
+              isMorhphOrRelationUniversalFlatFieldMetadata(
+                universalFlatFieldMetadata,
+              )
+            ) {
               return {
                 ...acc,
-                otherFlatFieldMetadatas: [
-                  ...acc.otherFlatFieldMetadatas,
-                  flatFieldMetadata,
+                morphOrRelationUniversalFlatFieldMetadatas: [
+                  ...acc.morphOrRelationUniversalFlatFieldMetadatas,
+                  universalFlatFieldMetadata,
                 ],
               };
-            },
-            initialAccumulator,
-          );
+            }
+
+            return {
+              ...acc,
+              otherUniversalFlatFieldMetadatas: [
+                ...acc.otherUniversalFlatFieldMetadatas,
+                universalFlatFieldMetadata,
+              ],
+            };
+          },
+          fieldAccumulator,
+        );
 
         if (isDefined(existingCreateObjectAction)) {
           if (isDefined(existingCreateFieldAction)) {
             return {
-              createdObjectActionByObjectMetadataId: {
-                ...createdObjectActionByObjectMetadataId,
-                [createFieldAction.objectMetadataId]: {
+              createdObjectActionByObjectMetadataUniversalIdentifier: {
+                ...createdObjectActionByObjectMetadataUniversalIdentifier,
+                [createFieldAction.objectMetadataUniversalIdentifier]: {
                   ...existingCreateObjectAction,
-                  flatFieldMetadatas: [
-                    ...existingCreateObjectAction.flatFieldMetadatas,
-                    ...otherFlatFieldMetadatas,
+                  universalFlatFieldMetadatas: [
+                    ...existingCreateObjectAction.universalFlatFieldMetadatas,
+                    ...otherUniversalFlatFieldMetadatas,
                   ],
                 },
               },
-              createdFieldActionByObjectMetadataId: {
-                ...createdFieldActionByObjectMetadataId,
-                [createFieldAction.objectMetadataId]: {
+              createdFieldActionByObjectMetadataUniversalIdentifier: {
+                ...createdFieldActionByObjectMetadataUniversalIdentifier,
+                [createFieldAction.objectMetadataUniversalIdentifier]: {
                   ...existingCreateFieldAction,
-                  flatFieldMetadatas: [
-                    ...existingCreateFieldAction.flatFieldMetadatas,
-                    ...morphOrRelationFlatFieldMetadatas,
+                  universalFlatFieldMetadatas: [
+                    ...existingCreateFieldAction.universalFlatFieldMetadatas,
+                    ...morphOrRelationUniversalFlatFieldMetadatas,
                   ],
                 },
               },
             };
           }
 
-          if (morphOrRelationFlatFieldMetadatas.length > 0) {
+          if (morphOrRelationUniversalFlatFieldMetadatas.length > 0) {
             return {
-              createdObjectActionByObjectMetadataId: {
-                ...createdObjectActionByObjectMetadataId,
-                [createFieldAction.objectMetadataId]: {
+              createdObjectActionByObjectMetadataUniversalIdentifier: {
+                ...createdObjectActionByObjectMetadataUniversalIdentifier,
+                [createFieldAction.objectMetadataUniversalIdentifier]: {
                   ...existingCreateObjectAction,
-                  flatFieldMetadatas: [
-                    ...existingCreateObjectAction.flatFieldMetadatas,
-                    ...otherFlatFieldMetadatas,
+                  universalFlatFieldMetadatas: [
+                    ...existingCreateObjectAction.universalFlatFieldMetadatas,
+                    ...otherUniversalFlatFieldMetadatas,
                   ],
                 },
               },
-              createdFieldActionByObjectMetadataId: {
-                ...createdFieldActionByObjectMetadataId,
-                [createFieldAction.objectMetadataId]: {
+              createdFieldActionByObjectMetadataUniversalIdentifier: {
+                ...createdFieldActionByObjectMetadataUniversalIdentifier,
+                [createFieldAction.objectMetadataUniversalIdentifier]: {
                   ...createFieldAction,
-                  flatFieldMetadatas: morphOrRelationFlatFieldMetadatas,
+                  universalFlatFieldMetadatas:
+                    morphOrRelationUniversalFlatFieldMetadatas,
                 },
               },
             };
           }
 
           return {
-            createdObjectActionByObjectMetadataId: {
-              ...createdObjectActionByObjectMetadataId,
-              [createFieldAction.objectMetadataId]: {
+            createdObjectActionByObjectMetadataUniversalIdentifier: {
+              ...createdObjectActionByObjectMetadataUniversalIdentifier,
+              [createFieldAction.objectMetadataUniversalIdentifier]: {
                 ...existingCreateObjectAction,
-                flatFieldMetadatas: [
-                  ...existingCreateObjectAction.flatFieldMetadatas,
-                  ...otherFlatFieldMetadatas,
+                universalFlatFieldMetadatas: [
+                  ...existingCreateObjectAction.universalFlatFieldMetadatas,
+                  ...otherUniversalFlatFieldMetadatas,
                 ],
               },
             },
-            createdFieldActionByObjectMetadataId,
+            createdFieldActionByObjectMetadataUniversalIdentifier,
           };
         }
 
         if (isDefined(existingCreateFieldAction)) {
           return {
-            createdFieldActionByObjectMetadataId: {
-              ...createdFieldActionByObjectMetadataId,
-              [createFieldAction.objectMetadataId]: {
+            createdFieldActionByObjectMetadataUniversalIdentifier: {
+              ...createdFieldActionByObjectMetadataUniversalIdentifier,
+              [createFieldAction.objectMetadataUniversalIdentifier]: {
                 ...existingCreateFieldAction,
-                flatFieldMetadatas: [
-                  ...existingCreateFieldAction.flatFieldMetadatas,
-                  ...createFieldAction.flatFieldMetadatas,
+                universalFlatFieldMetadatas: [
+                  ...existingCreateFieldAction.universalFlatFieldMetadatas,
+                  ...createFieldAction.universalFlatFieldMetadatas,
                 ],
               },
             },
-            createdObjectActionByObjectMetadataId,
+            createdObjectActionByObjectMetadataUniversalIdentifier,
           };
         }
 
         return {
-          createdFieldActionByObjectMetadataId: {
-            ...createdFieldActionByObjectMetadataId,
-            [createFieldAction.objectMetadataId]: createFieldAction,
+          createdFieldActionByObjectMetadataUniversalIdentifier: {
+            ...createdFieldActionByObjectMetadataUniversalIdentifier,
+            [createFieldAction.objectMetadataUniversalIdentifier]:
+              createFieldAction,
           },
-          createdObjectActionByObjectMetadataId,
+          createdObjectActionByObjectMetadataUniversalIdentifier,
         };
       },
       initialAccumulator,
@@ -179,11 +195,15 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
       ...orchestratorActionsReport,
       fieldMetadata: {
         ...orchestratorActionsReport.fieldMetadata,
-        create: Object.values(createdFieldActionByObjectMetadataId),
+        create: Object.values(
+          createdFieldActionByObjectMetadataUniversalIdentifier,
+        ),
       },
       objectMetadata: {
         ...orchestratorActionsReport.objectMetadata,
-        create: Object.values(createdObjectActionByObjectMetadataId),
+        create: Object.values(
+          createdObjectActionByObjectMetadataUniversalIdentifier,
+        ),
       },
     };
   };
