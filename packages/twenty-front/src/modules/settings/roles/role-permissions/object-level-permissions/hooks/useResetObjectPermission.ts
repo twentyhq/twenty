@@ -12,7 +12,7 @@ const OBJECT_PERMISSION_KEYS: SettingsRoleObjectPermissionKey[] = [
   'canDestroyObjectRecords',
 ];
 
-export const useResetObjectPermission = ({ roleId }: { roleId: string }) => {
+export const useResetObjectPermission = (roleId: string) => {
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );

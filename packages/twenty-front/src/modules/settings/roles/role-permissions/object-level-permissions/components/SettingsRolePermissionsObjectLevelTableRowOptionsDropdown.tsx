@@ -1,7 +1,7 @@
 // Options dropdown for object-level permission rows (remove, etc.), similar structure to AdvancedFilterRecordFilterOptionsDropdown
 
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
-import { useRemoveObjectPermissionFromDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useRemoveObjectPermissionFromDraftRole';
+import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -31,29 +31,28 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
     settingsDraftRoleFamilyState(roleId),
   );
 
-  const fieldPermissionsForObject =
+  const fieldPermissionsForCurrentObject =
     settingsDraftRole.fieldPermissions?.filter(
       (permission) => permission.objectMetadataId === objectMetadataId,
     ) ?? [];
 
-  const { removeObjectPermissionFromDraftRole } =
-    useRemoveObjectPermissionFromDraftRole(roleId);
+  const { resetObjectPermission } = useResetObjectPermission(roleId);
 
   const { upsertFieldPermissionInDraftRole } =
     useUpsertFieldPermissionInDraftRole(roleId);
 
   const handleRemove = () => {
     closeDropdown(dropdownId);
-    removeObjectPermissionFromDraftRole(objectMetadataId);
-
-    //! removal of field permission logic
-    fieldPermissionsForObject.forEach((fieldPermission: FieldPermission) => {
-      upsertFieldPermissionInDraftRole({
-        ...fieldPermission,
-        canUpdateFieldValue: null,
-        canReadFieldValue: null,
-      });
-    });
+    resetObjectPermission(objectMetadataId);
+    fieldPermissionsForCurrentObject.forEach(
+      (fieldPermission: FieldPermission) => {
+        upsertFieldPermissionInDraftRole({
+          ...fieldPermission,
+          canUpdateFieldValue: null,
+          canReadFieldValue: null,
+        });
+      },
+    );
   };
 
   return (
