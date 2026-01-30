@@ -1,13 +1,26 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isUniversalFieldMetadataSettingsOftype } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
+import { NakedFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { UniversalAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import {
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
+import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FieldMetadataSettings, FieldMetadataType } from 'twenty-shared/types';
 
 type FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs = {
   universalFlatFieldMetadata: UniversalFlatFieldMetadata;
-  universalIdentifierToGeneratedIdMap: Map<string, string>;
-  allFlatEntityMaps: AllFlatEntityMaps;
-  workspaceId: string;
+  allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
+  allFlatEntityMaps: UniversalAllFlatEntityMaps;
+  context: Pick<
+    WorkspaceMigrationActionRunnerArgs<WorkspaceMigrationAction>,
+    'workspaceId' | 'flatApplication'
+  >;
 };
 
 const getIdFromUniversalIdentifier = (
@@ -17,19 +30,100 @@ const getIdFromUniversalIdentifier = (
   return flatEntityMaps.idByUniversalIdentifier[universalIdentifier] ?? null;
 };
 
+const findFieldMetadataIdInCreateFieldContext = ({
+  universalIdentifier,
+  allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+  flatFieldMetadataMaps,
+}: {
+  universalIdentifier: string;
+  allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
+  flatFieldMetadataMaps: UniversalAllFlatEntityMaps['flatFieldMetadataMaps'];
+}): string | null => {
+  const generatedId =
+    allFieldIdToBeCreatedInActionByUniversalIdentifierMap.get(
+      universalIdentifier,
+    );
+
+  if (isDefined(generatedId)) {
+    return generatedId;
+  }
+
+  const existingFieldId =
+    flatFieldMetadataMaps.idByUniversalIdentifier[universalIdentifier];
+
+  return existingFieldId ?? null;
+};
+
+const fromUniversalSettingsToInsertableSettings = ({
+  universalSettings,
+  allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+  flatFieldMetadataMaps,
+}: {
+  universalSettings: UniversalFlatFieldMetadata['universalSettings'];
+  allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
+  flatFieldMetadataMaps: UniversalAllFlatEntityMaps['flatFieldMetadataMaps'];
+}): FieldMetadataSettings => {
+  if (!isDefined(universalSettings)) {
+    return null;
+  }
+
+  if (
+    isUniversalFieldMetadataSettingsOftype(
+      universalSettings,
+      FieldMetadataType.RELATION,
+    ) ||
+    isUniversalFieldMetadataSettingsOftype(
+      universalSettings,
+      FieldMetadataType.MORPH_RELATION,
+    )
+  ) {
+    const { junctionTargetFieldUniversalIdentifier, ...rest } =
+      universalSettings;
+    const junctionTargetFieldId = isDefined(
+      junctionTargetFieldUniversalIdentifier,
+    )
+      ? (findFieldMetadataIdInCreateFieldContext({
+          universalIdentifier: junctionTargetFieldUniversalIdentifier,
+          allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+          flatFieldMetadataMaps,
+        }) ?? undefined)
+      : undefined;
+
+    if (
+      isDefined(junctionTargetFieldUniversalIdentifier) &&
+      !isDefined(junctionTargetFieldId)
+    ) {
+      throw new WorkspaceMigrationActionExecutionException({
+        code: WorkspaceMigrationActionExecutionExceptionCode.FIELD_METADATA_NOT_FOUND,
+        message: `Could not not find junction column id for universal identifier ${junctionTargetFieldUniversalIdentifier}`,
+      });
+    }
+
+    return {
+      ...rest,
+      junctionTargetFieldId,
+    };
+  }
+
+  return universalSettings;
+};
+
 export const fromUniversalFlatFieldMetadataToInsertableFieldMetadata = ({
   universalFlatFieldMetadata,
-  universalIdentifierToGeneratedIdMap,
+  allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
   allFlatEntityMaps,
-  workspaceId,
-}: FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs) => {
+  context: {
+    flatApplication: { id: applicationId },
+    workspaceId,
+  },
+  // TODO create better typing rather than omitting lets create module that extends each others
+}: FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs): NakedFlatEntity<FieldMetadataEntity> => {
   const {
     universalIdentifier,
     applicationUniversalIdentifier,
-    objectUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier,
-    // Universal properties to exclude from insert
     viewFilterUniversalIdentifiers: _viewFilterUniversalIdentifiers,
     viewFieldUniversalIdentifiers: _viewFieldUniversalIdentifiers,
     kanbanAggregateOperationViewUniversalIdentifiers:
@@ -37,13 +131,14 @@ export const fromUniversalFlatFieldMetadataToInsertableFieldMetadata = ({
     calendarViewUniversalIdentifiers: _calendarViewUniversalIdentifiers,
     mainGroupByFieldMetadataViewUniversalIdentifiers:
       _mainGroupByFieldMetadataViewUniversalIdentifiers,
-    universalSettings: _universalSettings,
-    // Keep rest of properties
+    universalSettings,
     ...restProperties
   } = universalFlatFieldMetadata;
 
   const generatedId =
-    universalIdentifierToGeneratedIdMap.get(universalIdentifier);
+    allFieldIdToBeCreatedInActionByUniversalIdentifierMap.get(
+      universalIdentifier,
+    );
 
   if (!isDefined(generatedId)) {
     throw new Error(
@@ -52,43 +147,24 @@ export const fromUniversalFlatFieldMetadataToInsertableFieldMetadata = ({
   }
 
   const objectMetadataId = getIdFromUniversalIdentifier(
-    objectUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
     allFlatEntityMaps.flatObjectMetadataMaps,
   );
 
   if (!isDefined(objectMetadataId)) {
     throw new Error(
-      `Object metadata not found for universal identifier: ${objectUniversalIdentifier}`,
-    );
-  }
-
-  const applicationId = getIdFromUniversalIdentifier(
-    applicationUniversalIdentifier,
-    allFlatEntityMaps.flatApplicationMaps,
-  );
-
-  if (!isDefined(applicationId)) {
-    throw new Error(
-      `Application not found for universal identifier: ${applicationUniversalIdentifier}`,
+      `Object metadata not found for universal identifier: ${objectMetadataUniversalIdentifier}`,
     );
   }
 
   let relationTargetFieldMetadataId: string | null = null;
 
   if (isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
-    // First check if it's a field being created in the same action
-    relationTargetFieldMetadataId =
-      universalIdentifierToGeneratedIdMap.get(
-        relationTargetFieldMetadataUniversalIdentifier,
-      ) ?? null;
-
-    // If not found in the map, check existing fields
-    if (!isDefined(relationTargetFieldMetadataId)) {
-      relationTargetFieldMetadataId = getIdFromUniversalIdentifier(
-        relationTargetFieldMetadataUniversalIdentifier,
-        allFlatEntityMaps.flatFieldMetadataMaps,
-      );
-    }
+    relationTargetFieldMetadataId = findFieldMetadataIdInCreateFieldContext({
+      universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
+      allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+      flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+    });
 
     if (!isDefined(relationTargetFieldMetadataId)) {
       throw new Error(
@@ -112,8 +188,15 @@ export const fromUniversalFlatFieldMetadataToInsertableFieldMetadata = ({
     }
   }
 
+  const settings = fromUniversalSettingsToInsertableSettings({
+    universalSettings,
+    allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+    flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+  });
+
   return {
     ...restProperties,
+    settings,
     id: generatedId,
     workspaceId,
     applicationId,
