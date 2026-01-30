@@ -37,7 +37,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps, workspaceId } = context;
+    const { action, queryRunner, allFlatEntityMaps } = context;
     const { universalFlatFieldMetadatas } = action;
 
     const fieldMetadataRepository =
@@ -46,10 +46,13 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       );
 
     // Generate IDs for all fields in this action upfront
-    const universalIdentifierToGeneratedIdMap = new Map<string, string>();
+    const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
+      string,
+      string
+    >();
 
     for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
-      universalIdentifierToGeneratedIdMap.set(
+      allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
         universalFlatFieldMetadata.universalIdentifier,
         v4(),
       );
@@ -60,9 +63,9 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       const insertableFieldMetadata =
         fromUniversalFlatFieldMetadataToInsertableFieldMetadata({
           universalFlatFieldMetadata,
-          universalIdentifierToGeneratedIdMap,
+          allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
           allFlatEntityMaps,
-          workspaceId,
+          context,
         });
 
       await fieldMetadataRepository.insert(insertableFieldMetadata);
