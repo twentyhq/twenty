@@ -67,6 +67,7 @@ const StyledColumn = styled.div`
 `;
 
 const StyledTag = styled(Tag)`
+  max-width: 100%;
   min-width: 0;
   overflow: hidden;
 `;
