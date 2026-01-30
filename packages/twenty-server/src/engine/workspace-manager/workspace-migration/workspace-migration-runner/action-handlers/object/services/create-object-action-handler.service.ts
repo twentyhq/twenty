@@ -9,7 +9,8 @@ import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/fl
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
-import { fromUniversalFlatFieldMetadatasToNakedFieldMetadatas } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadatas-to-naked-field-metadatas.util.ts';
+import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
+import { fromUniversalFlatObjectMetadataToNakedObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/utils/from-universal-flat-object-metadata-to-naked-object-metadata.util';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
@@ -18,6 +19,7 @@ import {
   EnumOperation,
   executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -54,26 +56,47 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       order: { createdAt: 'DESC' },
     });
 
-    await objectMetadataRepository.insert({
-      ...universalFlatObjectMetadata,
-      dataSourceId: lastDataSourceMetadata.id,
-      targetTableName: 'DEPRECATED',
-    });
+    const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
+      string,
+      string
+    >();
 
-    const nakedFieldMetadatas =
-      fromUniversalFlatFieldMetadatasToNakedFieldMetadatas({
-        // TODO very important optimistically add the object to the maps here
+    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
+      allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
+        universalFlatFieldMetadata.universalIdentifier,
+        v4(),  // TODO should be configurable for API_METADATA
+      );
+    }
+
+    const nakedFlatObjectMetadata =
+      fromUniversalFlatObjectMetadataToNakedObjectMetadata({
+        allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
         allFlatEntityMaps,
         context,
-        universalFlatFieldMetadatas,
+        dataSourceId: lastDataSourceMetadata.id,
+        generatedId: v4(), // TODO should be configurable for API_METADATA
+        universalFlatObjectMetadata,
       });
+
+    await objectMetadataRepository.insert(nakedFlatObjectMetadata);
+
+    const nakedFlatFieldMetadatas = universalFlatFieldMetadatas.map(
+      (universalFlatFieldMetadata) =>
+        fromUniversalFlatFieldMetadataToNakedFieldMetadata({
+          objectMetadataId: nakedFlatObjectMetadata.id,
+          universalFlatFieldMetadata,
+          allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+          allFlatEntityMaps,
+          context,
+        }),
+    );
 
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<FieldMetadataEntity>(
         FieldMetadataEntity,
       );
 
-    await fieldMetadataRepository.insert(nakedFieldMetadatas);
+    await fieldMetadataRepository.insert(nakedFlatFieldMetadatas);
   }
 
   async executeForWorkspaceSchema(

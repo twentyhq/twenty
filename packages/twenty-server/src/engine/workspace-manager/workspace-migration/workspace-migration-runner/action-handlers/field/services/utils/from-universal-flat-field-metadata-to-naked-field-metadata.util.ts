@@ -24,6 +24,7 @@ export type FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs = {
     WorkspaceMigrationActionRunnerArgs<WorkspaceMigrationAction>,
     'workspaceId' | 'flatApplication'
   >;
+  objectMetadataId?: string;
 };
 
 const getIdFromUniversalIdentifier = (
@@ -115,11 +116,11 @@ export const fromUniversalFlatFieldMetadataToNakedFieldMetadata = ({
   universalFlatFieldMetadata,
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
   allFlatEntityMaps,
+  objectMetadataId: optionalObjectMetadataId,
   context: {
     flatApplication: { id: applicationId },
     workspaceId,
   },
-  // TODO create better typing rather than omitting lets create module that extends each others
 }: FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs): NakedFlatEntity<FieldMetadataEntity> => {
   const {
     universalIdentifier,
@@ -149,10 +150,12 @@ export const fromUniversalFlatFieldMetadataToNakedFieldMetadata = ({
     );
   }
 
-  const objectMetadataId = getIdFromUniversalIdentifier(
-    objectMetadataUniversalIdentifier,
-    allFlatEntityMaps.flatObjectMetadataMaps,
-  );
+  const objectMetadataId =
+    optionalObjectMetadataId ??
+    getIdFromUniversalIdentifier(
+      objectMetadataUniversalIdentifier,
+      allFlatEntityMaps.flatObjectMetadataMaps,
+    );
 
   if (!isDefined(objectMetadataId)) {
     throw new Error(
