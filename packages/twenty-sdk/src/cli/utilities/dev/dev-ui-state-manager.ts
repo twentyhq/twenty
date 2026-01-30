@@ -92,7 +92,7 @@ export class DevUiStateManager {
       ...this.state,
       ...(manifestStatus ? { manifestStatus } : {}),
       ...(appName ? { appName } : {}),
-      ...(error ? { error } : {}),
+      ...(error ? { error } : { error: undefined }),
     };
 
     this.notify();

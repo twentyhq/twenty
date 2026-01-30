@@ -16,6 +16,7 @@ export enum ManifestEntityKey {
   Objects = 'objects',
   Roles = 'roles',
   FrontComponents = 'frontComponents',
+  PublicAssets = 'publicAssets',
 }
 
 export type EntityFilePaths = Record<ManifestEntityKey, string[]>;

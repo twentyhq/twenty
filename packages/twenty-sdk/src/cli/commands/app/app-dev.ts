@@ -4,7 +4,7 @@ import {
   createLogicFunctionsWatcher,
   type EsbuildWatcher,
 } from '@/cli/utilities/build/common/esbuild-watcher';
-import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
+import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/update-manifest-checksums';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/dev-mode-orchestrator';

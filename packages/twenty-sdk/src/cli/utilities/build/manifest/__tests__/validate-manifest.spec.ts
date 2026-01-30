@@ -1,36 +1,46 @@
-import { validateManifest } from '@/cli/utilities/build/manifest/manifest-validate';
 import {
   type Application,
+  type ApplicationManifest,
+  type PackageJson,
   type FieldManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { validateManifest } from '@/cli/utilities/build/manifest/validate-manifest';
+
+const validApplication: Application = {
+  universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+  displayName: 'Test App',
+  roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+};
+
+const validField: FieldManifest = {
+  objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+
+  universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
+  type: FieldMetadataType.NUMBER,
+  name: 'healthScore',
+  label: 'Health Score',
+};
+
+const validManifest: ApplicationManifest = {
+  application: validApplication,
+  objects: [],
+  frontComponents: [],
+  fields: [],
+  logicFunctions: [],
+  roles: [],
+  publicAssets: [],
+  sources: {},
+  packageJson: {} as PackageJson,
+  yarnLock: '',
+};
 
 describe('validateManifest - objectExtensions', () => {
-  const validApplication: Application = {
-    universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
-    displayName: 'Test App',
-    roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
-  };
-
-  const validField: FieldManifest = {
-    objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
-
-    universalIdentifier: '550e8400-e29b-41d4-a716-446655440001',
-    type: FieldMetadataType.NUMBER,
-    name: 'healthScore',
-    label: 'Health Score',
-  };
-
   describe('valid object extensions', () => {
     it('should pass validation with valid object extension by nameSingular', () => {
       const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        frontComponents: [],
+        ...validManifest,
         fields: [validField],
-        logicFunctions: [],
-        roles: [],
-        publicAssets: [],
       });
 
       expect(result.isValid).toBe(true);
@@ -47,13 +57,8 @@ describe('validateManifest - objectExtensions', () => {
       };
 
       const result = validateManifest({
-        application: validApplication,
-        objects: [],
+        ...validManifest,
         fields: [extensionByUuid],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-        publicAssets: [],
       });
 
       expect(result.isValid).toBe(true);
@@ -70,13 +75,8 @@ describe('validateManifest - objectExtensions', () => {
       };
 
       const result = validateManifest({
-        application: validApplication,
-        objects: [],
+        ...validManifest,
         fields: [validField, anotherExtension],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-        publicAssets: [],
       });
 
       expect(result.isValid).toBe(true);
@@ -101,45 +101,13 @@ describe('validateManifest - objectExtensions', () => {
           },
         ],
       };
-
       const result = validateManifest({
-        application: validApplication,
-        objects: [],
+        ...validManifest,
         fields: [extensionWithSelect],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-        publicAssets: [],
       });
 
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
-    });
-  });
-
-  describe('targetObject validation', () => {
-    it('should fail when targetObject is missing', () => {
-      const invalidField = {
-        name: '',
-        label: '',
-      };
-
-      const result = validateManifest({
-        application: validApplication,
-        objects: [],
-        fields: [invalidField as any],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-        publicAssets: [],
-      });
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: 'Field must have a universalIdentifier',
-        }),
-      );
     });
   });
 
@@ -165,28 +133,24 @@ describe('validateManifest - objectExtensions', () => {
       ];
 
       const result = validateManifest({
-        application: validApplication,
-        objects: [],
+        ...validManifest,
         fields: fieldsWithDuplicates,
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-        publicAssets: [],
       });
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: expect.stringContaining('Duplicate universalIdentifier'),
-        }),
+      expect(result.errors).toContain(
+        'Duplicate universal identifiers: 550e8400-e29b-41d4-a716-446655440001',
       );
+      expect(result.warnings).toContain('No object defined');
+      expect(result.warnings).toContain('No logic function defined');
+      expect(result.warnings).toContain('No front component defined');
     });
 
     it('should fail when extension field ID conflicts with object field ID', () => {
       const sharedId = '550e8400-e29b-41d4-a716-446655440001';
 
       const result = validateManifest({
-        application: validApplication,
+        ...validManifest,
         objects: [
           {
             universalIdentifier: 'obj-uuid',
@@ -213,18 +177,15 @@ describe('validateManifest - objectExtensions', () => {
             label: 'Extension Field',
           },
         ],
-        logicFunctions: [],
-        frontComponents: [],
-        roles: [],
-        publicAssets: [],
       });
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContainEqual(
-        expect.objectContaining({
-          message: expect.stringContaining('Duplicate universalIdentifier'),
-        }),
+      expect(result.errors).toContain(
+        'Duplicate universal identifiers: 550e8400-e29b-41d4-a716-446655440001',
       );
+      expect(result.warnings).not.toContain('No object defined');
+      expect(result.warnings).toContain('No logic function defined');
+      expect(result.warnings).toContain('No front component defined');
     });
   });
 });

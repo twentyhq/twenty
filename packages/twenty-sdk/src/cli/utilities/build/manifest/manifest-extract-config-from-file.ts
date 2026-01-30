@@ -4,6 +4,7 @@ import { createRequire } from 'module';
 import * as esbuild from 'esbuild';
 import os from 'os';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { type ValidationResult } from '@/sdk';
 
 export const extractManifestFromFile = async <T>({
   filePath,
@@ -11,18 +12,10 @@ export const extractManifestFromFile = async <T>({
 }: {
   filePath: string;
   appPath: string;
-}): Promise<T> => {
+}): Promise<ValidationResult<T>> => {
   const module = await loadModule({ filePath, appPath });
 
-  const result = extractConfigFromModule<T>(module);
-
-  if (!result) {
-    throw new Error(
-      `Config file ${filePath} must export a config object default export`,
-    );
-  }
-
-  return result;
+  return extractDefaultConfigFromModuleOrThrow<T>(module, filePath);
 };
 
 const loadModule = async ({
@@ -77,18 +70,15 @@ const loadModule = async ({
   }
 };
 
-const extractConfigFromModule = <T>(
+const extractDefaultConfigFromModuleOrThrow = <T>(
   module: Record<string, unknown>,
-): T | undefined => {
+  filePath: string,
+): ValidationResult<T> => {
   if (isDefined(module.default) && isPlainObject(module.default)) {
-    return module.default as T;
+    return module.default as ValidationResult<T>;
   }
 
-  for (const [_, value] of Object.entries(module)) {
-    if (isPlainObject(value)) {
-      return value as T;
-    }
-  }
-
-  return undefined;
+  throw new Error(
+    `Config file ${filePath} must export a config object default export`,
+  );
 };

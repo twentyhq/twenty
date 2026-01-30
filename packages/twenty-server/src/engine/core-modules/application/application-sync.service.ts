@@ -29,7 +29,6 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
@@ -269,19 +268,13 @@ export class ApplicationSyncService {
           },
         );
 
-      const { idByNameSingular: objectIdByNameSingular } =
-        buildObjectIdByNameMaps(flatObjectMetadataMaps);
-
       const formattedObjectPermissions = role.objectPermissions
         ?.map((perm) => ({
           ...perm,
-          objectMetadataId: isDefined(perm.objectNameSingular)
-            ? objectIdByNameSingular[perm.objectNameSingular]
-            : isDefined(perm.objectUniversalIdentifier)
-              ? flatObjectMetadataMaps.idByUniversalIdentifier[
-                  perm.objectUniversalIdentifier
-                ]
-              : undefined,
+          objectMetadataId:
+            flatObjectMetadataMaps.idByUniversalIdentifier[
+              perm.objectUniversalIdentifier
+            ],
         }))
         .filter((perm): perm is typeof perm & { objectMetadataId: string } =>
           isDefined(perm.objectMetadataId),
@@ -299,32 +292,15 @@ export class ApplicationSyncService {
 
       const formattedFieldPermissions = role?.fieldPermissions
         ?.map((perm) => {
-          const objectMetadataId = isDefined(perm.objectNameSingular)
-            ? objectIdByNameSingular[perm.objectNameSingular]
-            : isDefined(perm.objectUniversalIdentifier)
-              ? flatObjectMetadataMaps.idByUniversalIdentifier[
-                  perm.objectUniversalIdentifier
-                ]
-              : undefined;
+          const objectMetadataId =
+            flatObjectMetadataMaps.idByUniversalIdentifier[
+              perm.objectUniversalIdentifier
+            ];
 
-          const fieldMetadataId = isDefined(objectMetadataId)
-            ? isDefined(perm.fieldName)
-              ? Object.values(flatFieldMetadataMaps.byId).find(
-                  (flatField) =>
-                    isDefined(flatField) &&
-                    flatField.objectMetadataId === objectMetadataId &&
-                    flatField.name === perm.fieldName,
-                )?.id
-              : isDefined(perm.fieldUniversalIdentifier)
-                ? Object.values(flatFieldMetadataMaps.byId).find(
-                    (flatField) =>
-                      isDefined(flatField) &&
-                      flatField.objectMetadataId === objectMetadataId &&
-                      flatField.universalIdentifier ===
-                        perm.fieldUniversalIdentifier,
-                  )?.id
-                : undefined
-            : undefined;
+          const fieldMetadataId =
+            flatFieldMetadataMaps.idByUniversalIdentifier[
+              perm.fieldUniversalIdentifier
+            ];
 
           return {
             ...perm,

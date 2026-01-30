@@ -1,7 +1,7 @@
 import {
   type ManifestBuildResult,
-  updateManifestChecksum,
-} from '@/cli/utilities/build/manifest/manifest-build';
+  updateManifestChecksums,
+} from '@/cli/utilities/build/manifest/update-manifest-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
@@ -9,7 +9,8 @@ import { type FileFolder } from 'twenty-shared/types';
 import type { Location } from 'esbuild';
 import { type DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 import { type EventName } from 'chokidar/handler.js';
-import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build-v2';
+import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
+import { validateManifest } from '@/cli/utilities/build/manifest/validate-manifest';
 
 export type DevModeOrchestratorOptions = {
   appPath: string;
@@ -233,18 +234,35 @@ export class DevModeOrchestrator {
 
       const result = await buildManifest(this.appPath);
 
-      /*if (result.error || !result.manifest) {
+      if (result.errors.length > 0 || !result.manifest) {
+        for (const error of result.errors) {
+          this.uiStateManager.addEvent({
+            message: error,
+            status: 'error',
+          });
+        }
         this.uiStateManager.updateManifestState({
           manifestStatus: 'error',
-        });
-        this.uiStateManager.addEvent({
-          message: result.error ?? 'Unknown error',
-          status: 'error',
+          error: result.errors[result.errors.length - 1],
         });
         return;
       }
 
-      const validation = validateManifest(result.manifest);*/
+      const validation = validateManifest(result.manifest);
+
+      if (!validation.isValid) {
+        for (const e of validation.errors) {
+          this.uiStateManager.addEvent({
+            message: e,
+            status: 'error',
+          });
+          this.uiStateManager.updateManifestState({
+            manifestStatus: 'error',
+            error: e,
+          });
+        }
+        return;
+      }
 
       this.uiStateManager.updateManifestState({
         appName: result.manifest.application.displayName,
@@ -254,29 +272,14 @@ export class DevModeOrchestrator {
         manifestFilePaths: result.filePaths,
       });
 
-      /*if (!validation.isValid) {
-        for (const e of validation.errors) {
-          this.uiStateManager.addEvent({
-            message: `${e.path}: ${e.message}`,
-            status: 'error',
-          });
-          this.uiStateManager.updateManifestState({
-            manifestStatus: 'error',
-          });
-        }
-
-        return;
-      }
-
       if (validation.warnings.length > 0) {
         for (const warning of validation.warnings) {
-          const path = warning.path ? `${warning.path}: ` : '';
           this.uiStateManager.addEvent({
-            message: `⚠ ${path}${warning.message}`,
+            message: `⚠ ${warning}`,
             status: 'warning',
           });
         }
-      }*/
+      }
 
       this.uiStateManager.addEvent({
         message: 'Successfully built manifest',
@@ -303,7 +306,7 @@ export class DevModeOrchestrator {
         await Promise.all(this.activeUploads);
       }
 
-      const manifest = updateManifestChecksum({
+      const manifest = updateManifestChecksums({
         manifest: result.manifest,
         builtFileInfos: this.builtFileInfos,
       });
@@ -343,7 +346,7 @@ export class DevModeOrchestrator {
         });
       } else {
         this.uiStateManager.addEvent({
-          message: `Sync failed: ${JSON.stringify(syncResult.error, null, 2)}`,
+          message: `Sync failed with error ${JSON.stringify(syncResult.error, null, 2)}`,
           status: 'error',
         });
         this.uiStateManager.updateManifestState({
@@ -352,7 +355,7 @@ export class DevModeOrchestrator {
       }
     } catch (error) {
       this.uiStateManager.addEvent({
-        message: `Sync failed: ${JSON.stringify(error, null, 2)}`,
+        message: `Sync failed with error ${JSON.stringify(error, null, 2)}`,
         status: 'error',
       });
       this.uiStateManager.updateManifestState({
