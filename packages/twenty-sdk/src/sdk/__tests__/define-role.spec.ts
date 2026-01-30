@@ -1,4 +1,4 @@
-import { defineRole } from '@/application';
+import { defineRole } from '@/sdk';
 
 describe('defineRole', () => {
   const validConfig = {

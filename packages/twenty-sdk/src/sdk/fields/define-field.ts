@@ -1,6 +1,6 @@
 import { type FieldManifest } from 'twenty-shared/application';
 import { isNonEmptyString } from '@sniptt/guards';
-import { validateFieldsOrThrow } from '@/application';
+import { validateFieldsOrThrow } from '@/sdk';
 
 export const defineField = <T extends FieldManifest>(config: T) => {
   if (!isNonEmptyString(config.objectUniversalIdentifier)) {

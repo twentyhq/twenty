@@ -1,4 +1,4 @@
-import { defineApp } from '@/application/define-app';
+import { defineApp } from '@/application/application/define-app';
 import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './src/roles/default-function.role';
 
 export default defineApp({

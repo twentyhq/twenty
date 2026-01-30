@@ -7,4 +7,4 @@
  *                              |___/
  */
 
-export * from './application';
+export * from './sdk';

@@ -7,8 +7,9 @@
  *                              |___/
  */
 
-export type { ApplicationConfig } from './application-config';
-export { defineApp } from './define-app';
+export type { ApplicationConfig } from './application/application-config';
+export { defineApp } from './application/define-app';
+export type { SyncableEntityOptions } from './common/types/syncable-entity-options.type';
 export type {
   ActorField,
   AddressField,
@@ -49,7 +50,6 @@ export type { RoutePayload } from './logic-functions/triggers/route-payload-type
 export { defineObject } from './objects/define-object';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { validateFieldsOrThrow } from './objects/validate-fields';
-export { PermissionFlag } from './permission-flag-type';
-export type { RoleConfig } from './role-config';
 export { defineRole } from './roles/define-role';
-export type { SyncableEntityOptions } from './syncable-entity-options.type';
+export { PermissionFlag } from './roles/permission-flag-type';
+export type { RoleConfig } from './roles/role-config';

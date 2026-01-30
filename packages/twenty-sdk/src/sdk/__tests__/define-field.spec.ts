@@ -1,4 +1,4 @@
-import { defineField } from '@/application';
+import { defineField } from '@/sdk';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type FieldManifest } from 'twenty-shared/application';
 

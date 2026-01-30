@@ -1,4 +1,4 @@
-import { type LogicFunctionConfig } from '@/application/logic-functions/logic-function-config';
+import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
 
 export const defineLogicFunction = <T extends LogicFunctionConfig>(
   config: T,

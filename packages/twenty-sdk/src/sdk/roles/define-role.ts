@@ -1,4 +1,4 @@
-import { type RoleConfig } from '@/application/role-config';
+import { type RoleConfig } from '@/sdk/roles/role-config';
 
 /**
  * Define a role configuration with validation.

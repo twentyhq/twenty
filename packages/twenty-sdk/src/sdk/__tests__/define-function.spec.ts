@@ -1,4 +1,4 @@
-import { defineLogicFunction } from '@/application';
+import { defineLogicFunction } from '@/sdk';
 
 // Mock handler for testing
 const mockHandler = async () => ({ success: true });
