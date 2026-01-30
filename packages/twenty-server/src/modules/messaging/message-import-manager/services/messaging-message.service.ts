@@ -250,28 +250,30 @@ export class MessagingMessageService {
           messageAccumulatorMap.values(),
         ).flatMap((accumulator) => accumulator.attachmentsToCreate);
 
-        const messageAttachmentsToCreate: Partial<MessageAttachmentWorkspaceEntity>[] =
-          [];
+        // Upload files in parallel for better performance
+        const messageAttachmentsToCreate = await Promise.all(
+          allAttachmentsToCreate.map(async (attachment) => {
+            const fileEntity = await this.fileUploadService.uploadFilesFieldFile({
+              file: attachment.file.content,
+              filename: attachment.file.filename,
+              declaredMimeType: attachment.file.mimeType,
+              workspaceId,
+            });
 
-        for (const attachment of allAttachmentsToCreate) {
-          const fileEntity = await this.fileUploadService.uploadFilesFieldFile({
-            file: attachment.file.content,
-            filename: attachment.file.filename,
-            declaredMimeType: attachment.file.mimeType,
-            workspaceId,
-          });
-
-          messageAttachmentsToCreate.push({
-            ...attachment.messageAttachment,
-            fileId: fileEntity.id,
-            size: fileEntity.size,
-          });
-        }
-
-        await messageAttachmentRepository.insert(
-          messageAttachmentsToCreate,
-          transactionManager,
+            return {
+              ...attachment.messageAttachment,
+              fileId: fileEntity.id,
+              size: fileEntity.size,
+            };
+          }),
         );
+
+        if (messageAttachmentsToCreate.length > 0) {
+          await messageAttachmentRepository.insert(
+            messageAttachmentsToCreate,
+            transactionManager,
+          );
+        }
 
         const messageExternalIdsAndIdsMap = new Map<string, string>();
 
@@ -468,7 +470,7 @@ export class MessagingMessageService {
 
         if (!isDefined(previousMessageThreadId)) {
           throw new Error(
-            `Previous message should have a thread id, either in the messageToCreate or existingMessageInDB`,
+            `Previous message should have a thread id, either in the messageToCreate or existingThreadInDB`,
           );
         }
 
