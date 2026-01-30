@@ -319,7 +319,7 @@ export default defineObject({
 * **函数如何运行**：它们用于权限的角色。
 * **（可选）变量**：以环境变量形式提供给函数的键值对。
 
-Use `defineApplication()` to define your application configuration:
+使用 `defineApplication()` 定义你的应用配置：
 
 ```typescript
 // src/app/application.config.ts
@@ -347,11 +347,11 @@ export default defineApplication({
 
 * `universalIdentifier` 字段是你拥有的确定性 ID；生成一次并在多次同步中保持稳定。
 * `applicationVariables` 会变成函数可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
-* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* `roleUniversalIdentifier` 必须与在 `*.role.ts` 文件中定义的角色一致（见下文）。
 
 #### 角色和权限
 
-应用可以定义角色，以封装对工作空间对象与操作的权限。 The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+应用可以定义角色，以封装对工作空间对象与操作的权限。 `application.config.ts` 中的 `roleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
 
 * 作为 `TWENTY_API_KEY` 注入的运行时 API 密钥源自该默认函数角色。
 * 类型化客户端将受限于该角色授予的权限。

@@ -319,7 +319,7 @@ Her uygulamanın aşağıdakileri açıklayan tek bir `application.config.ts` do
 * **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
 * **(İsteğe bağlı) değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
 
-Use `defineApplication()` to define your application configuration:
+Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
 
 ```typescript
 // src/app/application.config.ts
@@ -347,11 +347,11 @@ Notlar:
 
 * `universalIdentifier` alanları size ait belirleyici kimliklerdir; bunları bir kez oluşturun ve eşitlemeler boyunca kararlı tutun.
 * `applicationVariables`, fonksiyonlarınız için ortam değişkenlerine dönüşür (örneğin, `DEFAULT_RECIPIENT_NAME` değeri `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
-* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* `roleUniversalIdentifier`, `*.role.ts` dosyanızda tanımladığınız rolle eşleşmelidir (aşağıya bakın).
 
 #### Roller ve izinler
 
-Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application.config.ts` içindeki `roleUniversalIdentifier` alanı, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan rolü belirtir.
 
 * `TWENTY_API_KEY` olarak enjekte edilen çalışma zamanı API anahtarı bu varsayılan fonksiyon rolünden türetilir.
 * Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.

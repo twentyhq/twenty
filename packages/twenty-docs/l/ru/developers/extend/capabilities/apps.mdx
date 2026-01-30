@@ -319,7 +319,7 @@ export default defineObject({
 * **Как запускаются его функции**: какую роль они используют для прав доступа.
 * **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
 
-Use `defineApplication()` to define your application configuration:
+Используйте `defineApplication()` для определения конфигурации вашего приложения:
 
 ```typescript
 // src/app/application.config.ts
@@ -347,11 +347,11 @@ export default defineApplication({
 
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
-* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* `roleUniversalIdentifier` должен соответствовать роли, которую вы определяете в файле `*.role.ts` (см. ниже).
 
 #### Роли и разрешения
 
-Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `roleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
