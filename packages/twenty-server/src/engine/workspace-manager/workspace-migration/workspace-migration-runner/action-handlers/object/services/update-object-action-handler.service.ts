@@ -18,9 +18,9 @@ import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-ma
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
-  collectEnumOperationsForObject,
-  EnumOperation,
-  executeBatchEnumOperations,
+    collectEnumOperationsForObject,
+    EnumOperation,
+    executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
 
 @Injectable()
@@ -106,7 +106,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
           );
 
         const enumOperations = collectEnumOperationsForObject({
-          flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
+          universalFlatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
           tableName: currentTableName,
           operation: EnumOperation.RENAME,
           options: {

@@ -4,8 +4,8 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
-import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
@@ -32,8 +32,11 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
-    const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = action;
+    const { action, queryRunner, workspaceId } = context;
+    const {
+      flatEntity: universalFlatObjectMetadata,
+      universalFlatFieldMetadatas,
+    } = action;
 
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
@@ -45,13 +48,13 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 
     const lastDataSourceMetadata = await dataSourceRepository.findOneOrFail({
       where: {
-        workspaceId: flatObjectMetadata.workspaceId,
+        workspaceId,
       },
       order: { createdAt: 'DESC' },
     });
 
     await objectMetadataRepository.insert({
-      ...flatObjectMetadata,
+      ...universalFlatObjectMetadata,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',
     });
@@ -62,6 +65,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       );
 
     for (const flatFieldMetadata of flatFieldMetadatas) {
+      // TODO prastoin should save WITH id here
       await fieldMetadataRepository.save(flatFieldMetadata);
     }
   }
@@ -70,27 +74,34 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
-    const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = action;
+    const {
+      flatEntity: universalFlatObjectMetadata,
+      universalFlatFieldMetadatas,
+    } = action;
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
-      flatObjectMetadata,
+      objectMetadata: universalFlatObjectMetadata,
     });
 
-    const columnDefinitions = flatFieldMetadatas.flatMap((flatFieldMetadata) =>
-      generateColumnDefinitions({
-        flatFieldMetadata,
-        flatObjectMetadata,
-      }),
+    const columnDefinitions = universalFlatFieldMetadatas.flatMap(
+      (universalFlatFieldMetadata) =>
+        generateColumnDefinitions({
+          universalFlatFieldMetadata,
+          universalFlatObjectMetadata,
+          workspaceId,
+        }),
     );
 
-    const enumOrCompositeFlatFieldMetadatas = flatFieldMetadatas.filter(
-      (field) =>
-        isEnumFlatFieldMetadata(field) || isCompositeFlatFieldMetadata(field),
-    );
+    const enumOrCompositeUniversalFlatFieldMetadatas =
+      universalFlatFieldMetadatas.filter(
+        (universalFlatFieldMetadata) =>
+          isEnumUniversalFlatFieldMetadata(universalFlatFieldMetadata) ||
+          isCompositeUniversalFlatFieldMetadata(universalFlatFieldMetadata),
+      );
 
     const enumOperations = collectEnumOperationsForObject({
-      flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
+      universalFlatFieldMetadatas: enumOrCompositeUniversalFlatFieldMetadatas,
       tableName,
       operation: EnumOperation.CREATE,
     });
