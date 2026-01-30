@@ -13,6 +13,7 @@ import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standa
 import { type MessageAttachmentWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-attachment.workspace-entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
@@ -85,6 +86,16 @@ export class MessagingMessageService {
             workspaceId,
             'messageThread',
           );
+
+        const workspaceRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceEntity>(
+            workspaceId,
+            'workspace',
+          );
+
+        const workspace = await workspaceRepository.findOneOrFail({
+          where: { id: workspaceId },
+        });
 
         const messageAccumulatorMap = new Map<string, MessageAccumulator>();
 
@@ -258,6 +269,7 @@ export class MessagingMessageService {
               filename: attachment.file.filename,
               declaredMimeType: attachment.file.mimeType,
               workspaceId,
+              applicationId: workspace.workspaceCustomApplicationId,
             });
 
             return {
