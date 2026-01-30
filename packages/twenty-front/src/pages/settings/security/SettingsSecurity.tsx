@@ -5,6 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
@@ -20,8 +21,10 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
-import { H2Title, IconLock, IconTrash } from 'twenty-ui/display';
+import { H2Title, IconHistory, IconLock, IconTrash } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -169,6 +172,28 @@ export const SettingsSecurity = () => {
               <ToggleImpersonate />
             </Section>
           )}
+          <Section>
+            <H2Title
+              title={t`Event Logs`}
+              description={t`View workspace activity logs`}
+            />
+            <Card rounded>
+              <SettingsOptionCardContentButton
+                Icon={IconHistory}
+                title={t`Event Logs`}
+                description={t`View and filter workspace events, page views, and object changes`}
+                Button={
+                  <UndecoratedLink to={getSettingsPath(SettingsPath.EventLogs)}>
+                    <Button
+                      title={t`View Logs`}
+                      variant="secondary"
+                      size="small"
+                    />
+                  </UndecoratedLink>
+                }
+              />
+            </Card>
+          </Section>
           <Section>
             <H2Title
               title={t`Other`}

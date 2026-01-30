@@ -1335,6 +1335,90 @@ export type EmailsConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type EventLogDateRangeInput = {
+  end?: InputMaybe<Scalars['DateTime']>;
+  start?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type EventLogFiltersInput = {
+  /** Filter by timestamp range */
+  dateRange?: InputMaybe<EventLogDateRangeInput>;
+  /** Filter by event type */
+  eventType?: InputMaybe<Scalars['String']>;
+  /** Filter by object metadata ID (objectEvent only) */
+  objectMetadataId?: InputMaybe<Scalars['String']>;
+  /** Filter by record ID (objectEvent only) */
+  recordId?: InputMaybe<Scalars['String']>;
+  /** Filter by user ID */
+  userId?: InputMaybe<Scalars['String']>;
+};
+
+/** Order direction for event logs */
+export enum EventLogOrderByDirection {
+  ASC = 'ASC',
+  DESC = 'DESC'
+}
+
+/** Fields available for ordering event logs */
+export enum EventLogOrderByField {
+  EVENT = 'EVENT',
+  TIMESTAMP = 'TIMESTAMP',
+  USER_ID = 'USER_ID'
+}
+
+export type EventLogOrderByInput = {
+  direction?: EventLogOrderByDirection;
+  field?: EventLogOrderByField;
+};
+
+export type EventLogQueryInput = {
+  /** Filters to apply to the query */
+  filters?: InputMaybe<EventLogFiltersInput>;
+  /** Maximum number of records to return */
+  limit?: InputMaybe<Scalars['Int']>;
+  /** Number of records to skip */
+  offset?: InputMaybe<Scalars['Int']>;
+  /** Order by configuration */
+  orderBy?: InputMaybe<EventLogOrderByInput>;
+  /** The table to query */
+  table: EventLogTable;
+};
+
+export type EventLogQueryResult = {
+  __typename?: 'EventLogQueryResult';
+  /** Whether there are more records to fetch */
+  hasNextPage: Scalars['Boolean'];
+  /** The event log records */
+  records: Array<EventLogRecord>;
+  /** Total count of records matching the query */
+  totalCount: Scalars['Int'];
+};
+
+export type EventLogRecord = {
+  __typename?: 'EventLogRecord';
+  /** Event type or page name */
+  event: Scalars['String'];
+  /** Is custom object (objectEvent only) */
+  isCustom?: Maybe<Scalars['Boolean']>;
+  /** Object metadata ID (objectEvent only) */
+  objectMetadataId?: Maybe<Scalars['String']>;
+  /** Additional event properties */
+  properties?: Maybe<Scalars['JSON']>;
+  /** Record ID (objectEvent only) */
+  recordId?: Maybe<Scalars['String']>;
+  /** Timestamp of the event */
+  timestamp: Scalars['DateTime'];
+  /** User ID who triggered the event */
+  userId?: Maybe<Scalars['String']>;
+};
+
+/** Available event log tables in ClickHouse */
+export enum EventLogTable {
+  OBJECT_EVENT = 'OBJECT_EVENT',
+  PAGEVIEW = 'PAGEVIEW',
+  WORKSPACE_EVENT = 'WORKSPACE_EVENT'
+}
+
 export type EventSubscription = {
   __typename?: 'EventSubscription';
   eventStreamId: Scalars['String'];
@@ -3439,6 +3523,8 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
+  /** Get available event log tables */
+  getEventLogTables: Array<EventLogTable>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -3469,6 +3555,8 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   pieChartData: PieChartDataOutput;
+  /** Query event logs from ClickHouse */
+  queryEventLogs: EventLogQueryResult;
   search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetTokenOutput;
   versionInfo: VersionInfo;
@@ -3725,6 +3813,11 @@ export type QueryLineChartDataArgs = {
 
 export type QueryPieChartDataArgs = {
   input: PieChartDataInput;
+};
+
+
+export type QueryQueryEventLogsArgs = {
+  input: EventLogQueryInput;
 };
 
 
