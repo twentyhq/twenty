@@ -1,21 +1,24 @@
+import {
+  type FieldMetadataSettings,
+  FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isUniversalFieldMetadataSettingsOftype } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
-import { NakedFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { UniversalAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type';
+import { type NakedFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { type UniversalAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
   WorkspaceMigrationActionExecutionException,
   WorkspaceMigrationActionExecutionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { FieldMetadataSettings, FieldMetadataType } from 'twenty-shared/types';
+import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
-type FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs = {
-  universalFlatFieldMetadata: UniversalFlatFieldMetadata;
+export type FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs = {
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata;
   allFlatEntityMaps: UniversalAllFlatEntityMaps;
   context: Pick<
     WorkspaceMigrationActionRunnerArgs<WorkspaceMigrationAction>,
@@ -108,7 +111,7 @@ const fromUniversalSettingsToInsertableSettings = ({
   return universalSettings;
 };
 
-export const fromUniversalFlatFieldMetadataToInsertableFieldMetadata = ({
+export const fromUniversalFlatFieldMetadataToNakedFieldMetadata = ({
   universalFlatFieldMetadata,
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
   allFlatEntityMaps,
@@ -120,7 +123,7 @@ export const fromUniversalFlatFieldMetadataToInsertableFieldMetadata = ({
 }: FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs): NakedFlatEntity<FieldMetadataEntity> => {
   const {
     universalIdentifier,
-    applicationUniversalIdentifier,
+    applicationUniversalIdentifier: _applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier,

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -13,8 +12,8 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { fromUniversalFlatFieldMetadatasToNakedFieldMetadatas } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadatas-to-naked-field-metadatas.util.ts';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromUniversalFlatFieldMetadataToInsertableFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-universal-flat-field-metadata-to-insertable-field-metadata.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -37,7 +36,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps } = context;
+    const { action, queryRunner, allFlatEntityMaps, workspaceId } = context;
     const { universalFlatFieldMetadatas } = action;
 
     const fieldMetadataRepository =
@@ -45,31 +44,14 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         FieldMetadataEntity,
       );
 
-    // Generate IDs for all fields in this action upfront
-    const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
-      string,
-      string
-    >();
+    const nakedFieldMetadatas =
+      fromUniversalFlatFieldMetadatasToNakedFieldMetadatas({
+        allFlatEntityMaps,
+        context,
+        universalFlatFieldMetadatas,
+      });
 
-    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
-      allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
-        universalFlatFieldMetadata.universalIdentifier,
-        v4(),
-      );
-    }
-
-    // Transform and insert each field
-    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
-      const insertableFieldMetadata =
-        fromUniversalFlatFieldMetadataToInsertableFieldMetadata({
-          universalFlatFieldMetadata,
-          allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
-          allFlatEntityMaps,
-          context,
-        });
-
-      await fieldMetadataRepository.insert(insertableFieldMetadata);
-    }
+    await fieldMetadataRepository.insert(nakedFieldMetadatas);
   }
 
   async executeForWorkspaceSchema(

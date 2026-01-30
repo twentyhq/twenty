@@ -10,7 +10,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -72,7 +72,8 @@ const collectEnumOperationsForBasicEnumField = ({
           operation: EnumOperation.CREATE,
           enumName,
           values:
-            universalFlatFieldMetadata.options?.map((option) => option.value) ?? [],
+            universalFlatFieldMetadata.options?.map((option) => option.value) ??
+            [],
         },
       ];
     case EnumOperation.DROP:
