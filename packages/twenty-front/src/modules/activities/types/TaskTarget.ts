@@ -7,8 +7,13 @@ export type TaskTarget = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   companyId?: string | null;
   personId?: string | null;
+  opportunityId?: string | null;
+  targetCompanyId?: string | null;
+  targetPersonId?: string | null;
+  targetOpportunityId?: string | null;
   taskId: string | null;
   task: Pick<Task, 'id' | 'createdAt' | 'updatedAt' | '__typename'>;
   person?: Pick<Person, 'id' | 'name' | 'avatarUrl' | '__typename'> | null;

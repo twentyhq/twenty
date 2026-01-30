@@ -30,17 +30,17 @@ import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/wor
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
+import { TASK_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 type RelationFieldMetadataSettings =
   FieldMetadataSettings<FieldMetadataType.RELATION>;
 
 @Command({
-  name: 'upgrade:1-17:migrate-attachment-to-morph-relations',
+  name: 'upgrade:1-17:migrate-task-target-to-morph-relations',
   description:
-    'Migrate attachment relations to morph relation fields and set feature flag',
+    'Migrate taskTarget relations to morph relation fields and set feature flag',
 })
-export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -61,21 +61,21 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isMigrated = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
+      FeatureFlagKey.IS_TASK_TARGET_MIGRATED,
       workspaceId,
     );
 
-    this.logger.log(`Migrating attachments for workspace ${workspaceId}`);
+    this.logger.log(`Migrating taskTarget for workspace ${workspaceId}`);
 
     if (isMigrated) {
-      this.logger.log(`Attachment migration already completed. Skipping...`);
+      this.logger.log(`TaskTarget migration already completed. Skipping...`);
 
       return;
     }
 
     if (options.dryRun) {
       this.logger.log(
-        `Would have migrated attachments for workspace ${workspaceId}. Skipping...`,
+        `Would have migrated taskTarget for workspace ${workspaceId}. Skipping...`,
       );
 
       return;
@@ -88,7 +88,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
 
     try {
       const schemaName = getWorkspaceSchemaName(workspaceId);
-      const tableName = 'attachment';
+      const tableName = 'taskTarget';
 
       const {
         flatObjectMetadataMaps,
@@ -100,37 +100,33 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
         'flatApplicationMaps',
       ]);
 
-      const attachmentTargetFieldUniversalIdentifiers = new Set<string>([
-        STANDARD_OBJECTS.attachment.fields.targetTask.universalIdentifier,
-        STANDARD_OBJECTS.attachment.fields.targetNote.universalIdentifier,
-        STANDARD_OBJECTS.attachment.fields.targetPerson.universalIdentifier,
-        STANDARD_OBJECTS.attachment.fields.targetCompany.universalIdentifier,
-        STANDARD_OBJECTS.attachment.fields.targetOpportunity
+      const taskTargetFieldUniversalIdentifiers = new Set<string>([
+        STANDARD_OBJECTS.taskTarget.fields.targetPerson.universalIdentifier,
+        STANDARD_OBJECTS.taskTarget.fields.targetCompany.universalIdentifier,
+        STANDARD_OBJECTS.taskTarget.fields.targetOpportunity
           .universalIdentifier,
-        STANDARD_OBJECTS.attachment.fields.targetDashboard.universalIdentifier,
-        STANDARD_OBJECTS.attachment.fields.targetWorkflow.universalIdentifier,
       ]);
 
-      const attachmentObjectMetadata =
+      const taskTargetObjectMetadata =
         findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
           flatEntityMaps: flatObjectMetadataMaps,
-          universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
+          universalIdentifier: STANDARD_OBJECTS.taskTarget.universalIdentifier,
         });
 
-      if (!attachmentObjectMetadata) {
+      if (!taskTargetObjectMetadata) {
         this.logger.error(
-          `🟥 Attachment object metadata not found for workspace ${workspaceId}`,
+          `🟥 ${tableName} object metadata not found for workspace ${workspaceId}`,
         );
 
         return;
       }
 
-      const attachmentFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
-        attachmentObjectMetadata,
+      const taskTargetFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
+        taskTargetObjectMetadata,
         flatFieldMetadataMaps,
       );
 
-      const attachmentTargetRelationFields = attachmentFieldMetadatas
+      const taskTargetRelationFields = taskTargetFieldMetadatas
         .filter(isMorphOrRelationFlatFieldMetadata)
         .filter((field) => field.type === FieldMetadataType.RELATION)
         .filter((field) => {
@@ -141,9 +137,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
           });
           const isStandardTarget =
             isStandardAppField &&
-            attachmentTargetFieldUniversalIdentifiers.has(
-              field.universalIdentifier,
-            );
+            taskTargetFieldUniversalIdentifiers.has(field.universalIdentifier);
           const targetObjectMetadata = field.relationTargetObjectMetadataId
             ? flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId]
             : undefined;
@@ -153,7 +147,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
           return isStandardTarget || isCustomTarget;
         });
 
-      const fieldMigrations = attachmentTargetRelationFields.map((field) => {
+      const fieldMigrations = taskTargetRelationFields.map((field) => {
         const newFieldName = `target${capitalize(field.name)}`;
         const relationSettings: RelationFieldMetadataSettings = field.settings;
         const oldJoinColumnName =
@@ -171,6 +165,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
         };
       });
 
+      // Rename columns
       for (const { oldJoinColumnName, newJoinColumnName } of fieldMigrations) {
         if (oldJoinColumnName === newJoinColumnName) {
           this.logger.log(
@@ -197,10 +192,11 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
         }
       }
 
-      this.logger.log(`✅ Successfully migrated attachment records`);
+      this.logger.log(`✅ Successfully migrated ${tableName} records`);
 
-      const morphId = ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId;
+      const morphId = TASK_TARGET_STANDARD_FIELD_IDS.targetMorphId;
 
+      // Update field metadata
       for (const {
         field: fieldToMigrate,
         newFieldName,
@@ -242,12 +238,12 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
         }
       }
 
-      this.logger.log(`✅ Successfully migrated attachment fieldmetadata`);
+      this.logger.log(`✅ Successfully migrated ${tableName} fieldmetadata`);
 
       await queryRunner.commitTransaction();
 
       await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_ATTACHMENT_MIGRATED],
+        [FeatureFlagKey.IS_TASK_TARGET_MIGRATED],
         workspaceId,
       );
 
@@ -276,7 +272,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
       this.logger.log(`Cache flushed`);
 
       this.logger.log(
-        `Set IS_ATTACHMENT_MIGRATED feature flag for workspace ${workspaceId}`,
+        `Set IS_TASK_TARGET_MIGRATED feature flag for workspace ${workspaceId}`,
       );
 
       this.logger.log(`Flush cache for workspace ${workspaceId}`);
@@ -285,12 +281,12 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
         this.logger.error(
-          `Error migrating attachment to morph relations (rolled transaction back on ${workspaceId})`,
+          `Error migrating taskTarget to morph relations (rolled transaction back on ${workspaceId})`,
           error,
         );
       } else {
         this.logger.error(
-          `Error migrating attachment to morph relations after commit on ${workspaceId}`,
+          `Error migrating taskTarget to morph relations after commit on ${workspaceId}`,
           error,
         );
       }

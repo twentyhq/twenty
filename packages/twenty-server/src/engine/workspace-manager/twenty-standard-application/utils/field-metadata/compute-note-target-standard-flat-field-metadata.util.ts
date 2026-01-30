@@ -12,6 +12,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { NOTE_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 export const buildNoteTargetStandardFlatFieldMetadatas = ({
   now,
@@ -133,13 +134,13 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  person: createStandardRelationFieldFlatMetadata({
+  targetPerson: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'person',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: NOTE_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      fieldName: 'targetPerson',
       label: 'Person',
       description: 'NoteTarget person',
       icon: 'IconUser',
@@ -150,7 +151,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'personId',
+        joinColumnName: 'targetPersonId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -158,13 +159,13 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  company: createStandardRelationFieldFlatMetadata({
+  targetCompany: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'company',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: NOTE_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      fieldName: 'targetCompany',
       label: 'Company',
       description: 'NoteTarget company',
       icon: 'IconBuildingSkyscraper',
@@ -175,7 +176,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'companyId',
+        joinColumnName: 'targetCompanyId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -183,13 +184,13 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  opportunity: createStandardRelationFieldFlatMetadata({
+  targetOpportunity: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'opportunity',
+      type: FieldMetadataType.MORPH_RELATION,
+      morphId: NOTE_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      fieldName: 'targetOpportunity',
       label: 'Opportunity',
       description: 'NoteTarget opportunity',
       icon: 'IconTargetArrow',
@@ -200,7 +201,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'opportunityId',
+        joinColumnName: 'targetOpportunityId',
       },
     },
     standardObjectMetadataRelatedEntityIds,

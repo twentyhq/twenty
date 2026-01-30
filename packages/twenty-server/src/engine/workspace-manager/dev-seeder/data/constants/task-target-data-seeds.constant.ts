@@ -5,17 +5,17 @@ import { TASK_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data
 type TaskTargetDataSeed = {
   id: string;
   taskId: string | null;
-  personId: string | null;
-  companyId: string | null;
-  opportunityId: string | null;
+  targetPersonId: string | null;
+  targetCompanyId: string | null;
+  targetOpportunityId: string | null;
 };
 
 export const TASK_TARGET_DATA_SEED_COLUMNS: (keyof TaskTargetDataSeed)[] = [
   'id',
   'taskId',
-  'personId',
-  'companyId',
-  'opportunityId',
+  'targetPersonId',
+  'targetCompanyId',
+  'targetOpportunityId',
 ];
 
 // Generate all task target IDs
@@ -52,12 +52,12 @@ const GENERATE_TASK_TARGET_SEEDS = (): TaskTargetDataSeed[] => {
     TASK_TARGET_SEEDS.push({
       id: TASK_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
       taskId: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
-      personId:
+      targetPersonId:
         PERSON_DATA_SEED_IDS[
           `ID_${INDEX}` as keyof typeof PERSON_DATA_SEED_IDS
         ],
-      companyId: null,
-      opportunityId: null,
+      targetCompanyId: null,
+      targetOpportunityId: null,
     });
   }
 
@@ -68,12 +68,12 @@ const GENERATE_TASK_TARGET_SEEDS = (): TaskTargetDataSeed[] => {
     TASK_TARGET_SEEDS.push({
       id: TASK_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
       taskId: TASK_DATA_SEED_IDS[`ID_${INDEX}`],
-      personId: null,
-      companyId:
+      targetPersonId: null,
+      targetCompanyId:
         COMPANY_DATA_SEED_IDS[
           `ID_${COMPANY_INDEX}` as keyof typeof COMPANY_DATA_SEED_IDS
         ],
-      opportunityId: null,
+      targetOpportunityId: null,
     });
   }
 

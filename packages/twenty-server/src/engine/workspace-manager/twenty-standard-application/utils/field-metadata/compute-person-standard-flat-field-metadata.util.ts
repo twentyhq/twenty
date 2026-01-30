@@ -370,7 +370,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'taskTarget',
-      targetFieldName: 'person',
+      targetFieldName: 'targetPerson',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
@@ -393,7 +393,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'noteTarget',
-      targetFieldName: 'person',
+      targetFieldName: 'targetPerson',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

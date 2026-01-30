@@ -18,8 +18,10 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   ATTACHMENT_STANDARD_FIELD_IDS,
+  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+  NOTE_TARGET_STANDARD_FIELD_IDS,
+  TASK_TARGET_STANDARD_FIELD_IDS,
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
@@ -36,8 +38,8 @@ const morphIdByRelationObjectNameSingular = {
   timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
   favorite: null,
   attachment: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
-  noteTarget: null,
-  taskTarget: null,
+  noteTarget: NOTE_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+  taskTarget: TASK_TARGET_STANDARD_FIELD_IDS.targetMorphId,
 } satisfies Record<
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
   string | null
@@ -101,6 +103,10 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             ]) ||
           (objectMetadataNameSingular === 'attachment' &&
             existingFeatureFlagsMap[FeatureFlagKey.IS_ATTACHMENT_MIGRATED]) ||
+          (objectMetadataNameSingular === 'noteTarget' &&
+            existingFeatureFlagsMap[FeatureFlagKey.IS_NOTE_TARGET_MIGRATED]) ||
+          (objectMetadataNameSingular === 'taskTarget' &&
+            existingFeatureFlagsMap[FeatureFlagKey.IS_TASK_TARGET_MIGRATED]) ||
           false;
         const isObjectMigratedToMorphRelations =
           isObjectMigratedFromOlderReleases || isFeatureFlagEnabled;

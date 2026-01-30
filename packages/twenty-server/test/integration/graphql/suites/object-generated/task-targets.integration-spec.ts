@@ -15,11 +15,11 @@ describe('taskTargetsResolver (e2e)', () => {
                 updatedAt
                 deletedAt
                 taskId
-                personId
-                companyId
-                opportunityId
-                petId
-                surveyResultId
+                targetPersonId
+                targetCompanyId
+                targetOpportunityId
+                targetPetId
+                targetSurveyResultId
               }
             }
           }
@@ -52,11 +52,11 @@ describe('taskTargetsResolver (e2e)', () => {
           expect(taskTargets).toHaveProperty('updatedAt');
           expect(taskTargets).toHaveProperty('deletedAt');
           expect(taskTargets).toHaveProperty('taskId');
-          expect(taskTargets).toHaveProperty('personId');
-          expect(taskTargets).toHaveProperty('companyId');
-          expect(taskTargets).toHaveProperty('opportunityId');
-          expect(taskTargets).toHaveProperty('petId');
-          expect(taskTargets).toHaveProperty('surveyResultId');
+          expect(taskTargets).toHaveProperty('targetPersonId');
+          expect(taskTargets).toHaveProperty('targetCompanyId');
+          expect(taskTargets).toHaveProperty('targetOpportunityId');
+          expect(taskTargets).toHaveProperty('targetPetId');
+          expect(taskTargets).toHaveProperty('targetSurveyResultId');
         }
       });
   });

@@ -363,7 +363,7 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'taskTarget',
-      targetFieldName: 'opportunity',
+      targetFieldName: 'targetOpportunity',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
@@ -386,7 +386,7 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'noteTarget',
-      targetFieldName: 'opportunity',
+      targetFieldName: 'targetOpportunity',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
