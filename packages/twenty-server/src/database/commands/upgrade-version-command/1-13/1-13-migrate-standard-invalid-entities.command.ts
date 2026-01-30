@@ -61,7 +61,7 @@ const findStandardFlatFieldMetadatawOrThrow = ({
 }) => {
   const objectFlatFieldMetadata = findManyFlatEntityByIdInFlatEntityMapsOrThrow(
     {
-      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: flatObjectMetadata.fieldIds,
       flatEntityMaps: flatFieldMetadataMaps,
     },
   );

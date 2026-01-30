@@ -67,7 +67,7 @@ describe('getAllSelectableFields', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       universalIdentifier: 'object-id',
-      fieldMetadataIds: fieldIds,
+      fieldIds: fieldIds,
       indexMetadataIds: [],
       viewIds: [],
       applicationId: null,

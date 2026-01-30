@@ -30,7 +30,6 @@ export const createListDashboardsTool = (
 
       const dashboards =
         await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          authContext,
           async () => {
             const repo = await deps.globalWorkspaceOrmManager.getRepository(
               context.workspaceId,
@@ -40,6 +39,7 @@ export const createListDashboardsTool = (
 
             return repo.find({ take: limit, order: { position: 'ASC' } });
           },
+          authContext,
         );
 
       const dashboardList = dashboards.map((d) => ({

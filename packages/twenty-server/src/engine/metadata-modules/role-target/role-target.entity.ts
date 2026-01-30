@@ -26,6 +26,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Index('IDX_ROLE_TARGET_WORKSPACE_ID', ['userWorkspaceId', 'workspaceId'])
 @Index('IDX_ROLE_TARGET_AGENT_ID', ['agentId'])
 @Index('IDX_ROLE_TARGET_API_KEY_ID', ['apiKeyId'])
+@Index('IDX_ROLE_TARGET_ROLE_ID', ['roleId'])
 @Check(
   'CHK_role_target_single_entity',
   '("agentId" IS NOT NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NOT NULL AND "apiKeyId" IS NULL) OR ("agentId" IS NULL AND "userWorkspaceId" IS NULL AND "apiKeyId" IS NOT NULL)',

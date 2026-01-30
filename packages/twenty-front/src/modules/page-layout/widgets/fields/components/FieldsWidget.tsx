@@ -1,4 +1,6 @@
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -6,10 +8,10 @@ import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordF
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
+import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
@@ -40,6 +42,16 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+`;
+
+const StyledPropertyBox = styled.div`
+  align-self: stretch;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 type FieldsWidgetProps = {
@@ -81,7 +93,9 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     targetRecord.targetObjectNameSingular,
   );
 
-  if (sectionsWithFieldIndices.length === 0) {
+  const hasFieldsToDisplay = sectionsWithFieldIndices.length > 0;
+
+  if (!hasFieldsToDisplay) {
     return (
       <RightDrawerProvider value={{ isInRightDrawer }}>
         <StyledContainer>
@@ -117,13 +131,18 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
               key={section.id}
               title={section.title}
             >
-              <PropertyBox>
+              <StyledPropertyBox>
                 {isPrefetchLoading ? (
                   <PropertyBoxSkeletonLoader />
                 ) : (
                   <>
                     {section.fields.map(
                       ({ field: fieldMetadataItem, globalIndex }) => {
+                        const isActivityTarget = isActivityTargetField(
+                          fieldMetadataItem.name,
+                          targetRecord.targetObjectNameSingular,
+                        );
+
                         return (
                           <FieldContext.Provider
                             key={targetRecord.id + fieldMetadataItem.id}
@@ -165,24 +184,44 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                               })}`,
                             }}
                           >
-                            <RecordFieldComponentInstanceContext.Provider
-                              value={{
-                                instanceId: getRecordFieldInputInstanceId({
-                                  recordId: targetRecord.id,
-                                  fieldName: fieldMetadataItem.name,
-                                  prefix: instanceId,
-                                }),
-                              }}
-                            >
-                              <RecordInlineCell loading={recordLoading} />
-                            </RecordFieldComponentInstanceContext.Provider>
+                            {isActivityTarget ? (
+                              <ActivityTargetsInlineCell
+                                componentInstanceId={getRecordFieldInputInstanceId(
+                                  {
+                                    recordId: targetRecord.id,
+                                    fieldName: fieldMetadataItem.name,
+                                    prefix: instanceId,
+                                  },
+                                )}
+                                activityObjectNameSingular={
+                                  targetRecord.targetObjectNameSingular as
+                                    | CoreObjectNameSingular.Note
+                                    | CoreObjectNameSingular.Task
+                                }
+                                activityRecordId={targetRecord.id}
+                                showLabel={true}
+                                maxWidth={200}
+                              />
+                            ) : (
+                              <RecordFieldComponentInstanceContext.Provider
+                                value={{
+                                  instanceId: getRecordFieldInputInstanceId({
+                                    recordId: targetRecord.id,
+                                    fieldName: fieldMetadataItem.name,
+                                    prefix: instanceId,
+                                  }),
+                                }}
+                              >
+                                <RecordInlineCell loading={recordLoading} />
+                              </RecordFieldComponentInstanceContext.Provider>
+                            )}
                           </FieldContext.Provider>
                         );
                       },
                     )}
                   </>
                 )}
-              </PropertyBox>
+              </StyledPropertyBox>
             </FieldsWidgetSectionContainer>
           ))}
 

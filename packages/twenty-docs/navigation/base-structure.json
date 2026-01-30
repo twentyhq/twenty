@@ -52,6 +52,7 @@
                 "user-guide/data-model/how-tos/create-custom-objects",
                 "user-guide/data-model/how-tos/create-custom-fields",
                 "user-guide/data-model/how-tos/create-relation-fields",
+                "user-guide/data-model/how-tos/create-many-to-many-relations",
                 "user-guide/data-model/how-tos/customize-your-data-model",
                 "user-guide/data-model/how-tos/data-model-faq"
               ]
@@ -166,7 +167,8 @@
                     "user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger",
                     "user-guide/workflows/how-tos/connect-to-other-tools/bring-typeform-submissions-in-twenty",
                     "user-guide/workflows/how-tos/connect-to-other-tools/bring-product-data-in-twenty",
-                    "user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty"
+                    "user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty",
+                    "user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty"
                   ]
                 },
                 {
@@ -257,14 +259,16 @@
               "label": "Capabilities",
               "pages": [
                 "user-guide/dashboards/capabilities/dashboards",
-                "user-guide/dashboards/capabilities/widgets"
+                "user-guide/dashboards/capabilities/widgets",
+                "user-guide/dashboards/capabilities/chart-settings"
               ]
             },
             {
               "key": "dashboardsHowTos",
               "label": "How-Tos",
               "pages": [
-                "user-guide/dashboards/how-tos/dashboards-faq"
+                "user-guide/dashboards/how-tos/dashboards-faq",
+                "user-guide/dashboards/how-tos/widget-faq"
               ]
             }
           ]

@@ -6,8 +6,12 @@ import {
   type TestingModuleBuilder,
 } from '@nestjs/testing';
 
+import bytes from 'bytes';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
+
 import { AppModule } from 'src/app.module';
 import { CommandModule } from 'src/command/command.module';
+import { settings } from 'src/engine/constants/settings';
 import { StripeSDKMockService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/mocks/stripe-sdk-mock.service';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { CAPTCHA_DRIVER } from 'src/engine/core-modules/captcha/constants/captcha-driver.constants';
@@ -15,6 +19,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { ExceptionHandlerMockService } from 'src/engine/core-modules/exception-handler/mocks/exception-handler-mock.service';
 import { MockedUnhandledExceptionFilter } from 'src/engine/core-modules/exception-handler/mocks/mock-unhandled-exception.filter';
 import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
+import { JobsModule } from 'src/engine/core-modules/message-queue/jobs.module';
 import { QUEUE_DRIVER } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 
@@ -45,7 +50,12 @@ export const createApp = async (
   const stripeSDKMockService = new StripeSDKMockService();
   const mockExceptionHandlerService = new ExceptionHandlerMockService();
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
-    imports: [AppModule, CommandModule, MessageQueueModule.registerExplorer()],
+    imports: [
+      AppModule,
+      CommandModule,
+      JobsModule,
+      MessageQueueModule.registerExplorer(),
+    ],
     providers: [
       {
         provide: APP_FILTER,
@@ -74,6 +84,22 @@ export const createApp = async (
     rawBody: true,
     cors: true,
   });
+
+  app.use(
+    '/graphql',
+    graphqlUploadExpress({
+      maxFieldSize: bytes(settings.storage.maxFileSize),
+      maxFiles: 10,
+    }),
+  );
+
+  app.use(
+    '/metadata',
+    graphqlUploadExpress({
+      maxFieldSize: bytes(settings.storage.maxFileSize),
+      maxFiles: 10,
+    }),
+  );
 
   if (config.appInitHook) {
     await config.appInitHook(app);

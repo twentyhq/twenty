@@ -1,24 +1,24 @@
 ---
-title: Style Guide
+title: スタイルガイド
 ---
 
-This document includes the rules to follow when writing code.
+このドキュメントには、コードを書く際に従うべきルールが含まれています。
 
-The goal here is to have a consistent codebase, which is easy to read and easy to maintain.
+ここでの目標は、一貫性があり、読みやすく、メンテナンスしやすいコードベースにすることです。
 
-For this, it's better to be a bit more verbose than to be too concise.
+そのためには、簡潔すぎるよりも少し冗長な方が良いです。
 
-Always keep in mind that people read code more often than they write it, specially on an open source project, where anyone can contribute.
+常に念頭に置いておくべきは、コードは書くより読む方が多いということ、特にオープンソースプロジェクトでは、誰でも貢献できるためです。
 
-There are a lot of rules that are not defined here, but that are automatically checked by linters.
+ここでは定義されていない、多くの規則がありますが、リンターにより自動的にチェックされます。
 
 ## React
 
-### Use functional components
+### 関数コンポーネントを使用する
 
-Always use TSX functional components.
+常にTSXの関数コンポーネントを使用してください。
 
-Do not use default `import` with `const`, because it's harder to read and harder to import with code completion.
+`const`を使ったデフォルトの`import`は避けてください。読むことや、コード補完でのインポートが難しくなるからです。
 
 ```tsx
 // ❌ Bad, harder to read, harder to import with code completion
@@ -34,11 +34,11 @@ export function MyComponent() {
 };
 ```
 
-### Props
+### プロパティ
 
-Create the type of the props and call it `(ComponentName)Props` if there's no need to export it.
+プロップスの型を作成し、エクスポートの必要がない場合にはそれを`(ComponentName)Props`と呼んでください。
 
-Use props destructuring.
+プロップスの分割代入を使用する。
 
 ```tsx
 // ❌ Bad, no type
@@ -52,7 +52,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-#### Refrain from using `React.FC` or `React.FunctionComponent` to define prop types
+#### プロップス型の定義に`React.FC`または`React.FunctionComponent`を使用しない
 
 ```tsx
 /* ❌ - Bad, defines the component type annotations with `FC`
@@ -67,10 +67,10 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
- *      component's props
- *    - This method doesn't automatically include the children prop. If
- *      you want to include it, you have to specify it in OwnProps.
+/* ✅ - 良い例: プロップス用に別個のタイプ（OwnProps）を明示的に
+ *      定義する
+ *    - この方法は、デフォルトでchildrenプロップを含まないため、
+ *      必要な場合にOwnPropsに指定する必要があります。
  */
 type EmailFieldProps = {
   value: string;
@@ -81,9 +81,9 @@ const EmailField = ({ value }: EmailFieldProps) => (
 );
 ```
 
-#### No Single Variable Prop Spreading in JSX Elements
+#### JSX要素内で単一の変数プロップスプレーディングを使用しない
 
-Avoid using single variable prop spreading in JSX elements, like `{...props}`. This practice often results in code that is less readable and harder to maintain because it's unclear which props the component is receiving.
+`{...props}`のようにJSX要素内で単一の変数プロップスプレーディングを避けてください。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。 この方法は、コンポーネントが受け取るプロップスを不明確にするため、コードの可読性が低下し、メンテナンスが困難になります。
 
 ```tsx
 /* ❌ - Bad, spreads a single variable prop into the underlying component
@@ -94,23 +94,23 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Good, Explicitly lists all props
- *    - Enhances readability and maintainability
+/* ✅ - 良い例: すべてのプロップスを明示的にリストする
+ *    - 可読性と維持性を高める
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
 };
 ```
 
-Rationale:
+根拠:
 
-* At a glance, it's clearer which props the code passes down, making it easier to understand and maintain.
-* It helps to prevent tight coupling between components via their props.
-* Linting tools make it easier to identify misspelled or unused props when you list props explicitly.
+* ひと目で、コードがどのプロップスを渡しているかが明確になり、理解とメンテナンスが容易になります。
+* これにより、コンポーネント間のプロップスによる密結合を防ぐのに役立ちます。
+* プロップスを明示的にリストすれば、lintingツールが綴り間違いや未使用のプロップスを特定しやすくなります。
 
 ## JavaScript
 
-### Use nullish-coalescing operator `??`
+### `??`（ヌリッシュ合体演算子）を使う
 
 ```tsx
 // ❌ Bad, can return 'default' even if value is 0 or ''
@@ -120,21 +120,21 @@ const value = process.env.MY_VALUE || 'default';
 const value = process.env.MY_VALUE ?? 'default';
 ```
 
-### Use optional chaining `?.`
+### `?.`（オプショナルチェイニング）を使う
 
 ```tsx
-// ❌ Bad
+// ❌ 悪い例
 onClick && onClick();
 
-// ✅ Good
+// ✅ 良い例
 onClick?.();
 ```
 
 ## TypeScript
 
-### Use `type` instead of `interface`
+### `type`を使い、常に`interface`の代わりにする
 
-Always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
+`type`は多くの場合、`interface`と重複し、`type`の方が柔軟性が高いため、常に`type`を使用してください。
 
 ```tsx
 // ❌ Bad
@@ -148,11 +148,11 @@ type MyType = {
 };
 ```
 
-### Use string literals instead of enums
+### 列挙型の代わりに文字列リテラルを使う
 
-[String literals](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) are the go-to way to handle enum-like values in TypeScript. They are easier to extend with Pick and Omit, and offer a better developer experience, specially with code completion.
+[文字列リテラル](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types) は、TypeScriptで列挙型のような値を扱うための推奨方法です。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。 それらはPickやOmitで拡張するのが簡単で、特にコード補完を伴う開発者の体験を向上させます。
 
-You can see why TypeScript recommends avoiding enums [here](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums).
+なぜTypeScriptが列挙型を避けることを推奨しているかは[ここ](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#enums)をご覧ください。
 
 ```tsx
 // ❌ Bad, utilizes an enum
@@ -171,13 +171,13 @@ let color = Color.Red;
 let color: "red" | "green" | "blue" = "red";
 ```
 
-#### GraphQL and internal libraries
+#### GraphQLと内部ライブラリ
 
-You should use enums that GraphQL codegen generates.
+GraphQLのcodegenが生成する列挙型を使用する必要があります。
 
-It's also better to use an enum when using an internal library, so the internal library doesn't have to expose a string literal type that is not related to the internal API.
+内部ライブラリを使用する際にも列挙型を使用する方が良いので、内部ライブラリが内部APIに関連しない文字列リテラル型を公開する必要がなくなります。
 
-Example:
+例:
 
 ```TSX
 const {
@@ -190,11 +190,11 @@ setHotkeyScopeAndMemorizePreviousScope(
 );
 ```
 
-## Styling
+## スタイリング
 
-### Use StyledComponents
+### StyledComponentsを使用する
 
-Style the components with [styled-components](https://emotion.sh/docs/styled).
+コンポーネントを[styled-components](https://emotion.sh/docs/styled)でスタイル設定する。
 
 ```tsx
 // ❌ Bad
@@ -208,7 +208,7 @@ const StyledTitle = styled.div`
 `;
 ```
 
-Prefix styled components with "Styled" to differentiate them from "real" components.
+スタイル付きコンポーネントを"Styled"で接頭辞にして、"本物の"コンポーネントと区別する。
 
 ```tsx
 // ❌ Bad
@@ -224,17 +224,17 @@ const StyledTitle = styled.div`
 `;
 ```
 
-### Theming
+### テーマ
 
-Utilizing the theme for the majority of component styling is the preferred approach.
+大部分のコンポーネントのスタイルをテーマに基づかせるのが推奨される手法です。
 
-#### Units of measurement
+#### 測定の単位
 
-Avoid using `px` or `rem` values directly within the styled components. The necessary values are generally already defined in the theme, so it’s recommended to make use of the theme for these purposes.
+Styledコンポーネント内で`px`または`rem`値を直接使用しない 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。 必要な値は一般的にテーマに既に定義されているため、これらの目的でテーマを利用することが推奨されます。
 
-#### Colors
+#### カラー
 
-Refrain from introducing new colors; instead, use the existing palette from the theme. Should there be a situation where the palette does not align, please leave a comment so that the team can rectify it.
+新しい色を追加するのではなく、テーマから既存のパレットを使用してください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。 パレットが適合しない場合には、コメントを残してチームがそれを修正できるようにしてください。
 
 ```tsx
 // ❌ Bad, directly specifies style values without utilizing the theme
@@ -258,9 +258,9 @@ const StyledButton = styled.button`
 `;
 ```
 
-## Enforcing No-Type Imports
+## タイプ無しのインポートの強制
 
-Avoid type imports. To enforce this standard, an ESLint rule checks for and reports any type imports. This helps maintain consistency and readability in the TypeScript code.
+タイプインポートを避けてください。 タイプインポートを避けてください。 この標準を強制するために、ESLintルールがどのタイプのインポートもチェックして報告します。 これにより、TypeScriptコードの一貫性と可読性が維持されます。 これにより、TypeScriptコードの一貫性と可読性が維持されます。
 
 ```tsx
 // ❌ Bad
@@ -273,18 +273,18 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Meta, StoryObj } from '@storybook/react';
 ```
 
-### Why No-Type Imports
+### なぜタイプなしインポートなのか
 
-* **Consistency**: By avoiding type imports and using a single approach for both type and value imports, the codebase remains consistent in its module import style.
+* **一貫性**: 型インポートを避け、型と値の両方に単一のアプローチを使用することで、モジュールインポートスタイルの一貫性が保たれます。
 
-* **Readability**: No-type imports improve code readability by making it clear when you're importing values or types. This reduces ambiguity and makes it easier to understand the purpose of imported symbols.
+* **可読性**: 型専用インポートは、値をインポートしているのか型をインポートしているのかを明確にすることで、コードの可読性を高めます。 これにより曖昧さが減り、インポートされたシンボルの目的を理解しやすくなります。
 
-* **Maintainability**: It enhances codebase maintainability because developers can identify and locate type-only imports when reviewing or modifying code.
+* **維持性**: コードベースの維持性を向上させます。開発者がコードを確認/変更する際に、タイプのみのインポートを特定して見つけることができるからです。
 
-### ESLint Rule
+### ESLintルール
 
-An ESLint rule, `@typescript-eslint/consistent-type-imports`, enforces the no-type import standard. This rule will generate errors or warnings for any type import violations.
+ESLint のルール `@typescript-eslint/consistent-type-imports` は、型専用インポートの標準を強制します。 このルールは、タイプインポート違反のエラーや警告を生成します。
 
-Please note that this rule specifically addresses rare edge cases where unintentional type imports occur. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). In most situations, you should not need to use type-only imports.
+このルールは、意図せず型をインポートしてしまう稀なエッジケースに特化して対処することに留意してください。 TypeScript自体、[TypeScript 3.8 リリースノート](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html)でこのプラクティスを避けています。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。 ほとんどの状況で、タイプのみのインポートを使用する必要はありません。
 
-To ensure your code complies with this rule, make sure to run ESLint as part of your development workflow.
+コードがこのルールに準拠していることを確実にするため、開発ワークフローの一環として ESLint を実行してください。

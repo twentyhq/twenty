@@ -15,8 +15,11 @@
 Create Twenty App is the official scaffolding CLI for building apps on top of [Twenty CRM](https://twenty.com). It sets up a ready‑to‑run project that works seamlessly with the [twenty-sdk](https://www.npmjs.com/package/twenty-sdk).
 
 - Zero‑config project bootstrap
-- Preconfigured scripts for auth, generate, dev sync, one‑off sync, uninstall
+- Preconfigured scripts for auth, dev mode (watch & sync), generate, uninstall, and function management
 - Strong TypeScript support and typed client generation
+
+## Documentation
+See Twenty application documentation https://docs.twenty.com/developers/extend/capabilities/apps
 
 ## Prerequisites
 - Node.js 24+ (recommended) and Yarn 4
@@ -28,29 +31,33 @@ Create Twenty App is the official scaffolding CLI for building apps on top of [T
 npx create-twenty-app@latest my-twenty-app
 cd my-twenty-app
 
+# If you don't use yarn@4
+corepack enable
+yarn install
+
+# Get help
+yarn run help
+
 # Authenticate using your API key (you'll be prompted)
-yarn auth
+yarn auth:login
 
 # Add a new entity to your application (guided)
-yarn create-entity
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
-yarn generate
+yarn app:generate
 
-# Start dev mode: automatically syncs local changes to your workspace
-yarn dev
+# Start dev mode: watches, builds, and syncs local changes to your workspace
+yarn app:dev
 
-# Or run a one‑time sync
-yarn sync
+# Watch your application's function logs
+yarn function:logs
 
-# Watch your application's functions logs
-yarn logs
+# Execute a function with a JSON payload
+yarn function:execute -n my-function -p '{"key": "value"}'
 
 # Uninstall the application from the current workspace
-yarn uninstall
-
-# Display commands' help
-yarn help
+yarn app:uninstall
 ```
 
 ## What gets scaffolded
@@ -60,9 +67,9 @@ yarn help
 - Example placeholders to help you add entities, actions, and sync logic
 
 ## Next steps
-- Explore the generated project and add your first entity with `yarn create-entity`.
-- Keep your types up‑to‑date using `yarn generate`.
-- Use `yarn dev` while you iterate to see changes instantly in your workspace.
+- Explore the generated project and add your first entity with `yarn entity:add` (functions, front components, objects, roles).
+- Keep your types up‑to‑date using `yarn app:generate`.
+- Use `yarn app:dev` while you iterate — it watches, builds, and syncs changes to your workspace in real time.
 
 
 ## Publish your application
@@ -90,8 +97,8 @@ git push
 Our team reviews contributions for quality, security, and reusability before merging.
 
 ## Troubleshooting
-- Auth prompts not appearing: run `yarn auth` again and verify the API key permissions.
-- Types not generated: ensure `yarn generate` runs without errors, then re‑start `yarn dev`.
+- Auth prompts not appearing: run `yarn auth:login` again and verify the API key permissions.
+- Types not generated: ensure `yarn app:generate` runs without errors, then re‑start `yarn app:dev`.
 
 ## Contributing
 - See our [GitHub](https://github.com/twentyhq/twenty)

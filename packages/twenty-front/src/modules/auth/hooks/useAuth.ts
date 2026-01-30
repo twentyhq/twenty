@@ -26,12 +26,14 @@ import {
   type AuthTokenPair,
 } from '~/generated-metadata/graphql';
 
-import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
+import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -66,7 +68,6 @@ import { iconsState } from 'twenty-ui/display';
 import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
-import { loginTokenState } from '@/auth/states/loginTokenState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -121,7 +122,7 @@ export const useAuth = () => {
   const { loadMockedObjectMetadataItems } = useLoadMockedObjectMetadataItems();
 
   const clearSession = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       async () => {
         const emptySnapshot = snapshot_UNSTABLE();
 
@@ -152,6 +153,9 @@ export const useAuth = () => {
         const workspacePublicData = snapshot
           .getLoadable(workspacePublicDataState)
           .getValue();
+        const lastAuthenticatedMethod = snapshot
+          .getLoadable(lastAuthenticatedMethodState)
+          .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
@@ -174,12 +178,14 @@ export const useAuth = () => {
           return undefined;
         });
 
-        goToRecoilSnapshot(initialSnapshot);
-
         sessionStorage.clear();
         localStorage.clear();
+
+        goToRecoilSnapshot(initialSnapshot);
+
+        set(lastAuthenticatedMethodState, lastAuthenticatedMethod);
+
         await client.clearStore();
-        // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
         setLastAuthenticateWorkspaceDomain(null);
         await loadMockedObjectMetadataItems();
         navigate(AppPath.SignInUp);

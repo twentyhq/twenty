@@ -8,6 +8,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { MainContainerLayoutWithCommandMenu } from '@/object-record/components/MainContainerLayoutWithCommandMenu';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
+import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
 import { PageHeaderToggleCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderToggleCommandMenuButton';
@@ -62,6 +63,10 @@ export const RecordShowPage = () => {
                     id: objectRecordId,
                     targetObjectNameSingular: objectNameSingular,
                   }}
+                />
+                <RecordShowPageSSESubscribeEffect
+                  objectNameSingular={objectNameSingular}
+                  recordId={objectRecordId}
                 />
               </TimelineActivityContext.Provider>
             </MainContainerLayoutWithCommandMenu>

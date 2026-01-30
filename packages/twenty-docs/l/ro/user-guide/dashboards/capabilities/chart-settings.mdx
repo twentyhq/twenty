@@ -1,0 +1,275 @@
+---
+title: Setări pentru diagrame
+description: Configurați diagramele pentru a afișa datele exact așa cum aveți nevoie.
+---
+
+import { ChartIcon } from '/snippets/chart-icon.mdx';
+
+## Accesarea setărilor pentru diagrame
+
+1. Faceți clic pe butonul **Editare** din colțul din dreapta sus al tabloului de bord
+
+<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Mod editare" />
+
+2. Tabloul de bord intră în modul de editare
+3. Faceți clic pe orice widget pentru a-l selecta
+4. Panoul de setări se deschide în dreapta
+
+Setările sunt organizate în secțiuni:
+
+* **Date**: Ce date să preluați și cum să le filtrați
+* **Axa X**: Cum să grupați și să sortați categoriile (diagrame cu bare/linii)
+* **Axa Y**: Ce să măsurați și cum să o afișați (diagrame cu bare/linii)
+* **Stil**: Culori, etichete și opțiuni vizuale
+
+<Note>
+  Unele setări apar doar când sunt configurate alte setări. De exemplu, **Granularitate dată** apare doar când selectați un câmp de tip dată.
+</Note>
+
+---
+
+## Setări date
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="database" />Sursă </span>
+
+Alegeți din ce obiect să preluați date.
+
+1. Faceți clic pe **Sursă**
+2. Selectați un obiect (Oportunități, Persoane, Companii etc.)
+
+Toate obiectele standard și personalizate sunt disponibile. Schimbarea sursei resetează alte setări, deoarece opțiunile câmpului depind de obiectul selectat.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Sursă" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtru </span>
+
+Limitați ce înregistrări sunt incluse în diagramă.
+
+1. Faceți clic pe **Filtru**
+2. Se deschide constructorul de filtre
+3. Faceți clic pe **+ Adaugă filtru**
+4. Selectați un câmp, o condiție și o valoare
+5. Adăugați mai multe filtre după necesități
+
+Filtrele funcționează la fel ca în vizualizările de tabel. Folosiți-le pentru a vă concentra pe segmente specifice ale datelor.
+
+**Exemplu**: Filtrați oportunitățile unde Etapa este egală cu "Câștigat" pentru a afișa doar tranzacțiile închise.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtru" />
+
+<Tip>
+  Pentru câmpurile de tip dată, încercați **Este relativ** pentru a crea filtre dinamice precum "Ultimele 7 zile" sau "Luna aceasta" care se actualizează automat.
+</Tip>
+
+<Tip>
+  Filtrele avansate sunt acceptate—adăugați mai multe reguli de filtrare și combinați-le cu logica **Și** sau **Sau**.
+</Tip>
+
+---
+
+## Setări axa X
+
+Aceste setări controlează axa orizontală a diagramelor cu bare și linii—de obicei modul în care datele sunt grupate în categorii.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-x" />Date afișate </span>
+
+Selectați câmpul după care să grupați datele. Aceasta determină categoriile afișate pe axa X.
+
+**Exemplu**: Selectați "Etapă" pentru a vedea datele grupate după etapa din pipeline, sau "Data creării" pentru a vedea datele în timp.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Date afișate" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularitate dată </span>
+
+Când grupați după un câmp de tip dată, alegeți perioada de timp pentru grupare.
+
+| Opțiune               | Grupează datele după      | Exemplu de rezultat                                      |
+| --------------------- | ------------------------- | -------------------------------------------------------- |
+| **Zi**                | Fiecare zi calendaristică | 1 ian., 2 ian., 3 ian...                                 |
+| **Săptămână**         | Săptămâni calendaristice  | Săptămâna 1, Săptămâna 2, Săptămâna 3...                 |
+| **Lună**              | Luni calendaristice       | Ianuarie, Februarie, Martie...                           |
+| **Trimestru**         | Trimestre fiscale         | T1, T2, T3, T4                                           |
+| **An**                | Ani calendaristici        | 2023, 2024, 2025                                         |
+| **Ziua săptămânii**   | Zi a săptămânii (agregat) | Luni, Marți... (toate zilele de luni combinate)          |
+| **Luna anului**       | Lună (agregat)            | Ianuarie, Februarie... (toate lunile ianuarie combinate) |
+| **Trimestrul anului** | Trimestru (agregat)       | T1, T2, T3, T4 (toate T1 combinate)                      |
+
+Opțiunile "din săptămână/an" agregă pe întreaga perioadă de timp. Folosiți **Ziua săptămânii** pentru a vedea în ce zi din săptămână se obțin de obicei cele mai multe tranzacții. Folosiți **Lună** pentru a vedea tendințele lună de lună.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Sortează după </span>
+
+Controlați ordinea categoriilor pe axa X.
+
+* **Poziție** – Folosește ordinea definită în setările câmpului Select
+* **Alfabetic** – de la A la Z (sau cronologic pentru date)
+* **După valoare** – Ordonat după metrică (mai întâi cele mai mari sau cele mai mici)
+* **Manual** – Trageți pentru a stabili propria ordine
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Sortează după" />
+
+**Sfat**: Pentru etapele din pipeline, utilizați **Poziție** pentru a afișa etapele în ordinea procesului de vânzări (Potențial → Calificat → Ofertă → Câștigat).
+
+<Note>
+  Opțiunile afișate depind de tipul câmpului. Câmpurile de tip Select au toate opțiunile; câmpurile de tip dată și text afișează mai puține.
+</Note>
+
+<Tip>
+  Cu sortarea **Manual**, trageți categoriile pentru a crea o ordine personalizată—perfect pentru a evidenția segmente specifice sau pentru a spune o poveste cu datele dvs.
+</Tip>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Omite valorile zero </span>
+
+Ascundeți categoriile care au valoare zero sau nu au date.
+
+* **Activat**: Categoriile fără înregistrări sunt ascunse
+* **Dezactivat**: Toate categoriile sunt afișate, chiar dacă sunt goale
+
+Folosiți această opțiune pentru a curăța diagramele cu date rare.
+
+---
+
+## Setări axa Y
+
+Aceste setări controlează ce măsurați și cum este afișat.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="axis-y" />Date afișate </span>
+
+Selectați câmpul și operația pentru a calcula metrica.
+
+* **Numărări** – Numără toate, Numără gol, Numără ne-gol, Numără valori unice
+* **Matematică** – Sumă, Medie, Minim, Maxim (câmpuri numerice)
+* **Procente** – Procent gol, Procent ne-gol
+
+Câmpurile booleene adaugă Numără adevărat/fals. Diagramele agregate cu câmpuri de tip dată afișează Cel mai timpuriu/Cel mai târziu.
+
+**Exemplu**: Selectați "Sumă" cu operația Sumă pentru a vedea valoarea totală a tranzacțiilor pe categorie, sau Numără toate pentru a vedea numărul de tranzacții.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Date afișate" />
+
+<Note>
+  Opțiunile afișate depind de câmpul și tipul de diagramă. Dacă nu vedeți o operație așteptată, verificați tipul câmpului.
+</Note>
+
+### Raport
+
+Pentru câmpuri de tip Select, Multi-select sau Boolean, puteți calcula procentul unei valori specifice.
+
+1. Selectați un câmp de tip Select, Multi-select sau Boolean
+2. Activați **Raport**
+3. Alegeți opțiunea de măsurat
+
+**Exemplu**: Afișați tranzacțiile "Câștigat" ca procent din toate oportunitățile. Dacă aveți 10 Câștigate dintr-un total de 50, diagrama afișează 20%.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filters" />Grupează după </span>
+
+Adăugați o a doua dimensiune pentru a crea mai multe serii (mai multe bare sau linii).
+
+1. Stabiliți mai întâi câmpul pentru axa X
+2. Faceți clic pe **Grupează după**
+3. Selectați un al doilea câmp
+
+**Exemplu**: Grupați tranzacțiile după Etapă (axa X) ȘI după Proprietar (Grupează după) pentru a vedea alăturat distribuția pipeline-ului fiecărei persoane.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Grupare după" />
+
+Când Grupează după este setat, veți vedea mai multe culori în diagramă și apare o legendă.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularitate dată </span>
+
+Când Grupează după este un câmp de tip dată, alegeți perioada de timp (aceleași opțiuni ca pentru axa X).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="arrows-sort" />Sortează după </span>
+
+Când **Grupează după** este setat, controlați ordinea seriilor grupate (de ex., bara cărui proprietar apare prima în fiecare categorie).
+
+Aceleași opțiuni ca sortarea pe axa X—Poziție, Alfabetic și Manual—cu excepția faptului că **sortarea bazată pe valori nu este disponibilă** pentru gruparea secundară.
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="chart-bar-popular" />Cumulativ </span>
+
+Afișați totaluri cumulative în locul valorilor individuale.
+
+* **Dezactivat**: Fiecare bară/punct își afișează propria valoare
+* **Activ**: Fiecare bară/punct afișează suma tuturor valorilor anterioare plus propria valoare
+
+**Exemplu**: Ianuarie = 10, Februarie = 15
+
+* Cumulativ dezactivat: Afișează 10 și 15
+* Cumulativ activ: Afișează 10 și 25 (10 + 15)
+
+Folosiți opțiunea Cumulativ pentru a urmări progresul către un obiectiv în timp.
+
+<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Cumulativ" />
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Interval minim / <ChartIcon icon="math-max" />Interval maxim </span>
+
+Stabiliți valori minime și maxime fixe pentru axa Y.
+
+* Lăsați necompletat pentru scalare automată
+* Introduceți un număr pentru a fixa limita
+
+**Când se folosește:**
+
+* Setați Min la 0 pentru comparații vizuale corecte
+* Setați ambele pentru scări consistente între mai multe diagrame
+* Concentrați-vă pe un interval de valori specific setând ambele
+
+---
+
+## Setări de stil
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="color-swatch" />Culori </span>
+
+Setați schema de culori pentru diagrama dvs. Alegeți dintr-o varietate de palete de culori.
+
+<Note>
+  Când grupați după un câmp de tip Select, diagrama folosește automat culorile definite pentru fiecare opțiune în setările câmpului.
+</Note>
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Numele axei </span>
+
+Alegeți ce etichete de axă să afișați: **Niciuna**, **Axa X**, **Axa Y**, sau **Ambele** (numai pentru diagrame cu bare și linii).
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="stack-2" />Bare stivuite / Linii stivuite </span>
+
+Când Grupează după este setat, alegeți cum sunt afișate mai multe serii.
+
+* **Dezactivat (Grupate)**: Seriile apar una lângă alta. Folosiți când comparați valori exacte între grupuri.
+* **Activ (Stivuite)**: Seriile se stivuiesc una peste alta. Folosiți când arătați compoziția—cum părțile formează un întreg.
+
+**Exemplu**: Tranzacții după etapă, grupate după proprietar
+
+* Grupate: Vedeți numerele exacte ale fiecărui proprietar una lângă alta
+* Stivuite: Vedeți totalul tranzacțiilor pe etapă, cu contribuția fiecărui proprietar stivuită
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Etichete de date </span>
+
+Afișați valorile direct pe elementele diagramei (bare, puncte, segmente).
+
+* **Activ**: Valorile apar pe diagramă
+* **Dezactivat**: Nu se afișează valori (aspect mai curat)
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Legendă </span>
+
+Afișați sau ascundeți legenda (apare doar când Grupează după este setat).
+
+* **Activ**: Legenda arată ce reprezintă fiecare culoare
+* **Dezactivat**: Nu se afișează legendă
+
+<Tip>
+  **Treceți cursorul** peste un element al legendei pentru a evidenția acel grup. Faceți clic pentru a ascunde temporar acel grup din diagramă.
+</Tip>
+
+---
+
+## Note specifice diagramelor
+
+### Grafice circulare
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Fiecare segment reprezintă** – Definiți cum sunt grupate segmentele
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Ascunde categoria goală** – Elimină segmentele cu valoare zero
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Afișează valoarea în centru** – Afișează valoarea agregată (sumă, medie, număr etc.)
+
+### Diagrame agregate
+
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefix** – Adăugați text înaintea numărului (de ex., `$`)
+* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Sufix** – Adăugați text după număr (de ex., `%`)

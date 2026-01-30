@@ -106,7 +106,7 @@ describe('buildColumnsToSelect', () => {
       createdAt: new Date('2025-07-10T10:58:54.536Z'),
       updatedAt: new Date('2025-07-10T10:58:54.536Z'),
       universalIdentifier: personObjectId,
-      fieldMetadataIds: fieldIds,
+      fieldIds: fieldIds,
       indexMetadataIds: [],
       viewIds: [],
       applicationId: null,
@@ -162,7 +162,7 @@ describe('buildColumnsToSelect', () => {
     id: companyObjectId,
     nameSingular: 'company',
     namePlural: 'companies',
-    fieldMetadataIds: [],
+    fieldIds: [],
     indexMetadataIds: [],
     viewIds: [],
   } as unknown as FlatObjectMetadata;

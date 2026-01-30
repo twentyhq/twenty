@@ -1,3 +1,5 @@
+import { isString } from '@sniptt/guards';
+
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
@@ -107,10 +109,7 @@ export const areChartConfigurationFieldsValidForQuery = (
       );
 
     case 'IframeConfiguration':
-      return (
-        typeof configuration.url === 'string' &&
-        configuration.url.trim().length > 0
-      );
+      return isString(configuration.url) && configuration.url.trim().length > 0;
 
     default:
       return false;

@@ -16,6 +16,7 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { type RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
@@ -25,7 +26,8 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
+import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
+import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
@@ -37,6 +39,7 @@ import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 export class WorkspaceUpdateQueryBuilder<
@@ -55,6 +58,7 @@ export class WorkspaceUpdateQueryBuilder<
     criteria: string;
     partialEntity: QueryDeepPartialEntity<T>;
   }[];
+  private filesFieldSync: FilesFieldSync;
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
@@ -73,6 +77,7 @@ export class WorkspaceUpdateQueryBuilder<
     this.relationNestedQueries = new RelationNestedQueries(
       this.internalContext,
     );
+    this.filesFieldSync = new FilesFieldSync(this.internalContext);
   }
 
   override clone(): this {
@@ -152,6 +157,44 @@ export class WorkspaceUpdateQueryBuilder<
         this.featureFlagMap,
       );
 
+      const formattedBefore = formatResult<T[]>(
+        before,
+        objectMetadata,
+        this.internalContext.flatObjectMetadataMaps,
+        this.internalContext.flatFieldMetadataMaps,
+      );
+
+      let filesFieldDiffByEntityIndex = null;
+      let filesFieldFileIds = null;
+      let fileIdToApplicationId = new Map<string, string>();
+
+      const updatePayload = Array.isArray(this.expressionMap.valuesSet)
+        ? (this.expressionMap.valuesSet[0] ?? {})
+        : (this.expressionMap.valuesSet ?? {});
+
+      filesFieldDiffByEntityIndex =
+        this.filesFieldSync.computeFilesFieldDiffBeforeUpdateOne(
+          updatePayload,
+          mainAliasTarget,
+          formattedBefore,
+        );
+
+      if (isDefined(filesFieldDiffByEntityIndex)) {
+        const entities = formattedBefore.map(() => updatePayload);
+
+        const result = await this.filesFieldSync.enrichFilesFields({
+          entities,
+          filesFieldDiffByEntityIndex,
+          workspaceId: this.internalContext.workspaceId,
+          target: mainAliasTarget,
+        });
+
+        filesFieldFileIds = result.fileIds;
+        fileIdToApplicationId = result.fileIdToApplicationId;
+
+        this.expressionMap.valuesSet = result.entities[0];
+      }
+
       if (isDefined(this.relationNestedConfig)) {
         const updatedValues =
           await this.relationNestedQueries.processRelationNestedQueries({
@@ -166,16 +209,31 @@ export class WorkspaceUpdateQueryBuilder<
           updatedValues.length === 1 ? updatedValues[0] : updatedValues;
       }
 
-      const formattedBefore = formatResult<T[]>(
-        before,
-        objectMetadata,
-        this.internalContext.flatObjectMetadataMaps,
-        this.internalContext.flatFieldMetadataMaps,
-      );
-
       this.applyRowLevelPermissionPredicates();
 
+      const valuesSet = this.expressionMap.valuesSet ?? {};
+      const updatedRecords: T[] = before.map(
+        (record, index) =>
+          ({
+            ...record,
+            ...(Array.isArray(valuesSet)
+              ? (valuesSet[index] ?? valuesSet[0] ?? {})
+              : valuesSet),
+          }) as T,
+      );
+
+      this.validateRLSPredicatesForUpdate({
+        updatedRecords,
+      });
+
       const result = await super.execute();
+
+      if (isDefined(filesFieldFileIds)) {
+        await this.filesFieldSync.updateFileEntityRecords(
+          filesFieldFileIds,
+          fileIdToApplicationId,
+        );
+      }
 
       const after = await eventSelectQueryBuilder.getMany();
 
@@ -192,8 +250,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -204,8 +262,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -307,6 +365,36 @@ export class WorkspaceUpdateQueryBuilder<
           mainAliasTarget,
         );
 
+      let filesFieldDiffByEntityIndex = null;
+      let filesFieldFileIds = null;
+      let fileIdToApplicationId = null;
+
+      const entities = this.manyInputs.map((input) => input.partialEntity);
+
+      filesFieldDiffByEntityIndex =
+        this.filesFieldSync.computeFilesFieldDiffBeforeUpdate(
+          entities,
+          mainAliasTarget,
+          formattedBefore,
+        );
+
+      if (isDefined(filesFieldDiffByEntityIndex)) {
+        const result = await this.filesFieldSync.enrichFilesFields({
+          entities,
+          filesFieldDiffByEntityIndex,
+          workspaceId: this.internalContext.workspaceId,
+          target: mainAliasTarget,
+        });
+
+        filesFieldFileIds = result.fileIds;
+        fileIdToApplicationId = result.fileIdToApplicationId;
+
+        this.manyInputs = result.entities.map((updatedEntity, index) => ({
+          criteria: this.manyInputs[index].criteria,
+          partialEntity: updatedEntity,
+        }));
+      }
+
       if (isDefined(this.relationNestedConfig)) {
         const updatedValues =
           await this.relationNestedQueries.processRelationNestedQueries({
@@ -323,15 +411,44 @@ export class WorkspaceUpdateQueryBuilder<
         }));
       }
 
+      const beforeRecordById = new Map<string, T>();
+
+      for (const beforeRecord of formattedBefore) {
+        if (isDefined(beforeRecord.id)) {
+          beforeRecordById.set(beforeRecord.id, beforeRecord);
+        }
+      }
+
       for (const input of this.manyInputs) {
         this.expressionMap.valuesSet = input.partialEntity;
         this.where({ id: input.criteria });
 
         this.applyRowLevelPermissionPredicates();
 
+        const beforeRecord = beforeRecordById.get(input.criteria);
+        const updatedRecords = beforeRecord
+          ? [
+              {
+                ...beforeRecord,
+                ...input.partialEntity,
+              } as T,
+            ]
+          : [];
+
+        this.validateRLSPredicatesForUpdate({
+          updatedRecords,
+        });
+
         const result = await super.execute();
 
         results.push(result);
+      }
+
+      if (isDefined(filesFieldFileIds) && isDefined(fileIdToApplicationId)) {
+        await this.filesFieldSync.updateFileEntityRecords(
+          filesFieldFileIds,
+          fileIdToApplicationId,
+        );
       }
 
       const afterRecords = await eventSelectQueryBuilder.getMany();
@@ -349,8 +466,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -361,8 +478,8 @@ export class WorkspaceUpdateQueryBuilder<
           objectMetadataItem: objectMetadata,
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           workspaceId: this.internalContext.workspaceId,
-          entities: formattedAfter,
-          beforeEntities: formattedBefore,
+          recordsAfter: formattedAfter,
+          recordsBefore: formattedBefore,
           authContext: this.authContext,
         }),
       );
@@ -502,6 +619,14 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
+    if (
+      this.featureFlagMap[
+        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
+      ] !== true
+    ) {
+      return;
+    }
+
     if (this.shouldBypassPermissionChecks) {
       return;
     }
@@ -519,6 +644,43 @@ export class WorkspaceUpdateQueryBuilder<
       internalContext: this.internalContext,
       authContext: this.authContext,
       featureFlagMap: this.featureFlagMap,
+    });
+  }
+
+  private validateRLSPredicatesForUpdate({
+    updatedRecords,
+  }: {
+    updatedRecords: T[];
+  }): void {
+    if (
+      this.featureFlagMap[
+        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
+      ] !== true
+    ) {
+      return;
+    }
+
+    const mainAliasTarget = this.getMainAliasTarget();
+    const objectMetadata = getObjectMetadataFromEntityTarget(
+      mainAliasTarget,
+      this.internalContext,
+    );
+
+    const updatedRecordsFormatted = formatResult<T[]>(
+      updatedRecords,
+      objectMetadata,
+      this.internalContext.flatObjectMetadataMaps,
+      this.internalContext.flatFieldMetadataMaps,
+    );
+
+    validateRLSPredicatesForRecords({
+      records: updatedRecordsFormatted,
+      objectMetadata,
+      internalContext: this.internalContext,
+      authContext: this.authContext,
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      errorMessage:
+        'Updated record does not satisfy row-level security constraints of your current role',
     });
   }
 }

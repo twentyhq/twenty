@@ -15,8 +15,8 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
     {
       __typename: 'PageLayoutTab',
       id: 'task-tab-fields',
-      title: 'Fields',
-      icon: 'IconList',
+      title: 'Home',
+      icon: 'IconHome',
       position: 100,
       layoutMode: 'vertical-list',
       pageLayoutId: DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID,

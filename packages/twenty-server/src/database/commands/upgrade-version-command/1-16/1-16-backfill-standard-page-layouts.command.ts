@@ -10,6 +10,7 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { updateStandardPageLayoutWidgetsWithWorkspaceFieldIds } from 'src/database/commands/upgrade-version-command/1-16/utils/update-standard-page-layout-widgets-with-workspace-field-ids.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -36,6 +37,7 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly applicationService: ApplicationService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
@@ -102,6 +104,10 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
         },
       );
 
+    const shouldIncludeRecordPageLayouts = this.twentyConfigService.get(
+      'SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS',
+    );
+
     const {
       flatPageLayoutMaps: toFlatPageLayoutMaps,
       flatPageLayoutTabMaps: toFlatPageLayoutTabMaps,
@@ -110,6 +116,7 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
       now: new Date().toISOString(),
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      shouldIncludeRecordPageLayouts,
     });
 
     const toFlatPageLayoutWidgetMaps =

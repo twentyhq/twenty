@@ -1,16 +1,13 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type Expect } from 'twenty-shared/testing';
-import {
-  type ExtractPropertiesThatEndsWithId,
-  type ExtractPropertiesThatEndsWithIds,
-} from 'twenty-shared/types';
+import { type ExtractPropertiesThatEndsWithId } from 'twenty-shared/types';
 import { type Relation } from 'typeorm';
 
+import { type AddSuffixToEntityOneToManyProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-one-to-many-properties.type';
 import { type ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
 import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-one-to-many-entity-relation-properties.type';
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 type ManyToOneRelationValue<
@@ -24,12 +21,12 @@ type ManyToOneRelationValue<
   > extends Relation<infer TTargetEntity extends SyncableEntity>
     ? {
         metadataName: FromMetadataEntityToMetadataName<TTargetEntity>;
-        flatEntityForeignKeyAggregator: ExtractPropertiesThatEndsWithIds<
-          MetadataFlatEntity<FromMetadataEntityToMetadataName<TTargetEntity>>
-          // Note: In the best of the world should not be nullable, entities should always declare inverside keys
-        > | null;
+        flatEntityForeignKeyAggregator:
+          | keyof AddSuffixToEntityOneToManyProperties<TTargetEntity, 'ids'>
+          | null;
+        // Note: In the best of the world should not be nullable, entities should always declare inverside keys
         foreignKey: ExtractPropertiesThatEndsWithId<
-          MetadataFlatEntity<TSourceMetadataName>,
+          MetadataEntity<TSourceMetadataName>,
           'id' | 'workspaceId'
         >;
       }
@@ -79,11 +76,46 @@ export const ALL_METADATA_RELATIONS = {
     },
     oneToMany: {},
   },
+  commandMenuItem: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+      availabilityObjectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'availabilityObjectMetadataId',
+      },
+    },
+    oneToMany: {},
+  },
+  navigationMenuItem: {
+    manyToOne: {
+      workspace: null,
+      userWorkspace: null,
+      application: null,
+      targetObjectMetadata: {
+        metadataName: 'objectMetadata',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'targetObjectMetadataId',
+      },
+      folder: {
+        metadataName: 'navigationMenuItem',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'folderId',
+      },
+      view: {
+        metadataName: 'view',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'viewId',
+      },
+    },
+    oneToMany: {},
+  },
   fieldMetadata: {
     manyToOne: {
       object: {
         metadataName: 'objectMetadata',
-        flatEntityForeignKeyAggregator: 'fieldMetadataIds',
+        flatEntityForeignKeyAggregator: 'fieldIds',
         foreignKey: 'objectMetadataId',
       },
       workspace: null,
@@ -226,51 +258,11 @@ export const ALL_METADATA_RELATIONS = {
       indexFieldMetadatas: null,
     },
   },
-  serverlessFunction: {
+  logicFunction: {
     manyToOne: {
       workspace: null,
       application: null,
-      serverlessFunctionLayer: null,
-    },
-    oneToMany: {
-      cronTriggers: { metadataName: 'cronTrigger' },
-      databaseEventTriggers: { metadataName: 'databaseEventTrigger' },
-      routeTriggers: { metadataName: 'routeTrigger' },
-    },
-  },
-  cronTrigger: {
-    manyToOne: {
-      serverlessFunction: {
-        metadataName: 'serverlessFunction',
-        flatEntityForeignKeyAggregator: 'cronTriggerIds',
-        foreignKey: 'serverlessFunctionId',
-      },
-      workspace: null,
-      application: null,
-    },
-    oneToMany: {},
-  },
-  databaseEventTrigger: {
-    manyToOne: {
-      serverlessFunction: {
-        metadataName: 'serverlessFunction',
-        flatEntityForeignKeyAggregator: 'databaseEventTriggerIds',
-        foreignKey: 'serverlessFunctionId',
-      },
-      workspace: null,
-      application: null,
-    },
-    oneToMany: {},
-  },
-  routeTrigger: {
-    manyToOne: {
-      serverlessFunction: {
-        metadataName: 'serverlessFunction',
-        flatEntityForeignKeyAggregator: 'routeTriggerIds',
-        foreignKey: 'serverlessFunctionId',
-      },
-      workspace: null,
-      application: null,
+      logicFunctionLayer: null,
     },
     oneToMany: {},
   },
@@ -284,6 +276,12 @@ export const ALL_METADATA_RELATIONS = {
       objectPermissions: null,
       permissionFlags: null,
       fieldPermissions: null,
+      rowLevelPermissionPredicates: {
+        metadataName: 'rowLevelPermissionPredicate',
+      },
+      rowLevelPermissionPredicateGroups: {
+        metadataName: 'rowLevelPermissionPredicateGroup',
+      },
     },
   },
   roleTarget: {
@@ -308,6 +306,11 @@ export const ALL_METADATA_RELATIONS = {
         foreignKey: 'objectMetadataId',
       },
       application: null,
+      defaultTabToFocusOnMobileAndSidePanel: {
+        metadataName: 'pageLayoutTab',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'defaultTabToFocusOnMobileAndSidePanelId',
+      },
     },
     oneToMany: {
       tabs: { metadataName: 'pageLayoutTab' },
@@ -429,6 +432,20 @@ export const ALL_METADATA_RELATIONS = {
         metadataName: 'viewFilter',
       },
     },
+  },
+  frontComponent: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {},
+  },
+  webhook: {
+    manyToOne: {
+      workspace: null,
+      application: null,
+    },
+    oneToMany: {},
   },
 } as const satisfies MetadataRelationsProperties;
 

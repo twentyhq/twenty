@@ -1,7 +1,7 @@
 import typescriptParser from '@typescript-eslint/parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import reactConfig from '../../eslint.config.react.mjs';
+import reactConfig from '../twenty-eslint-rules/eslint.config.react.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,7 +23,7 @@ export default [
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
-        project: [path.resolve(__dirname, 'tsconfig.*.json')],
+        project: [path.resolve(__dirname, 'tsconfig.json')],
         ecmaFeatures: {
           jsx: true,
         },

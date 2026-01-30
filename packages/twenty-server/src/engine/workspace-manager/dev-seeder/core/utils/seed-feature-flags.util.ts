@@ -37,14 +37,9 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
@@ -67,12 +62,32 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
+        key: FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_IF_ELSE_ENABLED,
+        key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },

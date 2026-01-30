@@ -1,132 +1,130 @@
 ---
-title: Calendar & Emails
-description: Connect your email and calendar accounts to Twenty.
+title: Calendrier et e-mails
+description: Connectez vos comptes de messagerie et de calendrier à Twenty.
 image: /images/user-guide/emails/emails_header.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/emails/emails_header.png" alt="Calendar & Emails" />
+  <img src="/images/user-guide/emails/emails_header.png" alt="Calendrier et e-mails" />
 </Frame>
 
-## Connection Options
+## Options de connexion
 
-### Google Account (Gmail & Google Calendar)
+### Compte Google (Gmail & Google Calendar)
 
-1. Go to **Settings → Accounts**
-2. Click **Add account**
-3. Select **Continue with Google**
-4. Authorize Twenty to access your Gmail and Google Calendar
-5. Configure email sync settings (visibility, auto-creation) → click **Next**
-6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
-7. Your emails and calendar events will start syncing automatically
+1. Allez dans **Paramètres → Comptes**
+2. Cliquez sur **Ajouter un compte**
+3. Sélectionnez **Continuer avec Google**
+4. Autorisez Twenty à accéder à votre Gmail et à votre Google Calendar
+5. Configurez les paramètres de synchronisation des e-mails (visibilité, création automatique) → cliquez sur **Suivant**
+6. Configurez les paramètres de synchronisation du calendrier (visibilité, création automatique) → cliquez sur **Ajouter un compte**
+7. Vos e-mails et vos événements de calendrier commenceront à se synchroniser automatiquement
 
-### Microsoft Account (Outlook & Microsoft Calendar)
+### Compte Microsoft (Outlook & Calendrier Microsoft)
 
-1. Go to **Settings → Accounts**
-2. Click **Add account**
-3. Select **Continue with Microsoft**
-4. Authorize Twenty to access your Outlook and Microsoft Calendar
-5. Configure email sync settings (visibility, auto-creation) → click **Next**
-6. Configure calendar sync settings (visibility, auto-creation) → click **Add Account**
-7. Your emails and calendar events will start syncing automatically
+1. Allez dans **Paramètres → Comptes**
+2. Cliquez sur **Ajouter un compte**
+3. Sélectionnez **Continuer avec Microsoft**
+4. Autorisez Twenty à accéder à votre Outlook et à votre Calendrier Microsoft
+5. Configurez les paramètres de synchronisation des e-mails (visibilité, création automatique) → cliquez sur **Suivant**
+6. Configurez les paramètres de synchronisation du calendrier (visibilité, création automatique) → cliquez sur **Ajouter un compte**
+7. Vos e-mails et vos événements de calendrier commenceront à se synchroniser automatiquement
 
-### SMTP/CalDAV Setup (Other Providers)
+### Configuration SMTP/CalDAV (Autres fournisseurs)
 
-For other email and calendar providers:
+Pour les autres fournisseurs de services de messagerie et de calendrier :
 
-1. Go to **Settings → Releases → Lab** to enable the feature
-2. Return to **Settings → Accounts**
-3. Configure SMTP settings for email
-4. Configure CalDAV settings for calendar
-5. Test the connection
+1. Allez dans **Paramètres → Comptes**
+2. Configurez les paramètres SMTP pour les e-mails
+3. Configurez les paramètres CalDAV pour le calendrier
+4. Tester la connexion
 
-### Multiple Mailboxes
+### Plusieurs boîtes aux lettres
 
-* **Unlimited Accounts**: Connect multiple email accounts per user
-* **Account Management**: Switch between different mailboxes
-* **Sync Settings**: Configure different settings per mailbox
+* **Comptes illimités** : Connectez plusieurs comptes de messagerie par utilisateur
+* **Gestion de Compte**: Basculez entre différentes boîtes aux lettres
+* **Paramètres de Synchronisation**: Configurez différents paramètres par boîte aux lettres
 
 <Warning>
-  Only true mailboxes can be connected (e.g., support@domain.com with its own inbox). Email aliases that forward to another mailbox cannot be connected to Twenty.
+  Seules les vraies boîtes aux lettres peuvent être connectées (par exemple, support@domain.com avec sa propre boîte de réception). Les alias email qui redirigent vers une autre boîte aux lettres ne peuvent pas être connectés à Twenty.
 </Warning>
 
-## Email Configuration
+## Configuration des Emails
 
-### Message Visibility
+### Visibilité des Messages
 
-Choose different levels of visibility for your emails:
+Choisissez différents niveaux de visibilité pour vos e-mails :
 
-* **Metadata Only**: Share only basic information (sender, recipient, date, time)
-* **Subject and Metadata**: Share subject line along with metadata
-* **All Email Content**: Share entire email content including attachments
+* **Métadonnées uniquement** : Partagez uniquement les informations de base (expéditeur, destinataire, date, heure)
+* **Objet et métadonnées** : Partagez la ligne d'objet ainsi que les métadonnées
+* **Tout le contenu des e-mails** : Partagez l'intégralité du contenu des e-mails, y compris les pièces jointes
 
-### Contact Auto-Creation
+### Création Automatique de Contacts
 
-* **Deactivated**: No automatic contact creation
-* **For messages sent & received**: Create contacts for all external email interactions
-* **For messages sent only**: Create contacts only for emails you send
-* **Note**: Internal emails (same domain) are never synced to maintain privacy
+* **Désactivée**: Pas de création automatique de contacts
+* **Pour les messages envoyés et reçus** : Créez des contacts pour toutes les interactions par e-mail externes
+* **Pour les messages envoyés uniquement** : Créez des contacts uniquement pour les e-mails que vous envoyez
+* **Remarque** : Les emails internes (même domaine) ne sont jamais synchronisés pour maintenir la confidentialité
 
-<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+<Note>Lorsque cette option est activée, les contacts sont automatiquement liés à leurs enregistrements Entreprise en fonction de leur domaine de messagerie. Si l'entreprise n'existe pas encore, Twenty la crée pour vous.</Note>
 
-### Control which emails get sync with Message Folder Selection (Lab Feature)
+### Contrôlez quels emails sont synchronisés avec Sélection des dossiers de messages
 
-Control which email folders sync with Twenty:
+Contrôlez quels dossiers e-mail sont synchronisés avec Twenty :
 
-1. Go to **Settings → Releases → Lab** and enable **Message Folder**
-2. Return to **Settings → Accounts** and select your connected email account
-3. Choose which folders to sync:
-   * **Inbox**: Primary incoming emails
-   * **Sent**: Outgoing emails you've sent
-   * **Custom Folders**: Any specific folders you want to include
-   * **Exclude Folders**: Skip folders like Spam, Trash, or personal folders
+1. Accédez à **Paramètres → Comptes** et sélectionnez votre compte de messagerie connecté
+2. Choisissez quels dossiers synchroniser :
+   * **Boîte de réception** : Emails entrants principaux
+   * **Envoyés** : Les e-mails sortants que vous avez envoyés
+   * **Dossiers Personnalisés** : Tous les dossiers spécifiques que vous souhaitez inclure
+   * **Exclure les Dossiers** : Ignorer les dossiers tels que Spam, Corbeille ou dossiers personnels
 
-This gives you precise control over which emails appear in your CRM without syncing everything.
+Cela vous donne un contrôle précis sur les e-mails qui apparaissent dans votre CRM sans tout synchroniser.
 
-**What Gets Synced:**
+**Ce qui est Synchronisé :**
 
-* **External Emails**: All emails with external contacts from selected folders
-* **Internal Emails**: Not synced (same domain emails remain private)
-* **Attachments**: Coming in H1 2026
+* **E-mails externes** : Tous les e-mails avec des contacts externes provenant des dossiers sélectionnés
+* **E-mails internes** : Non synchronisés (les e-mails du même domaine restent privés)
+* **Pièces jointes** : Disponible au H1 2026
 
-**Note**: We don't provide a CC email address for selective syncing. Instead, use the Message Folder feature above to achieve the same level of control over which emails sync with Twenty.
+**Remarque** : Nous ne fournissons pas d'adresse email CC pour une synchronisation sélective. Utilisez plutôt la fonctionnalité Message Folder ci-dessus pour obtenir le même niveau de contrôle sur les e-mails qui se synchronisent avec Twenty.
 
-## Calendar Configuration
+## Configuration des Calendriers
 
-### Event Visibility
+### Visibilité des Événements
 
-Choose what will be visible to other users in your workspace:
+Choisissez ce qui sera visible pour les autres utilisateurs dans votre espace de travail :
 
-* **Everything**: The whole event details will be shared with your team
-* **Metadata**: Only date & participants will be shared with your team
+* **Tout** : Les détails complets de l'événement seront partagés avec votre équipe
+* **Métadonnées** : Seules la date et les participants seront partagés avec votre équipe
 
-### Contact Auto-Creation for Meetings
+### Création Automatique de Contacts pour les Réunions
 
-* **Yes**: Automatically create contacts for meeting participants not in your CRM
-* **No**: Only link meetings to existing contacts
+* **Oui** : Créez automatiquement des contacts pour les participants aux réunions qui ne sont pas dans votre CRM
+* **Non** : Liez uniquement les réunions à des contacts existants
 
-<Note>When enabled, contacts are automatically linked to their Company records based on their email domain. If the company doesn't exist yet, Twenty creates it for you.</Note>
+<Note>Lorsque cette option est activée, les contacts sont automatiquement liés à leurs enregistrements Entreprise en fonction de leur domaine de messagerie. Si l'entreprise n'existe pas encore, Twenty la crée pour vous.</Note>
 
-### Control which events get sync
+### Contrôlez quels événements sont synchronisés
 
-* **Meeting Import**: Automatically import calendar events
-* **Contact Linking**: Link meetings to People and Company records
+* **Importation de Réunions** : Importez automatiquement les événements de calendrier
+* **Lien de Contacts** : Associez des réunions aux enregistrements de personnes et d'entreprises
 
-**What Gets Synced:**
+**Ce qui est Synchronisé :**
 
-* **Meetings**: Calendar events with external participants
-* **Contact Linking**: Events automatically linked to CRM records
-* **Team Events**: Shared calendar visibility
+* **Réunions** : Événements de calendrier avec des participants externes
+* **Lien de Contacts** : Événements automatiquement liés aux enregistrements CRM
+* **Événements d'Équipe** : Visibilité partagée du calendrier
 
-## Sync Frequency
+## Fréquence de Synchronisation
 
-**Updates every 5 minutes**: Both email and calendar data sync automatically every 5 minutes after the initial import.
+**Mises à jour toutes les 5 minutes** : Les données de messagerie et de calendrier sont synchronisées automatiquement toutes les 5 minutes après l'importation initiale.
 
 <Note>
-  **Initial sync timing**: Calendar sync completes quickly (usually within minutes), while email sync takes longer for large mailboxes—up to a few hours depending on volume. Don't worry if you see contacts from calendar events appearing before your email contacts; this is normal behavior.
+  **Durée de la synchronisation initiale**: La synchronisation du calendrier se termine rapidement (généralement en quelques minutes), tandis que la synchronisation des emails prend plus de temps pour les grandes boîtes aux lettres. Twenty importe des emails à environ **400 messages par minute** (soumis aux limites de débit de l'API Gmail), de sorte qu'une boîte aux lettres contenant 10,000 emails prend environ 25 minutes. Ne vous inquiétez pas si vous voyez des contacts provenant d'événements de calendrier apparaître avant vos contacts e-mail ; c'est un comportement normal.
 </Note>
 
-## Next Steps
+## Prochaines étapes
 
-* [Mailbox capabilities](/l/fr/user-guide/calendar-emails/capabilities/mailbox)
-* [Troubleshoot missing emails](/l/fr/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)
+* [Fonctionnalités de la boîte aux lettres](/l/fr/user-guide/calendar-emails/capabilities/mailbox)
+* [Résoudre les problèmes d'e-mails manquants](/l/fr/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records)

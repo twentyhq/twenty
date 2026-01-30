@@ -25,6 +25,27 @@ export class ApplicationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
+  async findApplicationRoleId(
+    applicationId: string,
+    workspaceId: string,
+  ): Promise<string> {
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId, workspaceId },
+    });
+
+    if (
+      !isDefined(application) ||
+      !isDefined(application.defaultLogicFunctionRoleId)
+    ) {
+      throw new ApplicationException(
+        `Could not find application ${applicationId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return application.defaultLogicFunctionRoleId;
+  }
+
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({
     workspace: workspaceInput,
     workspaceId,
@@ -97,7 +118,7 @@ export class ApplicationService {
     return this.applicationRepository.find({
       where: { workspaceId },
       relations: [
-        'serverlessFunctions',
+        'logicFunctions',
         'agents',
         'objects',
         'applicationVariables',
@@ -112,7 +133,7 @@ export class ApplicationService {
     const application = await this.applicationRepository.findOne({
       where: { workspaceId, id: applicationId },
       relations: [
-        'serverlessFunctions',
+        'logicFunctions',
         'agents',
         'objects',
         'applicationVariables',
@@ -189,7 +210,7 @@ export class ApplicationService {
     const twentyStandardApplication = await this.create(
       {
         ...TWENTY_STANDARD_APPLICATION,
-        serverlessFunctionLayerId: null,
+        logicFunctionLayerId: null,
         workspaceId,
         canBeUninstalled: false,
       },
@@ -225,7 +246,7 @@ export class ApplicationService {
         universalIdentifier: applicationId,
         workspaceId: workspaceId,
         id: applicationId,
-        serverlessFunctionLayerId: null,
+        logicFunctionLayerId: null,
         canBeUninstalled: false,
       },
       queryRunner,

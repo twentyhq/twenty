@@ -112,7 +112,7 @@ You should run all commands in the following steps from the root of the project.
 
     **Option 2:** If you have docker installed:
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
   <Tab title="Mac OS">
@@ -159,10 +159,16 @@ You should run all commands in the following steps from the root of the project.
       CREATE ROLE postgres WITH SUPERUSER LOGIN;
     ```
     This creates a superuser role named `postgres` with login access.
+      ```bash
+      Role name | Attributes  | Member of
+      -----------+-------------+-----------
+      postgres  | Superuser   | {}
+      john      | Superuser   | {}
+    ```
 
     **Option 2:** If you have docker installed:
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
   <Tab title="Windows (WSL)">
@@ -179,7 +185,7 @@ You should run all commands in the following steps from the root of the project.
     Running Docker on WSL adds an extra layer of complexity.
     Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
     ```bash
-      make postgres-on-docker
+      make -C packages/twenty-docker postgres-on-docker
     ```
   </Tab>
 </Tabs>
@@ -196,7 +202,7 @@ Twenty requires a redis cache to provide the best performance
 
     **Option 2:** If you have docker installed:
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
   <Tab title="Mac OS">
@@ -209,7 +215,7 @@ Twenty requires a redis cache to provide the best performance
 
     **Option 2:** If you have docker installed:
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
   <Tab title="Windows (WSL)">
@@ -218,7 +224,7 @@ Twenty requires a redis cache to provide the best performance
 
     **Option 2:** If you have docker installed:
     ```bash
-      make redis-on-docker
+      make -C packages/twenty-docker redis-on-docker
     ```
   </Tab>
 </Tabs>

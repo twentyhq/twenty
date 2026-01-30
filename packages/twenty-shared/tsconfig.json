@@ -1,5 +1,7 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react",
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
@@ -8,19 +10,22 @@
     "noImplicitAny": true,
     "strictBindCallApply": false,
     "noEmit": true,
+    "types": ["jest", "node"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "scripts/**/*.ts",
+    "**/__mocks__/**/*",
+    "jest.config.mjs"
   ],
-  "extends": "../../tsconfig.base.json"
+  "exclude": [
+    "src/front-component/remote/mock/**/*",
+    "src/front-component/host/generated/host-component-registry.ts",
+    "src/front-component/remote/generated/remote-components.ts",
+    "src/front-component/remote/generated/remote-elements.ts"
+  ]
 }

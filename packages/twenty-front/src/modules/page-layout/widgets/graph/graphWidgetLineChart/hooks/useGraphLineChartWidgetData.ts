@@ -1,15 +1,23 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type LineChartSeries } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeries';
-import { getLineChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/getLineChartQueryLimit';
-import { transformGroupByDataToLineChartData } from '@/page-layout/widgets/graph/graphWidgetLineChart/utils/transformGroupByDataToLineChartData';
-import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { LINE_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/lineChartData';
+import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetLineChart/types/LineChartSeriesWithColor';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
-import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
-import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useMemo } from 'react';
-import { type LineChartConfiguration } from '~/generated/graphql';
+import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
+import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/determineGraphColorMode';
+import { extractLineChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractLineChartDataConfiguration';
+import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
+import { useQuery } from '@apollo/client';
+import { isString } from '@sniptt/guards';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  type LineChartConfiguration,
+  type LineChartDataPoint,
+  type LineChartSeries,
+} from '~/generated/graphql';
 
 type UseGraphLineChartWidgetDataProps = {
   objectMetadataItemId: string;
@@ -18,18 +26,16 @@ type UseGraphLineChartWidgetDataProps = {
 
 type UseGraphLineChartWidgetDataResult = {
   series: LineChartSeries[];
-  xAxisLabel?: string;
-  yAxisLabel?: string;
   showDataLabels: boolean;
   showLegend: boolean;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
   colorMode: GraphColorMode;
+  xAxisLabel: string;
+  yAxisLabel: string;
   loading: boolean;
   error?: Error;
-  objectMetadataItem: ReturnType<
-    typeof useObjectMetadataItemById
-  >['objectMetadataItem'];
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 export const useGraphLineChartWidgetData = ({
@@ -39,49 +45,85 @@ export const useGraphLineChartWidgetData = ({
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const limit = getLineChartQueryLimit(configuration);
+  const apolloCoreClient = useApolloCoreClient();
+
+  const dataConfiguration = extractLineChartDataConfiguration(configuration);
 
   const {
-    data: groupByData,
+    data: queryData,
     loading,
     error,
-    aggregateOperation,
-  } = useGraphWidgetGroupByQuery({
-    objectMetadataItemId,
-    configuration,
-    limit,
+  } = useQuery(LINE_CHART_DATA, {
+    client: apolloCoreClient,
+    variables: {
+      input: {
+        objectMetadataId: objectMetadataItemId,
+        configuration: dataConfiguration,
+      },
+    },
   });
 
-  const { userTimezone } = useUserTimezone();
-  const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
+  const formattedToRawLookup = queryData?.lineChartData?.formattedToRawLookup
+    ? new Map(Object.entries(queryData.lineChartData.formattedToRawLookup))
+    : new Map();
 
-  const transformedData = useMemo(
-    () =>
-      transformGroupByDataToLineChartData({
-        groupByData,
-        objectMetadataItem,
-        objectMetadataItems: objectMetadataItems ?? [],
-        configuration,
-        aggregateOperation,
-        userTimezone,
-        firstDayOfTheWeek: userFirstDayOfTheWeek,
-      }),
-    [
-      groupByData,
-      objectMetadataItem,
-      objectMetadataItems,
-      configuration,
-      aggregateOperation,
-      userTimezone,
-      userFirstDayOfTheWeek,
-    ],
+  const secondaryAxisField = objectMetadataItem?.fields?.find(
+    (field) => field.id === configuration.secondaryAxisGroupByFieldMetadataId,
+  );
+
+  const selectFieldOptions =
+    isDefined(secondaryAxisField) &&
+    (secondaryAxisField.type === FieldMetadataType.SELECT ||
+      secondaryAxisField.type === FieldMetadataType.MULTI_SELECT)
+      ? secondaryAxisField.options
+      : null;
+
+  const configurationColor = parseGraphColor(configuration.color);
+
+  const colorMode = determineGraphColorMode({
+    configurationColor,
+    selectFieldOptions,
+  });
+
+  const series = queryData?.lineChartData?.series?.map(
+    (seriesItem: {
+      id: string;
+      label: string;
+      data: Array<LineChartDataPoint>;
+    }): LineChartSeriesWithColor => {
+      const rawValue = formattedToRawLookup.get(seriesItem.id);
+
+      const itemColor = determineChartItemColor({
+        configurationColor,
+        selectOptions: selectFieldOptions,
+        rawValue: isString(rawValue) ? rawValue : undefined,
+      });
+
+      return {
+        id: seriesItem.id,
+        label: seriesItem.label,
+        color: itemColor,
+        data: seriesItem.data.map(
+          (point: LineChartDataPoint): LineChartDataPoint => ({
+            x: point.x,
+            y: point.y,
+          }),
+        ),
+      };
+    },
   );
 
   return {
-    ...transformedData,
+    series,
+    showDataLabels: configuration.displayDataLabel ?? false,
+    showLegend: configuration.displayLegend ?? true,
+    hasTooManyGroups: queryData?.lineChartData?.hasTooManyGroups ?? false,
+    colorMode,
+    formattedToRawLookup,
     objectMetadataItem,
+    xAxisLabel: queryData?.lineChartData?.xAxisLabel ?? '',
+    yAxisLabel: queryData?.lineChartData?.yAxisLabel ?? '',
     loading,
     error,
   };

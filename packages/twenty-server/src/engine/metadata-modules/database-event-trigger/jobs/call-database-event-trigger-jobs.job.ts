@@ -1,7 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import chunk from 'lodash.chunk';
+import { isDefined } from 'twenty-shared/utils';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
@@ -10,58 +11,64 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
-import {
-  ServerlessFunctionTriggerJob,
-  ServerlessFunctionTriggerJobData,
-} from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { transformEventBatchToEventPayloads } from 'src/engine/metadata-modules/database-event-trigger/utils/transform-event-batch-to-event-payloads';
+import {
+  LogicFunctionTriggerJob,
+  LogicFunctionTriggerJobData,
+} from 'src/engine/metadata-modules/logic-function/jobs/logic-function-trigger.job';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 const DATABASE_EVENT_JOBS_CHUNK_SIZE = 20;
 
 @Processor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
   constructor(
-    @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(DatabaseEventTriggerEntity)
-    private readonly databaseEventTriggerRepository: Repository<DatabaseEventTriggerEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
   async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
-    const databaseEventListeners =
-      await this.databaseEventTriggerRepository.find({
+    const logicFunctionsWithDatabaseEventTrigger =
+      await this.logicFunctionRepository.find({
         where: {
           workspaceId: workspaceEventBatch.workspaceId,
+          databaseEventTriggerSettings: Not(IsNull()),
         },
-        select: ['id', 'settings', 'workspaceId'],
-        relations: ['serverlessFunction'],
+        select: ['id', 'databaseEventTriggerSettings', 'workspaceId'],
       });
 
-    const databaseEventListenersToTrigger = databaseEventListeners.filter(
-      (databaseEventListener) =>
+    const logicFunctionsToTrigger =
+      logicFunctionsWithDatabaseEventTrigger.filter((logicFunction) =>
         this.shouldTriggerJob({
           workspaceEventBatch,
-          eventName: databaseEventListener.settings.eventName,
+          eventName: isDefined(logicFunction.databaseEventTriggerSettings)
+            ? logicFunction.databaseEventTriggerSettings.eventName
+            : '',
         }),
-    );
+      );
 
-    const serverlessFunctionPayloads = transformEventBatchToEventPayloads({
-      databaseEventListeners: databaseEventListenersToTrigger,
+    const logicFunctionPayloads = transformEventBatchToEventPayloads({
+      logicFunctions: logicFunctionsToTrigger,
       workspaceEventBatch,
     });
 
-    const serverlessFunctionPayloadsChunks = chunk(
-      serverlessFunctionPayloads,
+    if (logicFunctionPayloads.length === 0) {
+      return;
+    }
+
+    const logicFunctionPayloadsChunks = chunk(
+      logicFunctionPayloads,
       DATABASE_EVENT_JOBS_CHUNK_SIZE,
     );
 
-    for (const serverlessFunctionPayloadsChunk of serverlessFunctionPayloadsChunks) {
-      await this.messageQueueService.add<ServerlessFunctionTriggerJobData[]>(
-        ServerlessFunctionTriggerJob.name,
-        serverlessFunctionPayloadsChunk,
+    for (const logicFunctionPayloadsChunk of logicFunctionPayloadsChunks) {
+      await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+        LogicFunctionTriggerJob.name,
+        logicFunctionPayloadsChunk,
         { retryLimit: 3 },
       );
     }

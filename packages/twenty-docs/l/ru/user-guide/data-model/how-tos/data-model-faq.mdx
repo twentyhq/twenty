@@ -1,29 +1,29 @@
 ---
 title: Часто задаваемые вопросы о модели данных
-description: Frequently asked questions about Twenty's data model.
+description: Часто задаваемые вопросы о модели данных Twenty.
 ---
 
 ## Управление объектами
 
 <AccordionGroup>
-  <Accordion title="Can I delete a custom object?">
-    Yes, custom objects can be deleted. You can also deactivate them first, which hides the object and its data from the interface while preserving the data.
+  <Accordion title="Могу ли я удалить пользовательский объект?">
+    Да, пользовательские объекты можно удалять. Вы также можете сначала деактивировать их, что скрывает объект и его данные из интерфейса, сохраняя при этом данные.
   </Accordion>
 
   <Accordion title="Могу ли я удалить стандартные объекты (Люди, Компании и т.д.)?">
-    No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
+    Нет, стандартные объекты не могут быть удалены. Их можно только деактивировать: это скрывает их из интерфейса, но сохраняет данные.
   </Accordion>
 
-  <Accordion title="How many custom objects can I create?">
-    You can create as many custom objects and fields as you need — the price doesn't change.
+  <Accordion title="Сколько пользовательских объектов я могу создать?">
+    Вы можете создать столько пользовательских объектов и полей, сколько вам нужно — цена не изменится.
   </Accordion>
 
-  <Accordion title="Can I rename a standard object?">
-    You can rename the label of standard objects (People, Companies, Opportunities), but not their API names. The API names are fixed for consistency across all Twenty workspaces.
+  <Accordion title="Могу ли я переименовать стандартный объект?">
+    Вы можете переименовать метку стандартных объектов (Люди, Компании, Сделки), но не их имена API. Имена API фиксированы для единообразия во всех рабочих пространствах Twenty.
   </Accordion>
 
-  <Accordion title="Can I change an object's icon?">
-    Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
+  <Accordion title="Могу ли я изменить значок объекта?">
+    Да, вы можете изменить значок как стандартных, так и пользовательских объектов в разделе **Настройки → Модель данных**.
   </Accordion>
 
   <Accordion title="Могу ли я переупорядочить объекты в левой панели навигации?">
@@ -38,8 +38,8 @@ description: Frequently asked questions about Twenty's data model.
 ## Возможности полей
 
 <AccordionGroup>
-  <Accordion title="Can I change a field type after creation?">
-    No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
+  <Accordion title="Могу ли я изменить тип поля после создания?">
+    Нет, типы полей нельзя изменить после создания. Если вам нужен другой тип, создайте новое поле с правильным типом, перенесите данные, затем деактивируйте старое поле.
   </Accordion>
 
   <Accordion title="Почему мне нужны разные формы для единственного и множественного числа?">
@@ -55,21 +55,21 @@ description: Frequently asked questions about Twenty's data model.
     Определенные названия полей, такие как `Тип` или `Приложение`, зарезервированы для системного использования. Выбирайте альтернативные названия, такие как `Категория` или `Классификация`.
   </Accordion>
 
-  <Accordion title="What happens when I deactivate a field?">
-    * The field is hidden from the interface
-    * Existing data is preserved
-    * You can still access the field via API
-    * Existing relations remain but you can't create new ones
-    * You can reactivate the field later
+  <Accordion title="Что происходит, когда я деактивирую поле?">
+    * Поле скрывается из интерфейса
+    * Существующие данные сохраняются
+    * Вы по-прежнему можете получить доступ к полю через API
+    * Существующие отношения сохраняются, но вы не можете создавать новые
+    * Вы можете повторно активировать поле позже
   </Accordion>
 
-  <Accordion title="Can I make a field required?">
-    Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+  <Accordion title="Могу ли я сделать поле обязательным?">
+    На данный момент сделать пользовательские поля обязательными нельзя. Все поля допускают пустые значения. Вы можете использовать рабочие процессы, чтобы обеспечить обязательность полей, отправляя уведомления или блокируя действия, когда поля пусты.
   </Accordion>
 
-  <Accordion title="What's the difference between unique and required?">
-    * **Unique**: No two records can have the same value in this field
-    * **Required**: The field must have a value (not currently supported for custom fields)
+  <Accordion title="В чём разница между уникальным и обязательным?">
+    * **Уникальное**: две записи не могут иметь одно и то же значение в этом поле
+    * **Обязательное**: в поле должно быть значение (в настоящее время не поддерживается для пользовательских полей)
   </Accordion>
 
   <Accordion title="Могу ли я создавать поля-формулы?">
@@ -81,44 +81,44 @@ description: Frequently asked questions about Twenty's data model.
   </Accordion>
 
   <Accordion title="Могу ли я переупорядочивать поля в объектах?">
-    Переупорядочивание полей будет доступно вместе с настраиваемыми макетами в **Q4 2025**. Currently, fields appear in alphabetical order.
+    Переупорядочивание полей будет доступно вместе с настраиваемыми макетами в **Q4 2025**. На данный момент поля отображаются в алфавитном порядке.
   </Accordion>
 </AccordionGroup>
 
 ## Связи
 
 <AccordionGroup>
-  <Accordion title="Can I have a relation pointing to the same object?">
-    Да! Self-referencing relations are supported and recommended for use cases like account hierarchies. For example, create a relation from Companies to Companies to track parent/child accounts.
+  <Accordion title="Могу ли я создать отношение, указывающее на тот же объект?">
+    Да! Отношения, ссылающиеся на тот же объект, поддерживаются и рекомендуются для таких случаев, как иерархии учётных записей. Например, создайте отношение из Компаний к Компаниям, чтобы отслеживать родительские и дочерние учётные записи.
   </Accordion>
 
   <Accordion title="Могу ли я создавать отношения многие-ко-многим?">
-    Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
+    Отношения многие-ко-многим появятся в **H1 2026**. На данный момент создайте промежуточный объект с двумя отношениями один-ко-многим в качестве временного решения.
 
-    For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
+    Например, чтобы связать Людей и Проекты (многие-ко-многим), создайте объект "Назначения по проектам" с:
 
-    * A relation to People (many assignments → one person)
-    * A relation to Projects (many assignments → one project)
+    * Связь с Людьми (много назначений → один человек)
+    * Связь с Проектами (много назначений → один проект)
   </Accordion>
 
-  <Accordion title="What are relations to multiple object types (Morph relationships)?">
-    These allow one object to relate to multiple different object types through a single field. For example, Notes can be attached to People AND Companies AND Opportunities simultaneously.
+  <Accordion title="Что такое отношения к нескольким типам объектов (Morph-отношения)?">
+    Они позволяют одному объекту связываться с несколькими различными типами объектов через одно поле. Например, Заметки могут одновременно быть прикреплены к Людям И Компаниям И Сделкам.
 
-    Each Note links to one Person, one Company, and one Opportunity at the same time.
+    Каждая Заметка одновременно связана с одним Человеком, одной Компанией и одной Сделкой.
 
-    Learn more in [Relation Fields](/l/ru/user-guide/data-model/capabilities/relation-fields).
+    Подробнее см. в разделе [Поля связей](/l/ru/user-guide/data-model/capabilities/relation-fields).
   </Accordion>
 
-  <Accordion title="Can I have multiple relations between the same objects?">
-    Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+  <Accordion title="Могу ли я создать несколько отношений между одними и теми же объектами?">
+    Да, вы можете создать несколько отношений между одними и теми же двумя объектами. Например, у Компании могут быть отношения "Основной контакт" и "Контакт для выставления счетов" к Людям.
   </Accordion>
 
-  <Accordion title="What happens to relations when I delete a record?">
-    When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+  <Accordion title="Что происходит с отношениями, когда я удаляю запись?">
+    Когда вы удаляете запись, связь удаляется из связанных записей. Связанные записи не удаляются.
   </Accordion>
 
-  <Accordion title="Can I create circular relations?">
-    While technically possible, circular relations (A → B → C → A) should be avoided as they can cause confusion and potential performance issues.
+  <Accordion title="Могу ли я создать циклические отношения?">
+    Хотя это технически возможно, циклических отношений (A → B → C → A) следует избегать, поскольку они могут вызывать путаницу и потенциальные проблемы с производительностью.
   </Accordion>
 </AccordionGroup>
 
@@ -126,7 +126,7 @@ description: Frequently asked questions about Twenty's data model.
 
 <AccordionGroup>
   <Accordion title="Где я могу увидеть и изменить мою модель данных?">
-    Go to **Settings → Data Model** to view and edit all your objects and fields.
+    Перейдите в раздел **Настройки → Модель данных**, чтобы просмотреть и редактировать все свои объекты и поля.
   </Accordion>
 
   <Accordion title="Почему я не вижу Модель данных в настройках?">
@@ -134,22 +134,22 @@ description: Frequently asked questions about Twenty's data model.
   </Accordion>
 </AccordionGroup>
 
-## Data Management
+## Управление данными
 
 <AccordionGroup>
-  <Accordion title="Is there a limit to how many records I can have?">
-    There's no hard limit on record counts. However, very large datasets may impact performance in some views. Use filters and views to manage large datasets effectively.
+  <Accordion title="Есть ли ограничение на количество записей?">
+    Жёстких ограничений на количество записей нет. Однако очень большие наборы данных могут повлиять на производительность в некоторых представлениях. Используйте фильтры и представления, чтобы эффективно работать с большими наборами данных.
   </Accordion>
 
-  <Accordion title="Can I import data into custom objects?">
-    Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields. See [How to Prepare Your CSV Files](/l/ru/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  <Accordion title="Могу ли я импортировать данные в пользовательские объекты?">
+    Да, вы можете импортировать данные CSV в любой объект, включая пользовательские объекты. Процесс импорта поддерживает сопоставление пользовательских полей. См. [как подготовить файлы CSV](/l/ru/user-guide/data-migration/how-tos/prepare-your-csv-files).
   </Accordion>
 
-  <Accordion title="Can I export my data model configuration?">
-    Currently, there's no built-in export for data model configuration. Contact support if you need to migrate your data model between workspaces.
+  <Accordion title="Могу ли я экспортировать конфигурацию модели данных?">
+    На данный момент встроенного экспорта конфигурации модели данных нет. Свяжитесь со службой поддержки, если вам нужно перенести модель данных между рабочими пространствами.
   </Accordion>
 </AccordionGroup>
 
 ## Нужна дополнительная помощь?
 
-Check our [Implementation Services](/l/ru/user-guide/getting-started/capabilities/implementation-services) for help with complex data model design.
+Ознакомьтесь с нашими [услугами по внедрению](/l/ru/user-guide/getting-started/capabilities/implementation-services), чтобы получить помощь в разработке сложной модели данных.

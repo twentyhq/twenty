@@ -18,9 +18,9 @@ Twenty nabízí **dvě konfigurační režimy** pro různé potřeby nasazení:
 IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # výchozí
 ```
 
-**Most configuration happens through the UI** after installation:
+**Většina konfigurace probíhá prostřednictvím uživatelského rozhraní** po instalaci:
 
-1. Access your Twenty instance (usually `http://localhost:3000`)
+1. Přistupte ke své instanci Twenty (obvykle `http://localhost:3000`)
 2. Jděte na **Nastavení / Admin panel / Konfigurační proměnné**
 3. Nakonfigurujte integrace, e-mail, úložiště a další
 4. Změny se projeví okamžitě (u nasazení s více kontejnery do 15 sekund)
@@ -58,63 +58,63 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 1. Nastavte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ve vašem souboru `.env`
 2. Přidejte všechny konfigurační proměnné do souboru `.env`
 3. Restartujte kontejnery, aby se změny projevily
-4. Admin panel will show current values but cannot modify them
+4. Administrační panel zobrazí aktuální hodnoty, ale nemůže je upravovat
 
-## Multi-Workspace Mode
+## Režim více pracovních prostorů
 
-By default, Twenty runs in **single-workspace mode** — ideal for most self-hosted deployments where you need one CRM instance for your organization.
+Ve výchozím nastavení běží Twenty v **režimu jednoho pracovního prostoru** — ideální pro většinu samostatně hostovaných nasazení, kde potřebujete jednu instanci CRM pro svou organizaci.
 
-### Single-Workspace Mode (Default)
+### Režim jednoho pracovního prostoru (výchozí)
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* One workspace per Twenty instance
-* First user automatically becomes admin with full privileges (`canImpersonate` and `canAccessFullAdminPanel`)
-* New signups are disabled after the first workspace is created
-* Simple URL structure: `https://your-domain.com`
+* Jeden pracovní prostor na instanci Twenty
+* První uživatel se automaticky stává administrátorem s plnými oprávněními (`canImpersonate` a `canAccessFullAdminPanel`)
+* Po vytvoření prvního pracovního prostoru jsou nové registrace zakázány.
+* Jednoduchá struktura URL: `https://your-domain.com`
 
-### Enabling Multi-Workspace Mode
+### Povolení režimu více pracovních prostorů
 
 ```bash
 IS_MULTIWORKSPACE_ENABLED=true
 DEFAULT_SUBDOMAIN=app  # default value
 ```
 
-Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
+Povolte režim více pracovních prostorů pro nasazení typu SaaS, kde více nezávislých týmů potřebuje své vlastní pracovní prostory na téže instanci Twenty.
 
-**Key differences from single-workspace mode:**
+**Klíčové rozdíly oproti režimu jednoho pracovního prostoru:**
 
-* Multiple workspaces can be created on the same instance
-* Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
-* Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
-* No automatic admin privileges — first user in each workspace is a regular user
-* Workspace-specific settings like subdomain and custom domain become available in workspace settings
+* Na téže instanci lze vytvářet více pracovních prostorů
+* Každý pracovní prostor získá vlastní subdoménu (např. `sales.your-domain.com`, `marketing.your-domain.com`)
+* Uživatelé se registrují a přihlašují na `{DEFAULT_SUBDOMAIN}.your-domain.com` (např. `app.your-domain.com`)
+* Žádná automatická administrátorská oprávnění — první uživatel v každém pracovním prostoru je běžný uživatel
+* Nastavení specifická pro pracovní prostor, jako je subdoména a vlastní doména, se zpřístupní v nastavení pracovního prostoru
 
 <Warning>
-  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+  **Nastavení pouze na úrovni prostředí:** `IS_MULTIWORKSPACE_ENABLED` lze konfigurovat pouze prostřednictvím souboru `.env` a vyžaduje restart. Nelze jej změnit prostřednictvím administračního panelu.
 </Warning>
 
-### DNS Configuration for Multi-Workspace
+### Konfigurace DNS pro více pracovních prostorů
 
-When using multi-workspace mode, configure your DNS with a wildcard record to allow dynamic subdomain creation:
+Při použití režimu více pracovních prostorů nakonfigurujte své DNS pomocí zástupného (wildcard) záznamu, aby bylo možné dynamicky vytvářet subdomény:
 
 ```
 *.your-domain.com -> your-server-ip
 ```
 
-This enables automatic subdomain routing for new workspaces without manual DNS configuration.
+Tím se umožní automatické směrování subdomén pro nové pracovní prostory bez ruční konfigurace DNS.
 
-### Restricting Workspace Creation
+### Omezení vytváření pracovních prostorů
 
-In multi-workspace mode, you may want to limit who can create new workspaces:
+V režimu více pracovních prostorů možná budete chtít omezit, kdo může vytvářet nové pracovní prostory:
 
 ```bash
 IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ```
 
-When enabled, only users with `canAccessFullAdminPanel` can create additional workspaces. Users can still create their first workspace during initial signup.
+Pokud je povoleno, pouze uživatelé s `canAccessFullAdminPanel` mohou vytvářet další pracovní prostory. Uživatelé si stále mohou při úvodní registraci vytvořit svůj první pracovní prostor.
 
 ## Integrace Gmail & Google Kalendář
 
@@ -133,8 +133,8 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
 1. Přejděte na [Pověření](https://console.cloud.google.com/apis/credentials)
 2. Vytvořte OAuth 2.0 Client ID
 3. Přidejte tyto URI přesměrování:
-   * `https://{your-domain}/auth/google/redirect` (for SSO)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (for integrations)
+   * `https://{your-domain}/auth/google/redirect` (pro SSO)
+   * `https://{your-domain}/auth/google-apis/get-access-token` (pro integrace)
 
 ### Konfigurace v Twenty
 
@@ -194,7 +194,7 @@ Poznámka: "Mail.ReadWrite" a "Mail.Send" jsou povinné pouze v případě, že 
 
 Musíte přidat následující URI přesměrování do vašeho projektu:
 
-* `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
+* `https://{your-domain}/auth/microsoft/redirect`, pokud chcete použít Microsoft SSO
 * `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Konfigurace v Twenty
@@ -291,3 +291,47 @@ yarn command:prod cron:workflow:automated-cron-trigger
 <Warning>
   **Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
 </Warning>
+
+## Logické funkce
+
+Twenty podporuje logické funkce pro pracovní postupy a vlastní logiku. Běhové prostředí se konfiguruje pomocí proměnné prostředí `SERVERLESS_TYPE`.
+
+<Warning>
+  **Upozornění na zabezpečení:** Místní ovladač (`SERVERLESS_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, důrazně doporučujeme použít `SERVERLESS_TYPE=LAMBDA` nebo `SERVERLESS_TYPE=DISABLED`.
+</Warning>
+
+### Dostupné ovladače
+
+| Ovladač   | Proměnná prostředí         | Případ použití                             | Úroveň zabezpečení                  |
+| --------- | -------------------------- | ------------------------------------------ | ----------------------------------- |
+| Neaktivní | `SERVERLESS_TYPE=DISABLED` | Úplně zakázat logické funkce               | N/A                                 |
+| Lokální   | `SERVERLESS_TYPE=LOCAL`    | Vývojová a důvěryhodná prostředí           | Nízká (bez sandboxu)                |
+| Lambda    | `SERVERLESS_TYPE=LAMBDA`   | Produkční prostředí s nedůvěryhodným kódem | Vysoká (izolace na úrovni hardwaru) |
+
+### Doporučená konfigurace
+
+**Pro vývoj:**
+
+```bash
+SERVERLESS_TYPE=LOCAL  # default
+```
+
+**Pro produkci (AWS):**
+
+```bash
+SERVERLESS_TYPE=LAMBDA
+SERVERLESS_LAMBDA_REGION=us-east-1
+SERVERLESS_LAMBDA_ROLE=arn:aws:iam::123456789:role/your-lambda-role
+SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
+SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
+```
+
+**Pro zakázání logických funkcí:**
+
+```bash
+SERVERLESS_TYPE=DISABLED
+```
+
+<Note>
+  Při použití `SERVERLESS_TYPE=DISABLED` skončí každý pokus o spuštění logické funkce chybou. To je užitečné, pokud chcete provozovat Twenty bez podpory logických funkcí.
+</Note>

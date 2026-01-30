@@ -1,125 +1,125 @@
 ---
-title: Folder Architecture
-info: A detailed look into our server folder architecture
+title: 文件夹架构
+info: 详细了解我们的服务器文件夹架构
 ---
 
-The backend directory structure is as follows:
+后端目录结构如下：
 
 ```
 server
-  └───ability
-  └───constants
-  └───core
-  └───database
-  └───decorators
-  └───filters
-  └───guards
-  └───health
-  └───integrations
-  └───metadata
-  └───workspace
-  └───utils
+  └───能力
+  └───常量
+  └───核心
+  └───数据库
+  └───装饰器
+  └───过滤器
+  └───守卫
+  └───健康
+  └───集成
+  └───元数据
+  └───工作空间
+  └───工具
 ```
 
-## Ability
+## 能力
 
-Defines permissions and includes handlers for each entity.
+定义权限并为每个实体提供处理程序。
 
-## Decorators
+## 装饰器
 
-Defines custom decorators in NestJS for added functionality.
+为增强功能在NestJS中定义自定义装饰器。
 
-See [custom decorators](https://docs.nestjs.com/custom-decorators) for more details.
+有关更多详细信息，请参阅[自定义装饰器](https://docs.nestjs.com/custom-decorators)。
 
-## Filters
+## 过滤器
 
-Includes exception filters to handle exceptions that might occur in GraphQL endpoints.
+包含异常过滤器，以处理可能在GraphQL端点中出现的异常。
 
-## Guards
+## 守卫
 
-See [guards](https://docs.nestjs.com/guards) for more details.
+有关更多详细信息，请参见[守卫](https://docs.nestjs.com/guards)。
 
-## Health
+## 健康
 
-Includes a publicly available REST API (healthz) that returns a JSON to confirm whether the database is working as expected.
+包含一个公开可用的REST API（healthz），返回JSON以确认数据库是否按预期工作。
 
-## Metadata
+## 元数据
 
-Defines custom objects and makes available a GraphQL API (graphql/metadata).
+定义自定义对象并提供GraphQL API（graphql/metadata）。
 
-## Workspace
+## 工作区
 
-Generates and serves custom GraphQL schema based on the metadata.
+生成并提供基于元数据的自定义GraphQL架构。
 
-### Workspace Directory Structure
+### 工作空间目录结构
 
 ```
 workspace
 
   └───workspace-schema-builder
-    └───factories
-    └───graphql-types
-    └───database
-    └───interfaces
-    └───object-definitions
-    └───services
-    └───storage
-    └───utils
+    └───工厂
+    └───graphql类型
+    └───数据库
+    └───接口
+    └───对象定义
+    └───服务
+    └───存储
+    └───工具
   └───workspace-resolver-builder
-    └───factories
-    └───interfaces
+    └───工厂
+    └───接口
   └───workspace-query-builder
-    └───factories
-    └───interfaces
+    └───工厂
+    └───接口
   └───workspace-query-runner
-    └───interfaces
-    └───utils
+    └───接口
+    └───工具
   └───workspace-datasource
   └───workspace-manager
   └───workspace-migration-runner
-  └───utils
+  └───工具
   └───workspace.module.ts
   └───workspace.factory.spec.ts
   └───workspace.factory.ts
 ```
 
-The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements.
+工作空间目录的根目录包含`workspace.factory.ts`，其中包含`createGraphQLSchema`函数。 此函数通过使用元数据为各个工作空间定制架构来生成工作空间特定的架构。 通过分离架构和解析程序的构建，我们使用`makeExecutableSchema`函数，该函数结合这些离散元素。
 
-This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
+这个策略不仅仅是关于组织，它还有助于优化，比如缓存生成的类型定义以提高性能和可扩展性。
 
-### Workspace Schema builder
+### 工作空间架构生成器
 
-Generates the GraphQL schema, and includes:
+生成GraphQL架构，并包括：
 
-#### Factories:
+#### 工厂：
 
-Specialised constructors to generate GraphQL-related constructs.
+专门的构造函数用于生成与GraphQL相关的结构。
 
-* The type.factory translates field metadata into GraphQL types using `TypeMapperService`.
-* The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
+* type.factory使用`TypeMapperService`将字段元数据翻译为GraphQL类型。
+* type-definition.factory创建从`objectMetadata`派生的GraphQL输入或输出对象。
 
-#### GraphQL Types
+#### GraphQL类型
 
-Includes enumerations, inputs, objects, and scalars, and serves as the building blocks for the schema construction.
+包括枚举、输入、对象和标量，并作为架构构建的基石。
 
-#### Interfaces and Object Definitions
+#### 接口和对象定义
 
-Contains the blueprints for GraphQL entities, and includes both predefined and custom types like `MONEY` or `URL`.
+包含GraphQL实体的蓝图，包括诸如`MONEY`或`URL`之类的预定义和自定义类型。
 
-#### Services
+#### 服务
 
-Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+包含负责将FieldMetadataType与其适当GraphQL标量或查询修饰符相关联的服务。
 
-#### Storage
+#### 存储
 
-Includes the `TypeDefinitionsStorage` class that contains reusable type definitions, preventing duplication of GraphQL types.
+包含`TypeDefinitionsStorage`类，其中包含可重用的类型定义，防止重复GraphQL类型。
 
-### Workspace Resolver Builder
+### 工作空间解析器生成器
 
-Creates resolver functions for querying and mutating the GraphQL schema.
+创建用于查询和修改GraphQL架构的解析器函数。
 
-Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
+此目录中的每个工厂负责生成不同类型的解析器，如`FindManyResolverFactory`，旨在跨各种表灵活应用。
 
-### Workspace Query Runner
+### 工作空间查询运行器
 
-Runs the generated queries on the database and parses the result.
+在数据库上运行生成的查询并解析结果。

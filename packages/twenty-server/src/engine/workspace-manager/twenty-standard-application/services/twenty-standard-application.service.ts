@@ -3,10 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getSubFlatEntityMapsByApplicationIdOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-id-or-throw.util';
+import { fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-create-navigation-menu-item-input-to-flat-navigation-menu-item-to-create.util';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -23,9 +26,11 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 export class TwentyStandardApplicationService {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   // Note: To remove and handle natively in validateBuildAndRun after favorite migration to metadata
@@ -38,24 +43,95 @@ export class TwentyStandardApplicationService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const favoriteRepository =
-          await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-            workspaceId,
-            'favorite',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const favoriteRepository =
+        await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
+          workspaceId,
+          'favorite',
+        );
 
-        const favoriteCount = await favoriteRepository.count();
-        const favoriteToCreate = flatViews.map((flatView, index) => ({
-          viewId: flatView.id,
-          position: favoriteCount + index,
-        }));
+      const favoriteCount = await favoriteRepository.count();
+      const favoriteToCreate = flatViews.map((flatView, index) => ({
+        viewId: flatView.id,
+        position: favoriteCount + index,
+      }));
 
-        await favoriteRepository.insert(favoriteToCreate);
-      },
+      await favoriteRepository.insert(favoriteToCreate);
+    }, authContext);
+  }
+
+  private async createManyNavigationMenuItem({
+    flatViews,
+    workspaceId,
+  }: {
+    flatViews: FlatView[];
+    workspaceId: string;
+  }) {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatNavigationMenuItemMaps'],
+        },
+      );
+
+    const existingWorkspaceItems = Object.values(
+      existingFlatNavigationMenuItemMaps.byId,
+    ).filter(
+      (item) =>
+        isDefined(item) &&
+        item.workspaceId === workspaceId &&
+        item.userWorkspaceId === null,
     );
+
+    const maxPosition = existingWorkspaceItems.reduce(
+      (max, item) => Math.max(max, item?.position ?? 0),
+      0,
+    );
+
+    const flatNavigationMenuItemsToCreate = flatViews.map((flatView, index) => {
+      return fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
+        createNavigationMenuItemInput: {
+          viewId: flatView.id,
+          userWorkspaceId: undefined,
+          position: maxPosition + index + 1,
+        },
+        workspaceId,
+        applicationId: workspaceCustomFlatApplication.id,
+        flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+      });
+    });
+
+    if (flatNavigationMenuItemsToCreate.length === 0) {
+      return;
+    }
+
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          allFlatEntityOperationByMetadataName: {
+            navigationMenuItem: {
+              flatEntityToCreate: flatNavigationMenuItemsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+          workspaceId,
+          isSystemBuild: true,
+        },
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating workspace navigation menu items',
+      );
+    }
   }
 
   async synchronizeTwentyStandardApplicationOrThrow({
@@ -74,11 +150,16 @@ export class TwentyStandardApplicationService {
         ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
         'featureFlagsMap',
       ]);
+    const shouldIncludeRecordPageLayouts = this.twentyConfigService.get(
+      'SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS',
+    );
+
     const toTwentyStandardAllFlatEntityMaps =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
+        shouldIncludeRecordPageLayouts,
       });
 
     const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};

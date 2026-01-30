@@ -1,37 +1,37 @@
 ---
-title: Formula Fields
-description: Create formula fields using workflows until native support is available.
+title: 수식 필드
+description: 네이티브 지원이 제공될 때까지 워크플로우를 사용해 수식 필드를 생성하세요.
 ---
 
-Twenty doesn't yet support native formula fields yet (coming in 2026), but you can achieve the same result using workflows. This workaround lets you automatically calculate and populate field values—from simple concatenations to complex business logic.
+Twenty는 아직 네이티브 수식 필드를 지원하지 않습니다(2026년에 제공 예정이지만), 워크플로우를 사용하면 동일한 결과를 얻을 수 있습니다. 이 우회 방법을 사용하면 단순한 연결부터 복잡한 비즈니스 로직까지 필드 값을 자동으로 계산하고 채울 수 있습니다.
 
-## Common Use Cases
+## 일반적인 사용 사례
 
-| Use Case            | Formula Example                   |
-| ------------------- | --------------------------------- |
-| **Full name**       | First Name + " " + Last Name      |
-| **Expected amount** | Amount × Probability              |
-| **Days until due**  | Due Date - Today                  |
-| **Days in stage**   | Today - Stage Entry Date          |
-| **Lead score**      | Points based on multiple criteria |
+| 사용 사례           | 수식 예시                        |
+| --------------- | ---------------------------- |
+| **전체 이름**       | First Name + " " + Last Name |
+| **예상 금액**       | Amount × Probability         |
+| **마감일까지 남은 일수** | Due Date - Today             |
+| **단계 경과 일수**    | Today - Stage Entry Date     |
+| **리드 점수**       | 여러 기준을 기반으로 한 점수             |
 
 <Tip>
-  For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  파이프라인 단계에서 시간을 추적하는 전체 예시는 [각 단계에서 기회가 머무는 기간 추적하기](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)를 참조하세요.
 </Tip>
 
-## Basic Formula: Concatenation
+## 기본 수식: 연결
 
-### Example: Auto-Fill Full Name
+### 예시: 전체 이름 자동 채우기
 
-**Goal**: Automatically combine first and last name into a full name field.
+**목표**: 이름과 성을 결합해 전체 이름 필드에 자동으로 입력합니다.
 
-### Setup
+### 설정
 
-1. **Trigger**: Record is Updated or Created (People)
+1. **트리거**: 레코드가 업데이트되거나 생성됨 (People)
 
-2. **Filter**: Check that first name or last name changed
+2. **필터**: 이름 또는 성이 변경되었는지 확인
 
-3. **Code action**:
+3. **코드 액션**:
 
 ```javascript
 export const main = async (params) => {
@@ -45,21 +45,21 @@ export const main = async (params) => {
 };
 ```
 
-4. **Update Record**: Set Full Name to `{{code.fullName}}`
+4. **레코드 업데이트**: Full Name을 `{{code.fullName}}`(으)로 설정
 
-## Numeric Formula: Expected Amount
+## 수치 수식: 예상 금액
 
-### Example: Calculate Expected Revenue
+### 예시: 예상 매출 계산
 
-**Goal**: Multiply opportunity amount by probability to get expected amount.
+**목표**: 기회 금액에 확률을 곱하여 예상 금액을 계산합니다.
 
-See [How to Show Expected Amount in Pipeline](/l/ko/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) for the complete workflow.
+전체 워크플로우는 [파이프라인에서 예상 금액 표시하기](/l/ko/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)를 참조하세요.
 
-### Quick Setup
+### 빠른 설정
 
-1. **Trigger**: Record is Updated (Opportunities, Amount OR Probability field)
+1. **트리거**: 레코드가 업데이트됨 (Opportunities, Amount 또는 Probability 필드)
 
-2. **Code action**:
+2. **코드 액션**:
 
 ```javascript
 export const main = async (params) => {
@@ -71,19 +71,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Expected Amount to `{{code.expectedAmount}}`
+3. **레코드 업데이트**: Expected Amount를 `{{code.expectedAmount}}`(으)로 설정
 
-## Date Formula: Days Calculation
+## 날짜 수식: 일수 계산
 
-### Example: Days Until Task Due
+### 예시: 작업 마감일까지 남은 일수
 
-**Goal**: Calculate how many days remain until a task's due date.
+**목표**: 작업 마감일까지 남은 일수를 계산합니다.
 
-### Setup
+### 설정
 
-1. **Trigger**: Record is Updated or Created (Tasks, Due Date field)
+1. **트리거**: 레코드가 업데이트되거나 생성됨 (Tasks, Due Date 필드)
 
-2. **Code action**:
+2. **코드 액션**:
 
 ```javascript
 export const main = async (params) => {
@@ -102,23 +102,23 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
+3. **레코드 업데이트**: Days Until Due를 `{{code.daysUntilDue}}`(으)로 설정
 
 <Note>
-  Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  음수 값은 기한이 지난 작업을 의미합니다. 이 필드를 사용하여 긴급도에 따라 작업을 필터링하거나 정렬할 수 있습니다.
 </Note>
 
-## Conditional Formula: Lead Score
+## 조건 수식: 리드 점수
 
-### Example: Calculate Lead Score Based on Criteria
+### 예시: 기준에 따라 리드 점수 계산
 
-**Goal**: Score leads based on company size, industry, and engagement.
+**목표**: 회사 규모, 산업, 참여도에 따라 리드 점수를 산정합니다.
 
-### Setup
+### 설정
 
-1. **Trigger**: Record is Updated (People or Companies)
+1. **트리거**: 레코드가 업데이트됨 (People 또는 Companies)
 
-2. **Code action**:
+2. **코드 액션**:
 
 ```javascript
 export const main = async (params) => {
@@ -147,19 +147,19 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Lead Score to `{{code.leadScore}}`
+3. **레코드 업데이트**: Lead Score를 `{{code.leadScore}}`(으)로 설정
 
-## Text Formula: Domain Extraction
+## 텍스트 수식: 도메인 추출
 
-### Example: Extract Domain from Email
+### 예시: 이메일에서 도메인 추출
 
-**Goal**: Automatically extract and store the email domain.
+**목표**: 이메일 도메인을 자동으로 추출하여 저장합니다.
 
-### Setup
+### 설정
 
-1. **Trigger**: Record is Updated (People, Email field)
+1. **트리거**: 레코드가 업데이트됨 (People, Email 필드)
 
-2. **Code action**:
+2. **코드 액션**:
 
 ```javascript
 export const main = async (params) => {
@@ -173,30 +173,30 @@ export const main = async (params) => {
 };
 ```
 
-3. **Update Record**: Set Domain field to `{{code.domain}}`
+3. **레코드 업데이트**: Domain 필드를 `{{code.domain}}`(으)로 설정
 
-## Best Practices
+## 모범 사례
 
-### Performance
+### 성능
 
-* Only trigger on relevant field changes
-* Use filters to skip records that don't need calculation
-* Avoid complex calculations in high-volume workflows
+* 관련 필드 변경에만 트리거되도록 하세요.
+* 계산이 필요 없는 레코드는 필터로 건너뛰세요.
+* 대량 워크플로우에서는 복잡한 계산을 피하세요.
 
-### Error Handling
+### 오류 처리
 
-* Check for null/undefined values before calculations
-* Use default values when data is missing
-* Return clear error messages when calculations fail
+* 계산 전에 null/undefined 값을 확인하세요.
+* 데이터가 없을 때는 기본값을 사용하세요.
+* 계산이 실패하면 명확한 오류 메시지를 반환하세요.
 
-### Testing
+### 테스트
 
-* Test with edge cases (empty fields, zero values)
-* Verify calculations manually before activating
-* Monitor workflow runs for unexpected results
+* 엣지 케이스로 테스트하세요(빈 필드, 0 값 등).
+* 활성화 전에 계산을 수동으로 검증하세요.
+* 예상치 못한 결과가 있는지 워크플로우 실행을 모니터링하세요.
 
-## Related
+## 관련 항목
 
-* [How to Show Expected Amount in Pipeline](/l/ko/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [How to Track Time in Stage](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow Actions](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+* [파이프라인에서 예상 금액 표시하기](/l/ko/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+* [단계에서 시간 추적하기](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)
+* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)

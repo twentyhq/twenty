@@ -5,15 +5,20 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivi
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FileFolder,
   useUploadFileMutation,
 } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useUploadAttachmentFile = () => {
   const coreClient = useApolloCoreClient();
   const [uploadFile] = useUploadFileMutation({ client: coreClient });
+  const isAttachmentMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
+  );
 
   const { createOneRecord: createOneAttachment } =
     useCreateOneRecord<Attachment>({
@@ -42,6 +47,7 @@ export const useUploadAttachmentFile = () => {
 
     const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
       nameSingular: targetableObject.targetObjectNameSingular,
+      isMorphRelation: isAttachmentMigrated,
     });
 
     const attachmentToCreate = {

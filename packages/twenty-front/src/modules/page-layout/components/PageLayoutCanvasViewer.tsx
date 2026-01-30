@@ -18,7 +18,7 @@ export const PageLayoutCanvasViewer = ({
   const widget = widgets.at(0);
 
   if (!isDefined(widget)) {
-    throw new Error('No widget found in canvas layout');
+    return null;
   }
 
   return (

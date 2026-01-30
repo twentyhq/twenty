@@ -192,7 +192,6 @@ export class TimelineActivityService {
 
     const activityTargets =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const activityTargetRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -209,6 +208,7 @@ export class TimelineActivityService {
             },
           });
         },
+        authContext,
       );
 
     if (activityTargets.length === 0) {
@@ -277,7 +277,6 @@ export class TimelineActivityService {
 
     const activities =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const activityRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -303,6 +302,7 @@ export class TimelineActivityService {
             },
           });
         },
+        authContext,
       );
 
     if (activities.length === 0) {

@@ -14,6 +14,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
+import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
@@ -61,6 +62,12 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowCreateRecordActionInput;
 
+    const filteredObjectRecord = filterValidFieldsInRecord(
+      workflowActionInput.objectRecord,
+      objectMetadataInfo.flatObjectMetadata,
+      objectMetadataInfo.flatFieldMetadataMaps,
+    );
+
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
@@ -68,7 +75,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
 
     const toolOutput = await this.createRecordService.execute({
       objectName: workflowActionInput.objectName,
-      objectRecord: workflowActionInput.objectRecord,
+      objectRecord: filteredObjectRecord,
       authContext: executionContext.authContext,
       createdBy,
       rolePermissionConfig: executionContext.rolePermissionConfig,

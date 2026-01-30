@@ -22,6 +22,14 @@ export type AuthContext = {
   };
 };
 
+export type SerializableAuthContext = {
+  userId?: string;
+  userWorkspaceId?: string;
+  workspaceMemberId?: string;
+  apiKeyId?: string;
+  applicationId?: string;
+};
+
 export enum JwtTokenTypeEnum {
   ACCESS = 'ACCESS',
   REFRESH = 'REFRESH',
@@ -47,6 +55,12 @@ export type FileTokenJwtPayload = CommonPropertiesJwtPayload & {
   noteBlockId?: string;
   attachmentId?: string;
   personId?: string;
+};
+
+export type FilesFieldTokenJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.FILE;
+  workspaceId: string;
+  fileId: string;
 };
 
 export type LoginTokenJwtPayload = CommonPropertiesJwtPayload & {
@@ -119,4 +133,5 @@ export type JwtPayload =
   | TransientTokenJwtPayload
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
+  | FilesFieldTokenJwtPayload
   | PostgresProxyTokenJwtPayload;

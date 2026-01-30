@@ -1,5 +1,7 @@
+import gql from 'graphql-tag';
 import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { makeGraphqlAPIRequestWithFileUpload } from 'test/integration/graphql/utils/make-graphql-api-request-with-file-upload.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -26,6 +28,17 @@ export const TEST_UUID_FIELD_VALUE = '20202020-b21e-4ec2-873b-de4264d89025';
 export const TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE =
   '20202020-b21e-4ec2-873b-de4264d89021';
 
+const uploadFilesFieldFileMutation = gql`
+  mutation UploadFilesFieldFile($file: Upload!) {
+    uploadFilesFieldFile(file: $file) {
+      id
+      path
+      size
+      createdAt
+    }
+  }
+`;
+
 export const joinColumnNameForManyToOneMorphRelationField1 =
   computeMorphRelationFieldName({
     fieldName: 'manyToOneMorphRelationField',
@@ -35,7 +48,9 @@ export const joinColumnNameForManyToOneMorphRelationField1 =
     targetObjectMetadataNamePlural: TEST_TARGET_OBJECT_METADATA_NAME_PLURAL_1,
   }) + 'Id';
 
-export const setupTestObjectsWithAllFieldTypes = async () => {
+export const setupTestObjectsWithAllFieldTypes = async (
+  withFilesField: boolean = false,
+) => {
   const createdObjectMetadata = await createOneObjectMetadata({
     input: {
       nameSingular: TEST_OBJECT_METADATA_NAME_SINGULAR,
@@ -94,6 +109,33 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
       ],
     }),
   );
+
+  let uploadedFileId: string | undefined;
+
+  if (withFilesField) {
+    jest.useRealTimers();
+
+    const testFileContent = 'Test document content';
+    const testFileName = 'Document.pdf';
+    const testMimeType = 'application/pdf';
+
+    const uploadResponse = await makeGraphqlAPIRequestWithFileUpload(
+      {
+        query: uploadFilesFieldFileMutation,
+        variables: { file: null },
+      },
+      {
+        field: 'file',
+        buffer: Buffer.from(testFileContent),
+        filename: testFileName,
+        contentType: testMimeType,
+      },
+    );
+
+    jest.useFakeTimers();
+
+    uploadedFileId = uploadResponse.body.data.uploadFilesFieldFile.id;
+  }
 
   await makeGraphqlAPIRequest(
     createManyOperationFactory({
@@ -163,6 +205,16 @@ export const setupTestObjectsWithAllFieldTypes = async () => {
             test: 'test',
           },
           arrayField: ['test'],
+          ...(withFilesField && uploadedFileId
+            ? {
+                filesField: [
+                  {
+                    fileId: uploadedFileId,
+                    label: 'Document.pdf',
+                  },
+                ],
+              }
+            : {}),
         },
         {
           id: v4(),

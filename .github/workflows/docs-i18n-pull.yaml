@@ -24,7 +24,7 @@ on:
   pull_request:
     paths:
       - 'packages/twenty-docs/**'
-      - 'crowdin-docs.yml'
+      - '.github/crowdin-docs.yml'
       - '.github/workflows/docs-i18n-pull.yaml'
 
 concurrency:
@@ -78,7 +78,7 @@ jobs:
           for lang in $LANGUAGES; do
             echo "=== Pulling translations for $lang ==="
             crowdin download \
-              --config crowdin-docs.yml \
+              --config .github/crowdin-docs.yml \
               --token "$CROWDIN_PERSONAL_TOKEN" \
               --base-url "https://twenty.api.crowdin.com" \
               --language "$lang" \
@@ -107,10 +107,13 @@ jobs:
       - name: Regenerate docs.json
         run: yarn docs:generate
 
+      - name: Regenerate documentation paths constants
+        run: yarn docs:generate-paths
+
       - name: Commit artifacts to pull request branch
         if: github.event_name == 'pull_request'
         run: |
-          git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json
+          git add packages/twenty-docs/docs.json packages/twenty-docs/navigation/navigation.template.json packages/twenty-shared/src/constants/DocumentationPaths.ts
           if git diff --staged --quiet --exit-code; then
             echo "No navigation/doc changes to commit."
             exit 0

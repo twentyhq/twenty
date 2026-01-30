@@ -8,7 +8,7 @@ Buradaki amaç, okunması ve bakımı kolay tutarlı bir kod tabanı oluşturmak
 
 Bunun için, biraz daha ayrıntılı olmak, çok kısa olmaktan daha iyidir.
 
-Always keep in mind that people read code more often than they write it, specially on an open source project, where anyone can contribute.
+İnsanların kodu yazmaktan daha sık okuduğunu her zaman aklınızda bulundurun; özellikle herkesin katkıda bulunabildiği açık kaynak bir projede.
 
 Burada tanımlanmayan, ancak linters tarafından otomatik olarak kontrol edilen birçok kural vardır.
 
@@ -18,7 +18,7 @@ Burada tanımlanmayan, ancak linters tarafından otomatik olarak kontrol edilen 
 
 Her zaman TSX fonksiyonel bileşenlerini kullanın.
 
-Do not use default `import` with `const`, because it's harder to read and harder to import with code completion.
+Varsayılan `import`'u `const` ile kullanmayın, çünkü okunması daha zordur ve kod tamamlama ile içe aktarmak daha zordur.
 
 ```tsx
 // ❌ Bad, harder to read, harder to import with code completion
@@ -36,9 +36,9 @@ export function MyComponent() {
 
 ### Özellikler
 
-Create the type of the props and call it `(ComponentName)Props` if there's no need to export it.
+Prop'ların türünü oluşturun ve dışa aktarmaya gerek yoksa ona `(ComponentName)Props` adını verin.
 
-Use props destructuring.
+Props destructuring kullanın.
 
 ```tsx
 // ❌ Bad, no type
@@ -52,7 +52,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-#### Refrain from using `React.FC` or `React.FunctionComponent` to define prop types
+#### Prop türlerini tanımlamak için `React.FC` veya `React.FunctionComponent` kullanmaktan kaçının
 
 ```tsx
 /* ❌ - Bad, defines the component type annotations with `FC`
@@ -67,10 +67,9 @@ const EmailField: React.FC<{
 ```
 
 ```tsx
-/* ✅ - Good, a separate type (OwnProps) is explicitly defined for the
- *      component's props
- *    - This method doesn't automatically include the children prop. If
- *      you want to include it, you have to specify it in OwnProps.
+/* ✅ - İyi, bileşenin prop'ları için ayrı bir tür (OwnProps) açıkça tanımlanmıştır
+ *  - Bu yöntem çocuk prop'unu otomatik olarak içermez. 
+ *    Onu dahil etmek istiyorsanız, OwnProps'ta belirtmeniz gerekir.
  */
 type EmailFieldProps = {
   value: string;
@@ -94,8 +93,8 @@ const MyComponent = (props: OwnProps) => {
 ```
 
 ```tsx
-/* ✅ - Good, Explicitly lists all props
- *    - Enhances readability and maintainability
+/* ✅ - İyi, tüm prop'ları açıkça listeler
+ *  - Okunabilirliği ve bakımı arttırır
  */
 const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
   return <OtherComponent {...{ prop1, prop2, prop3 }} />;
@@ -123,18 +122,18 @@ const value = process.env.MY_VALUE ?? 'default';
 ### Opsiyonel zincirleme `?.` kullanın
 
 ```tsx
-// ❌ Bad
+// ❌ Kötü
 onClick && onClick();
 
-// ✅ Good
+// ✅ İyi
 onClick?.();
 ```
 
 ## TypeScript
 
-### Use `type` instead of `interface`
+### `interface` yerine `type` kullanın
 
-Always use `type` instead of `interface`, because they almost always overlap, and `type` is more flexible.
+Neredeyse her zaman örtüştükleri ve `type` daha esnek olduğu için her zaman `interface` yerine `type` kullanın.
 
 ```tsx
 // ❌ Bad
@@ -148,7 +147,7 @@ type MyType = {
 };
 ```
 
-### Use string literals instead of enums
+### enum'lar yerine string literal'leri kullanın
 
 [String literalleri](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types), TypeScript'te enum benzeri değerleri yönetmek için en iyi yöntemdir. Pick ve Omit ile genişletilmesi daha kolay olur ve özellikle kod tamamlama ile daha iyi bir geliştirici deneyimi sunarlar.
 
@@ -192,13 +191,13 @@ setHotkeyScopeAndMemorizePreviousScope(
 
 ## Şekil Verme
 
-### Use StyledComponents
+### StyledComponents kullanın
 
-Style the components with [styled-components](https://emotion.sh/docs/styled).
+Bileşenleri [styled-components](https://emotion.sh/docs/styled) ile stillendirin.
 
 ```tsx
-// ❌ Bad
-<div className="my-class">Hello World</div>
+// ❌ Kötü
+<div className=\"my-class\">Hello World</div>
 ```
 
 ```tsx
@@ -258,7 +257,7 @@ const StyledButton = styled.button`
 `;
 ```
 
-## Enforcing No-Type Imports
+## Tip içermeyen importları zorunlu kılma
 
 Tip ithalatlarından kaçının. Bu standardı uygulamak için bir ESLint kuralı, herhangi bir tip ithalatını kontrol eder ve raporlar. Bu, TypeScript kodunda tutarlılık ve okunabilirliği sağlamaya yardımcı olur.
 
@@ -285,6 +284,6 @@ import { Meta, StoryObj } from '@storybook/react';
 
 ESLint kuralı, `@typescript-eslint/consistent-type-imports`, tip ithalat standardını uygular. Bu kural, herhangi bir tip ithalat ihlali için hata veya uyarı üretir.
 
-Lütfen unutmayın ki bu kural, istemeden yapılan tip ithalatlarının gerçekleştiği nadir durumları özellikle ele alır. TypeScript itself discourages this practice, as mentioned in the [TypeScript 3.8 release notes](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Çoğu durumda, yalnızca tip ithalatları kullanmanıza gerek yoktur.
+Lütfen unutmayın ki bu kural, istemeden yapılan tip ithalatlarının gerçekleştiği nadir durumları özellikle ele alır. TypeScript'in kendisi, [TypeScript 3.8 sürüm notlarında](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html) belirtildiği gibi, bu uygulamayı caydırmaktadır. Çoğu durumda, yalnızca tip ithalatları kullanmanıza gerek yoktur.
 
 Kodunuzun bu kurala uygun olduğundan emin olmak için, geliştirme iş akışınızın bir parçası olarak ESLint'i çalıştırdığınızdan emin olun.

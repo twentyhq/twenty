@@ -3,8 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildCreatedByFromApiKey } from 'src/engine/core-modules/actor/utils/build-created-by-from-api-key.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
@@ -99,10 +98,6 @@ export class ActorFromAuthContextService {
         },
       );
 
-    this.logger.log(
-      `Injecting ${fieldName} from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
-    );
-
     const { idByNameSingular } = buildObjectIdByNameMaps(
       flatObjectMetadataMaps,
     );
@@ -169,7 +164,6 @@ export class ActorFromAuthContextService {
 
     if (isDefined(user)) {
       return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext as WorkspaceAuthContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -191,6 +185,7 @@ export class ActorFromAuthContextService {
             workspaceMemberId: workspaceMember.id,
           });
         },
+        authContext as WorkspaceAuthContext,
       );
     }
 

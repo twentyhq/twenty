@@ -1,0 +1,127 @@
+---
+title: 通知团队成员审阅笔记
+description: 当指派同事审阅笔记时，自动发送电子邮件通知。
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+<Note>
+  **目前尚不支持在笔记中直接标记团队成员。** 此功能计划在 2026 年下半年推出。 在此期间，此工作流提供一个实用的变通方案。
+</Note>
+
+## 挑战
+
+你希望在笔记中标记一位同事，以便其收到审阅通知。 目前，Twenty 不支持在笔记或任务中使用 @ 提及。
+
+## 变通方案
+
+不用在笔记正文中标记，而是可以：
+
+1. 在笔记对象上创建一个 **Reviewer** 关系字段
+2. 在创建或编辑笔记时指定审阅人
+3. 工作流会自动向审阅人发送一封包含该笔记链接的电子邮件
+
+<Warning>
+  **限制**：此方法每个字段只能指定一位审阅人。 如果需要通知多人，请创建额外的关系字段（例如，Reviewer 1、Reviewer 2）。 这在需要一次性标记许多协作者时扩展性不佳。
+</Warning>
+
+## 分步设置
+
+### 步骤 1：创建 Reviewer 字段
+
+<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+
+1. 进入 **设置 → 数据模型 → 笔记**
+2. 点击 **添加字段**
+3. 配置:
+
+| 设置       | 值              |
+| -------- | -------------- |
+| **Name** | Reviewer       |
+| **类型**   | 关系             |
+| **关联对象** | 工作区成员          |
+| **关系类型** | 多条笔记 → 一个工作区成员 |
+
+4. 保存该字段
+
+### 步骤 2：创建工作流
+
+<VimeoEmbed videoId="1151897168" title="视频演示" />
+
+#### 创建工作流触发器
+
+1. 转到主视图并创建一个新工作流
+2. 选择 **记录已更新** 作为触发器
+3. 选择 **笔记** 作为对象，并指定 Reviewer 字段。
+4. 每当笔记的审阅人被更新时都会触发。
+
+#### 添加筛选器以检查是否刚刚指定了审阅人
+
+添加一个 **筛选** 操作，仅在指定了审阅人时才继续：
+
+| 条件           | 值   |
+| ------------ | --- |
+| **Reviewer** | 不为空 |
+
+#### 搜索该工作区成员
+
+1. 添加 **搜索记录** 操作
+2. 选择 **Workspace Member**（位于高级对象下）
+3. 添加过滤器：
+
+| 条件     | 值                        |
+| ------ | ------------------------ |
+| **ID** | 等于 `{{note.reviewerId}}` |
+
+这将检索完整的工作区成员记录，包括其电子邮件地址和姓名。
+
+#### 发送通知邮件
+
+1. 添加 **Send Email** 操作
+2. 配置:
+
+| 字段      | 值                      |
+| ------- | ---------------------- |
+| **收件人** | 搜索记录 → 第一个工作区成员 → 用户邮箱 |
+| **主题**  | 有一条笔记需要你审阅             |
+| **正文**  | 请参见下方示例                |
+
+**电子邮件正文示例：**
+
+```text
+Hi {{searchRecord.firstWorkspaceMember.name.firstName}},
+
+You've been assigned to review a note.
+
+View the note here:
+https://yourSubDomain.twenty.com/object/note/{{recordIsUpdated.id}}
+
+Best,
+Twenty
+```
+
+<Note>
+  将 `yourSubDomain` 替换为你实际的 Twenty 工作区子域名。
+</Note>
+
+#### 测试并激活
+
+1. 点击 **Test** 以手动运行工作流
+2. 创建或编辑一条笔记并指定审阅人
+3. 在审阅人的收件箱中查收通知邮件
+4. 激活工作流
+
+## 用法
+
+设置完成后，你的团队可以通过以下方式使用此工作流：
+
+1. 创建新笔记（或编辑现有笔记）
+2. 在 **Reviewer** 字段中选择一位同事
+3. 该同事会自动收到一封包含该笔记直达链接的电子邮件
+
+## 相关内容
+
+* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)
+* [创建自定义字段](/l/zh/user-guide/data-model/how-tos/create-custom-fields)
+* [创建关系字段](/l/zh/user-guide/data-model/how-tos/create-relation-fields)

@@ -3,8 +3,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { FileFolder } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -25,7 +24,9 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}
 
-  @Mutation(() => SignedFileDTO)
+  @Mutation(() => SignedFileDTO, {
+    deprecationReason: 'Use uploadFilesFieldFile instead',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

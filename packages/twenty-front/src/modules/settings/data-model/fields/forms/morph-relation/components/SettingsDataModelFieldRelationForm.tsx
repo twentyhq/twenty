@@ -55,6 +55,12 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   ),
   targetFieldLabel: z.string().min(1),
   iconOnDestination: z.string().min(1),
+  settings: z
+    .object({
+      junctionTargetFieldId: z.string().optional(),
+    })
+    .catchall(z.unknown())
+    .optional(),
 });
 
 export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
@@ -62,17 +68,27 @@ export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldRelationFormProps = {
+  sourceObjectMetadataId: string;
   existingFieldMetadataId: string;
   disabled?: boolean;
 };
 
 export const SettingsDataModelFieldRelationForm = ({
   existingFieldMetadataId,
+  sourceObjectMetadataId,
   disabled = false,
 }: SettingsDataModelFieldRelationFormProps) => {
   const { t } = useLingui();
-  const { control } =
-    useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
+  const { control, watch } = useFormContext();
+
+  const currentIds = watch('morphRelationObjectMetadataIds') as
+    | string[]
+    | undefined;
+
+  const isSelfInDestinationForMorphRelation =
+    isDefined(currentIds) &&
+    currentIds.length > 1 &&
+    currentIds.includes(sourceObjectMetadataId);
 
   const { fieldMetadataItem: existingFieldMetadataItem } =
     useFieldMetadataItemById(existingFieldMetadataId);
@@ -85,11 +101,11 @@ export const SettingsDataModelFieldRelationForm = ({
   const initialRelationObjectMetadataItems =
     useRelationSettingsFormInitialTargetObjectMetadatas({
       fieldMetadataItem: existingFieldMetadataItem,
+      sourceObjectMetadataId,
     });
 
   const initialRelationType =
-    existingFieldMetadataItem?.settings?.relationType ??
-    RelationType.ONE_TO_MANY;
+    existingFieldMetadataItem?.relation?.type ?? RelationType.ONE_TO_MANY;
 
   const { label: defaultLabelOnDestination, icon: defaultIconOnDestination } =
     useRelationSettingsFormDefaultValuesTargetFieldMetadata({
@@ -137,6 +153,11 @@ export const SettingsDataModelFieldRelationForm = ({
               selectedObjectMetadataIds={value}
               withSearchInput={true}
               onChange={onChange}
+              error={
+                isSelfInDestinationForMorphRelation
+                  ? t`Relations cannot include the source object when multiple destinations are selected.`
+                  : undefined
+              }
             />
           )}
         />

@@ -85,7 +85,7 @@ export const renameRelatedMorphFieldOnObjectNamesUpdate = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: fromFlatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: fromFlatObjectMetadata.fieldIds,
     });
 
   const allMorphRelationFlatFieldMetadatas =

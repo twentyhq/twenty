@@ -1,34 +1,77 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import type {
   DatabaseEventPayload,
   ObjectRecordEvent,
 } from 'twenty-shared/database-events';
 
+import { type LogicFunctionTriggerJobData } from 'src/engine/metadata-modules/logic-function/jobs/logic-function-trigger.job';
+import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
-import { type ServerlessFunctionTriggerJobData } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
 
 export const transformEventBatchToEventPayloads = ({
   workspaceEventBatch,
-  databaseEventListeners,
+  logicFunctions,
 }: {
   workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
-  databaseEventListeners: DatabaseEventTriggerEntity[];
-}): ServerlessFunctionTriggerJobData[] => {
-  const result: ServerlessFunctionTriggerJobData[] = [];
+  logicFunctions: LogicFunctionEntity[];
+}): LogicFunctionTriggerJobData[] => {
+  const result: LogicFunctionTriggerJobData[] = [];
+  const { events, ...batchEventInfo } = workspaceEventBatch;
+  const [, operation] = workspaceEventBatch.name.split('.');
 
-  for (const databaseEventListener of databaseEventListeners) {
-    const { events, ...batchEventInfo } = workspaceEventBatch;
+  for (const logicFunction of logicFunctions) {
+    const triggerUpdatedFields =
+      logicFunction.databaseEventTriggerSettings?.updatedFields;
 
-    for (const event of events) {
+    const filteredEvents = filterEventsByUpdatedFields({
+      events,
+      operation,
+      triggerUpdatedFields,
+    });
+
+    for (const event of filteredEvents) {
       const payload: DatabaseEventPayload = { ...batchEventInfo, ...event };
 
       result.push({
-        serverlessFunctionId: databaseEventListener.serverlessFunction.id,
-        workspaceId: databaseEventListener.workspaceId,
+        logicFunctionId: logicFunction.id,
+        workspaceId: logicFunction.workspaceId,
         payload,
       });
     }
   }
 
   return result;
+};
+
+const filterEventsByUpdatedFields = ({
+  events,
+  operation,
+  triggerUpdatedFields,
+}: {
+  events: ObjectRecordEvent[];
+  operation: string;
+  triggerUpdatedFields?: string[];
+}): ObjectRecordEvent[] => {
+  if (
+    operation !== 'updated' ||
+    !isDefined(triggerUpdatedFields) ||
+    triggerUpdatedFields.length === 0
+  ) {
+    return events;
+  }
+
+  return events.filter((event) => {
+    const eventUpdatedFields = (
+      event.properties as { updatedFields?: string[] }
+    )?.updatedFields;
+
+    if (!isDefined(eventUpdatedFields) || eventUpdatedFields.length === 0) {
+      return false;
+    }
+
+    return eventUpdatedFields.some((fieldName: string) =>
+      triggerUpdatedFields.includes(fieldName),
+    );
+  });
 };

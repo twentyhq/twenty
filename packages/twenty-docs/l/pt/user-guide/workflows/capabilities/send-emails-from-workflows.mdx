@@ -1,46 +1,46 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: Enviar e-mails a partir de Fluxos de Trabalho
+description: Envie e-mails personalizados automaticamente usando ações de Fluxos de Trabalho.
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+Envie e-mails automaticamente quando eventos específicos ocorrerem no seu CRM — dê boas-vindas a novos contatos, faça acompanhamento de oportunidades ou notifique membros da equipe.
 
-## Prerequisites
+## Pré-requisitos
 
-Before you can send emails from workflows:
+Antes de enviar e-mails a partir de fluxos de trabalho:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. Conecte uma conta de e-mail em **Configurações → Contas**
+2. Garanta que a conta tenha as permissões de envio ativadas
 
-## Basic Email Workflow
+## Fluxo de Trabalho de E-mail Básico
 
-### Example: Welcome Email for New Contacts
+### Exemplo: E-mail de boas-vindas para novos contatos
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**Objetivo**: Enviar um e-mail de boas-vindas quando uma nova pessoa for adicionada ao CRM.
 
-**Setup**:
+**Configuração**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **Criar fluxo de trabalho**: Vá até **Configurações → Fluxos de Trabalho** e clique em **+ Novo Fluxo de Trabalho**
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **Adicionar gatilho**: Selecione **Registro é Criado** → **Pessoas**
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **Adicionar ação Enviar E-mail**:
+   * Clique em **+** para adicionar uma ação
+   * Selecione **Enviar E-mail**
+   * Configure o e-mail:
 
-| Field       | Value                                  |
+| Campo       | Valor                                  |
 | ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `Welcome to {{Your Company Name}}`     |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| **Para**    | `{{trigger.object.email}}`             |
+| **Assunto** | `Bem-vindo ao {{Your Company Name}}`   |
+| **Corpo**   | `Hi {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **Testar e ativar**: Teste com um registro de exemplo e, em seguida, ative
 
-## Using Variables in Emails
+## Usando variáveis em e-mails
 
-Reference data from previous steps using `{{variable}}` syntax:
+Referencie dados de etapas anteriores usando a sintaxe `{{variable}}`:
 
 ```text
 Hi {{trigger.object.firstName}},
@@ -53,97 +53,116 @@ Best regards,
 The Team
 ```
 
-### Available Variables from Triggers
+### Variáveis disponíveis dos gatilhos
 
-| Trigger Type               | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| Tipo de Trigger                | Variáveis comuns                       |
+| ------------------------------ | -------------------------------------- |
+| **Registro Criado/Atualizado** | `{{trigger.object.fieldName}}`         |
+| **Manual**                     | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                    | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## Avançado: E-mails condicionais
 
-### Example: Different Emails Based on Lead Source
+### Exemplo: E-mails diferentes com base na origem do lead
 
-**Goal**: Send different welcome emails based on where the lead came from.
+**Objetivo**: Enviar e-mails de boas-vindas diferentes com base na origem do lead.
 
-**Setup**:
+**Configuração**:
 
-1. **Trigger**: Record is Created (People)
+1. **Gatilho**: Registro é Criado (Pessoas)
 
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
+2. **Adicionar ação de Filtro**:
+   * Condição: `{{trigger.object.source}}` é igual a `"Website"`
+   * Se verdadeiro → continue para o e-mail de boas-vindas do site
 
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
+3. **Ramificação para outras origens**:
+   * Crie ramificações paralelas para origens diferentes
+   * Cada ramificação tem sua própria ação Enviar E-mail
 
-## Sending Emails to Multiple Recipients
+## Envio de e-mails para vários destinatários
 
-### Example: Notify Team When Deal Closes
+### Exemplo: Notificar a equipe quando o negócio for fechado
 
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**Objetivo**: Enviar e-mail ao representante de vendas e ao seu gerente quando uma oportunidade for ganha.
 
-**Setup**:
+**Configuração**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **Gatilho**: Registro é Atualizado (Oportunidades, Estágio = "Closed Won")
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Pesquisar Registros**: Encontre o gerente do proprietário da oportunidade
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Enviar E-mail nº 1**: Para o proprietário da oportunidade
+   * Para: `{{trigger.object.owner.email}}`
+   * Assunto: `Congratulations on closing {{trigger.object.name}}!`
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+4. **Enviar E-mail nº 2**: Para o gerente
+   * Para: `{{searchRecords.manager.email}}`
+   * Assunto: `Deal Won: {{trigger.object.name}}`
 
-## Scheduled Follow-up Emails
+## E-mails de acompanhamento agendados
 
-### Example: Follow Up 3 Days After Meeting
+### Exemplo: Acompanhar 3 dias após a reunião
 
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**Objetivo**: Enviar um e-mail de acompanhamento 3 dias após o registro de uma reunião.
 
-**Setup**:
+**Configuração**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **Gatilho**: Registro é Criado (Atividades, Tipo = "Reunião")
 
-2. **Delay action**: Wait 3 days
+2. **Ação de atraso**: Aguarde 3 dias
 
-3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+3. **Enviar E-mail**:
+   * Para: Participante da reunião
+   * Assunto: Acompanhamento da nossa conversa
+   * Corpo: Referencie detalhes da reunião a partir do gatilho
 
-## Best Practices
+## Anexos de e-mail
 
-### Email Content
+Você pode anexar arquivos a e-mails enviados a partir de fluxos de trabalho. O anexo é um arquivo estático que você faz upload ao configurar o fluxo de trabalho.
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+### Como adicionar um anexo
 
-### Deliverability
+1. Na ação **Enviar e-mail**, clique no botão **Anexos**
+2. Clique para fazer upload de um arquivo do seu computador
+3. O arquivo será anexado a todos os e-mails enviados por esta ação
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+### Casos de Uso Comuns
 
-### Troubleshooting
-
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+| Caso de uso                   | Arquivo de exemplo                      |
+| ----------------------------- | --------------------------------------- |
+| **E-mails de boas-vindas**    | Brochura da empresa (PDF)               |
+| **Sequências de integração**  | Guia de primeiros passos                |
+| **Acompanhamentos de Vendas** | Catálogo de produtos ou lista de preços |
+| **Confirmações de evento**    | Detalhes ou agenda do evento            |
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  Os anexos são estáticos — o mesmo arquivo é enviado a todos os destinatários. Para documentos dinâmicos (como cotações personalizadas), gere e anexe arquivos usando uma [Função Lógica](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
-## Related
+## Melhores Práticas
 
-* [Workflow Triggers](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+### Conteúdo do e-mail
+
+* Mantenha as linhas de assunto concisas e relevantes
+* Personalize com o nome do destinatário
+* Inclua uma chamada para ação clara
+* Teste os e-mails antes de ativar
+
+### Entregabilidade
+
+* Não envie muitos e-mails muito rapidamente
+* Use assinaturas de e-mail profissionais
+* Evite palavras que acionem spam
+* Garanta opções de cancelamento de inscrição para e-mails de marketing
+
+### Resolução de Problemas
+
+* Verifique se a conta de e-mail está conectada e ativa
+* Verifique se o endereço de e-mail do destinatário é válido
+* Revise as execuções do fluxo de trabalho em busca de mensagens de erro
+* Teste primeiro com o seu próprio endereço de e-mail
+
+## Relacionados
+
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)

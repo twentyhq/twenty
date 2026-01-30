@@ -13,15 +13,20 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { useRegisterObjectOperation } from '@/object-record/hooks/useRegisterObjectOperation';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import {
+  type ObjectRecord as ObjectRecordShared,
+  type RecordGqlOperationGqlRecordFields,
+} from 'twenty-shared/types';
+
+import { type BaseObjectRecord } from '@/object-record/types/BaseObjectRecord';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useRecoilValue } from 'recoil';
@@ -43,7 +48,6 @@ export const useCreateOneRecord = <
   shouldMatchRootQueryFilter,
 }: useCreateOneRecordProps) => {
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { registerObjectOperation } = useRegisterObjectOperation();
   const apolloCoreClient = useApolloCoreClient();
   const [loading, setLoading] = useState(false);
 
@@ -75,9 +79,7 @@ export const useCreateOneRecord = <
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const { refetchAggregateQueries } = useRefetchAggregateQueries({
-    objectMetadataNamePlural: objectMetadataItem.namePlural,
-  });
+  const { refetchAggregateQueries } = useRefetchAggregateQueries();
 
   const createOneRecord = async (recordInput: Partial<CreatedObjectRecord>) => {
     setLoading(true);
@@ -136,7 +138,7 @@ export const useCreateOneRecord = <
       getCreateOneRecordMutationResponseField(objectNameSingular);
 
     const createdObject = await apolloCoreClient
-      .mutate({
+      .mutate<ObjectRecord>({
         mutation: createOneRecordMutation,
         variables: {
           input: sanitizedInput,
@@ -185,16 +187,35 @@ export const useCreateOneRecord = <
         throw error;
       });
 
-    await refetchAggregateQueries();
+    await refetchAggregateQueries({
+      objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
 
-    registerObjectOperation(objectMetadataItem, { type: 'create-one' });
+    const positionToUse =
+      recordInput.position === 'first'
+        ? 'first'
+        : recordInput.position === 'last'
+          ? 'last'
+          : null;
 
-    if (!isDefined(createdObject.data?.[mutationResponseField])) {
+    const createdRecord = createdObject.data?.[
+      mutationResponseField
+    ] as ObjectRecordShared & BaseObjectRecord;
+
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem,
+      operation: {
+        type: 'create-one',
+        createdRecord: { ...createdRecord, position: positionToUse },
+      },
+    });
+
+    if (!isDefined(createdRecord)) {
       throw new CustomError('Failed to create record');
     }
 
     return getRecordFromRecordNode({
-      recordNode: createdObject.data?.[mutationResponseField],
+      recordNode: createdRecord,
     });
   };
 

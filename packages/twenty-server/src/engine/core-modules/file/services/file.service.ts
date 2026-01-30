@@ -4,7 +4,10 @@ import { basename, dirname, extname } from 'path';
 import { type Readable } from 'stream';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { buildSignedPath } from 'twenty-shared/utils';
+import {
+  buildSignedPath,
+  extractFolderPathFilenameAndTypeOrThrow,
+} from 'twenty-shared/utils';
 import { v4 as uuidV4 } from 'uuid';
 
 import {
@@ -12,7 +15,6 @@ import {
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -31,9 +33,8 @@ export class FileService {
   ): Promise<Readable> {
     const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
 
-    return await this.fileStorageService.read({
-      folderPath: workspaceFolderPath,
-      filename,
+    return await this.fileStorageService.readFile({
+      filePath: `${workspaceFolderPath}/${filename}`,
     });
   }
 
@@ -45,7 +46,7 @@ export class FileService {
     return buildSignedPath({
       path: url,
       token: this.encodeFileToken({
-        filename: extractFolderPathAndFilename(url).filename,
+        filename: extractFolderPathFilenameAndTypeOrThrow(url).filename,
         workspaceId,
       }),
     });
@@ -94,7 +95,9 @@ export class FileService {
     const workspaceFolderPath = `workspace-${workspaceId}`;
 
     const isWorkspaceFolderFound =
-      await this.fileStorageService.checkFolderExists(workspaceFolderPath);
+      await this.fileStorageService.checkFolderExists({
+        folderPath: workspaceFolderPath,
+      });
 
     if (!isWorkspaceFolderFound) {
       return;

@@ -4,9 +4,9 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, IsNull, Not, type Repository } from 'typeorm';
+import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
@@ -95,47 +95,44 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
   async createWorkspaceMember(workspaceId: string, user: UserEntity) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
-          where: {
-            userId: user.id,
-            workspaceId,
-          },
-        });
-
-        await workspaceMemberRepository.insert({
-          name: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-          },
-          colorScheme: 'System',
-          userId: user.id,
-          userEmail: user.email,
-          avatarUrl: userWorkspace.defaultAvatarUrl ?? '',
-          locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
-        });
-
-        const workspaceMember = await workspaceMemberRepository.find({
-          where: {
-            userId: user.id,
-          },
-        });
-
-        assert(
-          workspaceMember?.length === 1,
-          `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          workspaceId,
+          'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
-      },
-    );
+
+      const userWorkspace = await this.userWorkspaceRepository.findOneOrFail({
+        where: {
+          userId: user.id,
+          workspaceId,
+        },
+      });
+
+      await workspaceMemberRepository.insert({
+        name: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        colorScheme: 'System',
+        userId: user.id,
+        userEmail: user.email,
+        avatarUrl: userWorkspace.defaultAvatarUrl ?? '',
+        locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
+      });
+
+      const workspaceMember = await workspaceMemberRepository.find({
+        where: {
+          userId: user.id,
+        },
+      });
+
+      assert(
+        workspaceMember?.length === 1,
+        `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
+      );
+    }, authContext);
   }
 
   async addUserToWorkspaceIfUserNotInWorkspace(
@@ -356,7 +353,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -377,6 +373,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
         return workspaceMember;
       },
+      authContext,
     );
   }
 

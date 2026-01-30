@@ -2,15 +2,9 @@
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for cronTrigger 1`] = `
+exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `
 [
-  "serverlessFunction",
-]
-`;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for databaseEventTrigger 1`] = `
-[
-  "serverlessFunction",
+  "objectMetadata",
 ]
 `;
 
@@ -24,9 +18,21 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for frontComponent 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for index 1`] = `
 [
   "objectMetadata",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for logicFunction 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for navigationMenuItem 1`] = `
+[
+  "objectMetadata",
+  "navigationMenuItem",
+  "view",
 ]
 `;
 
@@ -62,18 +68,14 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 exports[`getMetadataRelatedMetadataNames should return related metadata names for role 1`] = `
 [
   "roleTarget",
+  "rowLevelPermissionPredicate",
+  "rowLevelPermissionPredicateGroup",
 ]
 `;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for roleTarget 1`] = `
 [
   "role",
-]
-`;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for routeTrigger 1`] = `
-[
-  "serverlessFunction",
 ]
 `;
 
@@ -92,14 +94,6 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "role",
   "rowLevelPermissionPredicateGroup",
   "rowLevelPermissionPredicate",
-]
-`;
-
-exports[`getMetadataRelatedMetadataNames should return related metadata names for serverlessFunction 1`] = `
-[
-  "cronTrigger",
-  "databaseEventTrigger",
-  "routeTrigger",
 ]
 `;
 
@@ -144,3 +138,5 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "view",
 ]
 `;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for webhook 1`] = `[]`;

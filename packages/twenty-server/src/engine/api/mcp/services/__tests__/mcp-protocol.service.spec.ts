@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { jsonSchema } from 'ai';
 
@@ -12,8 +13,10 @@ import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('McpProtocolService', () => {
   let service: McpProtocolService;
@@ -22,15 +25,32 @@ describe('McpProtocolService', () => {
   let userRoleService: jest.Mocked<UserRoleService>;
   let mcpToolExecutorService: jest.Mocked<McpToolExecutorService>;
   let apiKeyRoleService: jest.Mocked<ApiKeyRoleService>;
+  let userWorkspaceRepository: jest.Mocked<{ findOne: jest.Mock }>;
+  let workspaceCacheService: jest.Mocked<{ getOrRecompute: jest.Mock }>;
 
   const mockWorkspace = { id: 'workspace-1' } as WorkspaceEntity;
   const mockUserWorkspaceId = 'user-workspace-1';
+  const mockUserId = 'user-1';
+  const mockWorkspaceMemberId = 'workspace-member-1';
   const mockRoleId = 'role-1';
   const mockAdminRoleId = 'admin-role-1';
   const mockApiKey = {
     id: 'api-key-1',
     workspaceId: mockWorkspace.id,
   } as ApiKeyEntity;
+  const mockUser = { id: mockUserId };
+  const mockUserWorkspace = {
+    id: mockUserWorkspaceId,
+    user: mockUser,
+  };
+  const mockWorkspaceMember = {
+    id: mockWorkspaceMemberId,
+    userId: mockUserId,
+  };
+  const mockFlatWorkspaceMemberMaps = {
+    idByUserId: { [mockUserId]: mockWorkspaceMemberId },
+    byId: { [mockWorkspaceMemberId]: mockWorkspaceMember },
+  };
 
   beforeEach(async () => {
     const mockFeatureFlagService = {
@@ -52,6 +72,15 @@ describe('McpProtocolService', () => {
 
     const mockApiKeyRoleService = {
       getRoleIdForApiKeyId: jest.fn().mockResolvedValue(mockAdminRoleId),
+    };
+
+    const mockWorkspaceCacheService = {
+      getOrRecompute: jest.fn(),
+      invalidateAndRecompute: jest.fn(),
+    };
+
+    const mockUserWorkspaceRepository = {
+      findOne: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -77,6 +106,14 @@ describe('McpProtocolService', () => {
           provide: ApiKeyRoleService,
           useValue: mockApiKeyRoleService,
         },
+        {
+          provide: WorkspaceCacheService,
+          useValue: mockWorkspaceCacheService,
+        },
+        {
+          provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: mockUserWorkspaceRepository,
+        },
       ],
     }).compile();
 
@@ -86,6 +123,10 @@ describe('McpProtocolService', () => {
     userRoleService = module.get(UserRoleService);
     mcpToolExecutorService = module.get(McpToolExecutorService);
     apiKeyRoleService = module.get(ApiKeyRoleService);
+    userWorkspaceRepository = module.get(
+      getRepositoryToken(UserWorkspaceEntity),
+    );
+    workspaceCacheService = module.get(WorkspaceCacheService);
   });
 
   it('should be defined', () => {
@@ -216,6 +257,10 @@ describe('McpProtocolService', () => {
     it('should handle tools/call method with userWorkspaceId', async () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(true);
       userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(mockRoleId);
+      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        flatWorkspaceMemberMaps: mockFlatWorkspaceMemberMaps,
+      });
 
       const mockTool = {
         description: 'Test tool',
@@ -322,6 +367,10 @@ describe('McpProtocolService', () => {
     it('should handle tools listing', async () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(true);
       userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(mockRoleId);
+      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        flatWorkspaceMemberMaps: mockFlatWorkspaceMemberMaps,
+      });
 
       const mockToolsMap = {
         testTool: {
@@ -398,6 +447,10 @@ describe('McpProtocolService', () => {
     it('should handle error when tool is not found', async () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(true);
       userRoleService.getRoleIdForUserWorkspace.mockResolvedValue(mockRoleId);
+      userWorkspaceRepository.findOne.mockResolvedValue(mockUserWorkspace);
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        flatWorkspaceMemberMaps: mockFlatWorkspaceMemberMaps,
+      });
       toolRegistryService.getToolsByCategories.mockResolvedValue({});
 
       mcpToolExecutorService.handleToolCall.mockRejectedValue(

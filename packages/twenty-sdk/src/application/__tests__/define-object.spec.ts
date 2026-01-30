@@ -1,4 +1,4 @@
-import { defineObject } from '../objects/define-object';
+import { defineObject } from '@/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type ObjectManifest } from 'twenty-shared/application';
 
@@ -114,38 +114,6 @@ describe('defineObject', () => {
     expect(result.fields).toBeUndefined();
   });
 
-  it('should throw error when field is missing universalIdentifier', () => {
-    const config = {
-      ...validConfig,
-      fields: [
-        {
-          type: FieldMetadataType.TEXT,
-          label: 'Content',
-        },
-      ],
-    };
-
-    expect(() => defineObject(config as any)).toThrow(
-      'Field "Content" must have a universalIdentifier',
-    );
-  });
-
-  it('should throw error when field is missing type', () => {
-    const config = {
-      ...validConfig,
-      fields: [
-        {
-          universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-          label: 'Content',
-        },
-      ],
-    };
-
-    expect(() => defineObject(config as any)).toThrow(
-      'Field "Content" must have a type',
-    );
-  });
-
   it('should throw error when field is missing label', () => {
     const config = {
       ...validConfig,
@@ -175,7 +143,26 @@ describe('defineObject', () => {
       ],
     };
 
-    expect(() => defineObject(config as any)).toThrow('Field must have a name');
+    expect(() => defineObject(config as any)).toThrow(
+      'Field "Content" must have a name',
+    );
+  });
+
+  it('should throw error when field is missing universalIdentifier', () => {
+    const config = {
+      ...validConfig,
+      fields: [
+        {
+          type: FieldMetadataType.TEXT,
+          name: 'content',
+          label: 'Content',
+        },
+      ],
+    };
+
+    expect(() => defineObject(config as any)).toThrow(
+      'Field "Content" must have a universalIdentifier',
+    );
   });
 
   it('should throw error when SELECT field has no options', () => {

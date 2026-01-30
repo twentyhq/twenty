@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isNull, isUndefined } from '@sniptt/guards';
 import {
-  FieldMetadataRelationSettings,
+  FieldMetadataSettingsMapping,
   FieldMetadataType,
   ObjectRecord,
   RelationType,
@@ -29,6 +29,7 @@ import { validateBooleanFieldOrThrow } from 'src/engine/api/common/common-args-p
 import { validateCurrencyFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util';
 import { validateDateAndDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-and-date-time-field-or-throw.util';
 import { validateEmailsFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-field-or-throw.util';
+import { validateFilesFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { validateFullNameFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-full-name-field-or-throw.util';
 import { validateLinksFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util';
 import { validateMultiSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-multi-select-field-or-throw.util';
@@ -217,7 +218,7 @@ export class DataArgProcessor {
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const fieldMetadataRelationSettings =
-          fieldMetadata.settings as FieldMetadataRelationSettings;
+          fieldMetadata.settings as FieldMetadataSettingsMapping['RELATION'];
 
         if (
           fieldMetadataRelationSettings.relationType ===
@@ -245,6 +246,15 @@ export class DataArgProcessor {
         const validatedValue = validateEmailsFieldOrThrow(value, key);
 
         return transformEmailsValue(validatedValue);
+      }
+      case FieldMetadataType.FILES: {
+        const validatedValue = validateFilesFieldOrThrow(
+          value,
+          key,
+          fieldMetadata.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES],
+        );
+
+        return transformRawJsonField(validatedValue);
       }
       case FieldMetadataType.FULL_NAME: {
         const validatedValue = validateFullNameFieldOrThrow(value, key);

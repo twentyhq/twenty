@@ -2,6 +2,7 @@ import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/Pre
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
+import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -44,7 +45,8 @@ export const useChipFieldDisplay = () => {
     isFieldText(fieldDefinition) ||
     isFieldFullName(fieldDefinition) ||
     isFieldNumber(fieldDefinition) ||
-    isFieldActor(fieldDefinition)
+    isFieldActor(fieldDefinition) ||
+    isFieldUuid(fieldDefinition)
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 

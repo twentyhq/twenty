@@ -11,7 +11,6 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from 'twenty-ui/testing';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<typeof SnackBar> = {
   title: 'UI/Feedback/SnackBarManager/SnackBar',
@@ -36,7 +35,7 @@ export default meta;
 type Story = StoryObj<typeof SnackBar>;
 
 export const Default: Story = {
-  decorators: [ComponentDecorator, I18nFrontDecorator],
+  decorators: [ComponentDecorator],
   parameters: {
     chromatic: { disableSnapshot: true },
   },
@@ -46,7 +45,7 @@ export const Catalog: CatalogStory<Story, typeof SnackBar> = {
   args: {
     onCancel: fn(),
   },
-  decorators: [CatalogDecorator, I18nFrontDecorator],
+  decorators: [CatalogDecorator],
   parameters: {
     catalog: {
       dimensions: [

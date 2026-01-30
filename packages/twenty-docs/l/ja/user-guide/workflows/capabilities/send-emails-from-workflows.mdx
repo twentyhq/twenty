@@ -1,149 +1,168 @@
 ---
-title: Send Emails from Workflows
-description: Send personalized emails automatically using workflow actions.
+title: ワークフローによるメール送信
+description: ワークフローアクションを使用して、パーソナライズされたメールを自動送信します。
 image: /images/user-guide/workflows/workflow.png
 ---
 
-Automatically send emails when specific events occur in your CRM—welcome new contacts, follow up on opportunities, or notify team members.
+CRM で特定のイベントが発生したときにメールを自動送信します—新規連絡先を歓迎し、商談をフォローアップしたり、チームメンバーに通知したりします。
 
-## Prerequisites
+## 前提条件
 
-Before you can send emails from workflows:
+ワークフローからメールを送信する前に:
 
-1. Connect an email account under **Settings → Accounts**
-2. Ensure the account has sending permissions enabled
+1. **設定 → アカウント** でメールアカウントを接続する
+2. そのアカウントで送信権限が有効になっていることを確認する
 
-## Basic Email Workflow
+## 基本的なメールワークフロー
 
-### Example: Welcome Email for New Contacts
+### 例：新規連絡先へのウェルカムメール
 
-**Goal**: Send a welcome email when a new person is added to the CRM.
+**目的**: 新しい連絡先が CRM に追加されたときにウェルカムメールを送信する。
 
-**Setup**:
+**設定**:
 
-1. **Create workflow**: Go to **Settings → Workflows** and click **+ New Workflow**
+1. **ワークフローを作成**: **設定 → ワークフロー** に移動し、**+ New Workflow** をクリック
 
-2. **Add trigger**: Select **Record is Created** → **People**
+2. **トリガーを追加**: **Record is Created** → **People** を選択
 
-3. **Add Send Email action**:
-   * Click **+** to add an action
-   * Select **Send Email**
-   * Configure the email:
+3. **Send Email アクションを追加**:
+   * アクションを追加するには **+** をクリック
+   * **Send Email** を選択
+   * メールを設定:
 
-| Field       | Value                                  |
-| ----------- | -------------------------------------- |
-| **To**      | `{{trigger.object.email}}`             |
-| **Subject** | `Welcome to {{Your Company Name}}`     |
-| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
+| フィールド  | 値                                      |
+| ------ | -------------------------------------- |
+| **宛先** | `{{trigger.object.email}}`             |
+| **件名** | `{{Your Company Name}}へようこそ`           |
+| **本文** | `Hi {{trigger.object.firstName}}, ...` |
 
-4. **Test and activate**: Test with a sample record, then activate
+4. **テストして有効化**: サンプルレコードでテストし、その後有効化する
 
-## Using Variables in Emails
+## メールで変数を使用する
 
-Reference data from previous steps using `{{variable}}` syntax:
+`{{variable}}` 構文を使用して前のステップのデータを参照します:
 
 ```text
-Hi {{trigger.object.firstName}},
+{{trigger.object.firstName}} 様、
 
-Thank you for connecting with us!
+ご連絡いただきありがとうございます！
 
-Your company, {{trigger.object.company.name}}, is now in our system.
+御社 {{trigger.object.company.name}} は当社のシステムに登録されました。
 
-Best regards,
-The Team
+よろしくお願いいたします。
+チーム一同
 ```
 
-### Available Variables from Triggers
+### トリガーから利用できる変数
 
-| Trigger Type               | Common Variables                       |
-| -------------------------- | -------------------------------------- |
-| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
-| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                | `{{trigger.body.fieldName}}`           |
+| トリガータイプ        | 一般的な変数                                 |
+| -------------- | -------------------------------------- |
+| **レコードの作成/更新** | `{{trigger.object.fieldName}}`         |
+| **手動**         | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**    | `{{trigger.body.fieldName}}`           |
 
-## Advanced: Conditional Emails
+## 高度: 条件付きメール
 
-### Example: Different Emails Based on Lead Source
+### 例：リードのソースに基づいて異なるメール
 
-**Goal**: Send different welcome emails based on where the lead came from.
+**目的**: リードの流入元に応じて異なるウェルカムメールを送信する。
 
-**Setup**:
+**設定**:
 
-1. **Trigger**: Record is Created (People)
+1. **トリガー**: レコードが作成される（People）
 
-2. **Add Filter action**:
-   * Condition: `{{trigger.object.source}}` equals `"Website"`
-   * If true → continue to website welcome email
+2. **フィルターアクションを追加**:
+   * 条件: `{{trigger.object.source}}` が "Website" と等しい
+   * 真の場合 → ウェブサイトのウェルカムメールに進む
 
-3. **Branch for other sources**:
-   * Create parallel branches for different sources
-   * Each branch has its own Send Email action
+3. **その他のソース用の分岐**:
+   * ソースごとに並列の分岐を作成する
+   * 各分岐にそれぞれの Send Email アクションを配置する
 
-## Sending Emails to Multiple Recipients
+## 複数の受信者にメールを送信する
 
-### Example: Notify Team When Deal Closes
+### 例：商談が成立したときにチームへ通知
 
-**Goal**: Email the sales rep and their manager when an opportunity is won.
+**目的**: 商談が成約したときに担当営業とそのマネージャーへメールを送る。
 
-**Setup**:
+**設定**:
 
-1. **Trigger**: Record is Updated (Opportunities, Stage = "Closed Won")
+1. **トリガー**: レコードが更新（Opportunities、Stage = "Closed Won"）
 
-2. **Search Records**: Find the opportunity owner's manager
+2. **Search Records**: 商談の所有者のマネージャーを見つける
 
-3. **Send Email #1**: To opportunity owner
-   * To: `{{trigger.object.owner.email}}`
-   * Subject: `Congratulations on closing {{trigger.object.name}}!`
+3. **Send Email #1**: 商談の所有者宛て
+   * 宛先: `{{trigger.object.owner.email}}`
+   * 件名: `Congratulations on closing {{trigger.object.name}}!`
 
-4. **Send Email #2**: To manager
-   * To: `{{searchRecords.manager.email}}`
-   * Subject: `Deal Won: {{trigger.object.name}}`
+4. **Send Email #2**: マネージャー宛て
+   * 宛先: `{{searchRecords.manager.email}}`
+   * 件名: `Deal Won: {{trigger.object.name}}`
 
-## Scheduled Follow-up Emails
+## フォローアップメールのスケジュール送信
 
-### Example: Follow Up 3 Days After Meeting
+### 例：会議の3日後にフォローアップ
 
-**Goal**: Send a follow-up email 3 days after a meeting is logged.
+**目的**: 会議が記録された3日後にフォローアップメールを送信する。
 
-**Setup**:
+**設定**:
 
-1. **Trigger**: Record is Created (Activities, Type = "Meeting")
+1. **トリガー**: レコードが作成（Activities、Type = "Meeting"）
 
-2. **Delay action**: Wait 3 days
+2. **Delay アクション**: 3日待機
 
 3. **Send Email**:
-   * To: Meeting attendee
-   * Subject: Following up on our conversation
-   * Body: Reference meeting details from trigger
+   * 宛先: 会議の参加者
+   * 件名: 先日の会話のフォロー
+   * 本文: トリガーから会議の詳細を参照
 
-## Best Practices
+## メールの添付ファイル
 
-### Email Content
+ワークフローから送信されるメールにファイルを添付できます。 添付ファイルは、ワークフローを設定する際にアップロードする静的なファイルです。
 
-* Keep subject lines concise and relevant
-* Personalize with recipient's name
-* Include a clear call to action
-* Test emails before activating
+### 添付ファイルを追加する方法
 
-### Deliverability
+1. **メール送信** アクションで、**添付ファイル** ボタンをクリックします
+2. クリックしてお使いのコンピューターからファイルをアップロードします
+3. このアクションによって送信されるすべてのメールに、そのファイルが添付されます。
 
-* Don't send too many emails too quickly
-* Use professional email signatures
-* Avoid spam trigger words
-* Ensure unsubscribe options for marketing emails
+### 一般的な使用例
 
-### Troubleshooting
-
-* Verify email account is connected and active
-* Check recipient email address is valid
-* Review workflow runs for error messages
-* Test with your own email address first
+| ユースケース            | サンプルファイル        |
+| ----------------- | --------------- |
+| **ウェルカムメール**      | 会社案内（PDF）       |
+| **オンボーディングシーケンス** | 導入ガイド           |
+| **営業のフォローアップ**    | 製品カタログまたは価格表    |
+| **イベント確認メール**     | イベントの詳細またはアジェンダ |
 
 <Note>
-  **Coming soon**: Email attachments will be available in Q1 2026.
+  添付ファイルは静的です—すべての受信者に同じファイルが送信されます。 For dynamic documents (like personalized quotes), generate and attach files using a [Logic Function](/l/ja/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
-## Related
+## ベストプラクティス
 
-* [Workflow Triggers](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/ja/user-guide/workflows/capabilities/workflow-actions)
+### メールの内容
+
+* 件名は簡潔かつ関連性の高い内容に保つ
+* 受信者名でパーソナライズする
+* 明確な行動喚起を含める
+* 有効化前にメールをテストする
+
+### 到達性
+
+* 短時間に過度な数のメールを送信しない
+* プロフェッショナルなメール署名を使用する
+* スパム判定されやすい語句を避ける
+* マーケティングメールに配信停止オプションを必ず用意する
+
+### トラブルシューティング
+
+* メールアカウントが接続され有効になっていることを確認する
+* 受信者のメールアドレスが有効か確認する
+* エラーメッセージがないかワークフローの実行履歴を確認する
+* まず自分のメールアドレスでテストする
+
+## 関連
+
+* [ワークフローのトリガー](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
+* [ワークフローのアクション](/l/ja/user-guide/workflows/capabilities/workflow-actions)

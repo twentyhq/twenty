@@ -6,7 +6,10 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageFolderImportPolicy,
+  type MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageFolderPendingSyncAction,
   type MessageFolderWorkspaceEntity,
@@ -54,6 +57,7 @@ describe('MessagingMessageListFetchService', () => {
           messageChannelId: 'microsoft-message-channel-id',
         } as MessageFolderWorkspaceEntity,
       ],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     } as MessageChannelWorkspaceEntity;
 
     mockGoogleMessageChannel = {
@@ -68,6 +72,7 @@ describe('MessagingMessageListFetchService', () => {
       },
       syncCursor: 'google-sync-cursor',
       messageFolders: [],
+      messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
     } as unknown as MessageChannelWorkspaceEntity;
   });
 
@@ -208,7 +213,7 @@ describe('MessagingMessageListFetchService', () => {
             executeInWorkspaceContext: jest
               .fn()
 
-              .mockImplementation((_authContext: any, fn: () => any) => fn()),
+              .mockImplementation((fn: () => any, _authContext?: any) => fn()),
             getRepository: jest.fn().mockImplementation((workspaceId, name) => {
               if (name === 'messageChannel') {
                 return {

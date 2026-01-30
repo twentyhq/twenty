@@ -160,8 +160,6 @@ export const FormSingleRecordPicker = ({
     }
   };
 
-  const objectNames = objectNameSingulars.join(' or ');
-
   return (
     <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
@@ -214,7 +212,7 @@ export const FormSingleRecordPicker = ({
                 focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
-                emptyLabel={t`No ${objectNames}`}
+                emptyLabel={t`No records`}
                 onCancel={() => closeDropdown(dropdownId)}
                 onMorphItemSelected={handleMorphItemSelected}
                 objectNameSingulars={objectNameSingulars}

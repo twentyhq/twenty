@@ -1,18 +1,18 @@
 ---
-title: Buttons
+title: ボタン
 image: /images/user-guide/views/filter.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/views/filter.png" alt="Header" />
+  <img src="/images/user-guide/views/filter.png" alt="ヘッダー" />
 </Frame>
 
-A list of buttons and button groups used throughout the app.
+アプリ全体で使用されるボタンおよびボタングループの一覧。
 
-## Button
+## ボタン
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { Button } from "@/ui/input/button/components/Button";
 
@@ -21,7 +21,7 @@ A list of buttons and button groups used throughout the app.
         <Button
           className
           Icon={null}
-          title="Title"
+          title="タイトル"
           fullWidth={false}
           variant="primary"
           size="medium"
@@ -30,35 +30,35 @@ A list of buttons and button groups used throughout the app.
           soon={false}
           disabled={false}
           focus={true}
-          onClick={() => console.log("click")}
+          onClick={() => console.log("クリック")}
         />
       );
     };
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type                  | Description                                                                                                          |
-    | --------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-    | className | string                | Optional class name for additional styling                                                                           |
-    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
-    | title     | string                | The text content of the button                                                                                       |
-    | fullWidth | boolean               | Defines whether the button should span the whole width of its container                                              |
-    | variant   | string                | The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary`                       |
-    | size      | string                | The size of the button. Has two options: `small` and `medium`                                                        |
-    | position  | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-    | accent    | string                | The accent color of the button. Options include: `default`, `blue`, and `danger`                                     |
-    | soon      | boolean               | Indicates if the button is marked as "soon" (such as for upcoming features)                                          |
-    | disabled  | boolean               | Specifies whether the button is disabled or not                                                                      |
-    | focus     | boolean               | Determines if the button has focus                                                                                   |
-    | onClick   | function              | A callback function that triggers when the user clicks on the button                                                 |
+  <Tab title="プロパティ">
+    | プロパティ     | タイプ                   | 説明                                                                 |
+    | --------- | --------------------- | ------------------------------------------------------------------ |
+    | className | string                | 追加のスタイリングのためのオプションクラス名                                             |
+    | アイコン      | `React.ComponentType` | ボタン内に表示されるオプションのアイコンコンポーネント                                        |
+    | タイトル      | string                | ボタンのテキスト内容                                                         |
+    | fullWidth | ブール型                  | ボタンがコンテナの全幅を占めるかどうかを定義します                                          |
+    | バリアント     | string                | ボタンの視覚スタイルのバリアント。 オプションは `primary`、`secondary`、 `tertiary` を含みます   |
+    | サイズ       | string                | ボタンのサイズ。 オプションは2つ：`small` と `medium`                               |
+    | "位置"      | string                | ボタンの兄弟関係における位置。 オプションは `standalone`、`left`、`right`、 `middle` を含みます |
+    | accent    | string                | ボタンのアクセント色。 オプションは `default`、`blue`、`danger` を含みます                 |
+    | 間もなく      | ブール型                  | ボタンが「soon」としてマークされているかどうかを示します（たとえば、今後の機能のために）。                    |
+    | disabled  | ブール型                  | ボタンが無効かどうかを指定します                                                   |
+    | focus     | ブール型                  | ボタンにフォーカスがあるかどうかを決定します                                             |
+    | onClick   | function              | ユーザーがボタンをクリックしたときにトリガーされるコールバック関数                                  |
   </Tab>
 </Tabs>
 
-## Button Group
+## ボタングループ
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { Button } from "@/ui/input/button/components/Button";
     import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
@@ -69,7 +69,7 @@ A list of buttons and button groups used throughout the app.
           <Button
             className
             Icon={null}
-            title="Button 1"
+            title="ボタン 1"
             fullWidth={false}
             variant="primary"
             size="medium"
@@ -78,12 +78,12 @@ A list of buttons and button groups used throughout the app.
             soon={false}
             disabled={false}
             focus={false}
-            onClick={() => console.log("click")}
+            onClick={() => console.log("クリック")}
           />
           <Button
             className
             Icon={null}
-            title="Button 2"
+            title="ボタン 2"
             fullWidth={false}
             variant="secondary"
             size="medium"
@@ -92,12 +92,12 @@ A list of buttons and button groups used throughout the app.
             soon={false}
             disabled={false}
             focus={false}
-            onClick={() => console.log("click")}
+            onClick={() => console.log("クリック")}
           />
           <Button
             className
             Icon={null}
-            title="Button 3"
+            title="ボタン 3"
             fullWidth={false}
             variant="tertiary"
             size="medium"
@@ -106,7 +106,7 @@ A list of buttons and button groups used throughout the app.
             soon={false}
             disabled={false}
             focus={false}
-            onClick={() => console.log("click")}
+            onClick={() => console.log("クリック")}
           />
         </ButtonGroup>
       );
@@ -115,21 +115,21 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type      | Description                                                                                                      |
-    | --------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
-    | variant   | string    | The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary` |
-    | size      | string    | The size of the buttons within the group. Has two options: `medium` and `small`                                  |
-    | accent    | string    | The accent color of the buttons within the group. Options include `default`, `blue` and `danger`                 |
-    | className | string    | Optional class name for additional styling                                                                       |
-    | children  | ReactNode | An array of React elements representing the individual buttons within the group                                  |
+  <Tab title="プロパティ">
+    | プロパティ     | タイプ       | 説明                                                                     |
+    | --------- | --------- | ---------------------------------------------------------------------- |
+    | バリアント     | string    | グループ内のボタンの視覚スタイルのバリアント。 オプションは `primary`、`secondary`、 `tertiary` を含みます |
+    | サイズ       | string    | グループ内のボタンのサイズ。 オプションは2つ：`medium` と `small`                             |
+    | accent    | string    | グループ内のボタンのアクセント色。 オプションは `default`、`blue`、 `danger` を含みます              |
+    | className | string    | 追加のスタイリングのためのオプションクラス名                                                 |
+    | children  | ReactNode | グループ内の個々のボタンを表す React エレメントの配列                                         |
   </Tab>
 </Tabs>
 
-## Floating Button
+## 浮動ボタン
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -139,7 +139,7 @@ A list of buttons and button groups used throughout the app.
         <FloatingButton
           className
           Icon={IconSearch}
-          title="Title"
+          title="タイトル"
           size="medium"
           position="standalone"
           applyShadow={true}
@@ -152,25 +152,25 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type                  | Description                                                                                                      |
-    | ----------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
-    | className   | string                | Optional name for additional styling                                                                             |
-    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                    |
-    | title       | string                | The text content of the button                                                                                   |
-    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                    |
-    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `middle`, `right` |
-    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                   |
-    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                          |
-    | disabled    | boolean               | Determines whether the button is disabled                                                                        |
-    | focus       | boolean               | Indicates if the button has focus                                                                                |
+  <Tab title="プロパティ">
+    | プロパティ       | タイプ                   | 説明                                                                 |
+    | ----------- | --------------------- | ------------------------------------------------------------------ |
+    | className   | string                | 追加のスタイリングのためのオプション名                                                |
+    | アイコン        | `React.ComponentType` | ボタン内に表示されるオプションのアイコンコンポーネント                                        |
+    | タイトル        | string                | ボタンのテキスト内容                                                         |
+    | サイズ         | string                | ボタンのサイズ。 オプションは2つ：`small` と `medium`                               |
+    | "位置"        | string                | ボタンの兄弟関係における位置。 オプションは `standalone`、`left`、`middle`、 `right` を含みます |
+    | applyShadow | ブール型                  | ボタンにシャドウを適用するかどうかを決定します                                            |
+    | applyBlur   | ブール型                  | ボタンにぼかし効果を適用するかどうかを決定します                                           |
+    | disabled    | ブール型                  | ボタンが無効かどうかを決定します                                                   |
+    | focus       | ブール型                  | ボタンにフォーカスがあるかどうかを示します                                              |
   </Tab>
 </Tabs>
 
-## Floating Button Group
+## 浮動ボタングループ
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
     import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
@@ -206,18 +206,18 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props    | Type      | Description                                                                     | Default |
-    | -------- | --------- | ------------------------------------------------------------------------------- | ------- |
-    | size     | string    | The size of the button. Has two options: `small` and `medium`                   | small   |
-    | children | ReactNode | An array of React elements representing the individual buttons within the group |         |
+  <Tab title="プロパティ">
+    | プロパティ    | タイプ       | 説明                                   | デフォルト |
+    | -------- | --------- | ------------------------------------ | ----- |
+    | サイズ      | string    | ボタンのサイズ。 オプションは2つ：`small` と `medium` | small |
+    | children | ReactNode | グループ内の個々のボタンを表す React エレメントの配列       |       |
   </Tab>
 </Tabs>
 
-## Floating Icon Button
+## 浮動アイコンボタン
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -233,7 +233,7 @@ A list of buttons and button groups used throughout the app.
           applyBlur={true}
           disabled={false}
           focus={false}
-          onClick={() => console.log("click")}
+          onClick={() => console.log("クリック")}
           isActive={true}
         />
       );
@@ -241,26 +241,26 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type                  | Description                                                                                                          |
-    | ----------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-    | className   | string                | Optional name for additional styling                                                                                 |
-    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
-    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                        |
-    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                       |
-    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                              |
-    | disabled    | boolean               | Determines whether the button is disabled                                                                            |
-    | focus       | boolean               | Indicates if the button has focus                                                                                    |
-    | onClick     | function              | A callback function that triggers when the user clicks on the button                                                 |
-    | isActive    | boolean               | Determines if the button is in an active state                                                                       |
+  <Tab title="プロパティ">
+    | プロパティ       | タイプ                   | 説明                                                                 |
+    | ----------- | --------------------- | ------------------------------------------------------------------ |
+    | className   | string                | 追加のスタイリングのためのオプション名                                                |
+    | アイコン        | `React.ComponentType` | ボタン内に表示されるオプションのアイコンコンポーネント                                        |
+    | サイズ         | string                | ボタンのサイズ。 オプションは2つ：`small` と `medium`                               |
+    | "位置"        | string                | ボタンの兄弟関係における位置。 オプションは `standalone`、`left`、`right`、 `middle` を含みます |
+    | applyShadow | ブール型                  | ボタンにシャドウを適用するかどうかを決定します                                            |
+    | applyBlur   | ブール型                  | ボタンにぼかし効果を適用するかどうかを決定します                                           |
+    | disabled    | ブール型                  | ボタンが無効かどうかを決定します                                                   |
+    | focus       | ブール型                  | ボタンにフォーカスがあるかどうかを示します                                              |
+    | onClick     | function              | ユーザーがボタンをクリックしたときにトリガーされるコールバック関数                                  |
+    | isActive    | ブール型                  | ボタンがアクティブな状態にあるかどうかを決定します                                          |
   </Tab>
 </Tabs>
 
-## Floating Icon Button Group
+## 浮動アイコンボタングループ
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
     import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
@@ -269,12 +269,12 @@ A list of buttons and button groups used throughout the app.
       const iconButtons = [
         {
           Icon: IconClipboardText,
-          onClick: () => console.log("Button 1 clicked"),
+          onClick: () => console.log("ボタン 1 がクリックされました"),
           isActive: true,
         },
         {
           Icon: IconCheckbox,
-          onClick: () => console.log("Button 2 clicked"),
+          onClick: () => console.log("ボタン 2 がクリックされました"),
           isActive: true,
         },
       ];
@@ -290,19 +290,19 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type   | Description                                                                                                                                                                                                                                                          |
-    | ----------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className   | string | Optional name for additional styling                                                                                                                                                                                                                                 |
-    | size        | string | The size of the button. Has two options: `small` and `medium`                                                                                                                                                                                                        |
-    | iconButtons | array  | An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not. |
+  <Tab title="プロパティ">
+    | プロパティ       | タイプ    | 説明                                                                                                                       |
+    | ----------- | ------ | ------------------------------------------------------------------------------------------------------------------------ |
+    | className   | string | 追加のスタイリングのためのオプション名                                                                                                      |
+    | サイズ         | string | ボタンのサイズ。 オプションは2つ：`small` と `medium`                                                                                     |
+    | iconButtons | array  | グループ内のアイコンボタンをそれぞれ表すオブジェクトの配列。 各オブジェクトには、ボタンに表示したいアイコンコンポーネント、ユーザーがボタンをクリックした時に呼び出される関数、およびボタンをアクティブにするかどうかが含まれる必要があります。 |
   </Tab>
 </Tabs>
 
-## Light Button
+## ライトボタン
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { LightButton } from "@/ui/input/button/components/LightButton";
 
@@ -310,35 +310,35 @@ A list of buttons and button groups used throughout the app.
       return <LightButton
       className
       icon={null}
-      title="Title"
+      title="タイトル"
       accent="secondary"
       active={false}
       disabled={false}
       focus={true}
-      onClick={()=>console.log('click')}
+      onClick={()=>console.log('クリック')}
       />;
     };
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type              | Description                                                                 |
-    | --------- | ----------------- | --------------------------------------------------------------------------- |
-    | className | string            | Optional name for additional styling                                        |
-    | icon      | `React.ReactNode` | The icon you want to display in the button                                  |
-    | title     | string            | The text content of the button                                              |
-    | accent    | string            | The accent color of the button. Options include: `secondary` and `tertiary` |
-    | active    | boolean           | Determines if the button is in an active state                              |
-    | disabled  | boolean           | Determines whether the button is disabled                                   |
-    | focus     | boolean           | Indicates if the button has focus                                           |
-    | onClick   | function          | A callback function that triggers when the user clicks on the button        |
+  <Tab title="プロパティ">
+    | プロパティ     | タイプ               | 説明                                               |
+    | --------- | ----------------- | ------------------------------------------------ |
+    | className | string            | 追加のスタイリングのためのオプション名                              |
+    | アイコン      | `React.ReactNode` | ボタンに表示したいアイコン                                    |
+    | タイトル      | string            | ボタンのテキスト内容                                       |
+    | accent    | string            | ボタンのアクセント色。 オプションは `secondary`、 `tertiary` を含みます |
+    | アクティブ     | ブール型              | ボタンがアクティブな状態にあるかどうかを決定します                        |
+    | disabled  | ブール型              | ボタンが無効かどうかを決定します                                 |
+    | focus     | ブール型              | ボタンにフォーカスがあるかどうかを示します                            |
+    | onClick   | function          | ユーザーがボタンをクリックしたときにトリガーされるコールバック関数                |
   </Tab>
 </Tabs>
 
-## Light Icon Button
+## ライトアイコンボタン
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -349,39 +349,39 @@ A list of buttons and button groups used throughout the app.
           className
           testId="test1"
           Icon={IconSearch}
-          title="Title"
+          title="タイトル"
           size="small"
           accent="secondary"
           active={true}
           disabled={false}
           focus={true}
-          onClick={() => console.log("click")}
+          onClick={() => console.log("クリック")}
         />
       );
     };
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type                  | Description                                                                 |
-    | --------- | --------------------- | --------------------------------------------------------------------------- |
-    | className | string                | Optional name for additional styling                                        |
-    | testId    | string                | Test identifier for the button                                              |
-    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button               |
-    | title     | string                | The text content of the button                                              |
-    | size      | string                | The size of the button. Has two options: `small` and `medium`               |
-    | accent    | string                | The accent color of the button. Options include: `secondary` and `tertiary` |
-    | active    | boolean               | Determines if the button is in an active state                              |
-    | disabled  | boolean               | Determines whether the button is disabled                                   |
-    | focus     | boolean               | Indicates if the button has focus                                           |
-    | onClick   | function              | A callback function that triggers when the user clicks on the button        |
+  <Tab title="プロパティ">
+    | プロパティ     | タイプ                   | 説明                                               |
+    | --------- | --------------------- | ------------------------------------------------ |
+    | className | string                | 追加のスタイリングのためのオプション名                              |
+    | testId    | string                | ボタンのテスト識別子                                       |
+    | アイコン      | `React.ComponentType` | ボタン内に表示されるオプションのアイコンコンポーネント                      |
+    | タイトル      | string                | ボタンのテキスト内容                                       |
+    | サイズ       | string                | ボタンのサイズ。 オプションは2つ：`small` と `medium`             |
+    | accent    | string                | ボタンのアクセント色。 オプションは `secondary`、 `tertiary` を含みます |
+    | アクティブ     | ブール型                  | ボタンがアクティブな状態にあるかどうかを決定します                        |
+    | disabled  | ブール型                  | ボタンが無効かどうかを決定します                                 |
+    | focus     | ブール型                  | ボタンにフォーカスがあるかどうかを示します                            |
+    | onClick   | function              | ユーザーがボタンをクリックしたときにトリガーされるコールバック関数                |
   </Tab>
 </Tabs>
 
-## Main Button
+## メインボタン
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { MainButton } from "@/ui/input/button/components/MainButton";
     import { IconCheckbox } from "@tabler/icons-react";
@@ -389,7 +389,7 @@ A list of buttons and button groups used throughout the app.
     export const MyComponent = () => {
       return (
         <MainButton
-          title="Checkbox"
+          title="チェックボックス"
           fullWidth={false}
           variant="primary"
           soon={false}
@@ -400,22 +400,22 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props                | Type                             | Description                                                                       |
-    | -------------------- | -------------------------------- | --------------------------------------------------------------------------------- |
-    | title                | string                           | The text content of the button                                                    |
-    | fullWidth            | boolean                          | Defines whether the button should span the whole width of its container           |
-    | variant              | string                           | The visual style variant of the button. Options include `primary` and `secondary` |
-    | soon                 | boolean                          | Indicates if the button is marked as "soon" (such as for upcoming features)       |
-    | Icon                 | `React.ComponentType`            | An optional icon component that's displayed within the button                     |
-    | React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                      |
+  <Tab title="プロパティ">
+    | プロパティ                | タイプ                              | 説明                                                     |
+    | -------------------- | -------------------------------- | ------------------------------------------------------ |
+    | タイトル                 | string                           | ボタンのテキスト内容                                             |
+    | fullWidth            | ブール型                             | ボタンがコンテナの全幅を占めるかどうかを定義します                              |
+    | バリアント                | string                           | ボタンの視覚スタイルのバリアント。 オプションは `primary` と `secondary` を含みます |
+    | 間もなく                 | ブール型                             | ボタンが「soon」としてマークされているかどうかを示します（たとえば、今後の機能のために）。        |
+    | アイコン                 | `React.ComponentType`            | ボタン内に表示されるオプションのアイコンコンポーネント                            |
+    | React `button` props | `React.ComponentProps<'button'>` | 標準的なHTMLボタンのプロパティすべてがサポートされています                        |
   </Tab>
 </Tabs>
 
-## Rounded Icon Button
+## 丸型アイコンボタン
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="使用方法">
     ```jsx
     import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -430,10 +430,10 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props                | Type                                            | Description |
-    | -------------------- | ----------------------------------------------- | ----------- |
-    | Icon                 | `React.ComponentType`                           |             |
-    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
+  <Tab title="プロパティ">
+    | プロパティ                | タイプ                                             | 説明 |
+    | -------------------- | ----------------------------------------------- | -- |
+    | アイコン                 | `React.ComponentType`                           |    |
+    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |    |
   </Tab>
 </Tabs>

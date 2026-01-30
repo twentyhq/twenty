@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`NavigationMenuItem update should fail when updating a non-existent navigation menu item 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "NAVIGATION_MENU_ITEM_NOT_FOUND",
+    "userFriendlyMessage": "Navigation menu item not found.",
+  },
+  "message": "Navigation menu item not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`NavigationMenuItem update should fail when updating with empty id 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem update should fail when updating with invalid folderId (not a UUID) 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "not-a-valid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem update should fail when updating with invalid id (not a UUID) 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "not-a-valid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem update should fail when updating with missing id 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem update should fail when updating with negative position 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "Position must be a non-negative integer",
+              "userFriendlyMessage": "Position must be a non-negative integer",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating navigation menu item",
+  "name": "GraphQLError",
+}
+`;

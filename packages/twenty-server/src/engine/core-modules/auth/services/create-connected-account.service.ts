@@ -42,29 +42,26 @@ export class CreateConnectedAccountService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-
-        await connectedAccountRepository.save(
-          {
-            id: connectedAccountId,
-            handle,
-            provider,
-            accessToken,
-            refreshToken,
-            accountOwnerId,
-            scopes,
-          },
-          {},
-          manager,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const connectedAccountRepository =
+        await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
+          workspaceId,
+          'connectedAccount',
         );
-      },
-    );
+
+      await connectedAccountRepository.save(
+        {
+          id: connectedAccountId,
+          handle,
+          provider,
+          accessToken,
+          refreshToken,
+          accountOwnerId,
+          scopes,
+        },
+        {},
+        manager,
+      );
+    }, authContext);
   }
 }

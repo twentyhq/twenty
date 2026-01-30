@@ -100,7 +100,6 @@ export class TrashCleanupService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const repository = await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
@@ -137,6 +136,7 @@ export class TrashCleanupService {
 
         return deleted;
       },
+      authContext,
     );
   }
 

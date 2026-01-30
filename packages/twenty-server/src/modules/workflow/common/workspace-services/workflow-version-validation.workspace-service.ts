@@ -48,36 +48,33 @@ export class WorkflowVersionValidationWorkspaceService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const workflowAlreadyHasDraftVersion =
-          await workflowVersionRepository.exists({
-            where: {
-              workflowId: payload.data.workflowId,
-              status: WorkflowVersionStatus.DRAFT,
-              deletedAt: IsNull(),
-            },
-          });
+      const workflowAlreadyHasDraftVersion =
+        await workflowVersionRepository.exists({
+          where: {
+            workflowId: payload.data.workflowId,
+            status: WorkflowVersionStatus.DRAFT,
+            deletedAt: IsNull(),
+          },
+        });
 
-        if (workflowAlreadyHasDraftVersion) {
-          throw new WorkflowQueryValidationException(
-            'Cannot create multiple draft versions for the same workflow',
-            WorkflowQueryValidationExceptionCode.FORBIDDEN,
-            {
-              userFriendlyMessage: msg`Cannot create multiple draft versions for the same workflow`,
-            },
-          );
-        }
-      },
-    );
+      if (workflowAlreadyHasDraftVersion) {
+        throw new WorkflowQueryValidationException(
+          'Cannot create multiple draft versions for the same workflow',
+          WorkflowQueryValidationExceptionCode.FORBIDDEN,
+          {
+            userFriendlyMessage: msg`Cannot create multiple draft versions for the same workflow`,
+          },
+        );
+      }
+    }, authContext);
   }
 
   async validateWorkflowVersionForUpdateOne({
@@ -130,35 +127,33 @@ export class WorkflowVersionValidationWorkspaceService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-            workspaceId,
-            'workflowVersion',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          workspaceId,
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const otherWorkflowVersionsExist =
-          await workflowVersionRepository.exists({
-            where: {
-              workflowId: workflowVersion.workflowId,
-              deletedAt: IsNull(),
-              id: Not(workflowVersion.id),
-            },
-          });
+      const otherWorkflowVersionsExist = await workflowVersionRepository.exists(
+        {
+          where: {
+            workflowId: workflowVersion.workflowId,
+            deletedAt: IsNull(),
+            id: Not(workflowVersion.id),
+          },
+        },
+      );
 
-        if (!otherWorkflowVersionsExist) {
-          throw new WorkflowQueryValidationException(
-            'The initial version of a workflow can not be deleted',
-            WorkflowQueryValidationExceptionCode.FORBIDDEN,
-            {
-              userFriendlyMessage: msg`The initial version of a workflow can not be deleted`,
-            },
-          );
-        }
-      },
-    );
+      if (!otherWorkflowVersionsExist) {
+        throw new WorkflowQueryValidationException(
+          'The initial version of a workflow can not be deleted',
+          WorkflowQueryValidationExceptionCode.FORBIDDEN,
+          {
+            userFriendlyMessage: msg`The initial version of a workflow can not be deleted`,
+          },
+        );
+      }
+    }, authContext);
   }
 }

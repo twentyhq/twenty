@@ -386,4 +386,47 @@ export const failingCreateInputByFieldMetadataType: {
       },
     },
   ],
+  [FieldMetadataType.FILES]: [
+    {
+      input: {
+        filesField: 'not-an-addFiles-property',
+      },
+    },
+    {
+      input: {
+        filesField: { addFiles: [{ invalidField: 'test' }] },
+      },
+    },
+    {
+      input: {
+        filesField: {
+          addFiles: [{ fileId: 'not-a-uuid', label: 'Document.pdf' }],
+        },
+      },
+    },
+    {
+      input: {
+        filesField: [
+          {
+            addFiles: [
+              { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 12345 },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      input: {
+        filesField: {
+          addFiles: [
+            {
+              fileId: '550e8400-e29b-41d4-a716-446655440000',
+              label: 'Document.pdf',
+              extension: 'not-allowed-in-input',
+            },
+          ],
+        },
+      },
+    },
+  ],
 };

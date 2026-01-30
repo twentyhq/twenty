@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { AllMetadataName } from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
 
-import {
-  WorkspaceQueryRunnerException,
-  WorkspaceQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { getMetadataNameFromFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-name-from-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { FIND_ALL_CORE_VIEWS_GRAPHQL_OPERATION } from 'src/engine/metadata-modules/view/constants/find-all-core-views-graphql-operation.constant';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
+import {
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 
 @Injectable()
@@ -34,19 +34,18 @@ export class WorkspaceMigrationRunnerService {
   ) {}
 
   private getLegacyCacheInvalidationPromises({
-    workspaceMigration: { actions, workspaceId },
+    allFlatEntityMapsKeys,
+    workspaceId,
   }: {
-    workspaceMigration: Omit<WorkspaceMigration, 'relatedFlatEntityMapsKeys'>;
+    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
+    workspaceId: string;
   }): Promise<void>[] {
     const asyncOperations: Promise<void>[] = [];
-    const shouldIncrementMetadataGraphqlSchemaVersion = actions.some(
-      (action) => {
-        return (
-          action.metadataName === 'objectMetadata' ||
-          action.metadataName === 'fieldMetadata'
-        );
-      },
-    );
+    const flatMapsKeysSet = new Set(allFlatEntityMapsKeys);
+
+    const shouldIncrementMetadataGraphqlSchemaVersion =
+      flatMapsKeysSet.has('flatObjectMetadataMaps') ||
+      flatMapsKeysSet.has('flatFieldMetadataMaps');
 
     if (shouldIncrementMetadataGraphqlSchemaVersion) {
       asyncOperations.push(
@@ -56,16 +55,15 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    const viewRelatedMetadataNames = [
-      'view',
-      'viewFilter',
-      'viewGroup',
-      'viewField',
-      'viewFilterGroup',
+    const viewRelatedFlatMapsKeys: (keyof AllFlatEntityMaps)[] = [
+      'flatViewMaps',
+      'flatViewFilterMaps',
+      'flatViewGroupMaps',
+      'flatViewFieldMaps',
+      'flatViewFilterGroupMaps',
     ];
-    const shouldInvalidFindCoreViewsGraphqlCacheOperation = actions.some(
-      (action) => viewRelatedMetadataNames.includes(action.metadataName),
-    );
+    const shouldInvalidFindCoreViewsGraphqlCacheOperation =
+      viewRelatedFlatMapsKeys.some((key) => flatMapsKeysSet.has(key));
 
     if (
       shouldInvalidFindCoreViewsGraphqlCacheOperation ||
@@ -79,11 +77,9 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    const shouldInvalidateRoleMapCache = actions.some((action) => {
-      return (
-        action.metadataName === 'role' || action.metadataName === 'roleTarget'
-      );
-    });
+    const shouldInvalidateRoleMapCache =
+      flatMapsKeysSet.has('flatRoleMaps') ||
+      flatMapsKeysSet.has('flatRoleTargetMaps');
 
     if (
       shouldIncrementMetadataGraphqlSchemaVersion ||
@@ -104,35 +100,89 @@ export class WorkspaceMigrationRunnerService {
     return asyncOperations;
   }
 
+  async invalidateCache({
+    allFlatEntityMapsKeys,
+    workspaceId,
+  }: {
+    allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
+    workspaceId: string;
+  }): Promise<void> {
+    this.logger.time(
+      'Runner',
+      `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
+    );
+
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: allFlatEntityMapsKeys,
+    });
+
+    const invalidationResults = await Promise.allSettled(
+      this.getLegacyCacheInvalidationPromises({
+        allFlatEntityMapsKeys,
+        workspaceId,
+      }),
+    );
+
+    const invalidationFailures = invalidationResults.filter(
+      (result) => result.status === 'rejected',
+    );
+
+    if (invalidationFailures.length > 0) {
+      invalidationFailures.forEach((err) =>
+        this.logger.error(
+          `Failed to invalidate a legacy cache ${err.reason}`,
+          'Runner',
+        ),
+      );
+      throw new Error(
+        `Failed to invalidate ${invalidationFailures.length} cache operations`,
+      );
+    }
+
+    this.logger.timeEnd(
+      'Runner',
+      `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
+    );
+  }
+
   run = async ({
     actions,
     workspaceId,
-    relatedFlatEntityMapsKeys,
   }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
     const queryRunner = this.coreDataSource.createQueryRunner();
+    const actionMetadataNames = [
+      ...new Set(actions.flatMap((action) => action.metadataName)),
+    ];
+    const actionsMetadataAndRelatedMetadataNames: AllMetadataName[] = [
+      ...new Set([
+        ...actionMetadataNames,
+        ...actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
+      ]),
+    ];
+    const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(
+      getMetadataFlatEntityMapsKey,
+    );
 
     let allFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: relatedFlatEntityMapsKeys,
+          flatMapsKeys: allFlatEntityMapsKeys,
         },
       );
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
     this.logger.time('Runner', 'Transaction execution');
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    let flatEntityMapsToInvalidate: (keyof AllFlatEntityMaps)[] = [];
-
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       for (const action of actions) {
-        const partialOptimisticCache =
+        const result =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
@@ -144,20 +194,10 @@ export class WorkspaceMigrationRunnerService {
               },
             },
           );
-        const optimisticallyUpdatedFlatEntityMapsKeys = Object.keys(
-          partialOptimisticCache,
-        ) as (keyof AllFlatEntityMaps)[];
-
-        flatEntityMapsToInvalidate = [
-          ...new Set([
-            ...optimisticallyUpdatedFlatEntityMapsKeys,
-            ...flatEntityMapsToInvalidate,
-          ]),
-        ];
 
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
-          ...partialOptimisticCache,
+          ...result,
         };
       }
 
@@ -165,82 +205,45 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.timeEnd('Runner', 'Transaction execution');
 
-      const flatEntitiesCacheToInvalidate = [
-        ...new Set([
-          ...flatEntityMapsToInvalidate,
-          ...flatEntityMapsToInvalidate
-            .map(getMetadataNameFromFlatEntityMapsKey)
-            .flatMap(getMetadataRelatedMetadataNames)
-            .map(getMetadataFlatEntityMapsKey),
-        ]),
-      ];
+      await this.invalidateCache({
+        allFlatEntityMapsKeys,
+        workspaceId,
+      });
 
-      this.logger.time(
-        'Runner',
-        `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
-      );
-
-      const invalidationResults = await Promise.allSettled([
-        this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-          workspaceId,
-          flatMapsKeys: flatEntitiesCacheToInvalidate,
-        }),
-        ...this.getLegacyCacheInvalidationPromises({
-          workspaceMigration: {
-            actions,
-            workspaceId,
-          },
-        }),
-      ]);
-
-      const invalidationFailures = invalidationResults.filter(
-        (result) => result.status === 'rejected',
-      );
-
-      if (invalidationFailures.length > 0) {
-        throw new Error(
-          `Failed to invalidate ${invalidationFailures.length} cache operations`,
-        );
-      }
-
-      this.logger.timeEnd(
-        'Runner',
-        `Cache invalidation ${flatEntitiesCacheToInvalidate.join()}`,
-      );
       this.logger.timeEnd('Runner', 'Total execution');
 
       return allFlatEntityMaps;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        try {
-          await queryRunner.rollbackTransaction();
-        } catch (error) {
+        await queryRunner.rollbackTransaction().catch((error) =>
           // eslint-disable-next-line no-console
-          console.trace(`Failed to rollback transaction: ${error.message}`);
-        }
+          console.trace(`Failed to rollback transaction: ${error.message}`),
+        );
       }
 
-      const invertedActions = actions.reverse();
+      const invertedActions = [...actions].reverse();
 
       for (const invertedAction of invertedActions) {
-        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
+        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
           {
             action: invertedAction,
             context: {
               action: invertedAction,
-              allFlatEntityMaps: allFlatEntityMaps,
-              queryRunner,
+              allFlatEntityMaps,
               workspaceId,
             },
-            rollback: true,
           },
         );
       }
 
-      throw new WorkspaceQueryRunnerException(
-        error.message,
-        WorkspaceQueryRunnerExceptionCode.INTERNAL_SERVER_ERROR,
-      );
+      if (error instanceof WorkspaceMigrationRunnerException) {
+        throw error;
+      }
+
+      throw new WorkspaceMigrationRunnerException({
+        message: error.message,
+        code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      });
     } finally {
       await queryRunner.release();
     }

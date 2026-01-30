@@ -7,6 +7,7 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { parseImapAuthenticationError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-authentication-error.util';
 
 type ConnectedAccountIdentifier = Pick<
   ConnectedAccountWorkspaceEntity,
@@ -17,14 +18,22 @@ type ConnectedAccountIdentifier = Pick<
 export class ImapClientProvider {
   private readonly logger = new Logger(ImapClientProvider.name);
 
-  private static readonly RETRY_ATTEMPTS = 3;
-  private static readonly RETRY_DELAY_MS = 1000;
   private static readonly CONNECTION_TIMEOUT_MS = 30000;
+  private static readonly GREETING_TIMEOUT_MS = 16000;
 
   async getClient(
     connectedAccount: ConnectedAccountIdentifier,
   ): Promise<ImapFlow> {
-    return this.createConnectionWithRetry(connectedAccount);
+    try {
+      return await this.createConnection(connectedAccount);
+    } catch (error) {
+      this.logger.error(
+        `Failed to establish IMAP connection for ${connectedAccount.handle}: ${error.message}`,
+        error.stack,
+      );
+
+      throw parseImapAuthenticationError(error);
+    }
   }
 
   async closeClient(client: ImapFlow): Promise<void> {
@@ -33,34 +42,6 @@ export class ImapClientProvider {
       this.logger.log('Closed IMAP client');
     } catch (error) {
       this.logger.error(`Error closing IMAP client: ${error.message}`);
-    }
-  }
-
-  private async createConnectionWithRetry(
-    connectedAccount: ConnectedAccountIdentifier,
-    attempt = 1,
-  ): Promise<ImapFlow> {
-    try {
-      return await this.createConnection(connectedAccount);
-    } catch (error) {
-      if (attempt < ImapClientProvider.RETRY_ATTEMPTS) {
-        const delay = ImapClientProvider.RETRY_DELAY_MS * attempt;
-
-        this.logger.warn(
-          `IMAP connection attempt ${attempt} failed for ${connectedAccount.handle}, retrying in ${delay}ms: ${error.message}`,
-        );
-
-        await this.delay(delay);
-
-        return this.createConnectionWithRetry(connectedAccount, attempt + 1);
-      }
-
-      this.logger.error(
-        `Failed to establish IMAP connection for ${connectedAccount.handle} after ${ImapClientProvider.RETRY_ATTEMPTS} attempts: ${error.message}`,
-        error.stack,
-      );
-
-      throw error;
     }
   }
 
@@ -78,46 +59,33 @@ export class ImapClientProvider {
       (connectedAccount.connectionParameters as unknown as ImapSmtpCaldavParams) ||
       {};
 
-    let client: ImapFlow | null = null;
-    let timeoutId: NodeJS.Timeout | null = null;
-
     if (!isDefined(connectedAccount.handle)) {
       throw new CustomError(
         'Handle is required',
         MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
       );
     }
+
+    const client = new ImapFlow({
+      host: connectionParameters.IMAP?.host || '',
+      port: connectionParameters.IMAP?.port || 993,
+      secure: connectionParameters.IMAP?.secure,
+      auth: {
+        user: isDefined(connectionParameters.IMAP?.username)
+          ? connectionParameters.IMAP?.username
+          : connectedAccount.handle,
+        pass: connectionParameters.IMAP?.password || '',
+      },
+      logger: false,
+      tls: {
+        rejectUnauthorized: false,
+      },
+      connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
+      greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
+    });
+
     try {
-      client = new ImapFlow({
-        host: connectionParameters.IMAP?.host || '',
-        port: connectionParameters.IMAP?.port || 993,
-        secure: connectionParameters.IMAP?.secure,
-        auth: {
-          user: isDefined(connectionParameters.IMAP?.username)
-            ? connectionParameters.IMAP?.username
-            : connectedAccount.handle,
-          pass: connectionParameters.IMAP?.password || '',
-        },
-        logger: false,
-        tls: {
-          rejectUnauthorized: false,
-        },
-      });
-
-      const connectionPromise = client.connect();
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        timeoutId = setTimeout(
-          () => reject(new Error('Connection timeout')),
-          ImapClientProvider.CONNECTION_TIMEOUT_MS,
-        );
-      });
-
-      await Promise.race([connectionPromise, timeoutPromise]);
-
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
+      await client.connect();
 
       this.logger.log(
         `Connected to IMAP server for ${connectedAccount.handle}`,
@@ -125,25 +93,13 @@ export class ImapClientProvider {
 
       return client;
     } catch (error) {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-
-      if (client) {
-        try {
-          await client.logout();
-        } catch (cleanupError) {
-          this.logger.warn(
-            `Failed to cleanup client after connection error: ${cleanupError.message}`,
-          );
-        }
+      try {
+        await client.logout();
+      } catch {
+        // Ignore cleanup errors
       }
 
       throw error;
     }
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

@@ -55,7 +55,7 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadataToDelete.fieldMetadataIds,
+      flatEntityIds: flatObjectMetadataToDelete.fieldIds,
     });
   const flatFieldMetadatasToDelete = objectFlatFieldMetadatas.flatMap(
     (flatFieldMetadata) => {

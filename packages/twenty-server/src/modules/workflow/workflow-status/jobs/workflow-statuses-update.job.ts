@@ -1,20 +1,14 @@
 import { Logger, Scope } from '@nestjs/common';
 
 import isEqual from 'lodash.isequal';
-import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import {
-  WorkflowVersionStepException,
-  WorkflowVersionStepExceptionCode,
-} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import {
   WorkflowVersionStatus,
   type WorkflowVersionWorkspaceEntity,
@@ -23,10 +17,6 @@ import {
   WorkflowStatus,
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export enum WorkflowVersionEventType {
   CREATE = 'CREATE',
@@ -71,43 +61,39 @@ export class WorkflowStatusesUpdateJob {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly serverlessFunctionService: ServerlessFunctionService,
   ) {}
 
   @Process(WorkflowStatusesUpdateJob.name)
   async handle(event: WorkflowVersionBatchEvent): Promise<void> {
     const authContext = buildSystemAuthContext(event.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        switch (event.type) {
-          case WorkflowVersionEventType.CREATE:
-          case WorkflowVersionEventType.DELETE:
-            await Promise.all(
-              event.workflowIds.map((workflowId) =>
-                this.handleWorkflowVersionCreatedOrDeleted({
-                  workflowId,
-                  workspaceId: event.workspaceId,
-                }),
-              ),
-            );
-            break;
-          case WorkflowVersionEventType.STATUS_UPDATE:
-            await Promise.all(
-              event.statusUpdates.map((statusUpdate) =>
-                this.handleWorkflowVersionStatusUpdated({
-                  statusUpdate,
-                  workspaceId: event.workspaceId,
-                }),
-              ),
-            );
-            break;
-          default:
-            break;
-        }
-      },
-    );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      switch (event.type) {
+        case WorkflowVersionEventType.CREATE:
+        case WorkflowVersionEventType.DELETE:
+          await Promise.all(
+            event.workflowIds.map((workflowId) =>
+              this.handleWorkflowVersionCreatedOrDeleted({
+                workflowId,
+                workspaceId: event.workspaceId,
+              }),
+            ),
+          );
+          break;
+        case WorkflowVersionEventType.STATUS_UPDATE:
+          await Promise.all(
+            event.statusUpdates.map((statusUpdate) =>
+              this.handleWorkflowVersionStatusUpdated({
+                statusUpdate,
+                workspaceId: event.workspaceId,
+              }),
+            ),
+          );
+          break;
+        default:
+          break;
+      }
+    }, authContext);
   }
 
   private async handleWorkflowVersionCreatedOrDeleted({
@@ -157,61 +143,6 @@ export class WorkflowStatusesUpdateJob {
     );
   }
 
-  private async handlePublishServerlessFunction({
-    statusUpdate,
-    workspaceId,
-    workflowVersion,
-    workflowVersionRepository,
-  }: {
-    statusUpdate: WorkflowVersionStatusUpdate;
-    workspaceId: string;
-    workflowVersion: WorkflowVersionWorkspaceEntity;
-    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
-  }) {
-    const shouldComputeNewSteps =
-      statusUpdate.newStatus === WorkflowVersionStatus.ACTIVE &&
-      isDefined(workflowVersion.steps) &&
-      workflowVersion.steps.filter(
-        (step) => step.type === WorkflowActionType.CODE,
-      ).length > 0;
-
-    if (shouldComputeNewSteps) {
-      const newSteps: WorkflowAction[] = [];
-
-      for (const step of workflowVersion.steps || []) {
-        const newStep = { ...step };
-
-        if (step.type === WorkflowActionType.CODE) {
-          const serverlessFunction =
-            await this.serverlessFunctionService.publishOneServerlessFunctionOrFail(
-              step.settings.input.serverlessFunctionId,
-              workspaceId,
-            );
-
-          const newStepSettings = { ...step.settings };
-
-          if (!isDefined(serverlessFunction.latestVersion)) {
-            throw new WorkflowVersionStepException(
-              `Fail to publish serverless function ${serverlessFunction.id}. Latest version is null`,
-              WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
-            );
-          }
-
-          newStepSettings.input.serverlessFunctionVersion =
-            serverlessFunction.latestVersion;
-
-          newStep.settings = newStepSettings;
-        }
-
-        newSteps.push(newStep);
-      }
-
-      await workflowVersionRepository.update(statusUpdate.workflowVersionId, {
-        steps: newSteps,
-      });
-    }
-  }
-
   private async handleWorkflowVersionStatusUpdated({
     statusUpdate,
     workspaceId,
@@ -237,17 +168,6 @@ export class WorkflowStatusesUpdateJob {
       where: {
         id: statusUpdate.workflowId,
       },
-    });
-
-    const workflowVersion = await workflowVersionRepository.findOneOrFail({
-      where: { id: statusUpdate.workflowVersionId },
-    });
-
-    await this.handlePublishServerlessFunction({
-      workflowVersion,
-      workflowVersionRepository,
-      workspaceId,
-      statusUpdate,
     });
 
     const newWorkflowStatuses = await this.getWorkflowStatuses({

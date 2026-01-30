@@ -8,12 +8,11 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
-import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsNewObject',
   component: SettingsNewObject,
-  decorators: [PageDecorator, I18nFrontDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/new',
   },
@@ -27,8 +26,8 @@ export default meta;
 export type Story = StoryObj<typeof SettingsNewObject>;
 
 export const WithStandardSelected: Story = {
-  play: async () => {
-    const canvas = within(document.body);
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
     await canvas.findByRole(
       'heading',

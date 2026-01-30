@@ -1,6 +1,7 @@
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { NoDataLayer } from '@/page-layout/widgets/graph/components/NoDataLayer';
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { CustomBarItem } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomBarItem';
 import { CustomSliceHoverLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomSliceHoverLayer';
 import { CustomTotalsLayer } from '@/page-layout/widgets/graph/graphWidgetBarChart/components/CustomTotalsLayer';
@@ -10,17 +11,16 @@ import { useBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart
 import { useBarChartTheme } from '@/page-layout/widgets/graph/graphWidgetBarChart/hooks/useBarChartTheme';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
 import { graphWidgetHoveredSliceIndexComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetHoveredSliceIndexComponentState';
-import { type BarChartSeries } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
+import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { calculateStackedBarChartValueRange } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateStackedBarChartValueRange';
 import { calculateValueRangeFromBarChartKeys } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/calculateValueRangeFromBarChartKeys';
-import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
+import { computeShouldRoundFreeEndMap } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeShouldRoundFreeEndMap';
 import { getBarChartColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartColor';
 import { getBarChartInnerPadding } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartInnerPadding';
-import { getBarChartTickConfig } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTickConfig';
+import { getBarChartLayout } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartLayout';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { computeEffectiveValueRange } from '@/page-layout/widgets/graph/utils/computeEffectiveValueRange';
-import { computeValueTickValues } from '@/page-layout/widgets/graph/utils/computeValueTickValues';
 import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
 import {
   formatGraphValue,
@@ -49,7 +49,7 @@ type GraphWidgetBarChartProps = {
   data: BarDatum[];
   indexBy: string;
   keys: string[];
-  series?: BarChartSeries[];
+  series?: BarChartSeriesWithColor[];
   showLegend?: boolean;
   showGrid?: boolean;
   showValues?: boolean;
@@ -125,16 +125,30 @@ export const GraphWidgetBarChart = ({
 
   const chartTheme = useBarChartTheme();
 
-  const { barConfigs, enrichedKeys, legendItems, visibleKeys } =
-    useBarChartData({
-      data,
-      indexBy,
-      keys,
-      series,
-      colorRegistry,
-      seriesLabels,
-      colorMode,
-    });
+  const { enrichedKeysMap, enrichedKeys, legendItems, visibleKeys } =
+    useBarChartData({ keys, series, colorRegistry, seriesLabels, colorMode });
+
+  const orderedKeys =
+    groupMode === 'stacked' && layout === BarChartLayout.VERTICAL
+      ? visibleKeys.toReversed()
+      : visibleKeys;
+
+  const shouldRoundFreeEndMap = useMemo(
+    () =>
+      computeShouldRoundFreeEndMap({
+        data,
+        orderedKeys,
+        indexBy,
+        groupMode,
+      }),
+    [groupMode, orderedKeys, data, indexBy],
+  );
+
+  const keyToIndexMap = useMemo(() => {
+    return new Map<string, number>(
+      orderedKeys?.map((key, index) => [key, index]) ?? [],
+    );
+  }, [orderedKeys]);
 
   const calculatedValueRange =
     groupMode === 'stacked'
@@ -151,23 +165,25 @@ export const GraphWidgetBarChart = ({
       rangeMax,
     });
 
-  const tickConfig = getBarChartTickConfig({
-    width: chartWidth,
-    height: chartHeight,
+  const {
+    margins,
+    axisBottomConfiguration,
+    axisLeftConfiguration,
+    valueTickValues,
+    valueDomain,
+  } = getBarChartLayout({
+    axisTheme: chartTheme.axis,
+    chartWidth,
+    chartHeight,
     data,
     indexBy,
+    layout,
     xAxisLabel,
     yAxisLabel,
-    axisFontSize: chartTheme.axis.ticks.text.fontSize,
-    layout,
+    formatOptions,
+    effectiveMinimumValue,
+    effectiveMaximumValue,
   });
-
-  const { tickValues: valueTickValues, domain: valueDomain } =
-    computeValueTickValues({
-      minimum: effectiveMinimumValue,
-      maximum: effectiveMaximumValue,
-      tickCount: tickConfig.numberOfValueTicks,
-    });
 
   const hasClickableItems = isDefined(onSliceClick);
 
@@ -193,6 +209,7 @@ export const GraphWidgetBarChart = ({
   ) => {
     if (isDefined(sliceData)) {
       debouncedHideTooltip.cancel();
+      setHoveredSliceIndex(sliceData.slice.indexValue);
       setActiveBarTooltip({
         slice: sliceData.slice,
         offsetLeft: sliceData.offsetLeft,
@@ -207,33 +224,31 @@ export const GraphWidgetBarChart = ({
     debouncedHideTooltip();
   };
 
-  const {
-    axisBottom: axisBottomConfig,
-    axisLeft: axisLeftConfig,
-    margins,
-  } = getBarChartAxisConfigs({
-    layout,
-    xAxisLabel,
-    yAxisLabel,
-    formatOptions,
-    valueTickValues,
-    tickConfig,
-  });
+  const MemoizedBarItem = useMemo(
+    () => (props: BarItemProps<BarDatum>) => {
+      if (props.bar.data.value === 0) {
+        return null;
+      }
 
-  const BarItemWithContext = useMemo(
-    () => (props: BarItemProps<BarDatum>) => (
-      <CustomBarItem
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...props}
-        keys={visibleKeys}
-        groupMode={groupMode}
-        data={data}
-        indexBy={indexBy}
-        layout={layout}
-        chartId={id}
-      />
-    ),
-    [visibleKeys, groupMode, data, indexBy, layout, id],
+      const barKey = JSON.stringify([
+        props.bar.data.indexValue,
+        props.bar.data.id,
+      ]);
+      const shouldRoundFreeEnd = shouldRoundFreeEndMap?.get(barKey) ?? true;
+      const seriesIndex = keyToIndexMap.get(String(props.bar.data.id)) ?? -1;
+
+      return (
+        <CustomBarItem
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...props}
+          shouldRoundFreeEnd={shouldRoundFreeEnd}
+          seriesIndex={seriesIndex}
+          layout={layout}
+          chartId={id}
+        />
+      );
+    },
+    [shouldRoundFreeEndMap, keyToIndexMap, layout, id],
   );
 
   const TotalsLayer = ({
@@ -310,9 +325,9 @@ export const GraphWidgetBarChart = ({
           }}
         />
         <ResponsiveBar
-          barComponent={BarItemWithContext}
+          barComponent={MemoizedBarItem}
           data={data}
-          keys={visibleKeys}
+          keys={orderedKeys}
           indexBy={indexBy}
           margin={margins}
           padding={BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO}
@@ -327,7 +342,9 @@ export const GraphWidgetBarChart = ({
             clamp: true,
           }}
           indexScale={{ type: 'band', round: true }}
-          colors={(datum) => getBarChartColor(datum, barConfigs, theme)}
+          colors={(datum) => getBarChartColor(datum, enrichedKeysMap, theme)}
+          animate
+          motionConfig={CHART_MOTION_CONFIG}
           layers={[
             'grid',
             'markers',
@@ -341,8 +358,8 @@ export const GraphWidgetBarChart = ({
           markers={zeroMarker}
           axisTop={null}
           axisRight={null}
-          axisBottom={axisBottomConfig}
-          axisLeft={axisLeftConfig}
+          axisBottom={axisBottomConfiguration}
+          axisLeft={axisLeftConfiguration}
           enableGridX={layout === BarChartLayout.HORIZONTAL && showGrid}
           enableGridY={layout === BarChartLayout.VERTICAL && showGrid}
           gridXValues={
@@ -380,7 +397,6 @@ export const GraphWidgetBarChart = ({
         containerRef={containerRef}
         enrichedKeys={enrichedKeys}
         formatOptions={formatOptions}
-        layout={layout === BarChartLayout.VERTICAL ? 'vertical' : 'horizontal'}
         onSliceClick={onSliceClick}
         onMouseEnter={handleTooltipMouseEnter}
         onMouseLeave={handleTooltipMouseLeave}

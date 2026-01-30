@@ -60,24 +60,25 @@ GRID SYSTEM:
 
 WIDGET TYPES:
 
-1. GRAPH with graphType "AGGREGATE" (KPI number):
-   - Requires: objectMetadataId, configuration.graphType, configuration.aggregateFieldMetadataId, configuration.aggregateOperation
-   - Example: { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { graphType: "AGGREGATE", aggregateFieldMetadataId: "<amount-field-uuid>", aggregateOperation: "SUM" } }
+1. GRAPH with configurationType "AGGREGATE_CHART" (KPI number):
+   - Requires: objectMetadataId, configuration.configurationType, configuration.aggregateFieldMetadataId, configuration.aggregateOperation
+   - Example: { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { configurationType: "AGGREGATE_CHART", aggregateFieldMetadataId: "<amount-field-uuid>", aggregateOperation: "SUM" } }
 
-2. GRAPH with graphType "VERTICAL_BAR" or "HORIZONTAL_BAR":
+2. GRAPH with configurationType "BAR_CHART":
+   - Additional required: configuration.primaryAxisGroupByFieldMetadataId, configuration.layout ("VERTICAL" or "HORIZONTAL")
+   - Example: { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { configurationType: "BAR_CHART", aggregateFieldMetadataId: "<amount-field-uuid>", aggregateOperation: "COUNT", primaryAxisGroupByFieldMetadataId: "<stage-field-uuid>", layout: "VERTICAL" } }
+
+3. GRAPH with configurationType "LINE_CHART":
    - Additional required: configuration.primaryAxisGroupByFieldMetadataId
-   - Example: { graphType: "VERTICAL_BAR", aggregateFieldMetadataId: "<count-field-uuid>", aggregateOperation: "COUNT", primaryAxisGroupByFieldMetadataId: "<stage-field-uuid>" }
+   - Example: { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { configurationType: "LINE_CHART", aggregateFieldMetadataId: "<amount-field-uuid>", aggregateOperation: "SUM", primaryAxisGroupByFieldMetadataId: "<created-date-field-uuid>" } }
 
-3. GRAPH with graphType "LINE":
-   - Same as bar charts, good for time series
+4. GRAPH with configurationType "PIE_CHART":
+   - Additional required: configuration.groupByFieldMetadataId (note: different field name!)
+   - Example: { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { configurationType: "PIE_CHART", aggregateFieldMetadataId: "<id-field-uuid>", aggregateOperation: "COUNT", groupByFieldMetadataId: "<stage-field-uuid>" } }
 
-4. GRAPH with graphType "PIE":
-   - Requires: objectMetadataId, aggregateFieldMetadataId, aggregateOperation, groupByFieldMetadataId
-   - Example: { graphType: "PIE", aggregateFieldMetadataId: "<id-field-uuid>", aggregateOperation: "COUNT", groupByFieldMetadataId: "<stage-field-uuid>" }
+5. IFRAME: { type: "IFRAME", configuration: { configurationType: "IFRAME", url: "https://..." } }
 
-5. IFRAME: { type: "IFRAME", configuration: { url: "https://..." } }
-
-6. STANDALONE_RICH_TEXT: { type: "STANDALONE_RICH_TEXT", configuration: { body: "..." } }
+6. STANDALONE_RICH_TEXT: { type: "STANDALONE_RICH_TEXT", configuration: { configurationType: "STANDALONE_RICH_TEXT", body: { ... } } }
 
 AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`,
   inputSchema: createCompleteDashboardSchema,
@@ -205,27 +206,24 @@ const createDashboardRecord = async (
 ): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-    authContext,
-    async () => {
-      const dashboardRepository =
-        await deps.globalWorkspaceOrmManager.getRepository(
-          context.workspaceId,
-          'dashboard',
-          { shouldBypassPermissionChecks: true },
-        );
+  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    const dashboardRepository =
+      await deps.globalWorkspaceOrmManager.getRepository(
+        context.workspaceId,
+        'dashboard',
+        { shouldBypassPermissionChecks: true },
+      );
 
-      const position = await deps.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: { isCustom: false, nameSingular: 'dashboard' },
-        workspaceId: context.workspaceId,
-      });
+    const position = await deps.recordPositionService.buildRecordPosition({
+      value: 'first',
+      objectMetadata: { isCustom: false, nameSingular: 'dashboard' },
+      workspaceId: context.workspaceId,
+    });
 
-      const dashboard = { id: uuidv4(), title, pageLayoutId, position };
+    const dashboard = { id: uuidv4(), title, pageLayoutId, position };
 
-      await dashboardRepository.insert(dashboard);
+    await dashboardRepository.insert(dashboard);
 
-      return dashboard.id;
-    },
-  );
+    return dashboard.id;
+  }, authContext);
 };

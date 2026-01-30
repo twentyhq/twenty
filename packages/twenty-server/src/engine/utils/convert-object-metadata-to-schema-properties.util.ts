@@ -1,7 +1,8 @@
 import {
   FieldMetadataType,
-  type FieldMetadataSettings,
+  FILE_CATEGORIES,
   NumberDataType,
+  type FieldMetadataSettings,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -326,6 +327,31 @@ export const convertObjectMetadataToSchemaProperties = ({
             },
             markdown: {
               type: 'string',
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.FILES:
+        itemProperty = {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              fileId: {
+                type: 'string',
+                format: 'uuid',
+              },
+              label: {
+                type: 'string',
+              },
+              ...(forResponse
+                ? {
+                    fileCategory: {
+                      type: 'string',
+                      enum: Object.values(FILE_CATEGORIES),
+                    },
+                  }
+                : {}),
             },
           },
         };
