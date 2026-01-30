@@ -271,7 +271,7 @@ export type Application = {
   applicationVariables: Array<ApplicationVariable>;
   canBeUninstalled: Scalars['Boolean'];
   defaultLogicFunctionRole?: Maybe<Role>;
-  defaultLogicFunctionRoleId?: Maybe<Scalars['String']>;
+  defaultRoleId?: Maybe<Scalars['String']>;
   description: Scalars['String'];
   id: Scalars['UUID'];
   logicFunctions: Array<LogicFunction>;

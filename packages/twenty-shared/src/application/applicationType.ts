@@ -1,8 +1,8 @@
-import { type ApplicationVariables } from '@/application';
+import { type ApplicationVariables } from '@/sdk';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
-export type Application = SyncableEntityOptions & {
-  functionRoleUniversalIdentifier: string;
+export type ApplicationManifest = SyncableEntityOptions & {
+  defaultRoleUniversalIdentifier: string;
   displayName?: string;
   description?: string;
   icon?: string;

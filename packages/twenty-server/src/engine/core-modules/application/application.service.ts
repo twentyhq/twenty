@@ -33,17 +33,14 @@ export class ApplicationService {
       where: { id: applicationId, workspaceId },
     });
 
-    if (
-      !isDefined(application) ||
-      !isDefined(application.defaultLogicFunctionRoleId)
-    ) {
+    if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
       throw new ApplicationException(
         `Could not find application ${applicationId}`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
 
-    return application.defaultLogicFunctionRoleId;
+    return application.defaultRoleId;
   }
 
   async findWorkspaceTwentyStandardAndCustomApplicationOrThrow({

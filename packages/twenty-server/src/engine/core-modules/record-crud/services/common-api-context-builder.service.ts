@@ -126,9 +126,9 @@ export class CommonApiContextBuilderService {
       );
     } else if (
       isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultLogicFunctionRoleId)
+      isDefined(authContext.application.defaultRoleId)
     ) {
-      roleId = authContext.application.defaultLogicFunctionRoleId;
+      roleId = authContext.application.defaultRoleId;
     } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({

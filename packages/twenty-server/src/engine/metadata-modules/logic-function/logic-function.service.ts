@@ -43,7 +43,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
+import { LogicFunctionBuildService } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -52,7 +52,7 @@ export class LogicFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly functionBuildService: FunctionBuildService,
+    private readonly functionBuildService: LogicFunctionBuildService,
     private readonly logicFunctionLayerService: LogicFunctionLayerService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
