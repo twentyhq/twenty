@@ -1,4 +1,5 @@
 import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -25,25 +26,27 @@ export type CreateStandardPageLayoutArgs = {
 
 export const findObjectNameByUniversalIdentifier = (
   objectUniversalIdentifier: string,
-): string | null => {
+): string => {
   for (const [objectName, objectId] of Object.entries(STANDARD_OBJECT_IDS)) {
     if (objectId === objectUniversalIdentifier) {
       return objectName;
     }
   }
 
-  return null;
+  throw new Error(
+    `Object with universal identifier ${objectUniversalIdentifier} not found`,
+  );
 };
 
 const findTabKeyByUniversalIdentifier = (
   layoutName: string,
   tabUniversalIdentifier: string,
-): string | null => {
+): string => {
   const layout =
     STANDARD_PAGE_LAYOUTS[layoutName as keyof typeof STANDARD_PAGE_LAYOUTS];
 
-  if (!layout) {
-    return null;
+  if (!isDefined(layout)) {
+    throw new Error(`Layout with name ${layoutName} not found`);
   }
 
   for (const [tabKey, tab] of Object.entries(layout.tabs)) {
@@ -52,7 +55,9 @@ const findTabKeyByUniversalIdentifier = (
     }
   }
 
-  return null;
+  throw new Error(
+    `Tab with universal identifier ${tabUniversalIdentifier} not found`,
+  );
 };
 
 export const createStandardPageLayoutFlatMetadata = ({
@@ -81,7 +86,7 @@ export const createStandardPageLayoutFlatMetadata = ({
       objectUniversalIdentifier,
     );
 
-    if (objectName) {
+    if (isDefined(objectName)) {
       objectMetadataId =
         standardObjectMetadataRelatedEntityIds[
           objectName as keyof typeof standardObjectMetadataRelatedEntityIds
@@ -97,7 +102,7 @@ export const createStandardPageLayoutFlatMetadata = ({
       defaultTabUniversalIdentifier,
     );
 
-    if (tabKey) {
+    if (isDefined(tabKey)) {
       defaultTabToFocusOnMobileAndSidePanelId = layoutIds.tabs[tabKey].id;
     }
   }
