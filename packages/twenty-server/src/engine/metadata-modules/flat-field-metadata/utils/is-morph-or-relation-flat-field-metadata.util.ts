@@ -13,7 +13,7 @@ export const isMorphOrRelationFlatFieldMetadata = (
     ...MORPH_OR_RELATION_FIELD_TYPES,
   ]);
 
-export const isMorhphOrRelationUniversalFlatFieldMetadata = (
+export const isMorphOrRelationUniversalFlatFieldMetadata = (
   universalFlatFieldMetadata: UniversalFlatFieldMetadata,
 ): universalFlatFieldMetadata is UniversalFlatFieldMetadata<MorphOrRelationFieldMetadataType> =>
   isFlatFieldMetadataOfTypes(universalFlatFieldMetadata, [

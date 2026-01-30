@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { isMorhphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type AggregateOrchestratorActionsReportArgs } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-aggregate-orchestrator-actions-report-args.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -75,7 +75,7 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
         } = createFieldAction.universalFlatFieldMetadatas.reduce(
           (acc, universalFlatFieldMetadata) => {
             if (
-              isMorhphOrRelationUniversalFlatFieldMetadata(
+              isMorphOrRelationUniversalFlatFieldMetadata(
                 universalFlatFieldMetadata,
               )
             ) {

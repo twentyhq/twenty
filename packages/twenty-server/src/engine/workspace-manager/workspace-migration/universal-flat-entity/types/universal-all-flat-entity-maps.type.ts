@@ -14,7 +14,8 @@ export type UniversalAllFlatEntityMaps = {
         runner: true;
       };
     }
-      ? MetadataUniversalFlatEntity<P>
+      ? // Does not make sense in the end
+        MetadataUniversalFlatEntity<P>
       : MetadataFlatEntity<P>
   >;
 } & {
