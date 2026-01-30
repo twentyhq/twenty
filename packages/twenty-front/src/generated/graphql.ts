@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -5185,11 +5185,6 @@ export type SearchQueryVariables = Exact<{
 
 export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, objectLabelSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
-export type InstallMarketplaceAppMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type InstallMarketplaceAppMutation = { __typename?: 'Mutation', installMarketplaceApp: boolean };
-
 export type FindManyMarketplaceAppsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -5831,36 +5826,6 @@ export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Sea
 export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
 export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
 export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
-export const InstallMarketplaceAppDocument = gql`
-    mutation InstallMarketplaceApp {
-  installMarketplaceApp
-}
-    `;
-export type InstallMarketplaceAppMutationFn = Apollo.MutationFunction<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>;
-
-/**
- * __useInstallMarketplaceAppMutation__
- *
- * To run a mutation, you first call `useInstallMarketplaceAppMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInstallMarketplaceAppMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [installMarketplaceAppMutation, { data, loading, error }] = useInstallMarketplaceAppMutation({
- *   variables: {
- *   },
- * });
- */
-export function useInstallMarketplaceAppMutation(baseOptions?: Apollo.MutationHookOptions<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>(InstallMarketplaceAppDocument, options);
-      }
-export type InstallMarketplaceAppMutationHookResult = ReturnType<typeof useInstallMarketplaceAppMutation>;
-export type InstallMarketplaceAppMutationResult = Apollo.MutationResult<InstallMarketplaceAppMutation>;
-export type InstallMarketplaceAppMutationOptions = Apollo.BaseMutationOptions<InstallMarketplaceAppMutation, InstallMarketplaceAppMutationVariables>;
 export const FindManyMarketplaceAppsDocument = gql`
     query FindManyMarketplaceApps {
   findManyMarketplaceApps {
