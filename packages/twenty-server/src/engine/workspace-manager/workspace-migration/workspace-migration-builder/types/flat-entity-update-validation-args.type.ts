@@ -9,4 +9,5 @@ export type FlatEntityUpdateValidationArgs<T extends AllMetadataName> = Omit<
 > & {
   flatEntityId: string;
   flatEntityUpdates: FlatEntityPropertiesUpdates<T>;
+  universalIdentifier: string;
 };

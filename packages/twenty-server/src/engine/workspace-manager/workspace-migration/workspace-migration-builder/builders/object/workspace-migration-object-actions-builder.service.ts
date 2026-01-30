@@ -42,7 +42,7 @@ export class WorkspaceMigrationObjectActionsBuilderService extends WorkspaceEnti
       action: {
         type: 'create',
         metadataName: 'objectMetadata',
-        flatFieldMetadatas: [],
+        universalFlatFieldMetadatas: [],
         flatEntity: flatObjectMetadataToValidate,
       },
     };
@@ -94,12 +94,12 @@ export class WorkspaceMigrationObjectActionsBuilderService extends WorkspaceEnti
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { universalIdentifier, flatEntityUpdates } = args;
 
     const updateObjectAction: UpdateObjectAction = {
       type: 'update',
       metadataName: 'objectMetadata',
-      entityId: flatEntityId,
+      universalIdentifier,
       updates: flatEntityUpdates,
     };
 

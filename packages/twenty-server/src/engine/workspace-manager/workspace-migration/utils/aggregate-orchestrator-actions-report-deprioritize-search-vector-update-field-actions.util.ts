@@ -1,6 +1,6 @@
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type AggregateOrchestratorActionsReportArgs } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-aggregate-orchestrator-actions-report-args.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
@@ -22,9 +22,9 @@ export const aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFie
         otherUpdateFieldActions: UpdateFieldAction[];
       }>(
         (acc, updateFieldAction) => {
-          const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
             flatEntityMaps: flatFieldMetadataMaps,
-            flatEntityId: updateFieldAction.entityId,
+            universalIdentifier: updateFieldAction.universalIdentifier,
           });
 
           const isSearchVectorUpdateFieldAction =
