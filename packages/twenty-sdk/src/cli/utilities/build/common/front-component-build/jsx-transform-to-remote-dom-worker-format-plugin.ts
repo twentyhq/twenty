@@ -1,5 +1,5 @@
 import type * as esbuild from 'esbuild';
-import * as fs from 'fs';
+import * as fs from 'node:fs/promises';
 
 import { replaceHtmlTagsWithRemoteComponents } from './utils/replace-html-tags-with-remote-components';
 import { unwrapDefineFrontComponentToDirectExport } from './utils/unwrap-define-front-component-to-direct-export';
@@ -13,7 +13,7 @@ export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
       { filter: /\.front-component\.tsx$/ },
       async (loadArgs): Promise<esbuild.OnLoadResult> => {
         try {
-          const frontComponentSourceCode = fs.readFileSync(
+          const frontComponentSourceCode = await fs.readFile(
             loadArgs.path,
             'utf8',
           );
