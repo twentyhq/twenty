@@ -8,8 +8,8 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { type WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
+import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 export type FromToAllFlatEntityMaps = {
   [P in keyof AllFlatEntityMaps]?: FromTo<AllFlatEntityMaps[P]>;
@@ -21,6 +21,7 @@ export type WorkspaceMigrationOrchestratorBuildArgs = {
   fromToAllFlatEntityMaps: FromToAllFlatEntityMaps;
   dependencyAllFlatEntityMaps?: Partial<AllFlatEntityMaps>;
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
+  applicationUniversalIdentifier: string;
 };
 
 export type OrchestratorFailureReport = {
