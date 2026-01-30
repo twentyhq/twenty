@@ -1,5 +1,5 @@
 import {
-  type Application,
+  type ApplicationManifest,
   type FieldManifest,
   type ObjectManifest,
   type RoleManifest,
@@ -14,7 +14,7 @@ export type ValidationResult<T> = {
 };
 
 export type DefinableEntity =
-  | Application
+  | ApplicationManifest
   | ObjectManifest
   | FieldManifest
   | FrontComponentConfig

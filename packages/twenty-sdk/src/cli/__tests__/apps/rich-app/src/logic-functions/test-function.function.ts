@@ -1,4 +1,4 @@
-import { defineLogicFunction } from '@/application';
+import { defineLogicFunction } from '@/sdk';
 import { formatFarewell } from '../utils/greeting.util';
 
 const handler = () => {

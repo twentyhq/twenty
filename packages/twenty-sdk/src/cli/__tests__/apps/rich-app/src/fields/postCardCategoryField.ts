@@ -1,4 +1,4 @@
-import { defineField, FieldType } from '@/application';
+import { defineField, FieldType } from '@/sdk';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/postCard.object';
 import { POST_CARD_EXTENSION_CATEGORY_FIELD_ID } from '@/cli/__tests__/apps/rich-app/src/fields/postCardNumber.field';
 

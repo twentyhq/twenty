@@ -1,4 +1,4 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 const extractDuplicates = (values: string[]): string[] => {
@@ -34,7 +34,7 @@ const findUniversalIdentifiers = (obj: object): string[] => {
 
   return universalIdentifiers;
 };
-export const validateManifest = (manifest: ApplicationManifest) => {
+export const validateManifest = (manifest: Manifest) => {
   const errors: string[] = [];
   const warnings: string[] = [];
 

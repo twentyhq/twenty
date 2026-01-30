@@ -9,8 +9,8 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import {
-  type Application,
   type ApplicationManifest,
+  type Manifest,
   type AssetManifest,
   ASSETS_DIR,
   type FieldManifest,
@@ -71,14 +71,14 @@ const computeSources = async (
 export const buildManifest = async (
   appPath: string,
 ): Promise<{
-  manifest: ApplicationManifest | null;
+  manifest: Manifest | null;
   filePaths: EntityFilePaths;
   errors: string[];
 }> => {
   const filePaths = await loadSources(appPath);
   const errors: string[] = [];
 
-  let application: Application | undefined;
+  let application: ApplicationManifest | undefined;
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const roles: RoleManifest[] = [];
@@ -108,7 +108,7 @@ export const buildManifest = async (
 
     switch (entity) {
       case ManifestEntityKey.Application: {
-        const extract = await extractManifestFromFile<Application>({
+        const extract = await extractManifestFromFile<ApplicationManifest>({
           appPath,
           filePath,
         });

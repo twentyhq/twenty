@@ -1,5 +1,4 @@
-import { defineObject } from '@/application/objects/define-object';
-import { FieldType } from '@/application/fields/field-type';
+import { defineObject, FieldType } from '@/sdk';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',

@@ -1,8 +1,8 @@
-import { FieldType } from '@/application';
-import type { ApplicationManifest } from 'twenty-shared/application';
+import { FieldType } from '@/sdk';
+import type { Manifest } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-export const EXPECTED_MANIFEST: ApplicationManifest = {
+export const EXPECTED_MANIFEST: Manifest = {
   sources: {},
   publicAssets: [
     {
@@ -234,8 +234,8 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
         {
           canReadFieldValue: false,
           canUpdateFieldValue: false,
-          fieldName: 'content',
-          objectNameSingular: 'postCard',
+          fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
+          objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
         },
       ],
       label: 'Default function role',
@@ -245,7 +245,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
           canUpdateObjectRecords: true,
-          objectNameSingular: 'postCard',
+          objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
         },
       ],
       permissionFlags: [PermissionFlagType.APPLICATIONS],

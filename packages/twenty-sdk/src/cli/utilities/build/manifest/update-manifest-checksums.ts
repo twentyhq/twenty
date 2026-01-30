@@ -1,20 +1,17 @@
 import { relative } from 'path';
-import {
-  type ApplicationManifest,
-  OUTPUT_DIR,
-} from 'twenty-shared/application';
+import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
 import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
 export type ManifestBuildResult = {
-  manifest: ApplicationManifest | null;
+  manifest: Manifest | null;
   filePaths: EntityFilePaths;
   error?: string;
 };
 
 export type UpdateManifestChecksumParams = {
-  manifest: ApplicationManifest;
+  manifest: Manifest;
   builtFileInfos: Map<
     string,
     { checksum: string; builtPath: string; fileFolder: FileFolder }
@@ -24,7 +21,7 @@ export type UpdateManifestChecksumParams = {
 export const updateManifestChecksums = ({
   manifest,
   builtFileInfos,
-}: UpdateManifestChecksumParams): ApplicationManifest => {
+}: UpdateManifestChecksumParams): Manifest => {
   let result = structuredClone(manifest);
   for (const [
     builtPath,

@@ -1,4 +1,4 @@
-import { defineLogicFunction } from '@/application';
+import { defineLogicFunction } from '@/sdk';
 import { DEFAULT_NAME, formatGreeting } from '../utils/greeting.util';
 
 const greetingHandler = () => {

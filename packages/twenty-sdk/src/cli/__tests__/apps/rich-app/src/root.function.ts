@@ -1,4 +1,4 @@
-import { defineLogicFunction } from '@/application';
+import { defineLogicFunction } from '@/sdk';
 
 const rootHandler = () => {
   return 'root-function-result';

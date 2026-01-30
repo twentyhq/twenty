@@ -7,8 +7,7 @@
  *                              |___/
  */
 
-export type { ApplicationManifest } from './applicationManifestType';
-export type { Application } from './applicationType';
+export type { ApplicationManifest } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -31,6 +30,7 @@ export type {
   RouteTrigger,
   LogicFunctionTriggerManifest,
 } from './logicFunctionManifestType';
+export type { Manifest } from './manifestType';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';

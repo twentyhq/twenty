@@ -1,7 +1,7 @@
-import { FieldType } from '@/application';
-import type { ApplicationManifest } from 'twenty-shared/application';
+import { FieldType } from '@/sdk';
+import type { Manifest } from 'twenty-shared/application';
 
-export const EXPECTED_MANIFEST: ApplicationManifest = {
+export const EXPECTED_MANIFEST: Manifest = {
   sources: {},
   yarnLock: '',
   packageJson: {

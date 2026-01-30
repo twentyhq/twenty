@@ -1,4 +1,4 @@
-import { defineApplication } from '@/application/application/define-app';
+import { defineApplication } from '@/sdk';
 
 export default defineApplication({
   universalIdentifier: 'invalid-app-0000-0000-0000-000000000001',

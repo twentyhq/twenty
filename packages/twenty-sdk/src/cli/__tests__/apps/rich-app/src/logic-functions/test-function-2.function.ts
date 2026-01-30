@@ -1,4 +1,4 @@
-import { defineLogicFunction } from '@/application';
+import { defineLogicFunction } from '@/sdk';
 import { testFunction2 } from '../utils/test-function-2.util';
 
 export const config = defineLogicFunction({

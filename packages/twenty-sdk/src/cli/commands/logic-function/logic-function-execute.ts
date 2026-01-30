@@ -1,7 +1,7 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 
@@ -162,7 +162,7 @@ export class LogicFunctionExecuteCommand {
 
   private belongsToApplication(
     fn: { universalIdentifier: string; applicationId: string | null },
-    manifest: ApplicationManifest,
+    manifest: Manifest,
   ): boolean {
     return manifest.logicFunctions.some(
       (manifestFn) => manifestFn.universalIdentifier === fn.universalIdentifier,

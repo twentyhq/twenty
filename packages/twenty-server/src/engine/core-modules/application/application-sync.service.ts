@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import {
-  ApplicationManifest,
+  Manifest,
   FieldManifest,
   ObjectManifest,
   RoleManifest,
@@ -198,7 +198,7 @@ export class ApplicationSyncService {
     workspaceId,
     applicationId,
   }: {
-    manifest: ApplicationManifest;
+    manifest: Manifest;
     workspaceId: string;
     applicationId: string;
   }) {

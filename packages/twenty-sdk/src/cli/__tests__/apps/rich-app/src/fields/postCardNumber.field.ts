@@ -1,4 +1,4 @@
-import { defineField, FieldType } from '@/application';
+import { defineField, FieldType } from '@/sdk';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/postCard.object';
 
 export const POST_CARD_EXTENSION_PRIORITY_FIELD_ID =

@@ -13,7 +13,7 @@ const config: ApplicationConfig = {
       isSecret: false,
     },
   },
-  defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  functionRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
 };
 
 export default config;

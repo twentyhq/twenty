@@ -1,17 +1,17 @@
 import {
   type PackageJson,
-  type Application,
+  type ApplicationManifest,
   type ObjectManifest,
   type LogicFunctionManifest,
   type AssetManifest,
   type FrontComponentManifest,
   type RoleManifest,
   type FieldManifest,
-} from '@/application';
+} from '@/sdk';
 import { type Sources } from '@/types';
 
-export type ApplicationManifest = {
-  application: Application;
+export type Manifest = {
+  application: ApplicationManifest;
   objects: ObjectManifest[];
   fields: FieldManifest[];
   logicFunctions: LogicFunctionManifest[];
