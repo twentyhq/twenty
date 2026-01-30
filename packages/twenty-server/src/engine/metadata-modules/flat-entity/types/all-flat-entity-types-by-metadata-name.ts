@@ -44,6 +44,7 @@ import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-fil
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { type WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import {
   type CreateAgentAction,
   type DeleteAgentAction,
@@ -176,7 +177,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: DeleteObjectAction;
     };
     flatEntity: FlatObjectMetadata;
-    universalFlatEntity: UniversalFlatEntityFrom<ObjectMetadataEntity>;
+    universalFlatEntity: UniversalFlatObjectMetadata;
     entity: MetadataEntity<'objectMetadata'>;
   };
   view: {
