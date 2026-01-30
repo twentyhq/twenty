@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { lowerCase, upperFirst } from 'lodash';
 import { type ApplicationManifest } from 'twenty-shared/application';
 
-import { type MarketplaceAppDTO } from './dtos/marketplace-app.dto';
+import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
 
 type GitHubContent = {
   name: string;
