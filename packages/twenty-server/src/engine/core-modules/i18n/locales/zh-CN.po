@@ -1413,11 +1413,6 @@ msgstr "函数尚未就绪。"
 msgid "Function not found."
 msgstr "未找到函数。"
 
-#. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
-msgid "Function version not found."
-msgstr "未找到函数版本。"
-
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Google API authentication is disabled."

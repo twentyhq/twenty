@@ -1413,11 +1413,6 @@ msgstr "함수가 준비되지 않았습니다."
 msgid "Function not found."
 msgstr "함수를 찾을 수 없음."
 
-#. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
-msgid "Function version not found."
-msgstr "함수 버전을 찾을 수 없음."
-
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Google API authentication is disabled."

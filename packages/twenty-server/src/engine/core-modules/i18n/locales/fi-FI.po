@@ -1413,11 +1413,6 @@ msgstr "Funktio ei ole valmis."
 msgid "Function not found."
 msgstr "Funktiota ei löytynyt."
 
-#. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
-msgid "Function version not found."
-msgstr "Funktion versiota ei löytynyt."
-
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Google API authentication is disabled."

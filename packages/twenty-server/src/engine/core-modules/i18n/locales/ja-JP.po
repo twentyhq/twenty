@@ -1413,11 +1413,6 @@ msgstr "関数の準備ができていません。"
 msgid "Function not found."
 msgstr "関数が見つかりません。"
 
-#. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
-msgid "Function version not found."
-msgstr "関数バージョンが見つかりません。"
-
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Google API authentication is disabled."
