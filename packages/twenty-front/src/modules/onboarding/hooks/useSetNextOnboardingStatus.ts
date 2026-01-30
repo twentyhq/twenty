@@ -10,19 +10,24 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { isDefined } from 'twenty-shared/utils';
-import { OnboardingStatus } from '~/generated/graphql';
+import { OnboardingStatus, PermissionFlagType } from '~/generated/graphql';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 
 const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,
   currentWorkspace: CurrentWorkspace | null,
   calendarBookingPageId: string | null,
 ) => {
+  const permissionMap = usePermissionFlagMap();
   if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
     return OnboardingStatus.PROFILE_CREATION;
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
     if (currentWorkspace?.workspaceMembersCount === 1) {
+      if (permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS]) {
+        return OnboardingStatus.INVITE_TEAM;
+      }
       return OnboardingStatus.SYNC_EMAIL;
     }
     return OnboardingStatus.COMPLETED;
