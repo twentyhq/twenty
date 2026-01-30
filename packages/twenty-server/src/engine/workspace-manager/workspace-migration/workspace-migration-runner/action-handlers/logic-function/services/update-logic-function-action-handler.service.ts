@@ -16,7 +16,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -27,6 +26,7 @@ import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logi
 import { UpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+import { LogicFunctionBuildService } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.service';
 
 @Injectable()
 export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -36,7 +36,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly functionBuildService: FunctionBuildService,
+    private readonly functionBuildService: LogicFunctionBuildService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {

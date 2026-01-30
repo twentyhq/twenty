@@ -26,11 +26,10 @@ const STATUS_COLORS: Record<FileStatus, string> = {
 
 const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.Object]: 'Objects',
-  [SyncableEntity.ObjectExtension]: 'Object Extensions',
-  [SyncableEntity.Function]: 'Functions',
-  [SyncableEntity.FrontComponent]: 'Front Components',
+  [SyncableEntity.Field]: 'Fields',
+  [SyncableEntity.LogicFunction]: 'Logic functions',
+  [SyncableEntity.FrontComponent]: 'Front components',
   [SyncableEntity.Role]: 'Roles',
-  [SyncableEntity.PublicAsset]: 'Public Assets',
 };
 
 const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntity[];
@@ -194,7 +193,7 @@ export const renderDevUI = async (
 
     return (
       <Text color={config.color}>
-        {icon ?? ''}
+        {icon ? `${icon} ` : ''}
         {config.text}
         {snapshot.error && `: ${snapshot.error}`}
       </Text>

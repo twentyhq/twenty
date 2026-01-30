@@ -13,7 +13,7 @@ import path from 'path';
 import { OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
-export const FUNCTION_EXTERNAL_MODULES: string[] = [
+export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
   'path',
   'fs',
   'crypto',
@@ -204,13 +204,13 @@ const externalPatternsPlugin: esbuild.Plugin = {
   },
 };
 
-export const createFunctionsWatcher = (
+export const createLogicFunctionsWatcher = (
   options: RestartableWatcherOptions,
 ): EsbuildWatcher =>
   new EsbuildWatcher({
     ...options,
     config: {
-      externalModules: FUNCTION_EXTERNAL_MODULES,
+      externalModules: LOGIC_FUNCTION_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltLogicFunction,
       platform: 'node',
       extraPlugins: [externalPatternsPlugin],

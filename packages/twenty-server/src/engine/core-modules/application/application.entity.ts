@@ -57,10 +57,10 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   logicFunctionLayerId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  defaultLogicFunctionRoleId: string | null;
+  defaultRoleId: string | null;
 
   @Field(() => RoleDTO, { nullable: true })
-  defaultLogicFunctionRole: RoleDTO | null;
+  defaultRole: RoleDTO | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;

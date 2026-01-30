@@ -19,7 +19,7 @@ describe('useGetObjectRecordIdentifierByNameSingular', () => {
 
         setMetadataItems(generatedMockObjectMetadataItems);
 
-        return useGetObjectRecordIdentifierByNameSingular()(
+        return useGetObjectRecordIdentifierByNameSingular(true)(
           record,
           objectNameSingular,
         );

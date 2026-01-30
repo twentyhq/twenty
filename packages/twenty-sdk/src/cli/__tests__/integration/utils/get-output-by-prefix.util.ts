@@ -2,7 +2,7 @@ export type LogPrefix =
   | 'init'
   | 'dev-mode'
   | 'manifest-watch'
-  | 'functions-watch'
+  | 'logicFunctions-watch'
   | 'front-components-watch';
 
 export const getOutputByPrefix = (

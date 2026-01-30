@@ -1,4 +1,4 @@
-import { defineFrontComponent } from '@/application/front-components/define-front-component';
+import { defineFrontComponent } from '@/sdk';
 import { CardDisplay } from '../utils/card-display.component';
 
 export default defineFrontComponent({

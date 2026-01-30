@@ -8,7 +8,13 @@ import { isDefined, uncapitalize } from 'twenty-shared/utils';
 export const recordStoreIdentifiersFamilySelector = selectorFamily({
   key: 'recordStoreIdentifiersFamilySelector',
   get:
-    ({ recordIds }: { recordIds: string[] }) =>
+    ({
+      recordIds,
+      allowRequestsToTwentyIcons,
+    }: {
+      recordIds: string[];
+      allowRequestsToTwentyIcons: boolean;
+    }) =>
     ({ get }) => {
       const objectMetadataItems = get(objectMetadataItemsState);
 
@@ -30,6 +36,7 @@ export const recordStoreIdentifiersFamilySelector = selectorFamily({
           return getObjectRecordIdentifier({
             objectMetadataItem: objectMetadataItem,
             record: recordFromStore,
+            allowRequestsToTwentyIcons,
           });
         })
         .filter(isDefined);
