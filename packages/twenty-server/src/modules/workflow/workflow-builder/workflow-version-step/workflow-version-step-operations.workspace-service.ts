@@ -87,7 +87,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.CODE: {
         await this.logicFunctionService.destroyOne({
-          destroyLogicFunctionInput: { id: step.settings.input.logicFunctionId },
+          destroyLogicFunctionInput: {
+            id: step.settings.input.logicFunctionId,
+          },
           workspaceId,
         });
         break;
