@@ -4617,6 +4617,7 @@ export type UpdateLogicFunctionInput = {
 };
 
 export type UpdateLogicFunctionInputUpdates = {
+  builtHandlerPath?: InputMaybe<Scalars['String']>;
   code: Scalars['JSON'];
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
