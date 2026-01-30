@@ -10,8 +10,7 @@ import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-functio
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import type { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
-import { LogicFunctionIdInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-id.input';
-import { UpdateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function.input';
+import type { UpdateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function.input';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -36,22 +35,17 @@ export class LogicFunctionService {
   ) {}
 
   async createOne({
-    createLogicFunctionInput,
+    input,
     workspaceId,
     applicationId,
   }: {
-    createLogicFunctionInput: CreateLogicFunctionInput & {
+    input: Omit<CreateLogicFunctionInput, 'applicationId'> & {
       logicFunctionLayerId?: string;
     };
-    /**
-     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
-     * when interacting with another application than workspace custom one
-     * */
-    applicationId?: string;
     workspaceId: string;
+    applicationId?: string;
   }) {
-    let logicFunctionToCreateLayerId =
-      createLogicFunctionInput.logicFunctionLayerId;
+    let logicFunctionToCreateLayerId = input.logicFunctionLayerId;
 
     if (!isDefined(logicFunctionToCreateLayerId)) {
       const { id: commonLogicFunctionLayerId } =
@@ -72,7 +66,7 @@ export class LogicFunctionService {
     const flatLogicFunctionToCreate =
       fromCreateLogicFunctionInputToFlatLogicFunction({
         createLogicFunctionInput: {
-          ...createLogicFunctionInput,
+          ...input,
           logicFunctionLayerId: logicFunctionToCreateLayerId,
         },
         workspaceId,
@@ -116,10 +110,17 @@ export class LogicFunctionService {
     });
   }
 
-  async updateOne(
-    logicFunctionInput: UpdateLogicFunctionInput,
-    workspaceId: string,
-  ) {
+  async updateOne({
+    id,
+    update,
+    workspaceId,
+    applicationId: _applicationId,
+  }: {
+    id: string;
+    update: UpdateLogicFunctionInput['update'];
+    workspaceId: string;
+    applicationId?: string;
+  }) {
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -131,7 +132,7 @@ export class LogicFunctionService {
     const optimisticallyUpdatedFlatLogicFunction =
       fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow({
         flatLogicFunctionMaps,
-        updateLogicFunctionInput: logicFunctionInput,
+        updateLogicFunctionInput: { id, update },
       });
 
     const validateAndBuildResult =
@@ -171,12 +172,14 @@ export class LogicFunctionService {
   }
 
   async destroyOne({
-    destroyLogicFunctionInput,
+    id,
     workspaceId,
+    applicationId: _applicationId,
     isSystemBuild = false,
   }: {
-    destroyLogicFunctionInput: LogicFunctionIdInput;
+    id: string;
     workspaceId: string;
+    applicationId?: string;
     isSystemBuild?: boolean;
   }): Promise<FlatLogicFunction> {
     const { flatLogicFunctionMaps: existingFlatLogicFunctionMaps } =
@@ -187,8 +190,7 @@ export class LogicFunctionService {
         },
       );
 
-    const existingFlatLogicFunction =
-      existingFlatLogicFunctionMaps.byId[destroyLogicFunctionInput.id];
+    const existingFlatLogicFunction = existingFlatLogicFunctionMaps.byId[id];
 
     if (!isDefined(existingFlatLogicFunction)) {
       throw new LogicFunctionException(
@@ -288,14 +290,14 @@ export class LogicFunctionService {
     }
 
     const newFlatLogicFunction = await this.createOne({
-      createLogicFunctionInput: {
+      input: {
         name: existingLogicFunction.name,
         description: existingLogicFunction.description ?? undefined,
         timeoutSeconds: existingLogicFunction.timeoutSeconds,
-        applicationId: existingLogicFunction.applicationId ?? undefined,
         logicFunctionLayerId: existingLogicFunction.logicFunctionLayerId,
       },
       workspaceId,
+      applicationId: existingLogicFunction.applicationId ?? undefined,
     });
 
     const newApplicationUniversalIdentifier = isDefined(

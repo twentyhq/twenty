@@ -87,9 +87,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.CODE: {
         await this.logicFunctionService.destroyOne({
-          destroyLogicFunctionInput: {
-            id: step.settings.input.logicFunctionId,
-          },
+          id: step.settings.input.logicFunctionId,
           workspaceId,
         });
         break;
@@ -154,7 +152,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     switch (type) {
       case WorkflowActionType.CODE: {
         const newLogicFunction = await this.logicFunctionService.createOne({
-          createLogicFunctionInput: {
+          input: {
             name: 'A Logic Function Code Workflow Step',
             description: '',
           },

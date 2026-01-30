@@ -839,8 +839,9 @@ export class ApplicationSyncService {
 
     for (const logicFunctionToDelete of logicFunctionsToDelete) {
       await this.logicFunctionService.destroyOne({
-        destroyLogicFunctionInput: { id: logicFunctionToDelete.id },
+        id: logicFunctionToDelete.id,
         workspaceId,
+        applicationId,
         isSystemBuild: true,
       });
     }
@@ -862,7 +863,7 @@ export class ApplicationSyncService {
       const name =
         logicFunctionToSync.name ?? parse(logicFunctionToSync.handlerName).name;
 
-      const updateLogicFunctionInput = {
+      await this.logicFunctionService.updateOne({
         id: logicFunctionToUpdate.id,
         update: {
           name,
@@ -874,12 +875,9 @@ export class ApplicationSyncService {
           toolInputSchema: logicFunctionToSync.toolInputSchema,
           isTool: logicFunctionToSync.isTool,
         },
-      };
-
-      await this.logicFunctionService.updateOne(
-        updateLogicFunctionInput,
         workspaceId,
-      );
+        applicationId,
+      });
 
       // Trigger settings are now embedded in the logic function entity
       // They are handled through the update input
@@ -890,22 +888,19 @@ export class ApplicationSyncService {
         logicFunctionToCreate.name ??
         parse(logicFunctionToCreate.handlerName).name;
 
-      const createLogicFunctionInput = {
-        name,
-        code,
-        universalIdentifier: logicFunctionToCreate.universalIdentifier,
-        timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
-        sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
-        handlerName: logicFunctionToCreate.handlerName,
-        builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
-        applicationId,
-        logicFunctionLayerId,
-        toolInputSchema: logicFunctionToCreate.toolInputSchema,
-        isTool: logicFunctionToCreate.isTool,
-      };
-
       await this.logicFunctionService.createOne({
-        createLogicFunctionInput,
+        input: {
+          name,
+          code,
+          universalIdentifier: logicFunctionToCreate.universalIdentifier,
+          timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
+          sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
+          handlerName: logicFunctionToCreate.handlerName,
+          builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
+          logicFunctionLayerId,
+          toolInputSchema: logicFunctionToCreate.toolInputSchema,
+          isTool: logicFunctionToCreate.isTool,
+        },
         workspaceId,
         applicationId,
       });

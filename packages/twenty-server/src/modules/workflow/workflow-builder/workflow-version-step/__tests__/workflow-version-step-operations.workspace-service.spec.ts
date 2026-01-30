@@ -155,7 +155,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       });
 
       expect(logicFunctionService.destroyOne).toHaveBeenCalledWith({
-        destroyLogicFunctionInput: { id: 'function-id' },
+        id: 'function-id',
         workspaceId: mockWorkspaceId,
       });
     });

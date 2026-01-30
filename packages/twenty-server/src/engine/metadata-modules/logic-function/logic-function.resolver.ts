@@ -135,7 +135,7 @@ export class LogicFunctionResolver {
   ): Promise<LogicFunctionDTO> {
     try {
       const flatLogicFunction = await this.logicFunctionService.destroyOne({
-        destroyLogicFunctionInput: { id: input.id },
+        id: input.id,
         workspaceId,
       });
 
@@ -155,10 +155,11 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      const flatLogicFunction = await this.logicFunctionService.updateOne(
-        input,
+      const flatLogicFunction = await this.logicFunctionService.updateOne({
+        id: input.id,
+        update: input.update,
         workspaceId,
-      );
+      });
 
       return fromFlatLogicFunctionToLogicFunctionDto({
         flatLogicFunction,
@@ -177,7 +178,7 @@ export class LogicFunctionResolver {
   ): Promise<LogicFunctionDTO> {
     try {
       const flatLogicFunction = await this.logicFunctionService.createOne({
-        createLogicFunctionInput: input,
+        input,
         workspaceId,
       });
 

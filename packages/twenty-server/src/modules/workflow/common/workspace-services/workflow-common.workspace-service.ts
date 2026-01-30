@@ -319,9 +319,7 @@ export class WorkflowCommonWorkspaceService {
       for (const step of workflowVersion.steps ?? []) {
         if (step.type === WorkflowActionType.CODE) {
           await this.logicFunctionService.destroyOne({
-            destroyLogicFunctionInput: {
-              id: step.settings.input.logicFunctionId,
-            },
+            id: step.settings.input.logicFunctionId,
             workspaceId,
           });
         }
