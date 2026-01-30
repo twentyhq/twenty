@@ -84,6 +84,11 @@ export const FILTER_OPERANDS_MAP = {
     RecordFilterOperand.DOES_NOT_CONTAIN,
     ...emptyOperands,
   ],
+  FILES: [
+    RecordFilterOperand.CONTAINS,
+    RecordFilterOperand.DOES_NOT_CONTAIN,
+    ...emptyOperands,
+  ],
   DATE_TIME: [
     RecordFilterOperand.IS,
     RecordFilterOperand.IS_RELATIVE,
@@ -182,6 +187,8 @@ export const getRecordFilterOperands = ({
       return FILTER_OPERANDS_MAP.NUMBER;
     case 'RAW_JSON':
       return FILTER_OPERANDS_MAP.RAW_JSON;
+    case 'FILES':
+      return FILTER_OPERANDS_MAP.FILES;
     case 'DATE_TIME':
     case 'DATE':
       return FILTER_OPERANDS_MAP.DATE_TIME;

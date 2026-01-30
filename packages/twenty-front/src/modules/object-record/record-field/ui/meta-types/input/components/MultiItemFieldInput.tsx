@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import {
@@ -9,6 +9,7 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -16,13 +17,14 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilValue } from 'recoil';
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 type MultiItemFieldInputProps<T> = {
@@ -34,7 +36,7 @@ type MultiItemFieldInputProps<T> = {
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
-  formatInput?: (input: string) => T;
+  formatInput?: (input: string, itemIndex?: number) => T;
   renderItem: (props: {
     value: T;
     index: number;
@@ -43,6 +45,7 @@ type MultiItemFieldInputProps<T> = {
     handleDelete: () => void;
   }) => React.ReactNode;
   newItemLabel?: string;
+  onAddClick?: () => void;
   fieldMetadataType: FieldMetadataType;
   renderInput?: MultiItemBaseInputProps['renderInput'];
   maxItemCount?: number;
@@ -61,6 +64,7 @@ export const MultiItemFieldInput = <T,>({
   formatInput,
   renderItem,
   newItemLabel,
+  onAddClick,
   fieldMetadataType,
   renderInput,
   onClickOutside,
@@ -95,32 +99,38 @@ export const MultiItemFieldInput = <T,>({
     listenerId: instanceId,
   });
 
-  const getItemValueAsString = (index: number): string => {
-    if (index >= items.length) {
-      return '';
-    }
+  const getItemValueAsString = useCallback(
+    (index: number): string => {
+      if (index >= items.length) {
+        return '';
+      }
 
-    let item;
-    switch (fieldMetadataType) {
-      case FieldMetadataType.LINKS:
-        item = items[index] as { label: string; url: string };
-        return item.url || '';
-      case FieldMetadataType.PHONES:
-        item = items[index] as PhoneRecord;
-        return item.callingCode + item.number;
-      case FieldMetadataType.EMAILS:
-        item = items[index] as string;
-        return item;
-      case FieldMetadataType.ARRAY:
-        item = items[index] as string;
-        return item;
-      default:
-        throw new CustomError(
-          `Unsupported field type: ${fieldMetadataType}`,
-          'UNSUPPORTED_FIELD_TYPE',
-        );
-    }
-  };
+      let item;
+      switch (fieldMetadataType) {
+        case FieldMetadataType.LINKS:
+          item = items[index] as { label: string; url: string };
+          return item.url || '';
+        case FieldMetadataType.PHONES:
+          item = items[index] as PhoneRecord;
+          return item.callingCode + item.number;
+        case FieldMetadataType.EMAILS:
+          item = items[index] as string;
+          return item;
+        case FieldMetadataType.ARRAY:
+          item = items[index] as string;
+          return item;
+        case FieldMetadataType.FILES:
+          item = items[index] as { label: string };
+          return item.label || '';
+        default:
+          throw new CustomError(
+            `Unsupported field type: ${fieldMetadataType}`,
+            'UNSUPPORTED_FIELD_TYPE',
+          );
+      }
+    },
+    [items, fieldMetadataType],
+  );
 
   const shouldAutoEnterBecauseOnlyOneItemIsAllowed = maxItemCount === 1;
   const shouldAutoEditFirstItemOnOpen =
@@ -142,6 +152,21 @@ export const MultiItemFieldInput = <T,>({
     errorMessage: '',
   });
 
+  const [searchFilter, setSearchFilter] = useState('');
+
+  const shouldShowSearch = items.length > 3;
+
+  const filteredItems = useMemo(() => {
+    if (!shouldShowSearch || !searchFilter) {
+      return items;
+    }
+    const searchTerm = normalizeSearchText(searchFilter);
+    return items.filter((_item, index) => {
+      const itemText = getItemValueAsString(index);
+      return normalizeSearchText(itemText).includes(searchTerm);
+    });
+  }, [items, searchFilter, shouldShowSearch, getItemValueAsString]);
+
   const isLimitReached =
     typeof maxItemCount === 'number' && items.length >= maxItemCount;
 
@@ -159,6 +184,11 @@ export const MultiItemFieldInput = <T,>({
 
   const handleAddButtonClick = () => {
     if (isLimitReached) {
+      return;
+    }
+
+    if (isDefined(onAddClick)) {
+      onAddClick();
       return;
     }
 
@@ -205,7 +235,10 @@ export const MultiItemFieldInput = <T,>({
     const sanitizedInput = inputValue.trim();
 
     const newItem = formatInput
-      ? formatInput(sanitizedInput)
+      ? formatInput(
+          sanitizedInput,
+          isAddingNewItem ? undefined : itemToEditIndex,
+        )
       : (sanitizedInput as unknown as T);
 
     if (sanitizedInput === '' && isAddingNewItem) {
@@ -269,21 +302,36 @@ export const MultiItemFieldInput = <T,>({
 
   return (
     <DropdownContent ref={containerRef}>
-      {!!items.length &&
+      {shouldShowSearch && !isInputDisplayed && (
+        <>
+          <DropdownMenuSearchInput
+            value={searchFilter}
+            onChange={(event) =>
+              setSearchFilter(
+                turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
+              )
+            }
+            autoFocus
+          />
+          <DropdownMenuSeparator />
+        </>
+      )}
+      {!!filteredItems.length &&
         (!shouldAutoEnterBecauseOnlyOneItemIsAllowed || !isInputDisplayed) && (
           <>
             <DropdownMenuItemsContainer hasMaxHeight>
-              {items.map((item, index) =>
-                renderItem({
+              {filteredItems.map((item) => {
+                const originalIndex = items.indexOf(item);
+                return renderItem({
                   value: item,
-                  index,
-                  handleEdit: () => handleEditButtonClick(index),
-                  handleSetPrimary: () => handleSetPrimaryItem(index),
+                  index: originalIndex,
+                  handleEdit: () => handleEditButtonClick(originalIndex),
+                  handleSetPrimary: () => handleSetPrimaryItem(originalIndex),
                   handleDelete: () => {
-                    handleDeleteItem(index);
+                    handleDeleteItem(originalIndex);
                   },
-                }),
-              )}
+                });
+              })}
             </DropdownMenuItemsContainer>
             {isInputDisplayed || !isLimitReached ? (
               <DropdownMenuSeparator />
@@ -293,7 +341,7 @@ export const MultiItemFieldInput = <T,>({
       {isInputDisplayed || !items.length ? (
         <MultiItemBaseInput
           instanceId={instanceId}
-          autoFocus
+          autoFocus={!shouldShowSearch}
           placeholder={placeholder}
           value={inputValue}
           hasError={!errorData.isValid}

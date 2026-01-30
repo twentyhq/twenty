@@ -335,10 +335,12 @@ export type FieldPhonesValue = {
   additionalPhones?: PhoneRecord[] | null;
 };
 
-export type FieldFileValue = {
+export type FieldFilesValueItem = {
   fileId: string;
   label: string;
-  fileCategory: FileCategory;
+  extension?: string;
+  token?: string;
+  fileCategory?: FileCategory;
 };
 
-export type FieldFilesValue = FieldFileValue[];
+export type FieldFilesValue = FieldFilesValueItem[];

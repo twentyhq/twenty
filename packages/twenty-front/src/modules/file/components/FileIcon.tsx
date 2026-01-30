@@ -3,6 +3,7 @@ import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';
 import { IconMapping } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { type FileCategory } from 'twenty-shared/types';
 
 const StyledIconContainer = styled.div<{ background: string }>`
   align-items: center;
@@ -18,7 +19,7 @@ const StyledIconContainer = styled.div<{ background: string }>`
 export const FileIcon = ({
   fileCategory,
 }: {
-  fileCategory: AttachmentFileCategory;
+  fileCategory: AttachmentFileCategory | FileCategory;
 }) => {
   const theme = useTheme();
   const iconColors = useFileCategoryColors();

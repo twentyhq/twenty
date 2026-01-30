@@ -5882,6 +5882,13 @@ export type DeleteFileMutationVariables = Exact<{
 
 export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
 
+export type UploadFilesFieldFileMutationVariables = Exact<{
+  file: Scalars['Upload'];
+}>;
+
+
+export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
+
 export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
 
 export type NavigationMenuItemQueryFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null };
@@ -10180,6 +10187,42 @@ export function useDeleteFileMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteFileMutationHookResult = ReturnType<typeof useDeleteFileMutation>;
 export type DeleteFileMutationResult = Apollo.MutationResult<DeleteFileMutation>;
 export type DeleteFileMutationOptions = Apollo.BaseMutationOptions<DeleteFileMutation, DeleteFileMutationVariables>;
+export const UploadFilesFieldFileDocument = gql`
+    mutation UploadFilesFieldFile($file: Upload!) {
+  uploadFilesFieldFile(file: $file) {
+    id
+    path
+    size
+    createdAt
+  }
+}
+    `;
+export type UploadFilesFieldFileMutationFn = Apollo.MutationFunction<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>;
+
+/**
+ * __useUploadFilesFieldFileMutation__
+ *
+ * To run a mutation, you first call `useUploadFilesFieldFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadFilesFieldFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadFilesFieldFileMutation, { data, loading, error }] = useUploadFilesFieldFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadFilesFieldFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>(UploadFilesFieldFileDocument, options);
+      }
+export type UploadFilesFieldFileMutationHookResult = ReturnType<typeof useUploadFilesFieldFileMutation>;
+export type UploadFilesFieldFileMutationResult = Apollo.MutationResult<UploadFilesFieldFileMutation>;
+export type UploadFilesFieldFileMutationOptions = Apollo.BaseMutationOptions<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>;
 export const CreateNavigationMenuItemDocument = gql`
     mutation CreateNavigationMenuItem($input: CreateNavigationMenuItemInput!) {
   createNavigationMenuItem(input: $input) {

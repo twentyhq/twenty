@@ -9,6 +9,7 @@ import {
   type BooleanFilter,
   type CurrencyFilter,
   type DateFilter,
+  type FilesFilter,
   type FloatFilter,
   type MultiSelectFilter,
   type PhonesFilter,
@@ -160,6 +161,27 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               [correspondingFieldMetadataItem.name]: {
                 like: `%${recordFilter.value}%`,
               } as RawJsonFilter,
+            },
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
+          );
+      }
+    case 'FILES':
+      switch (recordFilter.operand) {
+        case RecordFilterOperand.CONTAINS:
+          return {
+            [correspondingFieldMetadataItem.name]: {
+              like: `%${recordFilter.value}%`,
+            } as FilesFilter,
+          };
+        case RecordFilterOperand.DOES_NOT_CONTAIN:
+          return {
+            not: {
+              [correspondingFieldMetadataItem.name]: {
+                like: `%${recordFilter.value}%`,
+              } as FilesFilter,
             },
           };
         default:

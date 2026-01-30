@@ -160,6 +160,7 @@ export type {
   MultiSelectFilter,
   ArrayFilter,
   RawJsonFilter,
+  FilesFilter,
   RichTextV2LeafFilter,
   RichTextV2Filter,
   TSVectorFilter,

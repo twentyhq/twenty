@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { AddressFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/AddressFieldInput';
 import { DateFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/DateFieldInput';
 import { EmailsFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput';
+import { FilesFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldInput';
 import { FullNameFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/FullNameFieldInput';
 import { LinksFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/LinksFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiSelectFieldInput';
@@ -24,6 +25,7 @@ import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/is
 import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/isFieldDateTime';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
+import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
@@ -64,6 +66,8 @@ export const FieldInput = () => {
         <TextFieldInput />
       ) : isFieldEmails(fieldDefinition) ? (
         <EmailsFieldInput />
+      ) : isFieldFiles(fieldDefinition) ? (
+        <FilesFieldInput />
       ) : isFieldFullName(fieldDefinition) ? (
         <FullNameFieldInput />
       ) : isFieldDateTime(fieldDefinition) ? (
