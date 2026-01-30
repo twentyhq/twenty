@@ -205,9 +205,7 @@ export const generateColumnDefinitions = ({
     return [generateTsVectorColumnDefinition(universalFlatFieldMetadata)];
   }
 
-  if (
-    isMorphOrRelationUniversalFlatFieldMetadata(universalFlatFieldMetadata)
-  ) {
+  if (isMorphOrRelationUniversalFlatFieldMetadata(universalFlatFieldMetadata)) {
     const relationColumn = generateRelationColumnDefinition(
       universalFlatFieldMetadata,
     );

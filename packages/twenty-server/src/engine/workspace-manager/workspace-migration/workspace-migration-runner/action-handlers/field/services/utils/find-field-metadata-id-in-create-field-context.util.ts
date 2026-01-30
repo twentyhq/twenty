@@ -1,5 +1,6 @@
-import { UniversalAllFlatEntityMaps } from "src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type";
-import { isDefined } from "twenty-shared/utils";
+import { isDefined } from 'twenty-shared/utils';
+
+import { type UniversalAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type';
 
 export const findFieldMetadataIdInCreateFieldContext = ({
   universalIdentifier,
