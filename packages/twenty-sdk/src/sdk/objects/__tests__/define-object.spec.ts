@@ -20,10 +20,12 @@ describe('defineObject', () => {
     ],
   };
 
-  it('should return the config when valid', () => {
+  it('should return successful validation result when valid', () => {
     const result = defineObject(validConfig);
 
-    expect(result).toEqual(validConfig);
+    expect(result.success).toBe(true);
+    expect(result.config).toEqual(validConfig);
+    expect(result.errors).toEqual([]);
   });
 
   it('should pass through all optional fields', () => {
@@ -34,62 +36,68 @@ describe('defineObject', () => {
 
     const result = defineObject(config);
 
-    expect(result.description).toBe('A post card object');
+    expect(result.success).toBe(true);
+    expect(result.config?.description).toBe('A post card object');
   });
 
-  it('should throw error when universalIdentifier is missing', () => {
+  it('should return error when universalIdentifier is missing', () => {
     const config = {
       ...validConfig,
       universalIdentifier: undefined,
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Object must have a universalIdentifier',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Object must have a universalIdentifier');
   });
 
-  it('should throw error when nameSingular is missing', () => {
+  it('should return error when nameSingular is missing', () => {
     const config = {
       ...validConfig,
       nameSingular: undefined,
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Object must have a nameSingular',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Object must have a nameSingular');
   });
 
-  it('should throw error when namePlural is missing', () => {
+  it('should return error when namePlural is missing', () => {
     const config = {
       ...validConfig,
       namePlural: undefined,
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Object must have a namePlural',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Object must have a namePlural');
   });
 
-  it('should throw error when labelSingular is missing', () => {
+  it('should return error when labelSingular is missing', () => {
     const config = {
       ...validConfig,
       labelSingular: undefined,
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Object must have a labelSingular',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Object must have a labelSingular');
   });
 
-  it('should throw error when labelPlural is missing', () => {
+  it('should return error when labelPlural is missing', () => {
     const config = {
       ...validConfig,
       labelPlural: undefined,
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Object must have a labelPlural',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Object must have a labelPlural');
   });
 
   it('should accept empty fields array', () => {
@@ -100,7 +108,7 @@ describe('defineObject', () => {
 
     const result = defineObject(config as any);
 
-    expect(result.fields).toEqual([]);
+    expect(result.config.fields).toEqual([]);
   });
 
   it('should accept missing fields', () => {
@@ -111,10 +119,10 @@ describe('defineObject', () => {
 
     const result = defineObject(config as any);
 
-    expect(result.fields).toBeUndefined();
+    expect(result.config.fields).toBeUndefined();
   });
 
-  it('should throw error when field is missing label', () => {
+  it('should return error when field is missing label', () => {
     const config = {
       ...validConfig,
       fields: [
@@ -126,12 +134,13 @@ describe('defineObject', () => {
       ],
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Field must have a label',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Field must have a label');
   });
 
-  it('should throw error when field is missing name', () => {
+  it('should return error when field is missing name', () => {
     const config = {
       ...validConfig,
       fields: [
@@ -143,12 +152,13 @@ describe('defineObject', () => {
       ],
     };
 
-    expect(() => defineObject(config as any)).toThrow(
-      'Field "Content" must have a name',
-    );
+    const result = defineObject(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Field "Content" must have a name');
   });
 
-  it('should throw error when field is missing universalIdentifier', () => {
+  it('should return error when field is missing universalIdentifier', () => {
     const config = {
       ...validConfig,
       fields: [
@@ -159,13 +169,15 @@ describe('defineObject', () => {
         },
       ],
     };
+    const result = defineObject(config as any);
 
-    expect(() => defineObject(config as any)).toThrow(
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
       'Field "Content" must have a universalIdentifier',
     );
   });
 
-  it('should throw error when SELECT field has no options', () => {
+  it('should return error when SELECT field has no options', () => {
     const config = {
       ...validConfig,
       fields: [
@@ -177,13 +189,15 @@ describe('defineObject', () => {
         },
       ],
     };
+    const result = defineObject(config as any);
 
-    expect(() => defineObject(config as any)).toThrow(
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
       'Field "Status" is a SELECT/MULTI_SELECT type and must have options',
     );
   });
 
-  it('should throw error when MULTI_SELECT field has no options', () => {
+  it('should return error when MULTI_SELECT field has no options', () => {
     const config = {
       ...validConfig,
       fields: [
@@ -196,7 +210,10 @@ describe('defineObject', () => {
       ],
     };
 
-    expect(() => defineObject(config as any)).toThrow(
+    const result = defineObject(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
       'Field "Tags" is a SELECT/MULTI_SELECT type and must have options',
     );
   });
@@ -220,6 +237,6 @@ describe('defineObject', () => {
 
     const result = defineObject(config as any);
 
-    expect(result.fields[0].options).toHaveLength(2);
+    expect(result.config.fields[0].options).toHaveLength(2);
   });
 });

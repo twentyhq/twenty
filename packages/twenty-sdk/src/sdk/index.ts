@@ -9,7 +9,13 @@
 
 export type { ApplicationConfig } from './application/application-config';
 export { defineApp } from './application/define-app';
+export type {
+  ValidationResult,
+  DefinableEntity,
+  DefineEntity,
+} from './common/types/define-entity.type';
 export type { SyncableEntityOptions } from './common/types/syncable-entity-options.type';
+export { createValidationResult } from './common/utils/create-validation-result';
 export type {
   ActorField,
   AddressField,
@@ -24,6 +30,7 @@ export { defineField } from './fields/define-field';
 export { FieldType } from './fields/field-type';
 export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
+export { validateFields } from './fields/validate-fields';
 export { defineFrontComponent } from './front-components/define-front-component';
 export type {
   FrontComponentType,
@@ -49,7 +56,5 @@ export type {
 export type { RoutePayload } from './logic-functions/triggers/route-payload-type';
 export { defineObject } from './objects/define-object';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
-export { validateFieldsOrThrow } from './objects/validate-fields';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
-export type { RoleConfig } from './roles/role-config';

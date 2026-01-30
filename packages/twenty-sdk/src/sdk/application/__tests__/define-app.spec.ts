@@ -1,7 +1,7 @@
 import { defineApp } from '@/sdk';
 
 describe('defineApp', () => {
-  it('should return the config when valid', () => {
+  it('should return successful validation result when valid', () => {
     const config = {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
@@ -12,7 +12,9 @@ describe('defineApp', () => {
 
     const result = defineApp(config);
 
-    expect(result).toEqual(config);
+    expect(result.success).toBe(true);
+    expect(result.config).toEqual(config);
+    expect(result.errors).toEqual([]);
   });
 
   it('should pass through all optional fields', () => {
@@ -33,31 +35,38 @@ describe('defineApp', () => {
 
     const result = defineApp(config);
 
-    expect(result).toEqual(config);
-    expect(result.applicationVariables).toBeDefined();
-    expect(result.roleUniversalIdentifier).toBe(
+    expect(result.success).toBe(true);
+    expect(result.config).toEqual(config);
+    expect(result.config?.applicationVariables).toBeDefined();
+    expect(result.config?.roleUniversalIdentifier).toBe(
       '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     );
   });
 
-  it('should throw error when universalIdentifier is missing', () => {
+  it('should return error when universalIdentifier is missing', () => {
     const config = {
       displayName: 'My App',
     };
 
-    expect(() => defineApp(config as any)).toThrow(
-      'App must have a universalIdentifier',
+    const result = defineApp(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Application must have a universalIdentifier',
     );
   });
 
-  it('should throw error when universalIdentifier is empty string', () => {
+  it('should return error when universalIdentifier is empty string', () => {
     const config = {
       universalIdentifier: '',
       displayName: 'My App',
     };
 
-    expect(() => defineApp(config as any)).toThrow(
-      'App must have a universalIdentifier',
+    const result = defineApp(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Application must have a universalIdentifier',
     );
   });
 });

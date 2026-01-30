@@ -1,70 +1,37 @@
-import { type RoleConfig } from '@/sdk/roles/role-config';
+import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
+import { type RoleManifest } from 'twenty-shared/application';
+import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 
-/**
- * Define a role configuration with validation.
- *
- * @example
- * ```typescript
- * import { defineRole, PermissionFlag } from 'twenty-sdk';
- *
- * export default defineRole({
- *   universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
- *   label: 'App User',
- *   description: 'Standard user role for the app',
- *   icon: 'IconUser',
- *   canReadAllObjectRecords: false,
- *   objectPermissions: [
- *     {
- *       objectNameSingular: 'postCard',
- *       canReadObjectRecords: true,
- *       canUpdateObjectRecords: true,
- *     },
- *   ],
- *   permissionFlags: [PermissionFlag.UPLOAD_FILE],
- * });
- * ```
- */
-export const defineRole = <T extends RoleConfig>(config: T): T => {
+export const defineRole: DefineEntity<RoleManifest> = (config) => {
+  const errors = [];
+
   if (!config.universalIdentifier) {
-    throw new Error('Role must have a universalIdentifier');
+    errors.push('Role must have a universalIdentifier');
   }
 
   if (!config.label) {
-    throw new Error('Role must have a label');
+    errors.push('Role must have a label');
   }
 
-  // Validate object permissions if provided
   if (config.objectPermissions) {
     for (const permission of config.objectPermissions) {
-      if (
-        !permission.objectNameSingular &&
-        !permission.objectUniversalIdentifier
-      ) {
-        throw new Error(
-          'Object permission must have either objectNameSingular or objectUniversalIdentifier',
-        );
+      if (!permission.objectUniversalIdentifier) {
+        errors.push('Object permission must have an objectUniversalIdentifier');
       }
     }
   }
 
-  // Validate field permissions if provided
   if (config.fieldPermissions) {
     for (const permission of config.fieldPermissions) {
-      if (
-        !permission.objectNameSingular &&
-        !permission.objectUniversalIdentifier
-      ) {
-        throw new Error(
-          'Field permission must have either objectNameSingular or objectUniversalIdentifier',
-        );
+      if (!permission.objectUniversalIdentifier) {
+        errors.push('Field permission must have an objectUniversalIdentifier');
       }
-      if (!permission.fieldName && !permission.fieldUniversalIdentifier) {
-        throw new Error(
-          'Field permission must have either fieldName or fieldUniversalIdentifier',
-        );
+
+      if (!permission.fieldUniversalIdentifier) {
+        errors.push('Field permission must have a fieldUniversalIdentifier');
       }
     }
   }
 
-  return config;
+  return createValidationResult({ config, errors });
 };

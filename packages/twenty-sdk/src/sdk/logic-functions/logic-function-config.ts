@@ -12,9 +12,6 @@ export type LogicFunctionConfig = Omit<
   | 'builtHandlerChecksum'
   | 'handlerName'
 > & {
-  name?: string;
-  description?: string;
-  timeoutSeconds?: number;
   handler: LogicFunctionHandler;
   triggers?: LogicFunctionTriggerManifest[];
 };

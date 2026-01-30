@@ -10,10 +10,12 @@ describe('defineFrontComponent', () => {
     component: MockComponent,
   };
 
-  it('should return the config when valid', () => {
+  it('should return successful validation result when valid', () => {
     const result = defineFrontComponent(validConfig);
 
-    expect(result).toEqual(validConfig);
+    expect(result.success).toBe(true);
+    expect(result.config).toEqual(validConfig);
+    expect(result.errors).toEqual([]);
   });
 
   it('should pass through optional fields', () => {
@@ -24,40 +26,48 @@ describe('defineFrontComponent', () => {
 
     const result = defineFrontComponent(config);
 
-    expect(result.description).toBe('A sample front component');
+    expect(result.success).toBe(true);
+    expect(result.config?.description).toBe('A sample front component');
   });
 
-  it('should throw error when universalIdentifier is missing', () => {
+  it('should return error when universalIdentifier is missing', () => {
     const config = {
       name: 'My Component',
       component: MockComponent,
     };
 
-    expect(() => defineFrontComponent(config as any)).toThrow(
-      'FrontComponent must have a universalIdentifier',
+    const result = defineFrontComponent(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Front component must have a universalIdentifier',
     );
   });
 
-  it('should throw error when component is missing', () => {
+  it('should return error when component is missing', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'My Component',
     };
 
-    expect(() => defineFrontComponent(config as any)).toThrow(
-      'FrontComponent must have a component',
-    );
+    const result = defineFrontComponent(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Front component must have a component');
   });
 
-  it('should throw error when component is not a function', () => {
+  it('should return error when component is not a function', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       name: 'My Component',
       component: 'not-a-function',
     };
 
-    expect(() => defineFrontComponent(config as any)).toThrow(
-      'FrontComponent must have a component',
+    const result = defineFrontComponent(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Front component component must be a React component',
     );
   });
 
@@ -69,6 +79,7 @@ describe('defineFrontComponent', () => {
 
     const result = defineFrontComponent(config as any);
 
-    expect(result.name).toBeUndefined();
+    expect(result.success).toBe(true);
+    expect(result.config?.name).toBeUndefined();
   });
 });

@@ -12,10 +12,12 @@ const validConfig: FieldManifest = {
 
 describe('defineField', () => {
   describe('valid configurations', () => {
-    it('should return the config when targeting by nameSingular', () => {
+    it('should return successful validation result when targeting by nameSingular', () => {
       const result = defineField(validConfig);
 
-      expect(result).toEqual(validConfig);
+      expect(result.success).toBe(true);
+      expect(result.config).toEqual(validConfig);
+      expect(result.errors).toEqual([]);
     });
 
     it('should pass through optional field properties', () => {
@@ -28,8 +30,9 @@ describe('defineField', () => {
 
       const result = defineField(config);
 
-      expect(result.description).toBe('A health score from 0-100');
-      expect(result.icon).toBe('IconHeart');
+      expect(result.success).toBe(true);
+      expect(result.config?.description).toBe('A health score from 0-100');
+      expect(result.config?.icon).toBe('IconHeart');
     });
 
     it('should accept SELECT field with options', () => {
@@ -53,21 +56,25 @@ describe('defineField', () => {
 
       const result = defineField(config);
 
-      expect(result.label).toBe('Churn Risk');
+      expect(result.success).toBe(true);
+      expect(result.config?.label).toBe('Churn Risk');
     });
   });
 
-  it('should throw error when objectUniversalIdentifier is missing', () => {
+  it('should return error when objectUniversalIdentifier is missing', () => {
     const { objectUniversalIdentifier: _, ...validConfigWithoutTargetObject } =
       validConfig;
 
-    expect(() => defineField(validConfigWithoutTargetObject as any)).toThrow(
+    const result = defineField(validConfigWithoutTargetObject as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
       'Field must have an objectUniversalIdentifier',
     );
   });
 
   describe('fields validation', () => {
-    it('should throw error when field is missing label', () => {
+    it('should return error when field is missing label', () => {
       const config = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
 
@@ -76,12 +83,13 @@ describe('defineField', () => {
         name: 'healthScore',
       };
 
-      expect(() => defineField(config as any)).toThrow(
-        'Field must have a label',
-      );
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain('Field must have a label');
     });
 
-    it('should throw error when field is missing name', () => {
+    it('should return error when field is missing name', () => {
       const config = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
 
@@ -90,12 +98,13 @@ describe('defineField', () => {
         label: 'Health Score',
       };
 
-      expect(() => defineField(config as any)).toThrow(
-        'Field "Health Score" must have a name',
-      );
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain('Field "Health Score" must have a name');
     });
 
-    it('should throw error when field is missing universalIdentifier', () => {
+    it('should return error when field is missing universalIdentifier', () => {
       const config = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
 
@@ -104,12 +113,15 @@ describe('defineField', () => {
         label: 'Health Score',
       };
 
-      expect(() => defineField(config as any)).toThrow(
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
         'Field "Health Score" must have a universalIdentifier',
       );
     });
 
-    it('should throw error when SELECT field has no options', () => {
+    it('should return error when SELECT field has no options', () => {
       const config = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
 
@@ -119,12 +131,15 @@ describe('defineField', () => {
         label: 'Status',
       };
 
-      expect(() => defineField(config as any)).toThrow(
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
         'Field "Status" is a SELECT/MULTI_SELECT type and must have options',
       );
     });
 
-    it('should throw error when MULTI_SELECT field has no options', () => {
+    it('should return error when MULTI_SELECT field has no options', () => {
       const config = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
 
@@ -134,12 +149,15 @@ describe('defineField', () => {
         label: 'Tags',
       };
 
-      expect(() => defineField(config as any)).toThrow(
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
         'Field "Tags" is a SELECT/MULTI_SELECT type and must have options',
       );
     });
 
-    it('should throw error when SELECT field has empty options array', () => {
+    it('should return error when SELECT field has empty options array', () => {
       const config = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
 
@@ -150,7 +168,10 @@ describe('defineField', () => {
         options: [],
       };
 
-      expect(() => defineField(config as any)).toThrow(
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
         'Field "Status" is a SELECT/MULTI_SELECT type and must have options',
       );
     });

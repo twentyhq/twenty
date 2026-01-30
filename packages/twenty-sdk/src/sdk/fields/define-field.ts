@@ -1,13 +1,22 @@
 import { type FieldManifest } from 'twenty-shared/application';
-import { isNonEmptyString } from '@sniptt/guards';
-import { validateFieldsOrThrow } from '@/sdk';
+import { validateFields } from '@/sdk/fields/validate-fields';
 
-export const defineField = <T extends FieldManifest>(config: T) => {
-  if (!isNonEmptyString(config.objectUniversalIdentifier)) {
-    throw new Error('Field must have an objectUniversalIdentifier');
+import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
+import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
+
+export const defineField: DefineEntity<FieldManifest> = (config) => {
+  const errors = [];
+
+  if (!config.objectUniversalIdentifier) {
+    errors.push('Field must have an objectUniversalIdentifier');
   }
 
-  validateFieldsOrThrow([config]);
+  const fieldErrors = validateFields([config]);
 
-  return config;
+  errors.push(...fieldErrors);
+
+  return createValidationResult({
+    config,
+    errors,
+  });
 };

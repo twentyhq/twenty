@@ -1,30 +1,29 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { isNonEmptyString } from '@sniptt/guards';
+
 import { type ObjectFieldManifest } from 'twenty-shared/application';
 
-/**
- * Validates an array of fields and throws an error if any field is invalid.
- * This validation is shared between defineObject and extendObject.
- */
-export const validateFieldsOrThrow = (
+export const validateFields = (
   fields: ObjectFieldManifest[] | undefined,
-): void => {
+): string[] => {
   if (!fields) {
-    return;
+    return [];
   }
+
+  const errors: string[] = [];
 
   for (const field of fields) {
     if (!isNonEmptyString(field.label)) {
-      throw new Error('Field must have a label');
+      errors.push('Field must have a label');
     }
 
     if (!isNonEmptyString(field.name)) {
-      throw new Error(`Field "${field.label}" must have a name`);
+      errors.push(`Field "${field.label}" must have a name`);
     }
 
     if (!isNonEmptyString(field.universalIdentifier)) {
-      throw new Error(`Field "${field.label}" must have a universalIdentifier`);
+      errors.push(`Field "${field.label}" must have a universalIdentifier`);
     }
 
     if (
@@ -32,9 +31,11 @@ export const validateFieldsOrThrow = (
         field.type === FieldMetadataType.MULTI_SELECT) &&
       (!Array.isArray(field.options) || field.options.length === 0)
     ) {
-      throw new Error(
+      errors.push(
         `Field "${field.label}" is a SELECT/MULTI_SELECT type and must have options`,
       );
     }
   }
+
+  return errors;
 };

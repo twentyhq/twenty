@@ -1,54 +1,64 @@
 import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
+import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
+import type { DefineEntity } from '@/sdk/common/types/define-entity.type';
 
-export const defineLogicFunction = <T extends LogicFunctionConfig>(
-  config: T,
-): T => {
+export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
+  config,
+) => {
+  const errors = [];
+
   if (!config.universalIdentifier) {
-    throw new Error('Function must have a universalIdentifier');
+    errors.push('Logic function must have a universalIdentifier');
+  }
+
+  if (!config.handler) {
+    errors.push('Logic function must have a handler');
   }
 
   if (typeof config.handler !== 'function') {
-    throw new Error('Function must have a handler');
+    errors.push('Logic function handler must be a function');
   }
 
-  // Validate each trigger
   for (const trigger of config.triggers ?? []) {
     if (!trigger.universalIdentifier) {
-      throw new Error('Each trigger must have a universalIdentifier');
+      errors.push('Each trigger must have a universalIdentifier');
     }
 
     if (!trigger.type) {
-      throw new Error('Each trigger must have a type');
+      errors.push('Each trigger must have a type');
     }
 
     switch (trigger.type) {
       case 'route':
         if (!trigger.path) {
-          throw new Error('Route trigger must have a path');
+          errors.push('Route trigger must have a path');
         }
         if (!trigger.httpMethod) {
-          throw new Error('Route trigger must have an httpMethod');
+          errors.push('Route trigger must have an httpMethod');
         }
         break;
 
       case 'cron':
         if (!trigger.pattern) {
-          throw new Error('Cron trigger must have a pattern');
+          errors.push('Cron trigger must have a pattern');
         }
         break;
 
       case 'databaseEvent':
         if (!trigger.eventName) {
-          throw new Error('Database event trigger must have an eventName');
+          errors.push('Database event trigger must have an eventName');
         }
         break;
 
       default:
-        throw new Error(
+        errors.push(
           `Unknown trigger type: ${(trigger as { type: string }).type}`,
         );
     }
   }
 
-  return config;
+  return createValidationResult({
+    config,
+    errors,
+  });
 };

@@ -1,25 +1,20 @@
 import { type Application } from 'twenty-shared/application';
+import { createValidationResult } from '@/sdk/common/utils/create-validation-result';
+import { type DefineEntity } from '@/sdk/common/types/define-entity.type';
 
-/**
- * Define an application configuration with validation.
- *
- * @example
- * ```typescript
- * import { defineApp } from 'twenty-sdk';
- * import { APP_ID } from '../src/constants';
- *
- * export default defineApp({
- *   universalIdentifier: APP_ID,
- *   displayName: 'My App',
- *   description: 'My app description',
- *   icon: 'IconWorld',
- * });
- * ```
- */
-export const defineApp = <T extends Application>(config: T): T => {
+export const defineApp: DefineEntity<Application> = (config) => {
+  const errors = [];
+
   if (!config.universalIdentifier) {
-    throw new Error('App must have a universalIdentifier');
+    errors.push('Application must have a universalIdentifier');
   }
 
-  return config;
+  if (!config.roleUniversalIdentifier) {
+    errors.push('Application must have a roleUniversalIdentifier');
+  }
+
+  return createValidationResult({
+    config,
+    errors,
+  });
 };

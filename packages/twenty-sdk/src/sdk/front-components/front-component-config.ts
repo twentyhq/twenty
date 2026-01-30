@@ -9,7 +9,5 @@ export type FrontComponentConfig = Omit<
   | 'builtComponentChecksum'
   | 'componentName'
 > & {
-  name?: string;
-  description?: string;
   component: FrontComponentType;
 };
