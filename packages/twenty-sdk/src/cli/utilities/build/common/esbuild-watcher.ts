@@ -226,7 +226,6 @@ export const createFrontComponentsWatcher = (
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
-      minify: true,
       extraPlugins: [
         reactGlobalsPlugin,
         jsxTransformToRemoteDomWorkerFormatPlugin,
