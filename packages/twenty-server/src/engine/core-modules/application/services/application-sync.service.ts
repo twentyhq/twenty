@@ -34,7 +34,7 @@ import { FieldPermissionService } from 'src/engine/metadata-modules/object-permi
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { LogicFunctionLayerService } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.service';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,

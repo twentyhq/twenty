@@ -1,31 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  DEFAULT_API_KEY_NAME,
-  DEFAULT_API_URL_NAME,
-} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function-executor/drivers/interfaces/logic-function-executor-driver.interface';
+import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
-import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { buildEnvVar } from 'src/engine/core-modules/logic-function-executor/drivers/utils/build-env-var';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
+import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import {
+  LogicFunctionExecutionException,
+  LogicFunctionExecutionExceptionCode,
+  LogicFunctionExecutorService,
+} from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { LogicFunctionLayerService } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.service';
 import { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import { type UpdateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function.input';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -37,35 +31,23 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
 import { fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-input-to-flat-logic-function-to-update-or-throw.util';
-import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { LogicFunctionBuildService } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.service';
-
-const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
 @Injectable()
 export class LogicFunctionService {
   constructor(
     private readonly fileStorageService: FileStorageService,
-    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly functionBuildService: LogicFunctionBuildService,
     private readonly logicFunctionLayerService: LogicFunctionLayerService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
-    private readonly throttlerService: ThrottlerService,
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly auditService: AuditService,
-    private readonly applicationTokenService: ApplicationTokenService,
-    private readonly subscriptionService: SubscriptionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
   async getLogicFunctionSourceCode(workspaceId: string, id: string) {
@@ -122,142 +104,29 @@ export class LogicFunctionService {
     workspaceId: string;
     payload: object;
   }): Promise<LogicFunctionExecuteResult> {
-    await this.throttleExecution(workspaceId);
-
-    const {
-      flatLogicFunctionMaps,
-      flatApplicationMaps,
-      applicationVariableMaps,
-      logicFunctionLayerMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatLogicFunctionMaps',
-      'flatApplicationMaps',
-      'applicationVariableMaps',
-      'logicFunctionLayerMaps',
-    ]);
-
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id,
-      flatLogicFunctionMaps,
-    });
-
-    const flatLogicFunctionLayer =
-      logicFunctionLayerMaps.byId[flatLogicFunction.logicFunctionLayerId];
-
-    if (!isDefined(flatLogicFunctionLayer)) {
-      throw new LogicFunctionException(
-        `Logic function layer with id ${flatLogicFunction.logicFunctionLayerId} not found`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    const applicationAccessToken = isDefined(flatLogicFunction.applicationId)
-      ? await this.applicationTokenService.generateApplicationToken({
-          workspaceId,
-          applicationId: flatLogicFunction.applicationId,
-          expiresInSeconds: Math.max(
-            flatLogicFunction.timeoutSeconds,
-            MIN_TOKEN_EXPIRATION_IN_SECONDS,
-          ),
-        })
-      : undefined;
-
-    const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
-
-    const flatApplicationVariables = isDefined(flatLogicFunction.applicationId)
-      ? (applicationVariableMaps.byApplicationId[
-          flatLogicFunction.applicationId
-        ] ?? [])
-      : [];
-
-    const envVariables = {
-      ...(isDefined(baseUrl)
-        ? {
-            [DEFAULT_API_URL_NAME]: baseUrl,
-          }
-        : {}),
-      ...(isDefined(applicationAccessToken)
-        ? {
-            [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
-          }
-        : {}),
-      ...buildEnvVar(flatApplicationVariables, this.secretEncryptionService),
-    };
-
-    const applicationUniversalIdentifier = isDefined(
-      flatLogicFunction.applicationId,
-    )
-      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          ?.universalIdentifier
-      : undefined;
-
-    if (!isDefined(applicationUniversalIdentifier)) {
-      throw new LogicFunctionException(
-        `Application universal identifier not found for logic function ${flatLogicFunction.id}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    // We keep that check to build functions
-    if (
-      !(await this.functionBuildService.isBuilt({
-        flatLogicFunction,
-        applicationUniversalIdentifier,
-      }))
-    ) {
-      await this.functionBuildService.buildAndUpload({
-        flatLogicFunction,
-        applicationUniversalIdentifier,
-      });
-    }
-
-    const resultLogicFunction = await this.callWithTimeout({
-      callback: () =>
-        this.logicFunctionExecutorService.execute({
-          flatLogicFunction,
-          flatLogicFunctionLayer,
-          applicationUniversalIdentifier,
-          payload,
-          env: envVariables,
-        }),
-      timeoutMs: flatLogicFunction.timeoutSeconds * 1000,
-    });
-
-    if (this.twentyConfigService.get('LOGIC_FUNCTION_LOGS_ENABLED')) {
-      /* eslint-disable no-console */
-      console.log(resultLogicFunction.logs);
-    }
-
-    await this.subscriptionService.publish({
-      channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
-      workspaceId,
-      payload: {
-        logicFunctionLogs: {
-          logs: resultLogicFunction.logs,
-          id: flatLogicFunction.id,
-          name: flatLogicFunction.name,
-          universalIdentifier: flatLogicFunction.universalIdentifier,
-          applicationId: flatLogicFunction.applicationId,
-          applicationUniversalIdentifier,
-        },
-      },
-    });
-
-    this.auditService
-      .createContext({
+    try {
+      return await this.logicFunctionExecutorService.executeOneLogicFunction({
+        id,
         workspaceId,
-      })
-      .insertWorkspaceEvent(LOGIC_FUNCTION_EXECUTED_EVENT, {
-        duration: resultLogicFunction.duration,
-        status: resultLogicFunction.status,
-        ...(resultLogicFunction.error && {
-          errorType: resultLogicFunction.error.errorType,
-        }),
-        functionId: flatLogicFunction.id,
-        functionName: flatLogicFunction.name,
+        payload,
       });
-
-    return resultLogicFunction;
+    } catch (error) {
+      if (error instanceof LogicFunctionExecutionException) {
+        switch (error.code) {
+          case LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND:
+            throw new LogicFunctionException(
+              error.message,
+              LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+            );
+          case LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED:
+            throw new LogicFunctionException(
+              error.message,
+              LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_LIMIT_REACHED,
+            );
+        }
+      }
+      throw error;
+    }
   }
 
   async deleteOneLogicFunction({
@@ -671,48 +540,5 @@ export class LogicFunctionService {
     });
 
     return newFlatLogicFunction;
-  }
-
-  private async throttleExecution(workspaceId: string) {
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `${workspaceId}-logic-function-execution`,
-        1,
-        this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT'),
-        this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_TTL'),
-      );
-    } catch {
-      throw new LogicFunctionException(
-        'Logic function execution rate limit exceeded',
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_LIMIT_REACHED,
-      );
-    }
-  }
-
-  private async callWithTimeout<T>({
-    callback,
-    timeoutMs,
-  }: {
-    callback: () => Promise<T>;
-    timeoutMs: number;
-  }): Promise<T> {
-    let timeoutId: NodeJS.Timeout;
-
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      timeoutId = setTimeout(
-        () =>
-          reject(
-            new LogicFunctionException(
-              `Execution timeout: ${timeoutMs / 1000}s`,
-              LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_TIMEOUT,
-            ),
-          ),
-        timeoutMs,
-      );
-    });
-
-    return Promise.race([callback(), timeoutPromise]).finally(() =>
-      clearTimeout(timeoutId),
-    ) as Promise<T>;
   }
 }

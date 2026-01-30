@@ -13,9 +13,9 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { getSeedProjectFiles } from 'src/engine/core-modules/logic-function-executor/drivers/utils/get-seed-project-files';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
+import { getSeedProjectFiles } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/get-seed-project-files';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -24,7 +24,7 @@ import {
 import { CreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { LogicFunctionBuildService } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.service';
+import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
 
 @Injectable()
 export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
