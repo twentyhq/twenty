@@ -24,12 +24,6 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.PersonPicture]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.LogicFunction]: {
-    ignoreExpirationToken: false,
-  },
-  [FileFolder.LogicFunctionToDelete]: {
-    ignoreExpirationToken: false,
-  },
   [FileFolder.File]: {
     ignoreExpirationToken: false,
   },

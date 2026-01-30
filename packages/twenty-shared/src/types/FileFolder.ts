@@ -3,8 +3,6 @@ export enum FileFolder {
   WorkspaceLogo = 'workspace-logo',
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
-  LogicFunction = 'logic-function',
-  LogicFunctionToDelete = 'logic-function-to-delete',
   File = 'file',
   AgentChat = 'agent-chat',
   BuiltLogicFunction = 'built-logic-function',

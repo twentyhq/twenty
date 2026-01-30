@@ -5,6 +5,7 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -19,9 +20,9 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function-executor/drivers/utils/build-env-var';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
-import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionLayerService } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.service';
@@ -68,25 +69,42 @@ export class LogicFunctionService {
   ) {}
 
   async getLogicFunctionSourceCode(workspaceId: string, id: string) {
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id,
-      flatLogicFunctionMaps,
-    });
-
     try {
-      const folderPath = getLogicFunctionFolderOrThrow({
-        flatLogicFunction,
+      const { flatLogicFunctionMaps, flatApplicationMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatLogicFunctionMaps',
+          'flatApplicationMaps',
+        ]);
+
+      const flatLogicFunction = findFlatLogicFunctionOrThrow({
+        id,
+        flatLogicFunctionMaps,
       });
 
-      return await this.fileStorageService.readFolder(folderPath);
+      const applicationUniversalIdentifier = isDefined(
+        flatLogicFunction.applicationId,
+      )
+        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+            ?.universalIdentifier
+        : undefined;
+
+      if (!isDefined(applicationUniversalIdentifier)) {
+        throw new LogicFunctionException(
+          `Application universal identifier not found for logic function ${id}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      const baseFolderPath = getLogicFunctionBaseFolderPath(
+        flatLogicFunction.sourceHandlerPath,
+      );
+
+      return await this.fileStorageService.readFolder_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: baseFolderPath,
+      });
     } catch (error) {
       if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
         return;
@@ -166,14 +184,30 @@ export class LogicFunctionService {
       ...buildEnvVar(flatApplicationVariables, this.secretEncryptionService),
     };
 
+    const applicationUniversalIdentifier = isDefined(
+      flatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(applicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${flatLogicFunction.id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
     // We keep that check to build functions
     if (
       !(await this.functionBuildService.isBuilt({
         flatLogicFunction,
+        applicationUniversalIdentifier,
       }))
     ) {
       await this.functionBuildService.buildAndUpload({
         flatLogicFunction,
+        applicationUniversalIdentifier,
       });
     }
 
@@ -182,6 +216,7 @@ export class LogicFunctionService {
         this.logicFunctionExecutorService.execute({
           flatLogicFunction,
           flatLogicFunctionLayer,
+          applicationUniversalIdentifier,
           payload,
           env: envVariables,
         }),
@@ -192,13 +227,6 @@ export class LogicFunctionService {
       /* eslint-disable no-console */
       console.log(resultLogicFunction.logs);
     }
-
-    const applicationUniversalIdentifier = isDefined(
-      flatLogicFunction.applicationId,
-    )
-      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          ?.universalIdentifier
-      : undefined;
 
     await this.subscriptionService.publish({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
@@ -230,24 +258,6 @@ export class LogicFunctionService {
       });
 
     return resultLogicFunction;
-  }
-
-  async publishOneLogicFunctionOrFail(
-    id: string,
-    workspaceId: string,
-  ): Promise<FlatLogicFunction> {
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    return findFlatLogicFunctionOrThrow({
-      id,
-      flatLogicFunctionMaps,
-    });
   }
 
   async deleteOneLogicFunction({
@@ -555,6 +565,19 @@ export class LogicFunctionService {
     id: string;
     workspaceId: string;
   }): Promise<FlatLogicFunction> {
+    return this.createLogicFunctionFromExistingLogicFunctionById({
+      id,
+      workspaceId,
+    });
+  }
+
+  async createLogicFunctionFromExistingLogicFunctionById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -563,32 +586,87 @@ export class LogicFunctionService {
         },
       );
 
-    const flatLogicFunctionToDuplicate = findFlatLogicFunctionOrThrow({
+    const existingLogicFunction = findFlatLogicFunctionOrThrow({
       id,
       flatLogicFunctionMaps,
     });
 
+    return this.createLogicFunctionFromExistingLogicFunction({
+      existingLogicFunction,
+      workspaceId,
+    });
+  }
+
+  async createLogicFunctionFromExistingLogicFunction({
+    existingLogicFunction,
+    workspaceId,
+  }: {
+    existingLogicFunction: FlatLogicFunction;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const existingApplicationUniversalIdentifier = isDefined(
+      existingLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[existingLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(existingApplicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${existingLogicFunction.id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
     const newFlatLogicFunction = await this.createOneLogicFunction(
       {
-        name: flatLogicFunctionToDuplicate.name,
-        description: flatLogicFunctionToDuplicate.description ?? undefined,
-        timeoutSeconds: flatLogicFunctionToDuplicate.timeoutSeconds,
-        applicationId: flatLogicFunctionToDuplicate.applicationId ?? undefined,
-        logicFunctionLayerId: flatLogicFunctionToDuplicate.logicFunctionLayerId,
+        name: existingLogicFunction.name,
+        description: existingLogicFunction.description ?? undefined,
+        timeoutSeconds: existingLogicFunction.timeoutSeconds,
+        applicationId: existingLogicFunction.applicationId ?? undefined,
+        logicFunctionLayerId: existingLogicFunction.logicFunctionLayerId,
       },
       workspaceId,
     );
 
-    await this.fileStorageService.copy({
+    const newApplicationUniversalIdentifier = isDefined(
+      newFlatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[newFlatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(newApplicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${newFlatLogicFunction.id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const fromBaseFolderPath = getLogicFunctionBaseFolderPath(
+      existingLogicFunction.sourceHandlerPath,
+    );
+    const toBaseFolderPath = getLogicFunctionBaseFolderPath(
+      newFlatLogicFunction.sourceHandlerPath,
+    );
+
+    await this.fileStorageService.copy_v2({
       from: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction: flatLogicFunctionToDuplicate,
-        }),
+        workspaceId,
+        applicationUniversalIdentifier: existingApplicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: fromBaseFolderPath,
       },
       to: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction: newFlatLogicFunction,
-        }),
+        workspaceId,
+        applicationUniversalIdentifier: newApplicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: toBaseFolderPath,
       },
     });
 

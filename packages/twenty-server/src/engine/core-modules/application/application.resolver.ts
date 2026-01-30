@@ -164,13 +164,13 @@ export class ApplicationResolver {
 
     const buffer = await streamToBuffer(createReadStream());
 
-    return await this.fileStorageService.write_v2({
+    return await this.fileStorageService.writeFile_v2({
       sourceFile: buffer,
-      destinationPath: filePath,
       mimeType: mimetype,
       fileFolder,
       applicationUniversalIdentifier,
       workspaceId,
+      resourcePath: filePath,
       settings: { isTemporaryFile: false, toDelete: false },
     });
   }

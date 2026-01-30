@@ -19,12 +19,13 @@ import {
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
-import { isDefined } from 'twenty-shared/utils';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type LogicFunctionExecutorDriver,
+  type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
+  type LogicFunctionExecutorDriver,
 } from 'src/engine/core-modules/logic-function-executor/drivers/interfaces/logic-function-executor-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -35,7 +36,6 @@ import {
   LambdaBuildDirectoryManager,
   NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
-import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
 import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -313,30 +313,23 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
   async execute({
     flatLogicFunction,
     flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
     payload,
     env,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
-    payload: object;
-    env?: Record<string, string>;
-  }): Promise<LogicFunctionExecuteResult> {
+  }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.build(flatLogicFunction, flatLogicFunctionLayer);
 
     await this.waitFunctionUpdates(flatLogicFunction);
 
     const startTime = Date.now();
 
-    const builtHandlerFolderPath = getLogicFunctionFolderOrThrow({
-      flatLogicFunction,
-      fileFolder: FileFolder.BuiltLogicFunction,
-    });
-
     const compiledCode = (
       await streamToBuffer(
-        await this.fileStorageService.read({
-          folderPath: builtHandlerFolderPath,
-          filename: flatLogicFunction.builtHandlerPath,
+        await this.fileStorageService.readFile_v2({
+          workspaceId: flatLogicFunction.workspaceId,
+          applicationUniversalIdentifier,
+          fileFolder: FileFolder.BuiltLogicFunction,
+          resourcePath: flatLogicFunction.builtHandlerPath,
         }),
       )
     ).toString('utf-8');
