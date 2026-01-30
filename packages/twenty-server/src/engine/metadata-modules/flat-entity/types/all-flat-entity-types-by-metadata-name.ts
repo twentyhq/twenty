@@ -23,25 +23,24 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { type PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { type PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { type RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { type RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-import { type RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { type RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
-import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
+import { type ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { type ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
+import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { type WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
@@ -70,6 +69,11 @@ import {
   type DeleteIndexAction,
   type UpdateIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import {
+  type CreateLogicFunctionAction,
+  type DeleteLogicFunctionAction,
+  type UpdateLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   type CreateNavigationMenuItemAction,
   type DeleteNavigationMenuItemAction,
@@ -115,11 +119,6 @@ import {
   type DeleteRowLevelPermissionPredicateAction,
   type UpdateRowLevelPermissionPredicateAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
-import {
-  type CreateLogicFunctionAction,
-  type DeleteLogicFunctionAction,
-  type UpdateLogicFunctionAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   type CreateSkillAction,
   type DeleteSkillAction,
@@ -169,6 +168,9 @@ export type AllFlatEntityTypesByMetadataName = {
       'fieldMetadata'
     >;
     entity: MetadataEntity<'fieldMetadata'>;
+    universalMigrated: {
+      runner: true;
+    };
   };
   objectMetadata: {
     actions: {
@@ -179,6 +181,9 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatObjectMetadata;
     universalFlatEntity: UniversalFlatObjectMetadata;
     entity: MetadataEntity<'objectMetadata'>;
+    universalMigrated: {
+      runner: true;
+    };
   };
   view: {
     actions: {

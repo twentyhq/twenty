@@ -1,15 +1,21 @@
+import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
+import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { AllMetadataName } from 'twenty-shared/metadata';
 
-// TODO make field and object maps
-export type AllFlatEntityMaps = {
+export type UniversalAllFlatEntityMaps = {
   [P in AllMetadataName as MetadataToFlatEntityMapsKey<P>]: FlatEntityMaps<
-    MetadataFlatEntity<P>
+    AllFlatEntityTypesByMetadataName[P] extends {
+      universalMigrated: {
+        runner: true;
+      };
+    }
+      ? MetadataUniversalFlatEntity<P>
+      : MetadataFlatEntity<P>
   >;
 } & {
   flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
 };
-
