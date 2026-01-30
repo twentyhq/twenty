@@ -82,7 +82,7 @@ export const createCreateCompleteWorkflowTool = (
 CRITICAL SCHEMA REQUIREMENTS:
 - Trigger type MUST be one of: DATABASE_EVENT, MANUAL, CRON, WEBHOOK
 - NEVER use "RECORD_CREATED" - this is invalid. Use "DATABASE_EVENT" instead.
-- Each step MUST include: id, name, type, valid, settings
+- Each step MUST include: id (must be a valid UUID), name, type, valid, settings
 - CREATE_RECORD actions MUST have objectName and objectRecord in settings.input
 - objectRecord must contain actual field values, not just field names
 - Use "trigger" as stepId for trigger step in stepPositions and edges
@@ -97,7 +97,7 @@ IMPORTANT: The tool schema provides comprehensive field descriptions, examples, 
 - Field requirements and data types
 - Common object patterns and field structures
 - Proper relationship field formats
-- Variable reference syntax (e.g., {{trigger.object.fieldName}})
+- Variable reference syntax: {{trigger.fieldName}} for trigger data, {{<step-id>.result.fieldName}} for step outputs (step-id is the step's UUID, not its name)
 - Error handling options
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.`,
