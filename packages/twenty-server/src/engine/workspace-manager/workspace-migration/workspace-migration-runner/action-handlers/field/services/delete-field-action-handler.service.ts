@@ -71,12 +71,13 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
-      flatObjectMetadata,
+      objectMetadata: flatObjectMetadata,
     });
 
     const columnDefinitions = generateColumnDefinitions({
-      flatFieldMetadata: fieldMetadata,
-      flatObjectMetadata: flatObjectMetadata,
+      universalFlatFieldMetadata: fieldMetadata,
+      universalFlatObjectMetadata: flatObjectMetadata,
+      workspaceId,
     });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
 
@@ -89,7 +90,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     });
 
     const enumOperations = collectEnumOperationsForField({
-      flatFieldMetadata: fieldMetadata,
+      universalFlatFieldMetadata: fieldMetadata,
       tableName,
       operation: EnumOperation.DROP,
     });
