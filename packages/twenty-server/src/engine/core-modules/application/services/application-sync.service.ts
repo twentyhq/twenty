@@ -5,14 +5,13 @@ import { parse } from 'path';
 import {
   FieldManifest,
   LogicFunctionManifest,
-  LogicFunctionTriggerManifest,
   Manifest,
   ObjectFieldManifest,
   ObjectManifest,
   RelationFieldManifest,
   RoleManifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType, HTTPMethod, Sources } from 'twenty-shared/types';
+import { FieldMetadataType, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -30,11 +29,6 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  CronTriggerSettings,
-  DatabaseEventTriggerSettings,
-  HttpRouteTriggerSettings,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -915,47 +909,7 @@ export class ApplicationSyncService {
         workspaceId,
         applicationId,
       });
-
-      // Trigger settings are now embedded in the logic function entity
-      // They are handled through the create input
     }
-  }
-
-  private extractTriggerSettingsFromManifest(
-    triggers: LogicFunctionTriggerManifest[] = [],
-  ): {
-    cronTriggerSettings: CronTriggerSettings | null;
-    databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;
-    httpRouteTriggerSettings: HttpRouteTriggerSettings | null;
-  } {
-    let cronTriggerSettings: CronTriggerSettings | null = null;
-    let databaseEventTriggerSettings: DatabaseEventTriggerSettings | null =
-      null;
-    let httpRouteTriggerSettings: HttpRouteTriggerSettings | null = null;
-
-    for (const trigger of triggers) {
-      if (trigger.type === 'cron') {
-        cronTriggerSettings = { pattern: trigger.pattern };
-      } else if (trigger.type === 'databaseEvent') {
-        databaseEventTriggerSettings = {
-          eventName: trigger.eventName,
-          updatedFields: trigger.updatedFields,
-        };
-      } else if (trigger.type === 'route') {
-        httpRouteTriggerSettings = {
-          path: trigger.path,
-          httpMethod: trigger.httpMethod as HTTPMethod,
-          isAuthRequired: trigger.isAuthRequired,
-          forwardedRequestHeaders: trigger.forwardedRequestHeaders,
-        };
-      }
-    }
-
-    return {
-      cronTriggerSettings,
-      databaseEventTriggerSettings,
-      httpRouteTriggerSettings,
-    };
   }
 
   public async uninstallApplication({
