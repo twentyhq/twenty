@@ -18,7 +18,7 @@ export type UpdateManifestChecksumParams = {
   >;
 };
 
-export const updateManifestChecksums = ({
+export const manifestUpdateChecksums = ({
   manifest,
   builtFileInfos,
 }: UpdateManifestChecksumParams): Manifest => {

@@ -34,7 +34,7 @@ const findUniversalIdentifiers = (obj: object): string[] => {
 
   return universalIdentifiers;
 };
-export const validateManifest = (manifest: Manifest) => {
+export const manifestValidate = (manifest: Manifest) => {
   const errors: string[] = [];
   const warnings: string[] = [];
 
