@@ -3,12 +3,10 @@ import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-ma
 import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-delete-workspace-migration-action.type';
 import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-update-workspace-migration-action.type';
 
-export type CreateObjectAction = BaseCreateWorkspaceMigrationAction<
-  'objectMetadata',
-  true
-> & {
-  universalFlatFieldMetadatas: UniversalFlatFieldMetadata[];
-};
+export type CreateObjectAction =
+  BaseCreateWorkspaceMigrationAction<'objectMetadata'> & {
+    universalFlatFieldMetadatas: UniversalFlatFieldMetadata[];
+  };
 
 export type UpdateObjectAction =
   BaseUpdateWorkspaceMigrationAction<'objectMetadata'>;

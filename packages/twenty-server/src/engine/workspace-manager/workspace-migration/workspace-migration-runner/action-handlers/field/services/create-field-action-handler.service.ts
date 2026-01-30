@@ -12,7 +12,7 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
-import { fromUniversalFlatFieldMetadatasToNakedFieldMetadatas } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadatas-to-naked-field-metadatas.util.ts';
+import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
@@ -21,6 +21,7 @@ import {
   EnumOperation,
   executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/workspace-schema-enum-operations.util';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -44,14 +45,28 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         FieldMetadataEntity,
       );
 
-    const nakedFieldMetadatas =
-      fromUniversalFlatFieldMetadatasToNakedFieldMetadatas({
-        allFlatEntityMaps,
-        context,
-        universalFlatFieldMetadatas,
-      });
+    const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
+      string,
+      string
+    >();
 
-    await fieldMetadataRepository.insert(nakedFieldMetadatas);
+    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
+      allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
+        universalFlatFieldMetadata.universalIdentifier,
+        v4(),  // TODO should be configurable for API_METADATA
+      );
+    }
+
+    const nakedFlatFieldMetadatas = universalFlatFieldMetadatas.map(
+      (universalFlatFieldMetadata) =>
+        fromUniversalFlatFieldMetadataToNakedFieldMetadata({
+          universalFlatFieldMetadata,
+          allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+          allFlatEntityMaps,
+          context,
+        }),
+    );
+    await fieldMetadataRepository.insert(nakedFlatFieldMetadatas);
   }
 
   async executeForWorkspaceSchema(
