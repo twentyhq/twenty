@@ -1413,11 +1413,6 @@ msgstr "Funksie is nie gereed nie."
 msgid "Function not found."
 msgstr "Funksie nie gevind nie."
 
-#. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
-msgid "Function version not found."
-msgstr "Funksie-weergawe nie gevind nie."
-
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Google API authentication is disabled."
