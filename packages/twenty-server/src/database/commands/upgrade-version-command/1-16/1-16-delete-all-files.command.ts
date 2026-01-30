@@ -41,6 +41,7 @@ export class DeleteFileRecordsCommand extends ActiveOrSuspendedWorkspacesMigrati
 
     const files = await this.fileRepository.find({
       where: { workspaceId },
+      withDeleted: true,
     });
 
     if (files.length === 0) {

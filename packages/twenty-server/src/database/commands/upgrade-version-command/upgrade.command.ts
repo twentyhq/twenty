@@ -5,9 +5,9 @@ import { type Repository } from 'typeorm';
 
 import { type ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
-    type AllCommands,
-    UpgradeCommandRunner,
-    type VersionCommands,
+  type AllCommands,
+  UpgradeCommandRunner,
+  type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
 import { CleanEmptyStringNullInTextFieldsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-clean-empty-string-null-in-text-fields.command';
