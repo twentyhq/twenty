@@ -77,6 +77,16 @@ export const manifestUpdateChecksums = ({
         ),
       };
     }
+
+    if (fileFolder === FileFolder.Source) {
+      if (rootBuiltPath === 'package.json') {
+        result.packageJsonChecksum = checksum;
+      }
+
+      if (rootBuiltPath === 'yarn.lock') {
+        result.yarnLockChecksum = checksum;
+      }
+    }
   }
   return result;
 };

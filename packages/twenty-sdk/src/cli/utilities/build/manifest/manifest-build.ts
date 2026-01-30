@@ -19,8 +19,6 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
-import { findPathFile } from '@/cli/utilities/file/file-find';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type FrontComponentConfig, type LogicFunctionConfig } from '@/sdk';
 import type { Sources } from 'twenty-shared/types';
@@ -219,15 +217,6 @@ export const buildManifest = async (
     );
   }
 
-  const packageJson = await parseJsoncFile(
-    await findPathFile(appPath, 'package.json'),
-  );
-
-  const yarnLock = await readFile(
-    await findPathFile(appPath, 'yarn.lock'),
-    'utf8',
-  );
-
   const manifest = !application
     ? null
     : {
@@ -239,8 +228,8 @@ export const buildManifest = async (
         frontComponents,
         publicAssets,
         sources: await computeSources(appPath, filePaths),
-        packageJson,
-        yarnLock,
+        packageJsonChecksum: null,
+        yarnLockChecksum: null,
       };
 
   const entityFilePaths: EntityFilePaths = {
