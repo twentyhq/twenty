@@ -37,7 +37,7 @@ export const getUniversalFlatFieldMetadataMock = (
     isSystem: false,
     standardOverrides: null,
     applicationUniversalIdentifier: faker.string.uuid(),
-    objectUniversalIdentifier: faker.string.uuid(),
+    objectMetadataUniversalIdentifier: faker.string.uuid(),
     relationTargetObjectMetadataUniversalIdentifier: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
     universalSettings: null,
