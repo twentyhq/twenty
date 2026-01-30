@@ -69,7 +69,7 @@ export const CommandMenuWorkflowCreateStepContent = () => {
       workflowInsertStepIds;
 
     const createdStep = await createStep({
-      newStepType: selection.type as WorkflowActionType,
+      newStepType: selection.type,
       parentStepId,
       nextStepId,
       position,
