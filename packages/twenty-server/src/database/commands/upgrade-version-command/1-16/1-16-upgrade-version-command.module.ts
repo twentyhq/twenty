@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-delete-all-files.command';
 import { FlushV2CacheAndIncrementMetadataVersionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-flush-v2-cache-and-increment-metadata-version.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
@@ -26,6 +27,7 @@ import { MakeViewGroupUniversalIdentifierAndApplicationIdNotNullableMigrationCom
 import { MakeViewUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-make-view-universal-identifier-and-application-id-not-nullable-migration.command';
 import { UpdateTaskOnDeleteActionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-update-task-on-delete-action.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -58,6 +60,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
       ViewFieldEntity,
       ViewFilterEntity,
       ViewGroupEntity,
+      FileEntity,
     ]),
     DataSourceModule,
     WorkspaceCacheModule,
@@ -73,6 +76,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateTaskOnDeleteActionCommand,
     BackfillOpportunityOwnerFieldCommand,
     BackfillStandardPageLayoutsCommand,
+    DeleteFileRecordsCommand,
     IdentifyAgentMetadataCommand,
     IdentifyFieldMetadataCommand,
     IdentifyIndexMetadataCommand,
@@ -99,6 +103,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateTaskOnDeleteActionCommand,
     BackfillOpportunityOwnerFieldCommand,
     BackfillStandardPageLayoutsCommand,
+    DeleteFileRecordsCommand,
     IdentifyAgentMetadataCommand,
     IdentifyFieldMetadataCommand,
     IdentifyIndexMetadataCommand,
