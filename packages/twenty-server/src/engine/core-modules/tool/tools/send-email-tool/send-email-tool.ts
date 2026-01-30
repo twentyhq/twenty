@@ -20,6 +20,7 @@ import {
 } from 'src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception';
 import { SendEmailInputZodSchema } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool.schema';
 import { type SendEmailInput } from 'src/engine/core-modules/tool/tools/send-email-tool/types/send-email-input.type';
+import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/send-email-tool/utils/parse-comma-separated-emails.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
   type Tool,
@@ -121,6 +122,59 @@ export class SendEmailTool implements Tool {
     );
   }
 
+  private normalizeRecipients(parameters: SendEmailInput): {
+    to: string[];
+    cc: string[];
+    bcc: string[];
+  } {
+    if (
+      !parameters.recipients ||
+      !parameters.recipients.to ||
+      parameters.recipients.to.trim().length === 0
+    ) {
+      throw new SendEmailToolException(
+        'No recipients specified',
+        SendEmailToolExceptionCode.INVALID_EMAIL,
+      );
+    }
+
+    const to = parseCommaSeparatedEmails(parameters.recipients.to);
+
+    if (to.length === 0) {
+      throw new SendEmailToolException(
+        'No valid recipients specified',
+        SendEmailToolExceptionCode.INVALID_EMAIL,
+      );
+    }
+
+    return {
+      to,
+      cc: parseCommaSeparatedEmails(parameters.recipients.cc),
+      bcc: parseCommaSeparatedEmails(parameters.recipients.bcc),
+    };
+  }
+
+  private validateEmails(recipients: {
+    to: string[];
+    cc: string[];
+    bcc: string[];
+  }): string[] {
+    const emailSchema = z.string().trim().pipe(z.email());
+    const invalidEmails: string[] = [];
+
+    const allEmails = [...recipients.to, ...recipients.cc, ...recipients.bcc];
+
+    for (const email of allEmails) {
+      const result = emailSchema.safeParse(email);
+
+      if (!result.success) {
+        invalidEmails.push(email);
+      }
+    }
+
+    return invalidEmails;
+  }
+
   private async getAttachments(
     files: Array<{ id: string; name: string; type: string }>,
     workspaceId: string,
@@ -186,23 +240,35 @@ export class SendEmailTool implements Tool {
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     const { workspaceId } = context;
-    const { email, subject, body, files } = parameters;
+    const { subject, body, files } = parameters;
     let { connectedAccountId } = parameters;
 
+    let recipients: { to: string[]; cc: string[]; bcc: string[] };
+
     try {
-      const emailSchema = z
-        .string()
-        .trim()
-        .pipe(z.email({ error: 'Invalid email' }));
-      const emailValidation = emailSchema.safeParse(email);
+      recipients = this.normalizeRecipients(parameters);
+    } catch (error) {
+      return {
+        success: false,
+        message: 'No recipients specified',
+        error:
+          error instanceof Error ? error.message : 'No recipients specified',
+      };
+    }
 
-      if (!emailValidation.success) {
-        throw new SendEmailToolException(
-          `Email '${email}' is invalid`,
-          SendEmailToolExceptionCode.INVALID_EMAIL,
-        );
-      }
+    const invalidEmails = this.validateEmails(recipients);
 
+    if (invalidEmails.length > 0) {
+      return {
+        success: false,
+        message: `Invalid email addresses: ${invalidEmails.join(', ')}`,
+        error: `Invalid email addresses: ${invalidEmails.join(', ')}`,
+      };
+    }
+
+    const toRecipientsDisplay = recipients.to.join(', ');
+
+    try {
       if (!connectedAccountId) {
         connectedAccountId =
           await this.getOrThrowFirstConnectedAccountId(workspaceId);
@@ -213,16 +279,23 @@ export class SendEmailTool implements Tool {
         workspaceId,
       );
 
-      const messageChannelId = connectedAccount.messageChannels.find(
+      const messageChannel = connectedAccount.messageChannels.find(
         (channel) => channel.handle === connectedAccount.handle,
-      )?.id!;
+      );
+
+      if (!isDefined(messageChannel)) {
+        throw new SendEmailToolException(
+          `No message channel found for connected account '${connectedAccountId}'`,
+          SendEmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+        );
+      }
 
       const { accessToken, refreshToken } =
         await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
           {
             connectedAccount,
             workspaceId,
-            messageChannelId,
+            messageChannelId: messageChannel.id,
           },
         );
 
@@ -247,7 +320,9 @@ export class SendEmailTool implements Tool {
 
       await this.sendMessageService.sendMessage(
         {
-          to: email,
+          to: recipients.to,
+          cc: recipients.cc.length > 0 ? recipients.cc : undefined,
+          bcc: recipients.bcc.length > 0 ? recipients.bcc : undefined,
           subject: safeSubject,
           body: textBody,
           html: safeHtmlBody,
@@ -257,14 +332,16 @@ export class SendEmailTool implements Tool {
       );
 
       this.logger.log(
-        `Email sent successfully to ${email}${attachments.length > 0 ? ` with ${attachments.length} attachments` : ''}`,
+        `Email sent successfully to ${toRecipientsDisplay}${attachments.length > 0 ? ` with ${attachments.length} attachments` : ''}`,
       );
 
       return {
         success: true,
-        message: `Email sent successfully to ${email}`,
+        message: `Email sent successfully to ${toRecipientsDisplay}`,
         result: {
-          recipient: email,
+          recipients: recipients.to,
+          ccRecipients: recipients.cc,
+          bccRecipients: recipients.bcc,
           subject: safeSubject,
           connectedAccountId,
           attachmentCount: attachments.length,
@@ -274,7 +351,7 @@ export class SendEmailTool implements Tool {
       if (error instanceof SendEmailToolException) {
         return {
           success: false,
-          message: `Failed to send email to ${email}`,
+          message: `Failed to send email to ${toRecipientsDisplay}`,
           error: error.message,
         };
       }
@@ -283,7 +360,7 @@ export class SendEmailTool implements Tool {
 
       return {
         success: false,
-        message: `Failed to send email to ${email}`,
+        message: `Failed to send email to ${toRecipientsDisplay}`,
         error: error instanceof Error ? error.message : 'Failed to send email',
       };
     }

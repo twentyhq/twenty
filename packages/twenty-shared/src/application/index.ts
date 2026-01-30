@@ -7,11 +7,6 @@
  *                              |___/
  */
 
-export type { ApplicationManifest } from './applicationManifestType';
-export type {
-  ApplicationMarketplaceData,
-  Application,
-} from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -20,19 +15,23 @@ export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { SyncableEntity } from './enums/syncable-entities.enum';
-export type { FieldManifest } from './fieldManifestType';
+export type {
+  FieldManifest,
+  RegularFieldManifest,
+  RelationFieldManifest,
+} from './fieldManifestType';
 export type { FrontComponentManifest } from './frontComponentManifestType';
 export type {
+  CronTrigger,
+  DatabaseEventTrigger,
   InputJsonSchema,
   LogicFunctionManifest,
-  DatabaseEventTrigger,
-  CronTrigger,
-  RouteTrigger,
   LogicFunctionTriggerManifest,
+  RouteTrigger,
 } from './logicFunctionManifestType';
-export type { ObjectExtensionManifest } from './objectExtensionManifestType';
+export type { Manifest } from './manifestType';
+export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type { PackageJson } from './packageJsonType';
-export type { RelationFieldManifest } from './relationFieldManifestType';
 export type { RoleManifest } from './roleManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';

@@ -47,7 +47,7 @@ export class ApplicationDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  defaultLogicFunctionRoleId?: string;
+  defaultRoleId?: string;
 
   @IsOptional()
   @Field(() => RoleDTO, { nullable: true })

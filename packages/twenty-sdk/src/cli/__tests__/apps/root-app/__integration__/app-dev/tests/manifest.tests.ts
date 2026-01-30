@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 
 import { normalizeManifestForComparison } from '@/cli/__tests__/integration/utils/normalize-manifest.util';
 import { EXPECTED_MANIFEST } from '@/cli/__tests__/apps/root-app/__integration__/app-dev/expected-manifest';
@@ -16,21 +16,22 @@ export const defineManifestTests = (appPath: string): void => {
 
     it('should have correct manifest content', async () => {
       const manifestPath = join(appPath, '.twenty/output/manifest.json');
-      const manifest: ApplicationManifest = await fs.readJSON(manifestPath);
+      const manifest: Manifest = await fs.readJSON(manifestPath);
 
       expect(manifest.application).toEqual(EXPECTED_MANIFEST.application);
       expect(manifest.objects).toEqual(EXPECTED_MANIFEST.objects);
 
       expect(
-        normalizeManifestForComparison({ functions: manifest.functions })
-          .functions,
+        normalizeManifestForComparison({
+          logicFunctions: manifest.logicFunctions,
+        }).logicFunctions,
       ).toEqual(
         normalizeManifestForComparison({
-          functions: EXPECTED_MANIFEST.functions,
-        }).functions,
+          logicFunctions: EXPECTED_MANIFEST.logicFunctions,
+        }).logicFunctions,
       );
 
-      for (const fn of manifest.functions) {
+      for (const fn of manifest.logicFunctions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();
         expect(typeof fn.builtHandlerChecksum).toBe('string');

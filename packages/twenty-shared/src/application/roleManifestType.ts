@@ -1,47 +1,20 @@
 import { type PermissionFlagType } from '@/constants';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
-type WithObjectIdentifier = {
+type ObjectPermission = {
   objectUniversalIdentifier: string;
-  objectNameSingular?: never;
-};
-
-type WithObjectName = {
-  objectNameSingular: string;
-  objectUniversalIdentifier?: never;
-};
-
-type BaseObjectPermission = {
   canReadObjectRecords?: boolean;
   canUpdateObjectRecords?: boolean;
   canSoftDeleteObjectRecords?: boolean;
   canDestroyObjectRecords?: boolean;
 };
 
-type ObjectPermission =
-  | (BaseObjectPermission & WithObjectIdentifier)
-  | (BaseObjectPermission & WithObjectName);
-
-type WithFieldIdentifier = {
+type FieldPermission = {
+  objectUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
-  fieldName?: never;
-};
-
-type WithFieldName = {
-  fieldName: string;
-  fieldUniversalIdentifier?: never;
-};
-
-type BaseFieldPermission = {
   canReadFieldValue?: boolean;
   canUpdateFieldValue?: boolean;
 };
-
-type FieldPermission =
-  | (BaseFieldPermission & WithObjectIdentifier & WithFieldIdentifier)
-  | (BaseFieldPermission & WithObjectIdentifier & WithFieldName)
-  | (BaseFieldPermission & WithObjectName & WithFieldIdentifier)
-  | (BaseFieldPermission & WithObjectName & WithFieldName);
 
 export type RoleManifest = SyncableEntityOptions & {
   label: string;
