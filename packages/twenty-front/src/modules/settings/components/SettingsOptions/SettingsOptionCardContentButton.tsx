@@ -1,9 +1,9 @@
 import {
-  StyledSettingsOptionCardContent,
-  StyledSettingsOptionCardDescription,
-  StyledSettingsOptionCardIcon,
-  StyledSettingsOptionCardTitle,
-} from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
+  StyledSettingsCardContent,
+  StyledSettingsCardDescription,
+  StyledSettingsCardIcon,
+  StyledSettingsCardTitle,
+} from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import styled from '@emotion/styled';
 import { type IconComponent } from 'twenty-ui/display';
@@ -28,19 +28,19 @@ export const SettingsOptionCardContentButton = ({
   Button,
 }: SettingsOptionCardContentButtonProps) => {
   return (
-    <StyledSettingsOptionCardContent disabled={disabled}>
+    <StyledSettingsCardContent disabled={disabled}>
       {Icon && (
-        <StyledSettingsOptionCardIcon>
+        <StyledSettingsCardIcon>
           <SettingsOptionIconCustomizer Icon={Icon} />
-        </StyledSettingsOptionCardIcon>
+        </StyledSettingsCardIcon>
       )}
       <div>
-        <StyledSettingsOptionCardTitle>{title}</StyledSettingsOptionCardTitle>
-        <StyledSettingsOptionCardDescription>
+        <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
+        <StyledSettingsCardDescription>
           {description}
-        </StyledSettingsOptionCardDescription>
+        </StyledSettingsCardDescription>
       </div>
       {Button && <StyledButtonContainer>{Button}</StyledButtonContainer>}
-    </StyledSettingsOptionCardContent>
+    </StyledSettingsCardContent>
   );
 };
