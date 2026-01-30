@@ -10,12 +10,22 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { type MessageAttachmentWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-attachment.workspace-entity';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
   existingThreadInDB?: Pick<MessageThreadWorkspaceEntity, 'id'>;
   existingMessageChannelMessageAssociationInDB?: MessageChannelMessageAssociationWorkspaceEntity;
+  attachmentsToCreate: {
+    messageAttachment: Partial<MessageAttachmentWorkspaceEntity>;
+    file: {
+      content: Buffer;
+      filename: string;
+      mimeType: string;
+    };
+  }[];
   messageToCreate?: Pick<
     MessageWorkspaceEntity,
     | 'id'
@@ -41,6 +51,7 @@ export class MessagingMessageService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly fileUploadService: FileUploadService,
   ) {}
 
   public async saveMessagesWithinTransaction(
@@ -125,6 +136,11 @@ export class MessagingMessageService {
           existingMessageChannelMessageAssociations,
         );
 
+        await this.enrichMessageAccumulatorWithAttachmentsToCreate(
+          messages,
+          messageAccumulatorMap,
+        );
+
         await this.enrichMessageAccumulatorWithMessageThreadToCreate(
           messages,
           messageAccumulatorMap,
@@ -153,230 +169,300 @@ export class MessagingMessageService {
 
           let newOrExistingMessageId: string;
 
-          if (!isDefined(messageAccumulator.existingMessageInDB)) {
-            newOrExistingMessageId = v4();
+		          if (!isDefined(messageAccumulator.existingMessageInDB)) {
+		            newOrExistingMessageId = v4();
 
-            const messageToCreate = {
-              id: newOrExistingMessageId,
-              headerMessageId: message.headerMessageId,
-              subject: message.subject,
-              receivedAt: message.receivedAt,
-              text: message.text,
-              messageThreadId,
-            };
+		            const messageToCreate = {
+		              id: newOrExistingMessageId,
+		              headerMessageId: message.headerMessageId,
+		              subject: message.subject,
+		              receivedAt: message.receivedAt,
+		              text: message.text,
+		              messageThreadId,
+		            };
 
-            messageAccumulator.messageToCreate = messageToCreate;
-          } else {
-            newOrExistingMessageId = messageAccumulator.existingMessageInDB.id;
-          }
+		            messageAccumulator.messageToCreate = messageToCreate;
+		          } else {
+		            newOrExistingMessageId = messageAccumulator.existingMessageInDB.id;
+		          }
 
-          if (
-            !isDefined(
-              messageAccumulator.existingMessageChannelMessageAssociationInDB,
-            )
-          ) {
-            messageAccumulator.messageChannelMessageAssociationToCreate = {
-              messageChannelId,
-              messageId: newOrExistingMessageId,
-              messageExternalId: message.externalId,
-              messageThreadExternalId: message.messageThreadExternalId,
-              direction: message.direction,
-            };
+	            for (const attachmentToCreate of messageAccumulator.attachmentsToCreate) {
+	              attachmentToCreate.messageAttachment.messageId = newOrExistingMessageId;
+	            }
 
-            messageAccumulatorMap.set(message.externalId, messageAccumulator);
-          }
-        }
+	          if (
+	            !isDefined(
+	              messageAccumulator.existingMessageChannelMessageAssociationInDB,
+	            )
+	          ) {
+	            messageAccumulator.messageChannelMessageAssociationToCreate = {
+	              messageChannelId,
+	              messageId: newOrExistingMessageId,
+	              messageExternalId: message.externalId,
+	              messageThreadExternalId: message.messageThreadExternalId,
+	              direction: message.direction,
+	            };
 
-        const messageThreadsToCreate = Array.from(
-          messageAccumulatorMap.values(),
-        )
-          .map((accumulator) => accumulator.threadToCreate)
-          .filter(isDefined);
+	            messageAccumulatorMap.set(message.externalId, messageAccumulator);
+	          }
+	        }
 
-        await messageThreadRepository.insert(
-          messageThreadsToCreate,
-          transactionManager,
-        );
+	        const messageThreadsToCreate = Array.from(
+	          messageAccumulatorMap.values(),
+	        )
+	          .map((accumulator) => accumulator.threadToCreate)
+	          .filter(isDefined);
 
-        const messagesToCreate = Array.from(messageAccumulatorMap.values())
-          .map((accumulator) => accumulator.messageToCreate)
-          .filter(isDefined);
+	        await messageThreadRepository.insert(
+	          messageThreadsToCreate,
+	          transactionManager,
+	        );
 
-        await messageRepository.insert(messagesToCreate, transactionManager);
+	        const messagesToCreate = Array.from(messageAccumulatorMap.values())
+	          .map((accumulator) => accumulator.messageToCreate)
+	          .filter(isDefined);
 
-        const messageChannelMessageAssociationsToCreate = Array.from(
-          messageAccumulatorMap.values(),
-        )
-          .map(
-            (accumulator) =>
-              accumulator.messageChannelMessageAssociationToCreate,
-          )
-          .filter(isDefined);
+	        await messageRepository.insert(messagesToCreate, transactionManager);
 
-        await messageChannelMessageAssociationRepository.insert(
-          messageChannelMessageAssociationsToCreate,
-          transactionManager,
-        );
+	        const messageChannelMessageAssociationsToCreate = Array.from(
+	          messageAccumulatorMap.values(),
+	        )
+	          .map(
+	            (accumulator) =>
+	              accumulator.messageChannelMessageAssociationToCreate,
+	          )
+	          .filter(isDefined);
 
-        const messageExternalIdsAndIdsMap = new Map<string, string>();
+	        await messageChannelMessageAssociationRepository.insert(
+	          messageChannelMessageAssociationsToCreate,
+	          transactionManager,
+	        );
 
-        for (const [
-          externalId,
-          accumulator,
-        ] of messageAccumulatorMap.entries()) {
-          if (isDefined(accumulator.messageToCreate)) {
-            messageExternalIdsAndIdsMap.set(
-              externalId,
-              accumulator.messageToCreate.id,
-            );
-          }
+	        const messageAttachmentRepository =
+	          await this.globalWorkspaceOrmManager.getRepository<MessageAttachmentWorkspaceEntity>(
+	            workspaceId,
+	            'messageAttachment',
+	          );
 
-          if (isDefined(accumulator.existingMessageInDB)) {
-            messageExternalIdsAndIdsMap.set(
-              externalId,
-              accumulator.existingMessageInDB.id,
-            );
-          }
-        }
+	        const allAttachmentsToCreate = Array.from(
+	          messageAccumulatorMap.values(),
+	        ).flatMap((accumulator) => accumulator.attachmentsToCreate);
 
-        return {
-          createdMessages: messagesToCreate,
-          messageExternalIdsAndIdsMap,
-        };
-      },
-      authContext,
-    );
-  }
+	        const messageAttachmentsToCreate: Partial<MessageAttachmentWorkspaceEntity>[] =
+	          [];
 
-  private async enrichMessageAccumulatorWithExistingMessages(
-    messages: MessageWithParticipants[],
-    messageAccumulatorMap: Map<string, MessageAccumulator>,
-    existingMessagesInDB: MessageWorkspaceEntity[],
-  ) {
-    for (const message of messages) {
-      const existingMessage = existingMessagesInDB.find(
-        (existingMessage) =>
-          existingMessage.headerMessageId === message.headerMessageId,
-      );
+	        for (const attachment of allAttachmentsToCreate) {
+	          const fileEntity = await this.fileUploadService.uploadFilesFieldFile({
+	            file: attachment.file.content,
+	            filename: attachment.file.filename,
+	            declaredMimeType: attachment.file.mimeType,
+	            workspaceId,
+	            applicationId: '00000000-0000-0000-0000-000000000000', // System application ID for internal files
+	          });
 
-      if (!isDefined(existingMessage)) {
-        messageAccumulatorMap.set(message.externalId, {});
-        continue;
-      }
+	          messageAttachmentsToCreate.push({
+	            ...attachment.messageAttachment,
+	            fileId: fileEntity.id,
+	            size: fileEntity.size,
+	          });
+	        }
 
-      messageAccumulatorMap.set(message.externalId, {
-        existingMessageInDB: existingMessage,
-      });
-    }
-  }
+	        await messageAttachmentRepository.insert(
+	          messageAttachmentsToCreate,
+	          transactionManager,
+	        );
 
-  private async enrichMessageAccumulatorWithExistingMessageThreadIds(
-    messages: MessageWithParticipants[],
-    messageAccumulatorMap: Map<string, MessageAccumulator>,
-    messageChannelMessageAssociationsReferencingMessageThread: Pick<
-      MessageChannelMessageAssociationWorkspaceEntity,
-      'messageThreadExternalId' | 'message'
-    >[],
-    workspaceId: string,
-  ) {
-    for (const message of messages) {
-      const messageAccumulator = messageAccumulatorMap.get(message.externalId);
+	        const messageExternalIdsAndIdsMap = new Map<string, string>();
 
-      if (!isDefined(messageAccumulator)) {
-        throw new Error(
-          `Message accumulator should reference the message, this should never happen`,
-        );
-      }
+	        for (const [
+	          externalId,
+	          accumulator,
+	        ] of messageAccumulatorMap.entries()) {
+	          if (isDefined(accumulator.messageToCreate)) {
+	            messageExternalIdsAndIdsMap.set(
+	              externalId,
+	              accumulator.messageToCreate.id,
+	            );
+	          }
 
-      const messageChannelMessageAssociationReferencingMessageThread =
-        messageChannelMessageAssociationsReferencingMessageThread.find(
-          (association) =>
-            association.messageThreadExternalId ===
-            message.messageThreadExternalId,
-        );
+	          if (isDefined(accumulator.existingMessageInDB)) {
+	            messageExternalIdsAndIdsMap.set(
+	              externalId,
+	              accumulator.existingMessageInDB.id,
+	            );
+	          }
+	        }
 
-      const existingThreadIdInDBIfMessageIsExistingInDB =
-        messageAccumulator.existingMessageInDB?.messageThreadId;
-      const existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation =
-        messageChannelMessageAssociationReferencingMessageThread?.message
-          ?.messageThreadId;
+	        return {
+	          createdMessages: messagesToCreate,
+	          messageExternalIdsAndIdsMap,
+	        };
+	      },
+	      authContext,
+	    );
+	  }
 
-      if (isDefined(existingThreadIdInDBIfMessageIsExistingInDB)) {
-        messageAccumulator.existingThreadInDB = {
-          id: existingThreadIdInDBIfMessageIsExistingInDB,
-        };
-      }
+	  private async enrichMessageAccumulatorWithAttachmentsToCreate(
+	    messages: MessageWithParticipants[],
+	    messageAccumulatorMap: Map<string, MessageAccumulator>,
+	  ) {
+	    for (const message of messages) {
+	      const messageAccumulator = messageAccumulatorMap.get(message.externalId);
 
-      if (
-        isDefined(
-          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation,
-        )
-      ) {
-        messageAccumulator.existingThreadInDB = {
-          id: existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation,
-        };
-      }
+	      if (!isDefined(messageAccumulator)) {
+	        throw new Error(
+	          `Message accumulator should reference the message, this should never happen`,
+	        );
+	      }
 
-      if (
-        isDefined(existingThreadIdInDBIfMessageIsExistingInDB) &&
-        isDefined(
-          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation,
-        ) &&
-        existingThreadIdInDBIfMessageIsExistingInDB !==
-          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation
-      ) {
-        this.logger.warn(
-          `
-          WorkspaceId: ${workspaceId} /
-          Message ExternalId: ${message.externalId} /
-          Message HeaderId: ${message.headerMessageId} /
-          Message Thread ExternalId: ${message.messageThreadExternalId} /
-          Message Thread Id in DB: ${existingThreadIdInDBIfMessageIsExistingInDB} /
-          Message Thread Id in Message Channel Message Association: ${existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation} /
-          Message Subject: ${message.subject} /
-          Message Received At: ${message.receivedAt} /
-          Thread inter channel detected`,
-        );
-      }
+	      messageAccumulator.attachmentsToCreate = message.attachments.map(
+	        (attachment) => ({
+	          messageAttachment: {
+	            filename: attachment.filename,
+	            mimeType: attachment.contentType,
+	          },
+	          file: {
+	            content: attachment.content,
+	            filename: attachment.filename,
+	            mimeType: attachment.contentType,
+	          },
+	        }),
+	      );
+	    }
+	  }
 
-      messageAccumulatorMap.set(message.externalId, messageAccumulator);
-    }
-  }
+	  private async enrichMessageAccumulatorWithExistingMessages(
+	    messages: MessageWithParticipants[],
+	    messageAccumulatorMap: Map<string, MessageAccumulator>,
+	    existingMessagesInDB: MessageWorkspaceEntity[],
+	  ) {
+	    for (const message of messages) {
+	      const existingMessage = existingMessagesInDB.find(
+	        (existingMessage) =>
+	          existingMessage.headerMessageId === message.headerMessageId,
+	      );
 
-  private async enrichMessageAccumulatorWithExistingMessageChannelMessageAssociations(
-    messages: MessageWithParticipants[],
-    messageAccumulatorMap: Map<string, MessageAccumulator>,
-    existingMessageChannelMessageAssociations: MessageChannelMessageAssociationWorkspaceEntity[],
-  ) {
-    for (const message of messages) {
-      const messageAccumulator = messageAccumulatorMap.get(message.externalId);
+	      if (!isDefined(existingMessage)) {
+	        messageAccumulatorMap.set(message.externalId, {
+	          attachmentsToCreate: [],
+	        });
+	        continue;
+	      }
 
-      if (!isDefined(messageAccumulator)) {
-        throw new Error(
-          `Message accumulator should reference the message, this should never happen`,
-        );
-      }
+	      messageAccumulatorMap.set(message.externalId, {
+	        existingMessageInDB: existingMessage,
+	        attachmentsToCreate: [],
+	      });
+	    }
+	  }
 
-      const existingMessage = messageAccumulator.existingMessageInDB;
+	  private async enrichMessageAccumulatorWithExistingMessageThreadIds(
+	    messages: MessageWithParticipants[],
+	    messageAccumulatorMap: Map<string, MessageAccumulator>,
+	    messageChannelMessageAssociationsReferencingMessageThread: Pick<
+	      MessageChannelMessageAssociationWorkspaceEntity,
+	      'messageThreadExternalId' | 'message'
+	    >[],
+	    workspaceId: string,
+	  ) {
+	    for (const message of messages) {
+	      const messageAccumulator = messageAccumulatorMap.get(message.externalId);
 
-      if (!isDefined(existingMessage)) {
-        continue;
-      }
+	      if (!isDefined(messageAccumulator)) {
+	        throw new Error(
+	          `Message accumulator should reference the message, this should never happen`,
+	        );
+	      }
 
-      const existingMessageChannelMessageAssociation =
-        existingMessageChannelMessageAssociations.find(
-          (association) => association.messageId === existingMessage.id,
-        );
+	      const messageChannelMessageAssociationReferencingMessageThread =
+	        messageChannelMessageAssociationsReferencingMessageThread.find(
+	          (association) =>
+	            association.messageThreadExternalId ===
+	            message.messageThreadExternalId,
+	        );
 
-      if (existingMessageChannelMessageAssociation) {
-        messageAccumulatorMap.set(message.externalId, {
-          existingMessageInDB: existingMessage,
-          existingMessageChannelMessageAssociationInDB:
-            existingMessageChannelMessageAssociation,
-        });
-      }
-    }
-  }
+	      const existingThreadIdInDBIfMessageIsExistingInDB =
+	        messageAccumulator.existingMessageInDB?.messageThreadId;
+	      const existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation =
+	        messageChannelMessageAssociationReferencingMessageThread?.message
+	          ?.messageThreadId;
+
+	      if (isDefined(existingThreadIdInDBIfMessageIsExistingInDB)) {
+	        messageAccumulator.existingThreadInDB = {
+	          id: existingThreadIdInDBIfMessageIsExistingInDB,
+	        };
+	      } else if (
+	        isDefined(
+	          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation,
+	        )
+	      ) {
+	        messageAccumulator.existingThreadInDB = {
+	          id: existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation,
+	        };
+	      }
+
+	      if (
+	        !isDefined(messageAccumulator.existingThreadInDB) &&
+	        isDefined(message.messageThreadExternalId)
+	      ) {
+	        messageAccumulator.threadToCreate = {
+	          id: v4(),
+	        };
+	      }
+	    }
+	  }
+
+	  private async enrichMessageAccumulatorWithExistingMessageChannelMessageAssociations(
+	    messages: MessageWithParticipants[],
+	    messageAccumulatorMap: Map<string, MessageAccumulator>,
+	    existingMessageChannelMessageAssociations: MessageChannelMessageAssociationWorkspaceEntity[],
+	  ) {
+	    for (const message of messages) {
+	      const messageAccumulator = messageAccumulatorMap.get(message.externalId);
+
+	      if (!isDefined(messageAccumulator)) {
+	        throw new Error(
+	          `Message accumulator should reference the message, this should never happen`,
+	        );
+	      }
+
+	      const existingMessageChannelMessageAssociation =
+	        existingMessageChannelMessageAssociations.find(
+	          (association) =>
+	            association.messageId === messageAccumulator.existingMessageInDB?.id,
+	        );
+
+	      if (isDefined(existingMessageChannelMessageAssociation)) {
+	        messageAccumulator.existingMessageChannelMessageAssociationInDB =
+	          existingMessageChannelMessageAssociation;
+	      }
+	    }
+	  }
+
+	  private async enrichMessageAccumulatorWithMessageThreadToCreate(
+	    messages: MessageWithParticipants[],
+	    messageAccumulatorMap: Map<string, MessageAccumulator>,
+	  ) {
+	    for (const message of messages) {
+	      const messageAccumulator = messageAccumulatorMap.get(message.externalId);
+
+	      if (!isDefined(messageAccumulator)) {
+	        throw new Error(
+	          `Message accumulator should reference the message, this should never happen`,
+	        );
+	      }
+
+	      if (
+	        !isDefined(messageAccumulator.existingThreadInDB) &&
+	        isDefined(message.messageThreadExternalId)
+	      ) {
+	        messageAccumulator.threadToCreate = {
+	          id: v4(),
+	        };
+	      }
+	    }
+	  }
+	}
 
   private async enrichMessageAccumulatorWithMessageThreadToCreate(
     messages: MessageWithParticipants[],

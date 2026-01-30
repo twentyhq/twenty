@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ImapFlow } from 'imapflow';
-import { Address, type Email as ParsedMail } from 'postal-mime';
+import { Address, type Attachment, type Email as ParsedMail } from 'postal-mime';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -12,6 +12,7 @@ import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-i
 import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
@@ -236,9 +237,11 @@ export class ImapGetMessagesService {
       }));
   }
 
-  private extractAttachments(parsed: ParsedMail) {
-    return (parsed.attachments || []).map((attachment) => ({
+  private extractAttachments(parsed: ParsedMail): MessageAttachment[] {
+    return (parsed.attachments || []).map((attachment: Attachment) => ({
       filename: attachment.filename || 'unnamed-attachment',
+      content: attachment.content,
+      contentType: attachment.contentType,
     }));
   }
 }

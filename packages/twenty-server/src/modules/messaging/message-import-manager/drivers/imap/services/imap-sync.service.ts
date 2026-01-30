@@ -63,6 +63,7 @@ export class ImapSyncService {
     folderPath: string,
   ): Promise<number[]> {
     const lastSyncedUid = previousCursor?.highestUid ?? 0;
+    const lastSyncedModSeq = previousCursor?.modSeq ?? 0;
     const { maxUid } = mailboxState;
 
     if (canUseQresync(client, previousCursor, mailboxState)) {
@@ -72,7 +73,7 @@ export class ImapSyncService {
         return await this.fetchWithQresync(
           client,
           lastSyncedUid,
-          BigInt(previousCursor!.modSeq!),
+          BigInt(lastSyncedModSeq),
         );
       } catch (error) {
         this.logger.warn(

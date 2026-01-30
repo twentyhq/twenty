@@ -13,9 +13,7 @@ export type Message = Omit<
   | 'messageThreadId'
   | 'id'
 > & {
-  attachments: {
-    filename: string;
-  }[];
+  attachments: MessageAttachment[];
   externalId: string;
   messageThreadExternalId: string;
   direction: MessageDirection;

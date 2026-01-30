@@ -70,12 +70,19 @@ export class ImapClientProvider {
       host: connectionParameters.IMAP?.host || '',
       port: connectionParameters.IMAP?.port || 993,
       secure: connectionParameters.IMAP?.secure,
-      auth: {
-        user: isDefined(connectionParameters.IMAP?.username)
-          ? connectionParameters.IMAP?.username
-          : connectedAccount.handle,
-        pass: connectionParameters.IMAP?.password || '',
-      },
+      auth: connectionParameters.IMAP?.accessToken
+        ? {
+            user: isDefined(connectionParameters.IMAP?.username)
+              ? connectionParameters.IMAP?.username
+              : connectedAccount.handle,
+            accessToken: connectionParameters.IMAP.accessToken,
+          }
+        : {
+            user: isDefined(connectionParameters.IMAP?.username)
+              ? connectionParameters.IMAP?.username
+              : connectedAccount.handle,
+            pass: connectionParameters.IMAP?.password || '',
+          },
       logger: false,
       tls: {
         rejectUnauthorized: false,
