@@ -32,7 +32,7 @@ describe('copyBaseApplicationProject', () => {
     }
   });
 
-  it('should create the correct folder structure with src/app/', async () => {
+  it('should create the correct folder structure with src/', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -48,8 +48,8 @@ describe('copyBaseApplicationProject', () => {
     const appConfigPath = join(srcAppPath, 'application.config.ts');
     expect(await fs.pathExists(appConfigPath)).toBe(true);
 
-    // Verify default-function.role.ts exists in src/app/
-    const roleConfigPath = join(srcAppPath, 'default-function.role.ts');
+    // Verify default.role.ts exists in src/app/
+    const roleConfigPath = join(srcAppPath, 'default.role.ts');
     expect(await fs.pathExists(roleConfigPath)).toBe(true);
   });
 
@@ -125,7 +125,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it imports the role identifier
     expect(appConfigContent).toContain(
-      "import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-logic-function.role'",
+      "import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default.role'",
     );
 
     // Verify display name and description
@@ -139,11 +139,11 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it references the role
     expect(appConfigContent).toContain(
-      'roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
+      'defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
   });
 
-  it('should create default-function.role.ts with defineRole and correct values', async () => {
+  it('should create default.role.ts with defineRole and correct values', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -151,11 +151,7 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: testAppDirectory,
     });
 
-    const roleConfigPath = join(
-      testAppDirectory,
-      'src',
-      'default-function.role.ts',
-    );
+    const roleConfigPath = join(testAppDirectory, 'src', 'default.role.ts');
     const roleConfigContent = await fs.readFile(roleConfigPath, 'utf8');
 
     // Verify it uses defineRole
@@ -283,13 +279,13 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: secondAppDir,
     });
 
-    // Read both role configs
     const firstRoleConfig = await fs.readFile(
-      join(firstAppDir, 'src', 'default-function.role.ts'),
+      join(firstAppDir, 'src', 'default.role.ts'),
       'utf8',
     );
+
     const secondRoleConfig = await fs.readFile(
-      join(secondAppDir, 'src', 'default-function.role.ts'),
+      join(secondAppDir, 'src', 'default.role.ts'),
       'utf8',
     );
 

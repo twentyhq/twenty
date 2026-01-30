@@ -3,7 +3,7 @@ import { join } from 'path';
 import { v4 } from 'uuid';
 import { ASSETS_DIR } from 'twenty-shared/application';
 
-const APP_FOLDER = 'src';
+const SRC_FOLDER = 'src';
 
 export const copyBaseApplicationProject = async ({
   appName,
@@ -26,27 +26,27 @@ export const copyBaseApplicationProject = async ({
 
   await createYarnLock(appDirectory);
 
-  const appFolderPath = join(appDirectory, APP_FOLDER);
+  const sourceFolderPath = join(appDirectory, SRC_FOLDER);
 
-  await fs.ensureDir(appFolderPath);
+  await fs.ensureDir(sourceFolderPath);
 
-  await createDefaultServerlessFunctionRoleConfig({
+  await createDefaultRoleConfig({
     displayName: appDisplayName,
-    appDirectory: appFolderPath,
+    appDirectory: sourceFolderPath,
   });
 
   await createDefaultFrontComponent({
-    appDirectory: appFolderPath,
+    appDirectory: sourceFolderPath,
   });
 
   await createDefaultFunction({
-    appDirectory: appFolderPath,
+    appDirectory: sourceFolderPath,
   });
 
   await createApplicationConfig({
     displayName: appDisplayName,
     description: appDescription,
-    appDirectory: appFolderPath,
+    appDirectory: sourceFolderPath,
   });
 };
 
@@ -103,7 +103,7 @@ yarn-error.log*
   await fs.writeFile(join(appDirectory, '.gitignore'), gitignoreContent);
 };
 
-const createDefaultServerlessFunctionRoleConfig = async ({
+const createDefaultRoleConfig = async ({
   displayName,
   appDirectory,
 }: {
@@ -128,7 +128,7 @@ export default defineRole({
 });
 `;
 
-  await fs.writeFile(join(appDirectory, 'default-function.role.ts'), content);
+  await fs.writeFile(join(appDirectory, 'default.role.ts'), content);
 };
 
 const createDefaultFrontComponent = async ({
@@ -212,7 +212,7 @@ const createApplicationConfig = async ({
   appDirectory: string;
 }) => {
   const content = `import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-logic-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default.role';
 
 export default defineApplication({
   universalIdentifier: '${v4()}',
