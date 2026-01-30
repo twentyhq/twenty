@@ -6,7 +6,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -36,8 +36,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
 
   beforeEach(async () => {
     logicFunctionService = {
-      createOneLogicFunction: jest.fn(),
-      deleteOneLogicFunction: jest.fn(),
+      createOne: jest.fn(),
+      destroyOne: jest.fn(),
       duplicateLogicFunction: jest.fn(),
     } as unknown as jest.Mocked<LogicFunctionService>;
 
@@ -154,10 +154,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(logicFunctionService.deleteOneLogicFunction).toHaveBeenCalledWith({
-        id: 'function-id',
+      expect(logicFunctionService.destroyOne).toHaveBeenCalledWith({
+        destroyLogicFunctionInput: { id: 'function-id' },
         workspaceId: mockWorkspaceId,
-        softDelete: false,
       });
     });
 
@@ -265,9 +264,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         httpRouteTriggerSettings: null,
       };
 
-      logicFunctionService.createOneLogicFunction.mockResolvedValue(
-        mockFlatLogicFunction,
-      );
+      logicFunctionService.createOne.mockResolvedValue(mockFlatLogicFunction);
 
       const result = await service.runStepCreationSideEffectsAndBuildStep({
         type: WorkflowActionType.CODE,

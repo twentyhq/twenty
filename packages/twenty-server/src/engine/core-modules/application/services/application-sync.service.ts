@@ -3,14 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import {
-  Manifest,
   FieldManifest,
   LogicFunctionManifest,
   LogicFunctionTriggerManifest,
-  ObjectManifest,
-  RoleManifest,
+  Manifest,
   ObjectFieldManifest,
+  ObjectManifest,
   RelationFieldManifest,
+  RoleManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType, HTTPMethod, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,25 +23,25 @@ import {
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
-import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
-import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionV2Service } from 'src/engine/metadata-modules/logic-function/services/logic-function-v2.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
+import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
+import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -55,7 +55,7 @@ export class ApplicationSyncService {
     private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly logicFunctionV2Service: LogicFunctionV2Service,
+    private readonly logicFunctionService: LogicFunctionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -844,7 +844,7 @@ export class ApplicationSyncService {
     );
 
     for (const logicFunctionToDelete of logicFunctionsToDelete) {
-      await this.logicFunctionV2Service.destroyOne({
+      await this.logicFunctionService.destroyOne({
         destroyLogicFunctionInput: { id: logicFunctionToDelete.id },
         workspaceId,
         isSystemBuild: true,
@@ -882,7 +882,7 @@ export class ApplicationSyncService {
         },
       };
 
-      await this.logicFunctionV2Service.updateOne(
+      await this.logicFunctionService.updateOne(
         updateLogicFunctionInput,
         workspaceId,
       );
@@ -910,7 +910,7 @@ export class ApplicationSyncService {
         isTool: logicFunctionToCreate.isTool,
       };
 
-      await this.logicFunctionV2Service.createOne({
+      await this.logicFunctionService.createOne({
         createLogicFunctionInput,
         workspaceId,
         applicationId,

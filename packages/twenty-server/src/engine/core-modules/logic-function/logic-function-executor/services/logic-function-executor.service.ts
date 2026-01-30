@@ -1,10 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import {
   LogicFunctionExecutorDriver,
@@ -15,14 +18,19 @@ import {
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/build-env-var';
 import { LOGIC_FUNCTION_EXECUTOR_DRIVER } from 'src/engine/core-modules/logic-function/logic-function-executor/constants/logic-function-executor.constants';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -60,6 +68,9 @@ export class LogicFunctionExecutorService
     private readonly functionBuildService: LogicFunctionBuildService,
     private readonly subscriptionService: SubscriptionService,
     private readonly auditService: AuditService,
+    private readonly fileStorageService: FileStorageService,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
 
   async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
@@ -226,6 +237,84 @@ export class LogicFunctionExecutorService
       });
 
     return resultLogicFunction;
+  }
+
+  async getLogicFunctionSourceCode(workspaceId: string, id: string) {
+    try {
+      const { flatLogicFunctionMaps, flatApplicationMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatLogicFunctionMaps',
+          'flatApplicationMaps',
+        ]);
+
+      const flatLogicFunction = findFlatLogicFunctionOrThrow({
+        id,
+        flatLogicFunctionMaps,
+      });
+
+      const applicationUniversalIdentifier = isDefined(
+        flatLogicFunction.applicationId,
+      )
+        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+            ?.universalIdentifier
+        : undefined;
+
+      if (!isDefined(applicationUniversalIdentifier)) {
+        throw new LogicFunctionExecutionException(
+          `Application universal identifier not found for logic function ${id}`,
+          LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      const baseFolderPath = getLogicFunctionBaseFolderPath(
+        flatLogicFunction.sourceHandlerPath,
+      );
+
+      return await this.fileStorageService.readFolder_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: baseFolderPath,
+      });
+    } catch (error) {
+      if (
+        isDefined(error) &&
+        'code' in error &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return;
+      }
+      throw error;
+    }
+  }
+
+  async getAvailablePackages(logicFunctionId: string) {
+    const logicFunction = await this.logicFunctionRepository.findOneOrFail({
+      where: { id: logicFunctionId },
+      relations: ['logicFunctionLayer'],
+    });
+
+    const packageJson = logicFunction.logicFunctionLayer.packageJson;
+
+    const yarnLock = logicFunction.logicFunctionLayer.yarnLock;
+
+    const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
+
+    const versions: Record<string, string> = {};
+
+    let match: RegExpExecArray | null;
+
+    while ((match = packageVersionRegex.exec(yarnLock)) !== null) {
+      const packageName = match[1].split('@', 1)[0];
+      const version = match[2];
+
+      // @ts-expect-error legacy noImplicitAny
+      if (packageJson.dependencies?.[packageName]) {
+        versions[packageName] = version;
+      }
+    }
+
+    return versions;
   }
 
   private async throttleExecution(workspaceId: string) {

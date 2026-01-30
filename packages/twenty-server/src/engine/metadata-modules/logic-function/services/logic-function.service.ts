@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import type { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
@@ -13,17 +17,22 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
 import { fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-input-to-flat-logic-function-to-update-or-throw.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
-export class LogicFunctionV2Service {
+export class LogicFunctionService {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
+    private readonly logicFunctionLayerService: LogicFunctionLayerService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   async createOne({
@@ -32,7 +41,7 @@ export class LogicFunctionV2Service {
     applicationId,
   }: {
     createLogicFunctionInput: CreateLogicFunctionInput & {
-      logicFunctionLayerId: string;
+      logicFunctionLayerId?: string;
     };
     /**
      * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
@@ -41,6 +50,18 @@ export class LogicFunctionV2Service {
     applicationId?: string;
     workspaceId: string;
   }) {
+    let logicFunctionToCreateLayerId =
+      createLogicFunctionInput.logicFunctionLayerId;
+
+    if (!isDefined(logicFunctionToCreateLayerId)) {
+      const { id: commonLogicFunctionLayerId } =
+        await this.logicFunctionLayerService.createCommonLayerIfNotExist(
+          workspaceId,
+        );
+
+      logicFunctionToCreateLayerId = commonLogicFunctionLayerId;
+    }
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -50,7 +71,10 @@ export class LogicFunctionV2Service {
 
     const flatLogicFunctionToCreate =
       fromCreateLogicFunctionInputToFlatLogicFunction({
-        createLogicFunctionInput,
+        createLogicFunctionInput: {
+          ...createLogicFunctionInput,
+          logicFunctionLayerId: logicFunctionToCreateLayerId,
+        },
         workspaceId,
         workspaceCustomApplicationId:
           applicationId ?? workspaceCustomFlatApplication.id,
@@ -146,76 +170,6 @@ export class LogicFunctionV2Service {
     });
   }
 
-  async deleteOne({
-    deleteLogicFunctionInput,
-    workspaceId,
-    isSystemBuild = false,
-  }: {
-    deleteLogicFunctionInput: LogicFunctionIdInput;
-    workspaceId: string;
-    isSystemBuild?: boolean;
-  }): Promise<FlatLogicFunction> {
-    const { flatLogicFunctionMaps: existingFlatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    const existingFlatLogicFunction =
-      existingFlatLogicFunctionMaps.byId[deleteLogicFunctionInput.id];
-
-    if (!isDefined(existingFlatLogicFunction)) {
-      throw new LogicFunctionException(
-        'Logic function to delete not found',
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
-      );
-    }
-
-    const optimisticallyUpdatedFlatLogicFunctionWithDeletedAt = {
-      ...existingFlatLogicFunction,
-      deletedAt: new Date().toISOString(),
-    };
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            logicFunction: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                optimisticallyUpdatedFlatLogicFunctionWithDeletedAt,
-              ],
-            },
-          },
-          workspaceId,
-          isSystemBuild,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while deleting logic function',
-      );
-    }
-
-    const { flatLogicFunctionMaps: recomputedExistingFlatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: optimisticallyUpdatedFlatLogicFunctionWithDeletedAt.id,
-      flatEntityMaps: recomputedExistingFlatLogicFunctionMaps,
-    });
-  }
-
   async destroyOne({
     destroyLogicFunctionInput,
     workspaceId,
@@ -266,5 +220,120 @@ export class LogicFunctionV2Service {
     }
 
     return existingFlatLogicFunction;
+  }
+
+  async duplicateLogicFunction({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
+    return this.createLogicFunctionFromExistingLogicFunctionById({
+      id,
+      workspaceId,
+    });
+  }
+
+  async createLogicFunctionFromExistingLogicFunctionById({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const existingLogicFunction = findFlatLogicFunctionOrThrow({
+      id,
+      flatLogicFunctionMaps,
+    });
+
+    return this.createLogicFunctionFromExistingLogicFunction({
+      existingLogicFunction,
+      workspaceId,
+    });
+  }
+
+  async createLogicFunctionFromExistingLogicFunction({
+    existingLogicFunction,
+    workspaceId,
+  }: {
+    existingLogicFunction: FlatLogicFunction;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const existingApplicationUniversalIdentifier = isDefined(
+      existingLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[existingLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(existingApplicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${existingLogicFunction.id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const newFlatLogicFunction = await this.createOne({
+      createLogicFunctionInput: {
+        name: existingLogicFunction.name,
+        description: existingLogicFunction.description ?? undefined,
+        timeoutSeconds: existingLogicFunction.timeoutSeconds,
+        applicationId: existingLogicFunction.applicationId ?? undefined,
+        logicFunctionLayerId: existingLogicFunction.logicFunctionLayerId,
+      },
+      workspaceId,
+    });
+
+    const newApplicationUniversalIdentifier = isDefined(
+      newFlatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[newFlatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(newApplicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${newFlatLogicFunction.id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const fromBaseFolderPath = getLogicFunctionBaseFolderPath(
+      existingLogicFunction.sourceHandlerPath,
+    );
+    const toBaseFolderPath = getLogicFunctionBaseFolderPath(
+      newFlatLogicFunction.sourceHandlerPath,
+    );
+
+    await this.fileStorageService.copy_v2({
+      from: {
+        workspaceId,
+        applicationUniversalIdentifier: existingApplicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: fromBaseFolderPath,
+      },
+      to: {
+        workspaceId,
+        applicationUniversalIdentifier: newApplicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: toBaseFolderPath,
+      },
+    });
+
+    return newFlatLogicFunction;
   }
 }
