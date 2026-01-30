@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -19,7 +20,6 @@ import {
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -167,6 +167,7 @@ export class WorkspaceMigrationRunnerService {
     const flatApplication = isDefined(applicationId)
       ? flatApplicationMaps.byId[applicationId]
       : undefined;
+
     if (!isDefined(applicationId) || !isDefined(flatApplication)) {
       throw new WorkspaceMigrationRunnerException({
         message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,

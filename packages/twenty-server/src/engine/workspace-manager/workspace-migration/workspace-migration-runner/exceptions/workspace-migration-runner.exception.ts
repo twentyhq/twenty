@@ -34,6 +34,7 @@ const {
   EXECUTION_FAILED: WorkspaceMigrationRunnerExceptionExecutionFailedCode,
   ...WorkspaceMigrationRunnerExceptionCodeOtherCode
 } = WorkspaceMigrationRunnerExceptionCode;
+
 type WorkspaceMigrationRunnerExceptionConstructorArgs =
   | {
       message: string;

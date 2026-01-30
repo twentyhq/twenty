@@ -9,6 +9,7 @@ import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/fl
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+import { fromUniversalFlatFieldMetadatasToNakedFieldMetadatas } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadatas-to-naked-field-metadatas.util.ts';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
@@ -32,7 +33,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
+    const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
     const {
       flatEntity: universalFlatObjectMetadata,
       universalFlatFieldMetadatas,
@@ -59,15 +60,20 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       targetTableName: 'DEPRECATED',
     });
 
+    const nakedFieldMetadatas =
+      fromUniversalFlatFieldMetadatasToNakedFieldMetadatas({
+        // TODO very important optimistically add the object to the maps here
+        allFlatEntityMaps,
+        context,
+        universalFlatFieldMetadatas,
+      });
+
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<FieldMetadataEntity>(
         FieldMetadataEntity,
       );
 
-    for (const flatFieldMetadata of flatFieldMetadatas) {
-      // TODO prastoin should save WITH id here
-      await fieldMetadataRepository.save(flatFieldMetadata);
-    }
+    await fieldMetadataRepository.insert(nakedFieldMetadatas);
   }
 
   async executeForWorkspaceSchema(
