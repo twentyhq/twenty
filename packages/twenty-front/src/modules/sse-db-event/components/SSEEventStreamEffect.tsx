@@ -1,5 +1,6 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useTriggerEventStreamCreation } from '@/sse-db-event/hooks/useTriggerEventStreamCreation';
 import { useTriggerEventStreamDestroy } from '@/sse-db-event/hooks/useTriggerEventStreamDestroy';
 import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
@@ -8,8 +9,8 @@ import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestr
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
-
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,6 +18,7 @@ import { FeatureFlagKey, OnboardingStatus } from '~/generated/graphql';
 
 export const SSEEventStreamEffect = () => {
   const sseClient = useRecoilValue(sseClientState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const sseEventStreamId = useRecoilValue(sseEventStreamIdState);
   const isCreatingSseEventStream = useRecoilValue(
@@ -37,21 +39,23 @@ export const SSEEventStreamEffect = () => {
   const { triggerEventStreamDestroy } = useTriggerEventStreamDestroy();
 
   useEffect(() => {
-    const willCreateEventStream =
+    const isSseClientAvailabble =
       isDefined(sseClient) &&
+      !isCreatingSseEventStream &&
+      !isDestroyingEventStream;
+
+    const willCreateEventStream =
+      isSseClientAvailabble &&
       isLoggedIn &&
       isSseDbEventsEnabled &&
       isDefined(currentUser) &&
-      !isCreatingSseEventStream &&
-      !isDestroyingEventStream &&
       currentUser.onboardingStatus === OnboardingStatus.COMPLETED &&
       !shouldDestroyEventStream &&
-      !isNonEmptyString(sseEventStreamId);
+      !isNonEmptyString(sseEventStreamId) &&
+      isNonEmptyArray(objectMetadataItems);
 
     const willDestroyEventStream =
-      isDefined(sseClient) &&
-      !isCreatingSseEventStream &&
-      !isDestroyingEventStream &&
+      isSseClientAvailabble &&
       isNonEmptyString(sseEventStreamId) &&
       shouldDestroyEventStream;
 
@@ -71,6 +75,7 @@ export const SSEEventStreamEffect = () => {
     sseClient,
     shouldDestroyEventStream,
     sseEventStreamId,
+    objectMetadataItems,
   ]);
 
   return null;
