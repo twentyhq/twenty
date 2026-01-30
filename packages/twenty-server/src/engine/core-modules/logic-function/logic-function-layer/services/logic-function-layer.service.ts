@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { FileFolder } from 'twenty-shared/types';
 
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -11,6 +12,7 @@ import { CreateLogicFunctionLayerInput } from 'src/engine/metadata-modules/logic
 import { getLastCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/get-last-common-layer-dependencies';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 
 @Injectable()
 export class LogicFunctionLayerService {
@@ -18,18 +20,17 @@ export class LogicFunctionLayerService {
     @InjectRepository(LogicFunctionLayerEntity)
     private readonly logicFunctionLayerRepository: Repository<LogicFunctionLayerEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   async create(
-    { packageJson, yarnLock }: CreateLogicFunctionLayerInput,
+    { packageJsonChecksum, yarnLockChecksum }: CreateLogicFunctionLayerInput,
     workspaceId: string,
   ) {
-    const checksum = logicFunctionCreateHash(yarnLock);
-
     const logicFunctionLayer = this.logicFunctionLayerRepository.create({
-      packageJson,
-      yarnLock,
-      checksum,
+      packageJson: {}, // Will be deleted when migration to Source files storage is done
+      packageJsonChecksum,
+      yarnLockChecksum,
       workspaceId,
     });
 
@@ -48,16 +49,7 @@ export class LogicFunctionLayerService {
     data: QueryDeepPartialEntity<LogicFunctionLayerEntity>,
     workspaceId: string,
   ) {
-    const checksum = data.yarnLock
-      ? logicFunctionCreateHash(data.yarnLock as string)
-      : undefined;
-
-    const updateData = { ...data, ...(checksum && { checksum }) };
-
-    const result = await this.logicFunctionLayerRepository.update(
-      id,
-      updateData,
-    );
+    const result = await this.logicFunctionLayerRepository.update(id, data);
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'logicFunctionLayerMaps',
@@ -66,12 +58,46 @@ export class LogicFunctionLayerService {
     return result;
   }
 
-  async createCommonLayerIfNotExist(workspaceId: string) {
+  // TODO: Should be replaced by seed package.json and yarn.lock files in Source folder for the Custom Workspace application
+  async createCommonLayerIfNotExist({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }) {
     const { packageJson, yarnLock } = await getLastCommonLayerDependencies();
-    const checksum = logicFunctionCreateHash(yarnLock);
+
+    await this.fileStorageService.writeFile_v2({
+      sourceFile: packageJson,
+      mimeType: undefined,
+      fileFolder: FileFolder.Source,
+      applicationUniversalIdentifier,
+      workspaceId,
+      resourcePath: '',
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    await this.fileStorageService.writeFile_v2({
+      sourceFile: yarnLock,
+      mimeType: undefined,
+      fileFolder: FileFolder.Source,
+      applicationUniversalIdentifier,
+      workspaceId,
+      resourcePath: '',
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    const packageJsonChecksum = logicFunctionCreateHash(
+      JSON.stringify(packageJson),
+    );
+
+    const yarnLockChecksum = logicFunctionCreateHash(yarnLock);
+
     const commonLayer = await this.logicFunctionLayerRepository.findOne({
       where: {
-        checksum,
+        yarnLockChecksum,
+        packageJsonChecksum,
         workspaceId,
       },
     });
@@ -80,6 +106,6 @@ export class LogicFunctionLayerService {
       return commonLayer;
     }
 
-    return this.create({ packageJson, yarnLock }, workspaceId);
+    return this.create({ packageJsonChecksum, yarnLockChecksum }, workspaceId);
   }
 }

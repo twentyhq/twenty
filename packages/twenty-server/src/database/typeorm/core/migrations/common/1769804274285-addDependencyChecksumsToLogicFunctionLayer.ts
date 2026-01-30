@@ -10,13 +10,13 @@ export class AddDependencyChecksumsToLogicFunctionLayer1769804274285
       `ALTER TABLE "core"."logicFunctionLayer" ADD "packageJsonChecksum" text NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."logicFunctionLayer" ADD "yarnLockChecksum" text NOT NULL`,
+      `ALTER TABLE "core"."logicFunctionLayer" RENAME COLUMN "checksum" TO "yarnLockChecksum"`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."logicFunctionLayer" DROP COLUMN "yarnLockChecksum"`,
+      `ALTER TABLE "core"."logicFunctionLayer" RENAME COLUMN "yarnLockChecksum" TO "checksum"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."logicFunctionLayer" DROP COLUMN "packageJsonChecksum"`,

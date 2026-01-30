@@ -47,21 +47,23 @@ export class LogicFunctionService {
   }) {
     let logicFunctionToCreateLayerId = input.logicFunctionLayerId;
 
-    if (!isDefined(logicFunctionToCreateLayerId)) {
-      const { id: commonLogicFunctionLayerId } =
-        await this.logicFunctionLayerService.createCommonLayerIfNotExist(
-          workspaceId,
-        );
-
-      logicFunctionToCreateLayerId = commonLogicFunctionLayerId;
-    }
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
         },
       );
+
+    if (!isDefined(logicFunctionToCreateLayerId)) {
+      const { id: commonLogicFunctionLayerId } =
+        await this.logicFunctionLayerService.createCommonLayerIfNotExist({
+          workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        });
+
+      logicFunctionToCreateLayerId = commonLogicFunctionLayerId;
+    }
 
     const flatLogicFunctionToCreate =
       fromCreateLogicFunctionInputToFlatLogicFunction({
