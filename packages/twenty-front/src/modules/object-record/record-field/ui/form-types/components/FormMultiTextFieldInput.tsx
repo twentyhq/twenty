@@ -10,7 +10,7 @@ import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type FormMultiItemFieldInputProps = {
+type FormMultiTextFieldInputProps = {
   label?: string;
   defaultValue: string | undefined | null;
   onChange: (value: string) => void;
@@ -19,14 +19,14 @@ type FormMultiItemFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
 };
 
-export const FormMultiItemFieldInput = ({
+export const FormMultiTextFieldInput = ({
   label,
   defaultValue,
   placeholder,
   onChange,
   readonly,
   VariablePicker,
-}: FormMultiItemFieldInputProps) => {
+}: FormMultiTextFieldInputProps) => {
   const instanceId = useId();
 
   const editor = useMultiItemFieldEditor({

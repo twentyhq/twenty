@@ -8,7 +8,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
-import { FormMultiItemFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiItemFieldInput';
+import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -320,7 +320,7 @@ export const WorkflowEditActionSendEmail = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
-          <FormMultiItemFieldInput
+          <FormMultiTextFieldInput
             label={t`To`}
             placeholder={t`Enter emails, comma-separated`}
             readonly={actionOptions.readonly}
@@ -334,7 +334,7 @@ export const WorkflowEditActionSendEmail = ({
             VariablePicker={WorkflowVariablePicker}
           />
           {visibleAdvancedFields.cc && (
-            <FormMultiItemFieldInput
+            <FormMultiTextFieldInput
               label={t`CC`}
               placeholder={t`Enter CC emails, comma-separated`}
               readonly={actionOptions.readonly}
@@ -349,7 +349,7 @@ export const WorkflowEditActionSendEmail = ({
             />
           )}
           {visibleAdvancedFields.bcc && (
-            <FormMultiItemFieldInput
+            <FormMultiTextFieldInput
               label={t`BCC`}
               placeholder={t`Enter BCC emails, comma-separated`}
               readonly={actionOptions.readonly}

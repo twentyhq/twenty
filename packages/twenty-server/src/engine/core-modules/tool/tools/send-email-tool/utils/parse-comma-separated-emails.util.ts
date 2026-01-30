@@ -1,7 +1,9 @@
+import { isDefined } from 'twenty-shared/utils';
+
 export const parseCommaSeparatedEmails = (
   value: string | undefined,
 ): string[] => {
-  if (!value) {
+  if (!isDefined(value)) {
     return [];
   }
 
