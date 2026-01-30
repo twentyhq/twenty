@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { type FileItemInput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
+import { type FileInput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -27,7 +27,7 @@ export const validateFilesFieldOrThrow = (
   value: unknown,
   fieldName: string,
   settings: FieldMetadataSettingsMapping[FieldMetadataType.FILES],
-): FileItemInput[] | null => {
+): FileInput[] | null => {
   if (isNull(value)) return null;
 
   let parsedValue: unknown = value;

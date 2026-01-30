@@ -42,6 +42,7 @@ const createRecordsQuery = gql`
         fileId
         label
         extension
+        url
       }
     }
   }
@@ -59,6 +60,7 @@ const updateRecordQuery = gql`
         fileId
         label
         extension
+        url
       }
     }
   }
@@ -278,6 +280,8 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(createdRecord.filesField[0].extension).toBe('.png');
     expect(createdRecord.filesField[1].fileId).toBe(textFile.id);
     expect(createdRecord.filesField[1].extension).toBe('.txt');
+    expect(createdRecord.filesField[0].url).toBeDefined();
+    expect(createdRecord.filesField[1].url).toBeDefined();
 
     expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
     expect(await checkFileExistsInDB(textFile.id)).toBe(true);
@@ -382,14 +386,17 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(updatedRecord.filesField[1].fileId).toBe(imageFile.id);
     expect(updatedRecord.filesField[1].label).toBe('imageFile-label.png');
     expect(updatedRecord.filesField[1].extension).toBe('.png');
+    expect(updatedRecord.filesField[1].url).toBeDefined();
     expect(updatedRecord.filesField[2].fileId).toBe(anotherImageFile.id);
     expect(updatedRecord.filesField[2].label).toBe(
       'updated-anotherImageFile-label.png',
     );
     expect(updatedRecord.filesField[2].extension).toBe('.png');
+    expect(updatedRecord.filesField[2].url).toBeDefined();
     expect(updatedRecord.filesField[0].fileId).toBe(textFile.id);
     expect(updatedRecord.filesField[0].label).toBe('new-added-text-file.txt');
     expect(updatedRecord.filesField[0].extension).toBe('.txt');
+    expect(updatedRecord.filesField[0].url).toBeDefined();
 
     expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
     expect(await checkFileIsInPermanentStorage(anotherImageFile.id)).toBe(true);
@@ -476,9 +483,10 @@ describe('fileFieldSync - FILES field <> files sync', () => {
     expect(updatedRecord.filesField).toHaveLength(2);
     expect(updatedRecord.filesField[1].fileId).toBe(imageFile.id);
     expect(updatedRecord.filesField[1].label).toBe('original-image.png');
+    expect(updatedRecord.filesField[1].url).toBeDefined();
     expect(updatedRecord.filesField[0].fileId).toBe(textFile.id);
     expect(updatedRecord.filesField[0].label).toBe('added-text.txt');
-
+    expect(updatedRecord.filesField[0].url).toBeDefined();
     expect(await checkFileExistsInDB(imageFile.id)).toBe(true);
     expect(await checkFileExistsInDB(textFile.id)).toBe(true);
     expect(await checkFileIsInPermanentStorage(imageFile.id)).toBe(true);
