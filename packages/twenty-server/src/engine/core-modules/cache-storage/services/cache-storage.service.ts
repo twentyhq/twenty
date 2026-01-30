@@ -247,6 +247,33 @@ export class CacheStorageService {
     return totalCount;
   }
 
+  async getAllKeysForPattern(scanPattern: string): Promise<string[]> {
+    if (!this.isRedisCache()) {
+      throw new Error(
+        'getAllKeysForPattern is only supported with Redis cache',
+      );
+    }
+
+    const redisClient = (this.cache as RedisCache).store.client;
+    let allKeys: string[] = [];
+    let cursor = 0;
+
+    do {
+      const result = await redisClient.scan(cursor, {
+        MATCH: `${this.namespace}:${scanPattern}`,
+        COUNT: 100,
+      });
+
+      cursor = result.cursor;
+
+      const keys = result.keys;
+
+      allKeys.push(...keys);
+    } while (cursor !== 0);
+
+    return allKeys;
+  }
+
   async acquireLock(key: string, ttl = 1000): Promise<boolean> {
     if (!this.isRedisCache()) {
       throw new Error('acquireLock is only supported with Redis cache');

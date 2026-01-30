@@ -3,9 +3,10 @@ import { ADD_QUERY_TO_EVENT_STREAM_MUTATION } from '@/sse-db-event/graphql/mutat
 import { REMOVE_QUERY_FROM_EVENT_STREAM_MUTATION } from '@/sse-db-event/graphql/mutations/RemoveQueryFromEventStreamMutation';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQueryListenersState';
+import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useMutation } from '@apollo/client';
+import { ApolloError, useMutation } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -69,27 +70,47 @@ export const SSEQuerySubscribeEffect = () => {
             ),
         );
 
-        for (const queryListenerToAdd of queryListenersToAdd) {
-          await addQueryToEventStream({
-            variables: {
-              input: {
-                eventStreamId: sseEventStreamId,
-                queryId: queryListenerToAdd.queryId,
-                operationSignature: queryListenerToAdd.operationSignature,
+        try {
+          for (const queryListenerToAdd of queryListenersToAdd) {
+            await addQueryToEventStream({
+              variables: {
+                input: {
+                  eventStreamId: sseEventStreamId,
+                  queryId: queryListenerToAdd.queryId,
+                  operationSignature: queryListenerToAdd.operationSignature,
+                },
               },
-            },
-          });
-        }
+            });
+          }
 
-        for (const queryListenerToRemove of queryListenersToRemove) {
-          await removeQueryFromEventStream({
-            variables: {
-              input: {
-                eventStreamId: sseEventStreamId,
-                queryId: queryListenerToRemove.queryId,
+          for (const queryListenerToRemove of queryListenersToRemove) {
+            await removeQueryFromEventStream({
+              variables: {
+                input: {
+                  eventStreamId: sseEventStreamId,
+                  queryId: queryListenerToRemove.queryId,
+                },
               },
-            },
-          });
+            });
+          }
+        } catch (error) {
+          if (error instanceof ApolloError) {
+            const subCode = error.graphQLErrors[0]?.extensions?.subCode;
+
+            switch (subCode) {
+              case 'EVENT_STREAM_DOES_NOT_EXIST':
+              case 'EVENT_STREAM_ALREADY_EXISTS': {
+                set(activeQueryListenersState, []);
+                set(shouldDestroyEventStreamState, true);
+                return;
+              }
+              default: {
+                throw new Error(
+                  `Unhandled error for event stream: ${error.message}`,
+                );
+              }
+            }
+          }
         }
 
         set(activeQueryListenersState, requiredQueryListeners);

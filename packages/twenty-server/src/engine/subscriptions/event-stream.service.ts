@@ -50,6 +50,20 @@ export class EventStreamService implements OnModuleInit {
     );
   }
 
+  async checkIfEventStreamExists({
+    workspaceId,
+    eventStreamChannelId,
+  }: {
+    workspaceId: string;
+    eventStreamChannelId: string;
+  }): Promise<boolean> {
+    const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
+
+    const existing = await this.cacheStorageService.get<EventStreamData>(key);
+
+    return isDefined(existing);
+  }
+
   async createEventStream({
     workspaceId,
     eventStreamChannelId,
@@ -108,6 +122,8 @@ export class EventStreamService implements OnModuleInit {
         eventStreamChannelId,
       ]);
     }, activeStreamsKey);
+
+    await this.cleanUpDanglingExpiredEventStreams(workspaceId);
   }
 
   async getActiveStreamIds(workspaceId: string): Promise<string[]> {
@@ -157,23 +173,12 @@ export class EventStreamService implements OnModuleInit {
   }
 
   async isAuthorized({
-    workspaceId,
-    eventStreamChannelId,
     authContext,
+    streamData,
   }: {
-    workspaceId: string;
-    eventStreamChannelId: string;
     authContext: SerializableAuthContext;
+    streamData: EventStreamData;
   }): Promise<boolean> {
-    const streamData = await this.getStreamData(
-      workspaceId,
-      eventStreamChannelId,
-    );
-
-    if (!isDefined(streamData)) {
-      return false;
-    }
-
     if (isDefined(authContext.userWorkspaceId)) {
       return (
         streamData.authContext.userWorkspaceId === authContext.userWorkspaceId
@@ -262,12 +267,38 @@ export class EventStreamService implements OnModuleInit {
     return `workspace:${workspaceId}:activeStreams`;
   }
 
-  private async getStreamData(
+  async getStreamData(
     workspaceId: string,
     eventStreamChannelId: string,
   ): Promise<EventStreamData | undefined> {
     const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
 
     return this.cacheStorageService.get<EventStreamData>(key);
+  }
+
+  private async cleanUpDanglingExpiredEventStreams(workspaceId: string) {
+    const eventStreamDetailFullPathKeys =
+      await this.cacheStorageService.getAllKeysForPattern(
+        `eventStream:${workspaceId}:*`,
+      );
+
+    const eventStreamDetailStreamIds = eventStreamDetailFullPathKeys.map(
+      (fullKey) => {
+        const parts = fullKey.split(':');
+
+        return parts[parts.length - 1];
+      },
+    );
+
+    const activeStreamIds = await this.getActiveStreamIds(workspaceId);
+
+    const streamIdsWithoutEventStreamDetailKey = activeStreamIds.filter(
+      (streamId) => !eventStreamDetailStreamIds.includes(streamId),
+    );
+
+    await this.removeFromActiveStreams(
+      workspaceId,
+      streamIdsWithoutEventStreamDetailKey,
+    );
   }
 }
