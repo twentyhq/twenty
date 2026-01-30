@@ -217,12 +217,12 @@ yarn auth:status
 
 SDK предоставляет четыре вспомогательных функции с встроенной валидацией для определения сущностей вашего приложения:
 
-| Функция            | Назначение                                     |
-| ------------------ | ---------------------------------------------- |
-| `defineApplication()`      | Настраивает метаданные приложения              |
-| `defineObject()`   | Определяет пользовательские объекты с полями   |
-| `defineFunction()` | Определение логических функций с обработчиками |
-| `defineRole()`     | Настраивает права роли и доступ к объектам     |
+| Функция               | Назначение                                     |
+| --------------------- | ---------------------------------------------- |
+| `defineApplication()` | Настраивает метаданные приложения              |
+| `defineObject()`      | Определяет пользовательские объекты с полями   |
+| `defineFunction()`    | Определение логических функций с обработчиками |
+| `defineRole()`        | Настраивает права роли и доступ к объектам     |
 
 Эти функции проверяют вашу конфигурацию во время выполнения и обеспечивают лучшую автодополняемость в IDE и безопасность типов.
 
@@ -319,7 +319,7 @@ export default defineObject({
 * **Как запускаются его функции**: какую роль они используют для прав доступа.
 * **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
 
-Используйте `defineApplication()` для определения конфигурации вашего приложения:
+Use `defineApplication()` to define your application configuration:
 
 ```typescript
 // src/app/application.config.ts
@@ -339,7 +339,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ export default defineApplication({
 
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` должен соответствовать роли, которую вы определяете в файле `*.role.ts` (см. ниже).
+* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
 
 #### Роли и разрешения
 
-Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `defaultRoleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-`universalIdentifier` этой роли затем указывается в `application.config.ts` как `defaultRoleUniversalIdentifier`. Иными словами:
+The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. Иными словами:
 
 * **\*.role.ts** определяет, что может делать роль функции по умолчанию.
 * **application.config.ts** указывает на эту роль, чтобы ваши функции наследовали её права.
@@ -606,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 Заметки:
 
 * Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
-* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `defaultRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
-* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `defaultRoleUniversalIdentifier` универсальный идентификатор этой роли.
+* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
+* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
 
 ### Пример Hello World
 

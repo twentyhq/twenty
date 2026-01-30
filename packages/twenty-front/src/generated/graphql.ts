@@ -679,12 +679,14 @@ export type CommandMenuItem = {
   availabilityObjectMetadataId?: Maybe<Scalars['UUID']>;
   availabilityType: CommandMenuItemAvailabilityType;
   createdAt: Scalars['DateTime'];
+  frontComponent?: Maybe<FrontComponent>;
+  frontComponentId?: Maybe<Scalars['UUID']>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   isPinned: Scalars['Boolean'];
   label: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId?: Maybe<Scalars['UUID']>;
 };
 
 export enum CommandMenuItemAvailabilityType {
@@ -919,10 +921,11 @@ export type CreateApprovedAccessDomainInput = {
 export type CreateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
+  frontComponentId?: InputMaybe<Scalars['UUID']>;
   icon?: InputMaybe<Scalars['String']>;
   isPinned?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
-  workflowVersionId: Scalars['UUID'];
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
@@ -952,6 +955,11 @@ export type CreateFieldInput = {
   relationCreationPayload?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
   type: FieldMetadataType;
+};
+
+export type CreateFrontComponentInput = {
+  id?: InputMaybe<Scalars['UUID']>;
+  name: Scalars['String'];
 };
 
 export type CreateLogicFunctionInput = {
@@ -2002,6 +2010,7 @@ export type Mutation = {
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
+  createFrontComponent: FrontComponent;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
   createOIDCIdentityProvider: SetupSsoOutput;
@@ -2034,6 +2043,7 @@ export type Mutation = {
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteEmailingDomain: Scalars['Boolean'];
   deleteFile: File;
+  deleteFrontComponent: FrontComponent;
   deleteJobs: DeleteJobsResponse;
   deleteOneAgent: Agent;
   deleteOneField: Field;
@@ -2114,6 +2124,7 @@ export type Mutation = {
   updateCoreViewGroup: CoreViewGroup;
   updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
+  updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
@@ -2273,6 +2284,11 @@ export type MutationCreateFileArgs = {
 };
 
 
+export type MutationCreateFrontComponentArgs = {
+  input: CreateFrontComponentInput;
+};
+
+
 export type MutationCreateManyCoreViewFieldsArgs = {
   inputs: Array<CreateViewFieldInput>;
 };
@@ -2424,6 +2440,11 @@ export type MutationDeleteEmailingDomainArgs = {
 
 export type MutationDeleteFileArgs = {
   fileId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteFrontComponentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -2807,6 +2828,11 @@ export type MutationUpdateCoreViewSortArgs = {
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
+};
+
+
+export type MutationUpdateFrontComponentArgs = {
+  input: UpdateFrontComponentInput;
 };
 
 
@@ -3440,6 +3466,8 @@ export type Query = {
   findOneLogicFunction: LogicFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  frontComponent?: Maybe<FrontComponent>;
+  frontComponents: Array<FrontComponent>;
   getAddressDetails: PlaceDetailsResult;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
@@ -3546,6 +3574,11 @@ export type QueryFindOneLogicFunctionArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryFrontComponentArgs = {
+  id: Scalars['UUID'];
 };
 
 
@@ -4397,6 +4430,17 @@ export type UpdateFieldInput = {
   name?: InputMaybe<Scalars['String']>;
   options?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateFrontComponentInput = {
+  /** The id of the front component to update */
+  id: Scalars['UUID'];
+  /** The front component fields to update */
+  update: UpdateFrontComponentInputUpdates;
+};
+
+export type UpdateFrontComponentInputUpdates = {
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {

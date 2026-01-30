@@ -17,6 +17,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
+import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 
 registerEnumType(CommandMenuItemAvailabilityType, {
   name: 'CommandMenuItemAvailabilityType',
@@ -30,9 +31,17 @@ export class CommandMenuItemDTO {
   id: string;
 
   @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  workflowVersionId: string;
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workflowVersionId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  frontComponentId?: string;
+
+  @Field(() => FrontComponentDTO, { nullable: true })
+  frontComponent?: FrontComponentDTO | null;
 
   @IsString()
   @IsNotEmpty()

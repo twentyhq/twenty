@@ -947,6 +947,11 @@ msgstr "Duplisert rot-resolver funnet. Hver rot-resolver kan bare kalles én gan
 msgid "Duplicated option {field}"
 msgstr "Duplisert alternativ {field}"
 
+#. js-lingui-id: n6jNyT
+#: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
+msgid "Either workflow version or front component is required."
+msgstr ""
+
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email already in use"
@@ -1043,6 +1048,16 @@ msgstr "Miljøvariabelen CLOUDFLARE_API_KEY må defineres for å bruke denne fun
 #: src/engine/core-modules/feature-flag/validates/feature-flag.validate.spec.ts
 msgid "Error"
 msgstr "Feil"
+
+#. js-lingui-id: ksMwKk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Exactly one of workflow version or front component is required"
+msgstr ""
+
+#. js-lingui-id: I8MWHr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Exactly one of workflowVersionId or frontComponentId is required"
+msgstr ""
 
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts

@@ -49,10 +49,11 @@ export const compareDimensionValues = ({
     direction === 'ASC' ? comparison : -comparison;
 
   if (isDefined(fieldType)) {
-    if (
-      isFieldMetadataDateKind(fieldType) &&
-      !isCyclicalDateGranularity(dateGranularity)
-    ) {
+    if (isFieldMetadataDateKind(fieldType)) {
+      if (isCyclicalDateGranularity(dateGranularity)) {
+        return 0;
+      }
+
       const dateA = parseDate(rawValueA);
       const dateB = parseDate(rawValueB);
 
