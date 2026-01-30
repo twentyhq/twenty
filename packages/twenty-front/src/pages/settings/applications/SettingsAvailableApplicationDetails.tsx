@@ -243,7 +243,7 @@ export const SettingsAvailableApplicationDetails = () => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
 
   const { data: marketplaceApps } = useMarketplaceApps();
-  const { install, isLoading: isInstalling } = useInstallMarketplaceApp();
+  const { install } = useInstallMarketplaceApp();
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.MARKETPLACE_APPS,
   );
@@ -450,7 +450,6 @@ export const SettingsAvailableApplicationDetails = () => {
               variant="primary"
               accent="blue"
               onClick={handleInstall}
-              disabled={isInstalling}
             />
           )}
         </StyledHeader>

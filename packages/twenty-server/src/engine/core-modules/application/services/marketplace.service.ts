@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 // eslint-disable-next-line no-restricted-imports
 import { lowerCase, upperFirst } from 'lodash';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/dtos/marketplace-app.dto';
 
@@ -198,7 +198,7 @@ export class MarketplaceService {
       return null;
     }
 
-    const manifest = JSON.parse(manifestContent) as ApplicationManifest;
+    const manifest = JSON.parse(manifestContent) as Manifest;
 
     const { application, packageJson } = manifest;
     const marketplaceData = application.marketplaceData;
