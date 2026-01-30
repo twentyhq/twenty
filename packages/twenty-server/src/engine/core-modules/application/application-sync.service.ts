@@ -34,7 +34,7 @@ import { FieldPermissionService } from 'src/engine/metadata-modules/object-permi
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function-executor/logic-function-layer.service';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { LogicFunctionV2Service } from 'src/engine/metadata-modules/logic-function/services/logic-function-v2.service';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';

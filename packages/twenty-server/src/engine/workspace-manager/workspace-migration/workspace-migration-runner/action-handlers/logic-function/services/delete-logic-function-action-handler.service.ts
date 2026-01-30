@@ -7,7 +7,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-base-folder-path.util';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { DeleteLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 

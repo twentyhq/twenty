@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function-executor/drivers/interfaces/logic-function-executor-driver.interface';
+import { type LogicFunctionExecuteResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
@@ -18,14 +18,14 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/uti
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-import { buildEnvVar } from 'src/engine/core-modules/logic-function-executor/drivers/utils/build-env-var';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
+import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/build-env-var';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-base-folder-path.util';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function-executor/logic-function-layer.service';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import { type UpdateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function.input';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -43,7 +43,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function-executor/logic-function-build.service';
+import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 

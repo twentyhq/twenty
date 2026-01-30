@@ -15,7 +15,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { SEED_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function-executor/drivers/constants/seed-project-input-schema';
+import { SEED_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/seed-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
