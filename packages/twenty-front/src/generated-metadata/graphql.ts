@@ -1636,8 +1636,6 @@ export type GetAuthorizationUrlForSsoOutput = {
 export type GetLogicFunctionSourceCodeInput = {
   /** The id of the function. */
   id: Scalars['ID'];
-  /** The version of the function */
-  version?: Scalars['String'];
 };
 
 /** Order by options for graph widgets */
