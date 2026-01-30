@@ -7,7 +7,7 @@ import {
   type FrontComponentManifest,
   type RoleManifest,
   type FieldManifest,
-} from '@/sdk';
+} from '@/application';
 import { type Sources } from '@/types';
 
 export type Manifest = {
