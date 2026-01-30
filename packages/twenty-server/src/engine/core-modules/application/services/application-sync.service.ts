@@ -3,16 +3,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import {
-  Manifest,
   FieldManifest,
   LogicFunctionManifest,
-  LogicFunctionTriggerManifest,
-  ObjectManifest,
-  RoleManifest,
+  Manifest,
   ObjectFieldManifest,
+  ObjectManifest,
   RelationFieldManifest,
+  RoleManifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType, HTTPMethod, Sources } from 'twenty-shared/types';
+import { FieldMetadataType, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -23,25 +22,20 @@ import {
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { PermissionFlagService } from 'src/engine/metadata-modules/permission-flag/permission-flag.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
-import {
-  CronTriggerSettings,
-  DatabaseEventTriggerSettings,
-  HttpRouteTriggerSettings,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionV2Service } from 'src/engine/metadata-modules/logic-function/services/logic-function-v2.service';
-import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -55,7 +49,7 @@ export class ApplicationSyncService {
     private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly logicFunctionV2Service: LogicFunctionV2Service,
+    private readonly logicFunctionService: LogicFunctionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -844,9 +838,10 @@ export class ApplicationSyncService {
     );
 
     for (const logicFunctionToDelete of logicFunctionsToDelete) {
-      await this.logicFunctionV2Service.destroyOne({
-        destroyLogicFunctionInput: { id: logicFunctionToDelete.id },
+      await this.logicFunctionService.destroyOne({
+        id: logicFunctionToDelete.id,
         workspaceId,
+        applicationId,
         isSystemBuild: true,
       });
     }
@@ -868,7 +863,7 @@ export class ApplicationSyncService {
       const name =
         logicFunctionToSync.name ?? parse(logicFunctionToSync.handlerName).name;
 
-      const updateLogicFunctionInput = {
+      await this.logicFunctionService.updateOne({
         id: logicFunctionToUpdate.id,
         update: {
           name,
@@ -880,12 +875,9 @@ export class ApplicationSyncService {
           toolInputSchema: logicFunctionToSync.toolInputSchema,
           isTool: logicFunctionToSync.isTool,
         },
-      };
-
-      await this.logicFunctionV2Service.updateOne(
-        updateLogicFunctionInput,
         workspaceId,
-      );
+        applicationId,
+      });
 
       // Trigger settings are now embedded in the logic function entity
       // They are handled through the update input
@@ -896,66 +888,23 @@ export class ApplicationSyncService {
         logicFunctionToCreate.name ??
         parse(logicFunctionToCreate.handlerName).name;
 
-      const createLogicFunctionInput = {
-        name,
-        code,
-        universalIdentifier: logicFunctionToCreate.universalIdentifier,
-        timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
-        sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
-        handlerName: logicFunctionToCreate.handlerName,
-        builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
-        applicationId,
-        logicFunctionLayerId,
-        toolInputSchema: logicFunctionToCreate.toolInputSchema,
-        isTool: logicFunctionToCreate.isTool,
-      };
-
-      await this.logicFunctionV2Service.createOne({
-        createLogicFunctionInput,
+      await this.logicFunctionService.createOne({
+        input: {
+          name,
+          code,
+          universalIdentifier: logicFunctionToCreate.universalIdentifier,
+          timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
+          sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
+          handlerName: logicFunctionToCreate.handlerName,
+          builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
+          logicFunctionLayerId,
+          toolInputSchema: logicFunctionToCreate.toolInputSchema,
+          isTool: logicFunctionToCreate.isTool,
+        },
         workspaceId,
         applicationId,
       });
-
-      // Trigger settings are now embedded in the logic function entity
-      // They are handled through the create input
     }
-  }
-
-  private extractTriggerSettingsFromManifest(
-    triggers: LogicFunctionTriggerManifest[] = [],
-  ): {
-    cronTriggerSettings: CronTriggerSettings | null;
-    databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;
-    httpRouteTriggerSettings: HttpRouteTriggerSettings | null;
-  } {
-    let cronTriggerSettings: CronTriggerSettings | null = null;
-    let databaseEventTriggerSettings: DatabaseEventTriggerSettings | null =
-      null;
-    let httpRouteTriggerSettings: HttpRouteTriggerSettings | null = null;
-
-    for (const trigger of triggers) {
-      if (trigger.type === 'cron') {
-        cronTriggerSettings = { pattern: trigger.pattern };
-      } else if (trigger.type === 'databaseEvent') {
-        databaseEventTriggerSettings = {
-          eventName: trigger.eventName,
-          updatedFields: trigger.updatedFields,
-        };
-      } else if (trigger.type === 'route') {
-        httpRouteTriggerSettings = {
-          path: trigger.path,
-          httpMethod: trigger.httpMethod as HTTPMethod,
-          isAuthRequired: trigger.isAuthRequired,
-          forwardedRequestHeaders: trigger.forwardedRequestHeaders,
-        };
-      }
-    }
-
-    return {
-      cronTriggerSettings,
-      databaseEventTriggerSettings,
-      httpRouteTriggerSettings,
-    };
   }
 
   public async uninstallApplication({

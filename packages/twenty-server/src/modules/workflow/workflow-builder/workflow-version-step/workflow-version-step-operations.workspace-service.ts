@@ -21,7 +21,7 @@ import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -86,10 +86,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.logicFunctionService.deleteOneLogicFunction({
+        await this.logicFunctionService.destroyOne({
           id: step.settings.input.logicFunctionId,
           workspaceId,
-          softDelete: false,
         });
         break;
       }
@@ -152,14 +151,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (type) {
       case WorkflowActionType.CODE: {
-        const newLogicFunction =
-          await this.logicFunctionService.createOneLogicFunction(
-            {
-              name: 'A Logic Function Code Workflow Step',
-              description: '',
-            },
-            workspaceId,
-          );
+        const newLogicFunction = await this.logicFunctionService.createOne({
+          input: {
+            name: 'A Logic Function Code Workflow Step',
+            description: '',
+          },
+          workspaceId,
+        });
 
         if (!isDefined(newLogicFunction)) {
           throw new WorkflowVersionStepException(

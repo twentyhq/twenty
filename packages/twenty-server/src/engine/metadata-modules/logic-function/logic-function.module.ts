@@ -11,14 +11,15 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
+import { CoreLogicFunctionLayerModule } from 'src/engine/core-modules/logic-function/logic-function-layer/logic-function-layer.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionResolver } from 'src/engine/metadata-modules/logic-function/logic-function.resolver';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
-import { LogicFunctionV2Service } from 'src/engine/metadata-modules/logic-function/services/logic-function-v2.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { WorkspaceFlatLogicFunctionMapCacheService } from 'src/engine/metadata-modules/logic-function/services/workspace-flat-logic-function-map-cache.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
@@ -39,6 +40,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     LogicFunctionLayerModule,
+    CoreLogicFunctionLayerModule,
+    LogicFunctionExecutorModule,
     SubscriptionsModule,
     WorkspaceCacheModule,
     TokenModule,
@@ -46,10 +49,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     LogicFunctionService,
-    LogicFunctionV2Service,
     LogicFunctionResolver,
     WorkspaceFlatLogicFunctionMapCacheService,
   ],
-  exports: [LogicFunctionService, LogicFunctionV2Service],
+  exports: [LogicFunctionService, LogicFunctionExecutorModule],
 })
 export class LogicFunctionModule {}
