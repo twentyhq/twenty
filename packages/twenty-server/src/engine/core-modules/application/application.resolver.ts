@@ -117,7 +117,6 @@ export class ApplicationResolver {
     }
 
     await this.workspaceMigrationRunnerService.run({
-      // @ts-expect-error ignoring until we implement a production ready validation schema for workspaceMigration
       actions,
       workspaceId,
     });
@@ -154,7 +153,7 @@ export class ApplicationResolver {
     const allowedApplicationFileFolders: FileFolder[] = [
       FileFolder.BuiltFunction,
       FileFolder.BuiltFrontComponent,
-      FileFolder.Asset,
+      FileFolder.PublicAsset,
       FileFolder.Source,
     ];
 

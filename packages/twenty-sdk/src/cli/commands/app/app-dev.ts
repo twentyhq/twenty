@@ -1,4 +1,4 @@
-import { createLogger } from '@/cli/utilities/build/common/logger';
+import { AssetWatcher } from '@/cli/utilities/build/common/asset-watcher';
 import {
   createFrontComponentsWatcher,
   createFunctionsWatcher,
@@ -8,12 +8,11 @@ import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifes
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/dev-mode-orchestrator';
-import { ApiService } from '@/cli/utilities/api/api-service';
 import path from 'path';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import * as fs from 'fs-extra';
-
-const initLogger = createLogger('init');
+import { DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
+import { renderDevUI } from '@/cli/utilities/dev/dev-ui';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 
 export type AppDevOptions = {
   appPath?: string;
@@ -25,41 +24,33 @@ export class AppDevCommand {
   private manifestWatcher: ManifestWatcher | null = null;
   private functionsWatcher: EsbuildWatcher | null = null;
   private frontComponentsWatcher: EsbuildWatcher | null = null;
+  private assetWatcher: AssetWatcher | null = null;
   private watchersStarted = false;
-  private apiService = new ApiService();
+  private uiStateManager: DevUiStateManager | null = null;
+  private unmountUI: (() => void) | null = null;
 
   async execute(options: AppDevOptions): Promise<void> {
     this.appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
-    await this.checkServer();
-
-    initLogger.log('🚀 Starting Twenty Application Development Mode');
-    initLogger.log(`📁 App Path: ${this.appPath}`);
-    console.log('');
 
     await this.cleanOutputDir();
+
+    this.uiStateManager = new DevUiStateManager({
+      appPath: this.appPath,
+      frontendUrl: process.env.FRONTEND_URL,
+    });
+
+    const { unmount } = await renderDevUI(this.uiStateManager);
+
+    this.unmountUI = unmount;
 
     this.orchestrator = new DevModeOrchestrator({
       appPath: this.appPath,
       handleManifestBuilt: this.handleWatcherRestarts.bind(this),
+      uiStateManager: this.uiStateManager,
     });
 
     await this.startManifestWatcher();
     this.setupGracefulShutdown();
-  }
-
-  private async checkServer(): Promise<void> {
-    if (process.env.TWENTY_SKIP_SERVER_CHECK === 'true') {
-      return;
-    }
-
-    const isAuthenticated = await this.apiService.validateAuth();
-
-    if (!isAuthenticated) {
-      initLogger.error(
-        'Please check your server is up and your credentials are correct.',
-      );
-      process.exit(1);
-    }
   }
 
   private async cleanOutputDir() {
@@ -104,6 +95,7 @@ export class AppDevCommand {
     await Promise.all([
       this.startFunctionsWatcher(functions),
       this.startFrontComponentsWatcher(frontComponents),
+      this.startAssetWatcher(),
     ]);
   }
 
@@ -139,15 +131,26 @@ export class AppDevCommand {
     await this.frontComponentsWatcher.start();
   }
 
+  private async startAssetWatcher(): Promise<void> {
+    this.assetWatcher = new AssetWatcher({
+      appPath: this.appPath,
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
+    });
+
+    await this.assetWatcher.start();
+  }
+
   private setupGracefulShutdown(): void {
     const shutdown = async () => {
-      console.log('');
-      initLogger.warn('🛑 Stopping...');
+      this.unmountUI?.();
 
       await Promise.all([
         this.manifestWatcher?.close(),
         this.functionsWatcher?.close(),
         this.frontComponentsWatcher?.close(),
+        this.assetWatcher?.close(),
       ]);
 
       process.exit(0);

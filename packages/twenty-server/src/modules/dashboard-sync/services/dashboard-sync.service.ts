@@ -60,7 +60,6 @@ export class DashboardSyncService {
 
     try {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const dashboardRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -71,6 +70,7 @@ export class DashboardSyncService {
 
           await dashboardRepository.update({ pageLayoutId }, { updatedAt });
         },
+        authContext,
       );
     } catch (error) {
       this.logger.error(

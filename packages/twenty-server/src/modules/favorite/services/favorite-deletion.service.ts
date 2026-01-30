@@ -28,68 +28,65 @@ export class FavoriteDeletionService {
   ): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const favoriteRepository =
-          await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
-            workspaceId,
-            'favorite',
-          );
-
-        const favoriteObjectMetadata =
-          await this.objectMetadataRepository.findOne({
-            where: {
-              nameSingular: 'favorite',
-              workspaceId,
-            },
-          });
-
-        if (!favoriteObjectMetadata) {
-          throw new Error('Favorite object metadata not found');
-        }
-
-        const favoriteFields = await this.fieldMetadataRepository.find({
-          where: {
-            objectMetadataId: favoriteObjectMetadata.id,
-            type: FieldMetadataType.RELATION,
-          },
-        });
-
-        const favoritesToDelete = await favoriteRepository.find({
-          select: {
-            id: true,
-          },
-          where: favoriteFields.map((field) => ({
-            [`${field.name}Id`]: In(deletedRecordIds),
-          })),
-          withDeleted: true,
-        });
-
-        if (favoritesToDelete.length === 0) {
-          return;
-        }
-
-        const favoriteIdsToDelete = favoritesToDelete.map(
-          (favorite) => favorite.id,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const favoriteRepository =
+        await this.globalWorkspaceOrmManager.getRepository<FavoriteWorkspaceEntity>(
+          workspaceId,
+          'favorite',
         );
 
-        const batches: string[][] = [];
+      const favoriteObjectMetadata =
+        await this.objectMetadataRepository.findOne({
+          where: {
+            nameSingular: 'favorite',
+            workspaceId,
+          },
+        });
 
-        for (
-          let i = 0;
-          i < favoriteIdsToDelete.length;
-          i += FAVORITE_DELETION_BATCH_SIZE
-        ) {
-          batches.push(
-            favoriteIdsToDelete.slice(i, i + FAVORITE_DELETION_BATCH_SIZE),
-          );
-        }
+      if (!favoriteObjectMetadata) {
+        throw new Error('Favorite object metadata not found');
+      }
 
-        for (const batch of batches) {
-          await favoriteRepository.delete(batch);
-        }
-      },
-    );
+      const favoriteFields = await this.fieldMetadataRepository.find({
+        where: {
+          objectMetadataId: favoriteObjectMetadata.id,
+          type: FieldMetadataType.RELATION,
+        },
+      });
+
+      const favoritesToDelete = await favoriteRepository.find({
+        select: {
+          id: true,
+        },
+        where: favoriteFields.map((field) => ({
+          [`${field.name}Id`]: In(deletedRecordIds),
+        })),
+        withDeleted: true,
+      });
+
+      if (favoritesToDelete.length === 0) {
+        return;
+      }
+
+      const favoriteIdsToDelete = favoritesToDelete.map(
+        (favorite) => favorite.id,
+      );
+
+      const batches: string[][] = [];
+
+      for (
+        let i = 0;
+        i < favoriteIdsToDelete.length;
+        i += FAVORITE_DELETION_BATCH_SIZE
+      ) {
+        batches.push(
+          favoriteIdsToDelete.slice(i, i + FAVORITE_DELETION_BATCH_SIZE),
+        );
+      }
+
+      for (const batch of batches) {
+        await favoriteRepository.delete(batch);
+      }
+    }, authContext);
   }
 }

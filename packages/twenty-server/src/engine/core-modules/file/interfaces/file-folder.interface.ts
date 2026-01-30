@@ -24,10 +24,10 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.PersonPicture]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.ServerlessFunction]: {
+  [FileFolder.LogicFunction]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.ServerlessFunctionToDelete]: {
+  [FileFolder.LogicFunctionToDelete]: {
     ignoreExpirationToken: false,
   },
   [FileFolder.File]: {
@@ -42,16 +42,13 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.BuiltFrontComponent]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.Asset]: {
+  [FileFolder.PublicAsset]: {
     ignoreExpirationToken: true,
   },
   [FileFolder.Source]: {
     ignoreExpirationToken: false,
   },
   [FileFolder.FilesField]: {
-    ignoreExpirationToken: false,
-  },
-  [FileFolder.TemporaryFilesField]: {
     ignoreExpirationToken: false,
   },
 };

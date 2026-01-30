@@ -8,9 +8,10 @@ import {
 } from 'twenty-shared/types';
 import { combineFilters, isDefined } from 'twenty-shared/utils';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
-import { transformEventToWebhookEvent } from 'src/engine/core-modules/webhook/utils/transform-event-to-webhook-event';
+import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -252,10 +253,10 @@ export class WorkspaceEventEmitterService {
   }
 
   private filterRestrictedFieldsFromEvent(
-    event: ObjectRecordEvent & { objectNameSingular: string },
+    event: ObjectRecordSubscriptionEvent,
     restrictedFields: RestrictedFieldsPermissions | undefined,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  ): ObjectRecordEvent & { objectNameSingular: string } {
+  ): ObjectRecordSubscriptionEvent {
     if (!restrictedFields || Object.keys(restrictedFields).length === 0) {
       return event;
     }
@@ -311,7 +312,7 @@ export class WorkspaceEventEmitterService {
     return {
       ...event,
       properties: filteredProperties,
-    } as ObjectRecordEvent & { objectNameSingular: string };
+    } as ObjectRecordSubscriptionEvent;
   }
 
   private getMatchingQueryIds(
@@ -322,7 +323,7 @@ export class WorkspaceEventEmitterService {
         variables?: { filter?: RecordGqlOperationFilter };
       }
     >,
-    event: ObjectRecordEvent & { objectNameSingular: string },
+    event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
@@ -351,7 +352,7 @@ export class WorkspaceEventEmitterService {
       objectNameSingular: string;
       variables?: { filter?: RecordGqlOperationFilter };
     },
-    event: ObjectRecordEvent & { objectNameSingular: string },
+    event: ObjectRecordSubscriptionEvent,
     subscriberRLSFilter: RecordGqlOperationFilter | null,
     objectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
@@ -384,11 +385,16 @@ export class WorkspaceEventEmitterService {
       return true;
     }
 
+    const shouldIgnoreSoftDeleteDefaultFilter =
+      event.action === DatabaseEventAction.DELETED ||
+      event.action === DatabaseEventAction.RESTORED;
+
     return isRecordMatchingRLSRowLevelPermissionPredicate({
       record,
       filter: combinedFilter,
       flatObjectMetadata: objectMetadata,
       flatFieldMetadataMaps,
+      shouldIgnoreSoftDeleteDefaultFilter,
     });
   }
 

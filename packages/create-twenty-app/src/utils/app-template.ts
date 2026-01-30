@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
+import { ASSETS_DIR } from 'twenty-shared/application';
 
 const APP_FOLDER = 'src';
 
@@ -20,6 +21,8 @@ export const copyBaseApplicationProject = async ({
   await createPackageJson({ appName, appDirectory });
 
   await createGitignore(appDirectory);
+
+  await createPublicAssetDirectory(appDirectory);
 
   await createYarnLock(appDirectory);
 
@@ -45,6 +48,10 @@ export const copyBaseApplicationProject = async ({
     description: appDescription,
     appDirectory: appFolderPath,
   });
+};
+
+const createPublicAssetDirectory = async (appDirectory: string) => {
+  await fs.ensureDir(join(appDirectory, ASSETS_DIR));
 };
 
 const createYarnLock = async (appDirectory: string) => {
@@ -238,8 +245,6 @@ const createPackageJson = async ({
       'auth:switch': 'twenty auth:switch',
       'auth:list': 'twenty auth:list',
       'app:dev': 'twenty app:dev',
-      'app:build': 'twenty app:build',
-      'app:sync': 'twenty app:sync',
       'entity:add': 'twenty entity:add',
       'app:generate': 'twenty app:generate',
       'function:logs': 'twenty function:logs',
@@ -250,7 +255,7 @@ const createPackageJson = async ({
       'lint:fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': '0.3.1',
+      'twenty-sdk': '0.4.0',
     },
     devDependencies: {
       typescript: '^5.9.3',

@@ -14,7 +14,9 @@ describe('root-app app:dev', () => {
 
   beforeAll(async () => {
     result = await runAppDev({ appPath: APP_PATH });
-
+    if (!result.success) {
+      console.log(result.output);
+    }
     expect(result.success).toBe(true);
   }, 60000);
 

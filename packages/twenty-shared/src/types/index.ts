@@ -105,8 +105,12 @@ export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
+export type { IsEmptyObject } from './IsEmptyObject.type';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
+export type { IsNever } from './IsNever.type';
+export type { IsSerializedRelation } from './IsSerializedRelation.type';
+export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NonNullableRequired } from './NonNullableRequired';
@@ -127,6 +131,8 @@ export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGra
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { OrderBy } from './OrderBy';
+export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
+export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';
@@ -187,7 +193,6 @@ export type {
 } from './RowLevelPermissionPredicateValue';
 export type { SerializedRelation } from './SerializedRelation.type';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
-export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';
 export type {

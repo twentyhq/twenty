@@ -7,7 +7,7 @@ Générez ou récupérez automatiquement un PDF et joignez-le à un enregistreme
 
 ## Vue d'ensemble
 
-Ce flux de travail utilise un **Déclencheur manuel** afin que les utilisateurs puissent générer un PDF à la demande pour tout enregistrement sélectionné. Une **Fonction sans serveur** gère :
+Ce flux de travail utilise un **Déclencheur manuel** afin que les utilisateurs puissent générer un PDF à la demande pour tout enregistrement sélectionné. Une **fonction logique** gère :
 
 1. Téléchargement du PDF depuis une URL (provenant d'un service de génération de PDF)
 2. Téléversement du fichier dans Twenty
@@ -17,7 +17,7 @@ Ce flux de travail utilise un **Déclencheur manuel** afin que les utilisateurs 
 
 Avant de configurer le flux de travail :
 
-1. **Créer une clé API** : Allez dans **Settings → APIs** et créez une nouvelle clé API. Vous aurez besoin de ce jeton pour la fonction sans serveur.
+1. **Créer une clé API** : Allez dans **Settings → APIs** et créez une nouvelle clé API. Vous aurez besoin de ce jeton pour la fonction logique.
 2. **Configurer un service de génération de PDF** (facultatif) : Si vous souhaitez générer des PDF dynamiquement (par exemple, des devis), utilisez un service comme Carbone, PDFMonkey ou DocuSeal pour créer le PDF et obtenir une URL de téléchargement.
 
 ## Configuration pas à pas
@@ -32,9 +32,9 @@ Avant de configurer le flux de travail :
   Avec un déclencheur manuel, les utilisateurs peuvent exécuter ce flux de travail à l'aide d'un bouton qui apparaît en haut à droite une fois un enregistrement sélectionné, afin de générer et de joindre un PDF.
 </Tip>
 
-### Étape 2 : Ajouter une fonction sans serveur
+### Étape 2 : Ajouter une fonction logique
 
-1. Ajoutez une action **Fonction sans serveur**
+1. Ajoutez une action **Code** (fonction logique)
 2. Créez une nouvelle fonction avec le code ci-dessous
 3. Configurez les paramètres d'entrée
 
@@ -45,10 +45,10 @@ Avant de configurer le flux de travail :
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  Si vous joignez à un objet différent (Personne, Opportunité, etc.), renommez le paramètre en conséquence (par exemple, `personId`, `opportunityId`) et mettez à jour la fonction sans serveur.
+  Si vous l'attachez à un objet différent (Personne, Opportunité, etc.), renommez le paramètre en conséquence (par exemple, `personId`, `opportunityId`) et mettez à jour la fonction logique.
 </Note>
 
-#### Code de la fonction sans serveur
+#### Code de la fonction logique
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ Mettez à jour à la fois le paramètre de la fonction et l'objet `variables.dat
 Si vous utilisez un service de génération de PDF, vous pouvez :
 
 1. Commencez par créer une action HTTP Request pour générer le PDF
-2. Transmettez l'URL du PDF retournée à la fonction sans serveur en tant que paramètre
+2. Transmettez l'URL du PDF retournée à la fonction logique en tant que paramètre
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ Pour créer des devis ou des factures dynamiques :
 * **DocuSeal** - Plateforme d'automatisation de documents
 * **Documint** - Génération de documents axée sur l'API
 
-Chaque service fournit une API qui renvoie une URL de PDF, que vous pouvez ensuite transmettre à la fonction sans serveur.
+Chaque service fournit une API qui renvoie une URL de PDF, que vous pouvez ensuite transmettre à la fonction logique.
 
 ## Résolution des problèmes
 
@@ -224,5 +224,5 @@ Chaque service fournit une API qui renvoie une URL de PDF, que vous pouvez ensui
 ## Articles connexes
 
 * [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
-* [Fonctions sans serveur](/l/fr/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Fonctions logiques](/l/fr/user-guide/workflows/capabilities/workflow-actions#code)
 * [Générer un devis ou une facture depuis Twenty](/l/fr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

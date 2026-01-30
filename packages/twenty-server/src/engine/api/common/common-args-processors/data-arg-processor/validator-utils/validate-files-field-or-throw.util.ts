@@ -2,15 +2,19 @@ import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
+import {
+  type FieldMetadataSettingsMapping,
+  type FieldMetadataType,
+} from 'twenty-shared/types';
 import { z } from 'zod';
-import { type FieldMetadataSettingsMapping } from 'twenty-shared/types';
 
+import { type FileInput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-export const fileItemSchema = z
+const fileItemSchema = z
   .object({
     fileId: z.string().uuidv4(),
     label: z.string(),
@@ -19,13 +23,11 @@ export const fileItemSchema = z
 
 export const filesFieldSchema = z.array(fileItemSchema);
 
-export type FileItem = z.infer<typeof fileItemSchema>;
-
 export const validateFilesFieldOrThrow = (
   value: unknown,
   fieldName: string,
-  settings: FieldMetadataSettingsMapping['FILES'],
-): FileItem[] | null => {
+  settings: FieldMetadataSettingsMapping[FieldMetadataType.FILES],
+): FileInput[] | null => {
   if (isNull(value)) return null;
 
   let parsedValue: unknown = value;
@@ -67,10 +69,10 @@ export const validateFilesFieldOrThrow = (
     const maxNumberOfValues = settings.maxNumberOfValues;
 
     throw new CommonQueryRunnerException(
-      `Max number of files is ${maxNumberOfValues}`,
+      `Max number of files is ${maxNumberOfValues} for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
       {
-        userFriendlyMessage: msg`Max number of files is ${maxNumberOfValues}`,
+        userFriendlyMessage: msg`Max number of files is ${maxNumberOfValues} for field "${fieldName}"`,
       },
     );
   }

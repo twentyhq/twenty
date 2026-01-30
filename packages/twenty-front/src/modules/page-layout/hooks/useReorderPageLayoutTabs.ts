@@ -1,8 +1,8 @@
-import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutDraftState } from '@/page-layout/hooks/usePageLayoutDraftState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type DropResult } from '@hello-pangea/dnd';
 import { useCallback } from 'react';

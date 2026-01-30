@@ -1,4 +1,7 @@
+import { relative } from 'path';
 import chokidar, { type FSWatcher } from 'chokidar';
+import { type EventName } from 'chokidar/handler.js';
+import { ASSETS_DIR } from 'twenty-shared/application';
 
 export type ManifestWatcherOptions = {
   appPath: string;
@@ -7,7 +10,7 @@ export type ManifestWatcherOptions = {
 
 export class ManifestWatcher {
   private appPath: string;
-  private handleChangeDetected: (filePath: string) => void;
+  private handleChangeDetected: (filePath: string, event: EventName) => void;
   private watcher: FSWatcher | null = null;
 
   constructor(options: ManifestWatcherOptions) {
@@ -17,7 +20,6 @@ export class ManifestWatcher {
 
   async start(): Promise<void> {
     this.watcher = chokidar.watch(this.appPath, {
-      ignored: [/node_modules/, /dist/, /\.twenty/],
       awaitWriteFinish: {
         stabilityThreshold: 100,
         pollInterval: 50,
@@ -29,7 +31,28 @@ export class ManifestWatcher {
       if (event === 'addDir') {
         return;
       }
-      this.handleChangeDetected(filePath);
+
+      const relativePath = relative(this.appPath, filePath);
+
+      const isInIgnoredDir =
+        relativePath.startsWith('node_modules') ||
+        relativePath.startsWith('generated') ||
+        relativePath.startsWith('dist');
+
+      const isAssetFile = relativePath.startsWith(ASSETS_DIR);
+
+      const isTypeScriptFile =
+        relativePath.endsWith('.ts') || relativePath.endsWith('.tsx');
+
+      const isHiddenFile = relativePath.startsWith('.');
+
+      const shouldIgnore = isInIgnoredDir || !isTypeScriptFile || isHiddenFile;
+
+      if (shouldIgnore && !isAssetFile) {
+        return;
+      }
+
+      this.handleChangeDetected(relativePath, event);
     });
   }
 

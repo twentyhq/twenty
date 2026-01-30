@@ -1,7 +1,7 @@
-import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
+import { calculateNewPosition } from '@/ui/layout/draggable-list/utils/calculateNewPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';

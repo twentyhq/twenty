@@ -93,7 +93,6 @@ export class WorkflowTriggerController {
 
     const { workflow } =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workflowRepository =
             await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
@@ -156,6 +155,7 @@ export class WorkflowTriggerController {
 
           return { workflow, workflowVersion };
         },
+        authContext,
       );
 
     const { workflowRunId } =

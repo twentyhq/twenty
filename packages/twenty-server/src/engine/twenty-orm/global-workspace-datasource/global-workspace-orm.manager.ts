@@ -2,8 +2,8 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
@@ -67,10 +67,11 @@ export class GlobalWorkspaceOrmManager {
   }
 
   async executeInWorkspaceContext<T>(
-    authContext: WorkspaceAuthContext,
     fn: () => T | Promise<T>,
+    authContext?: WorkspaceAuthContext,
   ): Promise<T> {
-    const context = await this.loadWorkspaceContext(authContext);
+    const resolvedAuthContext = authContext ?? getWorkspaceAuthContext();
+    const context = await this.loadWorkspaceContext(resolvedAuthContext);
 
     return withWorkspaceContext(context, fn);
   }

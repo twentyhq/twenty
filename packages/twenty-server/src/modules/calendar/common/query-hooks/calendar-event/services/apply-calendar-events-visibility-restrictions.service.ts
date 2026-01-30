@@ -27,7 +27,6 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const calendarChannelEventAssociationRepository =
           await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
@@ -117,6 +116,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
 
         return calendarEvents;
       },
+      authContext,
     );
   }
 }

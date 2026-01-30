@@ -4,6 +4,14 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const EXPECTED_MANIFEST: ApplicationManifest = {
   sources: {},
+  publicAssets: [
+    {
+      checksum: '99496069dcc2a1488e1cae9f826d2707',
+      fileName: 'favicon.png',
+      filePath: 'public/favicon.png',
+      fileType: 'png',
+    },
+  ],
   yarnLock: '',
   application: {
     applicationVariables: {
@@ -219,8 +227,6 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
       'auth:switch': 'twenty auth:switch',
       'auth:list': 'twenty auth:list',
       'app:dev': 'twenty app:dev',
-      'app:build': 'twenty app:build',
-      'app:sync': 'twenty app:sync',
       'entity:add': 'twenty entity:add',
       'app:generate': 'twenty app:generate',
       'function:logs': 'twenty function:logs',

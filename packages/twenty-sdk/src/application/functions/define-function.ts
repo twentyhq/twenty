@@ -1,7 +1,7 @@
 import { type FunctionConfig } from '@/application/functions/function-config';
 
 /**
- * Define a serverless function configuration with validation.
+ * Define a logic function configuration with validation.
  *
  * @example
  * ```typescript

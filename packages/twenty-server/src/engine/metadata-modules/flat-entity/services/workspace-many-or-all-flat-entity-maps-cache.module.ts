@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FlatCacheInvalidateCommand } from 'src/engine/core-modules/cache-storage/commands/flat-cache-invalidate.command';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { WorkspaceFlatFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-field-metadata/services/workspace-flat-field-metadata-map-cache.service';
@@ -25,6 +23,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -37,9 +36,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     WorkspaceCacheModule,
-    DataSourceModule,
     TypeOrmModule.forFeature([
-      WorkspaceEntity,
       ViewEntity,
       ViewFieldEntity,
       ViewFilterEntity,
@@ -54,6 +51,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       PageLayoutWidgetEntity,
       RowLevelPermissionPredicateEntity,
       RowLevelPermissionPredicateGroupEntity,
+      ApplicationEntity,
+      RoleEntity,
     ]),
   ],
   providers: [
@@ -71,7 +70,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatPageLayoutWidgetMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
-    FlatCacheInvalidateCommand,
   ],
   exports: [
     WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -88,7 +86,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatPageLayoutWidgetMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateMapCacheService,
     WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService,
-    FlatCacheInvalidateCommand,
   ],
 })
 export class WorkspaceManyOrAllFlatEntityMapsCacheModule {}

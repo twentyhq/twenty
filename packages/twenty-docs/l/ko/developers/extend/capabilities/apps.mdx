@@ -9,12 +9,12 @@ description: Twenty 맞춤설정을 코드로 구축하고 관리하세요.
 
 ## 앱이란 무엇인가요?
 
-앱을 사용하면 Twenty 맞춤설정을 **코드로** 구축하고 관리할 수 있습니다. 모든 것을 UI에서 구성하는 대신, 데이터 모델과 서버리스 함수를 코드로 정의합니다 — 이를 통해 더 빠르게 구축·유지 관리하고 여러 워크스페이스에 배포할 수 있습니다.
+앱을 사용하면 Twenty 맞춤설정을 **코드로** 구축하고 관리할 수 있습니다. 모든 것을 UI에서 구성하는 대신, 데이터 모델과 로직 함수를 코드로 정의합니다 — 이를 통해 더 빠르게 구축·유지 관리하고 여러 워크스페이스에 배포할 수 있습니다.
 
 **현재 가능한 작업:**
 
 * 사용자 정의 객체와 필드를 코드로 정의하기(관리형 데이터 모델)
-* 사용자 정의 트리거를 사용하여 서버리스 함수를 구축
+* 사용자 정의 트리거로 로직 함수 구축
 * 동일한 앱을 여러 워크스페이스에 배포
 
 **곧 제공 예정:**
@@ -50,15 +50,12 @@ yarn app:dev
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn app:create-entity
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
 yarn app:generate
 
-# Run a one‑time sync (instead of watch mode)
-yarn app:sync
-
-# Watch your application's functions logs
+# Watch your application's function logs
 yarn function:logs
 
 # Execute a function by name
@@ -68,7 +65,7 @@ yarn function:execute -n my-function -p '{"name": "test"}'
 yarn app:uninstall
 
 # Display commands' help
-yarn app:help
+yarn help
 ```
 
 참고: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) 및 [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk)의 CLI 참고 페이지도 확인하세요.
@@ -96,23 +93,25 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # 공개 자산 폴더(이미지, 폰트 등)
   src/
-    app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+    application.config.ts          # 필수 - 기본 애플리케이션 구성
+    default-function.role.ts       # 서버리스 함수의 기본 역할
+    hello-world.function.ts        # 서버리스 함수 예제
+    hello-world.front-component.tsx # 프런트 컴포넌트 예제
+    // 사용자 엔터티 (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### 설정보다 관례
 
 애플리케이션은 파일 접미사로 엔티티를 감지하는 **관례 우선** 접근 방식을 사용합니다. 이를 통해 `src/app/` 폴더 내에서 유연하게 구성할 수 있습니다:
 
-| 파일 접미사          | 엔티티 유형       |
-| --------------- | ------------ |
-| `*.object.ts`   | 사용자 정의 객체 정의 |
-| `*.function.ts` | 서버리스 함수 정의   |
-| `*.role.ts`     | 역할 정의        |
+| 파일 접미사                  | 엔티티 유형       |
+| ----------------------- | ------------ |
+| `*.object.ts`           | 사용자 정의 객체 정의 |
+| `*.function.ts`         | 서버리스 함수 정의   |
+| `*.front-component.tsx` | 프런트 컴포넌트 정의  |
+| `*.role.ts`             | 역할 정의        |
 
 ### 지원되는 폴더 구성 방식
 
@@ -121,12 +120,14 @@ my-twenty-app/
 **전통적(유형별):**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── objects/
 │   └── postCard.object.ts
 ├── functions/
 │   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
 └── roles/
     └── admin.role.ts
 ```
@@ -134,44 +135,46 @@ src/app/
 **기능 기반:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 └── post-card/
     ├── postCard.object.ts
     ├── createPostCard.function.ts
+    ├── card.front-component.tsx
     └── postCardAdmin.role.ts
 ```
 
 **플랫:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── postCard.object.ts
 ├── createPostCard.function.ts
+├── card.front-component.tsx
 └── admin.role.ts
 ```
 
 개요:
 
-* **package.json**: 앱 이름, 버전, 엔진(Node 24+, Yarn 4)을 선언하고, `twenty-sdk`와 함께 `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall`, `auth` 같은 스크립트를 추가합니다. 이 스크립트들은 로컬 `twenty` CLI에 위임됩니다.
+* **package.json**: 앱 이름, 버전, 엔진(Node 24+, Yarn 4)을 선언하고, `twenty-sdk`와 함께 `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, `auth:login` 같은 스크립트를 추가합니다. 이 스크립트들은 로컬 `twenty` CLI에 위임됩니다.
 * **.gitignore**: `node_modules`, `.yarn`, `generated/`(타입드 클라이언트), `dist/`, `build/`, 커버리지 폴더, 로그 파일, `.env*` 파일 등의 일반 산출물을 무시합니다.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: 프로젝트에서 사용하는 Yarn 4 툴체인을 고정하고 구성합니다.
 * **.nvmrc**: 프로젝트에서 예상하는 Node.js 버전을 고정합니다.
 * **eslint.config.mjs** 및 **tsconfig.json**: 앱의 TypeScript 소스에 대한 린팅 및 TypeScript 구성을 제공합니다.
 * **README.md**: 앱 루트에 기본 안내를 담은 간단한 README입니다.
-* **src/app/**: 애플리케이션을 코드로 정의하는 주요 위치:
+* **public/**: 애플리케이션과 함께 제공되는 공개 자산(이미지, 폰트, 정적 파일)을 저장하는 폴더입니다. 여기에 배치된 파일은 동기화 시 업로드되며 런타임에 액세스할 수 있습니다.
+* **src/**: 애플리케이션을 코드로 정의하는 주요 위치:
   * `application.config.ts`: 앱의 전역 구성(메타데이터 및 런타임 연결)입니다. 아래의 "Application config"를 참조하세요.
-  * `*.role.ts`: 서버리스 함수에서 사용하는 역할 정의. 아래의 "Default function role"을 참조하세요.
+  * `*.role.ts`: 로직 함수에서 사용하는 역할 정의. 아래의 "Default function role"을 참조하세요.
   * `*.object.ts`: 사용자 정의 객체 정의.
-  * `*.function.ts`: 서버리스 함수 정의.
-* **src/utils/**: 핸들러 구현 및 유틸리티를 위한 선택적 폴더.
+  * `*.function.ts`: 로직 함수 정의.
+  * `*.front-component.tsx`: 프런트 컴포넌트 정의.
 
 이후 명령을 실행하면 더 많은 파일과 폴더가 추가됩니다:
 
 * `yarn app:generate`는 `generated/` 폴더를 생성합니다(타입드 Twenty 클라이언트 + 워크스페이스 타입).
-* `yarn app:create-entity`는 사용자 정의 객체, 함수, 역할에 대한 엔티티 정의 파일을 `src/app/` 아래에 추가합니다.
-  l
+* `yarn entity:add`는 사용자 정의 객체, 함수, 프런트 컴포넌트 또는 역할에 대한 엔티티 정의 파일을 `src/` 아래에 추가합니다.
 
 ## 인증
 
@@ -218,7 +221,7 @@ SDK는 앱 엔티티를 정의할 때 사용할 수 있는, 내장 검증이 포
 | ------------------ | ------------------- |
 | `defineApp()`      | 애플리케이션 메타데이터 구성     |
 | `defineObject()`   | 필드가 있는 사용자 정의 객체 정의 |
-| `defineFunction()` | 핸들러가 있는 서버리스 함수 정의  |
+| `defineFunction()` | 핸들러가 있는 로직 함수 정의    |
 | `defineRole()`     | 역할 권한과 객체 접근 구성     |
 
 이 함수들은 런타임에 구성을 검증하고, 더 나은 IDE 자동 완성과 타입 안정성을 제공합니다.
@@ -302,62 +305,11 @@ export default defineObject({
 * `universalIdentifier`는 배포 전반에서 고유하고 안정적이어야 합니다.
 * 각 필드는 `name`, `type`, `label` 및 고유하고 안정적인 `universalIdentifier`가 필요합니다.
 * `fields` 배열은 선택 사항입니다. 사용자 정의 필드 없이도 객체를 정의할 수 있습니다.
-* `yarn app:create-entity`를 사용하여 새 객체를 스캐폴딩할 수 있으며, 이름, 필드, 관계 설정 과정을 안내합니다.
+* `yarn entity:add`를 사용하여 새 객체를 스캐폴딩할 수 있으며, 이름, 필드, 관계 설정 과정을 안내합니다.
 
 <Note>
   **기본 필드는 자동으로 생성됩니다.** 사용자 정의 객체를 정의하면 Twenty가 `name`, `createdAt`, `updatedAt`, `createdBy`, `position`, `deletedAt` 등의 표준 필드를 자동으로 추가합니다. 이 필드들은 `fields` 배열에 정의할 필요가 없습니다. 사용자 정의 필드만 추가하세요.
 </Note>
-
-<Accordion title="대안: 데코레이터 기반 문법">
-  TypeScript 데코레이터를 사용하여 객체를 정의할 수도 있습니다. 이 접근 방식은 `@Object`, `@Field`, `@Relation` 데코레이터를 사용하는 클래스 기반 문법을 사용합니다:
-
-  ```typescript
-  import {
-    type AddressField,
-    Field,
-    FieldType,
-    type FullNameField,
-    Object,
-    OnDeleteAction,
-    Relation,
-    RelationType,
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  } from 'twenty-sdk';
-  import { type Note } from '../../generated';
-
-  @Object({
-    universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-    nameSingular: 'postCard',
-    namePlural: 'postCards',
-    labelSingular: 'Post card',
-    labelPlural: 'Post cards',
-    description: 'A post card object',
-    icon: 'IconMail',
-  })
-  export class PostCard {
-    @Field({
-      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-      type: FieldType.TEXT,
-      label: 'Content',
-      description: "Postcard's content",
-      icon: 'IconAbc',
-    })
-    content: string;
-
-    @Relation({
-      universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-      type: RelationType.ONE_TO_MANY,
-      label: 'Notes',
-      icon: 'IconComment',
-      inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-      onDelete: OnDeleteAction.CASCADE,
-    })
-    notes: Note[];
-  }
-  ```
-
-  참고: 데코레이터 접근 방식은 TypeScript 구성에서 `experimentalDecorators`가 필요합니다.
-</Accordion>
 
 ### 애플리케이션 구성(application.config.ts)
 
@@ -399,7 +351,7 @@ export default defineApp({
 
 #### 역할 및 권한
 
-애플리케이션은 워크스페이스의 객체와 작업에 대한 권한을 캡슐화하는 역할을 정의할 수 있습니다. `application.config.ts`의 `functionRoleUniversalIdentifier` 필드는 앱의 서버리스 함수가 사용하는 기본 역할을 지정합니다.
+애플리케이션은 워크스페이스의 객체와 작업에 대한 권한을 캡슐화하는 역할을 정의할 수 있습니다. `application.config.ts`의 `functionRoleUniversalIdentifier` 필드는 앱의 로직 함수가 사용하는 기본 역할을 지정합니다.
 
 * `TWENTY_API_KEY`로 주입되는 런타임 API 키는 이 기본 함수 역할에서 파생됩니다.
 * 타입드 클라이언트는 해당 역할에 부여된 권한으로 제한됩니다.
@@ -461,7 +413,7 @@ export default defineRole({
 * `permissionFlags`는 플랫폼 수준 기능에 대한 액세스를 제어합니다. 최소한으로 유지하고, 필요한 것만 추가하세요.
 * Hello World 앱의 동작 예제를 참조하세요: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### 서버리스 함수 구성과 엔트리포인트
+### 로직 함수 구성과 엔트리포인트
 
 각 함수 파일은 `defineFunction()`을 사용해 핸들러와 선택적 트리거가 포함된 구성을 내보냅니다. 자동 감지를 위해 `*.function.ts` 파일 접미사를 사용하세요.
 
@@ -469,14 +421,9 @@ export default defineRole({
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '../../generated';
+import Twenty, { type Person } from '~/generated';
 
-const handler = async (
-  params:
-    | RoutePayload
-    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
-    | CronPayload,
-) => {
+const handler = async (params: RoutePayload) => {
   const client = new Twenty(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
@@ -507,18 +454,18 @@ export default defineFunction({
       isAuthRequired: false,
     },
     // Cron trigger (CRON pattern)
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *',
-    },
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
     // Database event trigger
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.updated',
-      updatedFields: ['name'],
-    },
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
   ],
 });
 ```
@@ -565,7 +512,7 @@ export default defineFunction({
   **기존 함수 마이그레이션 방법:** 핸들러에서 params 객체에서 직접 구조 분해하는 대신 `event.body`, `event.queryStringParameters`, 또는 `event.pathParameters`에서 구조 분해하도록 업데이트하세요.
 </Warning>
 
-라우트 트리거가 함수를 호출하면, AWS HTTP API v2 형식을 따르는 `RoutePayload` 객체를 받습니다. `twenty-sdk`에서 해당 타입을 임포트하세요:
+라우트 트리거가 로직 함수를 호출하면, AWS HTTP API v2 형식을 따르는 `RoutePayload` 객체를 받습니다. `twenty-sdk`에서 해당 타입을 임포트하세요:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -595,7 +542,7 @@ const handler = async (event: RoutePayload) => {
 
 ### HTTP 헤더 전달
 
-기본적으로 보안상의 이유로 들어오는 요청의 HTTP 헤더는 서버리스 함수로 **전달되지 않습니다**. 특정 헤더에 접근하려면 `forwardedRequestHeaders` 배열에 명시적으로 나열하세요:
+기본적으로 보안상의 이유로 들어오는 요청의 HTTP 헤더는 로직 함수로 **전달되지 않습니다**. 특정 헤더에 접근하려면 `forwardedRequestHeaders` 배열에 명시적으로 나열하세요:
 
 ```typescript
 export default defineFunction({
@@ -633,7 +580,7 @@ const handler = async (event: RoutePayload) => {
 
 새 함수를 만드는 방법은 두 가지입니다:
 
-* **스캐폴딩**: `yarn app:create-entity`를 실행하고 새 함수를 추가하는 옵션을 선택하세요. 이렇게 하면 핸들러와 구성이 포함된 시작 파일이 생성됩니다.
+* **스캐폴딩**: `yarn entity:add`를 실행하고 새 함수를 추가하는 옵션을 선택하세요. 이렇게 하면 핸들러와 구성이 포함된 시작 파일이 생성됩니다.
 * **수동**: 새 `*.function.ts` 파일을 만들고 동일한 패턴에 따라 `defineFunction()`을 사용하세요.
 
 ### 생성된 타입드 클라이언트
@@ -641,15 +588,15 @@ const handler = async (event: RoutePayload) => {
 워크스페이스 스키마를 기반으로 generated/에 로컬 타입드 클라이언트를 생성하려면 yarn app:generate를 실행하세요. 함수에서 사용하세요:
 
 ```typescript
-import Twenty from './generated';
+import Twenty from '~/generated';
 
 const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-클라이언트는 `yarn app:generate`로 다시 생성됩니다. 객체를 변경하고 `yarn app:sync`를 실행한 후 또는 새 워크스페이스에 온보딩할 때 다시 실행하세요.
+클라이언트는 `yarn app:generate`로 다시 생성됩니다. 객체를 변경한 후 또는 새 워크스페이스에 온보딩할 때 다시 실행하세요.
 
-#### 서버리스 함수의 런타임 자격 증명
+#### 로직 함수의 런타임 자격 증명
 
 함수가 Twenty에서 실행될 때, 플랫폼은 코드가 실행되기 전에 자격 증명을 환경 변수로 주입합니다:
 
@@ -659,7 +606,7 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 노트:
 
 * 생성된 클라이언트에 URL이나 API 키를 전달할 필요가 없습니다. 런타임에 process.env에서 `TWENTY_API_URL`과 `TWENTY_API_KEY`를 읽습니다.
-* API 키의 권한은 `application.config.ts`에서 `functionRoleUniversalIdentifier`를 통해 참조된 역할에 의해 결정됩니다. 이는 애플리케이션의 서버리스 함수에서 사용하는 기본 역할입니다.
+* API 키의 권한은 `application.config.ts`에서 `functionRoleUniversalIdentifier`를 통해 참조된 역할에 의해 결정됩니다. 이는 애플리케이션의 로직 함수에서 사용하는 기본 역할입니다.
 * 애플리케이션은 최소 권한 원칙을 따르도록 역할을 정의할 수 있습니다. 함수에 필요한 권한만 부여하고, `functionRoleUniversalIdentifier`를 해당 역할의 universal identifier로 지정하세요.
 
 ### Hello World 예제
@@ -679,25 +626,29 @@ yarn add -D twenty-sdk
 ```json filename="package.json"
 {
   "scripts": {
-    "auth": "twenty auth login",
-    "generate": "twenty app generate",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "logs": "twenty app logs",
-    "create-entity": "twenty app add",
-    "help": "twenty --help"
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
   }
 }
 ```
 
-이제 Yarn을 통해 동일한 명령을 실행할 수 있습니다. 예: `yarn app:dev`, `yarn app:sync` 등
+이제 Yarn을 통해 동일한 명령을 실행할 수 있습니다. 예: `yarn app:dev`, `yarn app:generate` 등.
 
 ## 문제 해결
 
 * 인증 오류: `yarn auth:login`를 실행하고 API 키에 필요한 권한이 있는지 확인하세요.
 * 서버에 연결할 수 없음: API URL과 Twenty 서버에 접근 가능한지 확인하세요.
-* 타입 또는 클라이언트가 없거나 오래됨: `yarn app:generate`를 실행한 다음 `yarn app:dev`를 실행하세요.
+* 타입 또는 클라이언트가 없거나 오래된 경우: `yarn app:generate`를 실행하세요.
 * 개발 모드가 동기화되지 않음: `yarn app:dev`가 실행 중인지, 환경에서 변경 사항을 무시하지 않는지 확인하세요.
 
 Discord 도움말 채널: https://discord.com/channels/1130383047699738754/1130386664812982322

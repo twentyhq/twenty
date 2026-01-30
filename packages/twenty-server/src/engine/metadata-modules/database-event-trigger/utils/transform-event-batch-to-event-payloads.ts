@@ -5,23 +5,24 @@ import type {
   ObjectRecordEvent,
 } from 'twenty-shared/database-events';
 
-import { type DatabaseEventTriggerEntity } from 'src/engine/metadata-modules/database-event-trigger/entities/database-event-trigger.entity';
-import { type ServerlessFunctionTriggerJobData } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
+import { type LogicFunctionTriggerJobData } from 'src/engine/metadata-modules/logic-function/jobs/logic-function-trigger.job';
+import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 export const transformEventBatchToEventPayloads = ({
   workspaceEventBatch,
-  databaseEventListeners,
+  logicFunctions,
 }: {
   workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
-  databaseEventListeners: DatabaseEventTriggerEntity[];
-}): ServerlessFunctionTriggerJobData[] => {
-  const result: ServerlessFunctionTriggerJobData[] = [];
+  logicFunctions: LogicFunctionEntity[];
+}): LogicFunctionTriggerJobData[] => {
+  const result: LogicFunctionTriggerJobData[] = [];
   const { events, ...batchEventInfo } = workspaceEventBatch;
   const [, operation] = workspaceEventBatch.name.split('.');
 
-  for (const databaseEventListener of databaseEventListeners) {
-    const triggerUpdatedFields = databaseEventListener.settings.updatedFields;
+  for (const logicFunction of logicFunctions) {
+    const triggerUpdatedFields =
+      logicFunction.databaseEventTriggerSettings?.updatedFields;
 
     const filteredEvents = filterEventsByUpdatedFields({
       events,
@@ -33,8 +34,8 @@ export const transformEventBatchToEventPayloads = ({
       const payload: DatabaseEventPayload = { ...batchEventInfo, ...event };
 
       result.push({
-        serverlessFunctionId: databaseEventListener.serverlessFunction.id,
-        workspaceId: databaseEventListener.workspaceId,
+        logicFunctionId: logicFunction.id,
+        workspaceId: logicFunction.workspaceId,
         payload,
       });
     }
