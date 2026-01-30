@@ -1,9 +1,13 @@
+import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
 import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectPermission } from '~/generated/graphql';
+import {
+  type FieldPermission,
+  type ObjectPermission,
+} from '~/generated/graphql';
 
 const OBJECT_PERMISSION_KEYS: SettingsRoleObjectPermissionKey[] = [
   'canReadObjectRecords',
@@ -20,12 +24,20 @@ export const useResetObjectPermission = (roleId: string) => {
   const { upsertObjectPermissionInDraftRole } =
     useUpsertObjectPermissionInDraftRole(roleId);
 
+  const { upsertFieldPermissionInDraftRole } =
+    useUpsertFieldPermissionInDraftRole(roleId);
+
   const resetObjectPermission = (objectMetadataItemId: string) => {
+    const fieldPermissionsForCurrentObject =
+      settingsDraftRole.fieldPermissions?.filter(
+        (permission) => permission.objectMetadataId === objectMetadataItemId,
+      ) ?? [];
     const existingObjectPermission = settingsDraftRole.objectPermissions?.find(
       (objectPermissionToFind) =>
         objectPermissionToFind.objectMetadataId === objectMetadataItemId,
     );
 
+    // object permission handling
     const resetPermissions = OBJECT_PERMISSION_KEYS.reduce(
       (acc, permissionKey) => {
         acc[permissionKey] = null;
@@ -49,6 +61,16 @@ export const useResetObjectPermission = (roleId: string) => {
 
       upsertObjectPermissionInDraftRole(updatedObjectPermission);
     }
+    //field permission permission handling
+    fieldPermissionsForCurrentObject.forEach(
+      (fieldPermission: FieldPermission) => {
+        upsertFieldPermissionInDraftRole({
+          ...fieldPermission,
+          canUpdateFieldValue: null,
+          canReadFieldValue: null,
+        });
+      },
+    );
   };
 
   return {
