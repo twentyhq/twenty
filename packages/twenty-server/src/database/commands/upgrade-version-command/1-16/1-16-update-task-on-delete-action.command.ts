@@ -13,6 +13,7 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -36,6 +37,7 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
     protected readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly applicationService: ApplicationService,
   ) {
     super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
@@ -177,6 +179,11 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
       );
 
       try {
+        const { twentyStandardFlatApplication } =
+          await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          );
+
         const validateAndBuildResult =
           await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
             {
@@ -189,6 +196,8 @@ export class UpdateTaskOnDeleteActionCommand extends ActiveOrSuspendedWorkspaces
               },
               workspaceId,
               isSystemBuild: true,
+              applicationUniversalIdentifier:
+                twentyStandardFlatApplication.universalIdentifier,
             },
           );
 

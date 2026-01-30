@@ -21,6 +21,7 @@ export const findFlatEntityByUniversalIdentifier = <
   }
 
   const result = flatEntityMaps.byId[flatEntityId];
+
   return isDefined(result)
     ? {
         ...result,

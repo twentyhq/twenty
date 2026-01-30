@@ -161,6 +161,8 @@ export class BackfillStandardPageLayoutsCommand extends ActiveOrSuspendedWorkspa
           dependencyAllFlatEntityMaps: {
             flatObjectMetadataMaps,
           },
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
         },
       );
 

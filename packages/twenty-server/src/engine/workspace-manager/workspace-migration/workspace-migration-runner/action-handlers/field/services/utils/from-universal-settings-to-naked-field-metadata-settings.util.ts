@@ -1,10 +1,17 @@
-import { isUniversalFieldMetadataSettingsOftype } from "src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util";
-import { UniversalAllFlatEntityMaps } from "src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type";
-import { UniversalFlatFieldMetadata } from "src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type";
-import { findFieldMetadataIdInCreateFieldContext } from "src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/find-field-metadata-id-in-create-field-context.util";
-import { WorkspaceMigrationActionExecutionException, WorkspaceMigrationActionExecutionExceptionCode } from "src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception";
-import { FieldMetadataSettings, FieldMetadataType } from "twenty-shared/types";
-import { isDefined } from "twenty-shared/utils";
+import {
+  type FieldMetadataSettings,
+  FieldMetadataType,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { isUniversalFieldMetadataSettingsOftype } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
+import { type UniversalAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { findFieldMetadataIdInCreateFieldContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/find-field-metadata-id-in-create-field-context.util';
+import {
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 
 export const fromUniversalSettingsToInsertableSettings = ({
   universalSettings,
