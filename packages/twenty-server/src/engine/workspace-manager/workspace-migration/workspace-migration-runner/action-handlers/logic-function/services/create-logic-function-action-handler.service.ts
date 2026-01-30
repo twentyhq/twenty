@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
-import { join } from 'path';
+import { dirname, join } from 'path';
 
 import { Repository } from 'typeorm';
 import { isObject } from '@sniptt/guards';
@@ -87,7 +87,6 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     sources: Sources,
     localPath: string,
   ): Promise<void> {
-    await fs.mkdir(localPath, { recursive: true });
     for (const key of Object.keys(sources)) {
       const filePath = join(localPath, key);
       const value = sources[key];
@@ -96,6 +95,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         await this.writeSourcesToLocalFolder(value as Sources, filePath);
         continue;
       }
+      await fs.mkdir(dirname(filePath), { recursive: true });
       await fs.writeFile(filePath, value);
     }
   }

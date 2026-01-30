@@ -2,31 +2,31 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
-import { join } from 'path';
+import { dirname, join } from 'path';
 
-import { Repository } from 'typeorm';
 import { isObject } from '@sniptt/guards';
 import { FileFolder, type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function-executor/logic-function-executor.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
+import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { UpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
-import { FunctionBuildService } from 'src/engine/metadata-modules/function-build/function-build.service';
 
 @Injectable()
 export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -109,7 +109,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     sources: Sources,
     localPath: string,
   ): Promise<void> {
-    await fs.mkdir(localPath, { recursive: true });
     for (const key of Object.keys(sources)) {
       const filePath = join(localPath, key);
       const value = sources[key];
@@ -118,6 +117,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         await this.writeSourcesToLocalFolder(value as Sources, filePath);
         continue;
       }
+      await fs.mkdir(dirname(filePath), { recursive: true });
       await fs.writeFile(filePath, value);
     }
   }
@@ -152,6 +152,11 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         resourcePath: baseFolderPath,
         localPath: sourceTemporaryDir,
       });
+    } catch (error) {
+      this.logger.log(
+        'workspace-migration-runner',
+        `Error updating logic function ${flatLogicFunction.id}: ${error.message}`,
+      );
     } finally {
       await lambdaBuildDirectoryManager.clean();
     }
