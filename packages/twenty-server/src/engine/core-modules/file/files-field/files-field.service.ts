@@ -69,9 +69,9 @@ export class FilesFieldService {
       },
     });
 
-    return await this.fileStorageService.write_v2({
+    return await this.fileStorageService.writeFile_v2({
       sourceFile: sanitizedFile,
-      destinationPath: name,
+      resourcePath: name,
       mimeType,
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,
@@ -142,8 +142,8 @@ export class FilesFieldService {
       },
     });
 
-    return await this.fileStorageService.read_v2({
-      destinationPath: removeFileFolderFromFileEntityPath(file.path),
+    return await this.fileStorageService.readFile_v2({
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
