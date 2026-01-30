@@ -1,10 +1,11 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   LogicFunctionExecutorDriverType,
   type LogicFunctionExecutorModuleOptions,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/interfaces/logic-function-executor.interface';
+
+import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export const logicFunctionModuleFactory = async (

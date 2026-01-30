@@ -15,6 +15,7 @@ import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
+import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function/logic-function-executor/interfaces/logic-function-executor.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
@@ -22,7 +23,6 @@ import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.en
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
-import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function/logic-function-executor/interfaces/logic-function-executor.interface';
 import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
