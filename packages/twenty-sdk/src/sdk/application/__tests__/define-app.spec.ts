@@ -7,7 +7,7 @@ describe('defineApplication', () => {
       displayName: 'My App',
       description: 'My app description',
       icon: 'IconWorld',
-      roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+      defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     };
 
     const result = defineApplication(config);
@@ -30,7 +30,7 @@ describe('defineApplication', () => {
           isSecret: true,
         },
       },
-      roleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+      defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     };
 
     const result = defineApplication(config);
@@ -38,7 +38,7 @@ describe('defineApplication', () => {
     expect(result.success).toBe(true);
     expect(result.config).toEqual(config);
     expect(result.config?.applicationVariables).toBeDefined();
-    expect(result.config?.roleUniversalIdentifier).toBe(
+    expect(result.config?.defaultRoleUniversalIdentifier).toBe(
       '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     );
   });

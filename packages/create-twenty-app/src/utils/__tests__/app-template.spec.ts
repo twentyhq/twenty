@@ -125,7 +125,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it imports the role identifier
     expect(appConfigContent).toContain(
-      "import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-logic-function.role'",
+      "import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-logic-function.role'",
     );
 
     // Verify display name and description
@@ -139,7 +139,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it references the role
     expect(appConfigContent).toContain(
-      'roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER',
+      'roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
   });
 
@@ -166,7 +166,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it exports the universal identifier constant
     expect(roleConfigContent).toContain(
-      'export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER',
+      'export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
 
     // Verify role label includes app name
@@ -182,7 +182,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it has a universalIdentifier (UUID format)
     expect(roleConfigContent).toMatch(
-      /universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER/,
+      /universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER/,
     );
   });
 
@@ -295,7 +295,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Extract UUIDs using regex
     const uuidRegex =
-      /DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
+      /DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
     const firstUuid = firstRoleConfig.match(uuidRegex)?.[1];
     const secondUuid = secondRoleConfig.match(uuidRegex)?.[1];
 

@@ -234,7 +234,7 @@ export class ApplicationSyncService {
 
       if (
         existingRole.universalIdentifier ===
-        manifest.application.roleUniversalIdentifier
+        manifest.application.defaultRoleUniversalIdentifier
       ) {
         defaultRoleId = existingRole.id;
       }

@@ -5,5 +5,5 @@ export default defineApplication({
   displayName: 'Invalid App',
   description: 'An app with duplicate IDs for testing validation',
   icon: 'IconAlertTriangle',
-  roleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
+  defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
 });

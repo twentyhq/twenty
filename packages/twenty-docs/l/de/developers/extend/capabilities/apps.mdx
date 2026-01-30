@@ -324,7 +324,7 @@ Verwenden Sie `defineApplication()`, um Ihre Anwendungskonfiguration zu definier
 ```typescript
 // src/app/application.config.ts
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -339,7 +339,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +347,11 @@ Notizen:
 
 * `universalIdentifier`-Felder sind deterministische IDs, die Sie besitzen; generieren Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
 * `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen (zum Beispiel ist `DEFAULT_RECIPIENT_NAME` als `process.env.DEFAULT_RECIPIENT_NAME` verfügbar).
-* `roleUniversalIdentifier` muss mit der Rolle übereinstimmen, die Sie in Ihrer `*.role.ts`-Datei definieren (siehe unten).
+* `defaultRoleUniversalIdentifier` muss mit der Rolle übereinstimmen, die Sie in Ihrer `*.role.ts`-Datei definieren (siehe unten).
 
 #### Rollen und Berechtigungen
 
-Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `roleUniversalIdentifier` in `application.config.ts` legt die Standardrolle fest, die von den Logikfunktionen Ihrer App verwendet wird.
+Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `defaultRoleUniversalIdentifier` in `application.config.ts` legt die Standardrolle fest, die von den Logikfunktionen Ihrer App verwendet wird.
 
 * Der zur Laufzeit als `TWENTY_API_KEY` injizierte API-Schlüssel wird von dieser Standard-Funktionsrolle abgeleitet.
 * Der typisierte Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
@@ -365,11 +365,11 @@ Wenn Sie eine neue App erzeugen, erstellt die CLI auch eine Standard-Rolldatei. 
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-Der `universalIdentifier` dieser Rolle wird anschließend in `application.config.ts` als `roleUniversalIdentifier` referenziert. Anders ausgedrückt:
+Der `universalIdentifier` dieser Rolle wird anschließend in `application.config.ts` als `defaultRoleUniversalIdentifier` referenziert. Anders ausgedrückt:
 
 * **\*.role.ts** definiert, was die Standard-Funktionsrolle darf.
 * **application.config.ts** verweist auf diese Rolle, sodass Ihre Funktionen deren Berechtigungen erben.
@@ -606,8 +606,8 @@ Wenn Ihre Funktion auf Twenty läuft, injiziert die Plattform vor der Ausführun
 Notizen:
 
 * Sie müssen dem generierten Client weder URL noch API-Schlüssel übergeben. Er liest `TWENTY_API_URL` und `TWENTY_API_KEY` zur Laufzeit aus process.env.
-* Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application.config.ts` über `roleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
-* Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `roleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
+* Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application.config.ts` über `defaultRoleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
+* Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `defaultRoleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
 
 ### Hello-World-Beispiel
 

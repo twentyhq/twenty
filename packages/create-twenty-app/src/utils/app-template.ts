@@ -114,11 +114,11 @@ const createDefaultServerlessFunctionRoleConfig = async ({
 
   const content = `import { defineRole } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   '${universalIdentifier}';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: '${displayName} default function role',
   description: '${displayName} default function role',
   canReadAllObjectRecords: true,
@@ -212,13 +212,13 @@ const createApplicationConfig = async ({
   appDirectory: string;
 }) => {
   const content = `import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-logic-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-logic-function.role';
 
 export default defineApplication({
   universalIdentifier: '${v4()}',
   displayName: '${displayName}',
   description: '${description ?? ''}',
-  roleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 `;
 

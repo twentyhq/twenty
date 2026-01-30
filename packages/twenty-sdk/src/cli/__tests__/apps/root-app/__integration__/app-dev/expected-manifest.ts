@@ -47,7 +47,7 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     displayName: 'Root App',
     description: 'An app with all entities at root level',
     icon: 'IconFolder',
-    roleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
+    defaultRoleUniversalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000002',
   },
   publicAssets: [],
   fields: [],

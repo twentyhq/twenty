@@ -9,8 +9,8 @@ export const defineApplication: DefineEntity<Application> = (config) => {
     errors.push('Application must have a universalIdentifier');
   }
 
-  if (!config.roleUniversalIdentifier) {
-    errors.push('Application must have a roleUniversalIdentifier');
+  if (!config.defaultRoleUniversalIdentifier) {
+    errors.push('Application must have a defaultRoleUniversalIdentifier');
   }
 
   return createValidationResult({
