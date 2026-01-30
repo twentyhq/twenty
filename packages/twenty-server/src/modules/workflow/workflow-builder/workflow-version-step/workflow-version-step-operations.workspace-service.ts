@@ -185,7 +185,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               },
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionVersion: 'draft',
                 logicFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
               },
             },

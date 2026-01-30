@@ -29,7 +29,6 @@ describe('getIsDescendantOfIterator', () => {
     settings: {
       input: {
         logicFunctionId: 'func2',
-        logicFunctionVersion: '1.0.0',
         logicFunctionInput: {},
       },
       outputSchema: {},
@@ -49,7 +48,6 @@ describe('getIsDescendantOfIterator', () => {
     settings: {
       input: {
         logicFunctionId: 'func3',
-        logicFunctionVersion: '1.0.0',
         logicFunctionInput: {},
       },
       outputSchema: {},
@@ -90,7 +88,6 @@ describe('getIsDescendantOfIterator', () => {
       settings: {
         input: {
           logicFunctionId: 'func4',
-          logicFunctionVersion: '1.0.0',
           logicFunctionInput: {},
         },
         outputSchema: {},
