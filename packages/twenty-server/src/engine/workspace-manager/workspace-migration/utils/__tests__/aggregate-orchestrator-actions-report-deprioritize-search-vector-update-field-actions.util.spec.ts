@@ -20,7 +20,7 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
           {
             type: 'update',
             metadataName: 'fieldMetadata',
-            entityId: 'search-vector-field-1',
+            universalIdentifier: 'search-vector-field-1',
             updates: [
               {
                 property: 'label',
@@ -32,7 +32,7 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
           {
             type: 'update',
             metadataName: 'fieldMetadata',
-            entityId: 'regular-field-1',
+            universalIdentifier: 'regular-field-1',
             updates: [
               {
                 property: 'label',
@@ -44,7 +44,7 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
           {
             type: 'update',
             metadataName: 'fieldMetadata',
-            entityId: 'regular-field-2',
+            universalIdentifier: 'regular-field-2',
             updates: [
               {
                 property: 'label',
@@ -100,9 +100,11 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
     const updateFieldActions = result.fieldMetadata
       .update as UpdateFieldAction[];
 
-    const actualEntityIds = updateFieldActions.map((action) => action.entityId);
+    const actualUniversalIdentifiers = updateFieldActions.map(
+      (action) => action.universalIdentifier,
+    );
 
-    expect(actualEntityIds).toEqual([
+    expect(actualUniversalIdentifiers).toEqual([
       'regular-field-1',
       'regular-field-2',
       'search-vector-field-1',
