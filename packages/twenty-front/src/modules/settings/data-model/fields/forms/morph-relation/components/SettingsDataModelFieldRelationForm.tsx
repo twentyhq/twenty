@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -18,6 +17,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -116,26 +116,8 @@ export const SettingsDataModelFieldRelationForm = ({
       ),
     [initialRelationObjectMetadataItems],
   );
-  const isMobile = useIsMobile();
-  const hasInitializedRef = useRef(false);
 
-  useEffect(() => {
-    if (!disableRelationEdition && !hasInitializedRef.current) {
-      const currentValue = watch('morphRelationObjectMetadataIds');
-      if (
-        !isDefined(currentValue) ||
-        (Array.isArray(currentValue) && currentValue.length === 0)
-      ) {
-        setValue('morphRelationObjectMetadataIds', initialMorphRelationsObjectMetadataIds, {
-          shouldDirty: false,
-        });
-        hasInitializedRef.current = true;
-      } else if (isDefined(currentValue) && Array.isArray(currentValue) && currentValue.length > 0) {
-        hasInitializedRef.current = true;
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const isMobile = useIsMobile();
 
   return (
     <StyledContainer>
