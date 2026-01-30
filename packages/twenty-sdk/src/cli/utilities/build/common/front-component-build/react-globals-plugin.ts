@@ -5,6 +5,7 @@ import type * as esbuild from 'esbuild';
 import { isDefined } from 'twenty-shared/utils';
 import { JSX_RUNTIME_EXPORTS } from './constants/JsxRuntimeExports';
 import { REACT_IMPORT_PATTERN } from './constants/ReactImportPattern';
+import { REACT_MODULE_FILTER_PATTERN } from './constants/ReactModuleFilterPattern';
 import { extractNamesFromImportSpecifier } from './utils/extract-names-from-import-specifier';
 
 const collectReactImports = (sourceContent: string): Set<string> => {
@@ -64,7 +65,7 @@ export const reactGlobalsPlugin: esbuild.Plugin = {
     });
 
     build.onResolve(
-      { filter: /^react(\/jsx-runtime)?$/ },
+      { filter: REACT_MODULE_FILTER_PATTERN },
       async ({ importer, path }) => {
         if (importer && !reactImportsByFilePath.has(importer)) {
           try {

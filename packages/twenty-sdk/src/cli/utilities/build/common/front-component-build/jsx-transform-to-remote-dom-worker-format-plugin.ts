@@ -11,12 +11,9 @@ export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
   setup: (esbuildBuild) => {
     esbuildBuild.onLoad(
       { filter: /\.front-component\.tsx$/ },
-      async (loadArgs): Promise<esbuild.OnLoadResult> => {
+      async ({ path }): Promise<esbuild.OnLoadResult> => {
         try {
-          const frontComponentSourceCode = await fs.readFile(
-            loadArgs.path,
-            'utf8',
-          );
+          const frontComponentSourceCode = await fs.readFile(path, 'utf8');
 
           const sourceWithRemoteComponents =
             replaceHtmlTagsWithRemoteComponents(frontComponentSourceCode);
@@ -34,7 +31,7 @@ export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
             errors: [
               {
                 text: `Failed to transform front component: ${transformError instanceof Error ? transformError.message : String(transformError)}`,
-                location: { file: loadArgs.path },
+                location: { file: path },
               },
             ],
           };
