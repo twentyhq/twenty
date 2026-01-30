@@ -1,3 +1,10 @@
+import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
+import { assetEntityBuilder } from '@/cli/utilities/build/manifest/entities/asset';
+import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
+import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
+import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
+import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/entities/object-extension';
+import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
 import { findPathFile } from '@/cli/utilities/file/file-find';
 import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
 import { glob } from 'fast-glob';
@@ -9,13 +16,6 @@ import {
   OUTPUT_DIR,
 } from 'twenty-shared/application';
 import { FileFolder, type Sources } from 'twenty-shared/types';
-import { applicationEntityBuilder } from '@/cli/utilities/build/manifest/entities/application';
-import { assetEntityBuilder } from '@/cli/utilities/build/manifest/entities/asset';
-import { frontComponentEntityBuilder } from '@/cli/utilities/build/manifest/entities/front-component';
-import { functionEntityBuilder } from '@/cli/utilities/build/manifest/entities/function';
-import { objectEntityBuilder } from '@/cli/utilities/build/manifest/entities/object';
-import { objectExtensionEntityBuilder } from '@/cli/utilities/build/manifest/entities/object-extension';
-import { roleEntityBuilder } from '@/cli/utilities/build/manifest/entities/role';
 
 import { manifestExtractFromFileServer } from './manifest-extract-from-file-server';
 
@@ -92,7 +92,7 @@ export const updateManifestChecksum = ({
     { fileFolder, checksum },
   ] of builtFileInfos.entries()) {
     const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
-    if (fileFolder === FileFolder.BuiltFunction) {
+    if (fileFolder === FileFolder.BuiltLogicFunction) {
       const functions = result.functions ?? [];
       const fnIndex = functions.findIndex(
         (f) => f.builtHandlerPath === rootBuiltPath,

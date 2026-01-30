@@ -211,7 +211,7 @@ export const createFunctionsWatcher = (
     ...options,
     config: {
       externalModules: FUNCTION_EXTERNAL_MODULES,
-      fileFolder: FileFolder.BuiltFunction,
+      fileFolder: FileFolder.BuiltLogicFunction,
       platform: 'node',
       extraPlugins: [externalPatternsPlugin],
     },

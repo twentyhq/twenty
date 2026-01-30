@@ -4,7 +4,8 @@
   "sourceRoot": "packages/twenty-sdk/src",
   "projectType": "library",
   "tags": [
-    "scope:sdk"
+    "scope:sdk",
+    "scope:shared"
   ],
   "targets": {
     "build": {
@@ -13,7 +14,11 @@
         "^build"
       ],
       "outputs": [
-        "{projectRoot}/dist"
+        "{projectRoot}/dist",
+        "{projectRoot}/front-component/package.json",
+        "{projectRoot}/front-component/dist",
+        "{projectRoot}/front-component-constants/package.json",
+        "{projectRoot}/front-component-constants/dist"
       ]
     },
     "dev": {

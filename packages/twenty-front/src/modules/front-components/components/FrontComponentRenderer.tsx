@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getMockFrontComponentUrl } from '@/front-components/utils/mockFrontComponent';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-shared/front-component';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component';
 
 type FrontComponentRendererProps = {
   frontComponentId: string;
