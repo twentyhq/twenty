@@ -7,7 +7,13 @@ import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migr
 export type FlatEntityPropertyUpdate<
   T extends AllMetadataName,
   K extends FlatEntityPropertiesToCompare<T> = FlatEntityPropertiesToCompare<T>,
-> = PropertyUpdate<
-  MetadataFlatEntity<T>,
-  Extract<K, keyof MetadataFlatEntity<T>>
->;
+> =
+  MetadataBuilderHasBeenMigratedToUniversal<T> extends true
+    ? PropertyUpdate<
+        MetadataFlatEntity<T>,
+        Extract<K, keyof MetadataFlatEntity<T>>
+      >
+    : PropertyUpdate<
+        MetadataFlatEntity<T>,
+        Extract<K, keyof MetadataFlatEntity<T>>
+      >;
