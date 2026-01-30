@@ -86,8 +86,8 @@ export class FieldEntityBuilder
   }
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
-    const fields = manifest.entities.fields;
-    const objects = manifest.entities.objects;
+    const fields = manifest.fields;
+    const objects = manifest.objects;
 
     const objectFieldIds = new Map<string, string>();
     for (const obj of objects) {

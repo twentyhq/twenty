@@ -147,7 +147,7 @@ export class LogicFunctionEntityBuilder
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const logicFunctions = manifest.entities.logicFunctions;
+    const logicFunctions = manifest.logicFunctions;
 
     for (const fn of logicFunctions) {
       if (fn.universalIdentifier) {

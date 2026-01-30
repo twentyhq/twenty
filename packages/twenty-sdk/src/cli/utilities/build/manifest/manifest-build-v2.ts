@@ -201,13 +201,11 @@ export const buildManifest = async (
 
   const manifest = {
     application,
-    entities: {
-      objects,
-      fields,
-      roles,
-      logicFunctions,
-      frontComponents,
-    },
+    objects,
+    fields,
+    roles,
+    logicFunctions,
+    frontComponents,
     publicAssets,
     sources: {},
     packageJson,

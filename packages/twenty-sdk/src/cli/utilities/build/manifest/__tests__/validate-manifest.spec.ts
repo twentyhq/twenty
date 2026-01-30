@@ -25,13 +25,11 @@ describe('validateManifest - objectExtensions', () => {
     it('should pass validation with valid object extension by nameSingular', () => {
       const result = validateManifest({
         application: validApplication,
-        entities: {
-          objects: [],
-          frontComponents: [],
-          fields: [validField],
-          logicFunctions: [],
-          roles: [],
-        },
+        objects: [],
+        frontComponents: [],
+        fields: [validField],
+        logicFunctions: [],
+        roles: [],
         publicAssets: [],
       });
 
@@ -50,13 +48,11 @@ describe('validateManifest - objectExtensions', () => {
 
       const result = validateManifest({
         application: validApplication,
-        entities: {
-          objects: [],
-          fields: [extensionByUuid],
-          logicFunctions: [],
-          frontComponents: [],
-          roles: [],
-        },
+        objects: [],
+        fields: [extensionByUuid],
+        logicFunctions: [],
+        frontComponents: [],
+        roles: [],
         publicAssets: [],
       });
 
@@ -75,13 +71,11 @@ describe('validateManifest - objectExtensions', () => {
 
       const result = validateManifest({
         application: validApplication,
-        entities: {
-          objects: [],
-          fields: [validField, anotherExtension],
-          logicFunctions: [],
-          frontComponents: [],
-          roles: [],
-        },
+        objects: [],
+        fields: [validField, anotherExtension],
+        logicFunctions: [],
+        frontComponents: [],
+        roles: [],
         publicAssets: [],
       });
 
@@ -110,13 +104,11 @@ describe('validateManifest - objectExtensions', () => {
 
       const result = validateManifest({
         application: validApplication,
-        entities: {
-          objects: [],
-          fields: [extensionWithSelect],
-          logicFunctions: [],
-          frontComponents: [],
-          roles: [],
-        },
+        objects: [],
+        fields: [extensionWithSelect],
+        logicFunctions: [],
+        frontComponents: [],
+        roles: [],
         publicAssets: [],
       });
 
@@ -134,13 +126,11 @@ describe('validateManifest - objectExtensions', () => {
 
       const result = validateManifest({
         application: validApplication,
-        entities: {
-          objects: [],
-          fields: [invalidField as any],
-          logicFunctions: [],
-          frontComponents: [],
-          roles: [],
-        },
+        objects: [],
+        fields: [invalidField as any],
+        logicFunctions: [],
+        frontComponents: [],
+        roles: [],
         publicAssets: [],
       });
 
@@ -176,13 +166,11 @@ describe('validateManifest - objectExtensions', () => {
 
       const result = validateManifest({
         application: validApplication,
-        entities: {
-          objects: [],
-          fields: fieldsWithDuplicates,
-          logicFunctions: [],
-          frontComponents: [],
-          roles: [],
-        },
+        objects: [],
+        fields: fieldsWithDuplicates,
+        logicFunctions: [],
+        frontComponents: [],
+        roles: [],
         publicAssets: [],
       });
 
@@ -199,37 +187,35 @@ describe('validateManifest - objectExtensions', () => {
 
       const result = validateManifest({
         application: validApplication,
-        entities: {
-          objects: [
-            {
-              universalIdentifier: 'obj-uuid',
-              nameSingular: 'myObject',
-              namePlural: 'myObjects',
-              labelSingular: 'My Object',
-              labelPlural: 'My Objects',
-              fields: [
-                {
-                  universalIdentifier: sharedId,
-                  type: FieldMetadataType.TEXT,
-                  name: 'existingField',
-                  label: 'Existing Field',
-                },
-              ],
-            },
-          ],
-          fields: [
-            {
-              objectUniversalIdentifier: '91c5848c-36dc-4e7e-b9ee-aa78caeff5a8',
-              universalIdentifier: sharedId,
-              type: FieldMetadataType.NUMBER,
-              name: 'extensionField',
-              label: 'Extension Field',
-            },
-          ],
-          logicFunctions: [],
-          frontComponents: [],
-          roles: [],
-        },
+        objects: [
+          {
+            universalIdentifier: 'obj-uuid',
+            nameSingular: 'myObject',
+            namePlural: 'myObjects',
+            labelSingular: 'My Object',
+            labelPlural: 'My Objects',
+            fields: [
+              {
+                universalIdentifier: sharedId,
+                type: FieldMetadataType.TEXT,
+                name: 'existingField',
+                label: 'Existing Field',
+              },
+            ],
+          },
+        ],
+        fields: [
+          {
+            objectUniversalIdentifier: '91c5848c-36dc-4e7e-b9ee-aa78caeff5a8',
+            universalIdentifier: sharedId,
+            type: FieldMetadataType.NUMBER,
+            name: 'extensionField',
+            label: 'Extension Field',
+          },
+        ],
+        logicFunctions: [],
+        frontComponents: [],
+        roles: [],
         publicAssets: [],
       });
 

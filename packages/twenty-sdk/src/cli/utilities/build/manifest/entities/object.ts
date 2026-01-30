@@ -112,7 +112,7 @@ export class ObjectEntityBuilder
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const objects = manifest.entities.objects;
+    const objects = manifest.objects;
 
     for (const obj of objects) {
       if (obj.universalIdentifier) {

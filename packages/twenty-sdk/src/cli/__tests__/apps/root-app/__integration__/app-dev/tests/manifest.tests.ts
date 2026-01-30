@@ -19,21 +19,19 @@ export const defineManifestTests = (appPath: string): void => {
       const manifest: ApplicationManifest = await fs.readJSON(manifestPath);
 
       expect(manifest.application).toEqual(EXPECTED_MANIFEST.application);
-      expect(manifest.entities.objects).toEqual(
-        EXPECTED_MANIFEST.entities.objects,
-      );
+      expect(manifest.objects).toEqual(EXPECTED_MANIFEST.objects);
 
       expect(
         normalizeManifestForComparison({
-          logicFunctions: manifest.entities.logicFunctions,
+          logicFunctions: manifest.logicFunctions,
         }).logicFunctions,
       ).toEqual(
         normalizeManifestForComparison({
-          logicFunctions: EXPECTED_MANIFEST.entities.logicFunctions,
+          logicFunctions: EXPECTED_MANIFEST.logicFunctions,
         }).logicFunctions,
       );
 
-      for (const fn of manifest.entities.logicFunctions) {
+      for (const fn of manifest.logicFunctions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();
         expect(typeof fn.builtHandlerChecksum).toBe('string');
@@ -41,20 +39,20 @@ export const defineManifestTests = (appPath: string): void => {
 
       expect(
         normalizeManifestForComparison({
-          frontComponents: manifest.entities.frontComponents,
+          frontComponents: manifest.frontComponents,
         }).frontComponents,
       ).toEqual(
         normalizeManifestForComparison({
-          frontComponents: EXPECTED_MANIFEST.entities.frontComponents,
+          frontComponents: EXPECTED_MANIFEST.frontComponents,
         }).frontComponents,
       );
 
-      for (const component of manifest.entities.frontComponents ?? []) {
+      for (const component of manifest.frontComponents ?? []) {
         expect(component.builtComponentChecksum).toBeDefined();
         expect(component.builtComponentChecksum).not.toBeNull();
         expect(typeof component.builtComponentChecksum).toBe('string');
       }
-      expect(manifest.entities.roles).toEqual(EXPECTED_MANIFEST.entities.roles);
+      expect(manifest.roles).toEqual(EXPECTED_MANIFEST.roles);
     });
   });
 };

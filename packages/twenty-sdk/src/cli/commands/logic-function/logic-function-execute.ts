@@ -164,7 +164,7 @@ export class LogicFunctionExecuteCommand {
     fn: { universalIdentifier: string; applicationId: string | null },
     manifest: ApplicationManifest,
   ): boolean {
-    return manifest.entities.logicFunctions.some(
+    return manifest.logicFunctions.some(
       (manifestFn) => manifestFn.universalIdentifier === fn.universalIdentifier,
     );
   }

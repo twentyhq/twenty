@@ -83,7 +83,7 @@ export const updateManifestChecksum = ({
   ] of builtFileInfos.entries()) {
     const rootBuiltPath = relative(OUTPUT_DIR, builtPath);
     if (fileFolder === FileFolder.BuiltLogicFunction) {
-      const logicFunctions = result.entities.logicFunctions;
+      const logicFunctions = result.logicFunctions;
       const fnIndex = logicFunctions.findIndex(
         (f) => f.builtHandlerPath === rootBuiltPath,
       );
@@ -92,12 +92,9 @@ export const updateManifestChecksum = ({
       }
       result = {
         ...result,
-        entities: {
-          ...result.entities,
-          logicFunctions: logicFunctions.map((fn, index) =>
-            index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
-          ),
-        },
+        logicFunctions: logicFunctions.map((fn, index) =>
+          index === fnIndex ? { ...fn, builtHandlerChecksum: checksum } : fn,
+        ),
       };
     }
 
@@ -117,7 +114,7 @@ export const updateManifestChecksum = ({
     }
 
     if (fileFolder === FileFolder.BuiltFrontComponent) {
-      const frontComponents = result.entities.frontComponents;
+      const frontComponents = result.frontComponents;
       const componentIndex =
         frontComponents.findIndex(
           (c) => c.builtComponentPath === rootBuiltPath,
@@ -127,14 +124,11 @@ export const updateManifestChecksum = ({
       }
       result = {
         ...result,
-        entities: {
-          ...result.entities,
-          frontComponents: frontComponents.map((component, index) =>
-            index === componentIndex
-              ? { ...component, builtComponentChecksum: checksum }
-              : component,
-          ),
-        },
+        frontComponents: frontComponents.map((component, index) =>
+          index === componentIndex
+            ? { ...component, builtComponentChecksum: checksum }
+            : component,
+        ),
       };
     }
   }
@@ -195,13 +189,11 @@ export const runManifestBuild = async (
 
     const manifest: ApplicationManifest = {
       application,
-      entities: {
-        objects: objectManifests,
-        fields: objectExtensionManifests,
-        logicFunctions: functionManifests,
-        frontComponents: frontComponentManifests,
-        roles: roleManifests,
-      },
+      objects: objectManifests,
+      fields: objectExtensionManifests,
+      logicFunctions: functionManifests,
+      frontComponents: frontComponentManifests,
+      roles: roleManifests,
       publicAssets: assetManifests,
       sources,
       packageJson,

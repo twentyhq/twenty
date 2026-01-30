@@ -35,14 +35,11 @@ export const validateManifest = (
   const warnings: ValidationWarning[] = [];
 
   applicationEntityBuilder.validate([manifest.application], errors);
-  objectEntityBuilder.validate(manifest.entities.objects, errors);
-  fieldEntityBuilder.validate(manifest.entities.fields, errors);
-  logicFunctionEntityBuilder.validate(manifest.entities.logicFunctions, errors);
-  roleEntityBuilder.validate(manifest.entities.roles, errors);
-  frontComponentEntityBuilder.validate(
-    manifest.entities.frontComponents,
-    errors,
-  );
+  objectEntityBuilder.validate(manifest.objects, errors);
+  fieldEntityBuilder.validate(manifest.fields, errors);
+  logicFunctionEntityBuilder.validate(manifest.logicFunctions, errors);
+  roleEntityBuilder.validate(manifest.roles, errors);
+  frontComponentEntityBuilder.validate(manifest.frontComponents, errors);
 
   const duplicates = collectAllDuplicates(manifest);
   for (const dup of duplicates) {
@@ -52,13 +49,13 @@ export const validateManifest = (
     });
   }
 
-  if (!isNonEmptyArray(manifest.entities.objects)) {
+  if (!isNonEmptyArray(manifest.objects)) {
     warnings.push({
       message: 'No objects defined',
     });
   }
 
-  if (!isNonEmptyArray(manifest.entities.logicFunctions)) {
+  if (!isNonEmptyArray(manifest.logicFunctions)) {
     warnings.push({
       message: 'No logicFunctions defined',
     });

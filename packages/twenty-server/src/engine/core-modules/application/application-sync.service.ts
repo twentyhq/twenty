@@ -82,26 +82,26 @@ export class ApplicationSyncService {
     });
 
     await this.syncObjects({
-      objectsToSync: manifest.entities.objects,
+      objectsToSync: manifest.objects,
       workspaceId,
       applicationId: application.id,
     });
 
     await this.syncObjectRelations({
-      objectsToSync: manifest.entities.objects,
+      objectsToSync: manifest.objects,
       workspaceId,
       applicationId: application.id,
     });
 
-    if (manifest.entities.fields.length > 0) {
+    if (manifest.fields.length > 0) {
       await this.syncFieldsOrThrow({
-        fieldsToSync: manifest.entities.fields,
+        fieldsToSync: manifest.fields,
         workspaceId,
         applicationId: application.id,
       });
     }
 
-    if (manifest.entities.logicFunctions.length > 0) {
+    if (manifest.logicFunctions.length > 0) {
       if (!isDefined(application.logicFunctionLayerId)) {
         throw new ApplicationException(
           `Failed to sync logic function, could not find a logic function layer.`,
@@ -110,7 +110,7 @@ export class ApplicationSyncService {
       }
 
       await this.syncLogicFunctions({
-        logicFunctionsToSync: manifest.entities.logicFunctions,
+        logicFunctionsToSync: manifest.logicFunctions,
         code: manifest.sources,
         workspaceId,
         applicationId: application.id,
@@ -154,7 +154,7 @@ export class ApplicationSyncService {
 
     let logicFunctionLayerId = application.logicFunctionLayerId;
 
-    if (manifest.entities.logicFunctions.length > 0) {
+    if (manifest.logicFunctions.length > 0) {
       if (!isDefined(logicFunctionLayerId)) {
         logicFunctionLayerId = (
           await this.logicFunctionLayerService.create(
@@ -205,7 +205,7 @@ export class ApplicationSyncService {
   }) {
     let defaultRoleId: string | null = null;
 
-    for (const role of manifest.entities.roles) {
+    for (const role of manifest.roles) {
       let existingRole = await this.roleService.getRoleByUniversalIdentifier({
         universalIdentifier: role.universalIdentifier,
         workspaceId,

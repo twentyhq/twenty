@@ -65,7 +65,7 @@ export class RoleEntityBuilder implements ManifestEntityBuilder<RoleManifest> {
 
   findDuplicates(manifest: ManifestWithoutSources): EntityIdWithLocation[] {
     const seen = new Map<string, string[]>();
-    const roles = manifest.entities.roles;
+    const roles = manifest.roles;
 
     for (const role of roles) {
       if (role.universalIdentifier) {
