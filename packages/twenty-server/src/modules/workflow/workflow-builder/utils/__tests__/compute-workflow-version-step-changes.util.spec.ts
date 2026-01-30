@@ -41,7 +41,11 @@ describe('computeWorkflowVersionStepChanges', () => {
       settings: {
         input: {
           connectedAccountId: '',
-          email: '',
+          recipients: {
+            to: '',
+            cc: '',
+            bcc: '',
+          },
           subject: '',
           body: '',
         },
