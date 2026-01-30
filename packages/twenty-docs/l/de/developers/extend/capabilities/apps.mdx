@@ -319,7 +319,7 @@ Jede App hat eine einzelne Datei `application.config.ts`, die Folgendes beschrei
 * **Wie ihre Funktionen ausgeführt werden**: welche Rolle sie für Berechtigungen verwenden.
 * **(Optional) Variablen**: Schlüssel–Wert-Paare, die Ihren Funktionen als Umgebungsvariablen zur Verfügung gestellt werden.
 
-Use `defineApplication()` to define your application configuration:
+Verwenden Sie `defineApplication()`, um Ihre Anwendungskonfiguration zu definieren:
 
 ```typescript
 // src/app/application.config.ts
@@ -347,11 +347,11 @@ Notizen:
 
 * `universalIdentifier`-Felder sind deterministische IDs, die Sie besitzen; generieren Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
 * `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen (zum Beispiel ist `DEFAULT_RECIPIENT_NAME` als `process.env.DEFAULT_RECIPIENT_NAME` verfügbar).
-* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* `roleUniversalIdentifier` muss mit der Rolle übereinstimmen, die Sie in Ihrer `*.role.ts`-Datei definieren (siehe unten).
 
 #### Rollen und Berechtigungen
 
-Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `roleUniversalIdentifier` in `application.config.ts` legt die Standardrolle fest, die von den Logikfunktionen Ihrer App verwendet wird.
 
 * Der zur Laufzeit als `TWENTY_API_KEY` injizierte API-Schlüssel wird von dieser Standard-Funktionsrolle abgeleitet.
 * Der typisierte Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.

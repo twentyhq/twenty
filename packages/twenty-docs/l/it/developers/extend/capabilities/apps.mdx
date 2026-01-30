@@ -319,7 +319,7 @@ Ogni app ha un singolo file `application.config.ts` che descrive:
 * **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
 * **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
 
-Use `defineApplication()` to define your application configuration:
+Usa `defineApplication()` per definire la configurazione della tua applicazione:
 
 ```typescript
 // src/app/application.config.ts
@@ -347,11 +347,11 @@ Note:
 
 * I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
-* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+* `roleUniversalIdentifier` deve corrispondere al ruolo che definisci nel tuo file `*.role.ts` (vedi sotto).
 
 #### Ruoli e permessi
 
-Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. Il campo `roleUniversalIdentifier` in `application.config.ts` designa il ruolo predefinito utilizzato dalle funzioni logiche della tua app.
 
 * La chiave API di runtime iniettata come `TWENTY_API_KEY` è derivata da questo ruolo funzione predefinito.
 * Il client tipizzato sarà limitato ai permessi concessi a quel ruolo.
