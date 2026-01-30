@@ -9,7 +9,7 @@ import type { Response } from 'express';
 import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
-} from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
+} from 'src/engine/core-modules/logic-function-executor/triggers/route/exceptions/route-trigger.exception';
 import type { CustomException } from 'src/utils/custom-exception';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 

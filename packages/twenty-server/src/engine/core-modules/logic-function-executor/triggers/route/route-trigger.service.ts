@@ -12,8 +12,8 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
-} from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception';
-import { buildLogicFunctionEvent } from 'src/engine/metadata-modules/route-trigger/utils/build-logic-function-event.util';
+} from 'src/engine/core-modules/logic-function-executor/triggers/route/exceptions/route-trigger.exception';
+import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function-executor/triggers/route/utils/build-logic-function-event.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 

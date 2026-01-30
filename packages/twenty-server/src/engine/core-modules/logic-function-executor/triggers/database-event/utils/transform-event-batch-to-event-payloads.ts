@@ -5,7 +5,7 @@ import type {
   ObjectRecordEvent,
 } from 'twenty-shared/database-events';
 
-import { type LogicFunctionTriggerJobData } from 'src/engine/metadata-modules/logic-function/jobs/logic-function-trigger.job';
+import { type LogicFunctionTriggerJobData } from 'src/engine/core-modules/logic-function-executor/jobs/logic-function-trigger.job';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 

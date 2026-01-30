@@ -1,6 +1,6 @@
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { transformEventBatchToEventPayloads } from 'src/engine/metadata-modules/database-event-trigger/utils/transform-event-batch-to-event-payloads';
+import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function-executor/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';

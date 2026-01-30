@@ -14,7 +14,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
-} from 'src/engine/metadata-modules/logic-function/jobs/logic-function-trigger.job';
+} from 'src/engine/core-modules/logic-function-executor/jobs/logic-function-trigger.job';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { shouldRunNow } from 'src/utils/should-run-now.utils';
 

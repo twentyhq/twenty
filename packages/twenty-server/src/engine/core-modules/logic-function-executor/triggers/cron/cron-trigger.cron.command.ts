@@ -6,7 +6,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import {
   CRON_TRIGGER_CRON_PATTERN,
   CronTriggerCronJob,
-} from 'src/engine/metadata-modules/cron-trigger/crons/jobs/cron-trigger.cron.job';
+} from 'src/engine/core-modules/logic-function-executor/triggers/cron/cron-trigger.cron.job';
 @Command({
   name: 'cron:trigger:start-cron-trigger',
   description: 'Starts a cron job to trigger cron triggered logic functions',

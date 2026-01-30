@@ -6,7 +6,7 @@ import {
   filterRequestHeaders,
   normalizePathParameters,
   normalizeQueryStringParameters,
-} from 'src/engine/metadata-modules/route-trigger/utils/build-logic-function-event.util';
+} from 'src/engine/core-modules/logic-function-executor/triggers/route/utils/build-logic-function-event.util';
 
 describe('filterRequestHeaders', () => {
   it('should filter headers based on allowed names', () => {

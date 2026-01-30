@@ -12,7 +12,7 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
-} from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
+} from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-base-folder-path.util';
 
 export type FunctionBuildParams = {
   flatLogicFunction: FlatLogicFunction;

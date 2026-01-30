@@ -15,7 +15,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getSeedProjectFiles } from 'src/engine/core-modules/logic-function-executor/drivers/utils/get-seed-project-files';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function-executor/drivers/utils/lambda-build-directory-manager';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/metadata-modules/logic-function/utils/get-logic-function-base-folder-path.util';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-base-folder-path.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
