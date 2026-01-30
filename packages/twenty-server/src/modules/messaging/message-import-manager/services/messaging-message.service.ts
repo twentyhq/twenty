@@ -328,22 +328,19 @@ export class MessagingMessageService {
         );
       }
 
-      // Only create attachments if the message is new
-      if (!isDefined(messageAccumulator.existingMessageInDB)) {
-        messageAccumulator.attachmentsToCreate = message.attachments.map(
-          (attachment) => ({
-            messageAttachment: {
-              filename: attachment.filename,
-              mimeType: attachment.contentType,
-            },
-            file: {
-              content: attachment.content,
-              filename: attachment.filename,
-              mimeType: attachment.contentType,
-            },
-          }),
-        );
-      }
+      messageAccumulator.attachmentsToCreate = message.attachments.map(
+        (attachment) => ({
+          messageAttachment: {
+            filename: attachment.filename,
+            mimeType: attachment.contentType,
+          },
+          file: {
+            content: attachment.content,
+            filename: attachment.filename,
+            mimeType: attachment.contentType,
+          },
+        }),
+      );
     }
   }
 
