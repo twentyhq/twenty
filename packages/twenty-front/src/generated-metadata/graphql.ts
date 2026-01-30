@@ -1553,11 +1553,9 @@ export enum FileFolder {
   AgentChat = 'AgentChat',
   Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
-  BuiltFunction = 'BuiltFunction',
+  BuiltLogicFunction = 'BuiltLogicFunction',
   File = 'File',
   FilesField = 'FilesField',
-  LogicFunction = 'LogicFunction',
-  LogicFunctionToDelete = 'LogicFunctionToDelete',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   PublicAsset = 'PublicAsset',
@@ -2113,7 +2111,6 @@ export type Mutation = {
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   installApplication: Scalars['Boolean'];
-  publishLogicFunction: LogicFunction;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
@@ -2717,11 +2714,6 @@ export type MutationInitiateOtpProvisioningArgs = {
 
 export type MutationInstallApplicationArgs = {
   workspaceMigration: WorkspaceMigrationInput;
-};
-
-
-export type MutationPublishLogicFunctionArgs = {
-  input: PublishLogicFunctionInput;
 };
 
 
@@ -3528,11 +3520,6 @@ export type PublicWorkspaceDataOutput = {
   id: Scalars['UUID'];
   logo?: Maybe<Scalars['String']>;
   workspaceUrls: WorkspaceUrls;
-};
-
-export type PublishLogicFunctionInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
 };
 
 export type Query = {
@@ -6294,13 +6281,6 @@ export type ExecuteOneLogicFunctionMutationVariables = Exact<{
 
 
 export type ExecuteOneLogicFunctionMutation = { __typename?: 'Mutation', executeOneLogicFunction: { __typename?: 'LogicFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: LogicFunctionExecutionStatus, error?: any | null } };
-
-export type PublishOneLogicFunctionMutationVariables = Exact<{
-  input: PublishLogicFunctionInput;
-}>;
-
-
-export type PublishOneLogicFunctionMutation = { __typename?: 'Mutation', publishLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, latestVersion?: string | null, publishedVersions: Array<string>, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UpdateOneLogicFunctionMutationVariables = Exact<{
   input: UpdateLogicFunctionInput;
@@ -12463,39 +12443,6 @@ export function useExecuteOneLogicFunctionMutation(baseOptions?: Apollo.Mutation
 export type ExecuteOneLogicFunctionMutationHookResult = ReturnType<typeof useExecuteOneLogicFunctionMutation>;
 export type ExecuteOneLogicFunctionMutationResult = Apollo.MutationResult<ExecuteOneLogicFunctionMutation>;
 export type ExecuteOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>;
-export const PublishOneLogicFunctionDocument = gql`
-    mutation PublishOneLogicFunction($input: PublishLogicFunctionInput!) {
-  publishLogicFunction(input: $input) {
-    ...LogicFunctionFields
-  }
-}
-    ${LogicFunctionFieldsFragmentDoc}`;
-export type PublishOneLogicFunctionMutationFn = Apollo.MutationFunction<PublishOneLogicFunctionMutation, PublishOneLogicFunctionMutationVariables>;
-
-/**
- * __usePublishOneLogicFunctionMutation__
- *
- * To run a mutation, you first call `usePublishOneLogicFunctionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePublishOneLogicFunctionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [publishOneLogicFunctionMutation, { data, loading, error }] = usePublishOneLogicFunctionMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function usePublishOneLogicFunctionMutation(baseOptions?: Apollo.MutationHookOptions<PublishOneLogicFunctionMutation, PublishOneLogicFunctionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<PublishOneLogicFunctionMutation, PublishOneLogicFunctionMutationVariables>(PublishOneLogicFunctionDocument, options);
-      }
-export type PublishOneLogicFunctionMutationHookResult = ReturnType<typeof usePublishOneLogicFunctionMutation>;
-export type PublishOneLogicFunctionMutationResult = Apollo.MutationResult<PublishOneLogicFunctionMutation>;
-export type PublishOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<PublishOneLogicFunctionMutation, PublishOneLogicFunctionMutationVariables>;
 export const UpdateOneLogicFunctionDocument = gql`
     mutation UpdateOneLogicFunction($input: UpdateLogicFunctionInput!) {
   updateOneLogicFunction(input: $input) {

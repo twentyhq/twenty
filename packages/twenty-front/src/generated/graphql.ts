@@ -1520,11 +1520,9 @@ export enum FileFolder {
   AgentChat = 'AgentChat',
   Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
-  BuiltFunction = 'BuiltFunction',
+  BuiltLogicFunction = 'BuiltLogicFunction',
   File = 'File',
   FilesField = 'FilesField',
-  LogicFunction = 'LogicFunction',
-  LogicFunctionToDelete = 'LogicFunctionToDelete',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   PublicAsset = 'PublicAsset',
@@ -2070,7 +2068,6 @@ export type Mutation = {
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   installApplication: Scalars['Boolean'];
-  publishLogicFunction: LogicFunction;
   removeQueryFromEventStream: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
@@ -2620,11 +2617,6 @@ export type MutationInitiateOtpProvisioningArgs = {
 
 export type MutationInstallApplicationArgs = {
   workspaceMigration: WorkspaceMigrationInput;
-};
-
-
-export type MutationPublishLogicFunctionArgs = {
-  input: PublishLogicFunctionInput;
 };
 
 
@@ -3410,11 +3402,6 @@ export type PublicWorkspaceDataOutput = {
   id: Scalars['UUID'];
   logo?: Maybe<Scalars['String']>;
   workspaceUrls: WorkspaceUrls;
-};
-
-export type PublishLogicFunctionInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
 };
 
 export type Query = {
