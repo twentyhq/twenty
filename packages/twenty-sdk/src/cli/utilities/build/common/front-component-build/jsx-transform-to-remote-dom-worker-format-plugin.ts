@@ -10,7 +10,7 @@ export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
   name: 'jsx-transform-to-remote-dom-worker-format-plugin',
   setup: (esbuildBuild) => {
     esbuildBuild.onLoad(
-      { filter: /\.front-component\.tsx$/ },
+      { filter: /\.tsx$/ },
       async ({ path }): Promise<esbuild.OnLoadResult> => {
         try {
           const frontComponentSourceCode = await fs.readFile(path, 'utf8');
