@@ -22,13 +22,11 @@ export interface LogicFunctionExecutorDriver {
     flatLogicFunction,
     flatLogicFunctionLayer,
     payload,
-    version,
     env,
   }: {
     flatLogicFunction: FlatLogicFunction;
     flatLogicFunctionLayer: FlatLogicFunctionLayer;
     payload: object;
-    version: string;
     env?: Record<string, string>;
   }): Promise<LogicFunctionExecuteResult>;
 }

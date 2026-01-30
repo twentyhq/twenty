@@ -13,7 +13,6 @@ describe('getWorkflowPreviousSteps', () => {
         settings: {
           input: {
             logicFunctionId: 'func1',
-            logicFunctionVersion: '1.0.0',
             logicFunctionInput: {},
           },
           outputSchema: {},
@@ -32,7 +31,6 @@ describe('getWorkflowPreviousSteps', () => {
         settings: {
           input: {
             logicFunctionId: 'func2',
-            logicFunctionVersion: '1.0.0',
             logicFunctionInput: {},
           },
           outputSchema: {},
@@ -51,7 +49,6 @@ describe('getWorkflowPreviousSteps', () => {
         settings: {
           input: {
             logicFunctionId: 'func3',
-            logicFunctionVersion: '1.0.0',
             logicFunctionInput: {},
           },
           outputSchema: {},
@@ -70,7 +67,6 @@ describe('getWorkflowPreviousSteps', () => {
         settings: {
           input: {
             logicFunctionId: 'func4',
-            logicFunctionVersion: '1.0.0',
             logicFunctionInput: {},
           },
           outputSchema: {},

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { computeDiffBetweenObjects, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -236,6 +237,8 @@ export class PageLayoutUpdateService {
           universalIdentifier: tabId,
           applicationId: workspaceCustomApplicationId,
           widgetIds: [],
+          icon: null,
+          layoutMode: PageLayoutTabLayoutMode.GRID,
         };
       },
     );
@@ -392,6 +395,7 @@ export class PageLayoutUpdateService {
           deletedAt: null,
           universalIdentifier: widgetId,
           applicationId: workspaceCustomApplicationId,
+          conditionalDisplay: null,
         };
       },
     );

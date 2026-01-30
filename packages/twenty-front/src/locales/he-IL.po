@@ -258,11 +258,6 @@ msgstr "יובאו {formattedCreatedRecordsProgress} מתוך {formattedRecordsT
 msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
 msgstr "{grantedBy, plural, one {הוענק עבור אובייקט {grantedBy}} two {הוענק עבור אובייקטים {grantedBy}} many {הוענק עבור אובייקטים {grantedBy}} other {הוענק עבור אובייקטים {grantedBy}}}"
 
-#. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "{graphTypeLabel} Chart"
-msgstr "תרשים {graphTypeLabel}"
-
 #. js-lingui-id: LB2Hw6
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "{headersCount} headers received"

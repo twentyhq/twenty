@@ -16,6 +16,7 @@ export type SyncableFlatEntity = Omit<
 
 export type FlatEntityFrom<
   TEntity,
+  // Required to be passed for narrowed type
   TMetadataName extends AllMetadataName | undefined = undefined,
 > = Omit<
   TEntity,

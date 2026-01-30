@@ -129,7 +129,6 @@ export const fromRowLevelPermissionPredicateEntityToFlatRowLevelPermissionPredic
         roleUniversalIdentifier,
         workspaceMemberFieldMetadataUniversalIdentifier,
         rowLevelPermissionPredicateGroupUniversalIdentifier,
-        value: rowLevelPermissionPredicateEntityWithoutRelations.value,
       },
     };
   };

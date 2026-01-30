@@ -67,13 +67,10 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
         );
       }
 
-      const version = logicFunction.latestVersion ?? 'draft';
-
       const result = await this.logicFunctionService.executeOneLogicFunction({
         id: workflowActionInput.logicFunctionId,
         workspaceId,
         payload: workflowActionInput.logicFunctionInput,
-        version,
       });
 
       if (result.error) {

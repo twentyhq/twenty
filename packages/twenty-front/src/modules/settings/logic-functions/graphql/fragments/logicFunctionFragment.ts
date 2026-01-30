@@ -7,8 +7,6 @@ export const LOGIC_FUNCTION_FRAGMENT = gql`
     description
     runtime
     timeoutSeconds
-    latestVersion
-    publishedVersions
     sourceHandlerPath
     builtHandlerPath
     handlerName

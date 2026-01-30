@@ -49,7 +49,6 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   private async buildAndSaveLogicFunction(logicFunction: FlatLogicFunction) {
     const draftFileFolder = getLogicFunctionFolderOrThrow({
       flatLogicFunction: logicFunction,
-      version: 'draft',
     });
 
     if (isDefined(logicFunction?.code)) {
@@ -69,7 +68,6 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     }
     await this.functionBuildService.buildAndUpload({
       flatLogicFunction: logicFunction,
-      version: 'draft',
     });
   }
 

@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
@@ -15,6 +16,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { FileController } from './controllers/file.controller';
 import { FileEntity } from './entities/file.entity';
 import { FileUploadService } from './file-upload/services/file-upload.service';
+import { FilesFieldModule } from './files-field/files-field.module';
 import { FileResolver } from './resolvers/file.resolver';
 import { FileMetadataService } from './services/file-metadata.service';
 import { FileService } from './services/file.service';
@@ -25,6 +27,8 @@ import { FileService } from './services/file.service';
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
     HttpModule,
     PermissionsModule,
+    FileStorageModule,
+    FilesFieldModule,
   ],
   providers: [
     FileService,
