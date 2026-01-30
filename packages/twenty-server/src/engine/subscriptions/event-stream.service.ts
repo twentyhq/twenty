@@ -122,8 +122,6 @@ export class EventStreamService implements OnModuleInit {
         eventStreamChannelId,
       ]);
     }, activeStreamsKey);
-
-    await this.cleanUpDanglingExpiredEventStreams(workspaceId);
   }
 
   async getActiveStreamIds(workspaceId: string): Promise<string[]> {
@@ -274,31 +272,5 @@ export class EventStreamService implements OnModuleInit {
     const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
 
     return this.cacheStorageService.get<EventStreamData>(key);
-  }
-
-  private async cleanUpDanglingExpiredEventStreams(workspaceId: string) {
-    const eventStreamDetailFullPathKeys =
-      await this.cacheStorageService.getAllKeysForPattern(
-        `eventStream:${workspaceId}:*`,
-      );
-
-    const eventStreamDetailStreamIds = eventStreamDetailFullPathKeys.map(
-      (fullKey) => {
-        const parts = fullKey.split(':');
-
-        return parts[parts.length - 1];
-      },
-    );
-
-    const activeStreamIds = await this.getActiveStreamIds(workspaceId);
-
-    const streamIdsWithoutEventStreamDetailKey = activeStreamIds.filter(
-      (streamId) => !eventStreamDetailStreamIds.includes(streamId),
-    );
-
-    await this.removeFromActiveStreams(
-      workspaceId,
-      streamIdsWithoutEventStreamDetailKey,
-    );
   }
 }
