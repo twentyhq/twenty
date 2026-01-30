@@ -1,5 +1,5 @@
 import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
-import { useGetManyLogicFunctions } from '@/settings/logic-functions/hooks/useGetManyLogicFunctions';
+import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
@@ -12,13 +12,15 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
+import { useRecoilValue } from 'recoil';
 import { IconFunction } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-export type WorkflowActionSelection =
-  | { type: WorkflowActionType; logicFunctionId?: undefined; name?: undefined }
-  | { type: 'LOGIC_FUNCTION'; logicFunctionId: string; name: string };
+export type WorkflowActionSelection = {
+  type: WorkflowActionType;
+  defaultSettings?: Record<string, unknown>;
+};
 
 export const CommandMenuWorkflowSelectAction = ({
   onActionSelected,
@@ -30,7 +32,7 @@ export const CommandMenuWorkflowSelectAction = ({
 
   const { t } = useLingui();
 
-  const { logicFunctions } = useGetManyLogicFunctions();
+  const logicFunctions = useRecoilValue(logicFunctionsState);
 
   const toolFunctions = logicFunctions.filter((fn) => fn.isTool === true);
 
@@ -38,8 +40,13 @@ export const CommandMenuWorkflowSelectAction = ({
     onActionSelected({ type: actionType });
   };
 
-  const handleFunctionClick = (logicFunctionId: string, name: string) => {
-    onActionSelected({ type: 'LOGIC_FUNCTION', logicFunctionId, name });
+  const handleFunctionClick = (logicFunctionId: string) => {
+    onActionSelected({
+      type: 'LOGIC_FUNCTION',
+      defaultSettings: {
+        input: { logicFunctionId, logicFunctionInput: {} },
+      },
+    });
   };
 
   return (
@@ -107,7 +114,7 @@ export const CommandMenuWorkflowSelectAction = ({
                 />
               )}
               text={fn.name}
-              onClick={() => handleFunctionClick(fn.id, fn.name)}
+              onClick={() => handleFunctionClick(fn.id)}
             />
           ))}
         </>

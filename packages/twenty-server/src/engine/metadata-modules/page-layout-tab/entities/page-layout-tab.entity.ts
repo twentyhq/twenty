@@ -1,5 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
 
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -51,6 +52,17 @@ export class PageLayoutTabEntity
     cascade: true,
   })
   widgets: Relation<PageLayoutWidgetEntity[]>;
+
+  @Column({ nullable: true, type: 'varchar' })
+  icon: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: Object.values(PageLayoutTabLayoutMode),
+    nullable: false,
+    default: PageLayoutTabLayoutMode.GRID,
+  })
+  layoutMode: PageLayoutTabLayoutMode;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

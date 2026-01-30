@@ -352,6 +352,8 @@ msgid "API key role not found."
 msgstr "Ο ρόλος για το κλειδί API δεν βρέθηκε."
 
 #. js-lingui-id: ltvmAF
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -486,7 +488,7 @@ msgid "Calendar sync error."
 msgstr "Σφάλμα συγχρονισμού ημερολογίου."
 
 #. js-lingui-id: eSaCR/
-#: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
+#: src/engine/twenty-orm/field-operations/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
 msgstr "Δεν είναι δυνατή η σύνδεση με το {connectFieldName}. Δεν βρέθηκε μοναδική εγγραφή με την προϋπόθεση: {formattedConnectCondition}"
 
@@ -1062,6 +1064,11 @@ msgstr "Αποτυχία δημιουργίας συνάρτησης."
 msgid "Failed to create record."
 msgstr "Αποτυχία δημιουργίας εγγραφής."
 
+#. js-lingui-id: mWj8el
+#: src/engine/core-modules/file/files-field/files-field.service.ts
+msgid "Failed to delete file {fileId}"
+msgstr ""
+
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
 msgid "Failed to delete jobs. Please try again later."
@@ -1297,6 +1304,11 @@ msgstr "Το FieldMetadataId είναι απαραίτητο για τη δημ�
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "Το FieldMetadataId είναι απαραίτητο για τη δημιουργία ενός είδους παραγγελίας προβολής."
+
+#. js-lingui-id: ycn/wp
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
+msgstr ""
 
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
@@ -2303,9 +2315,14 @@ msgstr ""
 msgid "March"
 msgstr "Μάρτιος"
 
-#. js-lingui-id: N/Fjss
+#. js-lingui-id: Dq8Em0
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "Max number of files is {filesFieldMaxNumberOfValues}"
+msgstr ""
+
+#. js-lingui-id: J9favo
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
-msgid "Max number of files is {maxNumberOfValues}"
+msgid "Max number of files is {maxNumberOfValues} for field \"{fieldName}\""
 msgstr ""
 
 #. js-lingui-id: hw7Mwk
@@ -4601,6 +4618,11 @@ msgstr ""
 #. js-lingui-id: 84/Dko
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
+msgstr ""
+
+#. js-lingui-id: 5r5YRW
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "You can only update one record with files field at once."
 msgstr ""
 
 #. js-lingui-id: 4ysDL0

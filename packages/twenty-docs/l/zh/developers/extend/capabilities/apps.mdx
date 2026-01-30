@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # 公共资源文件夹（图像、字体等）
   src/
     application.config.ts          # 必需 - 主应用程序配置
     default-function.role.ts       # 用于无服务器函数的默认角色
@@ -162,6 +163,7 @@ src/
 * **.nvmrc**：固定项目期望的 Node.js 版本。
 * **eslint.config.mjs** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
 * **README.md**：应用根目录中的简短 README，包含基本说明。
+* **public/**: 一个用于存储公共资源（图像、字体、静态文件）的文件夹，这些资源将随你的应用程序一起提供。 放置在此处的文件会在同步期间上传，并可在运行时访问。
 * **src/**：你以代码形式定义应用的主要位置：
   * `application.config.ts`：应用的全局配置（元数据和运行时关联）。 参见下方“应用配置”。
   * `*.role.ts`：你的逻辑函数所使用的角色定义。 参见下方“默认函数角色”。

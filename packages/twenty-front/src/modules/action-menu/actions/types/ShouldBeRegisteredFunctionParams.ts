@@ -4,6 +4,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { type ObjectPermissions } from 'twenty-shared/types';
+import { type FeatureFlagKey } from '~/generated/graphql';
 
 export type ShouldBeRegisteredFunctionParams = {
   objectMetadataItem?: ObjectMetadataItem;
@@ -28,4 +29,5 @@ export type ShouldBeRegisteredFunctionParams = {
     objectMetadataItemNameSingular: string,
   ) => boolean;
   forceRegisteredActionsByKey: Record<string, boolean | undefined>;
+  isFeatureFlagEnabled: (featureFlagKey: FeatureFlagKey) => boolean;
 };

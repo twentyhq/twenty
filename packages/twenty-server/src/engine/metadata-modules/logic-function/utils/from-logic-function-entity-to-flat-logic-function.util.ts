@@ -37,11 +37,6 @@ export const fromLogicFunctionEntityToFlatLogicFunction = ({
     __universal: {
       universalIdentifier: logicFunctionEntity.universalIdentifier,
       applicationUniversalIdentifier,
-      toolInputSchema: logicFunctionEntity.toolInputSchema,
-      cronTriggerSettings: logicFunctionEntity.cronTriggerSettings,
-      databaseEventTriggerSettings:
-        logicFunctionEntity.databaseEventTriggerSettings,
-      httpRouteTriggerSettings: logicFunctionEntity.httpRouteTriggerSettings,
     },
   };
 };

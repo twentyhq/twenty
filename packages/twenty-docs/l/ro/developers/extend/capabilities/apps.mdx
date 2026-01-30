@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Director pentru resurse publice (imagini, fonturi etc.)
   src/
     application.config.ts          # Obligatoriu - configurația principală a aplicației
     default-function.role.ts       # Rolul implicit pentru funcțiile serverless
@@ -162,6 +163,7 @@ Pe scurt:
 * **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
 * **eslint.config.mjs** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
 * **README.md**: Un README scurt în rădăcina aplicației, cu instrucțiuni de bază.
+* **public/**: Un folder pentru stocarea resurselor publice (imagini, fonturi, fișiere statice) care vor fi servite împreună cu aplicația ta. Fișierele plasate aici sunt încărcate în timpul sincronizării și sunt accesibile la rulare.
 * **src/**: Locul principal unde vă definiți aplicația sub formă de cod:
   * `application.config.ts`: Configurație globală pentru aplicație (metadate și conectare la runtime). Vezi "Configurația aplicației" mai jos.
   * `*.role.ts`: Definiții de rol folosite de funcțiile dvs. de logică. Vezi "Rol implicit pentru funcții" mai jos.

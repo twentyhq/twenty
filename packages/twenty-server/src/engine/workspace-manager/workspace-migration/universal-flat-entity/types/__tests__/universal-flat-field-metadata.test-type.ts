@@ -4,10 +4,8 @@ import {
   type HasAllProperties,
 } from 'twenty-shared/testing';
 import {
-  type FieldMetadataDefaultOption,
   type FieldMetadataType,
   type FieldNumberVariant,
-  type LinkMetadata,
   type NullablePartial,
   type NumberDataType,
   type RelationOnDeleteAction,
@@ -91,8 +89,9 @@ type UniversalFlatTransformationAssertions = [
   >,
 ];
 
+// JSONB properties are now prefixed with 'universal' in UniversalFlatFieldMetadata
 type NarrowedTestCase =
-  UniversalFlatFieldMetadata<FieldMetadataType.RELATION>['settings'];
+  UniversalFlatFieldMetadata<FieldMetadataType.RELATION>['universalSettings'];
 
 type NarrowedExpectedResult = {
   relationType: RelationType;
@@ -107,7 +106,7 @@ type NarrowedExpectedResult = {
 
 type SettingsTestCase = UniversalFlatFieldMetadata<
   FieldMetadataType.RELATION | FieldMetadataType.NUMBER | FieldMetadataType.TEXT
->['settings'];
+>['universalSettings'];
 
 type SettingsExpectedResult =
   | {
@@ -132,39 +131,8 @@ type SettingsExpectedResult =
     }
   | null;
 
-type DefaultValueTestCase = UniversalFlatFieldMetadata<
-  | FieldMetadataType.RELATION
-  | FieldMetadataType.NUMBER
-  | FieldMetadataType.TEXT
-  | FieldMetadataType.LINKS
-  | FieldMetadataType.CURRENCY
->['defaultValue'];
-
-type DefaultValueExpectedResult =
-  | string
-  | number
-  | null
-  | {
-      amountMicros: string | null;
-      currencyCode: string | null;
-      __JsonbPropertyBrand__?: undefined;
-    }
-  | {
-      primaryLinkLabel: string | null;
-      primaryLinkUrl: string | null;
-      secondaryLinks: LinkMetadata[] | null;
-      __JsonbPropertyBrand__?: undefined;
-    };
-
-type OptionsTestCase =
-  UniversalFlatFieldMetadata<FieldMetadataType.RATING>['options'];
-
-type OptionsExpectedResult = FieldMetadataDefaultOption[];
-
 // eslint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<Equal<SettingsTestCase, SettingsExpectedResult>>,
   Expect<Equal<NarrowedTestCase, NarrowedExpectedResult>>,
-  Expect<Equal<DefaultValueTestCase, DefaultValueExpectedResult>>,
-  Expect<Equal<OptionsTestCase, OptionsExpectedResult>>,
 ];

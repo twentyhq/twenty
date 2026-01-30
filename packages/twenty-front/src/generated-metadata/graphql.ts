@@ -1145,12 +1145,10 @@ export type CreateWorkflowVersionEdgeInput = {
 };
 
 export type CreateWorkflowVersionStepInput = {
+  /** Default settings for the step */
+  defaultSettings?: InputMaybe<Scalars['JSON']>;
   /** Step ID */
   id?: InputMaybe<Scalars['String']>;
-  /** Logic function ID */
-  logicFunctionId?: InputMaybe<Scalars['UUID']>;
-  /** Step name */
-  name?: InputMaybe<Scalars['String']>;
   /** Next step ID */
   nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
@@ -1415,6 +1413,7 @@ export enum FeatureFlagKey {
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_NAVIGATION_MENU_ITEM_ENABLED = 'IS_NAVIGATION_MENU_ITEM_ENABLED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
+  IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED = 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
   IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
   IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED = 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED',
   IS_SSE_DB_EVENTS_ENABLED = 'IS_SSE_DB_EVENTS_ENABLED',
@@ -1559,7 +1558,6 @@ export enum FileFolder {
   ProfilePicture = 'ProfilePicture',
   PublicAsset = 'PublicAsset',
   Source = 'Source',
-  TemporaryFilesField = 'TemporaryFilesField',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -3349,6 +3347,7 @@ export type PageInfo = {
 export type PageLayout = {
   __typename?: 'PageLayout';
   createdAt: Scalars['DateTime'];
+  defaultTabToFocusOnMobileAndSidePanelId?: Maybe<Scalars['UUID']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   name: Scalars['String'];
@@ -3362,13 +3361,21 @@ export type PageLayoutTab = {
   __typename?: 'PageLayoutTab';
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+  icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  layoutMode?: Maybe<PageLayoutTabLayoutMode>;
   pageLayoutId: Scalars['UUID'];
   position: Scalars['Float'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   widgets?: Maybe<Array<PageLayoutWidget>>;
 };
+
+export enum PageLayoutTabLayoutMode {
+  CANVAS = 'CANVAS',
+  GRID = 'GRID',
+  VERTICAL_LIST = 'VERTICAL_LIST'
+}
 
 export enum PageLayoutType {
   DASHBOARD = 'DASHBOARD',
@@ -3378,6 +3385,7 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
+  conditionalDisplay?: Maybe<Scalars['JSON']>;
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;

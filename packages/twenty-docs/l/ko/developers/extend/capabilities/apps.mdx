@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # 공개 자산 폴더(이미지, 폰트 등)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # 필수 - 기본 애플리케이션 구성
+    default-function.role.ts       # 서버리스 함수의 기본 역할
+    hello-world.function.ts        # 서버리스 함수 예제
+    hello-world.front-component.tsx # 프런트 컴포넌트 예제
+    // 사용자 엔터티 (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### 설정보다 관례
@@ -162,6 +163,7 @@ src/
 * **.nvmrc**: 프로젝트에서 예상하는 Node.js 버전을 고정합니다.
 * **eslint.config.mjs** 및 **tsconfig.json**: 앱의 TypeScript 소스에 대한 린팅 및 TypeScript 구성을 제공합니다.
 * **README.md**: 앱 루트에 기본 안내를 담은 간단한 README입니다.
+* **public/**: 애플리케이션과 함께 제공되는 공개 자산(이미지, 폰트, 정적 파일)을 저장하는 폴더입니다. 여기에 배치된 파일은 동기화 시 업로드되며 런타임에 액세스할 수 있습니다.
 * **src/**: 애플리케이션을 코드로 정의하는 주요 위치:
   * `application.config.ts`: 앱의 전역 구성(메타데이터 및 런타임 연결)입니다. 아래의 "Application config"를 참조하세요.
   * `*.role.ts`: 로직 함수에서 사용하는 역할 정의. 아래의 "Default function role"을 참조하세요.

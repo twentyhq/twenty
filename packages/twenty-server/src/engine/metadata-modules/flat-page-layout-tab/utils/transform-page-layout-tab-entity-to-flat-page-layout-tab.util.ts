@@ -46,6 +46,8 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = ({
     universalIdentifier: pageLayoutTabEntity.universalIdentifier,
     applicationId: pageLayoutTabEntity.applicationId,
     widgetIds: pageLayoutTabEntity.widgets.map((widget) => widget.id),
+    icon: pageLayoutTabEntity.icon,
+    layoutMode: pageLayoutTabEntity.layoutMode,
     __universal: {
       universalIdentifier: pageLayoutTabEntity.universalIdentifier,
       applicationUniversalIdentifier,

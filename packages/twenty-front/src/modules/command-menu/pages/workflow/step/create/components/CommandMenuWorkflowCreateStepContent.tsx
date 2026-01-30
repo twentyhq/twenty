@@ -74,8 +74,7 @@ export const CommandMenuWorkflowCreateStepContent = () => {
       nextStepId,
       position,
       connectionOptions,
-      logicFunctionId: selection.logicFunctionId,
-      name: selection.name,
+      defaultSettings: selection.defaultSettings,
     });
 
     if (!isDefined(createdStep)) {

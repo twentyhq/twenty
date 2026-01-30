@@ -258,11 +258,6 @@ msgstr "{formattedCreatedRecordsProgress} από {formattedRecordsToImportCount}
 msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
 msgstr "{grantedBy, plural, one {Granted για {grantedBy} αντικείμενο} other {Granted για {grantedBy} αντικείμενα}}"
 
-#. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "{graphTypeLabel} Chart"
-msgstr "Διάγραμμα {graphTypeLabel}"
-
 #. js-lingui-id: LB2Hw6
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "{headersCount} headers received"
@@ -835,7 +830,7 @@ msgid "Add folder"
 msgstr "Προσθήκη φακέλου"
 
 #. js-lingui-id: 7XzAKI
-#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Add inputs to your form"
 msgstr "Προσθέστε εισόδους στη φόρμα σας"
 
@@ -1599,6 +1594,11 @@ msgstr "Apple"
 msgid "Applicability"
 msgstr "Εφαρμογή"
 
+#. js-lingui-id: IrC12v
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Application"
+msgstr ""
+
 #. js-lingui-id: bw50Pz
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
 msgid "application detail page"
@@ -1621,6 +1621,7 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectAction.tsx
 msgid "Applications"
 msgstr "Εφαρμογές"
 
@@ -2226,11 +2227,13 @@ msgstr "Δεν μπορείτε να σαρώσετε; Αντιγράψτε το
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel"
 msgstr "Ακύρωση"
 
 #. js-lingui-id: HYLdMN
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Cancel Edition"
 msgstr "Ακύρωση Έκδοσης"
@@ -2478,7 +2481,7 @@ msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Καθαρίστε το πεδίο ή \"X\" για να επιστρέψετε στην προεπιλεγμένη τιμή του περιβάλλοντος."
 
 #. js-lingui-id: HevGC0
-#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Click on \"Add Field\" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page."
 msgstr "Κάντε κλικ στο \"Προσθήκη πεδίου\" παρακάτω για να προσθέσετε την πρώτη είσοδο στη φόρμα σας. Η φόρμα θα εμφανιστεί στην οθόνη του χρήστη όταν η ροή εργασιών ξεκινήσει από μια χειροκίνητη έναρξη. Για άλλους τύπους έναρξης, θα εμφανίζεται στη σελίδα αρχείου εκτέλεσης της ροής εργασιών."
 
@@ -2538,13 +2541,13 @@ msgid "Close command menu"
 msgstr "Κλείσιμο μενού εντολών"
 
 #. js-lingui-id: EWPtMO
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 msgid "Code"
 msgstr "Κώδικας"
 
 #. js-lingui-id: /8PmQ9
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Code Editor"
 msgstr "Επεξεργαστής Κώδικα"
 
@@ -4344,9 +4347,19 @@ msgstr "Επεξεργασία γραφήματος"
 msgid "Edit iFrame"
 msgstr "Επεξεργασία iFrame"
 
+#. js-lingui-id: NZubw3
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Edit Layout"
+msgstr ""
+
 #. js-lingui-id: IaSCqp
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Edit own profile information"
+msgstr ""
+
+#. js-lingui-id: ZgKSmd
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Edit Page Layout"
 msgstr ""
 
 #. js-lingui-id: h2KoTu
@@ -4791,7 +4804,7 @@ msgid "Enter user ID or email address"
 msgstr "Εισάγετε το αναγνωριστικό χρήστη ή τη διεύθυνση e-mail"
 
 #. js-lingui-id: pubQie
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunctionFields.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput.tsx
@@ -5147,7 +5160,7 @@ msgid "Expand folder"
 msgstr "Ανάπτυξη φακέλου"
 
 #. js-lingui-id: Y7w75u
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowLogicFunctionCodeEditor.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor.tsx
 msgid "Expand to Full Screen"
 msgstr "Επέκταση σε Πλήρη Οθόνη"
 
@@ -5816,7 +5829,7 @@ msgid "General - Settings"
 msgstr "Γενικά - Ρυθμίσεις"
 
 #. js-lingui-id: CjKOAP
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Generate Function Output"
 msgstr "Δημιουργία εξόδου λειτουργίας"
 
@@ -7219,7 +7232,7 @@ msgstr "Αποσύνδεση"
 
 #. js-lingui-id: w/bY7R
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Logs"
@@ -8168,6 +8181,11 @@ msgstr "Δεν βρέθηκαν φάκελοι για αυτόν το λογαρ
 #. js-lingui-id: gIrKyO
 #: src/pages/settings/ai/components/SettingsAgentLogsTab.tsx
 msgid "No input"
+msgstr ""
+
+#. js-lingui-id: LVdJ+2
+#: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+msgid "No input fields for this action"
 msgstr ""
 
 #. js-lingui-id: lj3GoP
@@ -9859,7 +9877,7 @@ msgid "Restore Records"
 msgstr "Επαναφορά εγγραφών"
 
 #. js-lingui-id: RD6AE9
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Result"
 msgstr "Αποτέλεσμα"
 
@@ -10039,6 +10057,7 @@ msgstr "Σάββατο"
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Save"
 msgstr "Αποθήκευση"
@@ -10052,6 +10071,11 @@ msgstr "Αποθήκευση ως νέα προβολή"
 #: src/modules/action-menu/actions/record-actions/constants/DashboardActionsConfig.tsx
 msgid "Save Dashboard"
 msgstr "Αποθήκευση πίνακα ελέγχου"
+
+#. js-lingui-id: BZVCCj
+#: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
+msgid "Save Page Layout"
+msgstr ""
 
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -11484,8 +11508,8 @@ msgstr "Όροι Υπηρεσίας"
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 msgid "Test"
@@ -12341,7 +12365,7 @@ msgstr "Χωρίς τίτλο ρόλος"
 
 #. js-lingui-id: p1M9l4
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 msgid "Untitled Workflow"
 msgstr "Άτιτλη Εργασία"
 
@@ -13158,6 +13182,11 @@ msgstr "Δεν επιτρέπεται να δημιουργείτε εγγραφ
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "You can either create a private app or share it to others"
 msgstr "Μπορείτε είτε να δημιουργήσετε μια ιδιωτική εφαρμογή είτε να τη μοιραστείτε με άλλους"
+
+#. js-lingui-id: CNAoaw
+#: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+msgid "You can see the function logic in your application settings."
+msgstr ""
 
 #. js-lingui-id: OLE3Ky
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx

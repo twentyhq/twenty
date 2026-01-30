@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Genel varlıklar klasörü (görseller, yazı tipleri vb.)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Gerekli - ana uygulama yapılandırması
+    default-function.role.ts       # Sunucusuz işlevler için varsayılan rol
+    hello-world.function.ts        # Örnek sunucusuz işlev
+    hello-world.front-component.tsx # Örnek ön uç bileşeni
+    // varlıklarınız (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Sözleşme-öncelikli yapılandırma
@@ -162,6 +163,7 @@ Genel hatlarıyla:
 * **.nvmrc**: Projenin beklediği Node.js sürümünü sabitler.
 * **eslint.config.mjs** ve **tsconfig.json**: Uygulamanızın TypeScript kaynakları için linting ve TypeScript yapılandırması sağlar.
 * **README.md**: Uygulama kökünde temel talimatların yer aldığı kısa bir README.
+* **public/**: Uygulamanızla birlikte sunulacak genel varlıkları (görseller, yazı tipleri, statik dosyalar) depolamak için bir klasör. Buraya yerleştirilen dosyalar senkronizasyon sırasında yüklenir ve çalışma zamanında erişilebilir olur.
 * **src/**: Uygulamanızı kod olarak tanımladığınız ana yer:
   * `application.config.ts`: Uygulamanız için genel yapılandırma (meta veriler ve çalışma zamanı bağlantıları). Aşağıda "Uygulama yapılandırması"na bakın.
   * `*.role.ts`: Mantık fonksiyonlarınız tarafından kullanılan rol tanımları. Aşağıda "Varsayılan fonksiyon rolü"ne bakın.

@@ -3,12 +3,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -111,6 +113,15 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         {
           provide: WorkspaceCacheService,
           useValue: workspaceCacheService,
+        },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: {
+            flushFlatEntityMaps: jest.fn(),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest
+              .fn()
+              .mockResolvedValue(createEmptyAllFlatEntityMaps()),
+          },
         },
       ],
     }).compile();
