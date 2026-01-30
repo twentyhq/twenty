@@ -5,9 +5,9 @@ import { type Repository } from 'typeorm';
 
 import { type ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import {
-  type AllCommands,
-  UpgradeCommandRunner,
-  type VersionCommands,
+    type AllCommands,
+    UpgradeCommandRunner,
+    type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { BackfillPageLayoutUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-backfill-page-layout-universal-identifiers.command';
 import { CleanEmptyStringNullInTextFieldsCommand } from 'src/database/commands/upgrade-version-command/1-13/1-13-clean-empty-string-null-in-text-fields.command';
@@ -24,6 +24,7 @@ import { FixNanPositionValuesInNotesCommand } from 'src/database/commands/upgrad
 import { MigratePageLayoutWidgetConfigurationCommand } from 'src/database/commands/upgrade-version-command/1-15/1-15-migrate-page-layout-widget-configuration.command';
 import { BackfillOpportunityOwnerFieldCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-opportunity-owner-field.command';
 import { BackfillStandardPageLayoutsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-backfill-standard-page-layouts.command';
+import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-delete-all-files.command';
 import { FlushV2CacheAndIncrementMetadataVersionCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-flush-v2-cache-and-increment-metadata-version.command';
 import { IdentifyAgentMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-agent-metadata.command';
 import { IdentifyFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/1-16/1-16-identify-field-metadata.command';
@@ -112,6 +113,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly identifyRemainingEntitiesMetadataCommand: IdentifyRemainingEntitiesMetadataCommand,
     protected readonly makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly flushV2CacheAndIncrementMetadataVersionCommand: FlushV2CacheAndIncrementMetadataVersionCommand,
+    protected readonly deleteFileRecordsCommand: DeleteFileRecordsCommand,
 
     // 1.17 Commands
     protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
@@ -185,6 +187,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         .makeRemainingEntitiesUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this.flushV2CacheAndIncrementMetadataVersionCommand,
       this.updateTaskOnDeleteActionCommand,
+      this.deleteFileRecordsCommand,
     ];
 
     const commands_1170: VersionCommands = [
@@ -192,6 +195,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyWebhookMetadataCommand,
       this
         .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
+      this.deleteFileRecordsCommand,
     ];
 
     this.allCommands = {
