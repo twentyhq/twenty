@@ -10,6 +10,7 @@ export type WorkspaceMigrationActionType =
   | BaseUpdateWorkspaceMigrationAction<AllMetadataName>['type']
   | BaseDeleteWorkspaceMigrationAction<AllMetadataName>['type'];
 
+// Universal action types (use universal identifiers)
 export type MetadataUniversalWorkspaceMigrationActionsRecord<
   T extends AllMetadataName,
 > = {
@@ -23,3 +24,8 @@ export type MetadataUniversalWorkspaceMigrationAction<
   TMetadataName extends AllMetadataName,
   TActionType extends WorkspaceMigrationActionType,
 > = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType];
+
+export type MetadataFlatWorkspaceMigrationAction<
+  TMetadataName extends AllMetadataName,
+  TActionType extends WorkspaceMigrationActionType,
+> = AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions'][TActionType];
