@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
-import { DeleteNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FlatDeleteNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteNavigationMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -17,15 +16,9 @@ export class DeleteNavigationMenuItemActionHandlerService extends WorkspaceMigra
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteNavigationMenuItemAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteNavigationMenuItemAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
-    const { universalIdentifier } = action;
-
-    const flatNavigationMenuItem = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
-      universalIdentifier,
-    });
+    const { flatAction, queryRunner, workspaceId } = context;
 
     const navigationMenuItemRepository =
       queryRunner.manager.getRepository<NavigationMenuItemEntity>(
@@ -33,13 +26,13 @@ export class DeleteNavigationMenuItemActionHandlerService extends WorkspaceMigra
       );
 
     await navigationMenuItemRepository.delete({
-      id: flatNavigationMenuItem.id,
+      id: flatAction.entityId,
       workspaceId,
     });
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<DeleteNavigationMenuItemAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatDeleteNavigationMenuItemAction>,
   ): Promise<void> {
     return;
   }
