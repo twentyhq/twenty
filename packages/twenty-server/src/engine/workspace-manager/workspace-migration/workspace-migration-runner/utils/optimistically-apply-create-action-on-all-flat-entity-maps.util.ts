@@ -5,24 +5,26 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
+import { type FlatCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { type FlatCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 
-type CreateAction<TMetadataName extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[TMetadataName]['actions']['create'];
+type FlatCreateAction<TMetadataName extends AllMetadataName> =
+  AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['create'];
 
 export type OptimisticallyApplyCreateActionOnAllFlatEntityMapsArgs<
   TMetadataName extends AllMetadataName,
 > = {
-  action: CreateAction<TMetadataName>;
+  flatAction: FlatCreateAction<TMetadataName>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
 export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
   TMetadataName extends AllMetadataName,
 >({
-  action,
+  flatAction,
   allFlatEntityMaps,
 }: OptimisticallyApplyCreateActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
-  switch (action.metadataName) {
+  switch (flatAction.metadataName) {
     case 'view':
     case 'viewField':
     case 'viewGroup':
@@ -40,21 +42,51 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
     case 'pageLayoutWidget':
     case 'pageLayoutTab':
     case 'commandMenuItem':
-    case 'fieldMetadata':
-    case 'objectMetadata':
     case 'frontComponent':
     case 'webhook': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        flatEntity: action.flatEntity,
+        flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-        metadataName: action.metadataName,
+        metadataName: flatAction.metadataName,
       });
+
+      return allFlatEntityMaps;
+    }
+    case 'fieldMetadata': {
+      const fieldAction = flatAction as unknown as FlatCreateFieldAction;
+
+      for (const flatFieldMetadata of fieldAction.flatFieldMetadatas) {
+        addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+          flatEntity: flatFieldMetadata,
+          flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+          metadataName: 'fieldMetadata',
+        });
+      }
+
+      return allFlatEntityMaps;
+    }
+    case 'objectMetadata': {
+      const objectAction = flatAction as unknown as FlatCreateObjectAction;
+
+      addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+        flatEntity: objectAction.flatEntity,
+        flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+        metadataName: 'objectMetadata',
+      });
+
+      for (const flatFieldMetadata of objectAction.flatFieldMetadatas) {
+        addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+          flatEntity: flatFieldMetadata,
+          flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+          metadataName: 'fieldMetadata',
+        });
+      }
 
       return allFlatEntityMaps;
     }
     case 'navigationMenuItem': {
       addFlatNavigationMenuItemToMapsAndUpdateIndex({
-        flatNavigationMenuItem: action.flatEntity,
+        flatNavigationMenuItem: flatAction.flatEntity,
         flatNavigationMenuItemMaps:
           allFlatEntityMaps.flatNavigationMenuItemMaps,
       });
@@ -62,7 +94,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
       return allFlatEntityMaps;
     }
     default: {
-      assertUnreachable(action);
+      assertUnreachable(flatAction);
     }
   }
 };

@@ -14,7 +14,7 @@ import { CreateObjectAction } from 'src/engine/workspace-manager/workspace-migra
 import { TranspileActionUniversalToFlat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/transpile-action-to-flat.type';
 import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
 import { fromUniversalFlatObjectMetadataToNakedObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/utils/from-universal-flat-object-metadata-to-naked-object-metadata.util';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext, type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -90,7 +90,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateObjectAction>,
   ): Promise<void> {
     const { action, queryRunner, flatAction } = context;
     const {
@@ -114,7 +114,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateObjectAction>,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
     const {
