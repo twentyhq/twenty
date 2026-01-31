@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AgentChatProvider } from '@/ai/components/AgentChatProvider';
 import { COMMAND_MENU_COMPONENT_INSTANCE_ID } from '@/command-menu/constants/CommandMenuComponentInstanceId';
@@ -7,8 +8,20 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
+
+const StyledCommandMenuContainer = styled.div<{ isMobile: boolean }>`
+  max-height: ${({ theme, isMobile }) => {
+    const mobileOffset = isMobile ? theme.spacing(16) : '0px';
+
+    return `calc(100% - ${mobileOffset})`;
+  }};
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
 
 type CommandMenuContainerProps = {
   children: React.ReactNode;
@@ -21,6 +34,7 @@ export const CommandMenuContainer = ({
     contextStoreCurrentObjectMetadataItemIdComponentState,
     COMMAND_MENU_COMPONENT_INSTANCE_ID,
   );
+  const isMobile = useIsMobile();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -46,7 +60,11 @@ export const CommandMenuContainer = ({
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <AgentChatProvider>{children}</AgentChatProvider>
+          <AgentChatProvider>
+            <StyledCommandMenuContainer isMobile={isMobile}>
+              {children}
+            </StyledCommandMenuContainer>
+          </AgentChatProvider>
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </RecordComponentInstanceContextsWrapper>
