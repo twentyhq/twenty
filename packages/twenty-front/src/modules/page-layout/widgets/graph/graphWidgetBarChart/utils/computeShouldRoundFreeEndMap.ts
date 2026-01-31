@@ -1,25 +1,19 @@
-import { type BarDatum } from '@nivo/bar';
 import { isNumber } from '@sniptt/guards';
 
-type ComputeShouldRoundFreeEndMapParams = {
-  data: BarDatum[];
-  orderedKeys: string[];
-  indexBy: string;
-  groupMode?: 'grouped' | 'stacked';
-};
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 
 export const computeShouldRoundFreeEndMap = ({
   data,
-  orderedKeys,
+  keys,
   indexBy,
   groupMode,
-}: ComputeShouldRoundFreeEndMapParams): Map<string, boolean> | null => {
-  if (
-    groupMode !== 'stacked' ||
-    !orderedKeys?.length ||
-    !data?.length ||
-    !indexBy
-  ) {
+}: {
+  data: BarChartDatum[];
+  keys: string[];
+  indexBy: string;
+  groupMode?: 'grouped' | 'stacked';
+}): Map<string, boolean> | null => {
+  if (groupMode !== 'stacked' || !keys?.length || !data?.length || !indexBy) {
     return null;
   }
 
@@ -28,8 +22,8 @@ export const computeShouldRoundFreeEndMap = ({
   for (const dataPoint of data) {
     const indexValue = dataPoint[indexBy];
 
-    for (let seriesIndex = 0; seriesIndex < orderedKeys.length; seriesIndex++) {
-      const key = orderedKeys[seriesIndex];
+    for (let seriesIndex = 0; seriesIndex < keys.length; seriesIndex++) {
+      const key = keys[seriesIndex];
       const value = dataPoint[key];
 
       if (!isNumber(value) || value === 0) {
@@ -38,7 +32,7 @@ export const computeShouldRoundFreeEndMap = ({
 
       const isNegative = value < 0;
 
-      const keysAfterCurrent = orderedKeys.slice(seriesIndex + 1);
+      const keysAfterCurrent = keys.slice(seriesIndex + 1);
       const hasSameSignBarAfter = keysAfterCurrent.some((afterKey) => {
         const afterValue = dataPoint[afterKey];
         return (

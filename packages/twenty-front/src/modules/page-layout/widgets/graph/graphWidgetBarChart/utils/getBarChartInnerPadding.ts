@@ -1,4 +1,5 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { computeBandScale } from '@/page-layout/widgets/graph/chart-core/utils/computeBandScale';
 import { BarChartLayout } from '~/generated/graphql';
 
 type BarChartMargins = {
@@ -40,9 +41,12 @@ export const getBarChartInnerPadding = ({
       ? chartWidth - margins.left - margins.right
       : chartHeight - margins.top - margins.bottom;
 
-  const spacePerGroup =
-    (availableSpace / dataLength) *
-    (1 - BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO);
+  const { bandwidth: spacePerGroup } = computeBandScale({
+    axisLength: availableSpace,
+    count: dataLength,
+    padding: BAR_CHART_CONSTANTS.OUTER_PADDING_RATIO,
+    outerPaddingPx: BAR_CHART_CONSTANTS.OUTER_PADDING_PX,
+  });
 
   const spacePerBar = spacePerGroup / keysLength;
 

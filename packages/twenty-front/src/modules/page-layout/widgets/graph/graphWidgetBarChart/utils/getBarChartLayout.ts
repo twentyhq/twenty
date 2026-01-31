@@ -1,5 +1,6 @@
 import { COMMON_CHART_CONSTANTS } from '@/page-layout/widgets/graph/constants/CommonChartConstants';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { getBarChartAxisConfigs } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartAxisConfigs';
 import {
   getBarChartTickConfig,
@@ -16,14 +17,13 @@ import {
   type GraphValueFormatOptions,
 } from '@/page-layout/widgets/graph/utils/graphFormatters';
 import { resolveAxisFontSizes } from '@/page-layout/widgets/graph/utils/resolveAxisFontSizes';
-import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
 
 type GetBarChartLayoutParams = {
   axisTheme: ChartAxisTheme;
   chartWidth: number;
   chartHeight: number;
-  data: BarDatum[];
+  data: BarChartDatum[];
   indexBy: string;
   layout: BarChartLayout;
   xAxisLabel?: string;
@@ -79,7 +79,12 @@ const resolveMarginInputs = ({
       ? tickResult.tickValues.map((value) =>
           formatGraphValue(value, formatOptions),
         )
-      : tickConfiguration.categoryTickValues.map((value) => String(value));
+      : tickConfiguration.categoryTickValues.map((value) =>
+          truncateTickLabel(
+            String(value),
+            tickConfiguration.maxLeftAxisTickLabelLength,
+          ),
+        );
 
   return { bottomTickLabels, leftTickLabels };
 };

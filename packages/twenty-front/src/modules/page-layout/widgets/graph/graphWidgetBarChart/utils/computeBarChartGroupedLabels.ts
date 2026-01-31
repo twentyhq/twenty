@@ -1,17 +1,17 @@
 import { type BarChartLabelData } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartLabelData';
-import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
+import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
 
 export const computeBarChartGroupedLabels = (
-  bars: readonly ComputedBarDatum<BarDatum>[],
+  bars: BarPosition[],
 ): BarChartLabelData[] => {
   return bars.map((bar) => {
-    const value = Number(bar.data.value);
+    const value = bar.value;
     const shouldRenderBelow = value < 0;
     const centerX = bar.x + bar.width / 2;
     const centerY = bar.y + bar.height / 2;
 
     return {
-      key: `value-${bar.data.id}-${bar.data.indexValue}`,
+      key: `value-${bar.seriesId}-${bar.indexValue}`,
       value,
       verticalX: centerX,
       verticalY: shouldRenderBelow ? bar.y + bar.height : bar.y,

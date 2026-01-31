@@ -1,6 +1,7 @@
 import { GraphWidgetFloatingTooltip } from '@/page-layout/widgets/graph/components/GraphWidgetFloatingTooltip';
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
 import { graphWidgetBarTooltipComponentState } from '@/page-layout/widgets/graph/graphWidgetBarChart/states/graphWidgetBarTooltipComponentState';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type BarChartEnrichedKey } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartEnrichedKey';
 import { type BarChartSlice } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSlice';
 import { getBarChartTooltipData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getBarChartTooltipData';
@@ -10,8 +11,9 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { type RefObject } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-type GraphBarChartTooltipProps = {
+type BarChartTooltipProps = {
   containerRef: RefObject<HTMLDivElement>;
+  dataByIndexValue: Map<string, BarChartDatum>;
   enrichedKeys: BarChartEnrichedKey[];
   formatOptions: GraphValueFormatOptions;
   onSliceClick?: (slice: BarChartSlice) => void;
@@ -19,14 +21,15 @@ type GraphBarChartTooltipProps = {
   onMouseLeave?: () => void;
 };
 
-export const GraphBarChartTooltip = ({
+export const BarChartTooltip = ({
   containerRef,
+  dataByIndexValue,
   enrichedKeys,
   formatOptions,
   onSliceClick,
   onMouseEnter,
   onMouseLeave,
-}: GraphBarChartTooltipProps) => {
+}: BarChartTooltipProps) => {
   const tooltipState = useRecoilComponentValue(
     graphWidgetBarTooltipComponentState,
   );
@@ -48,6 +51,7 @@ export const GraphBarChartTooltip = ({
     ? null
     : getBarChartTooltipData({
         slice: tooltipState.slice,
+        dataByIndexValue,
         enrichedKeys,
         formatOptions,
       });
