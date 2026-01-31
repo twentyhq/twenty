@@ -157,11 +157,13 @@ export const buildManifest = async (
 
         const { handler: _, ...rest } = extract.config;
 
+        const relativeFilePath = relative(appPath, filePath);
+
         const config: LogicFunctionManifest = {
           ...rest,
           handlerName: 'default.handler',
-          sourceHandlerPath: filePath,
-          builtHandlerPath: filePath.replace(/\.tsx?$/, '.mjs'),
+          sourceHandlerPath: relativeFilePath,
+          builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtHandlerChecksum: null,
         };
 
@@ -179,11 +181,13 @@ export const buildManifest = async (
 
         const { component, ...rest } = extract.config;
 
+        const relativeFilePath = relative(appPath, filePath);
+
         const config: FrontComponentManifest = {
           ...rest,
           componentName: component.name,
-          sourceComponentPath: filePath,
-          builtComponentPath: filePath.replace(/\.tsx?$/, '.mjs'),
+          sourceComponentPath: relativeFilePath,
+          builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: null,
         };
 

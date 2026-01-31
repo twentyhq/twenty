@@ -38,7 +38,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
   ) => {
     return join(
       LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
-      flatLogicFunctionLayer.checksum,
+      flatLogicFunctionLayer.yarnLockChecksum,
     );
   };
 
