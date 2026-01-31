@@ -9,6 +9,8 @@ export type MessageParseResult = {
   error?: Error;
 };
 
+const CHUNK_SIZE = 10; // "Advanced" Safety: Process small batches to avoid OOM
+
 @Injectable()
 export class ImapMessageParserService {
   private readonly logger = new Logger(ImapMessageParserService.name);
@@ -24,7 +26,6 @@ export class ImapMessageParserService {
 
     const lock = await client.getMailboxLock(folderPath);
     const results: MessageParseResult[] = [];
-    const CHUNK_SIZE = 10; // "Advanced" Safety: Process small batches to avoid OOM
 
     try {
       const startTime = Date.now();

@@ -33,11 +33,19 @@ export class ImapIdleService implements OnModuleDestroy {
                 this.logger.debug(`Email deleted in ${accountId} (seq: ${seq})`);
             });
 
-            // Start the IDLE command
-            await client.idle();
             this.activeClients.set(accountId, client);
-
             this.logger.log(`IDLE started for account ${accountId} on ${folderPath}`);
+
+            // Start IDLE in background (non-blocking)
+            // client.idle() resolves only when IDLE finishes, so we don't await it here.
+            client.idle().then(() => {
+                this.logger.log(`IDLE finished for ${accountId}`);
+                this.activeClients.delete(accountId);
+            }).catch(err => {
+                this.logger.error(`IDLE crashed for ${accountId}: ${err.message}`);
+                this.activeClients.delete(accountId);
+            });
+
         } catch (error) {
             this.logger.error(`Failed to start IDLE for ${accountId}: ${error.message}`);
             throw error;
@@ -51,21 +59,27 @@ export class ImapIdleService implements OnModuleDestroy {
         const client = this.activeClients.get(accountId);
         if (!client) return;
 
-        // imapflow handles stopping IDLE when you issue another command, 
-        // but explicit logout/idleStop is good practice.
-        // In imapflow, simply calling another command breaks IDLE, but we want to be clean.
-        // client.idle() returns a promise that resolves when IDLE ends.
-        // We can force it to verify.
-
-        this.activeClients.delete(accountId);
-        this.logger.log(`IDLE stopped for account ${accountId}`);
+        try {
+            await client.logout(); // This terminates IDLE and closes the connection
+        } catch (err) {
+            this.logger.warn(`Error stopping IDLE for ${accountId}: ${err.message}`);
+        } finally {
+            this.activeClients.delete(accountId);
+            this.logger.log(`IDLE stopped for account ${accountId}`);
+        }
     }
 
-    onModuleDestroy() {
+    async onModuleDestroy() {
         // Cleanup all connections on server shutdown
+        this.logger.log(`Cleaning up ${this.activeClients.size} IDLE connections...`);
         for (const [id, client] of this.activeClients) {
-            // client.logout() or close logic would happen here in a real service manager
-            this.logger.log(`Stopping IDLE for ${id} due to shutdown`);
+            try {
+                this.logger.log(`Stopping IDLE for ${id} due to shutdown`);
+                await client.logout();
+            } catch (err) {
+                this.logger.warn(`Failed to logout ${id}: ${err.message}`);
+            }
         }
+        this.activeClients.clear();
     }
 }
