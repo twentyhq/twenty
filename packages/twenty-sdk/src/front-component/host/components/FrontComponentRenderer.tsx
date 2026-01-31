@@ -3,7 +3,7 @@ import {
   RemoteRootRenderer,
 } from '@remote-dom/react/host';
 import React, { useState } from 'react';
-import { isDefined } from '../../../utils/validation/isDefined';
+import { isDefined } from 'twenty-shared/utils';
 import { FrontComponentWorkerEffect } from '../../remote/components/FrontComponentWorkerEffect';
 import { componentRegistry } from '../generated/host-component-registry';
 

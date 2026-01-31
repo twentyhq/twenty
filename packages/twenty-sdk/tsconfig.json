@@ -25,5 +25,11 @@
     "vite.config.ts",
     "scripts/generateBarrels.ts",
     "jest.config.mjs"
+  ],
+  "exclude": [
+    "src/front-component/remote/mock/**/*",
+    "src/front-component/host/generated/host-component-registry.ts",
+    "src/front-component/remote/generated/remote-components.ts",
+    "src/front-component/remote/generated/remote-elements.ts"
   ]
 }

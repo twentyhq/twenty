@@ -345,10 +345,11 @@ const HtmlHrWrapper = ({
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('hr', filterProps(props), children);
 };
-export const componentRegistry = new Map<
-  string,
-  ReturnType<typeof createRemoteComponentRenderer>
->([
+type ComponentRegistryValue =
+  | ReturnType<typeof createRemoteComponentRenderer>
+  | typeof RemoteFragmentRenderer;
+
+export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
   ['html-div', createRemoteComponentRenderer(HtmlDivWrapper)],
   ['html-span', createRemoteComponentRenderer(HtmlSpanWrapper)],
   ['html-section', createRemoteComponentRenderer(HtmlSectionWrapper)],

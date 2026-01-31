@@ -79,7 +79,11 @@ const generateRegistryMap = (components: ComponentSchema[]): string => {
     )
     .join('\n');
 
-  return `export const componentRegistry = new Map<string, ReturnType<typeof createRemoteComponentRenderer>>([
+  return `type ComponentRegistryValue =
+  | ReturnType<typeof createRemoteComponentRenderer>
+  | typeof RemoteFragmentRenderer;
+
+export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
 ${entries}
   ['${CUSTOM_ELEMENT_NAMES.FRAGMENT}', RemoteFragmentRenderer],
 ]);`;
