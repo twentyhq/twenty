@@ -75,7 +75,7 @@ export class LogicFunctionLayerService {
       fileFolder: FileFolder.Source,
       applicationUniversalIdentifier,
       workspaceId,
-      resourcePath: '',
+      resourcePath: 'package.json',
       settings: { isTemporaryFile: false, toDelete: false },
     });
 
@@ -85,7 +85,7 @@ export class LogicFunctionLayerService {
       fileFolder: FileFolder.Source,
       applicationUniversalIdentifier,
       workspaceId,
-      resourcePath: '',
+      resourcePath: 'yarn.lock',
       settings: { isTemporaryFile: false, toDelete: false },
     });
 
