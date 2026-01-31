@@ -109,7 +109,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        universalFlatFieldMetadata: selectField,
+        flatFieldMetadata: selectField,
         tableName: 'contacts',
         operation: EnumOperation.CREATE,
       });
@@ -147,7 +147,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        universalFlatFieldMetadata: multiSelectField,
+        flatFieldMetadata: multiSelectField,
         tableName: 'tasks',
         operation: EnumOperation.CREATE,
       });
@@ -169,7 +169,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        universalFlatFieldMetadata: selectField,
+        flatFieldMetadata: selectField,
         tableName: 'contacts',
         operation: EnumOperation.RENAME,
         options: { newFieldName: 'newStatus' },
@@ -194,7 +194,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        universalFlatFieldMetadata: addressField,
+        flatFieldMetadata: addressField,
         tableName: 'contacts',
         operation: EnumOperation.CREATE,
       });
@@ -212,7 +212,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        universalFlatFieldMetadata: relationField,
+        flatFieldMetadata: relationField,
         tableName: 'contacts',
         operation: EnumOperation.CREATE,
       });
@@ -232,7 +232,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        universalFlatFieldMetadata: textField,
+        flatFieldMetadata: textField,
         tableName: 'contacts',
         operation: EnumOperation.CREATE,
       });

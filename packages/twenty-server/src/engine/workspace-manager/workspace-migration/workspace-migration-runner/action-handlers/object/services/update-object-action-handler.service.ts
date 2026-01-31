@@ -5,17 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findManyFlatEntityByUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifiers-or-throw.util';
-import {
-  isCompositeUniversalFlatFieldMetadata
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
-import {
-  isEnumUniversalFlatFieldMetadata
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FlatUpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -82,12 +78,12 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     });
 
     if (isDefined(nameSingularUpdate)) {
-      const updatedObjectMetadata: UniversalFlatObjectMetadata = {
+      const updatedFlatObjectMetadata: FlatObjectMetadata = {
         ...flatObjectMetadata,
         nameSingular: nameSingularUpdate.to,
       };
 
-      const newTableName = computeObjectTargetTable(updatedObjectMetadata);
+      const newTableName = computeObjectTargetTable(updatedFlatObjectMetadata);
 
       if (currentTableName !== newTableName) {
         await this.workspaceSchemaManagerService.tableManager.renameTable({
@@ -98,20 +94,20 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         });
 
         const objectFlatFieldMetadatas =
-          findManyFlatEntityByUniversalIdentifiersOrThrow({
+          findManyFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityMaps: flatFieldMetadataMaps,
-            universalIdentifiers:
-              updatedObjectMetadata.fieldUniversalIdentifiers,
+            flatEntityIds: updatedFlatObjectMetadata.fieldIds,
           });
+
         const enumOrCompositeFlatFieldMetadatas =
           objectFlatFieldMetadatas.filter(
-            (flatField) =>
-              isEnumUniversalFlatFieldMetadata(flatField) ||
-              isCompositeUniversalFlatFieldMetadata(flatField),
+            (flatFieldMetadata) =>
+              isEnumFlatFieldMetadata(flatFieldMetadata) ||
+              isCompositeFlatFieldMetadata(flatFieldMetadata),
           );
 
         const enumOperations = collectEnumOperationsForObject({
-          universalFlatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
+          flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
           tableName: currentTableName,
           operation: EnumOperation.RENAME,
           options: {

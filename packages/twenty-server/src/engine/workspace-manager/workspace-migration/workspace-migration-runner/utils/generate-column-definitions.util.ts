@@ -8,12 +8,11 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
@@ -25,18 +24,18 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 
 export const generateCompositeColumnDefinition = ({
   compositeProperty,
-  parentUniversalFieldMetadata,
-  universalFlatObjectMetadata,
+  parentFlatFieldMetadata,
+  flatObjectMetadata,
   workspaceId,
 }: {
   compositeProperty: CompositeProperty;
-  parentUniversalFieldMetadata: UniversalFlatFieldMetadata<CompositeFieldMetadataType>;
-  universalFlatObjectMetadata: UniversalFlatObjectMetadata;
+  parentFlatFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
+  flatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
 }): WorkspaceSchemaColumnDefinition => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
     workspaceId,
-    objectMetadata: universalFlatObjectMetadata,
+    objectMetadata: flatObjectMetadata,
   });
 
   if (
@@ -50,12 +49,12 @@ export const generateCompositeColumnDefinition = ({
   }
 
   const columnName = computeCompositeColumnName(
-    parentUniversalFieldMetadata.name,
+    parentFlatFieldMetadata.name,
     compositeProperty,
   );
   const defaultValue =
     // @ts-expect-error - TODO: fix this
-    parentFieldMetadata.defaultValue?.[compositeProperty.name];
+    parentFlatFieldMetadata.defaultValue?.[compositeProperty.name];
   const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
   const serializedDefaultValue = serializeDefaultValue({
     columnName,
@@ -77,8 +76,8 @@ export const generateCompositeColumnDefinition = ({
         ? `"${schemaName}"."${computePostgresEnumName({ tableName, columnName })}"`
         : columnType,
     isNullable:
-      parentUniversalFieldMetadata.isNullable || !compositeProperty.isRequired,
-    isUnique: parentUniversalFieldMetadata.isUnique ?? false,
+      parentFlatFieldMetadata.isNullable || !compositeProperty.isRequired,
+    isUnique: parentFlatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
     isArray: isArrayFlag,
     isPrimary: false,
@@ -106,18 +105,18 @@ const generateTsVectorColumnDefinition = (
 };
 
 const generateRelationColumnDefinition = (
-  flatFieldMetadata: UniversalFlatFieldMetadata<
+  flatFieldMetadata: FlatFieldMetadata<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >,
 ): WorkspaceSchemaColumnDefinition | null => {
   if (
-    !flatFieldMetadata.universalSettings ||
-    !flatFieldMetadata.universalSettings.joinColumnName
+    !flatFieldMetadata.settings ||
+    !flatFieldMetadata.settings.joinColumnName
   ) {
     return null;
   }
 
-  const joinColumnName = flatFieldMetadata.universalSettings.joinColumnName;
+  const joinColumnName = flatFieldMetadata.settings.joinColumnName;
 
   return {
     name: joinColumnName,
@@ -131,24 +130,24 @@ const generateRelationColumnDefinition = (
 };
 
 const generateColumnDefinition = ({
-  universalFlatFieldMetadata,
+  flatFieldMetadata,
   schemaName,
   tableName,
 }: {
-  universalFlatFieldMetadata: UniversalFlatFieldMetadata;
+  flatFieldMetadata: FlatFieldMetadata;
   tableName: string;
   schemaName: string;
 }): WorkspaceSchemaColumnDefinition => {
-  const columnName = computeColumnName(universalFlatFieldMetadata.name);
+  const columnName = computeColumnName(flatFieldMetadata.name);
   const columnType = fieldMetadataTypeToColumnType(
-    universalFlatFieldMetadata.type,
+    flatFieldMetadata.type,
   ) as ColumnType;
   const serializedDefaultValue = serializeDefaultValue({
     columnName,
     schemaName,
     tableName,
     columnType,
-    defaultValue: universalFlatFieldMetadata.defaultValue,
+    defaultValue: flatFieldMetadata.defaultValue,
   });
 
   return {
@@ -157,65 +156,58 @@ const generateColumnDefinition = ({
       columnType === 'enum'
         ? `"${schemaName}"."${computePostgresEnumName({ tableName, columnName })}"`
         : (columnType as string),
-    isNullable: universalFlatFieldMetadata.isNullable ?? true,
+    isNullable: flatFieldMetadata.isNullable ?? true,
     isArray:
-      universalFlatFieldMetadata.type === FieldMetadataType.ARRAY ||
-      universalFlatFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-    isUnique: universalFlatFieldMetadata.isUnique ?? false,
+      flatFieldMetadata.type === FieldMetadataType.ARRAY ||
+      flatFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+    isUnique: flatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
-    isPrimary: universalFlatFieldMetadata.name === 'id',
+    isPrimary: flatFieldMetadata.name === 'id',
   };
 };
 
 export const generateColumnDefinitions = ({
-  universalFlatFieldMetadata,
-  universalFlatObjectMetadata,
+  flatFieldMetadata,
+  flatObjectMetadata,
   workspaceId,
 }: {
-  universalFlatFieldMetadata: UniversalFlatFieldMetadata;
-  universalFlatObjectMetadata: UniversalFlatObjectMetadata;
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
 }): WorkspaceSchemaColumnDefinition[] => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
     workspaceId,
-    objectMetadata: universalFlatObjectMetadata,
+    objectMetadata: flatObjectMetadata,
   });
 
-  if (isCompositeUniversalFlatFieldMetadata(universalFlatFieldMetadata)) {
-    const compositeType = getCompositeTypeOrThrow(
-      universalFlatFieldMetadata.type,
-    );
+  if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
+    const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
     return compositeType.properties.map((property) =>
       generateCompositeColumnDefinition({
         compositeProperty: property,
-        parentUniversalFieldMetadata: universalFlatFieldMetadata,
-        universalFlatObjectMetadata,
+        parentFlatFieldMetadata: flatFieldMetadata,
+        flatObjectMetadata,
         workspaceId,
       }),
     );
   }
 
   if (
-    isFlatFieldMetadataOfType(
-      universalFlatFieldMetadata,
-      FieldMetadataType.TS_VECTOR,
-    )
+    isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
   ) {
-    return [generateTsVectorColumnDefinition(universalFlatFieldMetadata)];
+    return [generateTsVectorColumnDefinition(flatFieldMetadata)];
   }
 
-  if (isMorphOrRelationUniversalFlatFieldMetadata(universalFlatFieldMetadata)) {
-    const relationColumn = generateRelationColumnDefinition(
-      universalFlatFieldMetadata,
-    );
+  if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+    const relationColumn = generateRelationColumnDefinition(flatFieldMetadata);
 
     return relationColumn ? [relationColumn] : [];
   }
 
   return [
     generateColumnDefinition({
-      universalFlatFieldMetadata,
+      flatFieldMetadata,
       tableName,
       schemaName,
     }),
