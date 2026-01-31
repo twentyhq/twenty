@@ -23,32 +23,10 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
   allFlatEntityMaps,
 }: OptimisticallyApplyCreateActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
   switch (action.metadataName) {
-    case 'fieldMetadata': {
-      action.universalFlatFieldMetadatas.forEach((flatEntity) =>
-        addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-          flatEntity,
-          flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-          metadataName: action.metadataName,
-        }),
-      );
-
-      return allFlatEntityMaps;
-    }
+    // fieldMetadata and objectMetadata are handled by their respective action handlers
+    // since they need to convert UniversalFlatEntity → FlatEntity (with generated IDs) first
+    case 'fieldMetadata':
     case 'objectMetadata': {
-      addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        flatEntity: action.flatEntity,
-        flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-        metadataName: action.metadataName,
-      });
-
-      action.flatFieldMetadatas.forEach((flatField) =>
-        addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-          flatEntity: flatField,
-          flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-          metadataName: 'fieldMetadata',
-        }),
-      );
-
       return allFlatEntityMaps;
     }
     case 'view':
