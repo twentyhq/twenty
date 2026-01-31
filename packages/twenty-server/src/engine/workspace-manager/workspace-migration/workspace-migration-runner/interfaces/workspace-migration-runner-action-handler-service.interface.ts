@@ -23,17 +23,25 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  WorkspaceMigrationActionRunnerContext,
+  type WorkspaceMigrationActionRunnerArgs,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyUpdateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-update-action-on-all-flat-entity-maps.util';
 
+type PrastoinNoName<TAction extends WorkspaceMigrationAction> =
+  IsMetadataRunnerUniversalMigrated<TAction['metadataName']> extends true
+    ? TranspileActionUniversalToFlat<TAction>
+    : TAction;
+
 type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
   TActionType extends WorkspaceMigrationAction,
-> = Pick<
-  WorkspaceMigrationActionRunnerArgs<TActionType>,
-  'allFlatEntityMaps' | 'action'
->;
+> = {
+  action: TActionType;
+  allFlatEntityMaps: AllFlatEntityMaps;
+};
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
@@ -48,11 +56,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   public async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<TAction>,
-  ): Promise<
-    IsMetadataRunnerUniversalMigrated<TAction['metadataName']> extends true
-      ? TranspileActionUniversalToFlat<TAction>
-      : TAction
-  > {
+  ): Promise<PrastoinNoName<TAction>> {
     switch (true) {
       // Actions add custom properties to base actions that custom transpilers ( next when migrated logic function create and index update too)
       case context.action.metadataName === 'objectMetadata' &&
@@ -66,21 +70,17 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       }
     }
 
-    return context.action as IsMetadataRunnerUniversalMigrated<
-      TAction['metadataName']
-    > extends true
-      ? TranspileActionUniversalToFlat<TAction>
-      : TAction;
+    return context.action as PrastoinNoName<TAction>;
   }
 
   executeForMetadata(
-    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
+    _context: WorkspaceMigrationActionRunnerContext<TAction>,
   ): Promise<void> {
     return Promise.resolve();
   }
 
   executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
+    _context: WorkspaceMigrationActionRunnerContext<TAction>,
   ): Promise<void> {
     return Promise.resolve();
   }
@@ -139,7 +139,8 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       }),
       this.asyncMethodPerformanceMetricWrapper({
         label: 'executeForWorkspaceSchema',
-        method: async () => this.executeForWorkspaceSchema(context),
+        method: async () =>
+          this.executeForWorkspaceSchema({ ...context, flatAction }),
       }),
     ]);
 
@@ -161,7 +162,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
     const partialOptimisticCache =
       this.optimisticallyApplyActionOnAllFlatEntityMaps({
-        action: context.action,
+        action: context.action, // Not sure about that this should get the flat action hein
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
 

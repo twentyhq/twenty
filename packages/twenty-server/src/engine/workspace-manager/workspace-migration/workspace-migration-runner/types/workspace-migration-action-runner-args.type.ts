@@ -11,10 +11,15 @@ export type WorkspaceMigrationActionRunnerArgs<
 > = {
   queryRunner: QueryRunner;
   action: T;
-  flatAction: IsMetadataRunnerUniversalMigrated<T['metadataName']> extends true
-    ? TranspileActionUniversalToFlat<T>
-    : T;
   allFlatEntityMaps: AllFlatEntityMaps;
   workspaceId: string;
   flatApplication: FlatApplication;
+};
+
+export type WorkspaceMigrationActionRunnerContext<
+  T extends WorkspaceMigrationAction,
+> = WorkspaceMigrationActionRunnerArgs<T> & {
+  flatAction: IsMetadataRunnerUniversalMigrated<T['metadataName']> extends true
+    ? TranspileActionUniversalToFlat<T>
+    : T;
 };
