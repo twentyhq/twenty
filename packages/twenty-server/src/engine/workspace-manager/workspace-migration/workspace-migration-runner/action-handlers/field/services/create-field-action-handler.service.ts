@@ -13,6 +13,7 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { type TranspileActionUniversalToFlat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/transpile-action-to-flat.type';
 import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -32,6 +33,40 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
+  }
+
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
+  ): Promise<TranspileActionUniversalToFlat<CreateFieldAction>> {
+    const { action, allFlatEntityMaps } = context;
+    const { universalFlatFieldMetadatas } = action;
+
+    const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
+      string,
+      string
+    >();
+
+    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
+      allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
+        universalFlatFieldMetadata.universalIdentifier,
+        v4(),
+      );
+    }
+
+    const flatFieldMetadatas = universalFlatFieldMetadatas.map(
+      (universalFlatFieldMetadata) =>
+        fromUniversalFlatFieldMetadataToNakedFieldMetadata({
+          universalFlatFieldMetadata,
+          allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+          allFlatEntityMaps,
+          context,
+        }),
+    );
+
+    return {
+      ...action,
+      universalFlatFieldMetadatas: flatFieldMetadatas,
+    };
   }
 
   async executeForMetadata(

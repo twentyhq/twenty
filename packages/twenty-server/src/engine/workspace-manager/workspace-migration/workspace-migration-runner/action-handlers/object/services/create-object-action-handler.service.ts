@@ -34,7 +34,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     super();
   }
 
-  async transpileUniversalActionToFlatAction(
+  override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
   ): Promise<TranspileActionUniversalToFlat<CreateObjectAction>> {
     const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
