@@ -101,6 +101,7 @@ describe('useSettingsNavigationItems', () => {
       [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
       [PermissionFlagType.ROLES]: true,
       [PermissionFlagType.SECURITY]: true,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: true,
     }));
 
     const { result } = renderHook(() => useSettingsNavigationItems(), {
