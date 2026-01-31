@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. Em outras palavras:
+O `universalIdentifier` desse papel é então referenciado em `application.config.ts` como `roleUniversalIdentifier`. Em outras palavras:
 
 * **\*.role.ts** define o que o papel de função padrão pode fazer.
 * **application.config.ts** aponta para esse papel para que suas funções herdem suas permissões.
@@ -606,8 +606,8 @@ Quando sua função é executada no Twenty, a plataforma injeta credenciais como
 Notas:
 
 * Você não precisa passar a URL ou a chave de API para o cliente gerado. Ele lê `TWENTY_API_URL` e `TWENTY_API_KEY` de process.env em tempo de execução.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. Este é o papel padrão usado pelas funções de lógica do seu app.
-* Os aplicativos podem definir papéis para seguir o princípio do menor privilégio. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
+* As permissões da chave de API são determinadas pelo papel referenciado no seu `application.config.ts` via `roleUniversalIdentifier`. Este é o papel padrão usado pelas funções de lógica do seu app.
+* Os aplicativos podem definir papéis para seguir o princípio do menor privilégio. Conceda apenas as permissões de que suas funções precisam e, em seguida, aponte `roleUniversalIdentifier` para o identificador universal desse papel.
 
 ### Exemplo Hello World
 
