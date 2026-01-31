@@ -2,7 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
-import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type UniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
 export const WorkspaceMigrationRunnerExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
@@ -42,7 +42,7 @@ type WorkspaceMigrationRunnerExceptionConstructorArgs =
       userFriendlyMessage?: MessageDescriptor;
     }
   | {
-      action: WorkspaceMigrationAction;
+      action: UniversalWorkspaceMigrationAction;
       errors: WorkspaceMigrationRunnerExecutionErrors;
       code: typeof WorkspaceMigrationRunnerExceptionExecutionFailedCode;
       userFriendlyMessage?: MessageDescriptor;
@@ -51,7 +51,7 @@ type WorkspaceMigrationRunnerExceptionConstructorArgs =
 export class WorkspaceMigrationRunnerException extends CustomError {
   code: keyof typeof WorkspaceMigrationRunnerExceptionCode;
   userFriendlyMessage: MessageDescriptor;
-  action?: WorkspaceMigrationAction;
+  action?: UniversalWorkspaceMigrationAction;
   errors?: WorkspaceMigrationRunnerExecutionErrors;
 
   constructor(args: WorkspaceMigrationRunnerExceptionConstructorArgs) {

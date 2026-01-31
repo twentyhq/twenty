@@ -10,8 +10,10 @@ import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modul
 import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
-import { TranspileActionUniversalToFlat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/transpile-action-to-flat.type';
+import {
+  CreateObjectAction,
+  FlatCreateObjectAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
 import { fromUniversalFlatObjectMetadataToNakedObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/utils/from-universal-flat-object-metadata-to-naked-object-metadata.util';
 import { WorkspaceMigrationActionRunnerContext, type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -36,7 +38,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
-  ): Promise<TranspileActionUniversalToFlat<CreateObjectAction>> {
+  ): Promise<FlatCreateObjectAction> {
     const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
 
     const dataSourceRepository =
@@ -83,20 +85,21 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     );
 
     return {
-      ...action,
+      type: action.type,
+      metadataName: action.metadataName,
       flatEntity: flatObjectMetadata,
-      universalFlatFieldMetadatas: flatFieldMetadatas,
+      flatFieldMetadatas,
     };
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<
+      CreateObjectAction,
+      FlatCreateObjectAction
+    >,
   ): Promise<void> {
-    const { action, queryRunner, flatAction } = context;
-    const {
-      flatEntity: flatObjectMetadata,
-      universalFlatFieldMetadatas: flatFieldMetadatas,
-    } = flatAction;
+    const { queryRunner, flatAction } = context;
+    const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = flatAction;
 
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
@@ -114,7 +117,10 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerContext<CreateObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<
+      CreateObjectAction,
+      FlatCreateObjectAction
+    >,
   ): Promise<void> {
     const { action, queryRunner, workspaceId } = context;
     const {

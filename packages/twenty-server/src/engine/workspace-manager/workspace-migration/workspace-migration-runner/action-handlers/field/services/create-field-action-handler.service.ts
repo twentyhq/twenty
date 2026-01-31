@@ -12,10 +12,15 @@ import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
-import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
-import { type TranspileActionUniversalToFlat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/transpile-action-to-flat.type';
+import {
+  type CreateFieldAction,
+  type FlatCreateFieldAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  WorkspaceMigrationActionRunnerContext,
+  type WorkspaceMigrationActionRunnerArgs,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -37,9 +42,10 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
-  ): Promise<TranspileActionUniversalToFlat<CreateFieldAction>> {
+  ): Promise<FlatCreateFieldAction> {
     const { action, allFlatEntityMaps } = context;
-    const { universalFlatFieldMetadatas } = action;
+    const { universalFlatFieldMetadatas, objectMetadataUniversalIdentifier } =
+      action;
 
     const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
       string,
@@ -53,9 +59,15 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       );
     }
 
+    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+      universalIdentifier: objectMetadataUniversalIdentifier,
+    });
+
     const flatFieldMetadatas = universalFlatFieldMetadatas.map(
       (universalFlatFieldMetadata) =>
         fromUniversalFlatFieldMetadataToNakedFieldMetadata({
+          objectMetadataId: flatObjectMetadata.id,
           universalFlatFieldMetadata,
           allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
           allFlatEntityMaps,
@@ -64,49 +76,35 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     );
 
     return {
-      ...action,
-      universalFlatFieldMetadatas: flatFieldMetadatas,
+      type: action.type,
+      metadataName: action.metadataName,
+      objectMetadataId: flatObjectMetadata.id,
+      flatFieldMetadatas,
     };
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
+    context: WorkspaceMigrationActionRunnerContext<
+      CreateFieldAction,
+      FlatCreateFieldAction
+    >,
   ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps } = context;
-    const { universalFlatFieldMetadatas } = action;
+    const { queryRunner, flatAction } = context;
+    const { flatFieldMetadatas } = flatAction;
 
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<FieldMetadataEntity>(
         FieldMetadataEntity,
       );
 
-    const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
-      string,
-      string
-    >();
-
-    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
-      allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
-        universalFlatFieldMetadata.universalIdentifier,
-        v4(), // TODO should be configurable for API_METADATA
-      );
-    }
-
-    const nakedFlatFieldMetadatas = universalFlatFieldMetadatas.map(
-      (universalFlatFieldMetadata) =>
-        fromUniversalFlatFieldMetadataToNakedFieldMetadata({
-          universalFlatFieldMetadata,
-          allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
-          allFlatEntityMaps,
-          context,
-        }),
-    );
-
-    await fieldMetadataRepository.insert(nakedFlatFieldMetadatas);
+    await fieldMetadataRepository.insert(flatFieldMetadatas);
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
+    context: WorkspaceMigrationActionRunnerContext<
+      CreateFieldAction,
+      FlatCreateFieldAction
+    >,
   ): Promise<void> {
     const {
       action,
