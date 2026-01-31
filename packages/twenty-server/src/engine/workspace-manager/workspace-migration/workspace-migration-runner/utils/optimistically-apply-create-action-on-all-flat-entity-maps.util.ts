@@ -23,12 +23,6 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
   allFlatEntityMaps,
 }: OptimisticallyApplyCreateActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
   switch (action.metadataName) {
-    // fieldMetadata and objectMetadata are handled by their respective action handlers
-    // since they need to convert UniversalFlatEntity → FlatEntity (with generated IDs) first
-    case 'fieldMetadata':
-    case 'objectMetadata': {
-      return allFlatEntityMaps;
-    }
     case 'view':
     case 'viewField':
     case 'viewGroup':
@@ -46,6 +40,8 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
     case 'pageLayoutWidget':
     case 'pageLayoutTab':
     case 'commandMenuItem':
+    case 'fieldMetadata':
+    case 'objectMetadata':
     case 'frontComponent':
     case 'webhook': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
