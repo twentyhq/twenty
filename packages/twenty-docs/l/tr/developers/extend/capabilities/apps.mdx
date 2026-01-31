@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. Başka bir deyişle:
+Bu rolün `universalIdentifier` değeri, `application.config.ts` içinde `roleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
 
 * **\*.role.ts**, varsayılan fonksiyon rolünün neler yapabileceğini tanımlar.
 * **application.config.ts** bu role işaret eder, böylece fonksiyonlarınız onun izinlerini devralır.
@@ -606,8 +606,8 @@ Fonksiyonunuz Twenty üzerinde çalıştığında, platform kodunuz yürütülme
 Notlar:
 
 * Oluşturulan istemciye URL veya API anahtarı geçirmeniz gerekmez. Çalışma zamanında `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini process.env üzerinden okur.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
-* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
+* API anahtarının izinleri, `application.config.ts` içinde `roleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
+* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `roleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
 
 ### Hello World örneği
 

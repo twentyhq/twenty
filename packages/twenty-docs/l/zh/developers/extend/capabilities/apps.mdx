@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. 换句话说：
+随后，该角色的 `universalIdentifier` 会在 `application.config.ts` 中被引用为 `roleUniversalIdentifier`。 换句话说：
 
 * **\*.role.ts** 定义默认函数角色可以执行的操作。
 * **application.config.ts** 指向该角色，使你的函数继承其权限。
@@ -606,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 备注:
 
 * 你无需向生成的客户端传递 URL 或 API 密钥。 它会在运行时从 process.env 读取 `TWENTY_API_URL` 和 `TWENTY_API_KEY`。
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. 这是你的应用逻辑函数使用的默认角色。
-* 应用可以定义角色以遵循最小权限原则。 Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
+* API 密钥的权限由 `application.config.ts` 中通过 `roleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
+* 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `roleUniversalIdentifier` 指向该角色的通用标识符。
 
 ### Hello World 示例
 
