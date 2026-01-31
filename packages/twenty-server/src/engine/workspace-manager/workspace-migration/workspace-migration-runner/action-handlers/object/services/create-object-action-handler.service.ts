@@ -10,7 +10,8 @@ import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modul
 import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+import { CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+import { TranspileActionUniversalToFlat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/transpile-action-to-flat.type';
 import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
 import { fromUniversalFlatObjectMetadataToNakedObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/utils/from-universal-flat-object-metadata-to-naked-object-metadata.util';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -33,19 +34,10 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     super();
   }
 
-  async executeForMetadata(
+  async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
-  ): Promise<void> {
+  ): Promise<TranspileActionUniversalToFlat<CreateObjectAction>> {
     const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
-    const {
-      flatEntity: universalFlatObjectMetadata,
-      universalFlatFieldMetadatas,
-    } = action;
-
-    const objectMetadataRepository =
-      queryRunner.manager.getRepository<ObjectMetadataEntity>(
-        ObjectMetadataEntity,
-      );
 
     const dataSourceRepository =
       queryRunner.manager.getRepository<DataSourceEntity>(DataSourceEntity);
@@ -62,29 +54,27 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       string
     >();
 
-    for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
+    for (const universalFlatFieldMetadata of action.universalFlatFieldMetadatas) {
       allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
         universalFlatFieldMetadata.universalIdentifier,
         v4(), // TODO should be configurable for API_METADATA
       );
     }
 
-    const nakedFlatObjectMetadata =
+    const flatObjectMetadata =
       fromUniversalFlatObjectMetadataToNakedObjectMetadata({
         allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
         allFlatEntityMaps,
         context,
         dataSourceId: lastDataSourceMetadata.id,
         generatedId: v4(), // TODO should be configurable for API_METADATA
-        universalFlatObjectMetadata,
+        universalFlatObjectMetadata: action.flatEntity,
       });
 
-    await objectMetadataRepository.insert(nakedFlatObjectMetadata);
-
-    const nakedFlatFieldMetadatas = universalFlatFieldMetadatas.map(
+    const flatFieldMetadatas = action.universalFlatFieldMetadatas.map(
       (universalFlatFieldMetadata) =>
         fromUniversalFlatFieldMetadataToNakedFieldMetadata({
-          objectMetadataId: nakedFlatObjectMetadata.id,
+          objectMetadataId: flatObjectMetadata.id,
           universalFlatFieldMetadata,
           allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
           allFlatEntityMaps,
@@ -92,12 +82,35 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         }),
     );
 
+    return {
+      ...action,
+      flatEntity: flatObjectMetadata,
+      universalFlatFieldMetadatas: flatFieldMetadatas,
+    };
+  }
+
+  async executeForMetadata(
+    context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
+  ): Promise<void> {
+    const { action, queryRunner, flatAction } = context;
+    const {
+      flatEntity: flatObjectMetadata,
+      universalFlatFieldMetadatas: flatFieldMetadatas,
+    } = flatAction;
+
+    const objectMetadataRepository =
+      queryRunner.manager.getRepository<ObjectMetadataEntity>(
+        ObjectMetadataEntity,
+      );
+
+    await objectMetadataRepository.insert(flatObjectMetadata);
+
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<FieldMetadataEntity>(
         FieldMetadataEntity,
       );
 
-    await fieldMetadataRepository.insert(nakedFlatFieldMetadatas);
+    await fieldMetadataRepository.insert(flatFieldMetadatas);
   }
 
   async executeForWorkspaceSchema(
