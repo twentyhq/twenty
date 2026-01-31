@@ -37,7 +37,6 @@ export const useResetObjectPermission = (roleId: string) => {
         objectPermissionToFind.objectMetadataId === objectMetadataItemId,
     );
 
-    // object permission handling
     const resetPermissions = OBJECT_PERMISSION_KEYS.reduce(
       (acc, permissionKey) => {
         acc[permissionKey] = null;
@@ -61,7 +60,7 @@ export const useResetObjectPermission = (roleId: string) => {
 
       upsertObjectPermissionInDraftRole(updatedObjectPermission);
     }
-    //field permission permission handling
+
     fieldPermissionsForCurrentObject.forEach(
       (fieldPermission: FieldPermission) => {
         upsertFieldPermissionInDraftRole({

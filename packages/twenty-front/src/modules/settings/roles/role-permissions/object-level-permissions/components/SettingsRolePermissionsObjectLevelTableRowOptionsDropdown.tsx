@@ -1,5 +1,3 @@
-// Options dropdown for object-level permission rows (remove, etc.), similar structure to AdvancedFilterRecordFilterOptionsDropdown
-
 import { useResetObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useResetObjectPermission';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

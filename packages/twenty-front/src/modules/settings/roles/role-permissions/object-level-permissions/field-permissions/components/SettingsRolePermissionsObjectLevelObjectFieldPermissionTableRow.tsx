@@ -16,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { type FieldPermission, RelationType } from '~/generated/graphql';
-//! Field permission table row
 export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px minmax(0, 1fr) 60px 60px;
 `;
@@ -33,15 +32,6 @@ const StyledNameLabel = styled.div`
 
   user-select: none;
 `;
-
-/*
-Look at SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow.tsx (current file)
-
-The handleUpdateChange (handle cliking edit) and handleSeeChanges (handle seeing) will "flip" permission
-
-By flip, meaning that if current permission is allowed, these functions will disallow. Or if, the current permission is not allowed, these functions will allow.
-
-*/
 
 type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -83,10 +73,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
 
     const { upsertFieldPermissionInDraftRole } =
       useUpsertFieldPermissionInDraftRole(roleId);
-    //!handle changes functions
 
-    //! handle allowing seeing permission or not
-    //TODO: this can be inspiration for remove field permission functionalities in SettingsRolePermissionsObjectLevelTableRowOptionsDropdown
     const handleSeeChange = () => {
       if (isDefined(fieldPermissionForThisFieldMetadataItem)) {
         if (
@@ -115,7 +102,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
       }
     };
 
-    //! handle allowing update or not
     const handleUpdateChange = () => {
       if (isDefined(fieldPermissionForThisFieldMetadataItem)) {
         if (
