@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { UpdateFrontComponentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -13,10 +13,10 @@ export class UpdateFrontComponentActionHandlerService extends WorkspaceMigration
   'frontComponent',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateFrontComponentAction>,
+    context: WorkspaceMigrationActionRunnerContext<UpdateFrontComponentAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId, updates } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, updates } = flatAction;
 
     const frontComponentRepository =
       queryRunner.manager.getRepository<FrontComponentEntity>(
@@ -32,7 +32,7 @@ export class UpdateFrontComponentActionHandlerService extends WorkspaceMigration
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateFrontComponentAction>,
+    _context: WorkspaceMigrationActionRunnerContext<UpdateFrontComponentAction>,
   ): Promise<void> {
     return;
   }

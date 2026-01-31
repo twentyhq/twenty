@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { CreateViewFilterAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/types/workspace-migration-view-filter-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -12,10 +12,10 @@ export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunn
   'viewFilter',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateViewFilterAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateViewFilterAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const viewFilterRepository =
       queryRunner.manager.getRepository<ViewFilterEntity>(ViewFilterEntity);
@@ -27,7 +27,7 @@ export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunn
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateViewFilterAction>,
+    _context: WorkspaceMigrationActionRunnerContext<CreateViewFilterAction>,
   ): Promise<void> {
     return;
   }

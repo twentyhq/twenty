@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { CreateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -16,10 +16,10 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateNavigationMenuItemAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateNavigationMenuItemAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const navigationMenuItemRepository =
       queryRunner.manager.getRepository<NavigationMenuItemEntity>(
@@ -33,7 +33,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateNavigationMenuItemAction>,
+    _context: WorkspaceMigrationActionRunnerContext<CreateNavigationMenuItemAction>,
   ): Promise<void> {
     return;
   }

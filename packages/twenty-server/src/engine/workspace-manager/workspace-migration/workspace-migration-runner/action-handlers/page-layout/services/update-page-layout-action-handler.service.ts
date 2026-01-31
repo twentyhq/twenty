@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { UpdatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -13,10 +13,10 @@ export class UpdatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
   'pageLayout',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdatePageLayoutAction>,
+    context: WorkspaceMigrationActionRunnerContext<UpdatePageLayoutAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId, updates } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, updates } = flatAction;
 
     const pageLayoutRepository =
       queryRunner.manager.getRepository<PageLayoutEntity>(PageLayoutEntity);
@@ -30,7 +30,7 @@ export class UpdatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdatePageLayoutAction>,
+    _context: WorkspaceMigrationActionRunnerContext<UpdatePageLayoutAction>,
   ): Promise<void> {
     return;
   }

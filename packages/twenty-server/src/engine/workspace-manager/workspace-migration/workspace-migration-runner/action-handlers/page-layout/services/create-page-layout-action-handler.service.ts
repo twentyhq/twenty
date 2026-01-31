@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { CreatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -16,10 +16,10 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreatePageLayoutAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreatePageLayoutAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const pageLayoutRepository =
       queryRunner.manager.getRepository<PageLayoutEntity>(PageLayoutEntity);
@@ -31,7 +31,7 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreatePageLayoutAction>,
+    _context: WorkspaceMigrationActionRunnerContext<CreatePageLayoutAction>,
   ): Promise<void> {
     return;
   }

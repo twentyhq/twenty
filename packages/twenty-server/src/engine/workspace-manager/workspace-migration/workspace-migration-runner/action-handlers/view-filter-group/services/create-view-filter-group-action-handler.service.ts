@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type CreateViewFilterGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action.type';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -12,10 +12,10 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
   'viewFilterGroup',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateViewFilterGroupAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateViewFilterGroupAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const viewFilterGroupRepository =
       queryRunner.manager.getRepository<ViewFilterGroupEntity>(
@@ -29,7 +29,7 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateViewFilterGroupAction>,
+    _context: WorkspaceMigrationActionRunnerContext<CreateViewFilterGroupAction>,
   ): Promise<void> {
     return;
   }

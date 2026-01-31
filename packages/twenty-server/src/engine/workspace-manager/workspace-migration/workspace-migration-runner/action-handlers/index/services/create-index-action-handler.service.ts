@@ -9,7 +9,7 @@ import {
   createIndexInWorkspaceSchema,
   insertIndexMetadata,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -23,25 +23,25 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateIndexAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
+    const { flatAction, queryRunner } = context;
 
     await insertIndexMetadata({
-      flatIndexMetadata: action.flatEntity,
+      flatIndexMetadata: flatAction.flatEntity,
       queryRunner,
     });
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<CreateIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateIndexAction>,
   ): Promise<void> {
     const {
       allFlatEntityMaps: {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps: universalFlatFieldMetadataMaps,
       },
-      action: { flatEntity: flatIndexMetadata },
+      flatAction: { flatEntity: flatIndexMetadata },
       queryRunner,
       workspaceId,
     } = context;

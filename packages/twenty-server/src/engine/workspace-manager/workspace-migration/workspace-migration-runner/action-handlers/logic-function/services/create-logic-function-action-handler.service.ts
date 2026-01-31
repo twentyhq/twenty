@@ -22,7 +22,10 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { CreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
 
@@ -41,10 +44,10 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateLogicFunctionAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateLogicFunctionAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity: logicFunction } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity: logicFunction } = flatAction;
 
     const applicationUniversalIdentifier =
       await this.getApplicationUniversalIdentifier(logicFunction.applicationId);
@@ -147,7 +150,10 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }
 
   async rollbackForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateLogicFunctionAction>,
+    context: Omit<
+      WorkspaceMigrationActionRunnerArgs<CreateLogicFunctionAction>,
+      'queryRunner'
+    >,
   ): Promise<void> {
     const { action } = context;
 

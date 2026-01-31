@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { CreateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -16,10 +16,10 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateRoleAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateRoleAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity: role } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity: role } = flatAction;
 
     const roleRepository =
       queryRunner.manager.getRepository<RoleEntity>(RoleEntity);
@@ -31,7 +31,7 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateRoleAction>,
+    _context: WorkspaceMigrationActionRunnerContext<CreateRoleAction>,
   ): Promise<void> {
     return;
   }

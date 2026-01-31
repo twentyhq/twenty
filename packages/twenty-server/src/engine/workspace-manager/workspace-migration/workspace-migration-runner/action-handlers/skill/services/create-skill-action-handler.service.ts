@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import { CreateSkillAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateSkillActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -16,10 +16,10 @@ export class CreateSkillActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateSkillAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateSkillAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const skillRepository =
       queryRunner.manager.getRepository<SkillEntity>(SkillEntity);
@@ -31,7 +31,7 @@ export class CreateSkillActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateSkillAction>,
+    _context: WorkspaceMigrationActionRunnerContext<CreateSkillAction>,
   ): Promise<void> {
     return;
   }
