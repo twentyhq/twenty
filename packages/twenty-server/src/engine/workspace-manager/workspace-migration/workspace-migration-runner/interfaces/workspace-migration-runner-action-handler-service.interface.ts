@@ -8,6 +8,7 @@ import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/fl
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
+import { TranspileActionUniversalToFlat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/transpile-action-to-flat.type';
 import {
   buildActionHandlerKey,
   type WorkspaceMigrationAction,
@@ -39,6 +40,11 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
+
+  // Lets make it redundant for the moment
+  abstract transpileUniversalActionToFlatAction(
+    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
+  ): Promise<TranspileActionUniversalToFlat<TAction>>;
 
   executeForMetadata(
     _context: WorkspaceMigrationActionRunnerArgs<TAction>,
@@ -97,10 +103,13 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       | MetadataToFlatEntityMapsKey<TMetadataName>
     >
   > {
+    const flatAction = await this.transpileUniversalActionToFlatAction(context);
+
     const [metadataResult, workspaceSchemaResult] = await Promise.allSettled([
       this.asyncMethodPerformanceMetricWrapper({
         label: 'executeForMetadata',
-        method: async () => this.executeForMetadata(context),
+        method: async () =>
+          this.executeForMetadata({ ...context,flatAction }),
       }),
       this.asyncMethodPerformanceMetricWrapper({
         label: 'executeForWorkspaceSchema',
