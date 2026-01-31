@@ -8,16 +8,17 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-create-workspace-migration-action.type';
-import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
 type ExpectedGenericFlatEntityInformation = {
-  actions: {
-    [P in WorkspaceMigrationActionType]:
-      | WorkspaceMigrationAction
-      | WorkspaceMigrationAction[];
+  universalActions: {
+    [P in WorkspaceMigrationActionType]: unknown;
+  };
+  flatActions: {
+    [P in WorkspaceMigrationActionType]: unknown;
   };
   flatEntity: SyncableFlatEntity;
   universalFlatEntity: UniversalSyncableFlatEntity;
+  entity: unknown;
   universalMigrated?: {
     runner?: true;
     builder?: true;

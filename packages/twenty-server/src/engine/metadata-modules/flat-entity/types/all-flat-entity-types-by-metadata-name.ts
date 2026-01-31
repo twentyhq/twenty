@@ -163,7 +163,7 @@ import {
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
-    actions: {
+    universalActions: {
       create: CreateFieldAction;
       update: UpdateFieldAction;
       delete: DeleteFieldAction;
@@ -184,7 +184,7 @@ export type AllFlatEntityTypesByMetadataName = {
     };
   };
   objectMetadata: {
-    actions: {
+    universalActions: {
       create: CreateObjectAction;
       update: UpdateObjectAction;
       delete: DeleteObjectAction;
@@ -202,7 +202,7 @@ export type AllFlatEntityTypesByMetadataName = {
     };
   };
   view: {
-    actions: {
+    universalActions: {
       create: CreateViewAction;
       update: UpdateViewAction;
       delete: DeleteViewAction;
@@ -217,7 +217,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'view'>;
   };
   viewField: {
-    actions: {
+    universalActions: {
       create: CreateViewFieldAction;
       update: UpdateViewFieldAction;
       delete: DeleteViewFieldAction;
@@ -232,7 +232,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewField'>;
   };
   viewGroup: {
-    actions: {
+    universalActions: {
       create: CreateViewGroupAction;
       update: UpdateViewGroupAction;
       delete: DeleteViewGroupAction;
@@ -247,7 +247,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewGroup'>;
   };
   rowLevelPermissionPredicate: {
-    actions: {
+    universalActions: {
       create: CreateRowLevelPermissionPredicateAction;
       update: UpdateRowLevelPermissionPredicateAction;
       delete: DeleteRowLevelPermissionPredicateAction;
@@ -262,7 +262,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'rowLevelPermissionPredicate'>;
   };
   rowLevelPermissionPredicateGroup: {
-    actions: {
+    universalActions: {
       create: CreateRowLevelPermissionPredicateGroupAction;
       update: UpdateRowLevelPermissionPredicateGroupAction;
       delete: DeleteRowLevelPermissionPredicateGroupAction;
@@ -277,7 +277,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'rowLevelPermissionPredicateGroup'>;
   };
   viewFilterGroup: {
-    actions: {
+    universalActions: {
       create: CreateViewFilterGroupAction;
       update: UpdateViewFilterGroupAction;
       delete: DeleteViewFilterGroupAction;
@@ -292,7 +292,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewFilterGroup'>;
   };
   index: {
-    actions: {
+    universalActions: {
       create: CreateIndexAction;
       update: UpdateIndexAction;
       delete: DeleteIndexAction;
@@ -307,7 +307,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'index'>;
   };
   logicFunction: {
-    actions: {
+    universalActions: {
       create: CreateLogicFunctionAction;
       update: UpdateLogicFunctionAction;
       delete: DeleteLogicFunctionAction;
@@ -322,7 +322,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'logicFunction'>;
   };
   viewFilter: {
-    actions: {
+    universalActions: {
       create: CreateViewFilterAction;
       update: UpdateViewFilterAction;
       delete: DeleteViewFilterAction;
@@ -337,7 +337,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewFilter'>;
   };
   role: {
-    actions: {
+    universalActions: {
       create: CreateRoleAction;
       update: UpdateRoleAction;
       delete: DeleteRoleAction;
@@ -352,7 +352,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'role'>;
   };
   roleTarget: {
-    actions: {
+    universalActions: {
       create: CreateRoleTargetAction;
       update: UpdateRoleTargetAction;
       delete: DeleteRoleTargetAction;
@@ -367,7 +367,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'roleTarget'>;
   };
   agent: {
-    actions: {
+    universalActions: {
       create: CreateAgentAction;
       update: UpdateAgentAction;
       delete: DeleteAgentAction;
@@ -382,7 +382,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'agent'>;
   };
   skill: {
-    actions: {
+    universalActions: {
       create: CreateSkillAction;
       update: UpdateSkillAction;
       delete: DeleteSkillAction;
@@ -397,7 +397,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'skill'>;
   };
   commandMenuItem: {
-    actions: {
+    universalActions: {
       create: CreateCommandMenuItemAction;
       update: UpdateCommandMenuItemAction;
       delete: DeleteCommandMenuItemAction;
@@ -412,7 +412,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'commandMenuItem'>;
   };
   navigationMenuItem: {
-    actions: {
+    universalActions: {
       create: CreateNavigationMenuItemAction;
       update: UpdateNavigationMenuItemAction;
       delete: DeleteNavigationMenuItemAction;
@@ -427,7 +427,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: NavigationMenuItemEntity;
   };
   pageLayout: {
-    actions: {
+    universalActions: {
       create: CreatePageLayoutAction;
       update: UpdatePageLayoutAction;
       delete: DeletePageLayoutAction;
@@ -442,7 +442,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'pageLayout'>;
   };
   pageLayoutWidget: {
-    actions: {
+    universalActions: {
       create: CreatePageLayoutWidgetAction;
       update: UpdatePageLayoutWidgetAction;
       delete: DeletePageLayoutWidgetAction;
@@ -460,7 +460,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'pageLayoutWidget'>;
   };
   pageLayoutTab: {
-    actions: {
+    universalActions: {
       create: CreatePageLayoutTabAction;
       update: UpdatePageLayoutTabAction;
       delete: DeletePageLayoutTabAction;
@@ -475,7 +475,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'pageLayoutTab'>;
   };
   frontComponent: {
-    actions: {
+    universalActions: {
       create: CreateFrontComponentAction;
       update: UpdateFrontComponentAction;
       delete: DeleteFrontComponentAction;
@@ -490,7 +490,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'frontComponent'>;
   };
   webhook: {
-    actions: {
+    universalActions: {
       create: CreateWebhookAction;
       update: UpdateWebhookAction;
       delete: DeleteWebhookAction;

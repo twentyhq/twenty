@@ -47,7 +47,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
   TAction extends
-    WorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['actions'][TActionType],
+    WorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType],
 > {
   public actionType: TActionType;
   public metadataName: TMetadataName;
@@ -105,13 +105,15 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       }
       case 'delete': {
         return optimisticallyApplyDeleteActionOnAllFlatEntityMaps({
-          action,
+          flatAction:
+            flatAction as AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['delete'],
           allFlatEntityMaps,
         });
       }
       case 'update': {
         return optimisticallyApplyUpdateActionOnAllFlatEntityMaps({
-          action,
+          flatAction:
+            flatAction as AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['update'],
           allFlatEntityMaps,
         });
       }
