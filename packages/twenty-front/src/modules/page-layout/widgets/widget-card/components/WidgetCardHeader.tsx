@@ -25,6 +25,7 @@ export type WidgetCardHeaderProps = {
   actions?: WidgetAction[];
   className?: string;
   isResizing?: boolean;
+  isReorderEnabled?: boolean;
 };
 
 const StyledWidgetCardHeader = styled.div`
@@ -78,6 +79,7 @@ export const WidgetCardHeader = ({
   isEmpty = false,
   isInEditMode = false,
   isResizing = false,
+  isReorderEnabled = true,
   title,
   onRemove,
   forbiddenDisplay,
@@ -94,7 +96,7 @@ export const WidgetCardHeader = ({
   return (
     <StyledWidgetCardHeader className={className}>
       <AnimatePresence initial={false}>
-        {!isEmpty && isInEditMode && (
+        {!isEmpty && isInEditMode && isReorderEnabled && (
           <WidgetGrip
             className="drag-handle"
             onClick={(e) => e.stopPropagation()}

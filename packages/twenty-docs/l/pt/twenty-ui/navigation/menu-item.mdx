@@ -1,16 +1,16 @@
 ---
-title: Menu Item
+title: Entrada de menu
 image: /images/user-guide/kanban-views/kanban.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/kanban-views/kanban.png" alt="Header" />
+  <img src="/images/user-guide/kanban-views/kanban.png" alt="Cabeçalho" />
 </Frame>
 
-A versatile menu item designed to be used in a menu or navigation list.
+Um item de menu versátil projetado para ser usado em uma lista de menu ou navegação.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { IconAlertCircle } from "@tabler/icons-react";
@@ -18,18 +18,18 @@ A versatile menu item designed to be used in a menu or navigation list.
 
     export const MyComponent = () => {
       const handleMenuItemClick = (event) => {
-        console.log("Menu item clicked!", event);
+        console.log("Item de menu clicado!", event);
       };
 
       const handleButtonClick = (event) => {
-        console.log("Icon button clicked!", event);
+        console.log("Botão de ícone clicado!", event);
       };
 
       return (
         <MenuItem
           LeftIcon={IconBell}
           accent="default"
-          text="Menu item text"
+          text="Texto do item de menu"
           iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
           isTooltipOpen={true}
           testId="menu-item-1"
@@ -41,30 +41,30 @@ A versatile menu item designed to be used in a menu or navigation list.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props         | Type          | Description                                                                                          |
-    | ------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
-    | LeftIcon      | IconComponent | An optional left icon displayed before the text in the menu item                                     |
-    | accent        | string        | Specifies the accent color of the menu item. Options include: `default`, `danger`, and `placeholder` |
-    | text          | string        | The text content of the menu item                                                                    |
-    | iconButtons   | array         | An array of objects representing additional icon buttons associated with the menu item               |
-    | isTooltipOpen | boolean       | Controls the visibility of the tooltip associated with the menu item                                 |
-    | testId        | string        | The data-testid attribute for testing purposes                                                       |
-    | onClick       | function      | Callback function triggered when the menu item is clicked                                            |
-    | className     | string        | Optional name for additional styling                                                                 |
+  <Tab title="Propriedades">
+    | Propriedades  | Tipo            | Descrição                                                                                             |
+    | ------------- | --------------- | ----------------------------------------------------------------------------------------------------- |
+    | LeftIcon      | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu                                   |
+    | destaque      | string          | Especifica a cor de destaque do item de menu. As opções incluem: `default`, `danger`, e `placeholder` |
+    | texto         | string          | O conteúdo de texto do item de menu                                                                   |
+    | botõesDeÍcone | matriz          | Uma matriz de objetos representando botões de ícones adicionais associados ao item de menu            |
+    | isTooltipOpen | booleano        | Controla a visibilidade da dica de ferramenta associada ao item de menu                               |
+    | testeId       | string          | O atributo data-testid para fins de teste                                                             |
+    | onClick       | função          | Função de retorno de chamada disparada quando o item de menu é clicado                                |
+    | className     | string          | Nome opcional para estilização adicional                                                              |
   </Tab>
 </Tabs>
 
-## Variants
+## Variantes
 
-The different variants of the menu item component include the following:
+As diferentes variantes do componente de item de menu incluem o seguinte:
 
-### Command
+### Comando
 
-A command-style menu item within a menu to indicate keyboard shortcuts.
+Um item de menu no estilo de comando dentro de um menu para indicar atalhos de teclado.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemCommand } from "twenty-ui/display";
@@ -89,25 +89,25 @@ A command-style menu item within a menu to indicate keyboard shortcuts.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type          | Description                                                      |
-    | ------------ | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon     | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text         | string        | The text content of the menu item                                |
-    | firstHotKey  | string        | The first keyboard shortcut associated with the command          |
-    | secondHotKey | string        | The second keyboard shortcut associated with the command         |
-    | isSelected   | boolean       | Indicates whether the menu item is selected or highlighted       |
-    | onClick      | function      | Callback function triggered when the menu item is clicked        |
-    | className    | string        | Optional name for additional styling                             |
+  <Tab title="Propriedades">
+    | Propriedades          | Tipo            | Descrição                                                              |
+    | --------------------- | --------------- | ---------------------------------------------------------------------- |
+    | ÍconeEsquerda         | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu    |
+    | texto                 | string          | O conteúdo de texto do item de menu                                    |
+    | primeiraTeclaDeAtalho | string          | A primeira tecla de atalho associada ao comando                        |
+    | segundaTeclaDeAtalho  | string          | A segunda tecla de atalho associada ao comando                         |
+    | éSelecionado          | booleano        | Indica se o item de menu está selecionado ou destacado                 |
+    | onClick               | função          | Função de retorno de chamada disparada quando o item de menu é clicado |
+    | className             | string          | Nome opcional para estilização adicional                               |
   </Tab>
 </Tabs>
 
-### Draggable
+### Arrastável
 
-A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+Um componente de item de menu arrastável projetado para ser usado em um menu ou lista onde os itens podem ser arrastados e ações adicionais podem ser realizadas através de botões de ícone.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { IconAlertCircle } from "@tabler/icons-react";
@@ -134,26 +134,26 @@ A draggable menu item component designed to be used in a menu or list where item
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                                                |
-    | -------------- | ------------- | ------------------------------------------------------------------------------------------ |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item                           |
-    | accent         | string        | The accent color of the menu item. It can either be `default`, `placeholder`, and `danger` |
-    | iconButtons    | array         | An array of objects representing additional icon buttons associated with the menu item     |
-    | isTooltipOpen  | boolean       | Controls the visibility of the tooltip associated with the menu item                       |
-    | onClick        | function      | Callback function to be triggered when the link is clicked                                 |
-    | text           | string        | The text content of the menu item                                                          |
-    | isDragDisabled | boolean       | Indicates whether dragging is disabled                                                     |
-    | className      | string        | Optional name for additional styling                                                       |
+  <Tab title="Propriedades">
+    | Propriedades   | Tipo            | Descrição                                                                                  |
+    | -------------- | --------------- | ------------------------------------------------------------------------------------------ |
+    | ÍconeEsquerda  | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu                        |
+    | destaque       | string          | A cor de destaque do item de menu. Pode ser `default`, `placeholder`, e `danger`           |
+    | botõesDeÍcone  | matriz          | Uma matriz de objetos representando botões de ícones adicionais associados ao item de menu |
+    | isTooltipOpen  | booleano        | Controla a visibilidade da dica de ferramenta associada ao item de menu                    |
+    | onClick        | função          | Função de retorno de chamada para ser disparada quando o link é clicado                    |
+    | texto          | string          | O conteúdo de texto do item de menu                                                        |
+    | isDragDisabled | booleano        | Indica se o arrasto está desativado                                                        |
+    | className      | string          | Nome opcional para estilização adicional                                                   |
   </Tab>
 </Tabs>
 
-### Multi Select
+### Seleção Múltipla
 
-Provides a way to implement multi-select functionality with an associated checkbox.
+Proporciona uma maneira de implementar a funcionalidade de seleção múltipla com uma caixa de seleção associada.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemMultiSelect } from "twenty-ui/display";
@@ -172,23 +172,23 @@ Provides a way to implement multi-select functionality with an associated checkb
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                      |
-    | -------------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text           | string        | The text content of the menu item                                |
-    | selected       | boolean       | Indicates whether the menu item is selected (checked)            |
-    | onSelectChange | function      | Callback function triggered when the checkbox state changes      |
-    | className      | string        | Optional name for additional styling                             |
+  <Tab title="Propriedades">
+    | Propriedades   | Tipo            | Descrição                                                                       |
+    | -------------- | --------------- | ------------------------------------------------------------------------------- |
+    | ÍconeEsquerda  | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu             |
+    | texto          | string          | O conteúdo de texto do item de menu                                             |
+    | selecionado    | booleano        | Indica se o item de menu está selecionado (marcado)                             |
+    | aoMudarSeleção | função          | Função de retorno de chamada disparada quando o estado da caixa de seleção muda |
+    | className      | string          | Nome opcional para estilização adicional                                        |
   </Tab>
 </Tabs>
 
-### Multi Select Avatar
+### Seleção Múltipla Avatar
 
-A multi-select menu item with an avatar, a checkbox for selection, and textual content.
+Um item de menu de seleção múltipla com um avatar, uma caixa de seleção para seleção e conteúdo textual.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
 
@@ -208,23 +208,23 @@ A multi-select menu item with an avatar, a checkbox for selection, and textual c
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type        | Description                                                          |
-    | -------------- | ----------- | -------------------------------------------------------------------- |
-    | avatar         | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
-    | text           | string      | The text content of the menu item                                    |
-    | selected       | boolean     | Indicates whether the menu item is selected (checked)                |
-    | onSelectChange | function    | Callback function triggered when the checkbox state changes          |
-    | className      | string      | Optional name for additional styling                                 |
+  <Tab title="Propriedades">
+    | Propriedades   | Tipo        | Descrição                                                                       |
+    | -------------- | ----------- | ------------------------------------------------------------------------------- |
+    | avatar         | `ReactNode` | O avatar ou ícone a ser exibido no lado esquerdo do item de menu                |
+    | texto          | string      | O conteúdo de texto do item de menu                                             |
+    | selecionado    | booleano    | Indica se o item de menu está selecionado (marcado)                             |
+    | aoMudarSeleção | função      | Função de retorno de chamada disparada quando o estado da caixa de seleção muda |
+    | className      | string      | Nome opcional para estilização adicional                                        |
   </Tab>
 </Tabs>
 
-### Navigate
+### Navegar
 
-A menu item featuring an optional left icon, textual content, and a right-chevron icon.
+Um item de menu com um ícone opcional à esquerda, conteúdo textual e um ícone de seta à direita.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemNavigate } from "twenty-ui/display";
@@ -246,22 +246,22 @@ A menu item featuring an optional left icon, textual content, and a right-chevro
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type          | Description                                                      |
-    | --------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text      | string        | The text content of the menu item                                |
-    | onClick   | function      | Callback function to be triggered when the menu item is clicked  |
-    | className | string        | Optional name for additional styling                             |
+  <Tab title="Propriedades">
+    | Propriedades  | Tipo            | Descrição                                                                       |
+    | ------------- | --------------- | ------------------------------------------------------------------------------- |
+    | ÍconeEsquerda | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu             |
+    | texto         | string          | O conteúdo de texto do item de menu                                             |
+    | onClick       | função          | Função de retorno de chamada para ser disparada quando o item de menu é clicado |
+    | className     | string          | Nome opcional para estilização adicional                                        |
   </Tab>
 </Tabs>
 
-### Select
+### Selecionar
 
-A selectable menu item, featuring optional left content (icon and text) and an indicator (check icon) for the selected state.
+Um item de menu selecionável, com conteúdo esquerdo opcional (ícone e texto) e um indicador (ícone de seleção) para o estado selecionado.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { IconBell } from "@tabler/icons-react";
     import { MenuItemSelect } from "twenty-ui/display";
@@ -286,25 +286,25 @@ A selectable menu item, featuring optional left content (icon and text) and an i
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type          | Description                                                      |
-    | --------- | ------------- | ---------------------------------------------------------------- |
-    | LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
-    | text      | string        | The text content of the menu item                                |
-    | selected  | boolean       | Indicates whether the menu item is selected (checked)            |
-    | disabled  | boolean       | Indicates whether the menu item is disabled                      |
-    | hovered   | boolean       | Indicates whether the menu item is currently being hovered over  |
-    | onClick   | function      | Callback function to be triggered when the menu item is clicked  |
-    | className | string        | Optional name for additional styling                             |
+  <Tab title="Propriedades">
+    | Propriedades  | Tipo            | Descrição                                                                       |
+    | ------------- | --------------- | ------------------------------------------------------------------------------- |
+    | ÍconeEsquerda | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu             |
+    | texto         | string          | O conteúdo de texto do item de menu                                             |
+    | selecionado   | booleano        | Indica se o item de menu está selecionado (marcado)                             |
+    | desativado    | booleano        | Indica se o item de menu está desativado                                        |
+    | pairado       | booleano        | Indica se o item de menu está com o cursor sobre ele no momento                 |
+    | onClick       | função          | Função de retorno de chamada para ser disparada quando o item de menu é clicado |
+    | className     | string          | Nome opcional para estilização adicional                                        |
   </Tab>
 </Tabs>
 
-### Select Avatar
+### Selecionar Avatar
 
-A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+Um item de menu selecionável com um avatar, com conteúdo esquerdo opcional (avatar e texto) e um indicador (ícone de seleção) para o estado selecionado.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { MenuItemSelectAvatar } from "twenty-ui/display";
 
@@ -333,26 +333,26 @@ A selectable menu item with an avatar, featuring optional left content (avatar a
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type        | Description                                                          |
-    | --------- | ----------- | -------------------------------------------------------------------- |
-    | avatar    | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
-    | text      | string      | The text content of the menu item                                    |
-    | selected  | boolean     | Indicates whether the menu item is selected (checked)                |
-    | disabled  | boolean     | Indicates whether the menu item is disabled                          |
-    | hovered   | boolean     | Indicates whether the menu item is currently being hovered over      |
-    | testId    | string      | The data-testid attribute for testing purposes                       |
-    | onClick   | function    | Callback function to be triggered when the menu item is clicked      |
-    | className | string      | Optional name for additional styling                                 |
+  <Tab title="Propriedades">
+    | Propriedades | Tipo        | Descrição                                                                       |
+    | ------------ | ----------- | ------------------------------------------------------------------------------- |
+    | avatar       | `ReactNode` | O avatar ou ícone a ser exibido no lado esquerdo do item de menu                |
+    | texto        | string      | O conteúdo de texto do item de menu                                             |
+    | selecionado  | booleano    | Indica se o item de menu está selecionado (marcado)                             |
+    | desativado   | booleano    | Indica se o item de menu está desativado                                        |
+    | pairado      | booleano    | Indica se o item de menu está com o cursor sobre ele no momento                 |
+    | testeId      | string      | O atributo data-testid para fins de teste                                       |
+    | onClick      | função      | Função de retorno de chamada para ser disparada quando o item de menu é clicado |
+    | className    | string      | Nome opcional para estilização adicional                                        |
   </Tab>
 </Tabs>
 
-### Select Color
+### Selecionar Cor
 
-A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
+Um item de menu selecionável com uma amostra de cor para cenários onde você deseja que os usuários escolham uma cor em um menu.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { MenuItemSelectColor } from "twenty-ui/display";
 
@@ -376,25 +376,25 @@ A selectable menu item with a color sample for scenarios where you want users to
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type     | Description                                                                                                                                                                 |
-    | --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | color     | string   | The theme color to be displayed as a sample in the menu item. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray` |
-    | selected  | boolean  | Indicates whether the menu item is selected (checked)                                                                                                                       |
-    | disabled  | boolean  | Indicates whether the menu item is disabled                                                                                                                                 |
-    | hovered   | boolean  | Indicates whether the menu item is currently being hovered over                                                                                                             |
-    | variant   | string   | The variant of the color sample. It can either be `default` or `pipeline`                                                                                                   |
-    | onClick   | function | Callback function to be triggered when the menu item is clicked                                                                                                             |
-    | className | string   | Optional name for additional styling                                                                                                                                        |
+  <Tab title="Propriedades">
+    | Propriedades | Tipo     | Descrição                                                                                                                                                                   |
+    | ------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | cor          | string   | A cor do tema a ser exibida como exemplo no item do menu. As opções incluem: `verde`, `turquesa`, `céu`, `azul`, `roxo`, `pink`, `vermelho`, `laranja`, `amarelo` e `cinza` |
+    | selecionado  | booleano | Indica se o item de menu está selecionado (marcado)                                                                                                                         |
+    | desativado   | booleano | Indica se o item de menu está desativado                                                                                                                                    |
+    | pairado      | booleano | Indica se o item de menu está com o cursor sobre ele no momento                                                                                                             |
+    | variante     | string   | A variante da amostra de cor. Pode ser `default` ou `pipeline`                                                                                                              |
+    | onClick      | função   | Função de retorno de chamada disparada quando o item de menu é clicado.                                                                                                     |
+    | className    | string   | Nome opcional para estilização adicional.                                                                                                                                   |
   </Tab>
 </Tabs>
 
-### Toggle
+### Alternar
 
-A menu item with an associated toggle switch to allow users to enable or disable a specific feature
+Um item de menu com um interruptor associado para permitir que os usuários ativem ou desativem um recurso específico.
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="Uso">
     ```jsx
     import { IconBell } from '@tabler/icons-react';
 
@@ -415,14 +415,14 @@ A menu item with an associated toggle switch to allow users to enable or disable
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props          | Type          | Description                                                       |
-    | -------------- | ------------- | ----------------------------------------------------------------- |
-    | LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item  |
-    | text           | string        | The text content of the menu item                                 |
-    | toggled        | boolean       | Indicates whether the toggle switch is in the "on" or "off" state |
-    | onToggleChange | function      | Callback function triggered when the toggle switch state changes  |
-    | toggleSize     | string        | The size of the toggle switch. It can be either \                 |
-    | className      | string        | Optional name for additional styling                              |
+  <Tab title="Propriedades">
+    | Propriedades    | Tipo            | Descrição                                                                                 |
+    | --------------- | --------------- | ----------------------------------------------------------------------------------------- |
+    | LeftIcon        | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu.                      |
+    | texto           | string          | O conteúdo de texto do item de menu.                                                      |
+    | alternado       | booleano        | Indica se o interruptor de alternância está no estado "on" ou "off".                      |
+    | onToggleChange  | função          | Função de retorno de chamada acionada quando o estado do interruptor de alternância muda. |
+    | tamanhoAlternar | string          | O tamanho do interruptor de alternância. Pode ser \                                       |
+    | className       | string          | Nome opcional para estilização adicional                                                  |
   </Tab>
 </Tabs>

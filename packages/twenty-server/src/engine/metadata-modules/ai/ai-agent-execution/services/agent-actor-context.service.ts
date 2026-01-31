@@ -46,7 +46,6 @@ export class AgentActorContextService {
 
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
@@ -61,6 +60,7 @@ export class AgentActorContextService {
             },
           });
         },
+        authContext,
       );
 
     if (!workspaceMember) {

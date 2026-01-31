@@ -108,7 +108,7 @@ export const useCreateNewIndexRecord = ({
           if (isDefined(labelIdentifierFieldMetadataItem)) {
             openRecordTitleCell({
               recordId,
-              fieldName: labelIdentifierFieldMetadataItem.name,
+              fieldMetadataItemId: labelIdentifierFieldMetadataItem.id,
               instanceId: getRecordFieldInputInstanceId({
                 recordId,
                 fieldName: labelIdentifierFieldMetadataItem.name,

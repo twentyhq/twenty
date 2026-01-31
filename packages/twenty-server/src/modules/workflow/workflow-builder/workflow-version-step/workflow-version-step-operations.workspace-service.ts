@@ -15,14 +15,16 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { SEED_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/seed-project-input-schema';
+import { SEED_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/seed-project-input-schema';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -62,7 +64,7 @@ const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
 export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly logicFunctionService: LogicFunctionService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleTargetEntity)
@@ -72,6 +74,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -83,18 +86,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        if (
-          !(await this.serverlessFunctionService.hasServerlessFunctionPublishedVersion(
-            step.settings.input.serverlessFunctionId,
-            workspaceId,
-          ))
-        ) {
-          await this.serverlessFunctionService.deleteOneServerlessFunction({
-            id: step.settings.input.serverlessFunctionId,
-            workspaceId,
-            softDelete: false,
-          });
-        }
+        await this.logicFunctionService.destroyOne({
+          id: step.settings.input.logicFunctionId,
+          workspaceId,
+        });
         break;
       }
       case WorkflowActionType.AI_AGENT: {
@@ -135,12 +130,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workflowVersionId,
     position,
     id,
+    defaultSettings,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
     workflowVersionId: string;
     position?: WorkflowStepPositionInput;
     id?: string;
+    defaultSettings?: Record<string, unknown>;
   }): Promise<{
     builtStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
@@ -154,16 +151,15 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (type) {
       case WorkflowActionType.CODE: {
-        const newServerlessFunction =
-          await this.serverlessFunctionService.createOneServerlessFunction(
-            {
-              name: 'A Serverless Function Code Workflow Step',
-              description: '',
-            },
-            workspaceId,
-          );
+        const newLogicFunction = await this.logicFunctionService.createOne({
+          input: {
+            name: 'A Logic Function Code Workflow Step',
+            description: '',
+          },
+          workspaceId,
+        });
 
-        if (!isDefined(newServerlessFunction)) {
+        if (!isDefined(newLogicFunction)) {
           throw new WorkflowVersionStepException(
             'Fail to create Code Step',
             WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
@@ -173,7 +169,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'Code - Serverless Function',
+            name: 'Code - Logic Function',
             type: WorkflowActionType.CODE,
             settings: {
               ...BASE_STEP_DEFINITION,
@@ -187,9 +183,48 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 _outputSchemaType: 'LINK',
               },
               input: {
-                serverlessFunctionId: newServerlessFunction.id,
-                serverlessFunctionVersion: 'draft',
-                serverlessFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
+                logicFunctionId: newLogicFunction.id,
+                logicFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.LOGIC_FUNCTION: {
+        const logicFunctionId = (
+          defaultSettings?.input as { logicFunctionId: string } | undefined
+        )?.logicFunctionId;
+
+        if (!isDefined(logicFunctionId)) {
+          throw new WorkflowVersionStepException(
+            'Logic function ID is required for LOGIC_FUNCTION step',
+            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        const { flatLogicFunctionMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatLogicFunctionMaps'],
+            },
+          );
+
+        const flatLogicFunction = findFlatLogicFunctionOrThrow({
+          id: logicFunctionId,
+          flatLogicFunctionMaps,
+        });
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: flatLogicFunction.name,
+            type: WorkflowActionType.LOGIC_FUNCTION,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                logicFunctionId,
+                logicFunctionInput: {},
               },
             },
           },
@@ -205,7 +240,11 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               ...BASE_STEP_DEFINITION,
               input: {
                 connectedAccountId: '',
-                email: '',
+                recipients: {
+                  to: '',
+                  cc: '',
+                  bcc: '',
+                },
                 subject: '',
                 body: '',
               },
@@ -533,7 +572,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const responseKeys = Object.keys(response);
 
@@ -598,6 +636,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           return acc;
         }, {});
       },
+      authContext,
     );
   }
 
@@ -615,10 +654,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        const newServerlessFunction =
-          await this.serverlessFunctionService.duplicateServerlessFunction({
-            id: step.settings.input.serverlessFunctionId,
-            version: step.settings.input.serverlessFunctionVersion,
+        const newLogicFunction =
+          await this.logicFunctionService.duplicateLogicFunction({
+            id: step.settings.input.logicFunctionId,
             workspaceId,
           });
 
@@ -631,8 +669,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             ...step.settings,
             input: {
               ...step.settings.input,
-              serverlessFunctionId: newServerlessFunction.id,
-              serverlessFunctionVersion: 'draft',
+              logicFunctionId: newLogicFunction.id,
             },
           },
         };
@@ -727,7 +764,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -777,6 +813,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         return emptyNodeStep;
       },
+      authContext,
     );
   }
 
@@ -797,7 +834,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const workflowVersionRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -878,6 +914,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           branches,
         };
       },
+      authContext,
     );
   }
 
@@ -890,11 +927,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }): Promise<WorkflowAction> {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        await this.serverlessFunctionService.createDraftFromPublishedVersion({
-          id: step.settings.input.serverlessFunctionId,
-          version: step.settings.input.serverlessFunctionVersion,
-          workspaceId,
-        });
+        const newLogicFunction =
+          await this.logicFunctionService.createLogicFunctionFromExistingLogicFunctionById(
+            {
+              id: step.settings.input.logicFunctionId,
+              workspaceId,
+            },
+          );
 
         return {
           ...step,
@@ -902,7 +941,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             ...step.settings,
             input: {
               ...step.settings.input,
-              serverlessFunctionVersion: 'draft',
+              logicFunctionId: newLogicFunction.id,
             },
           },
         };

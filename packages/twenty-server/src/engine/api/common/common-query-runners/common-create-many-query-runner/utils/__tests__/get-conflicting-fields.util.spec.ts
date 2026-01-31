@@ -85,7 +85,7 @@ describe('getConflictingFields', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       universalIdentifier: objectMetadataId,
-      fieldMetadataIds: fields.map((f) => f.id),
+      fieldIds: fields.map((f) => f.id),
       indexMetadataIds: [],
       viewIds: [],
       applicationId: null,

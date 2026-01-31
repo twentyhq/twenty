@@ -1,34 +1,34 @@
 ---
-title: Frontend Commands
+title: Commandes Frontend
 ---
 
-## Useful commands
+## Commandes utiles
 
-### Starting the app
+### Lancement de l'application
 
 ```bash
 npx nx start twenty-front
 ```
 
-### Regenerate graphql schema based on API graphql schema
+### Régénérer le schéma GraphQL basé sur le schéma API GraphQL
 
 ```bash
 npx nx run twenty-front:graphql:generate --configuration=metadata
 ```
 
-OR
+OU
 
 ```bash
 npx nx run twenty-front:graphql:generate
 ```
 
-### Lint
+### Analyse
 
 ```bash
 npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
-## Translations
+## Traductions
 
 ```bash
 npx nx run twenty-front:lingui:extract
@@ -44,11 +44,11 @@ npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve
 npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
-## Tech Stack
+## Écosystème Tech
 
-The project has a clean and simple stack, with minimal boilerplate code.
+Le projet a une stack simple et propre, avec un code boilerplate minimal.
 
-**App**
+**Application**
 
 * [React](https://react.dev/)
 * [Apollo](https://www.apollographql.com/docs/)
@@ -56,12 +56,12 @@ The project has a clean and simple stack, with minimal boilerplate code.
 * [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
 * [TypeScript](https://www.typescriptlang.org/)
 
-**Testing**
+**Tests**
 
 * [Jest](https://jestjs.io/)
 * [Storybook](https://storybook.js.org/)
 
-**Tooling**
+**Outils**
 
 * [Yarn](https://yarnpkg.com/)
 * [Craco](https://craco.js.org/docs/)
@@ -69,22 +69,22 @@ The project has a clean and simple stack, with minimal boilerplate code.
 
 ## Architecture
 
-### Routing
+### Routage
 
-[React Router](https://reactrouter.com/) handles the routing.
+[React Router](https://reactrouter.com/) gère le routage.
 
 To avoid unnecessary [re-renders](/l/fr/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
 
-### State Management
+### Gestion de l'État
 
-[Recoil](https://recoiljs.org/docs/introduction/core-concepts) handles state management.
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) gère la gestion de l'état.
 
-See [best practices](/l/fr/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) for more information on state management.
+Voir [les meilleures pratiques](/l/fr/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) pour plus d'informations sur la gestion de l'état.
 
-## Testing
+## Tests
 
-[Jest](https://jestjs.io/) serves as the tool for unit testing while [Storybook](https://storybook.js.org/) is for component testing.
+[Jest](https://jestjs.io/) sert de guide pour les tests unitaires tandis que [Storybook](https://storybook.js.org/) est utilisé pour les tests de composants.
 
-Jest is mainly for testing utility functions, and not components themselves.
+Jest est principalement utilisé pour tester les fonctions utilitaires, et non les composants eux-mêmes.
 
-Storybook is for testing the behavior of isolated components, as well as displaying the design system.
+Storybook est utilisé pour tester le comportement des composants isolés, ainsi que pour afficher le système de design.

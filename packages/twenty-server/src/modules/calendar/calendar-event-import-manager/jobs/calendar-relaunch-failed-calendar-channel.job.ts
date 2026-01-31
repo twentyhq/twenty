@@ -31,41 +31,37 @@ export class CalendarRelaunchFailedCalendarChannelJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const calendarChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
-            workspaceId,
-            'calendarChannel',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const calendarChannelRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelWorkspaceEntity>(
+          workspaceId,
+          'calendarChannel',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const calendarChannel = await calendarChannelRepository.findOne({
-          where: {
-            id: calendarChannelId,
+      const calendarChannel = await calendarChannelRepository.findOne({
+        where: {
+          id: calendarChannelId,
+        },
+        relations: {
+          connectedAccount: {
+            accountOwner: true,
           },
-          relations: {
-            connectedAccount: {
-              accountOwner: true,
-            },
-          },
-        });
+        },
+      });
 
-        if (
-          !calendarChannel ||
-          calendarChannel.syncStage !== CalendarChannelSyncStage.FAILED ||
-          calendarChannel.syncStatus !==
-            CalendarChannelSyncStatus.FAILED_UNKNOWN
-        ) {
-          return;
-        }
+      if (
+        !calendarChannel ||
+        calendarChannel.syncStage !== CalendarChannelSyncStage.FAILED ||
+        calendarChannel.syncStatus !== CalendarChannelSyncStatus.FAILED_UNKNOWN
+      ) {
+        return;
+      }
 
-        await calendarChannelRepository.update(calendarChannelId, {
-          syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-          syncStatus: CalendarChannelSyncStatus.ACTIVE,
-        });
-      },
-    );
+      await calendarChannelRepository.update(calendarChannelId, {
+        syncStage: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+        syncStatus: CalendarChannelSyncStatus.ACTIVE,
+      });
+    }, authContext);
   }
 }

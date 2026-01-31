@@ -1,15 +1,12 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
-import path from 'path';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
-import { FileFolder } from 'twenty-shared/types';
-import { createLogger } from '@/cli/utilities/build/common/logger';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import path, { relative } from 'path';
+import { type FileFolder } from 'twenty-shared/types';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 
 export class FileUploader {
   private apiService = new ApiService();
   private applicationUniversalIdentifier: string;
   private appPath: string;
-  private logger = createLogger('file-upload');
 
   constructor(options: {
     applicationUniversalIdentifier: string;
@@ -27,38 +24,13 @@ export class FileUploader {
     builtPath: string;
     fileFolder: FileFolder;
   }) {
-    const uploadResult = await this.apiService.uploadFile({
-      filePath: path.join(this.appPath, OUTPUT_DIR, builtPath),
-      builtHandlerPath: builtPath,
+    const builtHandlerPath = relative(OUTPUT_DIR, builtPath);
+
+    return await this.apiService.uploadFile({
+      filePath: path.join(this.appPath, builtPath),
+      builtHandlerPath,
       fileFolder,
       applicationUniversalIdentifier: this.applicationUniversalIdentifier,
     });
-
-    if (uploadResult.success) {
-      this.logger.success(`☁️ Uploaded ${builtPath}`);
-    } else {
-      this.logger.error(
-        `Failed to upload ${builtPath} -- ${uploadResult.error}`,
-      );
-    }
-  }
-
-  async uploadManifestBuiltFiles(manifest: ApplicationManifest) {
-    const uploadPromises = [
-      ...manifest.functions.map((builtFile) =>
-        this.uploadFile({
-          builtPath: builtFile.builtHandlerPath,
-          fileFolder: FileFolder.BuiltFunction,
-        }),
-      ),
-      ...manifest.frontComponents.map((builtFile) =>
-        this.uploadFile({
-          builtPath: builtFile.builtComponentPath,
-          fileFolder: FileFolder.BuiltFrontComponent,
-        }),
-      ),
-    ];
-
-    await Promise.all(uploadPromises);
   }
 }

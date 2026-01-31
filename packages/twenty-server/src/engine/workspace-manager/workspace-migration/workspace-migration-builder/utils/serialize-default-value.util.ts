@@ -1,6 +1,5 @@
 import { type ColumnType } from 'typeorm';
-
-import { type FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 
 import {
   FieldMetadataException,
@@ -11,7 +10,7 @@ import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type SerializeDefaultValueArgs = {
-  defaultValue?: FieldMetadataDefaultSerializableValue;
+  defaultValue?: FieldMetadataDefaultValueForAnyType;
   columnType?: ColumnType;
   schemaName: string;
   tableName: string;

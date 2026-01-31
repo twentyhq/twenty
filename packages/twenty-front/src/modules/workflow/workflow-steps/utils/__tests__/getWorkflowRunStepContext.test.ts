@@ -17,9 +17,8 @@ const mockFlow = {
       valid: true,
       settings: {
         input: {
-          serverlessFunctionId: '',
-          serverlessFunctionInput: {},
-          serverlessFunctionVersion: '',
+          logicFunctionId: '',
+          logicFunctionInput: {},
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -36,9 +35,8 @@ const mockFlow = {
       valid: true,
       settings: {
         input: {
-          serverlessFunctionId: '',
-          serverlessFunctionInput: {},
-          serverlessFunctionVersion: '',
+          logicFunctionId: '',
+          logicFunctionInput: {},
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -139,9 +137,8 @@ describe('getWorkflowRunStepContext', () => {
           valid: true,
           settings: {
             input: {
-              serverlessFunctionId: '',
-              serverlessFunctionInput: {},
-              serverlessFunctionVersion: '',
+              logicFunctionId: '',
+              logicFunctionInput: {},
             },
             outputSchema: {},
             errorHandlingOptions: {
@@ -176,9 +173,8 @@ describe('getWorkflowRunStepContext', () => {
           valid: true,
           settings: {
             input: {
-              serverlessFunctionId: '',
-              serverlessFunctionInput: {},
-              serverlessFunctionVersion: '',
+              logicFunctionId: '',
+              logicFunctionInput: {},
             },
             outputSchema: {},
             errorHandlingOptions: {

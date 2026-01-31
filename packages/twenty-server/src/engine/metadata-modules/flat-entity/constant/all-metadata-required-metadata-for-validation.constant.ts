@@ -31,16 +31,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     fieldMetadata: true,
   },
-  serverlessFunction: {},
-  cronTrigger: {
-    serverlessFunction: true,
-  },
-  databaseEventTrigger: {
-    serverlessFunction: true,
-  },
-  routeTrigger: {
-    serverlessFunction: true,
-  },
+  logicFunction: {},
   viewFilter: {
     view: true,
     fieldMetadata: true,
@@ -64,6 +55,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   skill: {},
   commandMenuItem: {
     objectMetadata: true,
+    frontComponent: true,
   },
   navigationMenuItem: {
     objectMetadata: true,
@@ -71,6 +63,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   pageLayout: {
     objectMetadata: true,
+    pageLayoutTab: true,
   },
   pageLayoutTab: {
     pageLayout: true,
@@ -90,4 +83,5 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
   },
   frontComponent: {},
+  webhook: {},
 } as const satisfies MetadataRequiredForValidation;

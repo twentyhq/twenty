@@ -1,31 +1,31 @@
 ---
-title: Bring Product Data into Twenty
-description: Sync product catalog data from a data warehouse into your CRM on a schedule.
+title: Traga dados de produtos para o Twenty
+description: Sincronize, de forma agendada, os dados do catálogo de produtos do seu armazém de dados para o seu CRM.
 ---
 
-Use this pattern to keep Twenty in sync with product data from your data warehouse (e.g., Snowflake, BigQuery, PostgreSQL).
+Use este padrão para manter o Twenty sincronizado com os dados de produtos do seu armazém de dados (por exemplo, Snowflake, BigQuery, PostgreSQL).
 
-## Workflow Structure
+## Estrutura do Fluxo de Trabalho
 
-1. **Trigger**: On a Schedule
-2. **Code**: Query your data warehouse
-3. **Code** (optional): Format data as array
-4. **Iterator**: Loop through each product
-5. **Upsert Record**: Create or update in Twenty
+1. **Gatilho**: De forma agendada
+2. **Código**: Consultar seu armazém de dados
+3. **Código** (opcional): Formatar os dados como array
+4. **Iterador**: Percorrer cada produto
+5. **Inserir/atualizar registro**: Criar ou atualizar no Twenty
 
 <img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
 
-## Step 1: Schedule the Trigger
+## Etapa 1: Agendar o gatilho
 
-Set the workflow to run at a frequency matching your data freshness needs:
+Defina o fluxo de trabalho para executar em uma frequência que atenda às suas necessidades de atualização dos dados:
 
-* Every 5 minutes for near real-time sync
-* Every hour for less critical data
-* Daily for batch updates
+* A cada 5 minutos para sincronização quase em tempo real
+* A cada hora para dados menos críticos
+* Diariamente para atualizações em lote
 
-## Step 2: Query Your Data Warehouse
+## Etapa 2: Consultar seu armazém de dados
 
-Add a **Code** action to fetch recent data:
+Adicione uma ação de **Código** para buscar dados recentes:
 
 ```javascript
 export const main = async () => {
@@ -54,14 +54,14 @@ export const main = async () => {
 ```
 
 <Tip>
-  Filter by `updated_at >= last X minutes` to retrieve only recently changed records. This keeps the sync efficient.
+  Filtre por `updated_at >= last X minutes` para recuperar apenas registros alterados recentemente. Isso mantém a sincronização eficiente.
 </Tip>
 
-## Step 3: Format Data (Optional)
+## Etapa 3: Formatar os dados (opcional)
 
-If your warehouse returns data in a format that needs transformation, add another **Code** action. Common transformations include type conversions, field renaming, and data cleanup.
+Se o seu armazém de dados retornar dados em um formato que precise de transformação, adicione outra ação de **Código**. Transformações comuns incluem conversões de tipo, renomeação de campos e limpeza de dados.
 
-### Example: User Data with Boolean and Status Fields
+### Exemplo: Dados de usuário com campos booleanos e de status
 
 ```javascript
 export const main = async (params: {
@@ -86,7 +86,7 @@ export const main = async (params: {
 };
 ```
 
-### Example: Product Data with Type Conversions
+### Exemplo: Dados de produto com conversões de tipo
 
 ```javascript
 export const main = async (params: { products: any }) => {
@@ -107,7 +107,7 @@ export const main = async (params: { products: any }) => {
 };
 ```
 
-### Example: Date and Currency Formatting
+### Exemplo: Formatação de data e moeda
 
 ```javascript
 export const main = async (params: { deals: any }) => {
@@ -131,52 +131,52 @@ export const main = async (params: { deals: any }) => {
 };
 ```
 
-### Common Transformations
+### Transformações comuns
 
-| Source Format        | Target Format    | Code                                     |
-| -------------------- | ---------------- | ---------------------------------------- |
-| `"true"` / `"false"` | `true` / `false` | `v === true \|\| v === "true"`           |
-| `"123.45"`           | `123.45`         | `parseFloat(value)`                      |
-| `"active"`           | `"ACTIVE"`       | `value.toUpperCase()`                    |
-| `1704067200` (Unix)  | ISO date         | `new Date(v * 1000).toISOString()`       |
-| `"$1,234.56"`        | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
-| `null` / `undefined` | `""`             | `value \|\| ""`                          |
+| Formato de origem    | Formato de destino | Código                                   |
+| -------------------- | ------------------ | ---------------------------------------- |
+| `"true"` / `"false"` | `true` / `false`   | `v === true \|\| v === "true"`           |
+| `"123.45"`           | `123.45`           | `parseFloat(value)`                      |
+| `"active"`           | `"ACTIVE"`         | `value.toUpperCase()`                    |
+| `1704067200` (Unix)  | Data ISO           | `new Date(v * 1000).toISOString()`       |
+| `"$1,234.56"`        | `1234.56`          | `parseFloat(v.replace(/[^0-9.-]/g, ""))` |
+| `null` / `undefined` | `""`               | `value \|\| ""`                          |
 
-## Step 4: Iterate Through Products
+## Etapa 4: Iterar pelos produtos
 
-Add an **Iterator** action:
+Adicione uma ação de **Iterador**:
 
-* Input: `{{code.products}}`
+* Entrada: `{{code.products}}`
 
-This loops through each product in the array.
+Isso percorre cada produto no array.
 
-## Step 5: Upsert Each Record
+## Etapa 5: Inserir/atualizar cada registro
 
-Inside the iterator, add an **Upsert Record** action:
+Dentro do iterador, adicione uma ação de **Inserir/atualizar registro**:
 
-| Setting      | Value                                  |
-| ------------ | -------------------------------------- |
-| **Object**   | Your custom Product object             |
-| **Match by** | External ID or SKU (unique identifier) |
-| **Name**     | `{{iterator.item.name}}`               |
-| **SKU**      | `{{iterator.item.sku}}`                |
-| **Price**    | `{{iterator.item.price}}`              |
+| Configuração            | Valor                                   |
+| ----------------------- | --------------------------------------- |
+| **Objeto**              | Seu objeto Produto personalizado        |
+| **Correspondência por** | ID externo ou SKU (identificador único) |
+| **Nome**                | `{{iterator.item.name}}`                |
+| **SKU**                 | `{{iterator.item.sku}}`                 |
+| **Preço**               | `{{iterator.item.price}}`               |
 
 <Tip>
-  Use **Upsert** (update or create) instead of building separate branches for create vs. update. It's faster to build and easier to debug.
+  Use **inserir/atualizar** (atualizar ou criar) em vez de construir ramificações separadas para criação vs. atualização. É mais rápido de construir e mais fácil de depurar.
 </Tip>
 
-## Example Use Cases
+## Casos de uso de exemplo
 
-| Source                  | Data                                |
-| ----------------------- | ----------------------------------- |
-| **ERP system**          | Product catalog, pricing, inventory |
-| **E-commerce platform** | Orders, customers, product updates  |
-| **Data warehouse**      | Aggregated metrics, enriched data   |
-| **Inventory system**    | Stock levels, reorder alerts        |
+| Fonte                        | Data                                        |
+| ---------------------------- | ------------------------------------------- |
+| **Sistema ERP**              | Catálogo de produtos, preços, inventário    |
+| **Plataforma de e-commerce** | Pedidos, clientes, atualizações de produtos |
+| **Armazém de dados**         | Métricas agregadas, dados enriquecidos      |
+| **Sistema de inventário**    | Níveis de estoque, alertas de reposição     |
 
-## Related
+## Relacionados
 
-* [Workflow Triggers](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/pt/user-guide/workflows/capabilities/workflow-actions)
-* [Handle Arrays in Code Actions](/l/pt/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+* [Lidar com arrays em ações de código](/l/pt/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -9,12 +9,12 @@ description: Twenty özelleştirmelerini kod olarak oluşturun ve yönetin.
 
 ## Uygulamalar Nedir?
 
-Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi sağlar. Her şeyi UI üzerinden yapılandırmak yerine, veri modelinizi ve sunucusuz fonksiyonlarınızı kodla tanımlarsınız — bu da oluşturmayı, bakımı ve birden çok çalışma alanına dağıtımı hızlandırır.
+Uygulamalar, Twenty özelleştirmelerini **kod olarak** oluşturup yönetmenizi sağlar. Her şeyi UI üzerinden yapılandırmak yerine, veri modelinizi ve mantık fonksiyonlarınızı kodla tanımlarsınız — bu da oluşturmayı, bakımı ve birden çok çalışma alanına dağıtmayı hızlandırır.
 
 **Bugün Yapabilecekleriniz:**
 
 * Özel nesneleri ve alanları kod olarak tanımlayın (yönetilen veri modeli)
-* Özel tetikleyicilerle sunucusuz fonksiyonlar oluşturun
+* Özel tetikleyicilerle mantık fonksiyonları oluşturun
 * Aynı uygulamayı birden çok çalışma alanına dağıtın
 
 **Yakında:**
@@ -50,15 +50,12 @@ Buradan şunları yapabilirsiniz:
 
 ```bash filename="Terminal"
 # Add a new entity to your application (guided)
-yarn app:create-entity
+yarn entity:add
 
 # Generate a typed Twenty client and workspace entity types
 yarn app:generate
 
-# Run a one‑time sync (instead of watch mode)
-yarn app:sync
-
-# Watch your application's functions logs
+# Watch your application's function logs
 yarn function:logs
 
 # Execute a function by name
@@ -68,7 +65,7 @@ yarn function:execute -n my-function -p '{"name": "test"}'
 yarn app:uninstall
 
 # Display commands' help
-yarn app:help
+yarn help
 ```
 
 Ayrıca bkz.: [create-twenty-app](https://www.npmjs.com/package/create-twenty-app) ve [twenty-sdk CLI](https://www.npmjs.com/package/twenty-sdk) için CLI başvuru sayfaları.
@@ -96,23 +93,25 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Genel varlıklar klasörü (görseller, yazı tipleri vb.)
   src/
-    app/
-      application.config.ts     # Required - main application configuration
-      default-function.role.ts  # Default role for serverless functions
-      // your entities (*.object.ts, *.function.ts, *.role.ts)
-    utils/                      # Optional - handler implementations & utilities
+    application.config.ts          # Gerekli - ana uygulama yapılandırması
+    default-function.role.ts       # Sunucusuz işlevler için varsayılan rol
+    hello-world.function.ts        # Örnek sunucusuz işlev
+    hello-world.front-component.tsx # Örnek ön uç bileşeni
+    // varlıklarınız (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Sözleşme-öncelikli yapılandırma
 
 Uygulamalar, varlıkların dosya sonekiyle algılandığı **sözleşme-öncelikli yapılandırma** yaklaşımını kullanır. Bu, `src/app/` klasörü içinde esnek bir düzenlemeye olanak tanır:
 
-| Dosya soneki    | Varlık türü                   |
-| --------------- | ----------------------------- |
-| `*.object.ts`   | Özel nesne tanımları          |
-| `*.function.ts` | Sunucusuz fonksiyon tanımları |
-| `*.role.ts`     | Rol tanımları                 |
+| Dosya soneki            | Varlık türü                   |
+| ----------------------- | ----------------------------- |
+| `*.object.ts`           | Özel nesne tanımları          |
+| `*.function.ts`         | Sunucusuz fonksiyon tanımları |
+| `*.front-component.tsx` | Front component definitions   |
+| `*.role.ts`             | Rol tanımları                 |
 
 ### Desteklenen klasör düzenleri
 
@@ -121,12 +120,14 @@ Varlıklarınızı şu desenlerden herhangi birine göre düzenleyebilirsiniz:
 **Geleneksel (türe göre):**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── objects/
 │   └── postCard.object.ts
 ├── functions/
 │   └── createPostCard.function.ts
+├── components/
+│   └── card.front-component.tsx
 └── roles/
     └── admin.role.ts
 ```
@@ -134,44 +135,46 @@ src/app/
 **Özelliğe dayalı:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 └── post-card/
     ├── postCard.object.ts
     ├── createPostCard.function.ts
+    ├── card.front-component.tsx
     └── postCardAdmin.role.ts
 ```
 
 **Düz:**
 
 ```text
-src/app/
+src/
 ├── application.config.ts
 ├── postCard.object.ts
 ├── createPostCard.function.ts
+├── card.front-component.tsx
 └── admin.role.ts
 ```
 
 Genel hatlarıyla:
 
-* **package.json**: Uygulama adını, sürümünü, motorları (Node 24+, Yarn 4) bildirir ve yerel `twenty` CLI’ına yetki devreden `dev`, `sync`, `generate`, `create-entity`, `logs`, `uninstall` ve `auth` gibi betiklerin yanı sıra `twenty-sdk` ekler.
+* **package.json**: Uygulama adını, sürümünü, motorları (Node 24+, Yarn 4) bildirir ve yerel `twenty` CLI’sine yetki devreden `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` ve `auth:login` gibi betiklerin yanı sıra `twenty-sdk` ekler.
 * **.gitignore**: `node_modules`, `.yarn`, `generated/` (türlendirilmiş istemci), `dist/`, `build/`, kapsam klasörleri, günlük dosyaları ve `.env*` dosyaları gibi yaygın artifaktları yok sayar.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Proje tarafından kullanılan Yarn 4 araç zincirini kilitler ve yapılandırır.
 * **.nvmrc**: Projenin beklediği Node.js sürümünü sabitler.
 * **eslint.config.mjs** ve **tsconfig.json**: Uygulamanızın TypeScript kaynakları için linting ve TypeScript yapılandırması sağlar.
 * **README.md**: Uygulama kökünde temel talimatların yer aldığı kısa bir README.
-* **src/app/**: Uygulamanızı kod olarak tanımladığınız ana yer:
+* **public/**: Uygulamanızla birlikte sunulacak genel varlıkları (görseller, yazı tipleri, statik dosyalar) depolamak için bir klasör. Buraya yerleştirilen dosyalar senkronizasyon sırasında yüklenir ve çalışma zamanında erişilebilir olur.
+* **src/**: Uygulamanızı kod olarak tanımladığınız ana yer:
   * `application.config.ts`: Uygulamanız için genel yapılandırma (meta veriler ve çalışma zamanı bağlantıları). Aşağıda "Uygulama yapılandırması"na bakın.
-  * `*.role.ts`: Sunucusuz fonksiyonlarınız tarafından kullanılan rol tanımları. Aşağıda "Varsayılan fonksiyon rolü"ne bakın.
+  * `*.role.ts`: Mantık fonksiyonlarınız tarafından kullanılan rol tanımları. Aşağıda "Varsayılan fonksiyon rolü"ne bakın.
   * `*.object.ts`: Özel nesne tanımları.
-  * `*.function.ts`: Sunucusuz fonksiyon tanımları.
-* **src/utils/**: İşleyici uygulamaları ve yardımcılar için isteğe bağlı klasör.
+  * `*.function.ts`: Mantık fonksiyon tanımları.
+  * `*.front-component.tsx`: Ön bileşen tanımları.
 
 İlerideki komutlar daha fazla dosya ve klasör ekleyecektir:
 
 * `yarn app:generate`, `generated/` klasörünü oluşturur (türlendirilmiş Twenty istemcisi + çalışma alanı türleri).
-* `yarn app:create-entity`, özel nesneleriniz, fonksiyonlarınız veya rolleriniz için `src/app/` altında varlık tanım dosyaları ekler.
-  l
+* `yarn entity:add`, özel nesneleriniz, fonksiyonlarınız, ön bileşenleriniz veya rolleriniz için `src/` altında varlık tanım dosyaları ekler.
 
 ## Kimlik Doğrulama
 
@@ -214,12 +217,12 @@ twenty-sdk, uygulamanız içinde kullandığınız türlendirilmiş yapı taşla
 
 SDK, uygulama varlıklarınızı tanımlamak için yerleşik doğrulamaya sahip dört yardımcı fonksiyon sunar:
 
-| Fonksiyon          | Amaç                                            |
-| ------------------ | ----------------------------------------------- |
-| `defineApp()`      | Uygulama meta verilerini yapılandırın           |
-| `defineObject()`   | Alanlara sahip özel nesneler tanımlayın         |
-| `defineFunction()` | İşleyicilerle sunucusuz fonksiyonlar tanımlayın |
-| `defineRole()`     | Rol izinlerini ve nesne erişimini yapılandırın  |
+| Fonksiyon             | Amaç                                           |
+| --------------------- | ---------------------------------------------- |
+| `defineApplication()` | Uygulama meta verilerini yapılandırın          |
+| `defineObject()`      | Alanlara sahip özel nesneler tanımlayın        |
+| `defineFunction()`    | İşleyicilerle mantık fonksiyonları tanımlayın  |
+| `defineRole()`        | Rol izinlerini ve nesne erişimini yapılandırın |
 
 Bu fonksiyonlar, yapılandırmanızı çalışma anında doğrular ve daha iyi IDE otomatik tamamlama ve tür güvenliği sağlar.
 
@@ -302,62 +305,11 @@ export default defineObject({
 * `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
 * Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
 * `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
-* `yarn app:create-entity` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
+* `yarn entity:add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
 
 <Note>
   **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, `name`, `createdAt`, `updatedAt`, `createdBy`, `position` ve `deletedAt` gibi standart alanları otomatik olarak ekler. Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
 </Note>
-
-<Accordion title="Alternatif: Dekoratör tabanlı söz dizimi">
-  Nesneleri TypeScript dekoratörlerini kullanarak da tanımlayabilirsiniz. Bu yaklaşım, `@Object`, `@Field` ve `@Relation` dekoratörleriyle sınıf tabanlı söz dizimi kullanır:
-
-  ```typescript
-  import {
-    type AddressField,
-    Field,
-    FieldType,
-    type FullNameField,
-    Object,
-    OnDeleteAction,
-    Relation,
-    RelationType,
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  } from 'twenty-sdk';
-  import { type Note } from '../../generated';
-
-  @Object({
-    universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-    nameSingular: 'postCard',
-    namePlural: 'postCards',
-    labelSingular: 'Post card',
-    labelPlural: 'Post cards',
-    description: 'A post card object',
-    icon: 'IconMail',
-  })
-  export class PostCard {
-    @Field({
-      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
-      type: FieldType.TEXT,
-      label: 'Content',
-      description: "Postcard's content",
-      icon: 'IconAbc',
-    })
-    content: string;
-
-    @Relation({
-      universalIdentifier: 'c9e2b4f4-b9ad-4427-9b42-9971b785edfe',
-      type: RelationType.ONE_TO_MANY,
-      label: 'Notes',
-      icon: 'IconComment',
-      inverseSideTargetUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
-      onDelete: OnDeleteAction.CASCADE,
-    })
-    notes: Note[];
-  }
-  ```
-
-  Not: Dekoratör yaklaşımı, TypeScript yapılandırmanızda `experimentalDecorators` gerektirir.
-</Accordion>
 
 ### Uygulama yapılandırması (application.config.ts)
 
@@ -367,14 +319,14 @@ Her uygulamanın aşağıdakileri açıklayan tek bir `application.config.ts` do
 * **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
 * **(İsteğe bağlı) değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
 
-Uygulama yapılandırmanızı tanımlamak için `defineApp()` kullanın:
+Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -387,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -395,11 +347,11 @@ Notlar:
 
 * `universalIdentifier` alanları size ait belirleyici kimliklerdir; bunları bir kez oluşturun ve eşitlemeler boyunca kararlı tutun.
 * `applicationVariables`, fonksiyonlarınız için ortam değişkenlerine dönüşür (örneğin, `DEFAULT_RECIPIENT_NAME` değeri `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
-* `functionRoleUniversalIdentifier`, `*.role.ts` dosyanızda tanımladığınız rolle eşleşmelidir (aşağıya bakın).
+* `roleUniversalIdentifier`, `*.role.ts` dosyanızda tanımladığınız rolle eşleşmelidir (aşağıya bakın).
 
 #### Roller ve izinler
 
-Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application.config.ts` içindeki `functionRoleUniversalIdentifier` alanı, uygulamanızın sunucusuz fonksiyonları tarafından kullanılan varsayılan rolü belirtir.
+Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application.config.ts` içindeki `roleUniversalIdentifier` alanı, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan rolü belirtir.
 
 * `TWENTY_API_KEY` olarak enjekte edilen çalışma zamanı API anahtarı bu varsayılan fonksiyon rolünden türetilir.
 * Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
@@ -413,11 +365,11 @@ Yeni bir uygulama oluşturduğunuzda CLI ayrıca varsayılan bir rol dosyası da
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -430,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -439,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -449,7 +401,7 @@ export default defineRole({
 });
 ```
 
-Bu rolün `universalIdentifier` değeri, `application.config.ts` içinde `functionRoleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
+Bu rolün `universalIdentifier` değeri, `application.config.ts` içinde `roleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
 
 * **\*.role.ts**, varsayılan fonksiyon rolünün neler yapabileceğini tanımlar.
 * **application.config.ts** bu role işaret eder, böylece fonksiyonlarınız onun izinlerini devralır.
@@ -461,7 +413,7 @@ Notlar:
 * `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Minimumda tutun; yalnızca ihtiyacınız olanları ekleyin.
 * Çalışan bir örneği Hello World uygulamasında görün: [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Sunucusuz fonksiyon yapılandırması ve giriş noktası
+### Mantık fonksiyon yapılandırması ve giriş noktası
 
 Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineFunction()` kullanır. Otomatik algılama için `*.function.ts` dosya soneğini kullanın.
 
@@ -469,14 +421,9 @@ Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren 
 // src/app/createPostCard.function.ts
 import { defineFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
-import Twenty, { type Person } from '../../generated';
+import Twenty, { type Person } from '~/generated';
 
-const handler = async (
-  params:
-    | RoutePayload
-    | DatabaseEventPayload<ObjectRecordCreateEvent<Person>>
-    | CronPayload,
-) => {
+const handler = async (params: RoutePayload) => {
   const client = new Twenty(); // generated typed client
   const name = 'name' in params.queryStringParameters
     ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
@@ -507,18 +454,18 @@ export default defineFunction({
       isAuthRequired: false,
     },
     // Cron trigger (CRON pattern)
-    {
-      universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-      type: 'cron',
-      pattern: '0 0 1 1 *',
-    },
+    // {
+    //   universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
+    //   type: 'cron',
+    //   pattern: '0 0 1 1 *',
+    // },
     // Database event trigger
-    {
-      universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-      type: 'databaseEvent',
-      eventName: 'person.updated',
-      updatedFields: ['name'],
-    },
+    // {
+    //   universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
+    //   type: 'databaseEvent',
+    //   eventName: 'person.updated',
+    //   updatedFields: ['name'],
+    // },
   ],
 });
 ```
@@ -565,7 +512,7 @@ Notlar:
   **Mevcut fonksiyonları taşımak için:** İşleyicinizi, parametreler nesnesinden doğrudan ayırmak yerine `event.body`, `event.queryStringParameters` veya `event.pathParameters` üzerinden ayrıştıracak şekilde güncelleyin.
 </Warning>
 
-Bir rota tetikleyicisi fonksiyonunuzu çağırdığında, AWS HTTP API v2 formatını izleyen bir `RoutePayload` nesnesi alır. Türü `twenty-sdk` içinden içe aktarın:
+Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında, AWS HTTP API v2 formatını izleyen bir `RoutePayload` nesnesi alır. Türü `twenty-sdk` içinden içe aktarın:
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -595,7 +542,7 @@ const handler = async (event: RoutePayload) => {
 
 ### HTTP başlıklarını iletme
 
-Varsayılan olarak, güvenlik nedenleriyle gelen isteklerden HTTP başlıkları sunucusuz fonksiyonunuza **aktarılmaz**. Belirli başlıklara erişmek için bunları açıkça `forwardedRequestHeaders` dizisinde listeleyin:
+Varsayılan olarak, güvenlik nedenleriyle gelen isteklerden HTTP başlıkları mantık fonksiyonunuza **aktarılmaz**. Belirli başlıklara erişmek için bunları açıkça `forwardedRequestHeaders` dizisinde listeleyin:
 
 ```typescript
 export default defineFunction({
@@ -633,7 +580,7 @@ const handler = async (event: RoutePayload) => {
 
 Yeni fonksiyonları iki şekilde oluşturabilirsiniz:
 
-* **Şablondan**: `yarn app:create-entity` çalıştırın ve yeni bir fonksiyon ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
+* **Şablondan**: `yarn entity:add` çalıştırın ve yeni bir fonksiyon ekleme seçeneğini seçin. Bu, bir işleyici ve yapılandırma içeren bir başlangıç dosyası oluşturur.
 * **Manuel**: Yeni bir `*.function.ts` dosyası oluşturun ve aynı deseni izleyerek `defineFunction()` kullanın.
 
 ### Oluşturulmuş türlendirilmiş istemci
@@ -641,15 +588,15 @@ Yeni fonksiyonları iki şekilde oluşturabilirsiniz:
 Çalışma alanı şemanıza göre generated/ içinde yerel bir türlendirilmiş istemci oluşturmak için yarn app:generate çalıştırın. Fonksiyonlarınızda kullanın:
 
 ```typescript
-import Twenty from './generated';
+import Twenty from '~/generated';
 
 const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-İstemci `yarn app:generate` tarafından yeniden oluşturulur. Nesnelerinizi değiştirip `yarn app:sync` çalıştırdıktan sonra veya yeni bir çalışma alanına katılırken yeniden çalıştırın.
+İstemci `yarn app:generate` tarafından yeniden oluşturulur. Nesnelerinizi değiştirdikten sonra veya yeni bir çalışma alanına katılırken yeniden çalıştırın.
 
-#### Sunucusuz fonksiyonlarda çalışma zamanı kimlik bilgileri
+#### Mantık fonksiyonlarında çalışma zamanı kimlik bilgileri
 
 Fonksiyonunuz Twenty üzerinde çalıştığında, platform kodunuz yürütülmeden önce kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
 
@@ -659,8 +606,8 @@ Fonksiyonunuz Twenty üzerinde çalıştığında, platform kodunuz yürütülme
 Notlar:
 
 * Oluşturulan istemciye URL veya API anahtarı geçirmeniz gerekmez. Çalışma zamanında `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini process.env üzerinden okur.
-* API anahtarının izinleri, `application.config.ts` içinde `functionRoleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın sunucusuz fonksiyonları tarafından kullanılan varsayılan roldür.
-* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `functionRoleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
+* API anahtarının izinleri, `application.config.ts` içinde `roleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
+* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `roleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
 
 ### Hello World örneği
 
@@ -679,25 +626,29 @@ Ardından şu gibi betikler ekleyin:
 ```json filename="package.json"
 {
   "scripts": {
-    "auth": "twenty auth login",
-    "generate": "twenty app generate",
-    "dev": "twenty app dev",
-    "sync": "twenty app sync",
-    "uninstall": "twenty app uninstall",
-    "logs": "twenty app logs",
-    "create-entity": "twenty app add",
-    "help": "twenty --help"
+    "auth:login": "twenty auth:login",
+    "auth:logout": "twenty auth:logout",
+    "auth:status": "twenty auth:status",
+    "auth:switch": "twenty auth:switch",
+    "auth:list": "twenty auth:list",
+    "app:dev": "twenty app:dev",
+    "app:generate": "twenty app:generate",
+    "app:uninstall": "twenty app:uninstall",
+    "entity:add": "twenty entity:add",
+    "function:logs": "twenty function:logs",
+    "function:execute": "twenty function:execute",
+    "help": "twenty help"
   }
 }
 ```
 
-Artık aynı komutları Yarn üzerinden çalıştırabilirsiniz; örn. `yarn app:dev`, `yarn app:sync` vb.
+Artık aynı komutları Yarn üzerinden çalıştırabilirsiniz; örn. `yarn app:dev`, `yarn app:generate` vb.
 
 ## Sorun Giderme
 
 * Kimlik doğrulama hataları: `yarn auth:login` çalıştırın ve API anahtarınızın gerekli izinlere sahip olduğundan emin olun.
 * Sunucuya bağlanılamıyor: API URL’sini ve Twenty sunucusunun erişilebilir olduğunu doğrulayın.
-* Türler veya istemci eksik/eski: `yarn app:generate` ve ardından `yarn app:dev` çalıştırın.
+* Türler veya istemci eksik/eski: `yarn app:generate` çalıştırın.
 * Geliştirme modu eşitlenmiyor: `yarn app:dev`'in çalıştığından ve değişikliklerin ortamınız tarafından yok sayılmadığından emin olun.
 
 Discord Yardım Kanalı: https://discord.com/channels/1130383047699738754/1130386664812982322

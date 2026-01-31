@@ -1,23 +1,39 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import {
+  FieldMetadataType,
+  type FieldMetadataSettings,
+} from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
+
+type RelationFieldMetadataSettings =
+  FieldMetadataSettings<FieldMetadataType.RELATION>;
 
 @Command({
   name: 'upgrade:1-17:migrate-attachment-to-morph-relations',
@@ -29,8 +45,6 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly featureFlagService: FeatureFlagService,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
@@ -76,44 +90,31 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
       const schemaName = getWorkspaceSchemaName(workspaceId);
       const tableName = 'attachment';
 
-      const customObjectMetadata = await this.objectMetadataRepository.find({
-        where: {
-          workspaceId,
-          isCustom: true,
-        },
-      });
-      const customObjectMetadataNames = customObjectMetadata.map(
-        (objectMetadata) => objectMetadata.nameSingular,
-      );
+      const {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatApplicationMaps,
+      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'flatApplicationMaps',
+      ]);
 
-      const fieldNameMigrations = [
-        { old: 'task', new: 'targetTask' },
-        { old: 'note', new: 'targetNote' },
-        { old: 'person', new: 'targetPerson' },
-        { old: 'company', new: 'targetCompany' },
-        { old: 'opportunity', new: 'targetOpportunity' },
-        { old: 'dashboard', new: 'targetDashboard' },
-        { old: 'workflow', new: 'targetWorkflow' },
-        ...customObjectMetadataNames.map((customObjectName) => ({
-          old: `${customObjectName}`,
-          new: `target${capitalize(customObjectName)}`,
-        })),
-      ];
-
-      const fieldMigrations = fieldNameMigrations.map(
-        ({ old: oldFieldName, new: newFieldName }) => ({
-          old: `${oldFieldName}Id`,
-          new: `${newFieldName}Id`,
-        }),
-      );
+      const attachmentTargetFieldUniversalIdentifiers = new Set<string>([
+        STANDARD_OBJECTS.attachment.fields.targetTask.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.targetNote.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.targetPerson.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.targetCompany.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.targetOpportunity
+          .universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.targetDashboard.universalIdentifier,
+        STANDARD_OBJECTS.attachment.fields.targetWorkflow.universalIdentifier,
+      ]);
 
       const attachmentObjectMetadata =
-        await this.objectMetadataRepository.findOne({
-          where: {
-            workspaceId,
-            nameSingular: 'attachment',
-          },
-          relations: ['fields'],
+        findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
         });
 
       if (!attachmentObjectMetadata) {
@@ -124,18 +125,71 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
         return;
       }
 
-      for (const { new: newField, old: oldField } of fieldMigrations) {
+      const attachmentFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
+        attachmentObjectMetadata,
+        flatFieldMetadataMaps,
+      );
+
+      const attachmentTargetRelationFields = attachmentFieldMetadatas
+        .filter(isMorphOrRelationFlatFieldMetadata)
+        .filter((field) => field.type === FieldMetadataType.RELATION)
+        .filter((field) => {
+          const isStandardAppField = this.isTwentyStandardApplicationField({
+            field,
+            flatApplicationMaps,
+            workspaceId,
+          });
+          const isStandardTarget =
+            isStandardAppField &&
+            attachmentTargetFieldUniversalIdentifiers.has(
+              field.universalIdentifier,
+            );
+          const targetObjectMetadata = field.relationTargetObjectMetadataId
+            ? flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId]
+            : undefined;
+          const isCustomTarget =
+            !isStandardAppField && targetObjectMetadata?.isCustom === true;
+
+          return isStandardTarget || isCustomTarget;
+        });
+
+      const fieldMigrations = attachmentTargetRelationFields.map((field) => {
+        const newFieldName = `target${capitalize(field.name)}`;
+        const relationSettings: RelationFieldMetadataSettings = field.settings;
+        const oldJoinColumnName =
+          relationSettings?.joinColumnName ??
+          computeMorphOrRelationFieldJoinColumnName({ name: field.name });
+        const newJoinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: newFieldName,
+        });
+
+        return {
+          field,
+          newFieldName,
+          oldJoinColumnName,
+          newJoinColumnName,
+        };
+      });
+
+      for (const { oldJoinColumnName, newJoinColumnName } of fieldMigrations) {
+        if (oldJoinColumnName === newJoinColumnName) {
+          this.logger.log(
+            `Column "${oldJoinColumnName}" already renamed. Skipping...`,
+          );
+          continue;
+        }
+
         try {
           await queryRunner.query(
             `ALTER TABLE "${schemaName}"."${tableName}"
-           RENAME COLUMN "${oldField}" TO "${newField}"`,
+           RENAME COLUMN "${oldJoinColumnName}" TO "${newJoinColumnName}"`,
           );
           this.logger.log(
-            `Renamed column "${oldField}" to "${newField}" for "${tableName}"`,
+            `Renamed column "${oldJoinColumnName}" to "${newJoinColumnName}" for "${tableName}"`,
           );
         } catch (error) {
           this.logger.error(
-            `Error renaming column "${oldField}" to "${newField}" for "${tableName}" in workspace ${workspaceId}`,
+            `Error renaming column "${oldJoinColumnName}" to "${newJoinColumnName}" for "${tableName}" in workspace ${workspaceId}`,
             error,
           );
 
@@ -145,60 +199,30 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
 
       this.logger.log(`✅ Successfully migrated attachment records`);
 
-      const objectNamesToMigrate = fieldNameMigrations.map(
-        ({ old: oldFieldName }) => oldFieldName,
-      );
-
-      const relatedObjectMetadata = await this.objectMetadataRepository.find({
-        where: {
-          workspaceId,
-        },
-      });
-
-      const relatedObjectMetadataMap = new Map(
-        relatedObjectMetadata.map((obj) => [obj.nameSingular, obj]),
-      );
-
       const morphId = ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId;
 
-      for (const objectName of objectNamesToMigrate) {
-        const relatedObject = relatedObjectMetadataMap.get(objectName);
-
-        if (!relatedObject) {
-          this.logger.warn(
-            `Related object metadata not found for ${objectName} in workspace ${workspaceId}`,
-          );
-          continue;
-        }
-
-        const fieldToMigrate = attachmentObjectMetadata.fields.find(
-          (field) =>
-            field.type === 'RELATION' &&
-            field.relationTargetObjectMetadataId === relatedObject.id,
-        );
-
-        if (!fieldToMigrate) {
-          this.logger.log(
-            `No RELATION field found for ${objectName} in attachment`,
-          );
-          continue;
-        }
-
-        const newFieldName = `target${capitalize(fieldToMigrate.name)}`;
-
+      for (const {
+        field: fieldToMigrate,
+        newFieldName,
+        newJoinColumnName,
+      } of fieldMigrations) {
         const settings = {
           ...fieldToMigrate.settings,
-          joinColumnName: computeMorphOrRelationFieldJoinColumnName({
-            name: newFieldName,
-          }),
+          joinColumnName: newJoinColumnName,
         };
 
         try {
           const result = await queryRunner.query(
             `UPDATE core."fieldMetadata"
-           SET name = $1, type = 'MORPH_RELATION', "morphId" = $3, settings = $4
+           SET name = $1, type = $5, "morphId" = $3, settings = $4
            WHERE id = $2`,
-            [newFieldName, fieldToMigrate.id, morphId, settings],
+            [
+              newFieldName,
+              fieldToMigrate.id,
+              morphId,
+              settings,
+              FieldMetadataType.MORPH_RELATION,
+            ],
           );
 
           const rowsUpdated = result[1] || 0;
@@ -210,7 +234,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
           }
         } catch (error) {
           this.logger.error(
-            `Error updating fieldMetadata for ${objectName} in workspace ${workspaceId}`,
+            `Error updating fieldMetadata for field "${fieldToMigrate.name}" in workspace ${workspaceId}`,
             error,
           );
 
@@ -227,11 +251,24 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
         workspaceId,
       );
 
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      const relatedMetadataNames =
+        getMetadataRelatedMetadataNames('fieldMetadata');
+      const relatedCacheKeysToInvalidate: WorkspaceCacheKeyName[] =
+        relatedMetadataNames.map(getMetadataFlatEntityMapsKey);
+      const cacheKeysToInvalidate: WorkspaceCacheKeyName[] = [
         'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
+        ...relatedCacheKeysToInvalidate,
         'featureFlagsMap',
-      ]);
+      ];
+
+      this.logger.log(
+        `Invalidating caches: ${cacheKeysToInvalidate.join(' ')}`,
+      );
+
+      await this.workspaceCacheService.invalidateAndRecompute(
+        workspaceId,
+        cacheKeysToInvalidate,
+      );
 
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
@@ -254,5 +291,30 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
     } finally {
       await queryRunner.release();
     }
+  }
+
+  private isTwentyStandardApplicationField({
+    field,
+    flatApplicationMaps,
+    workspaceId,
+  }: {
+    field: { id: string; name: string; applicationId: string };
+    flatApplicationMaps: FlatApplicationCacheMaps;
+    workspaceId: string;
+  }): boolean {
+    const application = flatApplicationMaps.byId[field.applicationId];
+
+    if (!application) {
+      this.logger.error(
+        `🟥 Application not found for field "${field.name}" (${field.id}) in workspace ${workspaceId} (applicationId: ${field.applicationId})`,
+      );
+
+      return false;
+    }
+
+    return (
+      application.universalIdentifier ===
+      TWENTY_STANDARD_APPLICATION.universalIdentifier
+    );
   }
 }

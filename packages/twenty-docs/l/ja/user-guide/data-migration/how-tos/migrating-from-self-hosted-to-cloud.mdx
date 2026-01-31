@@ -1,171 +1,171 @@
 ---
-title: Migrating from Self-Hosted to Cloud
-description: Step-by-step guide to migrate your Twenty self-hosted instance to Twenty Cloud.
+title: セルフホストからクラウドへの移行
+description: Twenty のセルフホストのインスタンスを Twenty Cloud に移行するためのステップバイステップガイド。
 ---
 
-## Overview
+## 概要
 
-This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
+このガイドでは、Twenty のセルフホストのインスタンスから Twenty Cloud へデータを移行する手順を説明します。 クラウドのワークスペースをセットアップし、データをエクスポートしてから再インポートする流れです。
 
-<Note>Views, workflows, and roles must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>移行後、ビュー、ワークフロー、役割は手動で再作成する必要があります。 この構成作業のための時間を確保してください。</Note>
 
-## Step 1: Create Your Cloud Workspace
+## ステップ 1: クラウドワークスペースを作成する
 
-1. Go to [app.twenty.com](https://app.twenty.com) and create a new workspace
-2. Complete the initial setup wizard
-3. Note your new workspace URL
+1. [app.twenty.com](https://app.twenty.com) にアクセスし、新しいワークスペースを作成します
+2. 初期セットアップウィザードを完了します
+3. 新しいワークスペースの URL を控えておきます
 
-## Step 2: Recreate Your Data Model
+## ステップ 2: データモデルを再作成する
 
-Before importing data, recreate your custom objects and fields:
+データをインポートする前に、カスタムオブジェクトとフィールドを再作成してください:
 
-1. Go to **Settings → Data Model** in your cloud instance
-2. Create custom objects that match your self-hosted setup
-3. Add custom fields to standard and custom objects
-4. Configure field settings (unique, required, etc.)
+1. クラウドのインスタンスで **設定 → データモデル** に移動します
+2. セルフホスト環境の設定に一致するカスタムオブジェクトを作成します
+3. 標準オブジェクトおよびカスタムオブジェクトにカスタムフィールドを追加します
+4. フィールドの設定（一意、必須など）を行います
 
-<Note>Take screenshots of your self-hosted data model for reference, or keep both instances open side by side.</Note>
+<Note>参照用にセルフホスト環境のデータモデルのスクリーンショットを撮るか、両方のインスタンスを並べて開いたままにしておきましょう。</Note>
 
-## Step 3: Invite All Users
+## ステップ 3: すべてのユーザーを招待する
 
 <Warning>
-  **Critical: Invite users BEFORE importing data.**
+  **重要: データをインポートする前にユーザーを招待してください。**
 
-  Users must accept their invitations before you import any records that reference them (like Account Owner fields). If users don't exist yet, those relations cannot be mapped.
+  ユーザーを参照するレコード（例: Account Owner フィールド）をインポートする前に、ユーザーは招待を受諾している必要があります。 ユーザーがまだ存在しない場合、それらのリレーションはマッピングできません。
 </Warning>
 
-1. Go to **Settings → Members** in your cloud instance
-2. Invite all team members who had accounts on self-hosted
-3. **Wait for everyone to accept** their invitation
-4. Verify all users appear in your Members list
+1. クラウドのインスタンスで **設定 → メンバー** に移動します
+2. セルフホストでアカウントを持っていたチームメンバー全員を招待します
+3. **全員が招待を受諾するのを待ちます**
+4. メンバー一覧にすべてのユーザーが表示されていることを確認します
 
-## Step 4: Export Data from Self-Hosted
+## ステップ 4: セルフホストからデータをエクスポートする
 
-Export each object from your self-hosted instance:
+セルフホストのインスタンスから各オブジェクトをエクスポートします:
 
-1. Navigate to each object (Companies, People, Opportunities, etc.)
-2. Configure the view to show **all columns** you want to migrate
-3. Click **⋮ → Export view**
-4. Save each CSV file with a clear name (e.g., `companies-export.csv`)
+1. 各オブジェクト（会社、連絡先、商談など）に移動します
+2. 移行したい**すべての列**が表示されるようにビューを設定します
+3. **⋮ → Export view** をクリックします
+4. 各 CSV ファイルをわかりやすい名前で保存します（例: `companies-export.csv`）
 
-**Export in this order** (for reference when importing):
+インポート時の参照のため、**この順序でエクスポート**してください:
 
-1. Companies
-2. People
-3. Opportunities
-4. Custom objects (following their dependencies)
-5. Tasks, Notes
+1. 会社
+2. 人物
+3. 商談
+4. カスタムオブジェクト（依存関係に従って）
+5. タスク、メモ
 
-## Step 5: Update Workspace Member References
+## ステップ 5: ワークスペースのメンバー参照を更新する
 
-The exported CSVs contain user IDs from your self-hosted instance. These IDs won't match your cloud instance, so you need to replace them with emails.
+エクスポートした CSV には、セルフホストのインスタンスのユーザー ID が含まれています。 これらの ID はクラウドのインスタンスと一致しないため、メールアドレスに置き換える必要があります。
 
-**For each CSV file with user references (Owner, Assignee, etc.):**
+**ユーザー参照（Owner、Assignee など）がある各 CSV ファイルについて:**
 
-1. Open the CSV in a spreadsheet application
-2. Add a new column next to each user ID column (e.g., `accountOwnerEmail` next to `accountOwnerId`)
-3. Fill in the **email address** of each user
-4. You can delete the old ID column or leave it (it will be skipped during import)
+1. CSV をスプレッドシートアプリで開きます
+2. 各ユーザー ID 列の隣に新しい列を追加します（例: `accountOwnerId` の隣に `accountOwnerEmail`）
+3. 各ユーザーの**メールアドレス**を入力します
+4. 古い ID 列は削除しても残しても構いません（インポート時にスキップされます）
 
-**Example:**
+**例:**
 
-Before:
+以前:
 
 ```csv
 name,domain,accountOwnerId
 Acme Corp,https://acme.com,old-uuid-123
 ```
 
-After:
+以降:
 
 ```csv
 name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Use the same email addresses that users used to accept their cloud workspace invitation.</Note>
+<Note>クラウドのワークスペース招待を受諾した際にユーザーが使用したものと同じメールアドレスを使用してください。</Note>
 
-## Step 6: Plan Your Import Order
+## ステップ 6: インポート順序を計画する
 
-Import files in the correct order to maintain relationships:
+リレーションを維持するため、正しい順序でファイルをインポートします:
 
-1. **Companies** first (no dependencies)
-2. **People** second (link to Companies)
-3. **Opportunities** third (link to Companies and People)
-4. **Custom objects** (following their dependencies)
-5. **Tasks and Notes** last (link to other records)
+1. 最初に**会社**（依存関係なし）
+2. 次に**連絡先**（会社にリンク）
+3. 3 番目に**商談**（会社および連絡先にリンク）
+4. **カスタムオブジェクト**（依存関係に従って）
+5. 最後に**タスクとメモ**（他のレコードにリンク）
 
-See [How to Import Relations](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for details on maintaining relationships.
+リレーションの維持方法の詳細は、[リレーションをインポートする方法](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) を参照してください。
 
-## Step 7: Import to Cloud
+## ステップ 7: クラウドにインポートする
 
-For each CSV file, in order:
+各 CSV ファイルについて、順番に実行します:
 
-1. Navigate to the object in your cloud instance
-2. Click **⋮ → Import records**
-3. Upload the CSV file
-4. Map columns to fields:
-   * Map user email columns to the appropriate relation fields
-   * Map other columns as usual
-5. Review and fix any errors
-6. Confirm the import
-7. Verify a few records before proceeding to the next file
+1. クラウドのインスタンスで対象のオブジェクトに移動します
+2. **⋮ → Import records** をクリックします
+3. CSV ファイルをアップロードします
+4. 列をフィールドにマッピングします:
+   * ユーザーのメールアドレス列を適切なリレーションフィールドにマッピングします
+   * その他の列は通常どおりマッピングします
+5. エラーを確認して修正します
+6. インポートを確認します
+7. 次のファイルに進む前に、いくつかのレコードを確認します
 
-## Step 8: Recreate Configuration
+## ステップ 8: 設定を再作成する
 
-After importing data, manually recreate:
+データのインポート後、次の項目を手動で再作成します:
 
-### Views
+### ビュー
 
-* Recreate saved views with filters, sorts, and column configurations
-* Set up any kanban or calendar views
+* フィルター、並べ替え、列の構成を含む保存済みビューを再作成します
+* カンバンビューやカレンダービューを設定します
 
-### Workflows
+### ワークフロー
 
-* Recreate automations in **Settings → Workflows**
-* Test each workflow before relying on it
+* **設定 → ワークフロー** で自動化を再作成します
+* 運用に入れる前に各ワークフローをテストします
 
-### Roles and Permissions
+### 役割と権限
 
-* Configure roles in **Settings → Roles**
-* Assign users to appropriate roles
+* **設定 → 役割** で役割を設定します
+* ユーザーに適切な役割を割り当てます
 
-### Integrations
+### 統合
 
-* Reconnect email and calendar sync for each user
-* Reconfigure any API integrations with new API keys
+* 各ユーザーのメールおよびカレンダーの同期を再接続します
+* 新しい API キーで各種 API 連携を再設定します
 
-## Post-Migration Checklist
+## ポスト移行チェックリスト
 
-<Check>All data imported successfully</Check>
-<Check>Relations between objects working correctly</Check>
-<Check>User assignments (Owner, Assignee) mapped correctly</Check>
-<Check>Views recreated</Check>
-<Check>Workflows recreated and tested</Check>
-<Check>Roles and permissions configured</Check>
-<Check>Email/calendar sync reconnected</Check>
-<Check>API integrations updated with new keys</Check>
+<Check>すべてのデータが正常にインポートされている</Check>
+<Check>オブジェクト間のリレーションが正しく機能している</Check>
+<Check>ユーザーの割り当て（Owner、Assignee）が正しくマッピングされている</Check>
+<Check>ビューを再作成済み</Check>
+<Check>ワークフローを再作成し、テスト済み</Check>
+<Check>役割と権限を構成済み</Check>
+<Check>メール/カレンダーの同期を再接続済み</Check>
+<Check>API 連携を新しいキーで更新済み</Check>
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Can I migrate workflows automatically?">
-    Not currently. Workflows must be recreated manually in your cloud instance.
+  <Accordion title="ワークフローを自動的に移行できますか？">
+    現時点ではできません。 ワークフローはクラウドのインスタンスで手動で再作成する必要があります。
   </Accordion>
 
-  <Accordion title="What about file attachments and images?">
-    File attachments are not included in CSV exports. You'll need to re-upload any attachments manually, migrate them via API or contact our team for assistance with large migrations.
+  <Accordion title="ファイルの添付や画像はどうなりますか？">
+    CSV のエクスポートにはファイルの添付は含まれません。 添付ファイルは手動で再アップロードするか、API で移行するか、大規模な移行については弊社チームにご連絡ください。
   </Accordion>
 
-  <Accordion title="Can I keep both instances running during migration?">
-    Yes, we recommend keeping your self-hosted instance running until you've verified the cloud migration is complete. Just be careful not to create new data in both places.
+  <Accordion title="移行中に両方のインスタンスを稼働させておけますか？">
+    はい、クラウドへの移行が完了したことを確認するまでは、セルフホストのインスタンスを稼働させておくことを推奨します。 ただし、両方の環境で新しいデータを作成しないようご注意ください。
   </Accordion>
 
-  <Accordion title="What if a user hasn't accepted their invitation yet?">
-    Records referencing that user will fail to import or the relation will be empty. Ensure all users accept invitations before importing data.
+  <Accordion title="ユーザーがまだ招待を受諾していない場合はどうなりますか？">
+    そのユーザーを参照するレコードはインポートに失敗するか、リレーションが空になります。 データをインポートする前に、すべてのユーザーが招待を受諾していることを確認してください。
   </Accordion>
 </AccordionGroup>
 
-## Need Help?
+## ヘルプが必要ですか?
 
-For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/l/ja/user-guide/getting-started/capabilities/implementation-services).
+複雑な移行や大規模なデータセットについては、[contact@twenty.com](mailto:contact@twenty.com) までご連絡いただくか、[導入支援サービス](/l/ja/user-guide/getting-started/capabilities/implementation-services)をご覧ください。

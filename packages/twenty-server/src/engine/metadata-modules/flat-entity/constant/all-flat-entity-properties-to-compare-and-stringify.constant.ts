@@ -1,7 +1,5 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { FLAT_CRON_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/cron-trigger/constants/flat-cron-trigger-editable-properties.constant';
-import { FLAT_DATABASE_EVENT_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/database-event-trigger/constants/flat-database-event-trigger-editable-properties.constant';
 import { FLAT_AGENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-agent/constants/flat-agent-editable-properties.constant';
 import { FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-command-menu-item/constants/flat-command-menu-item-editable-properties.constant';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -22,8 +20,7 @@ import { FLAT_VIEW_FILTER_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-
 import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
 import { FLAT_VIEW_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-group/constants/flat-view-group-editable-properties.constant';
 import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view/constants/flat-view-editable-properties.constant';
-import { FLAT_ROUTE_TRIGGER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/route-trigger/constants/flat-route-trigger-editable-properties.constant';
-import { FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/serverless-function/constants/flat-serverless-function-editable-properties.constant';
+import { FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/logic-function/constants/flat-logic-function-editable-properties.constant';
 
 type OneFlatEntityConfiguration<T extends AllMetadataName> = {
   propertiesToCompare: (keyof MetadataFlatEntity<T>)[];
@@ -76,28 +73,14 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     ],
     propertiesToStringify: ['flatIndexFieldMetadatas'],
   },
-  serverlessFunction: {
+  logicFunction: {
     propertiesToCompare: [
-      ...FLAT_SERVERLESS_FUNCTION_EDITABLE_PROPERTIES.filter(
+      ...FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES.filter(
         (property) => property !== 'code',
       ),
       'deletedAt',
-      'latestVersion',
-      'publishedVersions',
     ],
-    propertiesToStringify: ['toolInputSchema', 'publishedVersions'],
-  },
-  cronTrigger: {
-    propertiesToCompare: [...FLAT_CRON_TRIGGER_EDITABLE_PROPERTIES],
-    propertiesToStringify: ['settings'],
-  },
-  databaseEventTrigger: {
-    propertiesToCompare: [...FLAT_DATABASE_EVENT_TRIGGER_EDITABLE_PROPERTIES],
-    propertiesToStringify: ['settings'],
-  },
-  routeTrigger: {
-    propertiesToCompare: [...FLAT_ROUTE_TRIGGER_EDITABLE_PROPERTIES],
-    propertiesToStringify: [],
+    propertiesToStringify: ['toolInputSchema'],
   },
   viewFilter: {
     propertiesToCompare: [
@@ -178,6 +161,10 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   frontComponent: {
     propertiesToCompare: [...FLAT_FRONT_COMPONENT_EDITABLE_PROPERTIES],
     propertiesToStringify: [],
+  },
+  webhook: {
+    propertiesToCompare: ['targetUrl', 'operations', 'description', 'secret'],
+    propertiesToStringify: ['operations'],
   },
 } as const satisfies {
   [P in AllMetadataName]: OneFlatEntityConfiguration<P>;

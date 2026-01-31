@@ -28,8 +28,10 @@ export const CommandMenu = () => {
     matchingStandardActionRecordSelectionActions,
     matchingStandardActionObjectActions,
     matchingWorkflowRunRecordSelectionActions,
+    matchingFrontComponentRecordSelectionActions,
     matchingStandardActionGlobalActions,
     matchingWorkflowRunGlobalActions,
+    matchingFrontComponentGlobalActions,
     matchingNavigateActions,
     fallbackActions,
     matchingCreateRelatedRecordActions,
@@ -53,9 +55,9 @@ export const CommandMenu = () => {
   const commandGroups: ActionGroupConfig[] = [
     {
       heading: t`Record Selection`,
-      items: matchingStandardActionRecordSelectionActions.concat(
-        matchingWorkflowRunRecordSelectionActions,
-      ),
+      items: matchingStandardActionRecordSelectionActions
+        .concat(matchingWorkflowRunRecordSelectionActions)
+        .concat(matchingFrontComponentRecordSelectionActions),
     },
     {
       heading: t`Create Related Record`,
@@ -69,6 +71,7 @@ export const CommandMenu = () => {
       heading: t`Global`,
       items: matchingStandardActionGlobalActions
         .concat(matchingWorkflowRunGlobalActions)
+        .concat(matchingFrontComponentGlobalActions)
         .concat(matchingNavigateActions),
     },
     {

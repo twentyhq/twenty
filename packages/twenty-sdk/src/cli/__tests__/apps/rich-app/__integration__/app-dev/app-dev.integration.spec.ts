@@ -3,9 +3,8 @@ import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-
 import { join } from 'path';
 
 import { defineConsoleOutputTests } from './tests/console-output.tests';
-import { defineManifestTests } from '../app-dev/tests/manifest.tests';
-import { defineFrontComponentsTests } from '../app-dev/tests/front-components.tests';
-import { defineFunctionsTests } from '../app-dev/tests/functions.tests';
+import { defineManifestTests } from './tests/manifest.tests';
+import { defineEntitiesTests } from './tests/entities.tests';
 
 const APP_PATH = join(__dirname, '../..');
 
@@ -14,12 +13,13 @@ describe('rich-app app:dev', () => {
 
   beforeAll(async () => {
     result = await runAppDev({ appPath: APP_PATH });
-
+    if (!result.success) {
+      console.log(result.output);
+    }
     expect(result.success).toBe(true);
   }, 60000);
 
   defineConsoleOutputTests(() => result);
   defineManifestTests(APP_PATH);
-  defineFunctionsTests(APP_PATH);
-  defineFrontComponentsTests(APP_PATH);
+  defineEntitiesTests(APP_PATH);
 });

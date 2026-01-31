@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import {

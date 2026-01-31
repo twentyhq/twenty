@@ -71,7 +71,7 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     universalIdentifier: objectMetadataId,
-    fieldMetadataIds: ['name-id'],
+    fieldIds: ['name-id'],
     indexMetadataIds: [],
     viewIds: [],
     applicationId: null,

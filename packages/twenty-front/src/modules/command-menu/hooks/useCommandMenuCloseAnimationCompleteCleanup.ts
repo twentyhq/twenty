@@ -23,8 +23,8 @@ import { emitSidePanelCloseEvent } from '@/ui/layout/right-drawer/utils/emitSide
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { getShowPageTabListComponentId } from '@/ui/layout/show-page/utils/getShowPageTabListComponentId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
-import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
+import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
+import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -114,9 +114,9 @@ export const useCommandMenuCloseAnimationCompleteCleanup = () => {
         set(isCommandMenuClosingState, false);
         set(
           activeTabIdComponentState.atomFamily({
-            instanceId: WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+            instanceId: WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
           }),
-          WorkflowServerlessFunctionTabId.CODE,
+          WorkflowLogicFunctionTabId.CODE,
         );
 
         for (const [pageId, morphItems] of snapshot

@@ -11,6 +11,8 @@ import {
 import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { v4 as uuidv4 } from 'uuid';
 
+import { type UpdateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
+
 const CREATE_CONFIG_VARIABLE_MUTATION = gql`
   mutation CreateDatabaseConfigVariable($key: String!, $value: JSON!) {
     createDatabaseConfigVariable(key: $key, value: $value)
@@ -139,12 +141,14 @@ describe('webhooksResolver (e2e)', () => {
 
       createdWebhookId = createdWebhookData.id;
 
-      const updateInput = {
+      const updateInput: UpdateWebhookInput = {
         id: createdWebhookData.id,
-        targetUrl: 'https://updated.com/webhook',
-        operations: ['person.updated', 'company.created'],
-        description: 'Updated webhook',
-        secret: 'updated-secret',
+        update: {
+          targetUrl: 'https://updated.com/webhook',
+          operations: ['person.updated', 'company.created'],
+          description: 'Updated webhook',
+          secret: 'updated-secret',
+        },
       };
 
       const updateResponse = await updateWebhook(updateInput);
@@ -156,10 +160,14 @@ describe('webhooksResolver (e2e)', () => {
       const updatedWebhookData = updateResponse.body.data.updateWebhook;
 
       expect(updatedWebhookData.id).toBe(createdWebhookData.id);
-      expect(updatedWebhookData.targetUrl).toBe(updateInput.targetUrl);
-      expect(updatedWebhookData.operations).toEqual(updateInput.operations);
-      expect(updatedWebhookData.description).toBe(updateInput.description);
-      expect(updatedWebhookData.secret).toBe(updateInput.secret);
+      expect(updatedWebhookData.targetUrl).toBe(updateInput.update.targetUrl);
+      expect(updatedWebhookData.operations).toEqual(
+        updateInput.update.operations,
+      );
+      expect(updatedWebhookData.description).toBe(
+        updateInput.update.description,
+      );
+      expect(updatedWebhookData.secret).toBe(updateInput.update.secret);
     });
   });
 

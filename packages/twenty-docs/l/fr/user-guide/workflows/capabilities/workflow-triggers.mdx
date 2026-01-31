@@ -1,136 +1,136 @@
 ---
-title: Workflow Triggers
-description: Learn about the different triggers that start your workflows.
+title: Déclencheurs de flux de travail
+description: Découvrez les différents déclencheurs qui démarrent vos flux de travail.
 ---
 
-## About Triggers
+## À propos des déclencheurs
 
-Workflows always start with a single trigger that defines when the automation should run.
+Les flux de travail commencent toujours par un seul déclencheur qui définit quand l’automatisation doit s’exécuter.
 
 <img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
 
 <Tip>
-  **Advanced objects are supported!** Beyond standard CRM objects (People, Companies, Opportunities), you can also trigger workflows and perform actions on:
+  **Des objets avancés sont pris en charge !** Au-delà des objets CRM standard (Personnes, Entreprises, Opportunités), vous pouvez aussi déclencher des flux de travail et effectuer des actions sur :
 
-  * Workspace Members
-  * Calendar Events
-  * Messages (Emails)
-  * Tasks, Notes, and many other system objects
+  * Membres de l'espace de travail
+  * Événements de calendrier
+  * Messages (e-mails)
+  * Tâches, notes et de nombreux autres objets système
 
-  This opens up powerful automations like notifying team members when calendar events are created, or processing incoming emails automatically.
+  Cela permet des automatisations puissantes, comme avertir les membres de l'équipe lorsque des événements de calendrier sont créés, ou traiter automatiquement les e-mails entrants.
 </Tip>
 
-## Record is Created
+## Un enregistrement est créé
 
-Starts the workflow when a new record is created in a selected object (People, Companies, Opportunities, or any custom object).
+Démarre le flux de travail lorsqu'un nouvel enregistrement est créé dans un objet sélectionné (Personnes, Entreprises, Opportunités, ou tout objet personnalisé).
 
-**Configuration**: Select the object type to monitor for new records.
+**Configuration**: Sélectionnez le type d'objet à surveiller pour les nouveaux enregistrements.
 
 <Note>
-  * This trigger is great for records created by csv, mailbox and calendar synchronization, API.
-  * **It is not recommended for records created manually**: with this trigger, workflows start as soon as the record is created. Since Twenty UI offers auto-save on the fly (there is not an edit mode and then a validation to save records), the workflow will be triggered before the user inputs all the fields.
-    To trigger this workflow on records created manually, it is recommended to use the trigger `Record is created or updated` instead.
+  * Ce déclencheur est idéal pour les enregistrements créés via csv, la synchronisation de la boîte aux lettres et du calendrier, ou l'API.
+  * **Il n'est pas recommandé pour les enregistrements créés manuellement** : avec ce déclencheur, les flux de travail démarrent dès que l'enregistrement est créé. Comme l'interface Twenty propose l'enregistrement automatique à la volée (il n'y a pas de mode édition suivi d'une validation pour enregistrer les enregistrements), le flux de travail sera déclenché avant que l'utilisateur ne renseigne tous les champs.
+    Pour déclencher ce flux de travail sur des enregistrements créés manuellement, il est recommandé d'utiliser plutôt le déclencheur `Record is created or updated`.
 </Note>
 
-## Record is Updated
+## Un enregistrement est mis à jour
 
-Starts the workflow when changes are made to an existing record.
-
-**Configuration**:
-
-* Select the object type
-* Optionally specify which fields to monitor for changes
-
-## Record is Updated or Created
-
-Starts the workflow when a record is either created or updated in a selected object.
-
-**Why This Matters**: This trigger is particularly helpful because records created via different methods behave differently:
-
-* **API/CSV imports**: Records are created with all fields populated immediately
-* **Manual creation**: Records are created first, then fields are added in subsequent updates
+Démarre le flux de travail lorsque des modifications sont apportées à un enregistrement existant.
 
 **Configuration**:
 
-* Select the object type to monitor
-* Optionally specify which fields to monitor for changes
-* The workflow will trigger both on initial creation and any subsequent updates
+* Sélectionnez le type d'objet
+* Spécifiez éventuellement quels champs surveiller pour les changements
 
-## Record is Deleted
+## Un enregistrement est mis à jour ou créé
 
-Starts the workflow when a record is removed from an object.
+Démarre le flux de travail lorsqu'un enregistrement est soit créé soit mis à jour dans un objet sélectionné.
 
-**Configuration**: Select the object type to monitor for deletions.
+**Pourquoi est-ce important**: Ce déclencheur est particulièrement utile car les enregistrements créés par différentes méthodes se comportent différemment :
 
-## Manual Trigger
+* **Importations API/CSV** : Les enregistrements sont créés avec tous les champs remplis immédiatement
+* **Création manuelle** : Les enregistrements sont créés d'abord, puis les champs sont ajoutés lors de mises à jour ultérieures
 
-Starts the workflow when triggered by a user action. This trigger can be accessed through the `Cmd+K` menu or via a custom button that will be displayed in the top navbar after selecting record(s).
+**Configuration**:
+
+* Sélectionnez le type d'objet à surveiller
+* Spécifiez éventuellement quels champs surveiller pour les changements
+* Le flux de travail se déclenchera à la fois lors de la création initiale et lors de mises à jour ultérieures
+
+## Un enregistrement est supprimé
+
+Démarre le flux de travail lorsqu'un enregistrement est supprimé d'un objet.
+
+**Configuration**: Sélectionnez le type d'objet à surveiller pour les suppressions.
+
+## Déclencheur manuel
+
+Démarre le flux de travail lorsqu'il est déclenché par une action de l'utilisateur. Ce déclencheur est accessible via le menu `Cmd+K` ou via un bouton personnalisé qui s'affichera dans la barre de navigation supérieure après avoir sélectionné un ou plusieurs enregistrements.
 
 <img src="/images/user-guide/workflows/add_to_newsletter_button.png" style={{width:'100%'}} />
 
-**Availability Configuration**:
-Choose how the workflow should handle record selection:
+**Configuration de disponibilité**:
+Choisissez comment le flux de travail doit gérer la sélection des enregistrements :
 
-* **Global**: No record is required to trigger this workflow. The workflow is triggered from the command menu `Cmd + K` anywhere (from any object) and does not use record(s) as input.
+* **Global** : Aucun enregistrement n'est requis pour déclencher ce flux de travail. Le flux de travail est déclenché depuis le menu de commande `Cmd + K` n'importe où (à partir de n'importe quel objet) et n'utilise aucun enregistrement en entrée.
 
-* **Single**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run from beginning to end as many times as there are records selected.
+* L’enregistrement ou les enregistrements sélectionnés seront transmis à votre flux de travail. Cela est configuré pour un objet donné. Plusieurs enregistrements peuvent être sélectionnés avant de déclencher le flux de travail. Le flux de travail s'exécutera de bout en bout autant de fois qu'il y a d'enregistrements sélectionnés.
 
   <Note>
-    **Soft limit: 100 runs/minute**. Beyond this, workflows remain in "Not Started" status and are processed gradually—either by a background job or when another workflow enters the queue. This means you can select more than 100 records with a Single trigger; execution will just be slower.
+    **Limite souple : 100 exécutions/minute**. Au-delà de cela, les flux de travail restent au statut "Not Started" et sont traités progressivement — soit par une tâche en arrière-plan, soit lorsqu'un autre flux de travail entre dans la file d'attente. Cela signifie que vous pouvez sélectionner plus de 100 enregistrements avec un déclencheur unique ; l'exécution sera simplement plus lente.
   </Note>
 
-* **Bulk**: The selected record(s) will be passed to your workflow. This is configured for a given object. Several records can be selected before triggering the workflow. The workflow will run once, providing the entire list of records as input. This means the workflow needs to contain an [Iterator action](/l/fr/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **En masse** : Les enregistrements sélectionnés seront passés à votre flux de travail. Cela est configuré pour un objet donné. Plusieurs enregistrements peuvent être sélectionnés avant de déclencher le flux de travail. Le flux de travail s'exécutera une fois, en fournissant la liste entière des enregistrements comme entrée. Cela signifie que le flux de travail doit contenir une [Action d'itération](/l/fr/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
-  This is more advanced, and best for people who want to optimize the number of workflow runs.
+  C'est plus avancé, et idéal pour les personnes qui souhaitent optimiser le nombre d'exécutions de flux de travail.
 </Note>
 
 <img src="/images/user-guide/workflows/manual_trigger.png" style={{width:'100%'}} />
 
-**Additional Configuration**:
+**Configuration supplémentaire**:
 
-* Select the target object (for Single and Bulk availability)
-* Choose a command icon for the workflow trigger
-* Configure navbar placement (Pinned or Not Pinned)
+* Sélectionnez l'objet cible (pour disponibilité Unique et en masse)
+* Choisissez une icône de commande pour le déclencheur de flux de travail
+* Configurez le placement dans la barre de navigation (Épinglé ou Non épinglé)
 
-**Access Methods**:
+**Méthodes d'accès**:
 
-* `Cmd+K` menu to find and launch manual workflows
-* Custom button in the top navbar (if configured)
+* Menu `Cmd+K` pour trouver et lancer des flux de travail manuels
+* Bouton personnalisé dans la barre de navigation supérieure (si configuré)
 
-## Time-Based Trigger: On a Schedule
+## Déclencheur basé sur le temps : sur un planning
 
-Starts the workflow on a recurring basis you define.
+Démarre le flux de travail sur une base récurrente que vous définissez.
 
 **Configuration**:
 
-* Select time unit (minutes, hours, days)
-* Enter a value or use custom cron expressions for advanced scheduling
+* Sélectionnez l'unité de temps (minutes, heures, jours)
+* Entrez une valeur ou utilisez des expressions cron personnalisées pour une planification avancée
 
 <Note>
-  **Timezone**: Scheduled workflows run in **UTC**. When setting hours for daily schedules, convert your local time to UTC.
+  **Fuseau horaire** : Les flux de travail planifiés s'exécutent en **UTC**. Lors de la définition des heures pour les plannings quotidiens, convertissez votre heure locale en UTC.
 </Note>
 
-## External Trigger: Webhook
+## Déclencheur externe : Webhook
 
-Starts the workflow when a GET or POST request is received from an external service.
+Démarre le flux de travail lorsqu'une requête GET ou POST est reçue d'un service externe.
 
 <img src="/images/user-guide/workflows/webhook_trigger.png" style={{width:'100%'}} />
 
 **Configuration**:
 
-* The workflow provides a unique webhook URL—copy this and add it to your external system as the endpoint to call.
-* For POST requests, define the expected body structure so Twenty knows what data to expect. Add here the fields you will receive that will be needed below in your workflow.
-* Configure authentication (coming soon).
+* Le flux de travail fournit une URL de webhook unique — copiez-la et ajoutez-la à votre système externe comme point de terminaison à appeler.
+* Pour les requêtes POST, définissez la structure attendue du corps afin que Twenty sache quelles données attendre. Ajoutez ici les champs que vous recevrez et qui seront nécessaires plus bas dans votre flux de travail.
+* Configurez l'authentification (bientôt disponible).
 
-## Choosing the Right Trigger
+## Choisir le bon déclencheur
 
-| Use Case                    | Recommended Trigger          |
-| --------------------------- | ---------------------------- |
-| New leads need processing   | Record is Created            |
-| Data changes need sync      | Record is Updated            |
-| Import/manual data handling | Record is Updated or Created |
-| Cleanup after deletion      | Record is Deleted            |
-| User-initiated action       | Launch Manually              |
-| Recurring reports           | On a Schedule                |
-| External integration        | Webhook or On a Schedule     |
+| Cas d'utilisation                                            | Déclencheur recommandé                   |
+| ------------------------------------------------------------ | ---------------------------------------- |
+| Les nouveaux prospects doivent être traités                  | Un enregistrement est créé               |
+| Les modifications de données nécessitent une synchronisation | Un enregistrement est mis à jour         |
+| Import/gestion manuelle des données                          | Un enregistrement est mis à jour ou créé |
+| Nettoyage après suppression                                  | Un enregistrement est supprimé           |
+| Action initiée par l'utilisateur                             | Lancer manuellement                      |
+| Rapports récurrents                                          | À une heure programmée                   |
+| Intégration externe                                          | Webhook ou sur un planning               |

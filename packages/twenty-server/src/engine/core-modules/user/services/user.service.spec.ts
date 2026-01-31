@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository, type UpdateResult } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
@@ -76,7 +76,7 @@ describe('UserService', () => {
             executeInWorkspaceContext: jest
               .fn()
 
-              .mockImplementation((_authContext: any, fn: () => any) => fn()),
+              .mockImplementation((fn: () => any, _authContext?: any) => fn()),
           },
         },
         {

@@ -15,8 +15,8 @@ import { HTTPMethod } from 'twenty-shared/types';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { RouteTriggerRestApiExceptionFilter } from 'src/engine/metadata-modules/route-trigger/exceptions/route-trigger-rest-api-exception-filter';
-import { RouteTriggerService } from 'src/engine/metadata-modules/route-trigger/route-trigger.service';
+import { RouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger-rest-api-exception-filter';
+import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
 
 @Controller('s')
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)

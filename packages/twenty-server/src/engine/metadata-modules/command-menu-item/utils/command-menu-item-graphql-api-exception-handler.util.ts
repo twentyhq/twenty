@@ -15,6 +15,7 @@ export const commandMenuItemGraphqlApiExceptionHandler = (error: Error) => {
       case CommandMenuItemExceptionCode.COMMAND_MENU_ITEM_NOT_FOUND:
         throw new NotFoundError(error);
       case CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT:
+      case CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED:
         throw new UserInputError(error);
       default: {
         return assertUnreachable(error.code);

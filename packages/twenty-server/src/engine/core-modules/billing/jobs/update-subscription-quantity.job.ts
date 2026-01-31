@@ -29,36 +29,33 @@ export class UpdateSubscriptionQuantityJob {
   async handle(data: UpdateSubscriptionQuantityJobData): Promise<void> {
     const authContext = buildSystemAuthContext(data.workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            data.workspaceId,
-            'workspaceMember',
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMemberRepository =
+        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          data.workspaceId,
+          'workspaceMember',
+        );
 
-        const workspaceMembersCount = await workspaceMemberRepository.count();
+      const workspaceMembersCount = await workspaceMemberRepository.count();
 
-        if (!workspaceMembersCount || workspaceMembersCount <= 0) {
-          return;
-        }
+      if (!workspaceMembersCount || workspaceMembersCount <= 0) {
+        return;
+      }
 
-        try {
-          await this.billingSubscriptionUpdateService.changeSeats(
-            data.workspaceId,
-            workspaceMembersCount,
-          );
+      try {
+        await this.billingSubscriptionUpdateService.changeSeats(
+          data.workspaceId,
+          workspaceMembersCount,
+        );
 
-          this.logger.log(
-            `Updating workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members`,
-          );
-        } catch (e) {
-          this.logger.warn(
-            `Failed to update workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members. Error: ${e}`,
-          );
-        }
-      },
-    );
+        this.logger.log(
+          `Updating workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members`,
+        );
+      } catch (e) {
+        this.logger.warn(
+          `Failed to update workspace ${data.workspaceId} subscription quantity to ${workspaceMembersCount} members. Error: ${e}`,
+        );
+      }
+    }, authContext);
   }
 }

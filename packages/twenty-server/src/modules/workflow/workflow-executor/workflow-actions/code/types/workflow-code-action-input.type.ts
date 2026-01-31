@@ -1,7 +1,6 @@
 export type WorkflowCodeActionInput = {
-  serverlessFunctionId: string;
-  serverlessFunctionVersion: string;
-  serverlessFunctionInput: {
+  logicFunctionId: string;
+  logicFunctionInput: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };

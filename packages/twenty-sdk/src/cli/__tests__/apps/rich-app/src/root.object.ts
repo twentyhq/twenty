@@ -1,5 +1,4 @@
-import { defineObject } from '@/application/objects/define-object';
-import { FieldType } from '@/application/fields/field-type';
+import { defineObject, FieldType } from '@/sdk';
 
 export default defineObject({
   universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000001',

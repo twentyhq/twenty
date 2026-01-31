@@ -10,6 +10,8 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
+import { RecordIdentifierDTO } from './record-identifier.dto';
+
 @ObjectType('NavigationMenuItem')
 export class NavigationMenuItemDTO {
   @IsUUID()
@@ -64,4 +66,7 @@ export class NavigationMenuItemDTO {
   @IsDateString()
   @Field()
   updatedAt: Date;
+
+  @Field(() => RecordIdentifierDTO, { nullable: true })
+  targetRecordIdentifier?: RecordIdentifierDTO | null;
 }

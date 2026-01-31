@@ -1,52 +1,52 @@
 ---
-title: Generate a Quote or Invoice from Twenty
-description: Automatically create invoices in external tools when deals close.
+title: 从 Twenty 生成报价单或发票
+description: 在交易达成时，自动在外部工具中创建发票。
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+自动将交易数据发送到您的开票系统（Stripe、QuickBooks、Xero 等） 当机会赢单时。
 
-## Workflow Structure
+## 工作流结构
 
-1. **Trigger**: Record is Updated (Opportunity)
-2. **Filter**: Stage = Closed Won
-3. **Search Record**: Get Company details
-4. **Code** (optional): Format payload
-5. **HTTP Request**: Send to invoicing system
+1. **触发器**：记录已更新（机会对象）
+2. **筛选器**：阶段 = 赢单
+3. **搜索记录**：获取公司详细信息
+4. **代码**（可选）：格式化负载
+5. **HTTP 请求**：发送到开票系统
 
-## Step 1: Set Up the Trigger
+## 步骤 1：设置触发器
 
-1. Create a new workflow
-2. Select **Record is Updated** trigger
-3. Choose **Opportunity** as the object
+1. 创建新的工作流
+2. 选择 **记录已更新** 触发器
+3. 选择 **机会** 作为对象
 
-## Step 2: Filter for Closed Won
+## 步骤 2：筛选赢单
 
-Add a **Filter** action to only continue when the deal is won:
+添加一个 **筛选** 操作，仅在机会赢单时才继续：
 
-| Setting       | Value                             |
-| ------------- | --------------------------------- |
-| **Field**     | Stage                             |
-| **Condition** | Equals                            |
-| **Value**     | `CLOSED_WON` (or your stage name) |
+| 设置     | 值                     |
+| ------ | --------------------- |
+| **字段** | 阶段                    |
+| **条件** | 等于                    |
+| **值**  | `CLOSED_WON`（或您的阶段名称） |
 
 <Tip>
-  The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  该触发器会在任何机会更新时触发。 筛选器确保仅当阶段变更为赢单时，工作流才会继续。
 </Tip>
 
-## Step 3: Get Company Details
+## 步骤 3：获取公司详细信息
 
-The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
+机会记录可能不包含开票所需的所有公司字段。 添加一个 **搜索记录** 操作：
 
-| Setting      | Value                                    |
-| ------------ | ---------------------------------------- |
-| **Object**   | Company                                  |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| 设置       | 值                                    |
+| -------- | ------------------------------------ |
+| **对象**   | 公司                                   |
+| **匹配方式** | ID 等于 `{{trigger.object.companyId}}` |
 
-This retrieves the full Company record with billing address, tax ID, etc.
+这将检索包含账单地址、税号等在内的完整公司记录。
 
-## Step 4: Format the Payload (Optional)
+## 步骤 4：格式化负载（可选）
 
-If your invoicing system expects a specific format, add a **Code** action:
+如果您的开票系统需要特定格式，请添加一个 **代码** 操作：
 
 ```javascript
 export const main = async (params: {
@@ -84,18 +84,18 @@ export const main = async (params: {
 };
 ```
 
-## Step 5: Send to Invoicing System
+## 步骤 5：发送到开票系统
 
-Add an **HTTP Request** action:
+添加一个 **HTTP 请求** 操作：
 
-| Setting     | Value                                     |
-| ----------- | ----------------------------------------- |
-| **Method**  | POST                                      |
-| **URL**     | Your invoicing API endpoint               |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
-| **Body**    | `{{code.invoice}}` or map fields directly |
+| 设置      | 值                                    |
+| ------- | ------------------------------------ |
+| **方法**  | POST                                 |
+| **URL** | 您的开票 API 端点                          |
+| **请求头** | `Authorization: Bearer YOUR_API_KEY` |
+| **请求体** | `{{code.invoice}}` 或直接映射字段           |
 
-### Example: Stripe Invoice
+### 示例：Stripe 发票
 
 ```
 POST https://api.stripe.com/v1/invoices
@@ -109,7 +109,7 @@ Body:
   days_until_due: 30
 ```
 
-### Example: QuickBooks Invoice
+### 示例：QuickBooks 发票
 
 ```
 POST https://quickbooks.api.intuit.com/v3/company/{realmId}/invoice
@@ -120,24 +120,25 @@ Headers:
 Body: {{code.invoice}}
 ```
 
-## Complete Workflow Summary
+## 完整的工作流摘要
 
-| Step | Action                  | Purpose                              |
-| ---- | ----------------------- | ------------------------------------ |
-| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
-| 2    | Filter                  | Only proceed if Stage = Closed Won   |
-| 3    | Search Record           | Get full Company details for billing |
-| 4    | Code                    | Format data for invoicing API        |
-| 5    | HTTP Request            | Create invoice in external system    |
+| 步骤 | 操作        | 目的              |
+| -- | --------- | --------------- |
+| 1  | 触发器：记录已更新 | 当任何机会发生更改时触发    |
+| 2  | 过滤        | 仅当阶段 = 赢单时才继续   |
+| 3  | 搜索记录      | 获取用于开票的完整公司详细信息 |
+| 4  | 代码        | 为开票 API 格式化数据   |
+| 5  | HTTP请求    | 在外部系统中创建发票      |
 
-## Tips
+## 提示
 
-* **Store external IDs**: Save the invoice ID returned by the API back to the Opportunity using an **Update Record** action
-* **Error handling**: Add a branch to send a notification if the HTTP request fails
-* **Test first**: Use your invoicing system's sandbox/test mode before going live
+* **存储外部 ID**：使用 **更新记录** 操作将 API 返回的发票 ID 保存回机会
+* **错误处理**：添加一个分支，在 HTTP 请求失败时发送通知
+* **先测试**：在上线之前，使用开票系统的沙盒/测试模式
 
-## Related
+## 相关内容
 
-* [Workflow Triggers](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow Actions](/l/zh/user-guide/workflows/capabilities/workflow-actions)
-* [Closed Won Automations](/l/zh/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+* [从 Twenty 生成 PDF](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) — 将生成的 PDF 附加到记录
+* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+* [赢单自动化](/l/zh/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

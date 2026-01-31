@@ -1,23 +1,18 @@
 import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
-import { AppBuildCommand } from './app/app-build';
 import { AppDevCommand } from './app/app-dev';
 import { AppGenerateCommand } from './app/app-generate';
-import { AppSyncCommand } from './app/app-sync';
 import { AppUninstallCommand } from './app/app-uninstall';
 import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
 import { AuthStatusCommand } from './auth/auth-status';
-import { FunctionExecuteCommand } from './function/function-execute';
-import { FunctionLogsCommand } from './function/function-logs';
+import { LogicFunctionExecuteCommand } from './logic-function/logic-function-execute';
+import { LogicFunctionLogsCommand } from './logic-function/logic-function-logs';
 import { AuthSwitchCommand } from './auth/auth-switch';
-import {
-  EntityAddCommand,
-  isSyncableEntity,
-  SyncableEntity,
-} from './entity/entity-add';
+import { EntityAddCommand } from './entity/entity-add';
+import { SyncableEntity } from 'twenty-shared/application';
 
 export const registerCommands = (program: Command): void => {
   // Auth commands
@@ -66,13 +61,11 @@ export const registerCommands = (program: Command): void => {
 
   // App commands
   const devCommand = new AppDevCommand();
-  const syncCommand = new AppSyncCommand();
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
   const generateCommand = new AppGenerateCommand();
-  const logsCommand = new FunctionLogsCommand();
-  const executeCommand = new FunctionExecuteCommand();
-  const buildCommand = new AppBuildCommand();
+  const logsCommand = new LogicFunctionLogsCommand();
+  const executeCommand = new LogicFunctionExecuteCommand();
 
   program
     .command('app:dev [appPath]')
@@ -81,35 +74,6 @@ export const registerCommands = (program: Command): void => {
       await devCommand.execute({
         appPath: formatPath(appPath),
       });
-    });
-
-  program
-    .command('app:build [appPath]')
-    .description('Build application for deployment')
-    .option('-w, --watch', 'Watch for changes and rebuild')
-    .option('-t, --tarball', 'Create a tarball after build')
-    .action(async (appPath, options) => {
-      try {
-        const result = await buildCommand.execute({
-          ...options,
-          appPath: formatPath(appPath),
-        });
-        process.exit(result.success ? 0 : 1);
-      } catch {
-        process.exit(1);
-      }
-    });
-
-  program
-    .command('app:sync [appPath]')
-    .description('Sync application to Twenty')
-    .action(async (appPath?: string) => {
-      try {
-        const result = await syncCommand.execute(formatPath(appPath));
-        process.exit(result.success ? 0 : 1);
-      } catch {
-        process.exit(1);
-      }
     });
 
   program
@@ -134,14 +98,6 @@ export const registerCommands = (program: Command): void => {
       `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
     )
     .action(async (entityType?: string, options?: { path?: string }) => {
-      if (entityType && !isSyncableEntity(entityType)) {
-        console.error(
-          chalk.red(
-            `Invalid entity type "${entityType}". Must be one of: ${Object.values(SyncableEntity).join('|')}`,
-          ),
-        );
-        process.exit(1);
-      }
       await addCommand.execute(entityType as SyncableEntity, options?.path);
     });
 
@@ -194,7 +150,7 @@ export const registerCommands = (program: Command): void => {
       '-n, --functionName <functionName>',
       'Name of the function to execute',
     )
-    .description('Execute a serverless function with a JSON payload')
+    .description('Execute a logic function with a JSON payload')
     .action(
       async (
         appPath?: string,

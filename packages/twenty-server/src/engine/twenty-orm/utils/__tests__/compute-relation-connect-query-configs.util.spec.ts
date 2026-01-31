@@ -206,7 +206,7 @@ describe('computeRelationConnectQueryConfigs', () => {
     partial: Partial<FlatObjectMetadata> & {
       id: string;
       nameSingular: string;
-      fieldMetadataIds: string[];
+      fieldIds: string[];
       indexMetadataIds: string[];
     },
   ): FlatObjectMetadata =>
@@ -244,7 +244,7 @@ describe('computeRelationConnectQueryConfigs', () => {
     id: 'person-object-metadata-id',
     nameSingular: 'person',
     indexMetadataIds: [],
-    fieldMetadataIds: personFields.map((f) => f.id),
+    fieldIds: personFields.map((f) => f.id),
   });
 
   const companyMetadata = createFlatObjectMetadata({
@@ -255,7 +255,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       'company-domain-index-metadata-id',
       'company-composite-index-metadata-id',
     ],
-    fieldMetadataIds: companyFields.map((f) => f.id),
+    fieldIds: companyFields.map((f) => f.id),
   });
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -410,26 +410,23 @@ export class PageLayoutService {
   }): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
-      async () => {
-        const dashboardRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            'dashboard',
-            { shouldBypassPermissionChecks: true },
-          );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const dashboardRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          'dashboard',
+          { shouldBypassPermissionChecks: true },
+        );
 
-        const dashboards = await dashboardRepository.find({
-          where: {
-            pageLayoutId,
-          },
-        });
+      const dashboards = await dashboardRepository.find({
+        where: {
+          pageLayoutId,
+        },
+      });
 
-        for (const dashboard of dashboards) {
-          await dashboardRepository.delete(dashboard.id);
-        }
-      },
-    );
+      for (const dashboard of dashboards) {
+        await dashboardRepository.delete(dashboard.id);
+      }
+    }, authContext);
   }
 }

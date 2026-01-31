@@ -1,43 +1,43 @@
 ---
-title: Migrating from Other CRMs
-description: Step-by-step guide to migrate your data from any CRM to Twenty.
+title: 从其他CRM迁移
+description: 分步指南：将您的数据从任何客户关系管理系统迁移到 Twenty。
 ---
 
-## Overview
+## 概览
 
-This guide walks you through migrating your data from any CRM to Twenty. The process involves auditing your data, preparing your Twenty workspace, exporting from your current system, and importing into Twenty.
+本指南将引导您将数据从任何客户关系管理系统迁移到 Twenty。 该过程包括审核您的数据、准备您的 Twenty 工作区、从当前系统导出，并导入到 Twenty。
 
-<Note>Views, workflows, and permissions must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>视图、工作流和权限必须在迁移后手动重新创建。 为这些配置工作预留时间。</Note>
 
-## Step 1: Audit Your Current Data
+## 步骤 1：审核您现有的数据
 
-Migration is an opportunity for a fresh start. Don't bring over clutter.
+迁移是一个重新开始的机会。 不要把冗余内容带过来。
 
-**What to keep:**
+**应保留的内容：**
 
-* Active contacts and companies
-* Open opportunities and deals
-* Important notes and activities
-* Custom fields you actually use
+* 活跃的联系人和公司
+* 进行中的机会和交易
+* 重要的备注和活动
+* 实际使用的自定义字段
 
-**What to leave behind:**
+**应舍弃的内容：**
 
-* Outdated contacts (no activity in 2+ years)
-* Duplicate records
-* Test data
-* Unused custom fields
+* 过时的联系人（超过 2 年无任何活动）
+* 重复记录
+* 测试数据
+* 未使用的自定义字段
 
-## Step 2: Map Your Data Model
+## 步骤 2：映射您的数据模型
 
-Create a mapping document between your current CRM and Twenty:
+在您当前的客户关系管理系统与 Twenty 之间创建一份映射文档：
 
-| Your CRM               | Twenty               |
-| ---------------------- | -------------------- |
-| Account / Organization | **Company**          |
-| Contact / Person       | **People**           |
-| Deal / Opportunity     | **Opportunity**      |
-| Activity               | **Task** or **Note** |
-| Custom Object          | **Custom Object**    |
+| 您的客户关系管理系统    | Twenty               |
+| ------------- | -------------------- |
+| 账户 / 组织       | **公司**               |
+| 联系人 / 人员      | **人员**               |
+| 交易 / 机会       | **Opportunity**      |
+| Activity      | **Task** or **Note** |
+| Custom Object | **Custom Object**    |
 
 **For each field, document:**
 
@@ -72,7 +72,7 @@ Before importing data, prepare your Twenty workspace:
   If your data includes user references (Account Owner, Assignee, etc.), those users must exist in Twenty before import. Otherwise, those relations cannot be mapped.
 </Warning>
 
-1. Go to **Settings → Members**
+1. 转到 **设置 → 成员**
 2. Invite all team members
 3. **Wait for everyone to accept** their invitation
 4. Verify all users appear in your Members list
@@ -92,7 +92,7 @@ Export your data from your current CRM:
 2. Contacts / People
 3. Deals / Opportunities
 4. Notes and Activities
-5. Custom objects
+5. 自定义对象
 
 ## Step 5: Clean and Format Your Data
 
@@ -109,7 +109,7 @@ Open each exported CSV in a spreadsheet application and prepare it for Twenty.
 | Field Type        | Required Format                                   |
 | ----------------- | ------------------------------------------------- |
 | **Domain**        | `https://domain.com`                              |
-| **Email**         | `name@domain.com` (must be unique)                |
+| **电子邮件**          | `name@domain.com` (must be unique)                |
 | **Date**          | `YYYY-MM-DD`                                      |
 | **Phone**         | Three columns: Number, Country Code, Calling Code |
 | **Boolean**       | `TRUE` or `FALSE` (uppercase)                     |
@@ -207,7 +207,7 @@ After importing data, complete your workspace configuration:
 * Set up saved views with filters, sorts, and column configurations
 * Create any kanban or calendar views you need
 
-### Recreate Workflows
+### 重新创建工作流
 
 * Rebuild your automations in **Settings → Workflows**
 * Start with the most critical workflows
@@ -229,7 +229,7 @@ After importing data, complete your workspace configuration:
 * Walk through the new interface together
 * Document any team-specific processes
 
-## Common Issues and Solutions
+## 常见问题及解决方案
 
 | Issue                   | Cause                       | Solution                                                                             |
 | ----------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
@@ -241,7 +241,7 @@ After importing data, complete your workspace configuration:
 
 See [How to Fix Import Errors](/l/zh/user-guide/data-migration/how-tos/fix-import-errors) for detailed troubleshooting steps.
 
-## Post-Migration Checklist
+## 迁移后检查表
 
 ### Data Integrity
 
@@ -251,7 +251,7 @@ See [How to Fix Import Errors](/l/zh/user-guide/data-migration/how-tos/fix-impor
 <Check>Custom fields populated</Check>
 <Check>No unexpected duplicates</Check>
 
-### Configuration
+### 配置
 
 <Check>Views recreated</Check>
 <Check>Workflows recreated and tested</Check>
@@ -283,7 +283,7 @@ See [How to Fix Import Errors](/l/zh/user-guide/data-migration/how-tos/fix-impor
   </Accordion>
 </AccordionGroup>
 
-## Need Help?
+## 需要帮助？
 
 For complex migrations or large datasets:
 

@@ -9,7 +9,7 @@ import {
   printSchema,
 } from 'graphql/index';
 import * as path from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { pascalCase } from 'twenty-shared/utils';
@@ -18,7 +18,8 @@ export class ApiService {
   private client: AxiosInstance;
   private configService: ConfigService;
 
-  constructor() {
+  constructor(options?: { disableInterceptors: boolean }) {
+    const { disableInterceptors = false } = options || {};
     this.configService = new ConfigService();
     this.client = axios.create();
 
@@ -33,6 +34,10 @@ export class ApiService {
 
       return config;
     });
+
+    if (disableInterceptors) {
+      return;
+    }
 
     this.client.interceptors.response.use(
       (response) => response,
@@ -59,7 +64,7 @@ export class ApiService {
     );
   }
 
-  async validateAuth(): Promise<boolean> {
+  async validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {
     try {
       const query = `
         query CurrentWorkspace {
@@ -82,19 +87,19 @@ export class ApiService {
         },
       );
 
-      return response.status === 200 && !response.data.errors;
+      return {
+        authValid: response.status === 200 && !response.data.errors,
+        serverUp: response.status === 200,
+      };
     } catch {
-      return false;
+      return {
+        authValid: false,
+        serverUp: false,
+      };
     }
   }
 
-  async syncApplication({
-    manifest,
-    yarnLock,
-  }: {
-    manifest: ApplicationManifest;
-    yarnLock: string;
-  }): Promise<ApiResponse> {
+  async syncApplication(manifest: Manifest): Promise<ApiResponse> {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
@@ -105,7 +110,7 @@ export class ApiService {
       const variables = {
         manifest,
         packageJson: manifest.packageJson,
-        yarnLock,
+        yarnLock: manifest.yarnLock,
       };
 
       const response: AxiosResponse = await this.client.post(
@@ -236,7 +241,7 @@ export class ApiService {
     }
   }
 
-  async findServerlessFunctions(): Promise<
+  async findLogicFunctions(): Promise<
     ApiResponse<
       Array<{
         id: string;
@@ -248,8 +253,8 @@ export class ApiService {
   > {
     try {
       const query = `
-        query FindManyServerlessFunctions {
-          findManyServerlessFunctions {
+        query FindManyLogicFunctions {
+          findManyLogicFunctions {
             id
             name
             universalIdentifier
@@ -279,7 +284,7 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.findManyServerlessFunctions,
+        data: response.data.data.findManyLogicFunctions,
       };
     } catch (error) {
       return {
@@ -289,7 +294,7 @@ export class ApiService {
     }
   }
 
-  async executeServerlessFunction({
+  async executeLogicFunction({
     functionId,
     payload,
     version = 'latest',
@@ -312,8 +317,8 @@ export class ApiService {
   > {
     try {
       const mutation = `
-        mutation ExecuteOneServerlessFunction($input: ExecuteServerlessFunctionInput!) {
-          executeOneServerlessFunction(input: $input) {
+        mutation ExecuteOneLogicFunction($input: ExecuteLogicFunctionInput!) {
+          executeOneLogicFunction(input: $input) {
             data
             logs
             duration
@@ -350,13 +355,13 @@ export class ApiService {
           success: false,
           error:
             response.data.errors[0]?.message ||
-            'Failed to execute serverless function',
+            'Failed to execute logic function',
         };
       }
 
       return {
         success: true,
-        data: response.data.data.executeOneServerlessFunction,
+        data: response.data.data.executeOneLogicFunction,
       };
     } catch (error) {
       return {
@@ -387,8 +392,8 @@ export class ApiService {
     });
 
     const query = `
-        subscription SubscribeToLogs($input: ServerlessFunctionLogsInput!) {
-          serverlessFunctionLogs(input: $input) {
+        subscription SubscribeToLogs($input: LogicFunctionLogsInput!) {
+          logicFunctionLogs(input: $input) {
             logs
           }
         }
@@ -402,13 +407,13 @@ export class ApiService {
       },
     };
 
-    wsClient.subscribe<{ serverlessFunctionLogs: { logs: string } }>(
+    wsClient.subscribe<{ logicFunctionLogs: { logs: string } }>(
       {
         query,
         variables,
       },
       {
-        next: ({ data }) => console.log(data?.serverlessFunctionLogs.logs),
+        next: ({ data }) => console.log(data?.logicFunctionLogs.logs),
         error: (err: unknown) => console.error(err),
         complete: () => console.log('Completed'),
       },

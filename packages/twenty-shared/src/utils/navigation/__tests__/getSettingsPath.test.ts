@@ -23,8 +23,8 @@ describe('getSettingsPath', () => {
     ).toBe('/settings/objects/companies/name');
 
     expect(
-      getSettingsPath(SettingsPath.ServerlessFunctionDetail, {
-        serverlessFunctionId: 'func123',
+      getSettingsPath(SettingsPath.LogicFunctionDetail, {
+        logicFunctionId: 'func123',
       }),
     ).toBe('/settings/functions/func123');
 
@@ -88,8 +88,8 @@ describe('getSettingsPath', () => {
 
     expect(
       getSettingsPath(
-        SettingsPath.ServerlessFunctionDetail,
-        { serverlessFunctionId: 'func123' },
+        SettingsPath.LogicFunctionDetail,
+        { logicFunctionId: 'func123' },
         { mode: 'edit' },
         'code',
       ),

@@ -1,18 +1,18 @@
 ---
-title: Buttons
+title: 按钮
 image: /images/user-guide/views/filter.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/views/filter.png" alt="Header" />
+  <img src="/images/user-guide/views/filter.png" alt="标题" />
 </Frame>
 
-A list of buttons and button groups used throughout the app.
+在应用程序中使用的按钮和按钮组的列表。
 
 ## Button
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { Button } from "@/ui/input/button/components/Button";
 
@@ -37,28 +37,28 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type                  | Description                                                                                                          |
-    | --------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-    | className | string                | Optional class name for additional styling                                                                           |
-    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
-    | title     | string                | The text content of the button                                                                                       |
-    | fullWidth | boolean               | Defines whether the button should span the whole width of its container                                              |
-    | variant   | string                | The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary`                       |
-    | size      | string                | The size of the button. Has two options: `small` and `medium`                                                        |
-    | position  | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-    | accent    | string                | The accent color of the button. Options include: `default`, `blue`, and `danger`                                     |
-    | soon      | boolean               | Indicates if the button is marked as "soon" (such as for upcoming features)                                          |
-    | disabled  | boolean               | Specifies whether the button is disabled or not                                                                      |
-    | focus     | boolean               | Determines if the button has focus                                                                                   |
-    | onClick   | function              | A callback function that triggers when the user clicks on the button                                                 |
+  <Tab title="属性">
+    | 属性        | 类型                    | 描述                                                      |
+    | --------- | --------------------- | ------------------------------------------------------- |
+    | className | 字符串                   | 用于额外样式的可选类名                                             |
+    | 图标        | `React.ComponentType` | 按钮内显示的可选图标组件                                            |
+    | 标题        | string                | 按钮的文本内容                                                 |
+    | fullWidth | 布尔值                   | 定义按钮是否应占据其容器的整个宽度                                       |
+    | 变体        | string                | 按钮的视觉样式变体。 选项包括 `primary`，`secondary` 和 `tertiary`      |
+    | 大小        | 字符串                   | 按钮的大小。 有两个选项：`small` 和 `medium`                         |
+    | 职位        | string                | 按钮与其同类的位置。 选项包括: `standalone`，`left`，`right` 和 `middle` |
+    | accent    | string                | 按钮的强调颜色。 选项包括: `default`，`blue` 和 `danger`              |
+    | 即将推出      | 布尔值                   | 指示按钮是否标记为"即将推出"（例如针对即将推出的功能）                            |
+    | disabled  | 布尔值                   | 指定按钮是否被禁用                                               |
+    | focus     | 布尔值                   | 确定按钮是否具有焦点                                              |
+    | onClick   | 函数                    | 用户点击按钮时触发的回调函数                                          |
   </Tab>
 </Tabs>
 
-## Button Group
+## 按钮组
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { Button } from "@/ui/input/button/components/Button";
     import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
@@ -115,21 +115,21 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type      | Description                                                                                                      |
-    | --------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
-    | variant   | string    | The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary` |
-    | size      | string    | The size of the buttons within the group. Has two options: `medium` and `small`                                  |
-    | accent    | string    | The accent color of the buttons within the group. Options include `default`, `blue` and `danger`                 |
-    | className | string    | Optional class name for additional styling                                                                       |
-    | children  | ReactNode | An array of React elements representing the individual buttons within the group                                  |
+  <Tab title="属性">
+    | 属性        | 类型        | 描述                                                   |
+    | --------- | --------- | ---------------------------------------------------- |
+    | 变体        | 字符串       | 组内按钮的视觉样式变体。 选项包括 `primary`，`secondary` 和 `tertiary` |
+    | 大小        | 字符串       | 组内按钮的大小。 Has two options: `medium` and `small`       |
+    | accent    | 字符串       | 组内按钮的强调颜色。 选项包括 `default`，`blue` 和 `danger`          |
+    | className | string    | 用于额外样式的可选类名                                          |
+    | 子元素       | ReactNode | 一组代表组内各个按钮的 React 元素                                 |
   </Tab>
 </Tabs>
 
-## Floating Button
+## 浮动按钮
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -152,25 +152,25 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type                  | Description                                                                                                      |
-    | ----------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
-    | className   | string                | Optional name for additional styling                                                                             |
-    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                    |
-    | title       | string                | The text content of the button                                                                                   |
-    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                    |
-    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `middle`, `right` |
-    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                   |
-    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                          |
-    | disabled    | boolean               | Determines whether the button is disabled                                                                        |
-    | focus       | boolean               | Indicates if the button has focus                                                                                |
+  <Tab title="属性">
+    | 属性          | 类型                    | 描述                                                    |
+    | ----------- | --------------------- | ----------------------------------------------------- |
+    | className   | string                | 用于附加样式的可选名称                                           |
+    | 图标          | `React.ComponentType` | 按钮内显示的可选图标组件                                          |
+    | 标题          | 字符串                   | 按钮的文本内容                                               |
+    | 大小          | 字符串                   | 按钮的大小。 有两个选项：`small` 和 `medium`                       |
+    | 职位          | string                | 按钮与其同类的位置。 选项包括: `standalone`，`left`，`middle`，`right` |
+    | applyShadow | 布尔值                   | 确定是否对按钮应用阴影                                           |
+    | applyBlur   | 布尔值                   | 确定是否对按钮应用模糊效果                                         |
+    | disabled    | 布尔值                   | 确定按钮是否被禁用                                             |
+    | focus       | 布尔值                   | 指示按钮是否具有焦点                                            |
   </Tab>
 </Tabs>
 
-## Floating Button Group
+## 浮动按钮组
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
     import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
@@ -206,18 +206,18 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props    | Type      | Description                                                                     | Default |
-    | -------- | --------- | ------------------------------------------------------------------------------- | ------- |
-    | size     | string    | The size of the button. Has two options: `small` and `medium`                   | small   |
-    | children | ReactNode | An array of React elements representing the individual buttons within the group |         |
+  <Tab title="属性">
+    | 属性  | 类型        | 描述                              | 默认    |
+    | --- | --------- | ------------------------------- | ----- |
+    | 大小  | 字符串       | 按钮的大小。 有两个选项：`small` 和 `medium` | small |
+    | 子元素 | ReactNode | 一组代表组内各个按钮的 React 元素            |       |
   </Tab>
 </Tabs>
 
-## Floating Icon Button
+## 浮动图标按钮
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -241,26 +241,26 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type                  | Description                                                                                                          |
-    | ----------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
-    | className   | string                | Optional name for additional styling                                                                                 |
-    | Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
-    | size        | string                | The size of the button. Has two options: `small` and `medium`                                                        |
-    | position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-    | applyShadow | boolean               | Determines whether to apply shadow to a button                                                                       |
-    | applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                              |
-    | disabled    | boolean               | Determines whether the button is disabled                                                                            |
-    | focus       | boolean               | Indicates if the button has focus                                                                                    |
-    | onClick     | function              | A callback function that triggers when the user clicks on the button                                                 |
-    | isActive    | boolean               | Determines if the button is in an active state                                                                       |
+  <Tab title="属性">
+    | 属性          | 类型                    | 描述                                                      |
+    | ----------- | --------------------- | ------------------------------------------------------- |
+    | className   | string                | 用于附加样式的可选名称                                             |
+    | 图标          | `React.ComponentType` | 按钮内显示的可选图标组件                                            |
+    | 大小          | string                | 按钮的大小。 有两个选项：`small` 和 `medium`                         |
+    | 职位          | string                | 按钮与其同类的位置。 选项包括: `standalone`，`left`，`right`，和 `middle` |
+    | applyShadow | 布尔值                   | 确定是否对按钮应用阴影                                             |
+    | applyBlur   | 布尔值                   | 确定是否对按钮应用模糊效果                                           |
+    | disabled    | 布尔值                   | 确定按钮是否被禁用                                               |
+    | focus       | 布尔值                   | 指示按钮是否具有焦点                                              |
+    | onClick     | 函数                    | 用户点击按钮时触发的回调函数                                          |
+    | isActive    | 布尔值                   | 确定按钮是否处于活动状态                                            |
   </Tab>
 </Tabs>
 
-## Floating Icon Button Group
+## 浮动图标按钮组
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
     import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
@@ -290,19 +290,19 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props       | Type   | Description                                                                                                                                                                                                                                                          |
-    | ----------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    | className   | string | Optional name for additional styling                                                                                                                                                                                                                                 |
-    | size        | string | The size of the button. Has two options: `small` and `medium`                                                                                                                                                                                                        |
-    | iconButtons | array  | An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not. |
+  <Tab title="属性">
+    | 属性          | 类型     | 描述                                                                     |
+    | ----------- | ------ | ---------------------------------------------------------------------- |
+    | className   | string | 用于附加样式的可选名称                                                            |
+    | 大小          | 字符串    | 按钮的大小。 有两个选项：`small` 和 `medium`                                        |
+    | iconButtons | 数组     | 一组对象，每个对象代表组中的一个图标按钮。 每个对象应包含要在按钮中显示的图标组件，用户点击按钮时要调用的函数，以及按钮是否应处于活动状态。 |
   </Tab>
 </Tabs>
 
-## Light Button
+## 亮色按钮
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { LightButton } from "@/ui/input/button/components/LightButton";
 
@@ -321,24 +321,24 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type              | Description                                                                 |
-    | --------- | ----------------- | --------------------------------------------------------------------------- |
-    | className | string            | Optional name for additional styling                                        |
-    | icon      | `React.ReactNode` | The icon you want to display in the button                                  |
-    | title     | string            | The text content of the button                                              |
-    | accent    | string            | The accent color of the button. Options include: `secondary` and `tertiary` |
-    | active    | boolean           | Determines if the button is in an active state                              |
-    | disabled  | boolean           | Determines whether the button is disabled                                   |
-    | focus     | boolean           | Indicates if the button has focus                                           |
-    | onClick   | function          | A callback function that triggers when the user clicks on the button        |
+  <Tab title="属性">
+    | 属性        | 类型                | 描述                                     |
+    | --------- | ----------------- | -------------------------------------- |
+    | className | string            | 用于附加样式的可选名称                            |
+    | 图标        | `React.ReactNode` | 您想在按钮中显示的图标                            |
+    | 标题        | string            | 按钮的文本内容                                |
+    | accent    | string            | 按钮的强调颜色。 选项包括：`secondary` 和 `tertiary` |
+    | 活跃        | 布尔值               | 确定按钮是否处于活动状态                           |
+    | disabled  | 布尔值               | 确定按钮是否被禁用                              |
+    | focus     | 布尔值               | 指示按钮是否具有焦点                             |
+    | onClick   | function          | 用户点击按钮时触发的回调函数                         |
   </Tab>
 </Tabs>
 
-## Light Icon Button
+## 亮色图标按钮
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -362,26 +362,26 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props     | Type                  | Description                                                                 |
-    | --------- | --------------------- | --------------------------------------------------------------------------- |
-    | className | string                | Optional name for additional styling                                        |
-    | testId    | string                | Test identifier for the button                                              |
-    | Icon      | `React.ComponentType` | An optional icon component that's displayed within the button               |
-    | title     | string                | The text content of the button                                              |
-    | size      | string                | The size of the button. Has two options: `small` and `medium`               |
-    | accent    | string                | The accent color of the button. Options include: `secondary` and `tertiary` |
-    | active    | boolean               | Determines if the button is in an active state                              |
-    | disabled  | boolean               | Determines whether the button is disabled                                   |
-    | focus     | boolean               | Indicates if the button has focus                                           |
-    | onClick   | function              | A callback function that triggers when the user clicks on the button        |
+  <Tab title="属性">
+    | 属性        | 类型                    | 描述                                     |
+    | --------- | --------------------- | -------------------------------------- |
+    | className | string                | 用于附加样式的可选名称                            |
+    | 测试ID      | string                | 按钮的测试标识                                |
+    | 图标        | `React.ComponentType` | 按钮内显示的可选图标组件                           |
+    | 标题        | 字符串                   | 按钮的文本内容                                |
+    | 大小        | 字符串                   | 按钮的大小。 有两个选项：`small` 和 `medium`        |
+    | accent    | 字符串                   | 按钮的强调颜色。 选项包括：`secondary` 和 `tertiary` |
+    | 活跃        | 布尔值                   | 确定按钮是否处于活动状态                           |
+    | disabled  | 布尔值                   | 确定按钮是否被禁用                              |
+    | focus     | 布尔值                   | 指示按钮是否具有焦点                             |
+    | onClick   | 函数                    | 用户点击按钮时触发的回调函数                         |
   </Tab>
 </Tabs>
 
-## Main Button
+## 主要按钮
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { MainButton } from "@/ui/input/button/components/MainButton";
     import { IconCheckbox } from "@tabler/icons-react";
@@ -400,22 +400,22 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props                | Type                             | Description                                                                       |
-    | -------------------- | -------------------------------- | --------------------------------------------------------------------------------- |
-    | title                | string                           | The text content of the button                                                    |
-    | fullWidth            | boolean                          | Defines whether the button should span the whole width of its container           |
-    | variant              | string                           | The visual style variant of the button. Options include `primary` and `secondary` |
-    | soon                 | boolean                          | Indicates if the button is marked as "soon" (such as for upcoming features)       |
-    | Icon                 | `React.ComponentType`            | An optional icon component that's displayed within the button                     |
-    | React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                      |
+  <Tab title="属性">
+    | 属性                   | 类型                               | 描述                                      |
+    | -------------------- | -------------------------------- | --------------------------------------- |
+    | 标题                   | 字符串                              | 按钮的文本内容                                 |
+    | fullWidth            | 布尔值                              | 定义按钮是否应占据其容器的整个宽度                       |
+    | 变体                   | 字符串                              | 按钮的视觉样式变体。 选项包括 `primary` 和 `secondary` |
+    | 即将推出                 | 布尔值                              | 指示按钮是否标记为"即将推出"（例如针对即将推出的功能）            |
+    | 图标                   | `React.ComponentType`            | 按钮内显示的可选图标组件                            |
+    | React `button` props | `React.ComponentProps<'button'>` | 支持所有标准 HTML 按钮属性                        |
   </Tab>
 </Tabs>
 
-## Rounded Icon Button
+## 圆形图标按钮
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="用法">
     ```jsx
     import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
     import { IconSearch } from "@tabler/icons-react";
@@ -430,10 +430,10 @@ A list of buttons and button groups used throughout the app.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props                | Type                                            | Description |
-    | -------------------- | ----------------------------------------------- | ----------- |
-    | Icon                 | `React.ComponentType`                           |             |
-    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
+  <Tab title="属性">
+    | 属性                   | 类型                                              | 描述 |
+    | -------------------- | ----------------------------------------------- | -- |
+    | 图标                   | `React.ComponentType`                           |    |
+    | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |    |
   </Tab>
 </Tabs>

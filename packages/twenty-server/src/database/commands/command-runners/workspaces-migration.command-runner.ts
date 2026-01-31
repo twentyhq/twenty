@@ -142,7 +142,6 @@ export abstract class WorkspacesMigrationCommandRunner<
         const authContext = buildSystemAuthContext(workspaceId);
 
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-          authContext,
           async () => {
             const workspaceHasDataSource =
               await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
@@ -161,6 +160,7 @@ export abstract class WorkspacesMigrationCommandRunner<
               total: workspaceIdsToProcess.length,
             });
           },
+          authContext,
         );
 
         this.migrationReport.success.push({

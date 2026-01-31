@@ -3,6 +3,7 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -32,6 +33,8 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
         set(contextStoreIsFullTabWidgetInEditModeState, value);
 
+        set(currentPageLayoutIdState, value ? pageLayoutId : null);
+
         const isCommandMenuOpened = snapshot
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
@@ -45,7 +48,11 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
           );
         }
       },
-    [isPageLayoutInEditModeState, contextStoreIsFullTabWidgetInEditModeState],
+    [
+      isPageLayoutInEditModeState,
+      contextStoreIsFullTabWidgetInEditModeState,
+      pageLayoutId,
+    ],
   );
 
   return { setIsPageLayoutInEditMode };

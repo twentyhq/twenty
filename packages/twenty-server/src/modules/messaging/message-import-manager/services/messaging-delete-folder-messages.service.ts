@@ -62,7 +62,7 @@ export class MessagingDeleteFolderMessagesService {
 
         totalDeletedCount += validExternalIds.length;
 
-        this.logger.log(
+        this.logger.debug(
           `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${messageFolder.id} - Processed ${validExternalIds.length} message deletions`,
         );
       }

@@ -1,5 +1,6 @@
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -16,8 +17,10 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/object-record/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { sleep } from '~/utils/sleep';
 
 type useDeleteManyRecordProps = {
@@ -57,6 +60,11 @@ export const useDeleteManyRecords = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const { refetchAggregateQueries } = useRefetchAggregateQueries();
+  const isNavigationMenuItemEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
+  );
+  const { removeNavigationMenuItemsByTargetRecordIds } =
+    useRemoveNavigationMenuItemByTargetRecordId();
 
   const mutationResponseField = getDeleteManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -223,10 +231,15 @@ export const useDeleteManyRecords = ({
       objectMetadataNamePlural: objectMetadataItem.namePlural,
     });
 
+    if (isNavigationMenuItemEnabled) {
+      removeNavigationMenuItemsByTargetRecordIds(recordIdsToDelete);
+    }
+
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,
       operation: {
         type: 'delete-many',
+        deletedRecordIds: recordIdsToDelete,
       },
     });
 

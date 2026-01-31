@@ -55,54 +55,39 @@ export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
+export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties.type';
 export type {
   FieldMetadataDefaultValueFunctionNames,
-  FieldMetadataClassValidation,
-  FieldMetadataFunctionDefaultValue,
-  FieldMetadataDefaultValueForType,
-  FieldMetadataDefaultValueForAnyType,
-  FieldMetadataDefaultValue,
-  FieldMetadataDefaultSerializableValue,
-} from './FieldMetadataDefaultValue';
-export {
-  fieldMetadataDefaultValueFunctionName,
-  FieldMetadataDefaultValueString,
-  FieldMetadataDefaultValueRawJson,
-  FieldMetadataDefaultValueRichTextV2,
-  FieldMetadataDefaultValueRichText,
-  FieldMetadataDefaultValueNumber,
-  FieldMetadataDefaultValueBoolean,
-  FieldMetadataDefaultValueStringArray,
-  FieldMetadataDefaultValueDateTime,
-  FieldMetadataDefaultValueDate,
-  FieldMetadataDefaultValueCurrency,
-  FieldMetadataDefaultValueFullName,
   FieldMetadataDefaultValueUuidFunction,
   FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueRichTextV2,
+  FieldMetadataDefaultValueCurrency,
+  FieldMetadataDefaultValueFullName,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueLinks,
   FieldMetadataDefaultActor,
   FieldMetadataDefaultValueEmails,
   FieldMetadataDefaultValuePhones,
-  FieldMetadataDefaultArray,
+  FieldMetadataDefaultValueMapping,
+  FieldMetadataFunctionDefaultValue,
+  FieldMetadataDefaultValueForAnyType,
+  FieldMetadataDefaultValue,
 } from './FieldMetadataDefaultValue';
+export { fieldMetadataDefaultValueFunctionName } from './FieldMetadataDefaultValue';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
-export type { TagColor, FieldMetadataOptions } from './FieldMetadataOptions';
+export type {
+  TagColor,
+  FieldMetadataOptionForAnyType,
+  FieldMetadataOptions,
+} from './FieldMetadataOptions';
 export {
   FieldMetadataDefaultOption,
   FieldMetadataComplexOption,
 } from './FieldMetadataOptions';
 export type {
   FieldNumberVariant,
-  FieldMetadataNumberSettings,
-  FieldMetadataTextSettings,
-  FieldMetadataDateSettings,
-  FieldMetadataDateTimeSettings,
-  FieldMetadataRelationSettings,
-  FieldMetadataAddressSettings,
-  FieldMetadataFilesSettings,
-  FieldMetadataTsVectorSettings,
+  FieldMetadataSettingsMapping,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
 } from './FieldMetadataSettings';
@@ -120,8 +105,12 @@ export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
+export type { IsEmptyObject } from './IsEmptyObject.type';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
+export type { IsNever } from './IsNever.type';
+export type { IsSerializedRelation } from './IsSerializedRelation.type';
+export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NonNullableRequired } from './NonNullableRequired';
@@ -142,6 +131,8 @@ export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGra
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { OrderBy } from './OrderBy';
+export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
+export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';
@@ -200,7 +191,8 @@ export type {
   RelationPredicateValue,
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
-export type { ServerlessFunctionEvent } from './ServerlessFunctionEvent';
+export type { SerializedRelation } from './SerializedRelation.type';
+export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
 export { SettingsPath } from './SettingsPath';
 export type { Sources } from './SourcesType';
 export type {

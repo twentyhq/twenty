@@ -1,5 +1,6 @@
 import { useListenToObjectRecordOperationBrowserEvent } from '@/object-record/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useGetShouldInitializeRecordBoardForUpdateInputs } from '@/object-record/record-board/hooks/useGetShouldInitializeRecordBoardForUpdateInputs';
+import { useRemoveRecordsFromBoard } from '@/object-record/record-board/hooks/useRemoveRecordsFromBoard';
 import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/hooks/useTriggerRecordBoardInitialQuery';
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -31,6 +32,8 @@ export const RecordBoardDataChangedEffect = () => {
     useRecoilComponentCallbackState(
       recordIndexRecordIdsByGroupComponentFamilyState,
     );
+
+  const { removeRecordsFromBoard } = useRemoveRecordsFromBoard();
 
   const handleObjectRecordOperation = useRecoilCallback(
     ({ snapshot }) =>
@@ -126,6 +129,26 @@ export const RecordBoardDataChangedEffect = () => {
             }
             break;
           }
+          case 'delete-one': {
+            const removedRecordId = objectRecordOperation.deletedRecordId;
+
+            removeRecordsFromBoard({
+              recordIdsToRemove: [removedRecordId],
+            });
+            return;
+          }
+          case 'delete-many': {
+            const removedRecordIds = objectRecordOperation.deletedRecordIds;
+
+            removeRecordsFromBoard({
+              recordIdsToRemove: removedRecordIds,
+            });
+            return;
+          }
+          case 'restore-many':
+          case 'restore-one': {
+            return;
+          }
           default: {
             triggerRecordBoardInitialQuery();
           }
@@ -137,6 +160,7 @@ export const RecordBoardDataChangedEffect = () => {
       recordIndexGroupFieldMetadataItemCallbackState,
       recordGroupFromGroupValueCallbackState,
       recordIndexRecordIdsByGroupCallbackState,
+      removeRecordsFromBoard,
     ],
   );
 

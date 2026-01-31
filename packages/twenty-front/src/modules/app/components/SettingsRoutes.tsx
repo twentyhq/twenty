@@ -105,12 +105,12 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const SettingsServerlessFunctionDetail = lazy(() =>
-  import(
-    '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail'
-  ).then((module) => ({
-    default: module.SettingsServerlessFunctionDetail,
-  })),
+const SettingsLogicFunctionDetail = lazy(() =>
+  import('~/pages/settings/logic-functions/SettingsLogicFunctionDetail').then(
+    (module) => ({
+      default: module.SettingsLogicFunctionDetail,
+    }),
+  ),
 );
 
 const SettingsWorkspace = lazy(() =>
@@ -157,6 +157,14 @@ const SettingsApplicationDetails = lazy(() =>
       default: module.SettingsApplicationDetails,
     }),
   ),
+);
+
+const SettingsAvailableApplicationDetails = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsAvailableApplicationDetails'
+  ).then((module) => ({
+    default: module.SettingsAvailableApplicationDetails,
+  })),
 );
 
 const SettingsAgentForm = lazy(() =>
@@ -447,8 +455,8 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsSkillForm mode="edit" />}
         />
         <Route
-          path={SettingsPath.ServerlessFunctionDetail}
-          element={<SettingsServerlessFunctionDetail />}
+          path={SettingsPath.LogicFunctionDetail}
+          element={<SettingsLogicFunctionDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
@@ -582,8 +590,12 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApplicationDetails />}
         />
         <Route
-          path={SettingsPath.ApplicationServerlessFunctionDetail}
-          element={<SettingsServerlessFunctionDetail />}
+          path={SettingsPath.AvailableApplicationDetail}
+          element={<SettingsAvailableApplicationDetails />}
+        />
+        <Route
+          path={SettingsPath.ApplicationLogicFunctionDetail}
+          element={<SettingsLogicFunctionDetail />}
         />
       </Route>
 

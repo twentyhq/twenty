@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
@@ -23,10 +23,7 @@ const REMAINING_ENTITIES_METADATA_NAMES = [
   'rowLevelPermissionPredicate',
   'rowLevelPermissionPredicateGroup',
   'viewFilterGroup',
-  'cronTrigger',
-  'databaseEventTrigger',
-  'routeTrigger',
-  'serverlessFunction',
+  'logicFunction',
   'skill',
   'pageLayoutWidget',
   'pageLayout',
@@ -36,7 +33,7 @@ const REMAINING_ENTITIES_METADATA_NAMES = [
 @Command({
   name: 'upgrade:1-16:identify-remaining-entities-metadata',
   description:
-    'Identify remaining entities metadata (roleTarget, rowLevelPermissionPredicate, rowLevelPermissionPredicateGroup, viewFilterGroup, viewSort, cronTrigger, databaseEventTrigger, routeTrigger, serverlessFunction, skill, pageLayoutWidget, pageLayout, pageLayoutTab)',
+    'Identify remaining entities metadata (roleTarget, rowLevelPermissionPredicate, rowLevelPermissionPredicateGroup, viewFilterGroup, viewSort, logicFunction, skill, pageLayoutWidget, pageLayout, pageLayoutTab)',
 })
 export class IdentifyRemainingEntitiesMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(

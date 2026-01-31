@@ -23,7 +23,7 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
   const objectFlatFieldMetadatas =
     findManyFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadata.fieldMetadataIds,
+      flatEntityIds: flatObjectMetadata.fieldIds,
     });
   const initialAccumulator: ObjectFieldNamesAndJoinColumnNames = {
     joinColumnNames: [],

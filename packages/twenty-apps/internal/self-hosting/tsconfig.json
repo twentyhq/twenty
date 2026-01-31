@@ -20,7 +20,11 @@
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "src/*": ["./src/*"],
+      "~/*": ["./*"]
+    }
   },
   "exclude": [
     "node_modules",
