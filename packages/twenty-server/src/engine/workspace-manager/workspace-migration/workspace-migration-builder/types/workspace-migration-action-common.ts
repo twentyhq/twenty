@@ -1,14 +1,15 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import {
-  type MetadataWorkspaceMigrationAction,
+  type MetadataUniversalWorkspaceMigrationAction,
   type WorkspaceMigrationActionType,
 } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 
-export type WorkspaceMigrationAction = MetadataWorkspaceMigrationAction<
-  AllMetadataName,
-  WorkspaceMigrationActionType
->;
+export type UniversalWorkspaceMigrationAction =
+  MetadataUniversalWorkspaceMigrationAction<
+    AllMetadataName,
+    WorkspaceMigrationActionType
+  >;
 
 export { WorkspaceMigrationActionType };
 

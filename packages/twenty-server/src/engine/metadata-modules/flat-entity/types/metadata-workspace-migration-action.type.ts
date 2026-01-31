@@ -10,19 +10,16 @@ export type WorkspaceMigrationActionType =
   | BaseUpdateWorkspaceMigrationAction<AllMetadataName>['type']
   | BaseDeleteWorkspaceMigrationAction<AllMetadataName>['type'];
 
-export type MetadataWorkspaceMigrationActionsRecord<T extends AllMetadataName> =
-  {
-    [K in WorkspaceMigrationActionType]: MetadataWorkspaceMigrationAction<
-      T,
-      K
-    >[];
-  };
+export type MetadataUniversalWorkspaceMigrationActionsRecord<
+  T extends AllMetadataName,
+> = {
+  [K in WorkspaceMigrationActionType]: MetadataUniversalWorkspaceMigrationAction<
+    T,
+    K
+  >[];
+};
 
-export type MetadataWorkspaceMigrationAction<
+export type MetadataUniversalWorkspaceMigrationAction<
   TMetadataName extends AllMetadataName,
   TActionType extends WorkspaceMigrationActionType,
-> = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType] extends infer Action
-  ? Action extends Array<unknown>
-    ? Action[number]
-    : Action
-  : never;
+> = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType];

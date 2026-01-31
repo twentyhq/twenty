@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type UniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { findFieldMetadataIdInCreateFieldContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/find-field-metadata-id-in-create-field-context.util';
 import { fromUniversalSettingsToInsertableSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-settings-to-naked-field-metadata-settings.util';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -13,7 +13,7 @@ export type FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs = {
   universalFlatFieldMetadata: UniversalFlatFieldMetadata;
   allFlatEntityMaps: AllFlatEntityMaps;
   context: Pick<
-    WorkspaceMigrationActionRunnerArgs<WorkspaceMigrationAction>,
+    WorkspaceMigrationActionRunnerArgs<UniversalWorkspaceMigrationAction>,
     'workspaceId' | 'flatApplication'
   >;
   objectMetadataId?: string;
