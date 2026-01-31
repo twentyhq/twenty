@@ -6,6 +6,7 @@ import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-ve
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
 import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-send-email-recipients.command';
+import { MigrateDateTimeIsFilterValuesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-date-time-is-filter-values.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -16,6 +17,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
@@ -33,6 +35,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
       AttachmentWorkspaceEntity,
       WebhookEntity,
       FileEntity,
+      ViewFilterEntity,
     ]),
     DataSourceModule,
     WorkspaceCacheStorageModule,
@@ -50,6 +53,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
+    MigrateDateTimeIsFilterValuesCommand,
   ],
   exports: [
     MigrateAttachmentToMorphRelationsCommand,
@@ -57,6 +61,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
+    MigrateDateTimeIsFilterValuesCommand,
   ],
 })
 export class V1_17_UpgradeVersionCommandModule {}
