@@ -6,7 +6,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { CreateRowLevelPermissionPredicateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateRowLevelPermissionPredicateActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -14,10 +14,10 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
   'rowLevelPermissionPredicate',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateRowLevelPermissionPredicateAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateRowLevelPermissionPredicateAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const repository =
       queryRunner.manager.getRepository<RowLevelPermissionPredicateEntity>(
@@ -31,7 +31,7 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateRowLevelPermissionPredicateAction>,
+    _context: WorkspaceMigrationActionRunnerContext<CreateRowLevelPermissionPredicateAction>,
   ): Promise<void> {
     return;
   }

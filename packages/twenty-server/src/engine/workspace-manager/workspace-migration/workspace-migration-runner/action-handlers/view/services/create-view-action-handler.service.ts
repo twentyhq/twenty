@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { CreateViewAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -16,10 +16,10 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateViewAction>,
+    context: WorkspaceMigrationActionRunnerContext<CreateViewAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const viewRepository =
       queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
@@ -31,7 +31,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateViewAction>,
+    _context: WorkspaceMigrationActionRunnerContext<CreateViewAction>,
   ): Promise<void> {
     return;
   }

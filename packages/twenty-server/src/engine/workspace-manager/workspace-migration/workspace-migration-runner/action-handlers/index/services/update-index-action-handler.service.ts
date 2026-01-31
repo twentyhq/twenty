@@ -12,7 +12,7 @@ import {
   dropIndexFromWorkspaceSchema,
   insertIndexMetadata,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -26,29 +26,29 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<UpdateIndexAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
+    const { flatAction, queryRunner, workspaceId } = context;
 
     // Delete old index metadata
     await deleteIndexMetadata({
-      entityId: action.entityId,
+      entityId: flatAction.entityId,
       queryRunner,
       workspaceId,
     });
 
     // Create new index metadata
     await insertIndexMetadata({
-      flatIndexMetadata: action.updatedFlatEntity,
+      flatIndexMetadata: flatAction.updatedFlatEntity,
       queryRunner,
     });
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<UpdateIndexAction>,
   ): Promise<void> {
     const {
-      action,
+      flatAction,
       allFlatEntityMaps: {
         flatIndexMaps,
         flatObjectMetadataMaps,
@@ -58,7 +58,7 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       workspaceId,
     } = context;
 
-    const { entityId, updatedFlatEntity } = action;
+    const { entityId, updatedFlatEntity } = flatAction;
 
     // Get the old index to drop it
     const flatIndexMetadataToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow(

@@ -84,10 +84,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<
-      CreateFieldAction,
-      FlatCreateFieldAction
-    >,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
   ): Promise<void> {
     const { queryRunner, flatAction } = context;
     const { flatFieldMetadatas } = flatAction;
@@ -102,8 +99,8 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
   async executeForWorkspaceSchema(
     context: WorkspaceMigrationActionRunnerContext<
-      CreateFieldAction,
-      FlatCreateFieldAction
+      FlatCreateFieldAction,
+      CreateFieldAction
     >,
   ): Promise<void> {
     const {

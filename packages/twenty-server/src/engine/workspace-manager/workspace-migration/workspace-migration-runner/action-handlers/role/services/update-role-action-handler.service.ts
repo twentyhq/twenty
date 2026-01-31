@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UpdateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -13,22 +13,22 @@ export class UpdateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
   'role',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateRoleAction>,
+    context: WorkspaceMigrationActionRunnerContext<UpdateRoleAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId } = flatAction;
 
     const roleRepository =
       queryRunner.manager.getRepository<RoleEntity>(RoleEntity);
 
     await roleRepository.update(
       { id: entityId, workspaceId },
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
     );
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateRoleAction>,
+    _context: WorkspaceMigrationActionRunnerContext<UpdateRoleAction>,
   ): Promise<void> {
     return;
   }

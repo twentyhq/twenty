@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifiers-or-throw.util';
 import {
   isCompositeUniversalFlatFieldMetadata
@@ -17,8 +17,8 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
-import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { type FlatUpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -39,40 +39,35 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateObjectAction>,
   ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps } = context;
+    const { flatAction, queryRunner } = context;
 
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
         ObjectMetadataEntity,
       );
 
-    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatObjectMetadataMaps,
-      universalIdentifier: action.universalIdentifier,
-    });
-
     await objectMetadataRepository.update(
-      flatObjectMetadata.id,
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
+      flatAction.entityId,
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
     );
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateObjectAction>,
   ): Promise<void> {
     const {
-      action,
+      flatAction,
       queryRunner,
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { universalIdentifier, updates } = action;
+    const { entityId, updates } = flatAction;
 
-    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier: universalIdentifier,
+      flatEntityId: entityId,
     });
 
     const { schemaName, tableName: currentTableName } =

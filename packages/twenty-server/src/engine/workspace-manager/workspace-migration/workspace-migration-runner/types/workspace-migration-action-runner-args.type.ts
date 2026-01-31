@@ -19,10 +19,8 @@ export type WorkspaceMigrationActionRunnerArgs<
 
 export type WorkspaceMigrationActionRunnerContext<
   TFlatAction extends AllFlatWorkspaceMigrationAction,
-> = {
-  queryRunner: QueryRunner;
-  allFlatEntityMaps: AllFlatEntityMaps;
-  workspaceId: string;
-  flatApplication: FlatApplication;
+  TUniversalAction extends
+    AllUniversalWorkspaceMigrationAction = AllUniversalWorkspaceMigrationAction,
+> = WorkspaceMigrationActionRunnerArgs<TUniversalAction> & {
   flatAction: TFlatAction;
 };

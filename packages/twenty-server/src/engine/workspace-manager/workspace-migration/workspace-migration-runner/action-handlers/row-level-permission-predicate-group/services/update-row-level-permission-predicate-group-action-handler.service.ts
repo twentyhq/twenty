@@ -6,7 +6,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { UpdateRowLevelPermissionPredicateGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/types/workspace-migration-row-level-permission-predicate-group-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -15,23 +15,23 @@ export class UpdateRowLevelPermissionPredicateGroupActionHandlerService extends 
   'rowLevelPermissionPredicateGroup',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateRowLevelPermissionPredicateGroupAction>,
+    context: WorkspaceMigrationActionRunnerContext<UpdateRowLevelPermissionPredicateGroupAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
-    const { entityId } = action;
+    const { flatAction, queryRunner } = context;
+    const { entityId } = flatAction;
 
     const repository =
       queryRunner.manager.getRepository<RowLevelPermissionPredicateGroupEntity>(
         RowLevelPermissionPredicateGroupEntity,
       );
 
-    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action);
+    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
 
     await repository.update(entityId, update);
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateRowLevelPermissionPredicateGroupAction>,
+    _context: WorkspaceMigrationActionRunnerContext<UpdateRowLevelPermissionPredicateGroupAction>,
   ): Promise<void> {
     return;
   }

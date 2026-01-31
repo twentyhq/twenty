@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { UpdateCommandMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -13,10 +13,10 @@ export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigratio
   'commandMenuItem',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateCommandMenuItemAction>,
+    context: WorkspaceMigrationActionRunnerContext<UpdateCommandMenuItemAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId, updates } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, updates } = flatAction;
 
     const commandMenuItemRepository =
       queryRunner.manager.getRepository<CommandMenuItemEntity>(
@@ -32,7 +32,7 @@ export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigratio
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateCommandMenuItemAction>,
+    _context: WorkspaceMigrationActionRunnerContext<UpdateCommandMenuItemAction>,
   ): Promise<void> {
     return;
   }
