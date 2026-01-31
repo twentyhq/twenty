@@ -58,6 +58,8 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useLoadMockedObjectMetadataItems } from '@/object-metadata/hooks/useLoadMockedObjectMetadataItems';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { sseClientState } from '@/sse-db-event/states/sseClientState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
@@ -124,6 +126,10 @@ export const useAuth = () => {
   const clearSession = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
+        const sseClient = getSnapshotValue(snapshot, sseClientState);
+
+        sseClient?.dispose();
+
         const emptySnapshot = snapshot_UNSTABLE();
 
         const iconsValue = snapshot.getLoadable(iconsState).getValue();
