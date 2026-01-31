@@ -8,12 +8,17 @@ import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/fl
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
+import { IsMetadataRunnerUniversalMigrated } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/is-metadata-runner-universal-migrated.type';
 import { TranspileActionUniversalToFlat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/transpile-action-to-flat.type';
 import {
   buildActionHandlerKey,
   type WorkspaceMigrationAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
+import {
+  WorkspaceMigrationActionExecutionException,
+  WorkspaceMigrationActionExecutionExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -41,10 +46,32 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
 
-  // Lets make it redundant for the moment
-  abstract transpileUniversalActionToFlatAction(
-    _context: WorkspaceMigrationActionRunnerArgs<TAction>,
-  ): Promise<TranspileActionUniversalToFlat<TAction>>;
+  public async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<TAction>,
+  ): Promise<
+    IsMetadataRunnerUniversalMigrated<TAction['metadataName']> extends true
+      ? TranspileActionUniversalToFlat<TAction>
+      : TAction
+  > {
+    switch (true) {
+      // Actions add custom properties to base actions that custom transpilers ( next when migrated logic function create and index update too)
+      case context.action.metadataName === 'objectMetadata' &&
+        context.action.type === 'create':
+      case context.action.metadataName === 'fieldMetadata' &&
+        context.action.type === 'create': {
+        throw new WorkspaceMigrationActionExecutionException({
+          code: WorkspaceMigrationActionExecutionExceptionCode.INTERNAL_SERVER_ERROR,
+          message: `transpileUniversalActionToFlatAction should be implemented for ${context.action.type} ${context.action.metadataName}`,
+        });
+      }
+    }
+
+    return context.action as IsMetadataRunnerUniversalMigrated<
+      TAction['metadataName']
+    > extends true
+      ? TranspileActionUniversalToFlat<TAction>
+      : TAction;
+  }
 
   executeForMetadata(
     _context: WorkspaceMigrationActionRunnerArgs<TAction>,
@@ -108,8 +135,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     const [metadataResult, workspaceSchemaResult] = await Promise.allSettled([
       this.asyncMethodPerformanceMetricWrapper({
         label: 'executeForMetadata',
-        method: async () =>
-          this.executeForMetadata({ ...context,flatAction }),
+        method: async () => this.executeForMetadata({ ...context, flatAction }),
       }),
       this.asyncMethodPerformanceMetricWrapper({
         label: 'executeForWorkspaceSchema',
