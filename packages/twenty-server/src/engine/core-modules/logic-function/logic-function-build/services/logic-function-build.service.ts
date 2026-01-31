@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import fs from 'fs/promises';
 import { dirname, join } from 'path';
+import crypto from 'crypto';
 
 import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';
@@ -38,7 +39,7 @@ export class LogicFunctionBuildService {
   async buildAndUpload({
     flatLogicFunction,
     applicationUniversalIdentifier,
-  }: FunctionBuildParams): Promise<void> {
+  }: FunctionBuildParams): Promise<{ checksum: string }> {
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     try {
@@ -85,6 +86,10 @@ export class LogicFunctionBuildService {
           toDelete: false,
         },
       });
+
+      return {
+        checksum: crypto.createHash('md5').update(builtFile).digest('hex'),
+      };
     } finally {
       await lambdaBuildDirectoryManager.clean();
     }

@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { FileFolder } from 'twenty-shared/types';
+import { promises as fs } from 'fs';
+import { dirname, join } from 'path';
+
+import { isObject } from '@sniptt/guards';
+import { FileFolder, type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
 import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -32,6 +38,7 @@ export class LogicFunctionService {
     private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    private readonly logicFunctionBuildService: LogicFunctionBuildService,
   ) {}
 
   async createOne({
@@ -339,5 +346,97 @@ export class LogicFunctionService {
     });
 
     return newFlatLogicFunction;
+  }
+
+  async uploadSourceCode({
+    id,
+    code,
+    workspaceId,
+  }: {
+    id: string;
+    code: Sources;
+    workspaceId: string;
+  }): Promise<{ checksum: string; success: boolean }> {
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+        'flatApplicationMaps',
+      ]);
+
+    const flatLogicFunction = findFlatLogicFunctionOrThrow({
+      id,
+      flatLogicFunctionMaps,
+    });
+
+    const applicationUniversalIdentifier = isDefined(
+      flatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(applicationUniversalIdentifier)) {
+      throw new LogicFunctionException(
+        `Application universal identifier not found for logic function ${id}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+
+    try {
+      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
+
+      await this.writeSourcesToLocalFolder(code, sourceTemporaryDir);
+
+      const baseFolderPath = getLogicFunctionBaseFolderPath(
+        flatLogicFunction.sourceHandlerPath,
+      );
+
+      await this.fileStorageService.uploadFolder_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: baseFolderPath,
+        localPath: sourceTemporaryDir,
+      });
+    } finally {
+      await lambdaBuildDirectoryManager.clean();
+    }
+
+    const { checksum } = await this.logicFunctionBuildService.buildAndUpload({
+      flatLogicFunction,
+      applicationUniversalIdentifier,
+    });
+
+    await this.updateOne({
+      id: flatLogicFunction.id,
+      update: { checksum },
+      workspaceId,
+    });
+
+    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatLogicFunctionMaps'],
+    });
+
+    return { checksum, success: true };
+  }
+
+  private async writeSourcesToLocalFolder(
+    sources: Sources,
+    localPath: string,
+  ): Promise<void> {
+    for (const key of Object.keys(sources)) {
+      const filePath = join(localPath, key);
+      const value = sources[key];
+
+      if (isObject(value)) {
+        await this.writeSourcesToLocalFolder(value as Sources, filePath);
+        continue;
+      }
+      await fs.mkdir(dirname(filePath), { recursive: true });
+      await fs.writeFile(filePath, value);
+    }
   }
 }

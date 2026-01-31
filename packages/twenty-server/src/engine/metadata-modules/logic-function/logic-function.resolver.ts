@@ -23,6 +23,8 @@ import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function
 import { LogicFunctionLogsInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.input';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { UpdateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function.input';
+import { UploadLogicFunctionSourceCodeInput } from 'src/engine/metadata-modules/logic-function/dtos/upload-logic-function-source-code.input';
+import { UploadLogicFunctionSourceCodeResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/upload-logic-function-source-code-result.dto';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
@@ -203,6 +205,25 @@ export class LogicFunctionResolver {
         id,
         workspaceId,
         payload,
+      });
+    } catch (error) {
+      return logicFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => UploadLogicFunctionSourceCodeResultDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  async uploadLogicFunctionSourceCode(
+    @Args('input') input: UploadLogicFunctionSourceCodeInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<UploadLogicFunctionSourceCodeResultDTO> {
+    try {
+      const { id, code } = input;
+
+      return await this.logicFunctionService.uploadSourceCode({
+        id,
+        code,
+        workspaceId,
       });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
