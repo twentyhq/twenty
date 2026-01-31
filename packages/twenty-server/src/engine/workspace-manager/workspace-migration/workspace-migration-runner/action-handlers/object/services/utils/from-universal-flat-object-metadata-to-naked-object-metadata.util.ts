@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { type UniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 export type FromUniversalFlatObjectMetadataToNakedObjectMetadataArgs = {
@@ -12,7 +12,7 @@ export type FromUniversalFlatObjectMetadataToNakedObjectMetadataArgs = {
   allFlatEntityMaps: AllFlatEntityMaps;
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
   context: Pick<
-    WorkspaceMigrationActionRunnerArgs<UniversalWorkspaceMigrationAction>,
+    WorkspaceMigrationActionRunnerArgs<AllUniversalWorkspaceMigrationAction>,
     'workspaceId' | 'flatApplication'
   >;
   dataSourceId: string;

@@ -10,7 +10,8 @@ import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-en
 import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import {
   buildActionHandlerKey,
-  type UniversalWorkspaceMigrationAction,
+  type AllFlatWorkspaceMigrationAction,
+  type AllUniversalWorkspaceMigrationAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
 import {
@@ -30,10 +31,8 @@ import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/w
 import { optimisticallyApplyUpdateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-update-action-on-all-flat-entity-maps.util';
 
 type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
-  TUniversalAction extends UniversalWorkspaceMigrationAction,
-  TFlatAction,
+  TFlatAction extends AllFlatWorkspaceMigrationAction,
 > = {
-  action: TUniversalAction;
   flatAction: TFlatAction;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
@@ -41,8 +40,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
   TUniversalAction extends
-    UniversalWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType],
-  TFlatAction = AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions'][TActionType],
+    AllUniversalWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType],
+  TFlatAction extends
+    AllFlatWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions'][TActionType],
 > {
   public actionType: TActionType;
   public metadataName: TMetadataName;
@@ -70,45 +70,41 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 
   executeForMetadata(
-    _context: WorkspaceMigrationActionRunnerContext<TUniversalAction, TFlatAction>,
+    _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
   ): Promise<void> {
     return Promise.resolve();
   }
 
   executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<TUniversalAction, TFlatAction>,
+    _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
   ): Promise<void> {
     return Promise.resolve();
   }
 
   private optimisticallyApplyActionOnAllFlatEntityMaps({
-    action,
     flatAction,
     allFlatEntityMaps,
-  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<TUniversalAction, TFlatAction>): Pick<
+  }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<TFlatAction>): Pick<
     AllFlatEntityMaps,
     | MetadataRelatedFlatEntityMapsKeys<TMetadataName>
     | MetadataToFlatEntityMapsKey<TMetadataName>
   > {
-    switch (action.type) {
+    switch (flatAction.type) {
       case 'create': {
         return optimisticallyApplyCreateActionOnAllFlatEntityMaps({
-          flatAction:
-            flatAction as AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['create'],
+          flatAction,
           allFlatEntityMaps,
         });
       }
       case 'delete': {
         return optimisticallyApplyDeleteActionOnAllFlatEntityMaps({
-          flatAction:
-            flatAction as unknown as AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['delete'],
+          flatAction,
           allFlatEntityMaps,
         });
       }
       case 'update': {
         return optimisticallyApplyUpdateActionOnAllFlatEntityMaps({
-          flatAction:
-            flatAction as unknown as AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['update'],
+          flatAction,
           allFlatEntityMaps,
         });
       }
@@ -116,7 +112,10 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 
   rollbackForMetadata(
-    _context: Omit<WorkspaceMigrationActionRunnerArgs<TUniversalAction>, 'queryRunner'>,
+    _context: Omit<
+      WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
+      'queryRunner'
+    >,
   ): Promise<void> {
     return Promise.resolve();
   }
@@ -135,8 +134,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     const [metadataResult, workspaceSchemaResult] = await Promise.allSettled([
       this.asyncMethodPerformanceMetricWrapper({
         label: 'executeForMetadata',
-        method: async () =>
-          this.executeForMetadata({ ...context, flatAction }),
+        method: async () => this.executeForMetadata({ ...context, flatAction }),
       }),
       this.asyncMethodPerformanceMetricWrapper({
         label: 'executeForWorkspaceSchema',
@@ -163,7 +161,6 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
     const partialOptimisticCache =
       this.optimisticallyApplyActionOnAllFlatEntityMaps({
-        action: context.action,
         flatAction,
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
@@ -172,7 +169,10 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 
   async rollback(
-    context: Omit<WorkspaceMigrationActionRunnerArgs<TUniversalAction>, 'queryRunner'>,
+    context: Omit<
+      WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
+      'queryRunner'
+    >,
   ): Promise<void> {
     try {
       await this.rollbackForMetadata(context);
