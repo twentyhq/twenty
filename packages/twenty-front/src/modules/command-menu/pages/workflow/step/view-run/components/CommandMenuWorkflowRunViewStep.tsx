@@ -5,7 +5,6 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 
 export const CommandMenuWorkflowRunViewStep = () => {
   const workflowRunId = useCommandMenuWorkflowRunIdOrThrow();
-
   return (
     <WorkflowVisualizerComponentInstanceContext.Provider
       value={{

@@ -26,6 +26,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { Button } from 'twenty-ui/input';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -37,12 +38,13 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   flex-direction: column;
 `;
 
-const StyledInputArea = styled.div`
+const StyledInputArea = styled.div<{ isMobile: boolean }>`
   align-items: flex-end;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding-inline: ${({ theme }) => theme.spacing(3)};
+  padding-block: ${({ theme, isMobile }) => (isMobile ? 0 : theme.spacing(3))};
   background: ${({ theme }) => theme.background.primary};
 `;
 
@@ -64,7 +66,7 @@ const StyledButtonsContainer = styled.div`
 
 export const AIChatTab = () => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-
+  const isMobile = useIsMobile();
   const { isLoading, messages, isStreaming, error } =
     useAgentChatContextOrThrow();
 
@@ -121,7 +123,7 @@ export const AIChatTab = () => {
           )}
           {isLoading && messages.length === 0 && <AIChatSkeletonLoader />}
 
-          <StyledInputArea>
+          <StyledInputArea isMobile={isMobile}>
             <AgentChatContextPreview />
             <TextArea
               textAreaId={AI_CHAT_INPUT_ID}
