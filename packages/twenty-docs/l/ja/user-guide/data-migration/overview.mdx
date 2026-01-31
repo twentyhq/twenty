@@ -1,89 +1,89 @@
 ---
-title: Data Migration
-description: Import and export your CRM data via CSV files or API.
+title: データ移行
+description: CSVファイルまたはAPIを使用してCRMデータをインポートおよびエクスポートできます。
 image: /images/user-guide/import-export-data/cloud.png
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Frame>
-  <img src="/images/user-guide/import-export-data/cloud.png" alt="Data Migration" />
+  <img src="/images/user-guide/import-export-data/cloud.png" alt="データ移行" />
 </Frame>
 
-## Import Methods
+## インポート方法
 
-Twenty supports two main methods for importing data:
+Twenty では、データのインポート方法として主に次の2つをサポートしています。
 
-| Method         | Best For                             | Volume Limit            |
-| -------------- | ------------------------------------ | ----------------------- |
-| **CSV Import** | Standard migrations, regular updates | 10,000 records per file |
-| **API Import** | Large-scale migrations, automation   | Unlimited               |
+| メソッド         | 最適用途          | 件数上限            |
+| ------------ | ------------- | --------------- |
+| **CSVインポート** | 標準的な移行や定期的な更新 | 1ファイルあたり10,000件 |
+| **APIインポート** | 大規模な移行や自動化    | 無制限             |
 
-<Note>For very large datasets (hundreds of thousands of records), use the API. Our [implementation partners](/l/ja/user-guide/getting-started/capabilities/implementation-services) can help run these scripts if needed.</Note>
+<Note>非常に大きなデータセット（数十万件のレコード）の場合は、API を使用してください。 必要に応じて、当社の[実装パートナー](/l/ja/user-guide/getting-started/capabilities/implementation-services)がこれらのスクリプトの実行を支援できます。</Note>
 
-## CSV Import Basics
+## CSVインポートの基本
 
-You can import data for any object using CSV, XLSX, or XLS files. Each file should contain **only one type of object** (e.g., only People records).
+CSV、XLSX、または XLS ファイルを使用して、任意のオブジェクトのデータをインポートできます。 各ファイルには、**1種類のオブジェクトのみ**を含めてください（例：People レコードのみ）。
 
-<Note>**Fields must exist before import.** Uploading a CSV creates records but does not create fields. If you need custom fields, create them first under **Settings → Data Model**.</Note>
+<Note>**インポート前にフィールドが存在している必要があります。** CSV をアップロードするとレコードは作成されますが、フィールドは作成されません。 カスタムフィールドが必要な場合は、まず**Settings → Data Model**で作成してください。</Note>
 
-### Steps
+### 手順
 
-1. Navigate to the object where you want to import data
-2. Click the **⋮** icon on the top right (this is the Command Menu) and click on **Import records**
-3. Download the template file to ensure your data is in the expected format
-4. Upload your formatted CSV file
-5. Map your columns to Twenty fields
-6. Review errors (highlighted in yellow) and fix them, directly editing in the UI
-7. Confirm the import
+1. データをインポートする対象のオブジェクトに移動します。
+2. 右上の**⋮**アイコン（コマンドメニュー）をクリックし、**Import records**をクリックします。
+3. テンプレートファイルをダウンロードし、データが想定された形式になっていることを確認します。
+4. フォーマット済みのCSVファイルをアップロードします。
+5. 列を Twenty のフィールドにマッピングします。
+6. エラー（黄色でハイライト）を確認し、UI 上で直接編集して修正します。
+7. インポートを確定します。
 
-### Importing relations between objects
+### オブジェクト間の関係をインポート
 
-You can import relations between objects using the csv import function. You need to reference the related object using a unique field from this object: the `id`, the `email` for People and Workspace Members, the `domain` for companies, any other field set as unique in the data model for any other object.
+CSV インポート機能を使用して、オブジェクト間の関係をインポートできます。 関連オブジェクトは、一意のフィールドを使って参照します。使用できる例：`id`、People と Workspace Members では `email`、Companies では `domain`、そのほかのオブジェクトではデータモデルで一意に設定した任意のフィールド。
 
-<Note>**Deleted records count toward uniqueness.** Soft-deleted records (visible under Command Menu → See deleted records) are included in uniqueness checks. If you import a record with the same unique value as a deleted record, the deleted record will be restored.</Note>
+<Note>**削除済みレコードも一意性に含まれます。** ソフト削除されたレコード（Command Menu → See deleted records で表示可能）も一意性チェックに含まれます。 削除済みレコードと同じ一意値のレコードをインポートすると、その削除済みレコードが復元されます。</Note>
 
 <Warning>
-  **Import Order Matters!**
+  **インポートの順序が重要です！**
 
-  When importing related objects, upload files in this order:
+  関連オブジェクトをインポートする場合は、次の順序でファイルをアップロードしてください。
 
-  1. **Companies** first (the "one" side of relationships)
-  2. **People** second (linked to companies via companyId)
-  3. **Opportunities** third (linked to companies/people)
-  4. **Custom objects** with relations last
+  1. **Companies** を最初に（リレーションの「one」側）
+  2. **People** を2番目に（companyId を介して Companies にリンク）
+  3. **Opportunities** を3番目に（Companies／People にリンク）
+  4. リレーションのある **Custom objects** は最後に
 
-  Why? The "one" side of a one-to-many relationship must exist before you can reference it. For example, the Company record must exist before you import a Person with that company's ID.
+  なぜですか？ 1対多のリレーションでは、「one」側が参照される前に存在している必要があります。 例えば、その会社のIDを持つ Person をインポートする前に、Company レコードが存在している必要があります。
 </Warning>
 
-Please refer to [this article](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) for a step-by-step guide on how to proceed.
+手順の詳細については、[こちらの記事](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)を参照してください。
 
-## Export Data
+## データをエクスポート
 
-Export your workspace data for backups, reporting, or migration.
+バックアップ、レポーティング、または移行のためにワークスペースのデータをエクスポートします。
 
-### Steps
+### 手順
 
-1. Navigate to the object you want to export
-2. Configure the view with the columns you need
-3. Click **⋮** → **Export view**
-4. Save the CSV file
+1. エクスポートしたいオブジェクトに移動します。
+2. 必要な列を含むようにビューを設定します。
+3. **⋮** → **Export view** をクリックします。
+4. CSV ファイルを保存します。
 
-<Note>**Only visible columns are exported.** The CSV file will only contain the columns displayed in your current view. Add or hide columns before exporting to control what data is included.</Note>
+<Note>**表示されている列のみがエクスポートされます。** CSV ファイルには、現在のビューに表示されている列だけが含まれます。 どのデータを含めるかを制御するために、エクスポート前に列を追加または非表示にしてください。</Note>
 
-<Note>**Export limits**: Up to 20,000 records per export.</Note>
+<Note>**エクスポートの上限**: 1回のエクスポートにつき最大20,000件。</Note>
 
-## Permissions
+## 権限
 
-Data import and export require specific permissions:
+データのインポートとエクスポートには特定の権限が必要です。
 
-* **Import**: Requires "Import CSV" permission
-* **Export**: Requires "Export CSV" permission
+* **Import**: "Import CSV" 権限が必要
+* **Export**: "Export CSV" 権限が必要
 
-Contact your workspace admin if you don't have these permissions.
+これらの権限がない場合は、ワークスペース管理者に連絡してください。
 
-## Next Steps
+## 次のステップ
 
-* [Prepare your CSV files](/l/ja/user-guide/data-migration/how-tos/prepare-your-csv-files)
-* [Import relations between objects](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Import via API for large datasets](/l/ja/user-guide/data-migration/how-tos/import-data-via-api)
+* [CSV ファイルの準備](/l/ja/user-guide/data-migration/how-tos/prepare-your-csv-files)
+* [オブジェクト間の関係をインポート](/l/ja/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+* [大規模データセットをAPIでインポート](/l/ja/user-guide/data-migration/how-tos/import-data-via-api)

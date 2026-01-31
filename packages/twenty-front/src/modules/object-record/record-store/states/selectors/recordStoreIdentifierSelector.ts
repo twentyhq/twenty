@@ -8,7 +8,13 @@ import { uncapitalize } from 'twenty-shared/utils';
 export const recordStoreIdentifierFamilySelector = selectorFamily({
   key: 'recordStoreIdentifierFamilySelector',
   get:
-    ({ recordId }: { recordId: string }) =>
+    ({
+      recordId,
+      allowRequestsToTwentyIcons,
+    }: {
+      recordId: string;
+      allowRequestsToTwentyIcons: boolean;
+    }) =>
     ({ get }) => {
       const recordFromStore = get(recordStoreFamilyState(recordId));
       const objectNameSingular = uncapitalize(
@@ -28,6 +34,7 @@ export const recordStoreIdentifierFamilySelector = selectorFamily({
       return getObjectRecordIdentifier({
         objectMetadataItem: objectMetadataItem,
         record: recordFromStore,
+        allowRequestsToTwentyIcons,
       });
     },
 });

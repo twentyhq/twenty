@@ -6,9 +6,9 @@ import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
 import { PlainObjectToDatabaseEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToDatabaseEntityTransformer';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -107,7 +107,7 @@ describe('WorkspaceEntityManager', () => {
       isSystem: false,
       isActive: true,
       targetTableName: 'test_entity',
-      fieldMetadataIds: ['field-id'],
+      fieldIds: ['field-id'],
       indexMetadataIds: [],
       viewIds: [],
       universalIdentifier: 'test-entity-id',
@@ -123,6 +123,12 @@ describe('WorkspaceEntityManager', () => {
       duplicateCriteria: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      applicationUniversalIdentifier: 'test-application-id',
+      fieldUniversalIdentifiers: ['field-id'],
+      viewUniversalIdentifiers: [],
+      indexMetadataUniversalIdentifiers: [],
+      labelIdentifierFieldMetadataUniversalIdentifier: null,
+      imageIdentifierFieldMetadataUniversalIdentifier: null,
     };
 
     (getObjectMetadataFromEntityTarget as jest.Mock).mockReturnValue(
@@ -162,6 +168,16 @@ describe('WorkspaceEntityManager', () => {
       relationTargetObjectMetadataId: null,
       morphId: null,
       applicationId: 'application-id',
+      applicationUniversalIdentifier: 'application-id',
+      objectMetadataUniversalIdentifier: 'test-entity-id',
+      relationTargetObjectMetadataUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      viewFilterUniversalIdentifiers: [],
+      viewFieldUniversalIdentifiers: [],
+      kanbanAggregateOperationViewUniversalIdentifiers: [],
+      calendarViewUniversalIdentifiers: [],
+      mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      universalSettings: null,
     };
 
     const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
@@ -216,20 +232,30 @@ describe('WorkspaceEntityManager', () => {
         IS_PUBLIC_DOMAIN_ENABLED: false,
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
+        IS_ATTACHMENT_MIGRATED: false,
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
         IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED: false,
         IS_JUNCTION_RELATIONS_ENABLED: false,
         IS_SSE_DB_EVENTS_ENABLED: false,
         IS_COMMAND_MENU_ITEM_ENABLED: false,
+        IS_NAVIGATION_MENU_ITEM_ENABLED: false,
         IS_FILES_FIELD_ENABLED: false,
         IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED: false,
+        IS_MARKETPLACE_ENABLED: false,
+        IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
         emitMutationEvent: jest.fn(),
         emitDatabaseBatchEvent: jest.fn(),
         emitCustomBatchEvent: jest.fn(),
+      } as any,
+      coreDataSource: {
+        getRepository: jest.fn(() => ({
+          find: jest.fn(),
+          softDelete: jest.fn(),
+        })),
       } as any,
     } as WorkspaceInternalContext;
 
@@ -247,6 +273,7 @@ describe('WorkspaceEntityManager', () => {
       },
       permissionsPerRoleId: {},
       eventEmitterService: mockInternalContext.eventEmitterService,
+      coreDataSource: mockInternalContext.coreDataSource,
     } as GlobalWorkspaceDataSource;
 
     mockPermissionOptions = {
@@ -302,6 +329,7 @@ describe('WorkspaceEntityManager', () => {
         findColumnWithPropertyPath: jest.fn(),
       }),
       eventEmitterService: mockInternalContext.eventEmitterService,
+      coreDataSource: mockInternalContext.coreDataSource,
       createQueryBuilder: jest.fn().mockReturnValue({
         delete: jest.fn().mockReturnThis(),
         from: jest.fn().mockReturnThis(),

@@ -9,8 +9,7 @@ import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -71,12 +70,20 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     });
 
     if (isDefined(args.ids) && args.ids.length > 0) {
-      objectRecords = (await existingRecordsQueryBuilder
+      const fetchedRecords = (await existingRecordsQueryBuilder
         .where({ id: In(args.ids) })
         .setFindOptions({
           select: columnsToSelect,
         })
         .getMany()) as ObjectRecord[];
+
+      const orderIndex = new Map(args.ids.map((id, index) => [id, index]));
+
+      fetchedRecords.sort(
+        (a, b) => (orderIndex.get(a.id) ?? 0) - (orderIndex.get(b.id) ?? 0),
+      );
+
+      objectRecords = fetchedRecords;
     } else if (args.data && !isEmpty(args.data)) {
       objectRecords = args.data;
     }

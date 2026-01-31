@@ -65,5 +65,15 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     defaultValue: null,
     options: null,
     applicationId: faker.string.uuid(),
+    applicationUniversalIdentifier: faker.string.uuid(),
+    objectMetadataUniversalIdentifier: faker.string.uuid(),
+    relationTargetObjectMetadataUniversalIdentifier: faker.string.uuid(),
+    relationTargetFieldMetadataUniversalIdentifier: faker.string.uuid(),
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: settings,
   };
 };

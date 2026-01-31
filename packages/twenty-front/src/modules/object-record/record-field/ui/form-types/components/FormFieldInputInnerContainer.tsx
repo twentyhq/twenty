@@ -36,7 +36,12 @@ const StyledFormFieldInputInnerContainer = styled.div<
 
   box-sizing: border-box;
   display: flex;
-  overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+  overflow-x: auto;
+  overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   width: 100%;
 `;
 

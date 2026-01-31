@@ -7,8 +7,10 @@ import { type FileUIPart } from 'ai';
 import { useRecoilState } from 'recoil';
 import { buildSignedPath, isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useUploadFileMutation } from '~/generated-metadata/graphql';
-import { FileFolder } from '~/generated/graphql';
+import {
+  FileFolder,
+  useUploadFileMutation,
+} from '~/generated-metadata/graphql';
 
 export const useAIChatFileUpload = () => {
   const coreClient = useApolloCoreClient();

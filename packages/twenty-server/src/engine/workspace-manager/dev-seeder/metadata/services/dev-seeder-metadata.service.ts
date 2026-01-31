@@ -50,7 +50,7 @@ type JunctionConfigSeed = {
 // Helper type for flat entity maps
 type FlatMaps = {
   fieldMaps: { byId: Record<string, { name: string; morphId?: string }> };
-  objectMaps: { byId: Record<string, { fieldMetadataIds: string[] }> };
+  objectMaps: { byId: Record<string, { fieldIds: string[] }> };
   objectIdByName: Record<string, string>;
 };
 
@@ -482,7 +482,7 @@ export class DevSeederMetadataService {
       throw new Error(`Object metadata not found: ${objectName}`);
     }
 
-    for (const fieldId of objectMetadata.fieldMetadataIds) {
+    for (const fieldId of objectMetadata.fieldIds) {
       if (flatMaps.fieldMaps.byId[fieldId]?.name === fieldName) {
         return fieldId;
       }

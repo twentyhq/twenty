@@ -16,7 +16,7 @@ export enum MessageQueue {
   workflowQueue = 'workflow-queue',
   delayedJobsQueue = 'delayed-jobs-queue',
   deleteCascadeQueue = 'delete-cascade-queue',
-  serverlessFunctionQueue = 'serverless-function-queue',
+  logicFunctionQueue = 'logic-function-queue',
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
 }

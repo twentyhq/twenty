@@ -35,7 +35,6 @@ export class TimelineCalendarEventService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const offset = (page - 1) * pageSize;
 
@@ -166,6 +165,7 @@ export class TimelineCalendarEventService {
           timelineCalendarEvents,
         };
       },
+      authContext,
     );
   }
 
@@ -185,7 +185,6 @@ export class TimelineCalendarEventService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const personRepository =
           await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
@@ -222,6 +221,7 @@ export class TimelineCalendarEventService {
 
         return calendarEvents;
       },
+      authContext,
     );
   }
 
@@ -241,7 +241,6 @@ export class TimelineCalendarEventService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext,
       async () => {
         const opportunityRepository =
           await this.globalWorkspaceOrmManager.getRepository<OpportunityWorkspaceEntity>(
@@ -276,6 +275,7 @@ export class TimelineCalendarEventService {
 
         return calendarEvents;
       },
+      authContext,
     );
   }
 }

@@ -33,7 +33,7 @@ import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-me
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -49,6 +49,7 @@ export class SearchService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly fileService: FileService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async getAllRecordsWithObjectMetadataItems({
@@ -82,13 +83,10 @@ export class SearchService {
       OBJECT_METADATA_ITEMS_CHUNK_SIZE,
     );
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
     for (const objectMetadataItemChunk of filteredObjectMetadataItemsChunks) {
       const recordsWithObjectMetadataItems = await Promise.all(
         objectMetadataItemChunk.map(async (flatObjectMetadata) => {
           return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-            authContext,
             async () => {
               const repository =
                 await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
@@ -387,7 +385,10 @@ export class SearchService {
       flatFieldMetadataMaps,
     );
 
-    if (flatObjectMetadata.nameSingular === 'company') {
+    if (
+      flatObjectMetadata.nameSingular === 'company' &&
+      this.twentyConfigService.get('ALLOW_REQUESTS_TO_TWENTY_ICONS')
+    ) {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
@@ -453,7 +454,9 @@ export class SearchService {
           return {
             recordId: record.id,
             objectNameSingular: objectMetadataItem.nameSingular,
-            objectLabelSingular: objectMetadataItem.labelSingular,
+            objectLabelSingular:
+              objectMetadataItem.standardOverrides?.labelSingular ??
+              objectMetadataItem.labelSingular,
             label: this.getLabelIdentifierValue(
               record,
               objectMetadataItem,

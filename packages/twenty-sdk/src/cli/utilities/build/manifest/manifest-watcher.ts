@@ -1,69 +1,59 @@
+import { relative } from 'path';
 import chokidar, { type FSWatcher } from 'chokidar';
-import path from 'path';
-import { createLogger } from '@/cli/utilities/build/common/logger';
-import {
-  type ManifestBuildResult,
-  runManifestBuild,
-} from '@/cli/utilities/build/manifest/manifest-build';
-
-const logger = createLogger('manifest-watch');
-
-export type ManifestWatcherCallbacks = {
-  onBuildSuccess?: (result: ManifestBuildResult) => void;
-};
+import { type EventName } from 'chokidar/handler.js';
+import { ASSETS_DIR } from 'twenty-shared/application';
 
 export type ManifestWatcherOptions = {
   appPath: string;
-  callbacks?: ManifestWatcherCallbacks;
+  handleChangeDetected: (filePath: string) => void;
 };
 
 export class ManifestWatcher {
   private appPath: string;
-  private callbacks: ManifestWatcherCallbacks;
+  private handleChangeDetected: (filePath: string, event: EventName) => void;
   private watcher: FSWatcher | null = null;
 
   constructor(options: ManifestWatcherOptions) {
     this.appPath = options.appPath;
-    this.callbacks = options.callbacks ?? {};
+    this.handleChangeDetected = options.handleChangeDetected;
   }
 
   async start(): Promise<void> {
     this.watcher = chokidar.watch(this.appPath, {
-      ignored: [
-        '**/node_modules/**',
-        '**/.twenty/**',
-        '**/dist/**',
-        (filePath: string) =>
-          filePath.includes('/.twenty/') || filePath.includes('\\.twenty\\'),
-      ],
-      ignoreInitial: true,
       awaitWriteFinish: {
         stabilityThreshold: 100,
         pollInterval: 50,
       },
+      usePolling: true,
     });
 
     this.watcher.on('all', async (event, filePath) => {
-      if (!filePath.match(/\.(ts|tsx|json)$/)) {
+      if (event === 'addDir') {
         return;
       }
 
-      // Double-check to prevent watching our own output
-      if (filePath.includes('.twenty')) {
+      const relativePath = relative(this.appPath, filePath);
+
+      const isInIgnoredDir =
+        relativePath.startsWith('node_modules') ||
+        relativePath.startsWith('generated') ||
+        relativePath.startsWith('dist');
+
+      const isAssetFile = relativePath.startsWith(ASSETS_DIR);
+
+      const isTypeScriptFile =
+        relativePath.endsWith('.ts') || relativePath.endsWith('.tsx');
+
+      const isHiddenFile = relativePath.startsWith('.');
+
+      const shouldIgnore = isInIgnoredDir || !isTypeScriptFile || isHiddenFile;
+
+      if (shouldIgnore && !isAssetFile) {
         return;
       }
 
-      logger.log(`File ${event}: ${path.relative(this.appPath, filePath)}`);
-
-      const result = await runManifestBuild(this.appPath);
-
-      if (result.manifest) {
-        logger.log('👀 Watching for changes...');
-        this.callbacks.onBuildSuccess?.(result);
-      }
+      this.handleChangeDetected(relativePath, event);
     });
-
-    logger.log('📂 Watcher started');
   }
 
   async close(): Promise<void> {

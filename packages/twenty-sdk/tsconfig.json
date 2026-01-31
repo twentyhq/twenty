@@ -5,6 +5,7 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
+    "moduleResolution": "bundler",
     "strictNullChecks": true,
     "alwaysStrict": true,
     "noImplicitAny": true,

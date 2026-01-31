@@ -1,9 +1,11 @@
 import { useListenToObjectRecordOperationBrowserEvent } from '@/object-record/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { SSE_TABLE_DEBOUNCE_TIME_IN_MS_TO_AVOID_SSE_OWN_EVENTS_RACE_CONDITION } from '@/object-record/record-table/virtualization/constants/SseTableDebounceTimeInMsToAvoidSseOwnEventsRaceCondition';
 import { useGetShouldResetTableVirtualizationForUpdateInputs } from '@/object-record/record-table/virtualization/hooks/useGetShouldResetTableVirtualizationForUpdateInputs';
 import { useResetVirtualizationBecauseDataChanged } from '@/object-record/record-table/virtualization/hooks/useResetVirtualizationBecauseDataChanged';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/object-record/types/ObjectRecordOperationBrowserEventDetail';
+import { useDebouncedCallback } from 'use-debounce';
 
 export const RecordTableVirtualizedDataChangedEffect = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -14,6 +16,14 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
 
   const { getShouldResetTableVirtualizationForUpdateInputs } =
     useGetShouldResetTableVirtualizationForUpdateInputs();
+
+  const debouncedResertVirtualizationBecauseDataChanged = useDebouncedCallback(
+    resetVirtualizationBecauseDataChanged,
+    SSE_TABLE_DEBOUNCE_TIME_IN_MS_TO_AVOID_SSE_OWN_EVENTS_RACE_CONDITION,
+    {
+      leading: false,
+    },
+  );
 
   const handleObjectRecordOperation = (
     objectRecordOperationEventDetail: ObjectRecordOperationBrowserEventDetail,
@@ -34,10 +44,10 @@ export const RecordTableVirtualizedDataChangedEffect = () => {
         getShouldResetTableVirtualizationForUpdateInputs(updateInputs);
 
       if (shouldResetForUpdateOperation) {
-        resetVirtualizationBecauseDataChanged();
+        debouncedResertVirtualizationBecauseDataChanged();
       }
     } else {
-      resetVirtualizationBecauseDataChanged();
+      debouncedResertVirtualizationBecauseDataChanged();
     }
   };
 

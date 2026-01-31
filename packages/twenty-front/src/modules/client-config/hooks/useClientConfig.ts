@@ -29,6 +29,7 @@ import { useCallback } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { getClientConfig } from '@/client-config/utils/getClientConfig';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 type UseClientConfigResult = {
   data: { clientConfig: ClientConfig } | undefined;
@@ -110,6 +111,11 @@ export const useClientConfig = (): UseClientConfigResult => {
   const setIsEmailingDomainsEnabled = useSetRecoilState(
     isEmailingDomainsEnabledState,
   );
+
+  const setAllowRequestsToTwentyIcons = useSetRecoilState(
+    allowRequestsToTwentyIconsState,
+  );
+
   const setIsCloudflareIntegrationEnabled = useSetRecoilState(
     isCloudflareIntegrationEnabledState,
   );
@@ -188,6 +194,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
       setIsEmailingDomainsEnabled(clientConfig?.isEmailingDomainsEnabled);
+      setAllowRequestsToTwentyIcons(clientConfig?.allowRequestsToTwentyIcons);
       setIsCloudflareIntegrationEnabled(
         clientConfig?.isCloudflareIntegrationEnabled,
       );
@@ -230,6 +237,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setMicrosoftMessagingEnabled,
     setSentryConfig,
     setSupportChat,
+    setAllowRequestsToTwentyIcons,
   ]);
 
   return {

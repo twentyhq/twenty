@@ -21,7 +21,7 @@ import {
   type GroupByField,
   type GroupByRegularField,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
+import { getGroupByOrderExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-order-expression.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   type AggregationField,
@@ -70,7 +70,7 @@ export class GraphqlQueryOrderGroupByParser {
   }): Record<string, OrderByClause>[] {
     const parsedOrderBy: Record<string, OrderByClause>[] = [];
 
-    const fields = this.flatObjectMetadata.fieldMetadataIds
+    const fields = this.flatObjectMetadata.fieldIds
       .map((id) => this.flatFieldMetadataMaps.byId[id])
       .filter(isDefined);
 
@@ -493,7 +493,7 @@ export class GraphqlQueryOrderGroupByParser {
       )[0]
     }"`;
 
-    const expression = getGroupByExpression({
+    const expression = getGroupByOrderExpression({
       groupByField: associatedGroupByField,
       columnNameWithQuotes,
     });
@@ -620,7 +620,7 @@ export class GraphqlQueryOrderGroupByParser {
 
       const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
 
-      const expression = getGroupByExpression({
+      const expression = getGroupByOrderExpression({
         groupByField: associatedGroupByField,
         columnNameWithQuotes,
       });

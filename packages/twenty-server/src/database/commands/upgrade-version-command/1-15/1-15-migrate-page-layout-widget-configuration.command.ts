@@ -116,6 +116,11 @@ const migrateConfiguration = (
         ...configuration,
         configurationType: WidgetConfigurationType.FIELD,
       };
+    case WidgetType.FRONT_COMPONENT:
+      return {
+        ...configuration,
+        configurationType: WidgetConfigurationType.FRONT_COMPONENT,
+      };
     default:
       assertUnreachable(widgetType);
   }

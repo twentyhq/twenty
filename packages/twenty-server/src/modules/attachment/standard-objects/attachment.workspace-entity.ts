@@ -23,19 +23,19 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   /** @deprecated */
   author: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   authorId: string | null;
-  task: EntityRelation<TaskWorkspaceEntity> | null;
-  taskId: string | null;
-  note: EntityRelation<NoteWorkspaceEntity> | null;
-  noteId: string | null;
-  person: EntityRelation<PersonWorkspaceEntity> | null;
-  personId: string | null;
-  company: EntityRelation<CompanyWorkspaceEntity> | null;
-  companyId: string | null;
-  opportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
-  opportunityId: string | null;
-  dashboard: EntityRelation<DashboardWorkspaceEntity> | null;
-  dashboardId: string | null;
-  workflow: EntityRelation<WorkflowWorkspaceEntity> | null;
-  workflowId: string | null;
+  targetTask: EntityRelation<TaskWorkspaceEntity> | null;
+  targetTaskId: string | null;
+  targetNote: EntityRelation<NoteWorkspaceEntity> | null;
+  targetNoteId: string | null;
+  targetPerson: EntityRelation<PersonWorkspaceEntity> | null;
+  targetPersonId: string | null;
+  targetCompany: EntityRelation<CompanyWorkspaceEntity> | null;
+  targetCompanyId: string | null;
+  targetOpportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
+  targetOpportunityId: string | null;
+  targetDashboard: EntityRelation<DashboardWorkspaceEntity> | null;
+  targetDashboardId: string | null;
+  targetWorkflow: EntityRelation<WorkflowWorkspaceEntity> | null;
+  targetWorkflowId: string | null;
   custom: EntityRelation<CustomWorkspaceEntity>;
 }

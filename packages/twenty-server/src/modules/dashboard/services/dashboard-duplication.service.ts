@@ -6,8 +6,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
@@ -44,7 +43,6 @@ export class DashboardDuplicationService {
     const workspaceId = workspace.id;
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      authContext as WorkspaceAuthContext,
       async () => {
         const dashboardRepository =
           await this.globalWorkspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
@@ -108,6 +106,7 @@ export class DashboardDuplicationService {
           throw error;
         }
       },
+      authContext as WorkspaceAuthContext,
     );
   }
 

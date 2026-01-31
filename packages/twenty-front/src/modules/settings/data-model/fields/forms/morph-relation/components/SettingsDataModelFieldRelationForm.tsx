@@ -17,6 +17,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -55,6 +56,12 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   ),
   targetFieldLabel: z.string().min(1),
   iconOnDestination: z.string().min(1),
+  settings: z
+    .object({
+      junctionTargetFieldId: z.string().optional(),
+    })
+    .catchall(z.unknown())
+    .optional(),
 });
 
 export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
@@ -108,10 +115,14 @@ export const SettingsDataModelFieldRelationForm = ({
       relationType: initialRelationType,
     });
 
-  const initialMorphRelationsObjectMetadataIds =
-    initialRelationObjectMetadataItems.map(
-      (relationObjectMetadataItem) => relationObjectMetadataItem.id,
-    );
+  const initialMorphRelationsObjectMetadataIds = useMemo(
+    () =>
+      initialRelationObjectMetadataItems.map(
+        (relationObjectMetadataItem) => relationObjectMetadataItem.id,
+      ),
+    [initialRelationObjectMetadataItems],
+  );
+
   const isMobile = useIsMobile();
 
   return (

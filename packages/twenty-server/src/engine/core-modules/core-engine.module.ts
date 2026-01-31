@@ -9,6 +9,7 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { ApplicationSyncModule } from 'src/engine/core-modules/application/application-sync.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { EnvironmentModule } from 'src/engine/core-modules/environment/environment.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
@@ -46,14 +47,14 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
-import { serverlessModuleFactory } from 'src/engine/core-modules/serverless/serverless-module.factory';
-import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.module';
+import { logicFunctionModuleFactory } from 'src/engine/core-modules/logic-function/logic-function-executor/factories/logic-function-module.factory';
+import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { WebhookModule } from 'src/engine/core-modules/webhook/webhook.module';
+import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -75,6 +76,7 @@ import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
+    EnvironmentModule,
     TwentyConfigModule.forRoot(),
     HealthModule,
     AuditModule,
@@ -139,8 +141,8 @@ import { FileModule } from './file/file.module';
     CacheStorageModule,
     AiModelsModule,
     AiBillingModule,
-    ServerlessModule.forRootAsync({
-      useFactory: serverlessModuleFactory,
+    LogicFunctionModule.forRootAsync({
+      useFactory: logicFunctionModuleFactory,
       inject: [TwentyConfigService, FileStorageService],
     }),
     CodeInterpreterModule.forRootAsync({

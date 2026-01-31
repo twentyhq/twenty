@@ -353,7 +353,7 @@ export class CodeInterpreterTool implements Tool {
     const sanitizedFilename = path.basename(file.filename);
 
     try {
-      await this.fileStorageService.write({
+      await this.fileStorageService.writeFile({
         file: file.content,
         name: sanitizedFilename,
         mimeType: file.mimeType,
@@ -402,7 +402,7 @@ export class CodeInterpreterTool implements Tool {
       }
 
       try {
-        await this.fileStorageService.write({
+        await this.fileStorageService.writeFile({
           file: file.content,
           name: sanitizedFilename,
           mimeType: file.mimeType,

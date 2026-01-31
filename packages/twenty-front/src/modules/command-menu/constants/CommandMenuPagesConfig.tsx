@@ -2,6 +2,7 @@ import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { CommandMenuAIChatThreadsPage } from '@/command-menu/pages/AIChatThreads/components/CommandMenuAIChatThreadsPage';
 import { CommandMenuAskAIPage } from '@/command-menu/pages/ask-ai/components/CommandMenuAskAIPage';
 import { CommandMenuCalendarEventPage } from '@/command-menu/pages/calendar-event/components/CommandMenuCalendarEventPage';
+import { CommandMenuFrontComponentPage } from '@/command-menu/pages/front-component/components/CommandMenuFrontComponentPage';
 import { CommandMenuMessageThreadPage } from '@/command-menu/pages/message-thread/components/CommandMenuMessageThreadPage';
 import { CommandMenuPageLayoutChartSettings } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutChartSettings';
 import { CommandMenuPageLayoutGraphFilter } from '@/command-menu/pages/page-layout/components/CommandMenuPageLayoutGraphFilter';
@@ -64,4 +65,5 @@ export const COMMAND_MENU_PAGES_CONFIG = new Map<
     CommandMenuPages.PageLayoutTabSettings,
     <CommandMenuPageLayoutTabSettings />,
   ],
+  [CommandMenuPages.ViewFrontComponent, <CommandMenuFrontComponentPage />],
 ]);

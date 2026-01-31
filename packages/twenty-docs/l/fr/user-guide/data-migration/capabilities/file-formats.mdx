@@ -1,48 +1,48 @@
 ---
-title: Supported File Formats
-description: File formats supported for data import in Twenty.
+title: Formats de fichiers pris en charge
+description: Formats de fichiers pris en charge pour l’importation de données dans Twenty.
 ---
 
-## Supported Formats
+## Formats pris en charge
 
-Twenty supports three file formats for import:
+Twenty prend en charge trois formats de fichiers pour l’importation :
 
-| Format             | Extension | Notes                        |
-| ------------------ | --------- | ---------------------------- |
-| **CSV**            | .csv      | Recommended, most compatible |
-| **Excel**          | .xlsx     | Modern Excel format          |
-| **Excel (Legacy)** | .xls      | Older Excel format           |
+| Format             | Extension | Notes                          |
+| ------------------ | --------- | ------------------------------ |
+| **CSV**            | .csv      | Recommandé, le plus compatible |
+| **Excel**          | .xlsx     | Format Excel moderne           |
+| **Excel (hérité)** | .xls      | Ancien format Excel            |
 
-## File Requirements
+## Exigences relatives aux fichiers
 
-| Requirement      | Value                                 |
-| ---------------- | ------------------------------------- |
-| **Encoding**     | UTF-8 recommended                     |
-| **Record limit** | 10,000 records per file               |
-| **Structure**    | First row must contain column headers |
-| **Content**      | One object type per file              |
+| Exigence                     | Valeur                                                   |
+| ---------------------------- | -------------------------------------------------------- |
+| **Encodage**                 | UTF-8 recommandé                                         |
+| **Limite d’enregistrements** | 10 000 enregistrements par fichier                       |
+| **Structure**                | La première ligne doit contenir les en-têtes de colonnes |
+| **Contenu**                  | Un seul type d’objet par fichier                         |
 
-## CSV Best Practices
+## Meilleures pratiques pour les fichiers CSV
 
-* **Delimiter**: Use comma (`,`) or semicolon (`;`)
-* **Text qualifier**: Use double quotes (`"`) for text containing commas
-* **Line endings**: Windows (CRLF) or Unix (LF) both supported
-* **Empty values**: Leave cells empty, don't use "NULL" or "N/A"
+* **Délimiteur** : Utilisez une virgule (`,`) ou un point-virgule (`;`)
+* **Délimiteur de texte** : Utilisez des guillemets doubles (`\"`) pour le texte contenant des virgules
+* **Fins de ligne** : Windows (CRLF) ou Unix (LF) sont tous deux pris en charge
+* **Valeurs vides** : Laissez les cellules vides, n’utilisez pas "NULL" ni "N/A"
 
-## Excel Best Practices
+## Meilleures pratiques pour Excel
 
-When exporting from Excel:
+Lors de l’exportation depuis Excel :
 
-* Remove formulas (export values only)
-* Delete empty rows at the end
-* Ensure no merged cells
-* Use the first sheet only
+* Supprimez les formules (exportez uniquement les valeurs)
+* Supprimez les lignes vides à la fin
+* Assurez-vous qu’aucune cellule n’est fusionnée
+* Utilisez uniquement la première feuille
 
-## Large Datasets
+## Jeux de données volumineux
 
-For datasets larger than 10,000 records:
+Pour les jeux de données de plus de 10 000 enregistrements :
 
-* Split into multiple files
-* Or use the [API import](/l/fr/user-guide/data-migration/how-tos/import-data-via-api) for unlimited records
+* Divisez en plusieurs fichiers
+* Ou utilisez l’[importation via l’API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api) pour un nombre illimité d’enregistrements
 
-<Note>For very large migrations (100,000+ records), the API is significantly faster and more reliable than CSV imports.</Note>
+<Note>Pour des migrations très volumineuses (plus de 100 000 enregistrements), l’API est nettement plus rapide et plus fiable que les importations CSV.</Note>

@@ -1,12 +1,12 @@
 import {
-  type FieldMetadataRelationSettings,
+  type FieldMetadataSettingsMapping,
   RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const formatColumnNameForRelationField = (
   fieldName: string,
-  fieldMetadataSettings: FieldMetadataRelationSettings,
+  fieldMetadataSettings: FieldMetadataSettingsMapping['RELATION'],
 ): string => {
   if (fieldMetadataSettings.relationType === RelationType.ONE_TO_MANY) {
     throw new Error('No column exists for one to many relation fields');

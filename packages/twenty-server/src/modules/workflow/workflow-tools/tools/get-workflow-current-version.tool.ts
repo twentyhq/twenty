@@ -35,7 +35,6 @@ export const createGetWorkflowCurrentVersionTool = (
       const authContext = buildSystemAuthContext(context.workspaceId);
 
       return await deps.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        authContext,
         async () => {
           const workflowRepository =
             await deps.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
@@ -103,6 +102,7 @@ export const createGetWorkflowCurrentVersionTool = (
             },
           };
         },
+        authContext,
       );
     } catch (error) {
       return {

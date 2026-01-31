@@ -3,57 +3,52 @@ import type * as esbuild from 'esbuild';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import { type FileFolder } from 'twenty-shared/types';
 
 export type ProcessEsbuildResultParams = {
   result: esbuild.BuildResult;
-  outputDir: string;
-  builtDir: string;
+  appPath: string;
+  fileFolder: FileFolder;
   lastChecksums: Map<string, string>;
   onFileBuilt?: OnFileBuiltCallback;
-  onSuccess: (relativePath: string) => void;
-};
-
-export type ProcessEsbuildResultOutput = {
-  hasChanges: boolean;
 };
 
 export const processEsbuildResult = async ({
   result,
-  outputDir,
-  builtDir,
+  appPath,
+  fileFolder,
   lastChecksums,
   onFileBuilt,
-  onSuccess,
-}: ProcessEsbuildResultParams): Promise<ProcessEsbuildResultOutput> => {
+}: ProcessEsbuildResultParams) => {
   const outputFiles = Object.keys(result.metafile?.outputs ?? {}).filter(
     (file) => file.endsWith('.mjs'),
   );
 
-  let hasChanges = false;
-
   for (const outputFile of outputFiles) {
-    const absoluteOutputFile = path.resolve(outputFile);
-    const relativePath = path.relative(outputDir, absoluteOutputFile);
-    // Normalize path separators to forward slashes for consistent matching
-    const normalizedRelativePath = relativePath.split(path.sep).join('/');
-    const builtPath = `${builtDir}/${normalizedRelativePath}`;
+    const absoluteBuiltFile = path.resolve(outputFile);
+    const relativeBuiltPath = path.relative(appPath, absoluteBuiltFile);
+    const absoluteSourcePath =
+      result.metafile?.outputs?.[outputFile]?.entryPoint || '';
+    const relativeSourcePath = path.relative(appPath, absoluteSourcePath);
 
-    const content = await fs.readFile(absoluteOutputFile);
+    const content = await fs.readFile(absoluteBuiltFile);
     const checksum = crypto.createHash('md5').update(content).digest('hex');
 
-    const lastChecksum = lastChecksums.get(builtPath);
+    const lastChecksum = lastChecksums.get(relativeBuiltPath);
+
     if (lastChecksum === checksum) {
       continue;
     }
 
-    hasChanges = true;
-    lastChecksums.set(builtPath, checksum);
-    onSuccess(relativePath);
+    lastChecksums.set(relativeBuiltPath, checksum);
 
     if (onFileBuilt) {
-      await onFileBuilt(builtPath, checksum);
+      await onFileBuilt({
+        fileFolder,
+        builtPath: relativeBuiltPath,
+        sourcePath: relativeSourcePath,
+        checksum,
+      });
     }
   }
-
-  return { hasChanges };
 };

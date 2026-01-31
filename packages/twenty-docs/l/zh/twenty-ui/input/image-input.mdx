@@ -1,16 +1,16 @@
 ---
-title: Image Input
+title: 图像输入
 image: /images/user-guide/objects/objects.png
 ---
 
 <Frame>
-  <img src="/images/user-guide/objects/objects.png" alt="Header" />
+  <img src="/images/user-guide/objects/objects.png" alt="标题" />
 </Frame>
 
-Allows users to upload and remove an image.
+允许用户上传和删除图像。
 
 <Tabs>
-  <Tab title="Usage">
+  <Tab title="**用法**">
     ```jsx
     import { ImageInput } from "@/ui/input/components/ImageInput";
 
@@ -20,15 +20,15 @@ Allows users to upload and remove an image.
     ```
   </Tab>
 
-  <Tab title="Props">
-    | Props        | Type     | Description                                                                                       |
-    | ------------ | -------- | ------------------------------------------------------------------------------------------------- |
-    | picture      | string   | The image source URL                                                                              |
-    | onUpload     | function | The function called when a user uploads a new image. It receives the `File` object as a parameter |
-    | onRemove     | function | The function called when the user clicks on the remove button                                     |
-    | onAbort      | function | The function called when a user clicks on the abort button during image upload                    |
-    | isUploading  | boolean  | Indicates whether an image is currently being uploaded                                            |
-    | errorMessage | string   | An optional error message to display below the image input                                        |
-    | disabled     | boolean  | If `true`, the entire input is disabled, and the buttons are not clickable                        |
+  <Tab title="属性">
+    | 属性           | 类型  | 描述                                |
+    | ------------ | --- | --------------------------------- |
+    | 图片           | 字符串 | 图片来源 URL                          |
+    | onUpload     | 函数  | 当用户上传新的图片时调用的函数。 接收 `File` 对象作为参数 |
+    | onRemove     | 函数  | 当用户点击移除按钮时调用的函数                   |
+    | onAbort      | 函数  | 当用户在上传图片过程中点击中止按钮时调用的函数           |
+    | isUploading  | 布尔值 | 指示图像当前是否正在上传中                     |
+    | errorMessage | 字符串 | 在图片输入下方显示的可选错误消息                  |
+    | disabled     | 布尔值 | 如果 `true` ，整个输入被禁用，按钮不可点击         |
   </Tab>
 </Tabs>

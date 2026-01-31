@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -28,7 +29,7 @@ type FromToFlatFieldMetadataAndFlatEntityMaps = FromTo<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
   > & {
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
   };
 const FIELD_METADATA_UPDATE_INDEX_SIDE_EFFECT: FieldMetadataUpdateIndexSideEffect =
   {
@@ -43,7 +44,7 @@ export const handleIndexChangesDuringFieldUpdate = ({
   flatIndexMaps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: FromToFlatFieldMetadataAndFlatEntityMaps): FieldInputTranspilationResult<FieldMetadataUpdateIndexSideEffect> => {
   if (
     !hasIndexRelevantChanges({
@@ -81,7 +82,7 @@ export const handleIndexChangesDuringFieldUpdate = ({
     relatedIndexes,
     flatObjectMetadata,
     flatFieldMetadataMaps,
-    workspaceCustomApplicationId,
+    flatApplication,
   });
 };
 
@@ -127,13 +128,13 @@ const handleExistingIndexes = ({
   relatedIndexes,
   flatObjectMetadata,
   flatFieldMetadataMaps,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: {
   relatedIndexes: FlatIndexMetadata[];
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
 } & FromTo<FlatFieldMetadata, 'flatFieldMetadata'> & {
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
   }): FieldInputTranspilationResult<FieldMetadataUpdateIndexSideEffect> => {
   if (
     toFlatFieldMetadata.isUnique === false &&
@@ -155,7 +156,7 @@ const handleExistingIndexes = ({
     if (
       isDefined(uniqueIndexToDelete) &&
       ((isDefined(uniqueIndexToDelete.applicationId) &&
-        uniqueIndexToDelete.applicationId !== workspaceCustomApplicationId) ||
+        uniqueIndexToDelete.applicationId !== flatApplication.id) ||
         !uniqueIndexToDelete.isCustom)
     ) {
       return {

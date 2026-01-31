@@ -1,209 +1,209 @@
 ---
-title: Export Your Data
-description: Complete step-by-step guide to exporting data from Twenty.
+title: 데이터 내보내기
+description: Twenty에서 데이터를 내보내는 포괄적인 단계별 가이드.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Overview
+## 개요
 
-Export your workspace data to CSV for backups, reporting, or migration.
+백업, 보고, 또는 마이그레이션을 위해 워크스페이스 데이터를 CSV로 내보내세요.
 
-**Use cases:**
+**사용 사례:**
 
-* **Regular backups** — keep copies of your data
-* **External reporting** — analyze data in Excel, Google Sheets, or BI tools
-* **Migration** — move data to another system
-* **Bulk updates** — export, edit, and re-import to update records
+* **정기 백업** — 데이터 사본을 보관하세요
+* **외부 보고** — Excel, Google Sheets 또는 BI 도구에서 데이터를 분석하세요
+* **마이그레이션** — 데이터를 다른 시스템으로 이동하세요
+* **대량 업데이트** — 내보내고, 편집한 후, 다시 가져와 레코드를 업데이트하세요
 
-## What You Need to Know
+## 알아두어야 할 사항
 
-### Export Limits
+### 내보내기 제한
 
-* **Maximum 20,000 records** per export
-* Only **visible columns** are exported
-* Only **filtered records** are exported (based on your current view)
+* 내보내기 1회당 **최대 20,000개 레코드**
+* **표시된 열**만 내보내집니다
+* **필터링된 레코드**만 내보내집니다(현재 보기 기준)
 
-<Note>For larger exports (20,000+ records), use filters to export in batches or use the [API](/l/ko/developers/extend/capabilities/apis).</Note>
+<Note>더 큰 내보내기(20,000개 이상의 레코드)에는 필터를 사용해 배치로 내보내거나 [API](/l/ko/developers/extend/capabilities/apis)를 사용하세요.</Note>
 
-### Permissions
+### 권한
 
-You need the **"Export CSV"** permission to export data. Contact your workspace admin if you don't have this option.
+데이터를 내보내려면 **"Export CSV"** 권한이 필요합니다. 이 옵션이 없다면 워크스페이스 관리자에게 문의하세요.
 
-## Step 1: Navigate to the Object
+## 1단계: 객체로 이동
 
-Go to the object you want to export:
+내보내려는 객체로 이동하세요:
 
-* **People** — for contacts
-* **Companies** — for organizations
-* **Opportunities** — for deals
-* **Custom objects** — any object you've created
+* **People** — 연락처
+* **Companies** — 조직
+* **Opportunities** — 거래
+* **사용자 지정 객체** — 사용자가 생성한 모든 객체
 
-## Step 2: Configure Your View
+## 2단계: 보기 구성
 
-**Important:** The export includes only what's visible in your current view.
+**중요:** 내보내기에는 현재 보기에서 보이는 내용만 포함됩니다.
 
-### Add/Remove Columns
+### 열 추가/제거
 
-1. Click **Options → Fields** (or the **+** at the end of columns)
-2. Check the fields you want to export
-3. Uncheck fields you don't need
+1. **옵션 → 필드**를 클릭합니다(또는 열 끝의 **+**).
+2. 내보내려는 필드를 선택하세요
+3. 불필요한 필드의 선택을 해제하세요
 
-### Filter Records (Optional)
+### 레코드 필터링(선택 사항)
 
-If you only need a subset of data:
+일부 데이터만 필요하다면:
 
-1. Click **Filter**
-2. Add filter conditions (e.g., "Created date > January 1, 2024")
-3. Only matching records will be exported
+1. **필터**를 클릭합니다
+2. 필터 조건을 추가하세요(예: "Created date > January 1, 2024")
+3. 조건과 일치하는 레코드만 내보내집니다
 
-### Sort Records (Optional)
+### 레코드 정렬(선택 사항)
 
-1. Click a column header to sort
-2. The export will follow your sort order
+1. 정렬하려면 열 헤더를 클릭하세요
+2. 내보내기는 정렬 순서를 따릅니다
 
-<Note>**Create a dedicated export view.** Save a view specifically configured for exports so you don't need to reconfigure each time.</Note>
+<Note>**내보내기 전용 보기를 만드세요.** 내보내기에 맞게 구성한 보기를 저장해 매번 다시 구성할 필요가 없도록 하세요.</Note>
 
-## Step 3: Export the Data
+## 3단계: 데이터 내보내기
 
-1. Click the **⋮** icon on the top right of the table
-2. Select **Export view**
-3. Choose where to save the CSV file
-4. Wait for the download to complete
+1. 테이블 오른쪽 상단의 **⋮** 아이콘을 클릭하세요
+2. **Export view**를 선택하세요
+3. CSV 파일을 저장할 위치를 선택하세요
+4. 다운로드가 완료될 때까지 기다리세요
 
-## What Gets Exported
+## 내보내지는 내용
 
-| Included                         | Not Included           |
-| -------------------------------- | ---------------------- |
-| All visible columns              | Hidden columns         |
-| Records matching current filters | Filtered-out records   |
-| Custom field values              | Fields not in the view |
-| Record IDs                       | File attachments       |
-| Relation IDs                     | Images                 |
+| 포함됨             | 포함되지 않음     |
+| --------------- | ----------- |
+| 모든 표시된 열        | 숨김 열        |
+| 현재 필터와 일치하는 레코드 | 필터로 제외된 레코드 |
+| 사용자 지정 필드 값     | 보기에 없는 필드   |
+| 레코드 ID          | 파일 첨부       |
+| 관계 ID           | 이미지         |
 
-### Relation Fields
+### 관계 필드
 
-Relation IDs are only exported on the **"many" side** of a relationship:
+관계 ID는 관계의 **"many" 측**에서만 내보내집니다:
 
-* **People export** includes a `companyId` column (People → Company relation)
-* **Companies export** does NOT include `peopleIds` (Companies is the "one" side)
+* **People 내보내기**에는 `companyId` 열이 포함됩니다(People → Company 관계)
+* **Companies 내보내기**에는 `peopleIds`가 포함되지 않습니다(Companies는 "one" 측입니다)
 
-This means you can use the People export to re-import and maintain the Company link, but you'll need to re-import People after Companies to recreate the relationships.
+즉, People 내보내기를 사용해 다시 가져오면서 Company 연결을 유지할 수 있지만, 관계를 다시 만들려면 Companies 이후에 People을 다시 가져와야 합니다.
 
-## Exporting for Specific Purposes
+## 용도별 내보내기
 
-### For Backups
+### 백업용
 
-1. Create a view with **all fields** visible
-2. Remove all filters to include all records
-3. Export each object type separately
-4. Store exports in a secure location
-5. Set a recurring reminder (weekly/monthly)
+1. **모든 필드**가 보이도록 보기를 만들세요
+2. 모든 레코드를 포함하려면 모든 필터를 제거하세요
+3. 각 객체 유형을 별도로 내보내세요
+4. 내보낸 파일을 안전한 위치에 보관하세요
+5. 반복 알림을 설정하세요(매주/매월)
 
-### For External Reporting
+### 외부 보고용
 
-1. Include only the fields you need for analysis
-2. Apply filters to focus on relevant data
-3. Consider sorting by the field you'll analyze
+1. 분석에 필요한 필드만 포함하세요
+2. 관련 데이터에 집중할 수 있도록 필터를 적용하세요
+3. 분석할 필드로 정렬하는 것을 고려하세요
 
-### For Bulk Updates
+### 대량 업데이트용
 
-1. Export the records you want to update
-2. Include the unique identifier (`email`, `domain`, or `id`)
-3. Edit the exported file
-4. Re-import to update records
-   See: [How to Update Existing Records](/l/ko/user-guide/data-migration/how-tos/update-existing-records-via-import)
+1. 업데이트하려는 레코드를 내보내세요
+2. 고유 식별자(`email`, `domain` 또는 `id`)를 포함하세요
+3. 내보낸 파일을 편집하세요
+4. 다시 가져와 레코드를 업데이트하세요
+   참고: [기존 레코드를 업데이트하는 방법](/l/ko/user-guide/data-migration/how-tos/update-existing-records-via-import)
 
-### For Migration
+### 마이그레이션용
 
-If you're exporting to migrate to another system:
+다른 시스템으로 마이그레이션하기 위해 내보내는 경우:
 
-1. **Export each object separately** — People, Companies, Opportunities, etc.
-2. **Include ID fields** — these help maintain relationships
-3. **Document field mappings** — note how Twenty fields map to your target system
+1. **각 객체를 개별적으로 내보내세요** — People, Companies, Opportunities 등
+2. **ID 필드를 포함하세요** — 관계를 유지하는 데 도움이 됩니다
+3. **필드 매핑을 문서화하세요** — Twenty의 필드가 대상 시스템에 어떻게 매핑되는지 기록하세요
 
-## Handling Large Datasets (20,000+ Records)
+## 대용량 데이터셋 처리(20,000개 이상 레코드)
 
-The export limit is 20,000 records. For larger datasets:
+내보내기 한도는 20,000개 레코드입니다. 더 큰 데이터셋의 경우:
 
-### Option 1: Export in Batches
+### 옵션 1: 배치로 내보내기
 
-1. Add a filter (e.g., "Created date" ranges)
-2. Export the first batch
-3. Change the filter
-4. Export the next batch
-5. Combine files in your spreadsheet
+1. 필터를 추가하세요(예: "Created date" 범위)
+2. 첫 번째 배치를 내보내세요
+3. 필터를 변경하세요
+4. 다음 배치를 내보내세요
+5. 스프레드시트에서 파일을 결합하세요
 
-**Example filters for batching:**
+**배치용 예시 필터:**
 
-* By date range (January, February, March...)
-* By owner (Team member A, Team member B...)
-* By status (Active, Inactive...)
+* 날짜 범위별(1월, 2월, 3월...)
+* 소유자별(팀원 A, 팀원 B...)
+* 상태별(활성, 비활성...)
 
-### Option 2: Use the API
+### 옵션 2: API 사용
 
-The API has no record limit:
+API에는 레코드 수 한도가 없습니다:
 
-1. Get your API key from **Settings → Developers**
-2. Use the GraphQL API to query records
-3. Process results in your application
+1. API 키를 **설정 → 개발자**에서 발급받으세요
+2. GraphQL API를 사용해 레코드를 쿼리하세요
+3. 애플리케이션에서 결과를 처리하세요
 
-See: [API Documentation](/l/ko/developers/extend/capabilities/apis)
+참고: [API 문서](/l/ko/developers/extend/capabilities/apis)
 
-## Tips and Best Practices
+## 팁 및 모범 사례
 
-### Create Export Views
+### 내보내기용 보기 만들기
 
-Save views configured specifically for exports:
+내보내기에 맞게 구성한 보기를 저장하세요:
 
-1. Configure columns and filters
-2. Click **View options** → **Save as new view**
-3. Name it "Export - [Purpose]"
+1. 열과 필터를 구성하세요
+2. **보기 옵션** → **새 보기로 저장**을 클릭하세요
+3. "Export - [Purpose]"로 이름을 지정하세요
 
-### Secure Your Exports
+### 내보낸 파일 보호
 
-Exported files may contain sensitive data:
+내보낸 파일에는 민감한 데이터가 포함될 수 있습니다:
 
-* Store in secure locations
-* Delete old exports when no longer needed
-* Be careful sharing export files
+* 안전한 위치에 보관하세요
+* 더 이상 필요하지 않은 내보낸 파일은 삭제하세요
+* 내보낸 파일을 공유할 때 주의하세요
 
-### Check Before Exporting
+### 내보내기 전 확인 사항
 
-<Check>Correct columns are visible</Check>
-<Check>Filters are set correctly (or removed for full export)</Check>
-<Check>You have Export permission</Check>
+<Check>올바른 열이 표시되어 있습니다</Check>
+<Check>필터가 올바르게 설정되어 있습니다(전체 내보내기의 경우 제거)</Check>
+<Check>내보내기 권한이 있습니다</Check>
 
 ## FAQ
 
 <AccordionGroup>
-  <Accordion title="Why are some columns missing from my export?">
-    Only visible columns are exported. Add the columns you need via **Options → Fields** before exporting.
+  <Accordion title="내보낸 파일에 일부 열이 없는 이유는 무엇인가요?">
+    표시된 열만 내보내집니다. 내보내기 전에 **옵션 → 필드**에서 필요한 열을 추가하세요.
   </Accordion>
 
-  <Accordion title="Why doesn't my export have all records?">
-    Check your filters. The export only includes records matching your current view filters. Remove filters to export all records.
+  <Accordion title="내보낸 파일에 모든 레코드가 포함되지 않은 이유는 무엇인가요?">
+    필터를 확인하세요. 내보내기에는 현재 보기의 필터와 일치하는 레코드만 포함됩니다. 모든 레코드를 내보내려면 필터를 제거하세요.
   </Accordion>
 
-  <Accordion title="Can I export more than 20,000 records?">
-    Not in a single export. Use filters to export in batches, or use the API for larger datasets.
+  <Accordion title="20,000개 이상의 레코드를 내보낼 수 있나요?">
+    단일 내보내기로는 불가능합니다. 필터를 사용해 배치로 내보내거나, 더 큰 데이터셋에는 API를 사용하세요.
   </Accordion>
 
-  <Accordion title="What format is the export file?">
-    CSV (Comma Separated Values). Opens in Excel, Google Sheets, or any spreadsheet application.
+  <Accordion title="내보낸 파일의 형식은 무엇인가요?">
+    CSV(쉼표로 구분된 값). Excel, Google Sheets 또는 어떤 스프레드시트 애플리케이션에서도 열 수 있습니다.
   </Accordion>
 
-  <Accordion title="Are relation IDs included?">
-    Yes, but only on the "many" side of relationships. For example, a People export includes `companyId`, but a Companies export does not include people IDs.
+  <Accordion title="관계 ID가 포함되나요?">
+    예. 다만 관계의 "many" 측에서만 포함됩니다. 예를 들어 People 내보내기에는 `companyId`가 포함되지만, Companies 내보내기에는 people ID가 포함되지 않습니다.
   </Accordion>
 
-  <Accordion title="Can I automate exports?">
-    Not directly through the UI. Use the API to build automated export workflows.
+  <Accordion title="내보내기를 자동화할 수 있나요?">
+    UI만으로는 불가능합니다. API를 사용해 자동화된 내보내기 워크플로우를 구축하세요.
   </Accordion>
 </AccordionGroup>
 
-## Next Steps
+## 다음 단계
 
-* [How to Update Existing Records](/l/ko/user-guide/data-migration/how-tos/update-existing-records-via-import) — edit and re-import your export
-* [How to Import Data via API](/l/ko/user-guide/data-migration/how-tos/import-data-via-api) — for large datasets
-* [API Documentation](/l/ko/developers/extend/capabilities/apis) — build custom export workflows
+* [기존 레코드를 업데이트하는 방법](/l/ko/user-guide/data-migration/how-tos/update-existing-records-via-import) — 내보낸 파일을 편집한 뒤 다시 가져오세요
+* [API로 데이터 가져오는 방법](/l/ko/user-guide/data-migration/how-tos/import-data-via-api) — 대용량 데이터셋용
+* [API 문서](/l/ko/developers/extend/capabilities/apis) — 맞춤 내보내기 워크플로우를 구축하세요

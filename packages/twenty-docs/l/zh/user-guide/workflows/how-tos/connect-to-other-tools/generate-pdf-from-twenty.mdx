@@ -1,0 +1,228 @@
+---
+title: 在 Twenty 中生成 PDF
+description: 创建一个工作流，用于生成 PDF（例如报价单）并将其附加到记录。
+---
+
+自动生成或获取 PDF，并将其附加到 Twenty 中的记录。 这通常用于创建与公司、商机或其他对象关联的报价单、发票或报告。
+
+## 概览
+
+此工作流使用 **手动触发器**，因此用户可以按需为任何选定的记录生成 PDF。 A **Logic Function** handles:
+
+1. 从 URL（来自 PDF 生成服务）下载 PDF
+2. 将文件上传到 Twenty
+3. 创建与该记录关联的附件
+
+## 先决条件
+
+设置工作流之前：
+
+1. **创建 API 密钥**：前往 **设置 → APIs** 并创建一个新的 API 密钥。 You'll need this token for the logic function.
+2. **设置 PDF 生成服务**（可选）：如果您想动态生成 PDF（例如报价单），可使用 Carbone、PDFMonkey 或 DocuSeal 等服务来创建 PDF 并获取下载 URL。
+
+## 分步设置
+
+### 步骤 1：配置触发器
+
+1. 转到 **工作流** 并创建一个新工作流
+2. 选择 **手动触发器**
+3. 选择要将 PDF 附加到的对象（例如，**公司** 或 **商机**）
+
+<Tip>
+  使用手动触发器，用户在选择记录后可通过右上角出现的按钮运行此工作流，以生成并附加 PDF。
+</Tip>
+
+### Step 2: Add a Logic Function
+
+1. Add a **Code** action (logic function)
+2. 使用下面的代码创建一个新函数
+3. 配置输入参数
+
+#### 输入参数
+
+| 参数          | 值                       |
+| ----------- | ----------------------- |
+| `companyId` | `{{trigger.object.id}}` |
+
+<Note>
+  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
+</Note>
+
+#### Logic Function Code
+
+```typescript
+export const main = async (
+  params: { companyId: string },
+) => {
+  const { companyId } = params;
+
+  // Replace with your Twenty GraphQL endpoint
+  // Cloud: https://api.twenty.com/graphql
+  // Self-hosted: https://your-domain.com/graphql
+  const graphqlEndpoint = 'https://api.twenty.com/graphql';
+
+  // Replace with your API key from Settings → APIs
+  const authToken = 'YOUR_API_KEY';
+
+  // Replace with your PDF URL
+  // This could be from a PDF generation service or a static URL
+  const pdfUrl = 'https://your-pdf-service.com/generated-quote.pdf';
+  const filename = 'quote.pdf';
+
+  // Step 1: Download the PDF file
+  const pdfResponse = await fetch(pdfUrl);
+
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to download PDF: ${pdfResponse.status}`);
+  }
+
+  const pdfBlob = await pdfResponse.blob();
+  const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Step 2: Upload the file via GraphQL multipart upload
+  const uploadMutation = `
+    mutation UploadFile($file: Upload!, $fileFolder: FileFolder) {
+      uploadFile(file: $file, fileFolder: $fileFolder) {
+        path
+      }
+    }
+  `;
+
+  const uploadForm = new FormData();
+  uploadForm.append('operations', JSON.stringify({
+    query: uploadMutation,
+    variables: { file: null, fileFolder: 'Attachment' },
+  }));
+  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
+  uploadForm.append('0', pdfFile);
+
+  const uploadResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${authToken}` },
+    body: uploadForm,
+  });
+
+  const uploadResult = await uploadResponse.json();
+
+  if (uploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  }
+
+  const filePath = uploadResult.data?.uploadFile?.path;
+
+  if (!filePath) {
+    throw new Error('No file path returned from upload');
+  }
+
+  // Step 3: Create the attachment linked to the company
+  const attachmentMutation = `
+    mutation CreateAttachment($data: AttachmentCreateInput!) {
+      createAttachment(data: $data) {
+        id
+        name
+      }
+    }
+  `;
+
+  const attachmentResponse = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: attachmentMutation,
+      variables: {
+        data: {
+          name: filename,
+          fullPath: filePath,
+          companyId,
+        },
+      },
+    }),
+  });
+
+  const attachmentResult = await attachmentResponse.json();
+
+  if (attachmentResult.errors?.length) {
+    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+  }
+
+  return attachmentResult.data?.createAttachment;
+};
+```
+
+### 步骤 3：根据您的用例自定义
+
+#### 要附加到其他对象
+
+将 `companyId` 替换为相应的字段：
+
+| 对象    | 字段名称                 |
+| ----- | -------------------- |
+| 公司    | `companyId`          |
+| 人员    | `personId`           |
+| 机会    | `opportunityId`      |
+| 自定义对象 | `yourCustomObjectId` |
+
+同时更新函数参数以及附件的 mutation 中的 `variables.data` 对象。
+
+#### 要使用动态 PDF URL
+
+如果使用 PDF 生成服务，您可以：
+
+1. 首先创建一个 HTTP 请求操作以生成 PDF
+2. Pass the returned PDF URL to the logic function as a parameter
+
+```typescript
+export const main = async (
+  params: { companyId: string; pdfUrl: string; filename: string },
+) => {
+  const { companyId, pdfUrl, filename } = params;
+  // ... rest of the function
+};
+```
+
+### 步骤 4：测试并启用
+
+1. 保存工作流
+2. 导航到一条公司记录
+3. 单击 **⋮** 菜单并选择您的工作流
+4. 在记录上的 **附件** 部分检查并确认 PDF 已被附加
+5. 激活工作流
+
+## 与 PDF 生成服务结合使用
+
+用于创建动态报价单或发票：
+
+### 示例：生成报价单 → 附加 PDF
+
+| 步骤 | 操作        | 目的                  |
+| -- | --------- | ------------------- |
+| 1  | 手动触发器（公司） | 用户在记录上发起            |
+| 2  | 搜索记录      | 获取商机或行项目详情          |
+| 3  | HTTP请求    | 使用记录数据调用 PDF 生成 API |
+| 4  | 无服务器函数    | 下载并附加生成的 PDF        |
+
+### 常用的 PDF 生成服务
+
+* **Carbone** - 基于模板的文档生成
+* **PDFMonkey** - 基于模板的动态 PDF 创建
+* **DocuSeal** - 文档自动化平台
+* **Documint** - API 优先的文档生成
+
+Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
+
+## 故障排除
+
+| 问题         | 解决方案                       |
+| ---------- | -------------------------- |
+| "无法下载 PDF" | 检查 PDF URL 是否可访问并返回有效的 PDF |
+| "上传失败"     | 验证您的 API 密钥有效且具有写入权限       |
+| "附件创建失败"   | 确保对象 ID 字段名称与您的目标对象匹配      |
+
+## 相关内容
+
+* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+* [Logic Functions](/l/zh/user-guide/workflows/capabilities/workflow-actions#code)
+* [从 Twenty 生成报价单或发票](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

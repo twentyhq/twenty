@@ -37,11 +37,15 @@ Many records in Object A can be linked to many records in Object B.
 
 **Example:** Many People can be linked to many Projects, and vice versa.
 
-<Warning>
-**Many-to-Many is not yet supported.**
+Many-to-many relations use a **junction object** pattern: an intermediate object that connects both sides. With the junction relation feature, Twenty displays the final linked records directly, hiding the intermediate object from the UI.
 
-This relation type is planned for H1 2026. As a workaround, create an intermediate "junction" object (e.g., "Project Assignments") that has Many-to-One relations to both objects.
+<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}}/>
+
+<Warning>
+**Lab Feature**: Junction relations must be enabled at **Settings → Updates → Lab** before use.
 </Warning>
+
+See [How to Create Many-to-Many Relations](/user-guide/data-model/how-tos/create-many-to-many-relations) for a complete step-by-step guide.
 
 ## Creating a Relation Field
 

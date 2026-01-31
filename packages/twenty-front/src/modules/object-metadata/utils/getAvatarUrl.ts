@@ -15,12 +15,16 @@ export const getAvatarUrl = (
   objectNameSingular: string,
   record: ObjectRecord,
   imageIdentifierFieldMetadataItem: FieldMetadataItem | undefined,
+  allowRequestsToTwentyIcons?: boolean | undefined,
 ) => {
   if (objectNameSingular === CoreObjectNameSingular.WorkspaceMember) {
     return record.avatarUrl ?? undefined;
   }
 
-  if (objectNameSingular === CoreObjectNameSingular.Company) {
+  if (
+    objectNameSingular === CoreObjectNameSingular.Company &&
+    allowRequestsToTwentyIcons === true
+  ) {
     return getLogoUrlFromDomainName(
       getCompanyDomainName(record as Company) ?? '',
     );

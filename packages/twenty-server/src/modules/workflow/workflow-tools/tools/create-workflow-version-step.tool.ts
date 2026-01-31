@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import type { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
@@ -17,7 +19,9 @@ const createWorkflowVersionStepSchema = z.object({
   parentStepId: z
     .string()
     .optional()
-    .describe('Optional ID of the parent step this step should come after'),
+    .describe(
+      'Optional ID of the parent step this step should come after. If not provided, the step will be added at the end of the workflow.',
+    ),
   parentStepConnectionOptions: z
     .object({
       type: z.string().optional(),
@@ -36,22 +40,56 @@ const createWorkflowVersionStepSchema = z.object({
     })
     .optional()
     .describe('Optional position coordinates for the step'),
-  id: z.string().optional().describe('Optional step ID'),
 });
 
 export const createCreateWorkflowVersionStepTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowVersionStepService'>,
+  deps: Pick<
+    WorkflowToolDependencies,
+    'workflowVersionStepService' | 'workflowVersionStepHelpersService'
+  >,
   context: WorkflowToolContext,
 ) => ({
   name: 'create_workflow_version_step' as const,
   description:
-    'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration.',
+    'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration. If parentStepId is not provided, the step will be appended at the end of the workflow.',
   inputSchema: createWorkflowVersionStepSchema,
   execute: async (parameters: CreateWorkflowVersionStepInput) => {
     try {
+      let effectiveParentStepId = parameters.parentStepId;
+
+      if (!isDefined(effectiveParentStepId)) {
+        const workflowVersion =
+          await deps.workflowVersionStepHelpersService.getValidatedDraftWorkflowVersion(
+            {
+              workflowVersionId: parameters.workflowVersionId,
+              workspaceId: context.workspaceId,
+            },
+          );
+
+        const steps = workflowVersion.steps ?? [];
+
+        if (steps.length === 0) {
+          effectiveParentStepId = TRIGGER_STEP_ID;
+        } else {
+          const leafStep = steps.filter(
+            (step) =>
+              !isDefined(step.nextStepIds) || step.nextStepIds.length === 0,
+          );
+
+          if (leafStep.length > 1) {
+            effectiveParentStepId = undefined;
+          } else {
+            effectiveParentStepId = leafStep[0]?.id;
+          }
+        }
+      }
+
       return await deps.workflowVersionStepService.createWorkflowVersionStep({
         workspaceId: context.workspaceId,
-        input: parameters,
+        input: {
+          ...parameters,
+          parentStepId: effectiveParentStepId,
+        },
       });
     } catch (error) {
       return {
