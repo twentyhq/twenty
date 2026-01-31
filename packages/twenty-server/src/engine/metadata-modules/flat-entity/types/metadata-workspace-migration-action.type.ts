@@ -21,7 +21,7 @@ export type MetadataWorkspaceMigrationActionsRecord<T extends AllMetadataName> =
 export type MetadataWorkspaceMigrationAction<
   TMetadataName extends AllMetadataName,
   TActionType extends WorkspaceMigrationActionType,
-> = AllFlatEntityTypesByMetadataName[TMetadataName]['actions'][TActionType] extends infer Action
+> = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType] extends infer Action
   ? Action extends Array<unknown>
     ? Action[number]
     : Action
