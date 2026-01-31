@@ -31,15 +31,16 @@ import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/w
 import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyUpdateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-update-action-on-all-flat-entity-maps.util';
 
-type PrastoinNoName<TAction extends WorkspaceMigrationAction> =
+type FlatAction<TAction extends WorkspaceMigrationAction> =
   IsMetadataRunnerUniversalMigrated<TAction['metadataName']> extends true
     ? TranspileActionUniversalToFlat<TAction>
     : TAction;
 
 type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
-  TActionType extends WorkspaceMigrationAction,
+  TAction extends WorkspaceMigrationAction,
 > = {
-  action: TActionType;
+  action: TAction;
+  flatAction: FlatAction<TAction>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
@@ -56,9 +57,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   public async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<TAction>,
-  ): Promise<PrastoinNoName<TAction>> {
+  ): Promise<FlatAction<TAction>> {
     switch (true) {
-      // Actions add custom properties to base actions that custom transpilers ( next when migrated logic function create and index update too)
+      // Actions add custom properties to base actions that custom transpilers (next when migrated logic function create and index update too)
       case context.action.metadataName === 'objectMetadata' &&
         context.action.type === 'create':
       case context.action.metadataName === 'fieldMetadata' &&
@@ -70,7 +71,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       }
     }
 
-    return context.action as PrastoinNoName<TAction>;
+    return context.action as FlatAction<TAction>;
   }
 
   executeForMetadata(
@@ -87,6 +88,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
   private optimisticallyApplyActionOnAllFlatEntityMaps({
     action,
+    flatAction,
     allFlatEntityMaps,
   }: OptimisticallyApplyActionOnAllFlatEntityMapsArgs<TAction>): Pick<
     AllFlatEntityMaps,
@@ -96,7 +98,8 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     switch (action.type) {
       case 'create': {
         return optimisticallyApplyCreateActionOnAllFlatEntityMaps({
-          action,
+          flatAction:
+            flatAction as AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['create'],
           allFlatEntityMaps,
         });
       }
@@ -162,7 +165,8 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
 
     const partialOptimisticCache =
       this.optimisticallyApplyActionOnAllFlatEntityMaps({
-        action: context.action, // Not sure about that this should get the flat action hein
+        action: context.action,
+        flatAction,
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
 

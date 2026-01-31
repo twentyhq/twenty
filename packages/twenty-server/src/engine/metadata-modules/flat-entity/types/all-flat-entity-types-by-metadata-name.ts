@@ -57,6 +57,9 @@ import {
 import {
   type CreateFieldAction,
   type DeleteFieldAction,
+  type FlatCreateFieldAction,
+  type FlatDeleteFieldAction,
+  type FlatUpdateFieldAction,
   type UpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import {
@@ -82,6 +85,9 @@ import {
 import {
   type CreateObjectAction,
   type DeleteObjectAction,
+  type FlatCreateObjectAction,
+  type FlatDeleteObjectAction,
+  type FlatUpdateObjectAction,
   type UpdateObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import {
@@ -162,6 +168,11 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateFieldAction;
       delete: DeleteFieldAction;
     };
+    flatActions: {
+      create: FlatCreateFieldAction;
+      update: FlatUpdateFieldAction;
+      delete: FlatDeleteFieldAction;
+    };
     flatEntity: FlatFieldMetadata;
     universalFlatEntity: UniversalFlatEntityFrom<
       FieldMetadataEntity,
@@ -178,6 +189,11 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateObjectAction;
       delete: DeleteObjectAction;
     };
+    flatActions: {
+      create: FlatCreateObjectAction;
+      update: FlatUpdateObjectAction;
+      delete: FlatDeleteObjectAction;
+    };
     flatEntity: FlatObjectMetadata;
     universalFlatEntity: UniversalFlatObjectMetadata;
     entity: MetadataEntity<'objectMetadata'>;
@@ -187,6 +203,11 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   view: {
     actions: {
+      create: CreateViewAction;
+      update: UpdateViewAction;
+      delete: DeleteViewAction;
+    };
+    flatActions: {
       create: CreateViewAction;
       update: UpdateViewAction;
       delete: DeleteViewAction;
@@ -201,12 +222,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateViewFieldAction;
       delete: DeleteViewFieldAction;
     };
+    flatActions: {
+      create: CreateViewFieldAction;
+      update: UpdateViewFieldAction;
+      delete: DeleteViewFieldAction;
+    };
     flatEntity: FlatViewField;
     universalFlatEntity: UniversalFlatEntityFrom<ViewFieldEntity>;
     entity: MetadataEntity<'viewField'>;
   };
   viewGroup: {
     actions: {
+      create: CreateViewGroupAction;
+      update: UpdateViewGroupAction;
+      delete: DeleteViewGroupAction;
+    };
+    flatActions: {
       create: CreateViewGroupAction;
       update: UpdateViewGroupAction;
       delete: DeleteViewGroupAction;
@@ -221,12 +252,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateRowLevelPermissionPredicateAction;
       delete: DeleteRowLevelPermissionPredicateAction;
     };
+    flatActions: {
+      create: CreateRowLevelPermissionPredicateAction;
+      update: UpdateRowLevelPermissionPredicateAction;
+      delete: DeleteRowLevelPermissionPredicateAction;
+    };
     flatEntity: FlatRowLevelPermissionPredicate;
     universalFlatEntity: UniversalFlatEntityFrom<RowLevelPermissionPredicateEntity>;
     entity: MetadataEntity<'rowLevelPermissionPredicate'>;
   };
   rowLevelPermissionPredicateGroup: {
     actions: {
+      create: CreateRowLevelPermissionPredicateGroupAction;
+      update: UpdateRowLevelPermissionPredicateGroupAction;
+      delete: DeleteRowLevelPermissionPredicateGroupAction;
+    };
+    flatActions: {
       create: CreateRowLevelPermissionPredicateGroupAction;
       update: UpdateRowLevelPermissionPredicateGroupAction;
       delete: DeleteRowLevelPermissionPredicateGroupAction;
@@ -241,12 +282,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateViewFilterGroupAction;
       delete: DeleteViewFilterGroupAction;
     };
+    flatActions: {
+      create: CreateViewFilterGroupAction;
+      update: UpdateViewFilterGroupAction;
+      delete: DeleteViewFilterGroupAction;
+    };
     flatEntity: FlatViewFilterGroup;
     universalFlatEntity: UniversalFlatEntityFrom<ViewFilterGroupEntity>;
     entity: MetadataEntity<'viewFilterGroup'>;
   };
   index: {
     actions: {
+      create: CreateIndexAction;
+      update: UpdateIndexAction;
+      delete: DeleteIndexAction;
+    };
+    flatActions: {
       create: CreateIndexAction;
       update: UpdateIndexAction;
       delete: DeleteIndexAction;
@@ -261,12 +312,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateLogicFunctionAction;
       delete: DeleteLogicFunctionAction;
     };
+    flatActions: {
+      create: CreateLogicFunctionAction;
+      update: UpdateLogicFunctionAction;
+      delete: DeleteLogicFunctionAction;
+    };
     flatEntity: FlatLogicFunction;
     universalFlatEntity: UniversalFlatEntityFrom<LogicFunctionEntity>;
     entity: MetadataEntity<'logicFunction'>;
   };
   viewFilter: {
     actions: {
+      create: CreateViewFilterAction;
+      update: UpdateViewFilterAction;
+      delete: DeleteViewFilterAction;
+    };
+    flatActions: {
       create: CreateViewFilterAction;
       update: UpdateViewFilterAction;
       delete: DeleteViewFilterAction;
@@ -281,12 +342,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateRoleAction;
       delete: DeleteRoleAction;
     };
+    flatActions: {
+      create: CreateRoleAction;
+      update: UpdateRoleAction;
+      delete: DeleteRoleAction;
+    };
     flatEntity: FlatRole;
     universalFlatEntity: UniversalFlatEntityFrom<RoleEntity>;
     entity: MetadataEntity<'role'>;
   };
   roleTarget: {
     actions: {
+      create: CreateRoleTargetAction;
+      update: UpdateRoleTargetAction;
+      delete: DeleteRoleTargetAction;
+    };
+    flatActions: {
       create: CreateRoleTargetAction;
       update: UpdateRoleTargetAction;
       delete: DeleteRoleTargetAction;
@@ -301,12 +372,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateAgentAction;
       delete: DeleteAgentAction;
     };
+    flatActions: {
+      create: CreateAgentAction;
+      update: UpdateAgentAction;
+      delete: DeleteAgentAction;
+    };
     flatEntity: FlatAgent;
     universalFlatEntity: UniversalFlatEntityFrom<AgentEntity>;
     entity: MetadataEntity<'agent'>;
   };
   skill: {
     actions: {
+      create: CreateSkillAction;
+      update: UpdateSkillAction;
+      delete: DeleteSkillAction;
+    };
+    flatActions: {
       create: CreateSkillAction;
       update: UpdateSkillAction;
       delete: DeleteSkillAction;
@@ -321,12 +402,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateCommandMenuItemAction;
       delete: DeleteCommandMenuItemAction;
     };
+    flatActions: {
+      create: CreateCommandMenuItemAction;
+      update: UpdateCommandMenuItemAction;
+      delete: DeleteCommandMenuItemAction;
+    };
     flatEntity: FlatCommandMenuItem;
     universalFlatEntity: UniversalFlatEntityFrom<CommandMenuItemEntity>;
     entity: MetadataEntity<'commandMenuItem'>;
   };
   navigationMenuItem: {
     actions: {
+      create: CreateNavigationMenuItemAction;
+      update: UpdateNavigationMenuItemAction;
+      delete: DeleteNavigationMenuItemAction;
+    };
+    flatActions: {
       create: CreateNavigationMenuItemAction;
       update: UpdateNavigationMenuItemAction;
       delete: DeleteNavigationMenuItemAction;
@@ -341,12 +432,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdatePageLayoutAction;
       delete: DeletePageLayoutAction;
     };
+    flatActions: {
+      create: CreatePageLayoutAction;
+      update: UpdatePageLayoutAction;
+      delete: DeletePageLayoutAction;
+    };
     flatEntity: FlatPageLayout;
     universalFlatEntity: UniversalFlatEntityFrom<PageLayoutEntity>;
     entity: MetadataEntity<'pageLayout'>;
   };
   pageLayoutWidget: {
     actions: {
+      create: CreatePageLayoutWidgetAction;
+      update: UpdatePageLayoutWidgetAction;
+      delete: DeletePageLayoutWidgetAction;
+    };
+    flatActions: {
       create: CreatePageLayoutWidgetAction;
       update: UpdatePageLayoutWidgetAction;
       delete: DeletePageLayoutWidgetAction;
@@ -364,6 +465,11 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdatePageLayoutTabAction;
       delete: DeletePageLayoutTabAction;
     };
+    flatActions: {
+      create: CreatePageLayoutTabAction;
+      update: UpdatePageLayoutTabAction;
+      delete: DeletePageLayoutTabAction;
+    };
     flatEntity: FlatPageLayoutTab;
     universalFlatEntity: UniversalFlatEntityFrom<PageLayoutTabEntity>;
     entity: MetadataEntity<'pageLayoutTab'>;
@@ -374,12 +480,22 @@ export type AllFlatEntityTypesByMetadataName = {
       update: UpdateFrontComponentAction;
       delete: DeleteFrontComponentAction;
     };
+    flatActions: {
+      create: CreateFrontComponentAction;
+      update: UpdateFrontComponentAction;
+      delete: DeleteFrontComponentAction;
+    };
     flatEntity: FlatFrontComponent;
     universalFlatEntity: UniversalFlatEntityFrom<FrontComponentEntity>;
     entity: MetadataEntity<'frontComponent'>;
   };
   webhook: {
     actions: {
+      create: CreateWebhookAction;
+      update: UpdateWebhookAction;
+      delete: DeleteWebhookAction;
+    };
+    flatActions: {
       create: CreateWebhookAction;
       update: UpdateWebhookAction;
       delete: DeleteWebhookAction;
