@@ -4,7 +4,6 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type FlatDeleteFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
@@ -53,14 +52,14 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       workspaceId,
     } = context;
 
-    const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatFieldMetadataMaps,
       flatEntityId: flatAction.entityId,
     });
 
-    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier: fieldMetadata.objectMetadataUniversalIdentifier,
+      flatEntityId: flatFieldMetadata.objectMetadataId,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
@@ -69,8 +68,8 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     });
 
     const columnDefinitions = generateColumnDefinitions({
-      universalFlatFieldMetadata: fieldMetadata,
-      universalFlatObjectMetadata: flatObjectMetadata,
+      flatFieldMetadata,
+      flatObjectMetadata,
       workspaceId,
     });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
@@ -84,7 +83,7 @@ export class DeleteFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     });
 
     const enumOperations = collectEnumOperationsForField({
-      universalFlatFieldMetadata: fieldMetadata,
+      flatFieldMetadata,
       tableName,
       operation: EnumOperation.DROP,
     });

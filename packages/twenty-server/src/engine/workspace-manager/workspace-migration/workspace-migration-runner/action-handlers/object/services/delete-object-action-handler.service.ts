@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findManyFlatEntityByUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifiers-or-throw.util';
-import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
-import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type FlatDeleteObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
@@ -67,19 +67,20 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       tableName,
       cascade: true,
     });
-    const objectFlatFieldMetadatas =
-      findManyFlatEntityByUniversalIdentifiersOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        universalIdentifiers: flatObjectMetadata.fieldUniversalIdentifiers,
-      });
+
+    const objectFlatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityIds: flatObjectMetadata.fieldIds,
+    });
+
     const enumOrCompositeFlatFieldMetadatas = objectFlatFieldMetadatas.filter(
-      (field) =>
-        isEnumUniversalFlatFieldMetadata(field) ||
-        isCompositeUniversalFlatFieldMetadata(field),
+      (flatFieldMetadata) =>
+        isEnumFlatFieldMetadata(flatFieldMetadata) ||
+        isCompositeFlatFieldMetadata(flatFieldMetadata),
     );
 
     const enumOperations = collectEnumOperationsForObject({
-      universalFlatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
+      flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
       tableName,
       operation: EnumOperation.DROP,
     });
