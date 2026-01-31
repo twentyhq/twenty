@@ -23,33 +23,45 @@ export class ImapMessageParserService {
     }
 
     const lock = await client.getMailboxLock(folderPath);
+    const results: MessageParseResult[] = [];
+    const CHUNK_SIZE = 10; // "Advanced" Safety: Process small batches to avoid OOM
 
     try {
-      const uidSet = messageUids.join(',');
       const startTime = Date.now();
 
-      const messages = await client.fetchAll(
-        uidSet,
-        { uid: true, source: true },
-        { uid: true },
-      );
+      // Chunk the UIDs
+      for (let i = 0; i < messageUids.length; i += CHUNK_SIZE) {
+        const chunk = messageUids.slice(i, i + CHUNK_SIZE);
+        const uidSet = chunk.join(',');
 
-      const fetchedUids = new Set<number>();
-      const results: MessageParseResult[] = [];
+        try {
+          // Fetch only this chunk
+          const messages = await client.fetchAll(
+            uidSet,
+            { uid: true, source: true },
+            { uid: true },
+          );
 
-      for (const message of messages) {
-        fetchedUids.add(message.uid);
-        results.push(await this.parseMessage(message));
+          for (const message of messages) {
+            results.push(await this.parseMessage(message));
+          }
+        } catch (chunkError) {
+          this.logger.error(`Failed to fetch chunk ${uidSet}: ${chunkError.message}`);
+          // Add error results for this chunk so we don't return 'missing'
+          results.push(...this.createErrorResults(chunk, chunkError as Error));
+        }
       }
 
+      // Check for missing UIDs (skips)
+      const fetchedUids = new Set(results.map(r => r.uid));
       for (const uid of messageUids) {
         if (!fetchedUids.has(uid)) {
-          results.push({ uid, parsed: null });
+          results.push({ uid, parsed: null, error: new Error('Message not returned by server') });
         }
       }
 
       this.logger.log(
-        `Fetched and parsed ${results.length} messages from ${folderPath} in ${Date.now() - startTime}ms`,
+        `Fetched and parsed ${results.length} messages from ${folderPath} in ${Date.now() - startTime}ms (Chunked)`,
       );
 
       return results;
