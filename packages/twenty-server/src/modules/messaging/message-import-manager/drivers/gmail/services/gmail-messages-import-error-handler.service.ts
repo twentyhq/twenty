@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { isGmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-api-batch-error.util';
+import { isGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-api-error.util';
 import { isGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-network-error.util';
-import { parseGmailApiBatchError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-batch-error.util';
+import { parseGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-error.util';
 import { parseGmailNetworkError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-network-error.util';
 
 @Injectable()
@@ -19,21 +17,22 @@ export class GmailMessagesImportErrorHandler {
 
   public handleError(error: unknown, messageExternalId: string): void {
     this.logger.error(
-      `Gmail: Error importing messages: ${JSON.stringify(error)}`,
+      `Gmail: Error importing message ${messageExternalId}: ${JSON.stringify(error)}`,
     );
 
     if (isGmailNetworkError(error)) {
       throw parseGmailNetworkError(error);
     }
 
-    if (isGmailApiBatchError(error)) {
-      const exception = parseGmailApiBatchError(error, messageExternalId);
+    if (isGmailApiError(error)) {
+      const status = error.response?.status;
 
-      if (!isDefined(exception)) {
+      // 404/410 means message was deleted - skip silently
+      if (status === 404 || status === 410) {
         return;
       }
 
-      throw exception;
+      throw parseGmailApiError(error);
     }
 
     throw new MessageImportDriverException(
