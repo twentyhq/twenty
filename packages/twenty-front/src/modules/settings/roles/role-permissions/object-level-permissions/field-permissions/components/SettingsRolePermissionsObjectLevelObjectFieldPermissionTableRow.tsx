@@ -16,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { type FieldPermission, RelationType } from '~/generated/graphql';
-
 export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px minmax(0, 1fr) 60px 60px;
 `;
