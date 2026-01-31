@@ -139,7 +139,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
   }
 
   private getLayerName(flatLogicFunctionLayer: FlatLogicFunctionLayer) {
-    return flatLogicFunctionLayer.checksum;
+    return flatLogicFunctionLayer.yarnLockChecksum;
   }
 
   private async createLayerIfNotExists(
