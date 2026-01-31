@@ -39325,6 +39325,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"iconv-lite@npm:0.7.2":
+  version: 0.7.2
+  resolution: "iconv-lite@npm:0.7.2"
+  dependencies:
+    safer-buffer: "npm:>= 2.1.2 < 3.0.0"
+  checksum: 10c0/3c228920f3bd307f56bf8363706a776f4a060eb042f131cd23855ceca962951b264d0997ab38a1ad340e1c5df8499ed26e1f4f0db6b2a2ad9befaff22f14b722
+  languageName: node
+  linkType: hard
+
 "iconv-lite@npm:^0.4.24, iconv-lite@npm:~0.4.24":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
@@ -39433,20 +39442,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imapflow@npm:1.2.1":
-  version: 1.2.1
-  resolution: "imapflow@npm:1.2.1"
+"imapflow@npm:^1.2.8":
+  version: 1.2.8
+  resolution: "imapflow@npm:1.2.8"
   dependencies:
     "@zone-eu/mailsplit": "npm:5.4.8"
     encoding-japanese: "npm:2.2.0"
-    iconv-lite: "npm:0.7.0"
+    iconv-lite: "npm:0.7.2"
     libbase64: "npm:1.3.0"
     libmime: "npm:5.3.7"
     libqp: "npm:2.1.1"
-    nodemailer: "npm:7.0.11"
-    pino: "npm:10.1.0"
+    nodemailer: "npm:7.0.13"
+    pino: "npm:10.3.0"
     socks: "npm:2.8.7"
-  checksum: 10c0/dc3bef59dc2c9a6c27938de4c53e69ed5734d91da8a79cd2552fe90942667d7456dec557f1f0f2c7f61dfc459d0495c8420d754e84fa17b6a88be9caaa553113
+  checksum: 10c0/b8877f25b8906f963a1335ed0ba5d50e3df9e962be74b9b3913195ccf23b4492bcc81b10970a259522e77e0ceb545c82018a6b607e12047ce91ef33be7073aba
   languageName: node
   linkType: hard
 
@@ -47578,6 +47587,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nodemailer@npm:7.0.13":
+  version: 7.0.13
+  resolution: "nodemailer@npm:7.0.13"
+  checksum: 10c0/b26aa5b9fa4a033bbc1e1c16ef75ee2a9c8641fd290c00a8361d6a251b3c1b8bad545a23efa627f59cb266340a448891ea8aa49d8a9307c767b8505219d95079
+  languageName: node
+  linkType: hard
+
 "nopt@npm:^5.0.0":
   version: 5.0.0
   resolution: "nopt@npm:5.0.0"
@@ -49618,12 +49634,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-abstract-transport@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "pino-abstract-transport@npm:2.0.0"
+"pino-abstract-transport@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "pino-abstract-transport@npm:3.0.0"
   dependencies:
     split2: "npm:^4.0.0"
-  checksum: 10c0/02c05b8f2ffce0d7c774c8e588f61e8b77de8ccb5f8125afd4a7325c9ea0e6af7fb78168999657712ae843e4462bb70ac550dfd6284f930ee57f17f486f25a9f
+  checksum: 10c0/4486e1b9508110aaf963d07741ac98d660b974dd51d8ad42077d215118e27cda20c64da46c07c926898d52540aab7c6b9c37dc0f5355c203bb1d6a72b5bd8d6c
   languageName: node
   linkType: hard
 
@@ -49634,24 +49650,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino@npm:10.1.0":
-  version: 10.1.0
-  resolution: "pino@npm:10.1.0"
+"pino@npm:10.3.0":
+  version: 10.3.0
+  resolution: "pino@npm:10.3.0"
   dependencies:
     "@pinojs/redact": "npm:^0.4.0"
     atomic-sleep: "npm:^1.0.0"
     on-exit-leak-free: "npm:^2.1.0"
-    pino-abstract-transport: "npm:^2.0.0"
+    pino-abstract-transport: "npm:^3.0.0"
     pino-std-serializers: "npm:^7.0.0"
     process-warning: "npm:^5.0.0"
     quick-format-unescaped: "npm:^4.0.3"
     real-require: "npm:^0.2.0"
     safe-stable-stringify: "npm:^2.3.1"
     sonic-boom: "npm:^4.0.1"
-    thread-stream: "npm:^3.0.0"
+    thread-stream: "npm:^4.0.0"
   bin:
     pino: bin.js
-  checksum: 10c0/49c1dd80d5f99f02bde1acf2f60cef7686948a937f751f6cb368c2868c7e82e54aeabac63a34587e16019965cbf0eb6e609edf92c439a98a0a4fcb0add277eaf
+  checksum: 10c0/cfbbc7dfaa2df2aa2dce728d751aa4b5b7ab973b2cd4bfff57868567563ef0c1c021f22932769141d535c72662390e09a0190e44f4413496dbe5e3c672816308
   languageName: node
   linkType: hard
 
@@ -56682,12 +56698,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"thread-stream@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "thread-stream@npm:3.1.0"
+"thread-stream@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "thread-stream@npm:4.0.0"
   dependencies:
     real-require: "npm:^0.2.0"
-  checksum: 10c0/c36118379940b77a6ef3e6f4d5dd31e97b8210c3f7b9a54eb8fe6358ab173f6d0acfaf69b9c3db024b948c0c5fd2a7df93e2e49151af02076b35ada3205ec9a6
+  checksum: 10c0/f0a47a673af574062df20140ec3e857d679365253fcaa98a76c167c9a053ee03291f4b25bd89b078c7f6a48f07f49d5a49e4f5598bb1c8a263ec15955a018fbd
   languageName: node
   linkType: hard
 
@@ -57882,7 +57898,7 @@ __metadata:
     graphql-upload: "npm:16.0.2"
     graphql-yoga: "npm:4.0.5"
     html-to-text: "npm:^9.0.5"
-    imapflow: "npm:1.2.1"
+    imapflow: "npm:^1.2.8"
     ioredis: "npm:5.6.0"
     jsdom: "npm:^26.1.0"
     json-schema: "npm:0.4.0"

@@ -117,7 +117,7 @@
     "graphql-upload": "16.0.2",
     "graphql-yoga": "4.0.5",
     "html-to-text": "^9.0.5",
-    "imapflow": "1.2.1",
+    "imapflow": "^1.2.8",
     "ioredis": "5.6.0",
     "jsdom": "^26.1.0",
     "json-schema": "0.4.0",
