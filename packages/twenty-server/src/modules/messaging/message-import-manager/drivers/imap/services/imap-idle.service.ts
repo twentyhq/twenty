@@ -6,7 +6,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 export class ImapIdleService implements OnModuleDestroy {
     private readonly logger = new Logger(ImapIdleService.name);
     private activeClients: Map<string, ImapFlow> = new Map();
-    private activeLocks: Map<string, any> = new Map();
+    private activeLocks: Map<string, { release: () => void }> = new Map();
 
     constructor(private readonly eventEmitter: EventEmitter2) { }
 
