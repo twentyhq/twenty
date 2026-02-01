@@ -241,6 +241,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         workspaceId,
         buildOptions,
         additionalCacheDataMaps,
+        universalIdentifier: flatEntityToUpdate.universalIdentfier,
       });
 
       if (validationResult.status === 'fail') {

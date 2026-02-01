@@ -24,16 +24,18 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 
 export const generateCompositeColumnDefinition = ({
   compositeProperty,
-  parentFieldMetadata,
+  parentFlatFieldMetadata,
   flatObjectMetadata,
+  workspaceId,
 }: {
   compositeProperty: CompositeProperty;
-  parentFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
+  parentFlatFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
   flatObjectMetadata: FlatObjectMetadata;
+  workspaceId: string;
 }): WorkspaceSchemaColumnDefinition => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
-    workspaceId: flatObjectMetadata.workspaceId,
-    flatObjectMetadata,
+    workspaceId,
+    objectMetadata: flatObjectMetadata,
   });
 
   if (
@@ -47,12 +49,12 @@ export const generateCompositeColumnDefinition = ({
   }
 
   const columnName = computeCompositeColumnName(
-    parentFieldMetadata.name,
+    parentFlatFieldMetadata.name,
     compositeProperty,
   );
   const defaultValue =
     // @ts-expect-error - TODO: fix this
-    parentFieldMetadata.defaultValue?.[compositeProperty.name];
+    parentFlatFieldMetadata.defaultValue?.[compositeProperty.name];
   const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
   const serializedDefaultValue = serializeDefaultValue({
     columnName,
@@ -73,8 +75,9 @@ export const generateCompositeColumnDefinition = ({
       columnType === 'enum'
         ? `"${schemaName}"."${computePostgresEnumName({ tableName, columnName })}"`
         : columnType,
-    isNullable: parentFieldMetadata.isNullable || !compositeProperty.isRequired,
-    isUnique: parentFieldMetadata.isUnique ?? false,
+    isNullable:
+      parentFlatFieldMetadata.isNullable || !compositeProperty.isRequired,
+    isUnique: parentFlatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
     isArray: isArrayFlag,
     isPrimary: false,
@@ -166,13 +169,15 @@ const generateColumnDefinition = ({
 export const generateColumnDefinitions = ({
   flatFieldMetadata,
   flatObjectMetadata,
+  workspaceId,
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadata;
+  workspaceId: string;
 }): WorkspaceSchemaColumnDefinition[] => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
-    workspaceId: flatObjectMetadata.workspaceId,
-    flatObjectMetadata,
+    workspaceId,
+    objectMetadata: flatObjectMetadata,
   });
 
   if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
@@ -181,8 +186,9 @@ export const generateColumnDefinitions = ({
     return compositeType.properties.map((property) =>
       generateCompositeColumnDefinition({
         compositeProperty: property,
-        parentFieldMetadata: flatFieldMetadata,
+        parentFlatFieldMetadata: flatFieldMetadata,
         flatObjectMetadata,
+        workspaceId,
       }),
     );
   }
@@ -200,6 +206,10 @@ export const generateColumnDefinitions = ({
   }
 
   return [
-    generateColumnDefinition({ flatFieldMetadata, tableName, schemaName }),
+    generateColumnDefinition({
+      flatFieldMetadata,
+      tableName,
+      schemaName,
+    }),
   ];
 };

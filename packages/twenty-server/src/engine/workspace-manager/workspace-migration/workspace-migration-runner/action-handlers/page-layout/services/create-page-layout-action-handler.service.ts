@@ -3,8 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
-import { CreatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FlatCreatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -15,11 +18,17 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
     super();
   }
 
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatCreatePageLayoutAction>,
+  ): Promise<FlatCreatePageLayoutAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreatePageLayoutAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreatePageLayoutAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const pageLayoutRepository =
       queryRunner.manager.getRepository<PageLayoutEntity>(PageLayoutEntity);
@@ -31,7 +40,7 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreatePageLayoutAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreatePageLayoutAction>,
   ): Promise<void> {
     return;
   }

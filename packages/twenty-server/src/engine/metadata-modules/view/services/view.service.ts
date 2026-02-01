@@ -87,6 +87,8 @@ export class ViewService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -122,6 +124,13 @@ export class ViewService {
     workspaceId: string;
     userWorkspaceId?: string;
   }): Promise<ViewDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const {
       flatViewMaps: existingFlatViewMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
@@ -163,6 +172,8 @@ export class ViewService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -196,6 +207,13 @@ export class ViewService {
     deleteViewInput: DeleteViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -222,6 +240,8 @@ export class ViewService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -255,6 +275,13 @@ export class ViewService {
     destroyViewInput: DestroyViewInput;
     workspaceId: string;
   }): Promise<ViewDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewMaps: existingFlatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -280,6 +307,8 @@ export class ViewService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

@@ -5,7 +5,7 @@ import { BaseWorkspaceMigrationRunnerActionHandlerService } from 'src/engine/wor
 
 import {
   buildActionHandlerKey,
-  type WorkspaceMigrationAction,
+  type AllUniversalWorkspaceMigrationAction,
   type WorkspaceMigrationActionHandlerKey,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
@@ -53,7 +53,9 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     });
   }
 
-  private getActionHandler<T extends WorkspaceMigrationAction>(action: T) {
+  private getActionHandler<T extends AllUniversalWorkspaceMigrationAction>(
+    action: T,
+  ) {
     const actionHandlerKey = buildActionHandlerKey(
       action.type,
       action.metadataName,
@@ -70,7 +72,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     return handler;
   }
 
-  async executeActionHandler<T extends WorkspaceMigrationAction>({
+  async executeActionHandler<T extends AllUniversalWorkspaceMigrationAction>({
     action,
     context,
   }: {
@@ -82,7 +84,9 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     return await handler.execute(context);
   }
 
-  async executeActionRollbackHandler<T extends WorkspaceMigrationAction>({
+  async executeActionRollbackHandler<
+    T extends AllUniversalWorkspaceMigrationAction,
+  >({
     action,
     context,
   }: {

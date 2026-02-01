@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { UpdatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
+import { FlatUpdatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
@@ -101,7 +101,7 @@ export class WorkspaceMigrationPageLayoutTabActionsBuilderService extends Worksp
 
     const { flatEntityId, flatEntityUpdates } = args;
 
-    const updatePageLayoutTabAction: UpdatePageLayoutTabAction = {
+    const updatePageLayoutTabAction: FlatUpdatePageLayoutTabAction = {
       type: 'update',
       metadataName: 'pageLayoutTab',
       entityId: flatEntityId,

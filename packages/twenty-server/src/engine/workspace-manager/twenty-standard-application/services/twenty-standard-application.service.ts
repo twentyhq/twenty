@@ -123,6 +123,8 @@ export class TwentyStandardApplicationService {
           },
           workspaceId,
           isSystemBuild: true,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -194,6 +196,8 @@ export class TwentyStandardApplicationService {
           additionalCacheDataMaps: {
             featureFlagsMap,
           },
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
         },
       );
 

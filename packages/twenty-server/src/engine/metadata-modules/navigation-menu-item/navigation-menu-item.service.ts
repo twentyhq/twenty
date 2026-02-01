@@ -184,6 +184,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -223,6 +225,11 @@ export class NavigationMenuItemService {
     authApiKeyId?: string;
     authApplicationId?: string;
   }): Promise<NavigationMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -266,6 +273,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -305,6 +314,11 @@ export class NavigationMenuItemService {
     authApiKeyId?: string;
     authApplicationId?: string;
   }): Promise<NavigationMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -339,6 +353,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

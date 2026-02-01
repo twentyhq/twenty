@@ -3,8 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { UpdateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FlatUpdateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -12,11 +15,17 @@ export class UpdateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
   'update',
   'agent',
 ) {
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateAgentAction>,
+  ): Promise<FlatUpdateAgentAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateAgentAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateAgentAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId, updates } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, updates } = flatAction;
 
     const agentRepository =
       queryRunner.manager.getRepository<AgentEntity>(AgentEntity);
@@ -30,7 +39,7 @@ export class UpdateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateAgentAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateAgentAction>,
   ): Promise<void> {
     return;
   }

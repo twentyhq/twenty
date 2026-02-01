@@ -7,10 +7,10 @@ import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type LogicFunctionLayerCacheMaps } from 'src/engine/metadata-modules/logic-function-layer/types/logic-function-layer-cache-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { type LogicFunctionLayerCacheMaps } from 'src/engine/metadata-modules/logic-function-layer/types/logic-function-layer-cache-maps.type';
 
 export const WORKSPACE_CACHE_KEYS_V2 = {
   flatObjectMetadataMaps: 'flat-maps:object-metadata',
@@ -64,7 +64,8 @@ export type AdditionalCacheDataMaps = {
   applicationVariableMaps: ApplicationVariableCacheMaps;
 };
 
-export type WorkspaceCacheDataMap = AllFlatEntityMaps & AdditionalCacheDataMaps;
+export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &
+  AdditionalCacheDataMaps;
 
 export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
 

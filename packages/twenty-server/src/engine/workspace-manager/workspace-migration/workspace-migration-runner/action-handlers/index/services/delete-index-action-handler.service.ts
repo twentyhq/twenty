@@ -2,15 +2,21 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type DeleteIndexAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import {
+  type FlatDeleteIndexAction,
+  type UniversalDeleteIndexAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import {
   deleteIndexMetadata,
   dropIndexFromWorkspaceSchema,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  type WorkspaceMigrationActionRunnerArgs,
+  type WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -23,40 +29,40 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     super();
   }
 
-  async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteIndexAction>,
-  ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps, workspaceId } = context;
-    const { universalIdentifier } = action;
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteIndexAction>,
+  ): Promise<FlatDeleteIndexAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
+  }
 
-    const flatIndex = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatIndexMaps,
-      universalIdentifier,
-    });
+  async executeForMetadata(
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteIndexAction>,
+  ): Promise<void> {
+    const { flatAction, queryRunner, workspaceId } = context;
 
     await deleteIndexMetadata({
-      entityId: flatIndex.id,
+      entityId: flatAction.entityId,
       queryRunner,
       workspaceId,
     });
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteIndexAction>,
   ): Promise<void> {
     const {
-      action,
+      flatAction,
       allFlatEntityMaps: { flatIndexMaps },
       queryRunner,
       workspaceId,
     } = context;
-    const { universalIdentifier } = action;
 
-    const flatIndexMetadataToDelete =
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier,
+    const flatIndexMetadataToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: flatAction.entityId,
         flatEntityMaps: flatIndexMaps,
-      });
+      },
+    );
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
@@ -148,10 +149,31 @@ export class WorkspaceMigrationRunnerService {
 
   run = async ({
     actions,
+    applicationUniversalIdentifier,
     workspaceId,
   }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const applicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
+    const flatApplication = isDefined(applicationId)
+      ? flatApplicationMaps.byId[applicationId]
+      : undefined;
+
+    if (!isDefined(applicationId) || !isDefined(flatApplication)) {
+      throw new WorkspaceMigrationRunnerException({
+        message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
+        code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
+      });
+    }
 
     const queryRunner = this.coreDataSource.createQueryRunner();
     const actionMetadataNames = [
@@ -168,12 +190,13 @@ export class WorkspaceMigrationRunnerService {
     );
 
     let allFlatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: allFlatEntityMapsKeys,
-        },
-      );
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
+        typeof allFlatEntityMapsKeys,
+        false
+      >({
+        workspaceId,
+        flatMapsKeys: allFlatEntityMapsKeys,
+      });
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
     this.logger.time('Runner', 'Transaction execution');
@@ -187,6 +210,7 @@ export class WorkspaceMigrationRunnerService {
             {
               action,
               context: {
+                flatApplication,
                 action,
                 allFlatEntityMaps,
                 queryRunner,
@@ -228,6 +252,7 @@ export class WorkspaceMigrationRunnerService {
           {
             action: invertedAction,
             context: {
+              flatApplication,
               action: invertedAction,
               allFlatEntityMaps,
               workspaceId,

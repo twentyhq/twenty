@@ -3,9 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { DeleteCommandMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  FlatDeleteCommandMenuItemAction,
+  UniversalDeleteCommandMenuItemAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteCommandMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -16,16 +21,16 @@ export class DeleteCommandMenuItemActionHandlerService extends WorkspaceMigratio
     super();
   }
 
-  async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteCommandMenuItemAction>,
-  ): Promise<void> {
-    const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
-    const { universalIdentifier } = action;
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteCommandMenuItemAction>,
+  ): Promise<FlatDeleteCommandMenuItemAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
+  }
 
-    const flatCommandMenuItem = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatCommandMenuItemMaps,
-      universalIdentifier,
-    });
+  async executeForMetadata(
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteCommandMenuItemAction>,
+  ): Promise<void> {
+    const { flatAction, queryRunner, workspaceId } = context;
 
     const commandMenuItemRepository =
       queryRunner.manager.getRepository<CommandMenuItemEntity>(
@@ -33,13 +38,13 @@ export class DeleteCommandMenuItemActionHandlerService extends WorkspaceMigratio
       );
 
     await commandMenuItemRepository.delete({
-      id: flatCommandMenuItem.id,
+      id: flatAction.entityId,
       workspaceId,
     });
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<DeleteCommandMenuItemAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatDeleteCommandMenuItemAction>,
   ): Promise<void> {
     return;
   }

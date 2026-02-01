@@ -66,6 +66,11 @@ export class PageLayoutWidgetService {
     operations: WidgetMigrationOperations;
     errorMessage: string;
   }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -74,6 +79,8 @@ export class PageLayoutWidgetService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

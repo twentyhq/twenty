@@ -8,43 +8,42 @@ import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } f
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { replaceFlatNavigationMenuItemInMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/replace-flat-navigation-menu-item-in-maps-and-update-index.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
-type UpdateAction<TMetadataName extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[TMetadataName]['actions']['update'];
+type FlatUpdateAction<TMetadataName extends AllMetadataName> =
+  AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['update'];
 
 export type OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs<
   TMetadataName extends AllMetadataName,
 > = {
-  action: UpdateAction<TMetadataName>;
+  flatAction: FlatUpdateAction<TMetadataName>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
 export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
   TMetadataName extends AllMetadataName,
 >({
-  action,
+  flatAction,
   allFlatEntityMaps,
 }: OptimisticallyApplyUpdateActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
-  switch (action.metadataName) {
+  switch (flatAction.metadataName) {
     case 'index': {
       const flatIndex = findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: action.entityId,
+        flatEntityId: flatAction.entityId,
         flatEntityMaps: allFlatEntityMaps['flatIndexMaps'],
       });
 
       deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatIndex,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-        metadataName: action.metadataName,
+        metadataName: flatAction.metadataName,
       });
 
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        flatEntity: action.updatedFlatEntity,
+        flatEntity: flatAction.updatedFlatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-        metadataName: action.metadataName,
+        metadataName: flatAction.metadataName,
       });
 
       return allFlatEntityMaps;
@@ -68,20 +67,21 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
     case 'pageLayoutTab':
     case 'commandMenuItem':
     case 'frontComponent':
+    case 'navigationMenuItem':
     case 'webhook': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
-        action.metadataName,
+        flatAction.metadataName,
       );
       const fromFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow<
-        MetadataFlatEntity<typeof action.metadataName>
+        MetadataFlatEntity<typeof flatAction.metadataName>
       >({
-        flatEntityId: action.entityId,
+        flatEntityId: flatAction.entityId,
         flatEntityMaps: allFlatEntityMaps[flatEntityMapsKey],
       });
 
       const toFlatEntity = {
         ...fromFlatEntity,
-        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
+        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
       };
 
       replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
@@ -91,29 +91,8 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
 
       return allFlatEntityMaps;
     }
-    case 'navigationMenuItem': {
-      const fromFlatNavigationMenuItem =
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: action.entityId,
-          flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
-        });
-
-      const toFlatNavigationMenuItem = {
-        ...fromFlatNavigationMenuItem,
-        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
-      };
-
-      replaceFlatNavigationMenuItemInMapsAndUpdateIndex({
-        fromFlatNavigationMenuItem,
-        toFlatNavigationMenuItem,
-        flatNavigationMenuItemMaps:
-          allFlatEntityMaps.flatNavigationMenuItemMaps,
-      });
-
-      return allFlatEntityMaps;
-    }
     default: {
-      assertUnreachable(action);
+      assertUnreachable(flatAction);
     }
   }
 };

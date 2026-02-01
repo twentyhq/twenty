@@ -1,12 +1,18 @@
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-create-workspace-migration-action.type';
-import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-delete-workspace-migration-action.type';
+import { type BaseFlatCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-create-workspace-migration-action.type';
+import { type BaseFlatDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-delete-workspace-migration-action.type';
+import { type BaseUniversalDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-delete-workspace-migration-action.type';
 
-export type CreateIndexAction = BaseCreateWorkspaceMigrationAction<'index'>;
+export type FlatCreateIndexAction =
+  BaseFlatCreateWorkspaceMigrationAction<'index'>;
 
-export type DeleteIndexAction = BaseDeleteWorkspaceMigrationAction<'index'>;
+export type UniversalDeleteIndexAction =
+  BaseUniversalDeleteWorkspaceMigrationAction<'index'>;
 
-export type UpdateIndexAction = {
+export type FlatDeleteIndexAction =
+  BaseFlatDeleteWorkspaceMigrationAction<'index'>;
+
+export type FlatUpdateIndexAction = {
   type: 'update';
   metadataName: 'index';
   entityId: string;

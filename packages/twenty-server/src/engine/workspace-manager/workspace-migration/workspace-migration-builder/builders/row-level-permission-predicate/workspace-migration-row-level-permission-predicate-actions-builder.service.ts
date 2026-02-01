@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { UpdateRowLevelPermissionPredicateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
+import { FlatUpdateRowLevelPermissionPredicateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
@@ -111,7 +111,7 @@ export class WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService 
 
     const { flatEntityId, flatEntityUpdates } = args;
 
-    const updateAction: UpdateRowLevelPermissionPredicateAction = {
+    const updateAction: FlatUpdateRowLevelPermissionPredicateAction = {
       type: 'update',
       metadataName: 'rowLevelPermissionPredicate',
       entityId: flatEntityId,

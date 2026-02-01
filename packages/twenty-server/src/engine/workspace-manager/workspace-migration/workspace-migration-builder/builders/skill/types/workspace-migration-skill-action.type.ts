@@ -1,9 +1,16 @@
-import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-create-workspace-migration-action.type';
-import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-delete-workspace-migration-action.type';
-import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-update-workspace-migration-action.type';
+import { type BaseFlatCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-create-workspace-migration-action.type';
+import { type BaseFlatDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-delete-workspace-migration-action.type';
+import { type BaseFlatUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-update-workspace-migration-action.type';
+import { type BaseUniversalDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-delete-workspace-migration-action.type';
 
-export type CreateSkillAction = BaseCreateWorkspaceMigrationAction<'skill'>;
+export type FlatCreateSkillAction =
+  BaseFlatCreateWorkspaceMigrationAction<'skill'>;
 
-export type UpdateSkillAction = BaseUpdateWorkspaceMigrationAction<'skill'>;
+export type FlatUpdateSkillAction =
+  BaseFlatUpdateWorkspaceMigrationAction<'skill'>;
 
-export type DeleteSkillAction = BaseDeleteWorkspaceMigrationAction<'skill'>;
+export type UniversalDeleteSkillAction =
+  BaseUniversalDeleteWorkspaceMigrationAction<'skill'>;
+
+export type FlatDeleteSkillAction =
+  BaseFlatDeleteWorkspaceMigrationAction<'skill'>;

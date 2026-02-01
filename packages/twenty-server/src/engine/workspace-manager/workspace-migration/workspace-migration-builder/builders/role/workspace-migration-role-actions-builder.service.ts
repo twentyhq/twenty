@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { UpdateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
+import { FlatUpdateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
@@ -84,7 +84,7 @@ export class WorkspaceMigrationRoleActionsBuilderService extends WorkspaceEntity
 
     const { flatEntityId, flatEntityUpdates } = args;
 
-    const updateRoleAction: UpdateRoleAction = {
+    const updateRoleAction: FlatUpdateRoleAction = {
       type: 'update',
       metadataName: 'role',
       entityId: flatEntityId,

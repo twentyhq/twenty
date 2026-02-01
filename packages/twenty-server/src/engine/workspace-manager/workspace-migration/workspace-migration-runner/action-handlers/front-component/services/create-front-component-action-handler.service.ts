@@ -3,8 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
-import { CreateFrontComponentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FlatCreateFrontComponentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateFrontComponentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -15,11 +18,17 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
     super();
   }
 
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatCreateFrontComponentAction>,
+  ): Promise<FlatCreateFrontComponentAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateFrontComponentAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateFrontComponentAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const frontComponentRepository =
       queryRunner.manager.getRepository<FrontComponentEntity>(
@@ -33,7 +42,7 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateFrontComponentAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateFrontComponentAction>,
   ): Promise<void> {
     return;
   }

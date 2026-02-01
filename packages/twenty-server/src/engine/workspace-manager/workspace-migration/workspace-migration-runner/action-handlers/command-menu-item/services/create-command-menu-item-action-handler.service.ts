@@ -3,8 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import { CreateCommandMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FlatCreateCommandMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -15,11 +18,17 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
     super();
   }
 
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatCreateCommandMenuItemAction>,
+  ): Promise<FlatCreateCommandMenuItemAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<CreateCommandMenuItemAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateCommandMenuItemAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { flatEntity } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { flatEntity } = flatAction;
 
     const commandMenuItemRepository =
       queryRunner.manager.getRepository<CommandMenuItemEntity>(
@@ -33,7 +42,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<CreateCommandMenuItemAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateCommandMenuItemAction>,
   ): Promise<void> {
     return;
   }

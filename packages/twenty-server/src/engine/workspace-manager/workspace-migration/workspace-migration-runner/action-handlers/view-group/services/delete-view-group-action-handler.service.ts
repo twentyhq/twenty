@@ -2,38 +2,43 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { DeleteViewGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  FlatDeleteViewGroupAction,
+  UniversalDeleteViewGroupAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteViewGroupActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'delete',
   'viewGroup',
 ) {
-  async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteViewGroupAction>,
-  ): Promise<void> {
-    const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
-    const { universalIdentifier } = action;
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteViewGroupAction>,
+  ): Promise<FlatDeleteViewGroupAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
+  }
 
-    const flatViewGroup = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatViewGroupMaps,
-      universalIdentifier,
-    });
+  async executeForMetadata(
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteViewGroupAction>,
+  ): Promise<void> {
+    const { flatAction, queryRunner, workspaceId } = context;
 
     const viewGroupRepository =
       queryRunner.manager.getRepository<ViewGroupEntity>(ViewGroupEntity);
 
     await viewGroupRepository.delete({
-      id: flatViewGroup.id,
+      id: flatAction.entityId,
       workspaceId,
     });
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<DeleteViewGroupAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatDeleteViewGroupAction>,
   ): Promise<void> {
     return;
   }

@@ -2,14 +2,21 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { type DeleteObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  type FlatDeleteObjectAction,
+  type UniversalDeleteObjectAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+import {
+  type WorkspaceMigrationActionRunnerArgs,
+  type WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
   collectEnumOperationsForObject,
@@ -28,44 +35,54 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     super();
   }
 
-  async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>,
-  ): Promise<void> {
-    const { action, queryRunner, allFlatEntityMaps } = context;
-    const { universalIdentifier } = action;
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteObjectAction>,
+  ): Promise<FlatDeleteObjectAction> {
+    const { action, allFlatEntityMaps } = context;
 
     const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
       flatEntityMaps: allFlatEntityMaps.flatObjectMetadataMaps,
-      universalIdentifier,
+      universalIdentifier: action.universalIdentifier,
     });
+
+    return {
+      type: 'delete',
+      metadataName: 'objectMetadata',
+      entityId: flatObjectMetadata.id,
+    };
+  }
+
+  async executeForMetadata(
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteObjectAction>,
+  ): Promise<void> {
+    const { flatAction, queryRunner } = context;
 
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
         ObjectMetadataEntity,
       );
 
-    await objectMetadataRepository.delete(flatObjectMetadata.id);
+    await objectMetadataRepository.delete(flatAction.entityId);
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteObjectAction>,
   ): Promise<void> {
     const {
-      action,
+      flatAction,
       queryRunner,
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { universalIdentifier } = action;
 
-    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier,
+      flatEntityId: flatAction.entityId,
     });
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
-      flatObjectMetadata,
+      objectMetadata: flatObjectMetadata,
     });
 
     await this.workspaceSchemaManagerService.tableManager.dropTable({
@@ -74,14 +91,17 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       tableName,
       cascade: true,
     });
+
     const objectFlatFieldMetadatas =
       findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityMaps: flatFieldMetadataMaps,
         flatEntityIds: flatObjectMetadata.fieldIds,
       });
+
     const enumOrCompositeFlatFieldMetadatas = objectFlatFieldMetadatas.filter(
-      (field) =>
-        isEnumFlatFieldMetadata(field) || isCompositeFlatFieldMetadata(field),
+      (flatFieldMetadata) =>
+        isEnumFlatFieldMetadata(flatFieldMetadata) ||
+        isCompositeFlatFieldMetadata(flatFieldMetadata),
     );
 
     const enumOperations = collectEnumOperationsForObject({
