@@ -38,9 +38,10 @@ class UpdateLogicFunctionInputUpdates {
   @IsOptional()
   timeoutSeconds?: number;
 
-  @Field(() => graphqlTypeJson)
+  @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
-  code: Sources;
+  @IsOptional()
+  code?: Sources;
 
   @IsString()
   @Field({ nullable: true })
@@ -56,6 +57,11 @@ class UpdateLogicFunctionInputUpdates {
   @Field({ nullable: true })
   @IsOptional()
   builtHandlerPath?: string;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  checksum?: string;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()

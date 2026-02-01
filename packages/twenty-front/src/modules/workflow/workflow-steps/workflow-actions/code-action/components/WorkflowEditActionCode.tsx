@@ -40,7 +40,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
 import { computeNewSources } from '@/logic-functions/utils/computeNewSources';
-import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
+import { useUploadLogicFunctionSourceCode } from '@/settings/logic-functions/hooks/useUploadLogicFunctionSourceCode';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
@@ -106,7 +106,7 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { updateLogicFunction } = usePersistLogicFunction();
+  const { uploadLogicFunctionSourceCode } = useUploadLogicFunctionSourceCode();
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
@@ -150,15 +150,10 @@ export const WorkflowEditActionCode = ({
   });
 
   const handleSave = useDebouncedCallback(async () => {
-    await updateLogicFunction({
-      input: {
-        id: logicFunctionId,
-        update: {
-          name: formValues.name,
-          description: formValues.description,
-          code: formValues.code,
-        },
-      },
+    // Upload source code to file storage (separate from metadata updates)
+    await uploadLogicFunctionSourceCode({
+      id: logicFunctionId,
+      code: formValues.code,
     });
   }, 500);
 

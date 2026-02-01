@@ -288,6 +288,7 @@ export class LogicFunctionExecutorService
     }
   }
 
+  // TODO: compute that when builing logic function layer and store it in logicFunctionLayer record
   async getAvailablePackages(logicFunctionId: string) {
     const logicFunction = await this.logicFunctionRepository.findOneOrFail({
       where: { id: logicFunctionId },

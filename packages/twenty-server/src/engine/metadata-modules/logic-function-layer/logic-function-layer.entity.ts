@@ -1,4 +1,4 @@
-import { PackageJson } from 'twenty-shared/application';
+import { type PackageJson } from 'type-fest';
 import {
   Column,
   CreateDateColumn,
@@ -24,7 +24,10 @@ export class LogicFunctionLayerEntity extends WorkspaceRelatedEntity {
   yarnLock: string;
 
   @Column({ type: 'text', nullable: false })
-  checksum: string;
+  packageJsonChecksum: string;
+
+  @Column({ type: 'text', nullable: false })
+  yarnLockChecksum: string;
 
   @OneToMany(
     () => LogicFunctionEntity,

@@ -2150,6 +2150,7 @@ export type Mutation = {
   uploadFile: SignedFile;
   uploadFilesFieldFile: File;
   uploadImage: SignedFile;
+  uploadLogicFunctionSourceCode: UploadLogicFunctionSourceCodeResultDto;
   uploadWorkspaceLogo: SignedFile;
   uploadWorkspaceMemberProfilePicture: SignedFile;
   upsertFieldPermissions: Array<FieldPermission>;
@@ -2328,8 +2329,8 @@ export type MutationCreateOneLogicFunctionArgs = {
 
 
 export type MutationCreateOneLogicFunctionLayerArgs = {
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
+  packageJsonChecksum: Scalars['JSON'];
+  yarnLockChecksum: Scalars['String'];
 };
 
 
@@ -2759,8 +2760,6 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
 };
 
 
@@ -2969,6 +2968,11 @@ export type MutationUploadFilesFieldFileArgs = {
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
+};
+
+
+export type MutationUploadLogicFunctionSourceCodeArgs = {
+  input: UploadLogicFunctionSourceCodeInput;
 };
 
 
@@ -4457,7 +4461,7 @@ export type UpdateLogicFunctionInput = {
 
 export type UpdateLogicFunctionInputUpdates = {
   builtHandlerPath?: InputMaybe<Scalars['String']>;
-  code: Scalars['JSON'];
+  code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
@@ -4690,6 +4694,21 @@ export type UpdateWorkspaceInput = {
   smartModel?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
+};
+
+export type UploadLogicFunctionSourceCodeInput = {
+  /** The source code to upload */
+  code: Scalars['JSON'];
+  /** Id of the logic function to upload source code for */
+  id: Scalars['UUID'];
+};
+
+export type UploadLogicFunctionSourceCodeResultDto = {
+  __typename?: 'UploadLogicFunctionSourceCodeResultDTO';
+  /** The computed checksum of the uploaded source code */
+  checksum: Scalars['String'];
+  /** Whether the upload and build was successful */
+  success: Scalars['Boolean'];
 };
 
 export type UpsertFieldPermissionsInput = {

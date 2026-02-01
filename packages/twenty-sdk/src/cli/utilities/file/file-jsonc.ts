@@ -43,10 +43,10 @@ export const parseJsoncString = (
   return result;
 };
 
-export const parseJsoncFile = async (
+export const parseJsoncFile = async <T = object>(
   filePath: string,
   options: JsoncParseOptions = {},
-): Promise<any> => {
+): Promise<T> => {
   try {
     const content = await fs.readFile(filePath, 'utf8');
     return parseJsoncString(content, options);

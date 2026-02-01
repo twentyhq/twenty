@@ -1,5 +1,6 @@
 import {
   extractAndSanitizeObjectStringFields,
+  isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -28,17 +29,26 @@ export const fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow = ({
     id: logicFunctionToUpdateId,
     flatLogicFunctionMaps,
   });
+
+  // Only compute checksum and include code if code is provided
+  const hasCode = isDefined(rawUpdateLogicFunctionInput.update.code);
+  const checksumUpdate = hasCode
+    ? {
+        checksum: logicFunctionCreateHash(
+          JSON.stringify(rawUpdateLogicFunctionInput.update.code),
+        ),
+      }
+    : {};
+
   const updatedEditableFieldProperties = {
     ...extractAndSanitizeObjectStringFields(
       {
         ...rawUpdateLogicFunctionInput.update,
-        checksum: logicFunctionCreateHash(
-          JSON.stringify(rawUpdateLogicFunctionInput.update.code),
-        ),
+        ...checksumUpdate,
       },
       FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES,
     ),
-    code: rawUpdateLogicFunctionInput.update.code,
+    ...(hasCode ? { code: rawUpdateLogicFunctionInput.update.code } : {}),
   };
 
   return mergeUpdateInExistingRecord({

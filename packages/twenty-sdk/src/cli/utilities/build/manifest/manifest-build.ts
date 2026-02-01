@@ -19,12 +19,12 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
-import { findPathFile } from '@/cli/utilities/file/file-find';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type FrontComponentConfig, type LogicFunctionConfig } from '@/sdk';
 import type { Sources } from 'twenty-shared/types';
 import * as fs from 'fs-extra';
+import { findPathFile } from '@/cli/utilities/file/file-find';
+import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -157,11 +157,13 @@ export const buildManifest = async (
 
         const { handler: _, ...rest } = extract.config;
 
+        const relativeFilePath = relative(appPath, filePath);
+
         const config: LogicFunctionManifest = {
           ...rest,
           handlerName: 'default.handler',
-          sourceHandlerPath: filePath,
-          builtHandlerPath: filePath.replace(/\.tsx?$/, '.mjs'),
+          sourceHandlerPath: relativeFilePath,
+          builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtHandlerChecksum: null,
         };
 
@@ -179,11 +181,13 @@ export const buildManifest = async (
 
         const { component, ...rest } = extract.config;
 
+        const relativeFilePath = relative(appPath, filePath);
+
         const config: FrontComponentManifest = {
           ...rest,
           componentName: component.name,
-          sourceComponentPath: filePath,
-          builtComponentPath: filePath.replace(/\.tsx?$/, '.mjs'),
+          sourceComponentPath: relativeFilePath,
+          builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: null,
         };
 
@@ -219,13 +223,8 @@ export const buildManifest = async (
     );
   }
 
-  const packageJson = await parseJsoncFile(
+  const packageJson = await parseJsoncFile<Manifest['packageJson']>(
     await findPathFile(appPath, 'package.json'),
-  );
-
-  const yarnLock = await readFile(
-    await findPathFile(appPath, 'yarn.lock'),
-    'utf8',
   );
 
   const manifest = !application
@@ -239,8 +238,9 @@ export const buildManifest = async (
         frontComponents,
         publicAssets,
         sources: await computeSources(appPath, filePaths),
+        packageJsonChecksum: null,
+        yarnLockChecksum: null,
         packageJson,
-        yarnLock,
       };
 
   const entityFilePaths: EntityFilePaths = {

@@ -6,8 +6,9 @@ export const fromLogicFunctionLayerEntityToFlatLogicFunctionLayer = (
 ): FlatLogicFunctionLayer => ({
   id: entity.id,
   packageJson: entity.packageJson,
+  packageJsonChecksum: entity.packageJsonChecksum,
   yarnLock: entity.yarnLock,
-  checksum: entity.checksum,
+  yarnLockChecksum: entity.yarnLockChecksum,
   workspaceId: entity.workspaceId,
   createdAt: entity.createdAt.toISOString(),
   updatedAt: entity.updatedAt.toISOString(),

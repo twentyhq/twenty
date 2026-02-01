@@ -62,16 +62,12 @@ export class ApplicationSyncService {
   public async synchronizeFromManifest({
     workspaceId,
     manifest,
-    packageJson,
-    yarnLock,
   }: ApplicationInput & {
     workspaceId: string;
   }) {
     const application = await this.syncApplication({
       workspaceId,
       manifest,
-      packageJson,
-      yarnLock,
     });
 
     await this.syncObjects({
@@ -123,12 +119,10 @@ export class ApplicationSyncService {
   private async syncApplication({
     workspaceId,
     manifest,
-    packageJson,
-    yarnLock,
   }: ApplicationInput & {
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const name = manifest.application.displayName ?? packageJson.name;
+    const name = manifest.application.displayName ?? manifest.packageJson.name;
     const application =
       (await this.applicationService.findByUniversalIdentifier({
         universalIdentifier: manifest.application.universalIdentifier,
@@ -138,7 +132,7 @@ export class ApplicationSyncService {
         universalIdentifier: manifest.application.universalIdentifier,
         name,
         description: manifest.application.description,
-        version: packageJson.version,
+        version: manifest.packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
         logicFunctionLayerId: null,
         defaultRoleId: null,
@@ -147,13 +141,17 @@ export class ApplicationSyncService {
 
     let logicFunctionLayerId = application.logicFunctionLayerId;
 
-    if (manifest.logicFunctions.length > 0) {
+    if (
+      manifest.logicFunctions.length > 0 &&
+      isDefined(manifest.packageJsonChecksum) &&
+      isDefined(manifest.yarnLockChecksum)
+    ) {
       if (!isDefined(logicFunctionLayerId)) {
         logicFunctionLayerId = (
           await this.logicFunctionLayerService.create(
             {
-              packageJson,
-              yarnLock,
+              packageJsonChecksum: manifest.packageJsonChecksum,
+              yarnLockChecksum: manifest.yarnLockChecksum,
             },
             workspaceId,
           )
@@ -163,8 +161,8 @@ export class ApplicationSyncService {
       await this.logicFunctionLayerService.update(
         logicFunctionLayerId,
         {
-          packageJson,
-          yarnLock,
+          packageJsonChecksum: manifest.packageJsonChecksum,
+          yarnLockChecksum: manifest.yarnLockChecksum,
         },
         workspaceId,
       );
@@ -181,7 +179,7 @@ export class ApplicationSyncService {
     return await this.applicationService.update(application.id, {
       name,
       description: manifest.application.description,
-      version: packageJson.version,
+      version: manifest.packageJson.version,
       logicFunctionLayerId,
       defaultRoleId: null,
     });

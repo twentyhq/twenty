@@ -2189,6 +2189,7 @@ export type Mutation = {
   uploadFile: SignedFile;
   uploadFilesFieldFile: File;
   uploadImage: SignedFile;
+  uploadLogicFunctionSourceCode: UploadLogicFunctionSourceCodeResultDto;
   uploadWorkspaceLogo: SignedFile;
   uploadWorkspaceMemberProfilePicture: SignedFile;
   upsertFieldPermissions: Array<FieldPermission>;
@@ -2382,8 +2383,8 @@ export type MutationCreateOneLogicFunctionArgs = {
 
 
 export type MutationCreateOneLogicFunctionLayerArgs = {
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
+  packageJsonChecksum: Scalars['JSON'];
+  yarnLockChecksum: Scalars['String'];
 };
 
 
@@ -2844,8 +2845,6 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
 };
 
 
@@ -3064,6 +3063,11 @@ export type MutationUploadFilesFieldFileArgs = {
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
+};
+
+
+export type MutationUploadLogicFunctionSourceCodeArgs = {
+  input: UploadLogicFunctionSourceCodeInput;
 };
 
 
@@ -4618,7 +4622,7 @@ export type UpdateLogicFunctionInput = {
 
 export type UpdateLogicFunctionInputUpdates = {
   builtHandlerPath?: InputMaybe<Scalars['String']>;
-  code: Scalars['JSON'];
+  code?: InputMaybe<Scalars['JSON']>;
   description?: InputMaybe<Scalars['String']>;
   handlerName?: InputMaybe<Scalars['String']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
@@ -4874,6 +4878,21 @@ export type UpdateWorkspaceInput = {
   smartModel?: InputMaybe<Scalars['String']>;
   subdomain?: InputMaybe<Scalars['String']>;
   trashRetentionDays?: InputMaybe<Scalars['Float']>;
+};
+
+export type UploadLogicFunctionSourceCodeInput = {
+  /** The source code to upload */
+  code: Scalars['JSON'];
+  /** Id of the logic function to upload source code for */
+  id: Scalars['UUID'];
+};
+
+export type UploadLogicFunctionSourceCodeResultDto = {
+  __typename?: 'UploadLogicFunctionSourceCodeResultDTO';
+  /** The computed checksum of the uploaded source code */
+  checksum: Scalars['String'];
+  /** Whether the upload and build was successful */
+  success: Scalars['Boolean'];
 };
 
 export type UpsertFieldPermissionsInput = {
@@ -6312,6 +6331,13 @@ export type UpdateOneLogicFunctionMutationVariables = Exact<{
 
 
 export type UpdateOneLogicFunctionMutation = { __typename?: 'Mutation', updateOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+
+export type UploadLogicFunctionSourceCodeMutationVariables = Exact<{
+  input: UploadLogicFunctionSourceCodeInput;
+}>;
+
+
+export type UploadLogicFunctionSourceCodeMutation = { __typename?: 'Mutation', uploadLogicFunctionSourceCode: { __typename?: 'UploadLogicFunctionSourceCodeResultDTO', checksum: string, success: boolean } };
 
 export type FindManyAvailablePackagesQueryVariables = Exact<{
   input: LogicFunctionIdInput;
@@ -12548,6 +12574,40 @@ export function useUpdateOneLogicFunctionMutation(baseOptions?: Apollo.MutationH
 export type UpdateOneLogicFunctionMutationHookResult = ReturnType<typeof useUpdateOneLogicFunctionMutation>;
 export type UpdateOneLogicFunctionMutationResult = Apollo.MutationResult<UpdateOneLogicFunctionMutation>;
 export type UpdateOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<UpdateOneLogicFunctionMutation, UpdateOneLogicFunctionMutationVariables>;
+export const UploadLogicFunctionSourceCodeDocument = gql`
+    mutation UploadLogicFunctionSourceCode($input: UploadLogicFunctionSourceCodeInput!) {
+  uploadLogicFunctionSourceCode(input: $input) {
+    checksum
+    success
+  }
+}
+    `;
+export type UploadLogicFunctionSourceCodeMutationFn = Apollo.MutationFunction<UploadLogicFunctionSourceCodeMutation, UploadLogicFunctionSourceCodeMutationVariables>;
+
+/**
+ * __useUploadLogicFunctionSourceCodeMutation__
+ *
+ * To run a mutation, you first call `useUploadLogicFunctionSourceCodeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadLogicFunctionSourceCodeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadLogicFunctionSourceCodeMutation, { data, loading, error }] = useUploadLogicFunctionSourceCodeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUploadLogicFunctionSourceCodeMutation(baseOptions?: Apollo.MutationHookOptions<UploadLogicFunctionSourceCodeMutation, UploadLogicFunctionSourceCodeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadLogicFunctionSourceCodeMutation, UploadLogicFunctionSourceCodeMutationVariables>(UploadLogicFunctionSourceCodeDocument, options);
+      }
+export type UploadLogicFunctionSourceCodeMutationHookResult = ReturnType<typeof useUploadLogicFunctionSourceCodeMutation>;
+export type UploadLogicFunctionSourceCodeMutationResult = Apollo.MutationResult<UploadLogicFunctionSourceCodeMutation>;
+export type UploadLogicFunctionSourceCodeMutationOptions = Apollo.BaseMutationOptions<UploadLogicFunctionSourceCodeMutation, UploadLogicFunctionSourceCodeMutationVariables>;
 export const FindManyAvailablePackagesDocument = gql`
     query FindManyAvailablePackages($input: LogicFunctionIdInput!) {
   getAvailablePackages(input: $input)

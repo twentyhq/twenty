@@ -1,5 +1,4 @@
 import {
-  type PackageJson,
   type ApplicationManifest,
   type ObjectManifest,
   type LogicFunctionManifest,
@@ -7,8 +6,9 @@ import {
   type FrontComponentManifest,
   type RoleManifest,
   type FieldManifest,
-} from '@/sdk';
+} from '@/application';
 import { type Sources } from '@/types';
+import { type PackageJson } from 'type-fest';
 
 export type Manifest = {
   application: ApplicationManifest;
@@ -20,5 +20,6 @@ export type Manifest = {
   publicAssets: AssetManifest[];
   sources: Sources;
   packageJson: PackageJson;
-  yarnLock: string;
+  packageJsonChecksum: string | null;
+  yarnLockChecksum: string | null;
 };

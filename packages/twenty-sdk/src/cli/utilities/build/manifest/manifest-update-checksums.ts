@@ -18,7 +18,7 @@ export type UpdateManifestChecksumParams = {
   >;
 };
 
-export const updateManifestChecksums = ({
+export const manifestUpdateChecksums = ({
   manifest,
   builtFileInfos,
 }: UpdateManifestChecksumParams): Manifest => {
@@ -76,6 +76,16 @@ export const updateManifestChecksums = ({
             : component,
         ),
       };
+    }
+
+    if (fileFolder === FileFolder.Source) {
+      if (rootBuiltPath === 'package.json') {
+        result.packageJsonChecksum = checksum;
+      }
+
+      if (rootBuiltPath === 'yarn.lock') {
+        result.yarnLockChecksum = checksum;
+      }
     }
   }
   return result;
