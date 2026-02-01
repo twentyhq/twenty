@@ -4,17 +4,17 @@ import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata
 import { type AggregateOrchestratorActionsReportArgs } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-aggregate-orchestrator-actions-report-args.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
-import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { type UniversalCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 
 type AggregatedActions = {
   createdFieldActionByObjectMetadataUniversalIdentifier: Record<
     string,
-    CreateFieldAction
+    UniversalCreateFieldAction
   >;
   createdObjectActionByObjectMetadataUniversalIdentifier: Record<
     string,
-    CreateObjectAction
+    UniversalCreateObjectAction
   >;
 };
 
@@ -23,13 +23,14 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
     orchestratorActionsReport,
   }: AggregateOrchestratorActionsReportArgs): OrchestratorActionsReport => {
     const initialCreatedObjectActionByObjectMetadataUniversalIdentifier = (
-      orchestratorActionsReport.objectMetadata.create as CreateObjectAction[]
+      orchestratorActionsReport.objectMetadata
+        .create as UniversalCreateObjectAction[]
     ).reduce(
       (acc, createObjectAction) => ({
         ...acc,
         [createObjectAction.flatEntity.universalIdentifier]: createObjectAction,
       }),
-      {} as Record<string, CreateObjectAction>,
+      {} as Record<string, UniversalCreateObjectAction>,
     );
 
     const initialAccumulator: AggregatedActions = {
@@ -42,7 +43,8 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
       createdFieldActionByObjectMetadataUniversalIdentifier,
       createdObjectActionByObjectMetadataUniversalIdentifier,
     } = (
-      orchestratorActionsReport.fieldMetadata.create as CreateFieldAction[]
+      orchestratorActionsReport.fieldMetadata
+        .create as UniversalCreateFieldAction[]
     ).reduce<AggregatedActions>(
       (
         {

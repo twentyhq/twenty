@@ -4,7 +4,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type AggregateOrchestratorActionsReportArgs } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-aggregate-orchestrator-actions-report-args.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { type UniversalUpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 
 export const aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldActions =
   ({
@@ -14,12 +14,12 @@ export const aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFie
     assertIsDefinedOrThrow(flatFieldMetadataMaps);
 
     const updateFieldActions = orchestratorActionsReport.fieldMetadata
-      .update as UpdateFieldAction[];
+      .update as UniversalUpdateFieldAction[];
 
     const { searchVectorUpdateFieldActions, otherUpdateFieldActions } =
       updateFieldActions.reduce<{
-        searchVectorUpdateFieldActions: UpdateFieldAction[];
-        otherUpdateFieldActions: UpdateFieldAction[];
+        searchVectorUpdateFieldActions: UniversalUpdateFieldAction[];
+        otherUpdateFieldActions: UniversalUpdateFieldAction[];
       }>(
         (acc, updateFieldAction) => {
           const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
