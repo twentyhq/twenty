@@ -37,25 +37,21 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerContext<CreateIndexAction>,
   ): Promise<void> {
     const {
-      allFlatEntityMaps: {
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps: universalFlatFieldMetadataMaps,
-      },
+      allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       flatAction: { flatEntity: flatIndexMetadata },
       queryRunner,
       workspaceId,
     } = context;
 
-    const universalFlatObjectMetadata =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: flatIndexMetadata.objectMetadataId,
-      });
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: flatIndexMetadata.objectMetadataId,
+    });
 
     await createIndexInWorkspaceSchema({
       flatIndexMetadata,
-      universalFlatFieldMetadataMaps,
-      universalFlatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
       queryRunner,
       workspaceId,
