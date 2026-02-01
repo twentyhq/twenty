@@ -23,8 +23,8 @@ export class ImapService {
         let lock = await client.getMailboxLock('INBOX');
         try {
             // Logic: Fetch latest 10 emails
-            const status = await client.mailbox.status('INBOX', { messages: true });
-            const total = status.messages || 0;
+            // FIX: Use .exists property directly (no .status() method on mailbox obj)
+            const total = client.mailbox.exists || 0;
             if (total === 0) return [];
             
             const fetchStart = Math.max(1, total - 9);
