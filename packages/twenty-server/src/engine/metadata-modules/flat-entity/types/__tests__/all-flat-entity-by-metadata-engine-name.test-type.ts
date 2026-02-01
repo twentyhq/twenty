@@ -19,10 +19,6 @@ type ExpectedGenericFlatEntityInformation = {
   flatEntity: SyncableFlatEntity;
   universalFlatEntity: UniversalSyncableFlatEntity;
   entity: unknown;
-  universalMigrated?: {
-    runner?: true;
-    builder?: true;
-  };
 };
 
 type ExpectedGenericAllFlatEntityInformationByMetadataEngine = {
