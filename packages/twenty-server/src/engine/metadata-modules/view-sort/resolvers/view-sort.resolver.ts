@@ -105,7 +105,7 @@ export class ViewSortResolver {
     @Args('input') destroyViewSortInput: DestroyViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    const destroyedViewSort = this.viewSortService.destroyOne({
+    const destroyedViewSort = await this.viewSortService.destroyOne({
       destroyViewSortInput,
       workspaceId,
     });

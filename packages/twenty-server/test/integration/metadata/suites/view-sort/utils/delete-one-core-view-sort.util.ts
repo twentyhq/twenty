@@ -4,22 +4,18 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
-
 export const deleteOneCoreViewSort = async ({
   viewSortId,
-  gqlFields,
   expectToFail,
 }: {
   viewSortId: string;
   gqlFields?: string;
   expectToFail?: boolean;
 }): CommonResponseBody<{
-  deleteCoreViewSort: ViewSortDTO;
+  deleteCoreViewSort: boolean;
 }> => {
   const graphqlOperation = deleteCoreViewSortQueryFactory({
     viewSortId,
-    gqlFields,
   });
 
   const response = await makeMetadataAPIRequest(graphqlOperation);

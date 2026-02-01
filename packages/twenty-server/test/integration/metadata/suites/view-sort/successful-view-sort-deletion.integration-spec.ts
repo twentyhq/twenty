@@ -106,9 +106,7 @@ describe('View Sort deletion should succeed', () => {
       viewSortId,
     });
 
-    expect(deleteData.deleteCoreViewSort).toMatchObject({
-      id: viewSortId,
-    });
+    expect(deleteData.deleteCoreViewSort).toBe(true);
 
     const { data: findData } = await findCoreViewSorts({
       expectToFail: false,
@@ -146,8 +144,6 @@ describe('View Sort deletion should succeed', () => {
       viewSortId,
     });
 
-    expect(destroyData.destroyCoreViewSort).toMatchObject({
-      id: viewSortId,
-    });
+    expect(destroyData.destroyCoreViewSort).toBe(true);
   });
 });

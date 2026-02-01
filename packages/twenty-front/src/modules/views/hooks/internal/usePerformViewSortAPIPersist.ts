@@ -57,8 +57,8 @@ export const usePerformViewSortAPIPersist = () => {
           apolloClient.mutate({
             mutation: UPDATE_CORE_VIEW_SORT,
             variables: {
-              id: viewSort.id,
               input: {
+                id: viewSort.id,
                 direction: viewSort.direction,
               } satisfies Partial<CoreViewSort>,
             },
@@ -85,7 +85,7 @@ export const usePerformViewSortAPIPersist = () => {
           apolloClient.mutate({
             mutation: DESTROY_CORE_VIEW_SORT,
             variables: {
-              id: viewSort.id,
+              input: { id: viewSort.id },
             },
             update: (_cache) => {
               triggerViewSortOptimisticEffect({
