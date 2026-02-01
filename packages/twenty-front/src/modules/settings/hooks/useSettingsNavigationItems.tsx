@@ -96,6 +96,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Accounts`,
           path: SettingsPath.Accounts,
           Icon: IconAt,
+          isHidden: !permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS],
           subItems: [
             {
               label: t`Emails`,

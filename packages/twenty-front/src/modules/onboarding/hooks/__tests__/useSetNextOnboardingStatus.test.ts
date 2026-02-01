@@ -3,9 +3,14 @@ import { RecoilRoot, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
+import {
+  OnboardingStatus,
+  PermissionFlagType,
+  SubscriptionStatus,
+} from '~/generated/graphql';
 import {
   mockCurrentWorkspace,
   mockedUserData,
@@ -15,16 +20,21 @@ const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
   withOneWorkspaceMember = true,
+  hasConnectedAccountsPermission = true,
 ) => {
   const { result } = renderHook(
     () => {
       const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+      const setCurrentUserWorkspace = useSetRecoilState(
+        currentUserWorkspaceState,
+      );
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
       return {
         currentUser,
         setCurrentUser,
         setCurrentWorkspace,
+        setCurrentUserWorkspace,
         setNextOnboardingStatus,
       };
     },
@@ -46,6 +56,13 @@ const renderHooks = (
         : undefined,
       workspaceMembersCount: withOneWorkspaceMember ? 1 : 2,
     });
+    result.current.setCurrentUserWorkspace({
+      permissionFlags: hasConnectedAccountsPermission
+        ? [PermissionFlagType.CONNECTED_ACCOUNTS]
+        : [],
+      twoFactorAuthenticationMethodSummary: null,
+      objectsPermissions: [],
+    });
   });
   act(() => {
     result.current.setNextOnboardingStatus();
@@ -59,6 +76,7 @@ describe('useSetNextOnboardingStatus', () => {
       OnboardingStatus.PROFILE_CREATION,
       false,
       true,
+      true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
   });
@@ -68,14 +86,26 @@ describe('useSetNextOnboardingStatus', () => {
       OnboardingStatus.PROFILE_CREATION,
       false,
       false,
+      true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+  });
+
+  it('should skip SyncEmail when user does not have CONNECTED_ACCOUNTS permission', () => {
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+      false,
+      true,
+      false,
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
   });
 
   it('should set next onboarding status for SyncEmail', () => {
     const nextOnboardingStatus = renderHooks(
       OnboardingStatus.SYNC_EMAIL,
       false,
+      true,
       true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
@@ -86,6 +116,7 @@ describe('useSetNextOnboardingStatus', () => {
       OnboardingStatus.SYNC_EMAIL,
       true,
       false,
+      true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
   });
@@ -93,6 +124,7 @@ describe('useSetNextOnboardingStatus', () => {
   it('should set next onboarding status for Completed', () => {
     const nextOnboardingStatus = renderHooks(
       OnboardingStatus.INVITE_TEAM,
+      true,
       true,
       true,
     );
