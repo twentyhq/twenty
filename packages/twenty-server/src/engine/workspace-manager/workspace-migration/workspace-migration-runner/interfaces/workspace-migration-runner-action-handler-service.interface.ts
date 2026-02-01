@@ -8,16 +8,15 @@ import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/fl
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { BaseFlatDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-delete-workspace-migration-action.type';
 import {
   buildActionHandlerKey,
   type AllFlatWorkspaceMigrationAction,
   type AllUniversalWorkspaceMigrationAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-migration-action-handler-metadata-key.constant';
-import {
-  WorkspaceMigrationActionExecutionException,
-  WorkspaceMigrationActionExecutionExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
@@ -40,7 +39,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
   TUniversalAction extends // TODO create abstracted type utils
-  AllUniversalWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType],
+    AllUniversalWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType],
   TFlatAction extends
     AllFlatWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions'][TActionType],
 > {
@@ -50,26 +49,32 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
 
-  // TODO prastoin before merge completely refactor, still implem basic transpiler that could be called on each actions handler
-  public async transpileUniversalActionToFlatAction(
+  public abstract transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
-  ): Promise<TFlatAction> {
-    switch (true) {
-      // Actions that add custom properties to base actions that custom transpilers (next when migrated logic function create and index update too)
-      case context.action.metadataName === 'objectMetadata' &&
-        context.action.type === 'create':
-      case context.action.metadataName === 'fieldMetadata' &&
-        context.action.type === 'create': {
-        throw new WorkspaceMigrationActionExecutionException({
-          code: WorkspaceMigrationActionExecutionExceptionCode.INTERNAL_SERVER_ERROR,
-          message: `transpileUniversalActionToFlatAction should be implemented for ${context.action.type} ${context.action.metadataName}`,
-        });
-      }
-    }
-    // TODO should implement the default base actions handlers
+  ): Promise<TFlatAction>;
 
-    // TODO could be improved ?
-    return context.action as unknown as TFlatAction;
+  protected transpileUniversalDeleteActionToFlatDeleteAction(
+    context: 'delete' extends TActionType
+      ? WorkspaceMigrationActionRunnerArgs<
+          AllUniversalWorkspaceMigrationAction<'delete'>
+        >
+      : never,
+  ): BaseFlatDeleteWorkspaceMigrationAction<TMetadataName> {
+    const { action, allFlatEntityMaps } = context;
+
+    const flatEntityMaps =
+      allFlatEntityMaps[getMetadataFlatEntityMapsKey(action.metadataName)];
+
+    const flatEntity = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    return {
+      type: 'delete',
+      metadataName: this.metadataName,
+      entityId: flatEntity.id,
+    };
   }
 
   executeForMetadata(

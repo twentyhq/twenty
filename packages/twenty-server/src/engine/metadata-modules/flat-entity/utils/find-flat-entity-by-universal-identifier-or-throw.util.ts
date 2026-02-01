@@ -11,17 +11,21 @@ import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/w
 
 export type FindFlatEntityByUniversalIdentifierOrThrowArgs<
   T extends SyncableFlatEntity | UniversalSyncableFlatEntity,
+  TMaps extends FlatEntityMaps<T>,
 > = {
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMaps: TMaps;
   universalIdentifier: string;
 };
 
 export const findFlatEntityByUniversalIdentifierOrThrow = <
   T extends SyncableFlatEntity | UniversalSyncableFlatEntity,
+  TMaps extends FlatEntityMaps<T>,
 >({
   flatEntityMaps,
   universalIdentifier,
-}: FindFlatEntityByUniversalIdentifierOrThrowArgs<T>): T & { id: string } => {
+}: FindFlatEntityByUniversalIdentifierOrThrowArgs<T, TMaps>): T & {
+  id: string;
+} => {
   const flatEntity = findFlatEntityByUniversalIdentifier({
     flatEntityMaps,
     universalIdentifier,

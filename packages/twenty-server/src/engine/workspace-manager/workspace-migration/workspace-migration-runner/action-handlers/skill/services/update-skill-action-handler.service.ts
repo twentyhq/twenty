@@ -4,7 +4,10 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import { FlatUpdateSkillAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
-import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -12,6 +15,12 @@ export class UpdateSkillActionHandlerService extends WorkspaceMigrationRunnerAct
   'update',
   'skill',
 ) {
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateSkillAction>,
+  ): Promise<FlatUpdateSkillAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateSkillAction>,
   ): Promise<void> {
