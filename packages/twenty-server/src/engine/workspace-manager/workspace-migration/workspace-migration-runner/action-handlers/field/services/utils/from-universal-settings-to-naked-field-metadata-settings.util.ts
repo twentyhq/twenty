@@ -5,7 +5,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { isUniversalFieldMetadataSettingsOftype } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
-import { type UniversalAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { findFieldMetadataIdInCreateFieldContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/find-field-metadata-id-in-create-field-context.util';
 import {
@@ -20,7 +20,7 @@ export const fromUniversalSettingsToInsertableSettings = ({
 }: {
   universalSettings: UniversalFlatFieldMetadata['universalSettings'];
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
-  flatFieldMetadataMaps: UniversalAllFlatEntityMaps['flatFieldMetadataMaps'];
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
 }): FieldMetadataSettings => {
   if (!isDefined(universalSettings)) {
     return null;
