@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ImapModule } from './imap/imap.module';
 import { ImapModule } from './imap/imap.module';
 import { ImapModule } from './imap/imap.module';
+import { ImapModule } from './imap/imap.module';
 
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
@@ -12,6 +13,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
+    ImapModule,
     ImapModule,
     ImapModule,
     ImapModule,
