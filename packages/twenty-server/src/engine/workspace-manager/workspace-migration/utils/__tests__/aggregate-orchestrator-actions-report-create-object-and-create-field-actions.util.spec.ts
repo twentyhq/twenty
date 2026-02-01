@@ -482,4 +482,124 @@ describe('aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions', 
       expect(objectActions).toHaveLength(expectedTotalObjectActions);
     },
   );
+
+  describe('fieldIdByUniversalIdentifier merging', () => {
+    it('should merge fieldIdByUniversalIdentifier for both object and field actions', () => {
+      const input: OrchestratorActionsReport = {
+        ...createEmptyOrchestratorActionsReport(),
+        objectMetadata: {
+          create: [
+            {
+              type: 'create',
+              metadataName: 'objectMetadata',
+              flatEntity: getUniversalFlatObjectMetadataMock({
+                universalIdentifier: 'object-1',
+                nameSingular: 'user',
+                namePlural: 'users',
+              }),
+              universalFlatFieldMetadatas: [],
+            } satisfies UniversalCreateObjectAction,
+          ],
+          update: [],
+          delete: [],
+        },
+        fieldMetadata: {
+          create: [
+            {
+              type: 'create',
+              metadataName: 'fieldMetadata',
+              objectMetadataUniversalIdentifier: 'object-1',
+              universalFlatFieldMetadatas: [
+                getUniversalFlatFieldMetadataMock({
+                  universalIdentifier: 'field-1',
+                  objectMetadataUniversalIdentifier: 'object-1',
+                  type: FieldMetadataType.TEXT,
+                  name: 'firstName',
+                }),
+              ],
+              fieldIdByUniversalIdentifier: {
+                'field-1': 'custom-field-id-1',
+              },
+            } satisfies UniversalCreateFieldAction,
+            {
+              type: 'create',
+              metadataName: 'fieldMetadata',
+              objectMetadataUniversalIdentifier: 'object-1',
+              universalFlatFieldMetadatas: [
+                getUniversalFlatFieldMetadataMock({
+                  universalIdentifier: 'field-2',
+                  objectMetadataUniversalIdentifier: 'object-1',
+                  type: FieldMetadataType.TEXT,
+                  name: 'lastName',
+                }),
+              ],
+              fieldIdByUniversalIdentifier: {
+                'field-2': 'custom-field-id-2',
+              },
+            } satisfies UniversalCreateFieldAction,
+            {
+              type: 'create',
+              metadataName: 'fieldMetadata',
+              objectMetadataUniversalIdentifier: 'object-1',
+              universalFlatFieldMetadatas: [
+                getUniversalFlatFieldMetadataMock({
+                  universalIdentifier: 'relation-field-1',
+                  objectMetadataUniversalIdentifier: 'object-1',
+                  type: FieldMetadataType.RELATION,
+                  name: 'company',
+                }),
+              ],
+              fieldIdByUniversalIdentifier: {
+                'relation-field-1': 'custom-relation-field-id-1',
+              },
+            } satisfies UniversalCreateFieldAction,
+            {
+              type: 'create',
+              metadataName: 'fieldMetadata',
+              objectMetadataUniversalIdentifier: 'object-1',
+              universalFlatFieldMetadatas: [
+                getUniversalFlatFieldMetadataMock({
+                  universalIdentifier: 'relation-field-2',
+                  objectMetadataUniversalIdentifier: 'object-1',
+                  type: FieldMetadataType.RELATION,
+                  name: 'manager',
+                }),
+              ],
+              fieldIdByUniversalIdentifier: {
+                'relation-field-2': 'custom-relation-field-id-2',
+              },
+            } satisfies UniversalCreateFieldAction,
+          ],
+          update: [],
+          delete: [],
+        },
+      };
+
+      const result =
+        aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions({
+          orchestratorActionsReport: input,
+        });
+
+      const objectActions = result.objectMetadata
+        .create as UniversalCreateObjectAction[];
+      const fieldActions = result.fieldMetadata
+        .create as UniversalCreateFieldAction[];
+
+      // Regular TEXT fields are merged into the object action
+      expect(objectActions).toHaveLength(1);
+      expect(objectActions[0].fieldIdByUniversalIdentifier).toEqual({
+        'field-1': 'custom-field-id-1',
+        'field-2': 'custom-field-id-2',
+        'relation-field-1': 'custom-relation-field-id-1',
+        'relation-field-2': 'custom-relation-field-id-2',
+      });
+
+      // RELATION fields stay in a separate field action
+      expect(fieldActions).toHaveLength(1);
+      expect(fieldActions[0].fieldIdByUniversalIdentifier).toEqual({
+        'relation-field-1': 'custom-relation-field-id-1',
+        'relation-field-2': 'custom-relation-field-id-2',
+      });
+    });
+  });
 });

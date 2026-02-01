@@ -14,6 +14,8 @@ export type UniversalCreateFieldAction = Omit<
 > & {
   objectMetadataUniversalIdentifier: string;
   universalFlatFieldMetadatas: UniversalFlatFieldMetadata[];
+  // Optional map to provide specific IDs for field creation (for API metadata).
+  fieldIdByUniversalIdentifier?: Record<string, string>;
 };
 
 export type UniversalUpdateFieldAction =

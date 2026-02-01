@@ -45,8 +45,11 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateFieldAction>,
   ): Promise<FlatCreateFieldAction> {
     const { action, allFlatEntityMaps } = context;
-    const { universalFlatFieldMetadatas, objectMetadataUniversalIdentifier } =
-      action;
+    const {
+      universalFlatFieldMetadatas,
+      objectMetadataUniversalIdentifier,
+      fieldIdByUniversalIdentifier,
+    } = action;
 
     const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
       string,
@@ -54,9 +57,14 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     >();
 
     for (const universalFlatFieldMetadata of universalFlatFieldMetadatas) {
+      const providedId =
+        fieldIdByUniversalIdentifier?.[
+          universalFlatFieldMetadata.universalIdentifier
+        ];
+
       allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
         universalFlatFieldMetadata.universalIdentifier,
-        v4(),
+        providedId ?? v4(),
       );
     }
 

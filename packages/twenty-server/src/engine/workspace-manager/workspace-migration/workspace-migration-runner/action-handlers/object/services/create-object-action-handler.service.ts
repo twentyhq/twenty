@@ -43,6 +43,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateObjectAction>,
   ): Promise<FlatCreateObjectAction> {
     const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
+    const { fieldIdByUniversalIdentifier, id: providedObjectId } = action;
 
     const dataSourceRepository =
       queryRunner.manager.getRepository<DataSourceEntity>(DataSourceEntity);
@@ -60,9 +61,14 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     >();
 
     for (const universalFlatFieldMetadata of action.universalFlatFieldMetadatas) {
+      const providedFieldId =
+        fieldIdByUniversalIdentifier?.[
+          universalFlatFieldMetadata.universalIdentifier
+        ];
+
       allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
         universalFlatFieldMetadata.universalIdentifier,
-        v4(), // TODO should be configurable for API_METADATA
+        providedFieldId ?? v4(),
       );
     }
 
@@ -72,7 +78,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         allFlatEntityMaps,
         context,
         dataSourceId: lastDataSourceMetadata.id,
-        generatedId: v4(), // TODO should be configurable for API_METADATA
+        generatedId: providedObjectId ?? v4(),
         universalFlatObjectMetadata: action.flatEntity,
       });
 

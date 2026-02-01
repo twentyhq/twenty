@@ -7,6 +7,20 @@ import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/wo
 import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { type UniversalCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 
+const mergeFieldIdByUniversalIdentifier = (
+  existing: Record<string, string> | undefined,
+  incoming: Record<string, string> | undefined,
+): Record<string, string> | undefined => {
+  if (!isDefined(existing) && !isDefined(incoming)) {
+    return undefined;
+  }
+
+  return {
+    ...existing,
+    ...incoming,
+  };
+};
+
 type AggregatedActions = {
   createdFieldActionByObjectMetadataUniversalIdentifier: Record<
     string,
@@ -112,6 +126,11 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
                     ...existingCreateObjectAction.universalFlatFieldMetadatas,
                     ...otherUniversalFlatFieldMetadatas,
                   ],
+                  fieldIdByUniversalIdentifier:
+                    mergeFieldIdByUniversalIdentifier(
+                      existingCreateObjectAction.fieldIdByUniversalIdentifier,
+                      createFieldAction.fieldIdByUniversalIdentifier,
+                    ),
                 },
               },
               createdFieldActionByObjectMetadataUniversalIdentifier: {
@@ -122,6 +141,11 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
                     ...existingCreateFieldAction.universalFlatFieldMetadatas,
                     ...morphOrRelationUniversalFlatFieldMetadatas,
                   ],
+                  fieldIdByUniversalIdentifier:
+                    mergeFieldIdByUniversalIdentifier(
+                      existingCreateFieldAction.fieldIdByUniversalIdentifier,
+                      createFieldAction.fieldIdByUniversalIdentifier,
+                    ),
                 },
               },
             };
@@ -137,6 +161,11 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
                     ...existingCreateObjectAction.universalFlatFieldMetadatas,
                     ...otherUniversalFlatFieldMetadatas,
                   ],
+                  fieldIdByUniversalIdentifier:
+                    mergeFieldIdByUniversalIdentifier(
+                      existingCreateObjectAction.fieldIdByUniversalIdentifier,
+                      createFieldAction.fieldIdByUniversalIdentifier,
+                    ),
                 },
               },
               createdFieldActionByObjectMetadataUniversalIdentifier: {
@@ -159,6 +188,10 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
                   ...existingCreateObjectAction.universalFlatFieldMetadatas,
                   ...otherUniversalFlatFieldMetadatas,
                 ],
+                fieldIdByUniversalIdentifier: mergeFieldIdByUniversalIdentifier(
+                  existingCreateObjectAction.fieldIdByUniversalIdentifier,
+                  createFieldAction.fieldIdByUniversalIdentifier,
+                ),
               },
             },
             createdFieldActionByObjectMetadataUniversalIdentifier,
@@ -175,6 +208,10 @@ export const aggregateOrchestratorActionsReportCreateObjectAndCreateFieldActions
                   ...existingCreateFieldAction.universalFlatFieldMetadatas,
                   ...createFieldAction.universalFlatFieldMetadatas,
                 ],
+                fieldIdByUniversalIdentifier: mergeFieldIdByUniversalIdentifier(
+                  existingCreateFieldAction.fieldIdByUniversalIdentifier,
+                  createFieldAction.fieldIdByUniversalIdentifier,
+                ),
               },
             },
             createdObjectActionByObjectMetadataUniversalIdentifier,
