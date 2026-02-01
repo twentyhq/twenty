@@ -10,6 +10,7 @@ import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-g
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
       ViewFieldEntity,
       ViewFilterEntity,
       ViewGroupEntity,
+      ViewSortEntity,
       ViewFilterGroupEntity,
     ]),
   ],

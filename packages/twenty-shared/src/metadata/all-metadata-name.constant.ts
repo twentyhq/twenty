@@ -4,6 +4,7 @@ export const ALL_METADATA_NAME = {
   view: 'view',
   viewField: 'viewField',
   viewGroup: 'viewGroup',
+  viewSort: 'viewSort',
   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup',
   viewFilterGroup: 'viewFilterGroup',

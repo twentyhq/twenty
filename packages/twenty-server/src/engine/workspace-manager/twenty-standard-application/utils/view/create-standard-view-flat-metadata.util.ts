@@ -117,6 +117,7 @@ export const createStandardViewFlatMetadata = <
     viewFilterIds: [],
     viewGroupIds: [],
     viewFilterGroupIds: [],
+    viewSortIds: [],
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

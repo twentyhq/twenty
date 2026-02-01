@@ -16,6 +16,8 @@ import { UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
+import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
+import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
 
 @Resolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -41,50 +43,71 @@ export class ViewSortResolver {
   @UseGuards(NoPermissionGuard)
   async getCoreViewSort(
     @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO | null> {
-    return this.viewSortService.findById(id, workspace.id);
+    return this.viewSortService.findById(id, workspaceId);
   }
 
   @Mutation(() => ViewSortDTO)
   @UseGuards(CreateViewSortPermissionGuard)
   async createCoreViewSort(
-    @Args('input') input: CreateViewSortInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') createViewSortInput: CreateViewSortInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return this.viewSortService.create({
-      ...input,
-      workspaceId: workspace.id,
+    return this.viewSortService.createOne({
+      createViewSortInput,
+      workspaceId: workspaceId,
+    });
+  }
+
+  @Mutation(() => ViewSortDTO)
+  @UseGuards(CreateViewSortPermissionGuard)
+  async createManyCoreViewSorts(
+    @Args('inputs', { type: () => [CreateViewSortInput] })
+    createViewSortInputs: CreateViewSortInput[],
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewSortDTO[]> {
+    return this.viewSortService.createMany({
+      createViewSortInputs,
+      workspaceId,
     });
   }
 
   @Mutation(() => ViewSortDTO)
   @UseGuards(UpdateViewSortPermissionGuard)
   async updateCoreViewSort(
-    @Args('id', { type: () => String }) id: string,
-    @Args('input') input: UpdateViewSortInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') updateViewSortInput: UpdateViewSortInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return this.viewSortService.update(id, workspace.id, input);
+    return this.viewSortService.updateOne({
+      updateViewSortInput,
+      workspaceId,
+    });
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ViewSortDTO)
   @UseGuards(DeleteViewSortPermissionGuard)
   async deleteCoreViewSort(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input') deleteViewSortInput: DeleteViewSortInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    const deletedViewSort = await this.viewSortService.delete(id, workspace.id);
+    const deletedViewSort = await this.viewSortService.deleteOne({
+      deleteViewSortInput,
+      workspaceId,
+    });
 
     return isDefined(deletedViewSort);
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ViewSortDTO)
   @UseGuards(DestroyViewSortPermissionGuard)
   async destroyCoreViewSort(
-    @Args('id', { type: () => String }) id: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<boolean> {
-    return this.viewSortService.destroy(id, workspace.id);
+    @Args('input') destroyViewSortInput: DestroyViewSortInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<ViewSortDTO> {
+    return this.viewSortService.destroyOne({
+      destroyViewSortInput,
+      workspaceId,
+    });
   }
 }

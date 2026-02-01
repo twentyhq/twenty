@@ -21,6 +21,7 @@ import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-module
 import { FLAT_VIEW_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-group/constants/flat-view-group-editable-properties.constant';
 import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view/constants/flat-view-editable-properties.constant';
 import { FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/logic-function/constants/flat-logic-function-editable-properties.constant';
+import { FLAT_VIEW_SORT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-sort/constants/flat-view-sort-editable-properties.constant';
 
 type OneFlatEntityConfiguration<T extends AllMetadataName> = {
   propertiesToCompare: (keyof MetadataFlatEntity<T>)[];
@@ -61,6 +62,10 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   },
   viewGroup: {
     propertiesToCompare: [...FLAT_VIEW_GROUP_EDITABLE_PROPERTIES, 'deletedAt'],
+    propertiesToStringify: [],
+  },
+  viewSort: {
+    propertiesToCompare: [...FLAT_VIEW_SORT_EDITABLE_PROPERTIES, 'deletedAt'],
     propertiesToStringify: [],
   },
   index: {

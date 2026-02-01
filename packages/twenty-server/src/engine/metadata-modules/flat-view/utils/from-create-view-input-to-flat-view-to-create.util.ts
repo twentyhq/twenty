@@ -68,6 +68,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     viewFieldIds: [],
     viewFilterIds: [],
     viewGroupIds: [],
+    viewSortIds: [],
     viewFilterGroupIds: [],
     applicationId: workspaceCustomApplicationId,
   };

@@ -88,6 +88,8 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
 
   const flatViewFilterGroupMaps = createEmptyFlatEntityMaps();
 
+  const flatViewSortMaps = createEmptyFlatEntityMaps();
+
   const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps,

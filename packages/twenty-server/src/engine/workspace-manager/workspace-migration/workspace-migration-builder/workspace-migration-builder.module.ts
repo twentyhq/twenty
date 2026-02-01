@@ -25,6 +25,7 @@ import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/wo
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/workspace-migration-builder-validators.module';
+import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
 
 @Module({
   imports: [FeatureFlagModule, WorkspaceMigrationBuilderValidatorsModule],
@@ -36,6 +37,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationViewFilterActionsBuilderService,
     WorkspaceMigrationViewFilterGroupActionsBuilderService,
     WorkspaceMigrationViewGroupActionsBuilderService,
+    WorkspaceMigrationViewSortActionsBuilderService,
     WorkspaceMigrationIndexActionsBuilderService,
     WorkspaceMigrationLogicFunctionActionsBuilderService,
     WorkspaceMigrationFieldActionsBuilderService,
@@ -61,6 +63,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationViewFilterActionsBuilderService,
     WorkspaceMigrationViewFilterGroupActionsBuilderService,
     WorkspaceMigrationViewGroupActionsBuilderService,
+    WorkspaceMigrationViewSortActionsBuilderService,
     WorkspaceMigrationFieldActionsBuilderService,
     WorkspaceMigrationLogicFunctionActionsBuilderService,
     WorkspaceMigrationRoleActionsBuilderService,

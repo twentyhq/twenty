@@ -20,6 +20,7 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 
 @Injectable()
 @WorkspaceCache('flatViewMaps')
@@ -41,6 +42,8 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
     private readonly viewGroupRepository: Repository<ViewGroupEntity>,
     @InjectRepository(ViewFilterGroupEntity)
     private readonly viewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
+    @InjectRepository(ViewSortEntity)
+    private readonly viewSortRepository: Repository<ViewSortEntity>,
   ) {
     super();
   }
@@ -55,6 +58,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
       viewFilters,
       viewGroups,
       viewFilterGroups,
+      viewSorts,
     ] = await Promise.all([
       this.viewRepository.find({
         where: { workspaceId },
@@ -95,6 +99,11 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
         select: ['id', 'universalIdentifier', 'viewId'],
         withDeleted: true,
       }),
+      this.viewSortRepository.find({
+        where: { workspaceId },
+        select: ['id', 'universalIdentifier', 'viewId'],
+        withDeleted: true,
+      }),
     ]);
 
     const [
@@ -102,6 +111,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
       viewFiltersByViewId,
       viewGroupsByViewId,
       viewFilterGroupsByViewId,
+      viewSortsByViewId,
     ] = (
       [
         {
@@ -118,6 +128,10 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
         },
         {
           entities: viewFilterGroups,
+          foreignKey: 'viewId',
+        },
+        {
+          entities: viewSorts,
           foreignKey: 'viewId',
         },
       ] as const
@@ -140,6 +154,7 @@ export class WorkspaceFlatViewMapCacheService extends WorkspaceCacheProvider<Fla
           viewFilters: viewFiltersByViewId.get(viewEntity.id) || [],
           viewGroups: viewGroupsByViewId.get(viewEntity.id) || [],
           viewFilterGroups: viewFilterGroupsByViewId.get(viewEntity.id) || [],
+          viewSorts: viewSortsByViewId.get(viewEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
         objectMetadataIdToUniversalIdentifierMap,

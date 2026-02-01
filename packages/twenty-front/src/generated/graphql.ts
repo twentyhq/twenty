@@ -205,6 +205,7 @@ export enum AllMetadataName {
   viewFilter = 'viewFilter',
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
+  viewSort = 'viewSort',
   webhook = 'webhook'
 }
 
@@ -4629,10 +4630,14 @@ export type UpdateViewInput = {
 };
 
 export type UpdateViewSortInput = {
+  /** The id of the view sort to update */
+  id: Scalars['UUID'];
+  /** The view sort to update */
+  update: UpdateViewSortInputUpdates;
+};
+
+export type UpdateViewSortInputUpdates = {
   direction?: InputMaybe<ViewSortDirection>;
-  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  viewId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateWebhookInput = {
