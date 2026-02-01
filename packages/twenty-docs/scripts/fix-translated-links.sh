@@ -26,6 +26,9 @@ for lang_dir in "$DOCS_DIR"/*/ ; do
 
   echo "📝 Processing $lang_code documentation..."
 
+  # Use different sed syntax for macOS compatibility if needed, but standard -i works on minimal linux
+  # using -i.bak is safer for BSD/Mac compatibility too
+
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|href=\"/user-guide/|href=\"/l/$lang_code/user-guide/|g" {} \;
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
@@ -40,6 +43,7 @@ for lang_dir in "$DOCS_DIR"/*/ ; do
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|](/twenty-ui/|](/l/$lang_code/twenty-ui/|g" {} \;
 
+  # Fix absolute links to docs.twenty.com
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
     "s|https://docs\.twenty\.com/user-guide/|https://docs.twenty.com/l/$lang_code/user-guide/|g" {} \;
   find "$lang_dir" -name "*.mdx" -type f -exec sed -i.bak \
@@ -60,4 +64,3 @@ for lang_dir in "$DOCS_DIR"/*/ ; do
 done
 
 echo "🎉 All translated links have been fixed!"
-
