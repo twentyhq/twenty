@@ -6,7 +6,7 @@ import { ImapFlow } from 'imapflow';
 export class ImapService {
   private readonly logger = new Logger(ImapService.name);
 
-  async connectAndFetch(config: { host: string; port: number; auth: any }) {
+  async connectAndFetch(config: { host: string; port: number; auth: any }): Promise<any[]> {
     const client = new ImapFlow({
       host: config.host,
       port: config.port,
@@ -19,20 +19,31 @@ export class ImapService {
         await client.connect();
         this.logger.log('IMAP Connected');
 
-        // Critical: Ensure lock is released even if fetch fails
         let lock = await client.getMailboxLock('INBOX');
         try {
-            // Logic: Fetch latest 10 emails
-            // FIX: Use .exists property directly (no .status() method on mailbox obj)
-            const total = client.mailbox.exists || 0;
-            if (total === 0) return [];
+            // FIX: Use UIDs to prevent race conditions (volatility of sequence numbers)
+            // 1. Fetch all UIDs (lightweight)
+            const uidFetch = client.fetch('1:*', { uid: true, envelope: false, bodyStructure: false });
+            const uids: number[] = [];
             
-            const fetchStart = Math.max(1, total - 9);
+            for await (const msg of uidFetch) {
+                uids.push(msg.uid);
+            }
+
+            if (uids.length === 0) return [];
+
+            // 2. Sort and get last 10
+            uids.sort((a, b) => a - b);
+            const targets = uids.slice(-10);
+            
+            // 3. Fetch by UID (stable reference)
+            const range = targets.join(',');
             const messages = [];
             
-            // Fetch range start:* (last 10)
-            for await (let message of client.fetch(`${fetchStart}:*`, { envelope: true })) {
-                messages.push(message.envelope);
+            if (range) {
+                for await (let message of client.fetch(range, { uid: true, envelope: true })) {
+                    messages.push(message);
+                }
             }
             return messages;
         } finally {
@@ -40,15 +51,9 @@ export class ImapService {
         }
     } catch (error) {
         this.logger.error('IMAP Operation Failed', error);
-        throw error; 
+        throw error;
     } finally {
-        // Bulletproof: Safe logout that doesn't mask errors
-        try {
-             await client.logout();
-        } catch (e) {
-             // If logout fails (e.g. connection lost), we suppress it to not mask the original error
-             this.logger.warn('Logout failed or connection already closed');
-        }
+        try { await client.logout(); } catch (e) { /* ignore */ }
     }
   }
 }
