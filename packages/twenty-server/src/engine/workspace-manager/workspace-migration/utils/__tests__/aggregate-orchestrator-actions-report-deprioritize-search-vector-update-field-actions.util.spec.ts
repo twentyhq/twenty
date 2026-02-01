@@ -8,7 +8,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldActions } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report-deprioritize-search-vector-update-field-actions.util';
-import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { type UniversalUpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 
 describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldActions', () => {
   it('should move searchVector update actions to the end of the update list', () => {
@@ -28,7 +28,7 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
                 to: 'Updated Search Vector',
               },
             ],
-          } satisfies UpdateFieldAction,
+          } satisfies UniversalUpdateFieldAction,
           {
             type: 'update',
             metadataName: 'fieldMetadata',
@@ -40,7 +40,7 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
                 to: 'Updated First Name',
               },
             ],
-          } satisfies UpdateFieldAction,
+          } satisfies UniversalUpdateFieldAction,
           {
             type: 'update',
             metadataName: 'fieldMetadata',
@@ -52,7 +52,7 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
                 to: 'Updated Last Name',
               },
             ],
-          } satisfies UpdateFieldAction,
+          } satisfies UniversalUpdateFieldAction,
         ],
         delete: [],
       },
@@ -98,7 +98,7 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
       );
 
     const updateFieldActions = result.fieldMetadata
-      .update as UpdateFieldAction[];
+      .update as UniversalUpdateFieldAction[];
 
     const actualUniversalIdentifiers = updateFieldActions.map(
       (action) => action.universalIdentifier,

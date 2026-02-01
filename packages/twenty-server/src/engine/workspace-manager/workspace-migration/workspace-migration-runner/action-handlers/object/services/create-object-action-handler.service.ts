@@ -11,8 +11,8 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
-  CreateObjectAction,
   FlatCreateObjectAction,
+  UniversalCreateObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import { fromUniversalFlatFieldMetadataToFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-flat-field-metadata.util';
 import { fromUniversalFlatObjectMetadataToFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/utils/from-universal-flat-object-metadata-to-flat-object-metadata.util';
@@ -40,7 +40,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateObjectAction>,
   ): Promise<FlatCreateObjectAction> {
     const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
 
