@@ -8,6 +8,7 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import {
@@ -17,7 +18,6 @@ import {
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { type UniversalAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -30,7 +30,7 @@ export const computeFlatIndexFieldColumnNames = ({
   flatFieldMetadataMaps,
 }: {
   flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
-  flatFieldMetadataMaps: UniversalAllFlatEntityMaps['flatFieldMetadataMaps'];
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
 }): string[] => {
   return flatIndexFieldMetadatas.flatMap(({ fieldMetadataId }) => {
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -148,7 +148,7 @@ export const createIndexInWorkspaceSchema = async ({
 }: {
   flatIndexMetadata: FlatIndexMetadata;
   universalFlatObjectMetadata: UniversalFlatObjectMetadata;
-  universalFlatFieldMetadataMaps: UniversalAllFlatEntityMaps['flatFieldMetadataMaps'];
+  universalFlatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
   workspaceSchemaManagerService: WorkspaceSchemaManagerService;
   queryRunner: QueryRunner;
   workspaceId: string;

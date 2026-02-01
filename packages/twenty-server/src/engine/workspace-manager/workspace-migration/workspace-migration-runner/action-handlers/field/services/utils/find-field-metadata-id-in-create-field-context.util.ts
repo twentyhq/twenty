@@ -1,6 +1,5 @@
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { isDefined } from 'twenty-shared/utils';
-
-import { type UniversalAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-all-flat-entity-maps.type';
 
 export const findFieldMetadataIdInCreateFieldContext = ({
   universalIdentifier,
@@ -9,7 +8,7 @@ export const findFieldMetadataIdInCreateFieldContext = ({
 }: {
   universalIdentifier: string;
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
-  flatFieldMetadataMaps: UniversalAllFlatEntityMaps['flatFieldMetadataMaps'];
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
 }): string | null => {
   const generatedId =
     allFieldIdToBeCreatedInActionByUniversalIdentifierMap.get(

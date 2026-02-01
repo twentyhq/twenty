@@ -57,12 +57,12 @@ import {
   type UpdateCommandMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
 import {
-  type CreateFieldAction,
-  type DeleteFieldAction,
   type FlatCreateFieldAction,
   type FlatDeleteFieldAction,
   type FlatUpdateFieldAction,
-  type UpdateFieldAction,
+  type UniversalCreateFieldAction,
+  type UniversalDeleteFieldAction,
+  type UniversalUpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import {
   type CreateFrontComponentAction,
@@ -89,12 +89,12 @@ import {
   type UpdateNavigationMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import {
-  type CreateObjectAction,
-  type DeleteObjectAction,
   type FlatCreateObjectAction,
   type FlatDeleteObjectAction,
   type FlatUpdateObjectAction,
-  type UpdateObjectAction,
+  type UniversalCreateObjectAction,
+  type UniversalDeleteObjectAction,
+  type UniversalUpdateObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import {
   type CreatePageLayoutTabAction,
@@ -184,9 +184,9 @@ import {
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
     universalActions: {
-      create: CreateFieldAction;
-      update: UpdateFieldAction;
-      delete: DeleteFieldAction;
+      create: UniversalCreateFieldAction;
+      update: UniversalUpdateFieldAction;
+      delete: UniversalDeleteFieldAction;
     };
     flatActions: {
       create: FlatCreateFieldAction;
@@ -199,15 +199,12 @@ export type AllFlatEntityTypesByMetadataName = {
       'fieldMetadata'
     >;
     entity: MetadataEntity<'fieldMetadata'>;
-    universalMigrated: {
-      runner: true;
-    };
   };
   objectMetadata: {
     universalActions: {
-      create: CreateObjectAction;
-      update: UpdateObjectAction;
-      delete: DeleteObjectAction;
+      create: UniversalCreateObjectAction;
+      update: UniversalUpdateObjectAction;
+      delete: UniversalDeleteObjectAction;
     };
     flatActions: {
       create: FlatCreateObjectAction;
@@ -217,9 +214,6 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatObjectMetadata;
     universalFlatEntity: UniversalFlatObjectMetadata;
     entity: MetadataEntity<'objectMetadata'>;
-    universalMigrated: {
-      runner: true;
-    };
   };
   view: {
     universalActions: {
