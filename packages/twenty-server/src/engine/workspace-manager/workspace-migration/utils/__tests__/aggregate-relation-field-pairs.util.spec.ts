@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { getUniversalFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-universal-flat-field-metadata.mock';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { aggregateRelationFieldPairs } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-relation-field-pairs.util';
@@ -21,8 +21,9 @@ describe('aggregateRelationFieldPairs', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: targetTaskFieldId,
+                objectMetadataId: 'attachment-object-metadata-id',
                 objectMetadataUniversalIdentifier: attachmentObjectId,
                 type: FieldMetadataType.RELATION,
                 name: 'targetTask',
@@ -39,8 +40,9 @@ describe('aggregateRelationFieldPairs', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: attachmentsFieldId,
+                objectMetadataId: 'task-object-metadata-id',
                 objectMetadataUniversalIdentifier: taskObjectId,
                 type: FieldMetadataType.RELATION,
                 name: 'attachments',
@@ -91,8 +93,9 @@ describe('aggregateRelationFieldPairs', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: fieldUniversalId,
+                objectMetadataId: 'some-object-metadata-id',
                 objectMetadataUniversalIdentifier: objectUniversalId,
                 type: FieldMetadataType.TEXT,
                 name: 'standaloneField',
@@ -135,8 +138,9 @@ describe('aggregateRelationFieldPairs', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: relationFieldId,
+                objectMetadataId: 'some-object-metadata-id',
                 objectMetadataUniversalIdentifier: objectUniversalId,
                 type: FieldMetadataType.RELATION,
                 name: 'relationToExisting',
@@ -181,8 +185,9 @@ describe('aggregateRelationFieldPairs', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: pair1FieldA,
+                objectMetadataId: 'object-1-metadata-id',
                 objectMetadataUniversalIdentifier: 'object-1',
                 type: FieldMetadataType.RELATION,
                 name: 'pair1FieldA',
@@ -196,8 +201,9 @@ describe('aggregateRelationFieldPairs', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: pair1FieldB,
+                objectMetadataId: 'object-2-metadata-id',
                 objectMetadataUniversalIdentifier: 'object-2',
                 type: FieldMetadataType.RELATION,
                 name: 'pair1FieldB',
@@ -211,8 +217,9 @@ describe('aggregateRelationFieldPairs', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: pair2FieldA,
+                objectMetadataId: 'object-3-metadata-id',
                 objectMetadataUniversalIdentifier: 'object-3',
                 type: FieldMetadataType.RELATION,
                 name: 'pair2FieldA',
@@ -226,8 +233,9 @@ describe('aggregateRelationFieldPairs', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: pair2FieldB,
+                objectMetadataId: 'object-4-metadata-id',
                 objectMetadataUniversalIdentifier: 'object-4',
                 type: FieldMetadataType.RELATION,
                 name: 'pair2FieldB',
