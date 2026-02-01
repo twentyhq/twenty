@@ -25,7 +25,7 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatSkillMaps } from 'src/engine/metadata-modules/flat-skill/types/flat-skill-maps.type';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
-import { FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
+import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';

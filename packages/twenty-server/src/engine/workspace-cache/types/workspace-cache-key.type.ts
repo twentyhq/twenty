@@ -64,7 +64,8 @@ export type AdditionalCacheDataMaps = {
   applicationVariableMaps: ApplicationVariableCacheMaps;
 };
 
-export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> & AdditionalCacheDataMaps;
+export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &
+  AdditionalCacheDataMaps;
 
 export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
 
