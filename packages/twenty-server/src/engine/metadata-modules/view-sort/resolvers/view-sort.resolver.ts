@@ -60,7 +60,7 @@ export class ViewSortResolver {
     });
   }
 
-  @Mutation(() => ViewSortDTO)
+  @Mutation(() => [ViewSortDTO])
   @UseGuards(CreateViewSortPermissionGuard)
   async createManyCoreViewSorts(
     @Args('inputs', { type: () => [CreateViewSortInput] })
@@ -85,7 +85,7 @@ export class ViewSortResolver {
     });
   }
 
-  @Mutation(() => ViewSortDTO)
+  @Mutation(() => Boolean)
   @UseGuards(DeleteViewSortPermissionGuard)
   async deleteCoreViewSort(
     @Args('input') deleteViewSortInput: DeleteViewSortInput,
@@ -99,15 +99,17 @@ export class ViewSortResolver {
     return isDefined(deletedViewSort);
   }
 
-  @Mutation(() => ViewSortDTO)
+  @Mutation(() => Boolean)
   @UseGuards(DestroyViewSortPermissionGuard)
   async destroyCoreViewSort(
     @Args('input') destroyViewSortInput: DestroyViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<ViewSortDTO> {
-    return this.viewSortService.destroyOne({
+  ): Promise<boolean> {
+    const destroyedViewSort = this.viewSortService.destroyOne({
       destroyViewSortInput,
       workspaceId,
     });
+
+    return isDefined(destroyedViewSort);
   }
 }

@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const DELETE_CORE_VIEW_SORT = gql`
-  mutation DeleteCoreViewSort($id: String!) {
-    deleteCoreViewSort(id: $id)
+  mutation DeleteCoreViewSort($input: DeleteViewSortInput!) {
+    deleteCoreViewSort(input: $input)
   }
 `;

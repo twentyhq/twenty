@@ -1221,6 +1221,11 @@ export type DeleteViewGroupInput = {
   id: Scalars['UUID'];
 };
 
+export type DeleteViewSortInput = {
+  /** The id of the view sort to delete. */
+  id: Scalars['UUID'];
+};
+
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
   stepId: Scalars['String'];
@@ -1249,6 +1254,11 @@ export type DestroyViewFilterInput = {
 
 export type DestroyViewGroupInput = {
   /** The id of the view group to destroy. */
+  id: Scalars['UUID'];
+};
+
+export type DestroyViewSortInput = {
+  /** The id of the view sort to destroy. */
   id: Scalars['UUID'];
 };
 
@@ -2014,6 +2024,7 @@ export type Mutation = {
   createFrontComponent: FrontComponent;
   createManyCoreViewFields: Array<CoreViewField>;
   createManyCoreViewGroups: Array<CoreViewGroup>;
+  createManyCoreViewSorts: Array<CoreViewSort>;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
   createOneAgent: Agent;
@@ -2300,6 +2311,11 @@ export type MutationCreateManyCoreViewGroupsArgs = {
 };
 
 
+export type MutationCreateManyCoreViewSortsArgs = {
+  inputs: Array<CreateViewSortInput>;
+};
+
+
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
 };
@@ -2425,7 +2441,7 @@ export type MutationDeleteCoreViewGroupArgs = {
 
 
 export type MutationDeleteCoreViewSortArgs = {
-  id: Scalars['String'];
+  input: DeleteViewSortInput;
 };
 
 
@@ -2546,7 +2562,7 @@ export type MutationDestroyCoreViewGroupArgs = {
 
 
 export type MutationDestroyCoreViewSortArgs = {
-  id: Scalars['String'];
+  input: DestroyViewSortInput;
 };
 
 
@@ -2821,7 +2837,6 @@ export type MutationUpdateCoreViewGroupArgs = {
 
 
 export type MutationUpdateCoreViewSortArgs = {
-  id: Scalars['String'];
   input: UpdateViewSortInput;
 };
 
@@ -5354,7 +5369,7 @@ export type DeleteCoreViewGroupMutationVariables = Exact<{
 export type DeleteCoreViewGroupMutation = { __typename?: 'Mutation', deleteCoreViewGroup: { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type DeleteCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
+  input: DeleteViewSortInput;
 }>;
 
 
@@ -5396,7 +5411,7 @@ export type DestroyCoreViewGroupMutationVariables = Exact<{
 export type DestroyCoreViewGroupMutation = { __typename?: 'Mutation', destroyCoreViewGroup: { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type DestroyCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
+  input: DestroyViewSortInput;
 }>;
 
 
@@ -5440,7 +5455,6 @@ export type UpdateCoreViewGroupMutationVariables = Exact<{
 export type UpdateCoreViewGroupMutation = { __typename?: 'Mutation', updateCoreViewGroup: { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type UpdateCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
   input: UpdateViewSortInput;
 }>;
 
@@ -6399,8 +6413,8 @@ export type DeleteCoreViewGroupMutationHookResult = ReturnType<typeof useDeleteC
 export type DeleteCoreViewGroupMutationResult = Apollo.MutationResult<DeleteCoreViewGroupMutation>;
 export type DeleteCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewGroupMutation, DeleteCoreViewGroupMutationVariables>;
 export const DeleteCoreViewSortDocument = gql`
-    mutation DeleteCoreViewSort($id: String!) {
-  deleteCoreViewSort(id: $id)
+    mutation DeleteCoreViewSort($input: DeleteViewSortInput!) {
+  deleteCoreViewSort(input: $input)
 }
     `;
 export type DeleteCoreViewSortMutationFn = Apollo.MutationFunction<DeleteCoreViewSortMutation, DeleteCoreViewSortMutationVariables>;
@@ -6418,7 +6432,7 @@ export type DeleteCoreViewSortMutationFn = Apollo.MutationFunction<DeleteCoreVie
  * @example
  * const [deleteCoreViewSortMutation, { data, loading, error }] = useDeleteCoreViewSortMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -6591,8 +6605,8 @@ export type DestroyCoreViewGroupMutationHookResult = ReturnType<typeof useDestro
 export type DestroyCoreViewGroupMutationResult = Apollo.MutationResult<DestroyCoreViewGroupMutation>;
 export type DestroyCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewGroupMutation, DestroyCoreViewGroupMutationVariables>;
 export const DestroyCoreViewSortDocument = gql`
-    mutation DestroyCoreViewSort($id: String!) {
-  destroyCoreViewSort(id: $id)
+    mutation DestroyCoreViewSort($input: DestroyViewSortInput!) {
+  destroyCoreViewSort(input: $input)
 }
     `;
 export type DestroyCoreViewSortMutationFn = Apollo.MutationFunction<DestroyCoreViewSortMutation, DestroyCoreViewSortMutationVariables>;
@@ -6610,7 +6624,7 @@ export type DestroyCoreViewSortMutationFn = Apollo.MutationFunction<DestroyCoreV
  * @example
  * const [destroyCoreViewSortMutation, { data, loading, error }] = useDestroyCoreViewSortMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -6789,8 +6803,8 @@ export type UpdateCoreViewGroupMutationHookResult = ReturnType<typeof useUpdateC
 export type UpdateCoreViewGroupMutationResult = Apollo.MutationResult<UpdateCoreViewGroupMutation>;
 export type UpdateCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewGroupMutation, UpdateCoreViewGroupMutationVariables>;
 export const UpdateCoreViewSortDocument = gql`
-    mutation UpdateCoreViewSort($id: String!, $input: UpdateViewSortInput!) {
-  updateCoreViewSort(id: $id, input: $input) {
+    mutation UpdateCoreViewSort($input: UpdateViewSortInput!) {
+  updateCoreViewSort(input: $input) {
     ...ViewSortFragment
   }
 }
@@ -6810,7 +6824,6 @@ export type UpdateCoreViewSortMutationFn = Apollo.MutationFunction<UpdateCoreVie
  * @example
  * const [updateCoreViewSortMutation, { data, loading, error }] = useUpdateCoreViewSortMutation({
  *   variables: {
- *      id: // value for 'id'
  *      input: // value for 'input'
  *   },
  * });
