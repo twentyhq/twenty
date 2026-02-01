@@ -3,8 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { FlatDeleteRoleTargetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/types/workspace-migration-role-target-action.type';
-import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  FlatDeleteRoleTargetAction,
+  UniversalDeleteRoleTargetAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/types/workspace-migration-role-target-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteRoleTargetActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -13,6 +19,12 @@ export class DeleteRoleTargetActionHandlerService extends WorkspaceMigrationRunn
 ) {
   constructor() {
     super();
+  }
+
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteRoleTargetAction>,
+  ): Promise<FlatDeleteRoleTargetAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
   }
 
   async executeForMetadata(

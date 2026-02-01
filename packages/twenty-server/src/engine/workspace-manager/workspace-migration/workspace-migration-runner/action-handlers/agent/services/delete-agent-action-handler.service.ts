@@ -3,8 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { FlatDeleteAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
-import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  FlatDeleteAgentAction,
+  UniversalDeleteAgentAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteAgentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -13,6 +19,12 @@ export class DeleteAgentActionHandlerService extends WorkspaceMigrationRunnerAct
 ) {
   constructor() {
     super();
+  }
+
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteAgentAction>,
+  ): Promise<FlatDeleteAgentAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
   }
 
   async executeForMetadata(

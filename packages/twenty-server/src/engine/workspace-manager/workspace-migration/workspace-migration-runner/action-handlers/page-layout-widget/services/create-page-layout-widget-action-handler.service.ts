@@ -4,7 +4,10 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { FlatCreatePageLayoutWidgetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
-import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -13,6 +16,12 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
 ) {
   constructor() {
     super();
+  }
+
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatCreatePageLayoutWidgetAction>,
+  ): Promise<FlatCreatePageLayoutWidgetAction> {
+    return context.action;
   }
 
   async executeForMetadata(

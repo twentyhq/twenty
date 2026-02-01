@@ -3,8 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import { FlatDeleteWebhookAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
-import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  FlatDeleteWebhookAction,
+  UniversalDeleteWebhookAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteWebhookActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -13,6 +19,12 @@ export class DeleteWebhookActionHandlerService extends WorkspaceMigrationRunnerA
 ) {
   constructor() {
     super();
+  }
+
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteWebhookAction>,
+  ): Promise<FlatDeleteWebhookAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
   }
 
   async executeForMetadata(

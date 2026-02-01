@@ -8,8 +8,14 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
-import { FlatDeleteLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
-import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  FlatDeleteLogicFunctionAction,
+  UniversalDeleteLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -18,6 +24,12 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
 ) {
   constructor(private readonly fileStorageService: FileStorageService) {
     super();
+  }
+
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteLogicFunctionAction>,
+  ): Promise<FlatDeleteLogicFunctionAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
   }
 
   async executeForMetadata(

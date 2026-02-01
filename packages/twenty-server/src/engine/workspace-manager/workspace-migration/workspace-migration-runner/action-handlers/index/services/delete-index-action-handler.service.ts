@@ -5,12 +5,18 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type FlatDeleteIndexAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import {
+  type FlatDeleteIndexAction,
+  type UniversalDeleteIndexAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import {
   deleteIndexMetadata,
   dropIndexFromWorkspaceSchema,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/index-action-handler.utils';
-import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  type WorkspaceMigrationActionRunnerArgs,
+  type WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -21,6 +27,12 @@ export class DeleteIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super();
+  }
+
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteIndexAction>,
+  ): Promise<FlatDeleteIndexAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
   }
 
   async executeForMetadata(
