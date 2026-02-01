@@ -15,7 +15,6 @@
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
-    "imapflow": "^1.0.151",
     "@ai-sdk/anthropic": "^2.0.17",
     "@ai-sdk/openai": "^2.0.30",
     "@ai-sdk/provider-utils": "^3.0.9",
@@ -118,6 +117,7 @@
     "graphql-upload": "16.0.2",
     "graphql-yoga": "4.0.5",
     "html-to-text": "^9.0.5",
+    "imapflow": "^1.0.151",
     "ioredis": "5.6.0",
     "jsdom": "^26.1.0",
     "json-schema": "0.4.0",
