@@ -45,7 +45,9 @@ export class ImapService {
             const messages = [];
             
             if (range) {
-                for await (let message of client.fetch(range, { uid: true, envelope: true })) {
+                // FIX: ImapFlow.fetch(range, query, options)
+                // 'uid: true' must be in the 3rd argument (options), unlike 'envelope' (query)
+                for await (let message of client.fetch(range, { envelope: true }, { uid: true })) {
                     messages.push(message);
                 }
             }
