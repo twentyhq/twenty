@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -136,8 +136,8 @@ describe('Generate Column Definitions', () => {
         objectMetadataId: mockObjectId,
         type: FieldMetadataType.RELATION,
         name: 'company',
-        universalSettings: {
-          relationType: 'MANY_TO_ONE' as any,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
           joinColumnName: 'companyId',
         },
       });
