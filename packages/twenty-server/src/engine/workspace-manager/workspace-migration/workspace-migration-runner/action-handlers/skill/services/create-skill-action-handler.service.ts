@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
-import { CreateSkillAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
+import { FlatCreateSkillAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CreateSkillActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateSkillAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateSkillAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { flatEntity } = flatAction;
@@ -31,7 +31,7 @@ export class CreateSkillActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<CreateSkillAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateSkillAction>,
   ): Promise<void> {
     return;
   }

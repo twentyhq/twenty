@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { CreateViewAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
+import { FlatCreateViewAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateViewAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateViewAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { flatEntity } = flatAction;
@@ -31,7 +31,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<CreateViewAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateViewAction>,
   ): Promise<void> {
     return;
   }

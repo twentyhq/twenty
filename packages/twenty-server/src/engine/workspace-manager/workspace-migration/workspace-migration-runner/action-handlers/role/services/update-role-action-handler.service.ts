@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { UpdateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
+import { FlatUpdateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
@@ -13,7 +13,7 @@ export class UpdateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
   'role',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<UpdateRoleAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateRoleAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { entityId } = flatAction;
@@ -28,7 +28,7 @@ export class UpdateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<UpdateRoleAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateRoleAction>,
   ): Promise<void> {
     return;
   }

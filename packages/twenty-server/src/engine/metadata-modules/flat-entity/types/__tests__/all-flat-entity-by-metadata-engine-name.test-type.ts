@@ -7,7 +7,8 @@ import { type WorkspaceMigrationActionType } from 'src/engine/metadata-modules/f
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-create-workspace-migration-action.type';
+import { type BaseFlatCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-create-workspace-migration-action.type';
+import { type BaseUniversalCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-create-workspace-migration-action.type';
 
 type ExpectedGenericFlatEntityInformation = {
   universalActions: {
@@ -44,11 +45,14 @@ type Assertions = [
   >,
   Expect<
     Equal<
-      BaseCreateWorkspaceMigrationAction<'objectMetadata'>['flatEntity'],
+      BaseUniversalCreateWorkspaceMigrationAction<'objectMetadata'>['flatEntity'],
       UniversalFlatObjectMetadata
     >
   >,
   Expect<
-    Equal<BaseCreateWorkspaceMigrationAction<'view'>['flatEntity'], FlatView>
+    Equal<
+      BaseFlatCreateWorkspaceMigrationAction<'view'>['flatEntity'],
+      FlatView
+    >
   >,
 ];

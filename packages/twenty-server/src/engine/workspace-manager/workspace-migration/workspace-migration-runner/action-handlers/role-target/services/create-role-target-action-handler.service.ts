@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { CreateRoleTargetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/types/workspace-migration-role-target-action.type';
+import { FlatCreateRoleTargetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/types/workspace-migration-role-target-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class CreateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
   'roleTarget',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateRoleTargetAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateRoleTargetAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { flatEntity: roleTarget } = flatAction;
@@ -27,7 +27,7 @@ export class CreateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<CreateRoleTargetAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateRoleTargetAction>,
   ): Promise<void> {
     return;
   }

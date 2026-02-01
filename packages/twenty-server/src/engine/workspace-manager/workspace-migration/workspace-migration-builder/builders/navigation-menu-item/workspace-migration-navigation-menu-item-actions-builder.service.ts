@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { UpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
+import { FlatUpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
@@ -102,7 +102,7 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
 
     const { flatEntityId, flatEntityUpdates } = args;
 
-    const updateNavigationMenuItemAction: UpdateNavigationMenuItemAction = {
+    const updateNavigationMenuItemAction: FlatUpdateNavigationMenuItemAction = {
       type: 'update',
       metadataName: 'navigationMenuItem',
       entityId: flatEntityId,

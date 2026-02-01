@@ -5,7 +5,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type UpdateIndexAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import { type FlatUpdateIndexAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import {
   createIndexInWorkspaceSchema,
   deleteIndexMetadata,
@@ -26,7 +26,7 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<UpdateIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateIndexAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
 
@@ -45,7 +45,7 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerContext<UpdateIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateIndexAction>,
   ): Promise<void> {
     const {
       flatAction,

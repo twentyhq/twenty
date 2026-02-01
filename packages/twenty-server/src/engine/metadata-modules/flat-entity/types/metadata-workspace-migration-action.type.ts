@@ -1,14 +1,10 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
-import { type BaseCreateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-create-workspace-migration-action.type';
-import { type BaseDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-delete-workspace-migration-action.type';
-import { type BaseUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-update-workspace-migration-action.type';
+import { WORKSPACE_MIGRATION_ACTION_TYPE } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/constants/workspace-migration-action-type.constant';
 
 export type WorkspaceMigrationActionType =
-  | BaseCreateWorkspaceMigrationAction<AllMetadataName>['type']
-  | BaseUpdateWorkspaceMigrationAction<AllMetadataName>['type']
-  | BaseDeleteWorkspaceMigrationAction<AllMetadataName>['type'];
+  keyof typeof WORKSPACE_MIGRATION_ACTION_TYPE;
 
 // Universal action types (use universal identifiers)
 export type MetadataUniversalWorkspaceMigrationActionsRecord<

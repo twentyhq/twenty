@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
-import { UpdateViewGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
+import { FlatUpdateViewGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
@@ -13,7 +13,7 @@ export class UpdateViewGroupActionHandlerService extends WorkspaceMigrationRunne
   'viewGroup',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<UpdateViewGroupAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateViewGroupAction>,
   ): Promise<void> {
     const { flatAction, queryRunner } = context;
     const { entityId } = flatAction;
@@ -28,7 +28,7 @@ export class UpdateViewGroupActionHandlerService extends WorkspaceMigrationRunne
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<UpdateViewGroupAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateViewGroupAction>,
   ): Promise<void> {
     return;
   }
