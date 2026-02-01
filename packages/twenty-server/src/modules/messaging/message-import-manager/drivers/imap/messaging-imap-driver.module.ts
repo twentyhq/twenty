@@ -1,5 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -31,6 +32,7 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     FeatureFlagModule,
     WorkspaceDataSourceModule,
     MessageParticipantManagerModule,
+    EventEmitterModule,
   ],
   providers: [
     ImapClientProvider,

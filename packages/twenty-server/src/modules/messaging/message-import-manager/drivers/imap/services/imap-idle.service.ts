@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
 import { ImapFlow } from 'imapflow';
 
 @Injectable()
@@ -21,6 +21,7 @@ export class ImapIdleService implements OnModuleDestroy {
   ): Promise<void> {
     if (this.activeClients.has(accountId)) {
       this.logger.warn(`IDLE already active for account ${accountId}`);
+
       return;
     }
 
@@ -28,6 +29,7 @@ export class ImapIdleService implements OnModuleDestroy {
       // "Enterprise" Safety: Acquire a lock on the mailbox to prevent other commands
       // from changing the selected mailbox on this connection while IDLE is active.
       const lock = await client.getMailboxLock(folderPath);
+
       this.activeLocks.set(accountId, lock);
 
       // Hook into the 'exists' event (New Email)
@@ -61,16 +63,19 @@ export class ImapIdleService implements OnModuleDestroy {
           this.logger.error(`IDLE crashed for ${accountId}: ${err.message}`);
           this.cleanupAccount(accountId);
         });
-
     } catch (error) {
-      this.logger.error(`Failed to start IDLE for ${accountId}: ${error.message}`);
+      this.logger.error(
+        `Failed to start IDLE for ${accountId}: ${error.message}`,
+      );
 
       // Ensure we release lock if startup fails
       const lock = this.activeLocks.get(accountId);
+
       if (lock) {
         lock.release();
         this.activeLocks.delete(accountId);
       }
+
       throw error;
     }
   }
@@ -80,6 +85,7 @@ export class ImapIdleService implements OnModuleDestroy {
    */
   async stopIdle(accountId: string): Promise<void> {
     const client = this.activeClients.get(accountId);
+
     if (!client) return;
 
     try {
@@ -95,10 +101,11 @@ export class ImapIdleService implements OnModuleDestroy {
   private cleanupAccount(accountId: string) {
     // Release Lock
     const lock = this.activeLocks.get(accountId);
+
     if (lock) {
       try {
         lock.release();
-      } catch (err) {
+      } catch {
         /* ignore */
       }
       this.activeLocks.delete(accountId);
@@ -112,6 +119,7 @@ export class ImapIdleService implements OnModuleDestroy {
     this.logger.log(
       `Cleaning up ${this.activeClients.size} IDLE connections...`,
     );
+
     for (const [id, client] of this.activeClients) {
       try {
         this.logger.log(`Stopping IDLE for ${id} due to shutdown`);
