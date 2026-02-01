@@ -11,6 +11,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -23,13 +24,19 @@ import { PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { isPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/is-property-update.util';
-import { FlatUpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import {
+  FlatUpdateFieldAction,
+  UniversalUpdateFieldAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
   WorkspaceMigrationActionExecutionException,
   WorkspaceMigrationActionExecutionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
-import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  type WorkspaceMigrationActionRunnerArgs,
+  type WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -62,6 +69,27 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     super();
   }
 
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateFieldAction>,
+  ): Promise<FlatUpdateFieldAction> {
+    const { action, allFlatEntityMaps } = context;
+
+    const flatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    // TODO: transpile settings universal identifiers when builder has been migrated
+    // For now, updates only contain flat entity diff properties (already IDs, not universal identifiers)
+
+    return {
+      type: 'update',
+      metadataName: 'fieldMetadata',
+      entityId: flatFieldMetadata.id,
+      updates: action.updates,
+    };
+  }
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldAction>,
   ): Promise<void> {
@@ -72,8 +100,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       );
 
     const { entityId } = flatAction;
-
-    // TODO prastoin when migrated builder fromUniversalSettingsToInsertableSettings
 
     await fieldMetadataRepository.update(
       entityId,
