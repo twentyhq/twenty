@@ -6,7 +6,7 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
-export type FromUniversalFlatObjectMetadataToNakedObjectMetadataArgs = {
+export type FromUniversalFlatObjectMetadataToFlatObjectMetadataArgs = {
   universalFlatObjectMetadata: UniversalFlatObjectMetadata;
   generatedId: string;
   allFlatEntityMaps: AllFlatEntityMaps;
@@ -42,7 +42,7 @@ const findFieldMetadataIdInCreateObjectContext = ({
   return existingFieldId ?? null;
 };
 
-export const fromUniversalFlatObjectMetadataToNakedObjectMetadata = ({
+export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
   universalFlatObjectMetadata,
   dataSourceId,
   generatedId,
@@ -52,7 +52,7 @@ export const fromUniversalFlatObjectMetadataToNakedObjectMetadata = ({
     flatApplication: { id: applicationId },
     workspaceId,
   },
-}: FromUniversalFlatObjectMetadataToNakedObjectMetadataArgs): FlatObjectMetadata & {
+}: FromUniversalFlatObjectMetadataToFlatObjectMetadataArgs): FlatObjectMetadata & {
   dataSourceId: string;
 } => {
   const {

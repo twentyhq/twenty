@@ -8,7 +8,7 @@ import { findFieldMetadataIdInCreateFieldContext } from 'src/engine/workspace-ma
 import { fromUniversalSettingsToInsertableSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-settings-to-naked-field-metadata-settings.util';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
-export type FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs = {
+export type FromUniversalFlatFieldMetadataToFlatFieldMetadataArgs = {
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
   universalFlatFieldMetadata: UniversalFlatFieldMetadata;
   allFlatEntityMaps: AllFlatEntityMaps;
@@ -26,7 +26,7 @@ const getIdFromUniversalIdentifier = (
   return flatEntityMaps.idByUniversalIdentifier[universalIdentifier] ?? null;
 };
 
-export const fromUniversalFlatFieldMetadataToNakedFieldMetadata = ({
+export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
   universalFlatFieldMetadata,
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
   allFlatEntityMaps,
@@ -35,7 +35,7 @@ export const fromUniversalFlatFieldMetadataToNakedFieldMetadata = ({
     flatApplication: { id: applicationId },
     workspaceId,
   },
-}: FromUniversalFlatFieldMetadataToInsertableFieldMetadataArgs): FlatFieldMetadata => {
+}: FromUniversalFlatFieldMetadataToFlatFieldMetadataArgs): FlatFieldMetadata => {
   const {
     universalIdentifier,
     applicationUniversalIdentifier,

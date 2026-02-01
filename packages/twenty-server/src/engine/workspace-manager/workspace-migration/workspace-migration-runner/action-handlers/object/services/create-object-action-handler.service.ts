@@ -14,8 +14,8 @@ import {
   CreateObjectAction,
   FlatCreateObjectAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
-import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
-import { fromUniversalFlatObjectMetadataToNakedObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/utils/from-universal-flat-object-metadata-to-naked-object-metadata.util';
+import { fromUniversalFlatFieldMetadataToFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-flat-field-metadata.util';
+import { fromUniversalFlatObjectMetadataToFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/utils/from-universal-flat-object-metadata-to-flat-object-metadata.util';
 import {
   WorkspaceMigrationActionRunnerContext,
   type WorkspaceMigrationActionRunnerArgs,
@@ -67,7 +67,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     }
 
     const flatObjectMetadata =
-      fromUniversalFlatObjectMetadataToNakedObjectMetadata({
+      fromUniversalFlatObjectMetadataToFlatObjectMetadata({
         allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
         allFlatEntityMaps,
         context,
@@ -78,7 +78,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 
     const flatFieldMetadatas = action.universalFlatFieldMetadatas.map(
       (universalFlatFieldMetadata) =>
-        fromUniversalFlatFieldMetadataToNakedFieldMetadata({
+        fromUniversalFlatFieldMetadataToFlatFieldMetadata({
           objectMetadataId: flatObjectMetadata.id,
           universalFlatFieldMetadata,
           allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
