@@ -21,6 +21,7 @@
     "imapflow": "^1.0.151",
     "@ai-sdk/anthropic": "^2.0.17",
     "@ai-sdk/openai": "^2.0.30",
+    "imapflow": "^1.0.151",
     "@ai-sdk/provider-utils": "^3.0.9",
     "@ai-sdk/xai": "^2.0.19",
     "@aws-sdk/client-lambda": "3.967.0",
