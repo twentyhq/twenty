@@ -412,11 +412,7 @@ export class SignInUpService {
   async checkWorkspaceCreationIsAllowedOrThrow(
     currentUser: UserEntity,
   ): Promise<void> {
-    if (!this.isWorkspaceCreationLimitedToServerAdmins()) return;
-
-    if (await this.isFirstWorkspaceForUser(currentUser.id)) return;
-
-    if (!currentUser.canAccessFullAdminPanel) {
+    if (this.isWorkspaceCreationLimitedToServerAdmins()) {
       throw new AuthException(
         'Workspace creation is restricted to admins',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -425,6 +421,8 @@ export class SignInUpService {
         },
       );
     }
+
+    if (await this.isFirstWorkspaceForUser(currentUser.id)) return;
   }
 
   async signUpOnNewWorkspace(
