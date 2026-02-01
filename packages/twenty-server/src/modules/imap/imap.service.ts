@@ -21,6 +21,10 @@ export class ImapService {
 
         let lock = await client.getMailboxLock('INBOX');
         try {
+            // FIX: Check for empty mailbox to prevent 'Invalid messageset' error (1:*)
+            const total = client.mailbox.exists || 0;
+            if (total === 0) return [];
+
             // FIX: Use UIDs to prevent race conditions (volatility of sequence numbers)
             // 1. Fetch all UIDs (lightweight)
             const uidFetch = client.fetch('1:*', { uid: true, envelope: false, bodyStructure: false });
@@ -29,7 +33,7 @@ export class ImapService {
             for await (const msg of uidFetch) {
                 uids.push(msg.uid);
             }
-
+            
             if (uids.length === 0) return [];
 
             // 2. Sort and get last 10
