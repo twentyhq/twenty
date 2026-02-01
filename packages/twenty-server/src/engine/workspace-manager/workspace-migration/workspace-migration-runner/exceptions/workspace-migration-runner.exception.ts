@@ -28,6 +28,7 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
 export type WorkspaceMigrationRunnerExecutionErrors = {
   metadata?: Error;
   workspaceSchema?: Error;
+  actionTranspilation?: Error;
 };
 
 const {

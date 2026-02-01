@@ -131,6 +131,22 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     return Promise.resolve();
   }
 
+  private async transpileUniversalActionToFlatActionOrThrow(
+    context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
+  ): Promise<TFlatAction> {
+    try {
+      return await this.transpileUniversalActionToFlatAction(context);
+    } catch (error) {
+      throw new WorkspaceMigrationRunnerException({
+        action: context.action,
+        errors: {
+          actionTranspilation: error,
+        },
+        code: WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED,
+      });
+    }
+  }
+
   async execute(
     context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
   ): Promise<
@@ -140,7 +156,8 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       | MetadataToFlatEntityMapsKey<TMetadataName>
     >
   > {
-    const flatAction = await this.transpileUniversalActionToFlatAction(context);
+    const flatAction =
+      await this.transpileUniversalActionToFlatActionOrThrow(context);
 
     const [metadataResult, workspaceSchemaResult] = await Promise.allSettled([
       this.asyncMethodPerformanceMetricWrapper({
