@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { getUniversalFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-universal-flat-field-metadata.mock';
-import { getUniversalFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-universal-flat-object-metadata.mock';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { aggregateNonRelationFieldsIntoObjectActions } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-non-relation-fields-into-object-actions.util';
@@ -20,7 +20,7 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
           {
             type: 'create',
             metadataName: 'objectMetadata',
-            flatEntity: getUniversalFlatObjectMetadataMock({
+            flatEntity: getFlatObjectMetadataMock({
               universalIdentifier: objectUniversalId,
               nameSingular: 'testObject',
               namePlural: 'testObjects',
@@ -37,8 +37,9 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: fieldUniversalId,
+                objectMetadataId: 'object-metadata-id',
                 objectMetadataUniversalIdentifier: objectUniversalId,
                 type: FieldMetadataType.TEXT,
                 name: 'testField',
@@ -86,7 +87,7 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
           {
             type: 'create',
             metadataName: 'objectMetadata',
-            flatEntity: getUniversalFlatObjectMetadataMock({
+            flatEntity: getFlatObjectMetadataMock({
               universalIdentifier: objectUniversalId,
               nameSingular: 'testObject',
               namePlural: 'testObjects',
@@ -103,8 +104,9 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: relationFieldUniversalId,
+                objectMetadataId: 'object-metadata-id',
                 objectMetadataUniversalIdentifier: objectUniversalId,
                 type: FieldMetadataType.RELATION,
                 name: 'relationField',
@@ -159,8 +161,9 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: fieldUniversalId,
+                objectMetadataId: 'existing-object-metadata-id',
                 objectMetadataUniversalIdentifier: existingObjectUniversalId,
                 type: FieldMetadataType.TEXT,
                 name: 'fieldForExistingObject',
@@ -205,7 +208,7 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
           {
             type: 'create',
             metadataName: 'objectMetadata',
-            flatEntity: getUniversalFlatObjectMetadataMock({
+            flatEntity: getFlatObjectMetadataMock({
               universalIdentifier: objectUniversalId,
               nameSingular: 'testObject',
               namePlural: 'testObjects',
@@ -222,14 +225,16 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
             type: 'create',
             metadataName: 'fieldMetadata',
             universalFlatFieldMetadatas: [
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: textFieldUniversalId,
+                objectMetadataId: 'object-metadata-id',
                 objectMetadataUniversalIdentifier: objectUniversalId,
                 type: FieldMetadataType.TEXT,
                 name: 'textField',
               }),
-              getUniversalFlatFieldMetadataMock({
+              getFlatFieldMetadataMock({
                 universalIdentifier: relationFieldUniversalId,
+                objectMetadataId: 'object-metadata-id',
                 objectMetadataUniversalIdentifier: objectUniversalId,
                 type: FieldMetadataType.RELATION,
                 name: 'relationField',
