@@ -47,17 +47,24 @@ export class ImapMessageParserService {
             results.push(await this.parseMessage(message));
           }
         } catch (chunkError) {
-          this.logger.error(`Failed to fetch chunk ${uidSet}: ${chunkError.message}`);
+          this.logger.error(
+            `Failed to fetch chunk ${uidSet}: ${chunkError.message}`,
+          );
           // Add error results for this chunk so we don't return 'missing'
           results.push(...this.createErrorResults(chunk, chunkError as Error));
         }
       }
 
       // Check for missing UIDs (skips)
-      const fetchedUids = new Set(results.map(r => r.uid));
+      const fetchedUids = new Set(results.map((r) => r.uid));
+
       for (const uid of messageUids) {
         if (!fetchedUids.has(uid)) {
-          results.push({ uid, parsed: null, error: new Error('Message not returned by server') });
+          results.push({
+            uid,
+            parsed: null,
+            error: new Error('Message not returned by server'),
+          });
         }
       }
 

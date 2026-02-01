@@ -52,4 +52,4 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     ImapIdleService,
   ],
 })
-export class MessagingIMAPDriverModule { }
+export class MessagingIMAPDriverModule {}
