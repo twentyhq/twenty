@@ -61,7 +61,9 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
     // Field should be merged into object action
     expect(result.objectMetadata.create).toMatchObject([
       {
-        universalFlatFieldMetadatas: [{ universalIdentifier: fieldUniversalId }],
+        universalFlatFieldMetadatas: [
+          { universalIdentifier: fieldUniversalId },
+        ],
         fieldIdByUniversalIdentifier: {
           [fieldUniversalId]: 'generated-field-id',
         },

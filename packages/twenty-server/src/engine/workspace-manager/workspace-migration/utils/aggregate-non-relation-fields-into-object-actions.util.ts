@@ -11,10 +11,8 @@ import { type UniversalCreateObjectAction } from 'src/engine/workspace-manager/w
 export const aggregateNonRelationFieldsIntoObjectActions = ({
   orchestratorActionsReport,
 }: AggregateOrchestratorActionsReportArgs): OrchestratorActionsReport => {
-  const createObjectActions = orchestratorActionsReport.objectMetadata
-    .create;
-  const createFieldActions = orchestratorActionsReport.fieldMetadata
-    .create;
+  const createObjectActions = orchestratorActionsReport.objectMetadata.create;
+  const createFieldActions = orchestratorActionsReport.fieldMetadata.create;
 
   const createObjectActionByObjectUniversalIdentifier = new Map<
     string,
@@ -49,9 +47,8 @@ export const aggregateNonRelationFieldsIntoObjectActions = ({
 
     for (const field of nonRelationFields) {
       const objectUniversalId = field.objectMetadataUniversalIdentifier;
-      const existing = nonRelationFieldsByObjectUniversalIdentifier.get(
-        objectUniversalId,
-      );
+      const existing =
+        nonRelationFieldsByObjectUniversalIdentifier.get(objectUniversalId);
 
       if (isDefined(existing)) {
         existing.push(field);
@@ -83,10 +80,7 @@ export const aggregateNonRelationFieldsIntoObjectActions = ({
       }
     }
 
-    const remainingFields = [
-      ...unmergedNonRelationFields,
-      ...relationFields,
-    ];
+    const remainingFields = [...unmergedNonRelationFields, ...relationFields];
 
     if (remainingFields.length > 0) {
       remainingCreateFieldActions.push({

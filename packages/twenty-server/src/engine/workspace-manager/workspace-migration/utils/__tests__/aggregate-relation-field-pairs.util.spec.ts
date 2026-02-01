@@ -162,9 +162,7 @@ describe('aggregateRelationFieldPairs', () => {
     // Should remain as single action (target not being created)
     expect(result.fieldMetadata.create).toMatchObject([
       {
-        universalFlatFieldMetadatas: [
-          { universalIdentifier: relationFieldId },
-        ],
+        universalFlatFieldMetadatas: [{ universalIdentifier: relationFieldId }],
       },
     ]);
   });

@@ -48,7 +48,8 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateFieldAction>,
   ): Promise<FlatCreateFieldAction> {
     const { action, allFlatEntityMaps } = context;
-    const { universalFlatFieldMetadatas, fieldIdByUniversalIdentifier } = action;
+    const { universalFlatFieldMetadatas, fieldIdByUniversalIdentifier } =
+      action;
 
     const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
       string,

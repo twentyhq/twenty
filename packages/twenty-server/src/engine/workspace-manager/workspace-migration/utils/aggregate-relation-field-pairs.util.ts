@@ -18,6 +18,7 @@ export const aggregateRelationFieldPairs = ({
     .create as UniversalCreateFieldAction[];
 
   const fieldByUniversalIdentifier = new Map<string, FieldWithActionContext>();
+
   for (const action of createFieldActions) {
     for (const field of action.universalFlatFieldMetadatas) {
       fieldByUniversalIdentifier.set(field.universalIdentifier, {
@@ -30,7 +31,10 @@ export const aggregateRelationFieldPairs = ({
   const processedFieldUniversalIdentifiers = new Set<string>();
   const aggregatedCreateFieldActions: UniversalCreateFieldAction[] = [];
 
-  for (const [universalIdentifier, fieldContext] of fieldByUniversalIdentifier) {
+  for (const [
+    universalIdentifier,
+    fieldContext,
+  ] of fieldByUniversalIdentifier) {
     if (processedFieldUniversalIdentifiers.has(universalIdentifier)) {
       continue;
     }
