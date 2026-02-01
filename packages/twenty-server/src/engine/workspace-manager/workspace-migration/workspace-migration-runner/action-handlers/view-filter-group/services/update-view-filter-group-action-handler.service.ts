@@ -27,7 +27,8 @@ export class UpdateViewFilterGroupActionHandlerService extends WorkspaceMigratio
         ViewFilterGroupEntity,
       );
 
-    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
+    const update =
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
 
     await viewFilterGroupRepository.update(entityId, update);
   }

@@ -25,7 +25,8 @@ export class UpdateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
     const roleTargetRepository =
       queryRunner.manager.getRepository<RoleTargetEntity>(RoleTargetEntity);
 
-    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
+    const update =
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
 
     await roleTargetRepository.update(entityId, update);
   }

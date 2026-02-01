@@ -70,7 +70,8 @@ const collectEnumOperationsForBasicEnumField = ({
         {
           operation: EnumOperation.CREATE,
           enumName,
-          values: flatFieldMetadata.options?.map((option) => option.value) ?? [],
+          values:
+            flatFieldMetadata.options?.map((option) => option.value) ?? [],
         },
       ];
     case EnumOperation.DROP:

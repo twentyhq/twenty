@@ -150,12 +150,11 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
         flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
       ) {
-        const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow(
-          {
+        const targetFlatObjectMetadata =
+          findFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityMaps: flatObjectMetadataMaps,
             flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId!,
-          },
-        );
+          });
         const referencedTableName = computeObjectTargetTable(
           targetFlatObjectMetadata,
         );

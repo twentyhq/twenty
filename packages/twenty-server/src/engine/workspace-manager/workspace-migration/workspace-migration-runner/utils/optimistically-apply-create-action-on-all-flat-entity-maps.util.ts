@@ -5,8 +5,6 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
-import { type FlatCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
-import { type FlatCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 
 type FlatCreateAction<TMetadataName extends AllMetadataName> =
   AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['create'];
@@ -53,9 +51,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
       return allFlatEntityMaps;
     }
     case 'fieldMetadata': {
-      const fieldAction = flatAction as unknown as FlatCreateFieldAction;
-
-      for (const flatFieldMetadata of fieldAction.flatFieldMetadatas) {
+      for (const flatFieldMetadata of flatAction.flatFieldMetadatas) {
         addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
           flatEntity: flatFieldMetadata,
           flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
@@ -66,15 +62,13 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
       return allFlatEntityMaps;
     }
     case 'objectMetadata': {
-      const objectAction = flatAction as unknown as FlatCreateObjectAction;
-
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        flatEntity: objectAction.flatEntity,
+        flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
         metadataName: 'objectMetadata',
       });
 
-      for (const flatFieldMetadata of objectAction.flatFieldMetadatas) {
+      for (const flatFieldMetadata of flatAction.flatFieldMetadatas) {
         addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
           flatEntity: flatFieldMetadata,
           flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,

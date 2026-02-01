@@ -9,4 +9,5 @@ export type UpdateViewAction = BaseUpdateWorkspaceMigrationAction<'view'>;
 
 export type DeleteViewAction = BaseDeleteWorkspaceMigrationAction<'view'>;
 
-export type FlatDeleteViewAction = BaseFlatDeleteWorkspaceMigrationAction<'view'>;
+export type FlatDeleteViewAction =
+  BaseFlatDeleteWorkspaceMigrationAction<'view'>;
