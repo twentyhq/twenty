@@ -114,7 +114,11 @@ describe('useSettingsNavigationItems', () => {
     expect(workspaceSection?.items.some((item) => !item.isHidden)).toBe(true);
   });
 
-  it('should show user section items regardless of permissions', () => {
+  it('should show user section items (except Accounts) regardless of permissions', () => {
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
+    }));
+
     const { result } = renderHook(() => useSettingsNavigationItems(), {
       wrapper: Wrapper,
     });
@@ -123,6 +127,50 @@ describe('useSettingsNavigationItems', () => {
       (section) => section.label === 'User',
     );
     expect(userSection?.items.length).toBeGreaterThan(0);
-    expect(userSection?.items.every((item) => !item.isHidden)).toBe(true);
+
+    const profileItem = userSection?.items.find(
+      (item) => item.label === 'Profile',
+    );
+    const experienceItem = userSection?.items.find(
+      (item) => item.label === 'Experience',
+    );
+    expect(profileItem?.isHidden).toBeFalsy();
+    expect(experienceItem?.isHidden).toBeFalsy();
+  });
+
+  it('should hide Accounts when no CONNECTED_ACCOUNTS permission', () => {
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
+    }));
+
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+
+    const userSection = result.current.find(
+      (section) => section.label === 'User',
+    );
+    const accountsItem = userSection?.items.find(
+      (item) => item.label === 'Accounts',
+    );
+    expect(accountsItem?.isHidden).toBe(true);
+  });
+
+  it('should show Accounts when has CONNECTED_ACCOUNTS permission', () => {
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: true,
+    }));
+
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+
+    const userSection = result.current.find(
+      (section) => section.label === 'User',
+    );
+    const accountsItem = userSection?.items.find(
+      (item) => item.label === 'Accounts',
+    );
+    expect(accountsItem?.isHidden).toBe(false);
   });
 });
