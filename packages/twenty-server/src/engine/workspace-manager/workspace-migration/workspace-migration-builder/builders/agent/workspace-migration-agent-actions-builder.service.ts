@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { UpdateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+import { FlatUpdateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
@@ -84,7 +84,7 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
 
     const { flatEntityId, flatEntityUpdates } = args;
 
-    const updateAgentAction: UpdateAgentAction = {
+    const updateAgentAction: FlatUpdateAgentAction = {
       type: 'update',
       metadataName: 'agent',
       entityId: flatEntityId,

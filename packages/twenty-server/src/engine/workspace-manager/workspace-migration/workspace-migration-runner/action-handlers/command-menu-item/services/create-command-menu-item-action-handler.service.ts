@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import { CreateCommandMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
+import { FlatCreateCommandMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateCommandMenuItemAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateCommandMenuItemAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { flatEntity } = flatAction;
@@ -33,7 +33,7 @@ export class CreateCommandMenuItemActionHandlerService extends WorkspaceMigratio
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<CreateCommandMenuItemAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateCommandMenuItemAction>,
   ): Promise<void> {
     return;
   }

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { CreateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
+import { FlatCreateAgentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateAgentAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateAgentAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { flatEntity } = flatAction;
@@ -31,7 +31,7 @@ export class CreateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<CreateAgentAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateAgentAction>,
   ): Promise<void> {
     return;
   }

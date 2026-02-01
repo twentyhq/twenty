@@ -21,7 +21,7 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { CreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import { FlatCreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -44,7 +44,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateLogicFunctionAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateLogicFunctionAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { flatEntity: logicFunction } = flatAction;
@@ -151,7 +151,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 
   async rollbackForMetadata(
     context: Omit<
-      WorkspaceMigrationActionRunnerArgs<CreateLogicFunctionAction>,
+      WorkspaceMigrationActionRunnerArgs<FlatCreateLogicFunctionAction>,
       'queryRunner'
     >,
   ): Promise<void> {

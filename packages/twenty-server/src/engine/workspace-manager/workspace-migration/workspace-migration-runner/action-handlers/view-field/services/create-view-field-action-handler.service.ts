@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { CreateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
+import { FlatCreateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateViewFieldAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateViewFieldAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { flatEntity } = flatAction;
@@ -31,7 +31,7 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<CreateViewFieldAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateViewFieldAction>,
   ): Promise<void> {
     return;
   }

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
-import { type CreateViewFilterGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action.type';
+import { type FlatCreateViewFilterGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action.type';
 import { type WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
   'viewFilterGroup',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateViewFilterGroupAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateViewFilterGroupAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { flatEntity } = flatAction;
@@ -29,7 +29,7 @@ export class CreateViewFilterGroupActionHandlerService extends WorkspaceMigratio
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<CreateViewFilterGroupAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatCreateViewFilterGroupAction>,
   ): Promise<void> {
     return;
   }

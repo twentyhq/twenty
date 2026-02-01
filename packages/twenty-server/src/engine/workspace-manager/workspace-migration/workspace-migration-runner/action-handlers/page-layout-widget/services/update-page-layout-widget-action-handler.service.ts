@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { UpdatePageLayoutWidgetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
+import { FlatUpdatePageLayoutWidgetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
@@ -17,7 +17,7 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<UpdatePageLayoutWidgetAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdatePageLayoutWidgetAction>,
   ): Promise<void> {
     const { flatAction, queryRunner } = context;
     const { entityId, updates } = flatAction;
@@ -39,7 +39,7 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<UpdatePageLayoutWidgetAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdatePageLayoutWidgetAction>,
   ): Promise<void> {
     return;
   }

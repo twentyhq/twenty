@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
-import { UpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
+import { FlatUpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
@@ -13,7 +13,7 @@ export class UpdateNavigationMenuItemActionHandlerService extends WorkspaceMigra
   'navigationMenuItem',
 ) {
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<UpdateNavigationMenuItemAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateNavigationMenuItemAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { entityId, updates } = flatAction;
@@ -32,7 +32,7 @@ export class UpdateNavigationMenuItemActionHandlerService extends WorkspaceMigra
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<UpdateNavigationMenuItemAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateNavigationMenuItemAction>,
   ): Promise<void> {
     return;
   }

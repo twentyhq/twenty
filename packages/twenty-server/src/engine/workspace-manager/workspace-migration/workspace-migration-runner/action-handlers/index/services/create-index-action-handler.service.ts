@@ -4,7 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { type CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import { type FlatCreateIndexAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import {
   createIndexInWorkspaceSchema,
   insertIndexMetadata,
@@ -23,7 +23,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerContext<CreateIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>,
   ): Promise<void> {
     const { flatAction, queryRunner } = context;
 
@@ -34,7 +34,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerContext<CreateIndexAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatCreateIndexAction>,
   ): Promise<void> {
     const {
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
