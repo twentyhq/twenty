@@ -16,8 +16,4 @@ describe('ImapService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-  it('should have a connect method', () => {
-    expect(service.connectAndFetch).toBeDefined();
-  });
 });

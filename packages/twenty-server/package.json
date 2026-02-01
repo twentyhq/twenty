@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "imapflow": "^1.0.151",
+    "imapflow": "^1.0.151",
     "@ai-sdk/anthropic": "^2.0.17",
     "@ai-sdk/openai": "^2.0.30",
     "@ai-sdk/provider-utils": "^3.0.9",
