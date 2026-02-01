@@ -6,6 +6,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 export class ImapIdleService implements OnModuleDestroy {
     private readonly logger = new Logger(ImapIdleService.name);
     private activeClients: Map<string, ImapFlow> = new Map();
+    private activeLocks: Map<string, any> = new Map();
 
     constructor(private readonly eventEmitter: EventEmitter2) { }
 
@@ -19,8 +20,10 @@ export class ImapIdleService implements OnModuleDestroy {
         }
 
         try {
-            // Ensure we are in the correct mailbox
-            await client.mailboxOpen(folderPath);
+            // "Enterprise" Safety: Acquire a lock on the mailbox to prevent other commands 
+            // from changing the selected mailbox on this connection while IDLE is active.
+            const lock = await client.getMailboxLock(folderPath);
+            this.activeLocks.set(accountId, lock);
 
             // Hook into the 'exists' event (New Email)
             client.on('exists', (data) => {
@@ -37,17 +40,22 @@ export class ImapIdleService implements OnModuleDestroy {
             this.logger.log(`IDLE started for account ${accountId} on ${folderPath}`);
 
             // Start IDLE in background (non-blocking)
-            // client.idle() resolves only when IDLE finishes, so we don't await it here.
             client.idle().then(() => {
                 this.logger.log(`IDLE finished for ${accountId}`);
-                this.activeClients.delete(accountId);
+                this.cleanupAccount(accountId);
             }).catch(err => {
                 this.logger.error(`IDLE crashed for ${accountId}: ${err.message}`);
-                this.activeClients.delete(accountId);
+                this.cleanupAccount(accountId);
             });
 
         } catch (error) {
             this.logger.error(`Failed to start IDLE for ${accountId}: ${error.message}`);
+            // Ensure we release lock if startup fails
+            const lock = this.activeLocks.get(accountId);
+            if (lock) {
+                lock.release();
+                this.activeLocks.delete(accountId);
+            }
             throw error;
         }
     }
@@ -60,13 +68,26 @@ export class ImapIdleService implements OnModuleDestroy {
         if (!client) return;
 
         try {
-            await client.logout(); // This terminates IDLE and closes the connection
+            await client.logout(); // Terminate connection
         } catch (err) {
             this.logger.warn(`Error stopping IDLE for ${accountId}: ${err.message}`);
         } finally {
-            this.activeClients.delete(accountId);
+            this.cleanupAccount(accountId);
             this.logger.log(`IDLE stopped for account ${accountId}`);
         }
+    }
+
+    private cleanupAccount(accountId: string) {
+        // Release Lock
+        const lock = this.activeLocks.get(accountId);
+        if (lock) {
+            try {
+                lock.release();
+            } catch (err) { /* ignore */ }
+            this.activeLocks.delete(accountId);
+        }
+        // Remove Client
+        this.activeClients.delete(accountId);
     }
 
     async onModuleDestroy() {
@@ -79,7 +100,9 @@ export class ImapIdleService implements OnModuleDestroy {
             } catch (err) {
                 this.logger.warn(`Failed to logout ${id}: ${err.message}`);
             }
+            this.cleanupAccount(id);
         }
         this.activeClients.clear();
+        this.activeLocks.clear();
     }
 }
