@@ -65,7 +65,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, allFlatEntityMaps } = context;
+    const { flatAction, queryRunner } = context;
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<FieldMetadataEntity>(
         FieldMetadataEntity,
@@ -260,13 +260,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           },
         );
 
-        const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow(
-          {
+        const targetFlatObjectMetadata =
+          findFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityId:
               optimisticFlatFieldMetadata.relationTargetObjectMetadataId,
             flatEntityMaps: flatObjectMetadataMaps,
-          },
-        );
+          });
 
         const referencedTableName = computeObjectTargetTable(
           targetFlatObjectMetadata,

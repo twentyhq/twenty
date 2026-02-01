@@ -68,10 +68,11 @@ export class DeleteObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       cascade: true,
     });
 
-    const objectFlatFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityIds: flatObjectMetadata.fieldIds,
-    });
+    const objectFlatFieldMetadatas =
+      findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityIds: flatObjectMetadata.fieldIds,
+      });
 
     const enumOrCompositeFlatFieldMetadatas = objectFlatFieldMetadatas.filter(
       (flatFieldMetadata) =>

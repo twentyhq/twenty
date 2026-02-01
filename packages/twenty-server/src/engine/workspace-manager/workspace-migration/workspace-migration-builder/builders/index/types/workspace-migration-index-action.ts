@@ -7,7 +7,8 @@ export type CreateIndexAction = BaseCreateWorkspaceMigrationAction<'index'>;
 
 export type DeleteIndexAction = BaseDeleteWorkspaceMigrationAction<'index'>;
 
-export type FlatDeleteIndexAction = BaseFlatDeleteWorkspaceMigrationAction<'index'>;
+export type FlatDeleteIndexAction =
+  BaseFlatDeleteWorkspaceMigrationAction<'index'>;
 
 export type UpdateIndexAction = {
   type: 'update';

@@ -25,7 +25,8 @@ export class UpdateViewFilterActionHandlerService extends WorkspaceMigrationRunn
     const viewFilterRepository =
       queryRunner.manager.getRepository<ViewFilterEntity>(ViewFilterEntity);
 
-    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
+    const update =
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
 
     await viewFilterRepository.update(entityId, update);
   }

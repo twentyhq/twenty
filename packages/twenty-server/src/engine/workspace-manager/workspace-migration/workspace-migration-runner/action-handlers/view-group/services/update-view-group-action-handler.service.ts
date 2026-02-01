@@ -21,7 +21,8 @@ export class UpdateViewGroupActionHandlerService extends WorkspaceMigrationRunne
     const viewGroupRepository =
       queryRunner.manager.getRepository<ViewGroupEntity>(ViewGroupEntity);
 
-    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
+    const update =
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
 
     await viewGroupRepository.update(entityId, update);
   }

@@ -25,7 +25,8 @@ export class UpdateRowLevelPermissionPredicateGroupActionHandlerService extends 
         RowLevelPermissionPredicateGroupEntity,
       );
 
-    const update = fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
+    const update =
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
 
     await repository.update(entityId, update);
   }

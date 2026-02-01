@@ -1,7 +1,8 @@
-import { FromUniversalFlatEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-universal-flat-entity-to-metadata-name.type';
-import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { AllMetadataName } from 'twenty-shared/metadata';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { type FromUniversalFlatEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-universal-flat-entity-to-metadata-name.type';
+import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 
 type TranspileToFlat<T> = T extends readonly (infer U)[]
   ? U extends MetadataUniversalFlatEntity<AllMetadataName>

@@ -9,4 +9,5 @@ export type UpdateAgentAction = BaseUpdateWorkspaceMigrationAction<'agent'>;
 
 export type DeleteAgentAction = BaseDeleteWorkspaceMigrationAction<'agent'>;
 
-export type FlatDeleteAgentAction = BaseFlatDeleteWorkspaceMigrationAction<'agent'>;
+export type FlatDeleteAgentAction =
+  BaseFlatDeleteWorkspaceMigrationAction<'agent'>;
