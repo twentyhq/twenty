@@ -49,8 +49,6 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'create',
         metadataName: 'fieldMetadata',
-        objectMetadataUniversalIdentifier:
-          flatFieldMetadataToValidate.objectMetadataId,
         universalFlatFieldMetadatas: [flatFieldMetadataToValidate],
         fieldIdByUniversalIdentifier,
       },

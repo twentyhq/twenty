@@ -12,7 +12,6 @@ export type UniversalCreateFieldAction = Omit<
   BaseUniversalCreateWorkspaceMigrationAction<'fieldMetadata'>,
   'flatEntity'
 > & {
-  objectMetadataUniversalIdentifier: string;
   universalFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   // Optional map to provide specific IDs for field creation (for API metadata).
   fieldIdByUniversalIdentifier?: Record<string, string>;
@@ -29,7 +28,6 @@ export type FlatCreateFieldAction = Omit<
   BaseFlatCreateWorkspaceMigrationAction<'fieldMetadata'>,
   'flatEntity'
 > & {
-  objectMetadataId: string;
   flatFieldMetadatas: FlatFieldMetadata[];
 };
 
