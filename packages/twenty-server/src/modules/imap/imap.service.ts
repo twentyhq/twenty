@@ -22,7 +22,8 @@ export class ImapService {
         let lock = await client.getMailboxLock('INBOX');
         try {
             // FIX: Check for empty mailbox to prevent 'Invalid messageset' error (1:*)
-            const total = client.mailbox.exists || 0;
+            // Handle type 'false | MailboxObject'
+            const total = (client.mailbox && client.mailbox.exists) ? client.mailbox.exists : 0;
             if (total === 0) return [];
 
             // FIX: Use UIDs to prevent race conditions (volatility of sequence numbers)
