@@ -17,7 +17,7 @@ import {
   type CreateFieldAction,
   type FlatCreateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
-import { fromUniversalFlatFieldMetadataToNakedFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-naked-field-metadata.util';
+import { fromUniversalFlatFieldMetadataToFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-flat-field-metadata.util';
 import {
   WorkspaceMigrationActionRunnerContext,
   type WorkspaceMigrationActionRunnerArgs,
@@ -67,7 +67,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const flatFieldMetadatas = universalFlatFieldMetadatas.map(
       (universalFlatFieldMetadata) =>
-        fromUniversalFlatFieldMetadataToNakedFieldMetadata({
+        fromUniversalFlatFieldMetadataToFlatFieldMetadata({
           objectMetadataId: flatObjectMetadata.id,
           universalFlatFieldMetadata,
           allFieldIdToBeCreatedInActionByUniversalIdentifierMap,

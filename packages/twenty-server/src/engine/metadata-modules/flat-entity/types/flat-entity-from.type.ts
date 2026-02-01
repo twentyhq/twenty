@@ -14,8 +14,7 @@ export type SyncableFlatEntity = Omit<
   id: string;
 };
 
-// Find better naming
-export type NakedFlatEntity<TEntity> = Omit<
+type AtomicFlatEntity<TEntity> = Omit<
   TEntity,
   | ExtractEntityRelatedEntityProperties<TEntity>
   | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
@@ -25,7 +24,7 @@ export type FlatEntityFrom<
   TEntity,
   // Required to be passed for narrowed type
   TMetadataName extends AllMetadataName | undefined = undefined,
-> = NakedFlatEntity<TEntity> &
+> = AtomicFlatEntity<TEntity> &
   CastRecordTypeOrmDatePropertiesToString<TEntity> &
   AddSuffixToEntityOneToManyProperties<TEntity, 'ids'> &
   (TEntity extends SyncableEntity

@@ -23,6 +23,34 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
   allFlatEntityMaps,
 }: OptimisticallyApplyCreateActionOnAllFlatEntityMapsArgs<TMetadataName>): AllFlatEntityMaps => {
   switch (flatAction.metadataName) {
+    case 'fieldMetadata': {
+      flatAction.flatFieldMetadatas.forEach((flatEntity) =>
+        addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+          flatEntity,
+          flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+          metadataName: flatAction.metadataName,
+        }),
+      );
+
+      return allFlatEntityMaps;
+    }
+    case 'objectMetadata': {
+      addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+        flatEntity: flatAction.flatEntity,
+        flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+        metadataName: flatAction.metadataName,
+      });
+
+      flatAction.flatFieldMetadatas.forEach((flatField) =>
+        addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
+          flatEntity: flatField,
+          flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
+          metadataName: 'fieldMetadata',
+        }),
+      );
+
+      return allFlatEntityMaps;
+    }
     case 'view':
     case 'viewField':
     case 'viewGroup':
@@ -47,34 +75,6 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
         metadataName: flatAction.metadataName,
       });
-
-      return allFlatEntityMaps;
-    }
-    case 'fieldMetadata': {
-      for (const flatFieldMetadata of flatAction.flatFieldMetadatas) {
-        addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-          flatEntity: flatFieldMetadata,
-          flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-          metadataName: 'fieldMetadata',
-        });
-      }
-
-      return allFlatEntityMaps;
-    }
-    case 'objectMetadata': {
-      addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        flatEntity: flatAction.flatEntity,
-        flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-        metadataName: 'objectMetadata',
-      });
-
-      for (const flatFieldMetadata of flatAction.flatFieldMetadatas) {
-        addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-          flatEntity: flatFieldMetadata,
-          flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
-          metadataName: 'fieldMetadata',
-        });
-      }
 
       return allFlatEntityMaps;
     }

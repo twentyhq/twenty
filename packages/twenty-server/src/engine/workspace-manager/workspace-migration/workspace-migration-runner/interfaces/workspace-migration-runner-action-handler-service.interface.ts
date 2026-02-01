@@ -39,8 +39,8 @@ type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,
   TMetadataName extends AllMetadataName,
-  TUniversalAction extends
-    AllUniversalWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType],
+  TUniversalAction extends // TODO create abstracted type utils
+  AllUniversalWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['universalActions'][TActionType],
   TFlatAction extends
     AllFlatWorkspaceMigrationAction = AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions'][TActionType],
 > {
@@ -50,11 +50,12 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
 
+  // TODO prastoin before merge completely refactor, still implem basic transpiler that could be called on each actions handler
   public async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
   ): Promise<TFlatAction> {
     switch (true) {
-      // Actions add custom properties to base actions that custom transpilers (next when migrated logic function create and index update too)
+      // Actions that add custom properties to base actions that custom transpilers (next when migrated logic function create and index update too)
       case context.action.metadataName === 'objectMetadata' &&
         context.action.type === 'create':
       case context.action.metadataName === 'fieldMetadata' &&
@@ -65,7 +66,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
         });
       }
     }
+    // TODO should implement the default base actions handlers
 
+    // TODO could be improved ?
     return context.action as unknown as TFlatAction;
   }
 
