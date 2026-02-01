@@ -1,3 +1,4 @@
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -12,16 +13,20 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { type ObjectMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-standard-overrides-properties.types';
+import { removeStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/remove-standard-override.util';
+import { setStandardOverrideForLocale } from 'src/engine/metadata-modules/object-metadata/utils/set-standard-override-for-locale.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 type SanitizeRawUpdateObjectInputArgs = {
   rawUpdateObjectInput: UpdateOneObjectInput;
   existingFlatObjectMetadata: FlatObjectMetadata;
+  locale?: keyof typeof APP_LOCALES;
 };
 
 export const sanitizeRawUpdateObjectInput = ({
   existingFlatObjectMetadata,
   rawUpdateObjectInput,
+  locale,
 }: SanitizeRawUpdateObjectInputArgs) => {
   const isStandardObject = isStandardMetadata(existingFlatObjectMetadata);
   const updatedEditableObjectProperties = extractAndSanitizeObjectStringFields(
@@ -57,52 +62,52 @@ export const sanitizeRawUpdateObjectInput = ({
     );
   }
 
-  const standardOverrides =
-    OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
-      (standardOverrides, property) => {
-        const propertyValue = updatedEditableObjectProperties[property];
+  const safeLocale = locale ?? SOURCE_LOCALE;
 
-        const isPropertyUpdated =
-          updatedEditableObjectProperties[property] !== undefined;
+  let standardOverrides = existingFlatObjectMetadata.standardOverrides;
 
-        if (!isPropertyUpdated) {
-          return standardOverrides;
-        }
-        delete updatedEditableObjectProperties[property];
+  const standardOverrideKeys = new Set<string>(
+    OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES,
+  );
 
-        if (propertyValue === existingFlatObjectMetadata[property]) {
-          if (
-            isDefined(standardOverrides) &&
-            Object.prototype.hasOwnProperty.call(standardOverrides, property)
-          ) {
-            const { [property]: _, ...restOverrides } = standardOverrides;
+  const filteredEditableObjectProperties = Object.fromEntries(
+    Object.entries(updatedEditableObjectProperties).filter(
+      ([key]) => !standardOverrideKeys.has(key),
+    ),
+  );
 
-            return restOverrides;
-          }
+  for (const property of OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES) {
+    const propertyValue = updatedEditableObjectProperties[property];
+    const isPropertyUpdated = propertyValue !== undefined;
 
-          return standardOverrides;
-        }
+    if (!isPropertyUpdated) {
+      continue;
+    }
 
-        return {
-          ...standardOverrides,
-          [property]: propertyValue,
-        };
-      },
-      existingFlatObjectMetadata.standardOverrides,
-    );
+    const isResettingToDefault =
+      propertyValue === existingFlatObjectMetadata[property];
 
-  if (
-    isDefined(standardOverrides) &&
-    Object.keys(standardOverrides).length === 0
-  ) {
-    return {
-      standardOverrides: null,
-      updatedEditableObjectProperties,
-    };
+    if (isResettingToDefault) {
+      standardOverrides = removeStandardOverride({
+        overrides: standardOverrides,
+        property,
+        locale: safeLocale,
+      });
+    } else {
+      standardOverrides = setStandardOverrideForLocale({
+        overrides: standardOverrides,
+        property,
+        value: propertyValue,
+        locale: safeLocale,
+      });
+    }
   }
 
+  const isEmptyOverrides =
+    isDefined(standardOverrides) && Object.keys(standardOverrides).length === 0;
+
   return {
-    standardOverrides,
-    updatedEditableObjectProperties,
+    standardOverrides: isEmptyOverrides ? null : standardOverrides,
+    updatedEditableObjectProperties: filteredEditableObjectProperties,
   };
 };
