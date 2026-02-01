@@ -4,8 +4,8 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
@@ -107,7 +107,7 @@ export class FlatNavigationMenuItemValidatorService {
   }: {
     navigationMenuItemId: string;
     folderId: string;
-    flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
+    flatNavigationMenuItemMaps: MetadataFlatEntityMaps<'navigationMenuItem'>;
   }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
     const circularDependencyResult = validateFlatEntityCircularDependency({
       flatEntityId: navigationMenuItemId,

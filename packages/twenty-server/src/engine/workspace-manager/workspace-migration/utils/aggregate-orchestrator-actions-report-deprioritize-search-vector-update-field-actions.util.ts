@@ -1,6 +1,6 @@
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { type AggregateOrchestratorActionsReportArgs } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-aggregate-orchestrator-actions-report-args.type';
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
@@ -22,13 +22,13 @@ export const aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFie
         otherUpdateFieldActions: UniversalUpdateFieldAction[];
       }>(
         (acc, updateFieldAction) => {
-          const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+          const flatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow({
             flatEntityMaps: flatFieldMetadataMaps,
             universalIdentifier: updateFieldAction.universalIdentifier,
           });
 
           const isSearchVectorUpdateFieldAction =
-            flatFieldMetadata?.name === SEARCH_VECTOR_FIELD.name;
+            flatFieldMetadata.name === SEARCH_VECTOR_FIELD.name;
 
           if (isSearchVectorUpdateFieldAction) {
             return {

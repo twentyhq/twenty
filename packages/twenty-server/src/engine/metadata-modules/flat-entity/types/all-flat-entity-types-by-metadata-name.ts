@@ -1,25 +1,41 @@
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFrontComponentMaps } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component-maps.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
+import { type FlatRoleTargetMaps } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type FlatSkillMaps } from 'src/engine/metadata-modules/flat-skill/types/flat-skill-maps.type';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
+import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
+import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -33,7 +49,9 @@ import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/r
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { type RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { type RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
+import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
+import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
 import { type ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -183,6 +201,7 @@ import {
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
+    flatEntityMaps: FlatEntityMaps<FlatFieldMetadata>;
     universalActions: {
       create: UniversalCreateFieldAction;
       update: UniversalUpdateFieldAction;
@@ -201,6 +220,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'fieldMetadata'>;
   };
   objectMetadata: {
+    flatEntityMaps: FlatEntityMaps<FlatObjectMetadata>;
     universalActions: {
       create: UniversalCreateObjectAction;
       update: UniversalUpdateObjectAction;
@@ -216,6 +236,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'objectMetadata'>;
   };
   view: {
+    flatEntityMaps: FlatViewMaps;
     universalActions: {
       create: FlatCreateViewAction;
       update: FlatUpdateViewAction;
@@ -231,6 +252,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'view'>;
   };
   viewField: {
+    flatEntityMaps: FlatViewFieldMaps;
     universalActions: {
       create: FlatCreateViewFieldAction;
       update: FlatUpdateViewFieldAction;
@@ -246,6 +268,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewField'>;
   };
   viewGroup: {
+    flatEntityMaps: FlatViewGroupMaps;
     universalActions: {
       create: FlatCreateViewGroupAction;
       update: FlatUpdateViewGroupAction;
@@ -261,6 +284,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewGroup'>;
   };
   rowLevelPermissionPredicate: {
+    flatEntityMaps: FlatRowLevelPermissionPredicateMaps;
     universalActions: {
       create: FlatCreateRowLevelPermissionPredicateAction;
       update: FlatUpdateRowLevelPermissionPredicateAction;
@@ -276,6 +300,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'rowLevelPermissionPredicate'>;
   };
   rowLevelPermissionPredicateGroup: {
+    flatEntityMaps: FlatRowLevelPermissionPredicateGroupMaps;
     universalActions: {
       create: FlatCreateRowLevelPermissionPredicateGroupAction;
       update: FlatUpdateRowLevelPermissionPredicateGroupAction;
@@ -291,6 +316,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'rowLevelPermissionPredicateGroup'>;
   };
   viewFilterGroup: {
+    flatEntityMaps: FlatViewFilterGroupMaps;
     universalActions: {
       create: FlatCreateViewFilterGroupAction;
       update: FlatUpdateViewFilterGroupAction;
@@ -306,6 +332,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewFilterGroup'>;
   };
   index: {
+    flatEntityMaps: FlatEntityMaps<FlatIndexMetadata>;
     universalActions: {
       create: FlatCreateIndexAction;
       update: FlatUpdateIndexAction;
@@ -321,6 +348,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'index'>;
   };
   logicFunction: {
+    flatEntityMaps: FlatEntityMaps<FlatLogicFunction>;
     universalActions: {
       create: FlatCreateLogicFunctionAction;
       update: FlatUpdateLogicFunctionAction;
@@ -336,6 +364,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'logicFunction'>;
   };
   viewFilter: {
+    flatEntityMaps: FlatViewFilterMaps;
     universalActions: {
       create: FlatCreateViewFilterAction;
       update: FlatUpdateViewFilterAction;
@@ -351,6 +380,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'viewFilter'>;
   };
   role: {
+    flatEntityMaps: FlatEntityMaps<FlatRole>;
     universalActions: {
       create: FlatCreateRoleAction;
       update: FlatUpdateRoleAction;
@@ -366,6 +396,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'role'>;
   };
   roleTarget: {
+    flatEntityMaps: FlatRoleTargetMaps;
     universalActions: {
       create: FlatCreateRoleTargetAction;
       update: FlatUpdateRoleTargetAction;
@@ -381,6 +412,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'roleTarget'>;
   };
   agent: {
+    flatEntityMaps: FlatAgentMaps;
     universalActions: {
       create: FlatCreateAgentAction;
       update: FlatUpdateAgentAction;
@@ -396,6 +428,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'agent'>;
   };
   skill: {
+    flatEntityMaps: FlatSkillMaps;
     universalActions: {
       create: FlatCreateSkillAction;
       update: FlatUpdateSkillAction;
@@ -411,6 +444,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'skill'>;
   };
   commandMenuItem: {
+    flatEntityMaps: FlatCommandMenuItemMaps;
     universalActions: {
       create: FlatCreateCommandMenuItemAction;
       update: FlatUpdateCommandMenuItemAction;
@@ -426,6 +460,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'commandMenuItem'>;
   };
   navigationMenuItem: {
+    flatEntityMaps: FlatNavigationMenuItemMaps;
     universalActions: {
       create: FlatCreateNavigationMenuItemAction;
       update: FlatUpdateNavigationMenuItemAction;
@@ -441,6 +476,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: NavigationMenuItemEntity;
   };
   pageLayout: {
+    flatEntityMaps: FlatPageLayoutMaps;
     universalActions: {
       create: FlatCreatePageLayoutAction;
       update: FlatUpdatePageLayoutAction;
@@ -456,6 +492,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'pageLayout'>;
   };
   pageLayoutWidget: {
+    flatEntityMaps: FlatPageLayoutWidgetMaps;
     universalActions: {
       create: FlatCreatePageLayoutWidgetAction;
       update: FlatUpdatePageLayoutWidgetAction;
@@ -474,6 +511,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'pageLayoutWidget'>;
   };
   pageLayoutTab: {
+    flatEntityMaps: FlatPageLayoutTabMaps;
     universalActions: {
       create: FlatCreatePageLayoutTabAction;
       update: FlatUpdatePageLayoutTabAction;
@@ -489,6 +527,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'pageLayoutTab'>;
   };
   frontComponent: {
+    flatEntityMaps: FlatFrontComponentMaps;
     universalActions: {
       create: FlatCreateFrontComponentAction;
       update: FlatUpdateFrontComponentAction;
@@ -504,6 +543,7 @@ export type AllFlatEntityTypesByMetadataName = {
     entity: MetadataEntity<'frontComponent'>;
   };
   webhook: {
+    flatEntityMaps: FlatWebhookMaps;
     universalActions: {
       create: FlatCreateWebhookAction;
       update: FlatUpdateWebhookAction;

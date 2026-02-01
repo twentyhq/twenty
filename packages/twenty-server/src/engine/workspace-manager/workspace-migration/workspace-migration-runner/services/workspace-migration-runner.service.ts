@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
-import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -190,12 +190,13 @@ export class WorkspaceMigrationRunnerService {
     );
 
     let allFlatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: allFlatEntityMapsKeys,
-        },
-      );
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
+        typeof allFlatEntityMapsKeys,
+        false
+      >({
+        workspaceId,
+        flatMapsKeys: allFlatEntityMapsKeys,
+      });
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
     this.logger.time('Runner', 'Transaction execution');

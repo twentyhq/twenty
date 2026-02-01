@@ -4,7 +4,6 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
-import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
 
 type FlatCreateAction<TMetadataName extends AllMetadataName> =
   AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['create'];
@@ -69,20 +68,12 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = <
     case 'pageLayoutTab':
     case 'commandMenuItem':
     case 'frontComponent':
+    case 'navigationMenuItem':
     case 'webhook': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
         metadataName: flatAction.metadataName,
-      });
-
-      return allFlatEntityMaps;
-    }
-    case 'navigationMenuItem': {
-      addFlatNavigationMenuItemToMapsAndUpdateIndex({
-        flatNavigationMenuItem: flatAction.flatEntity,
-        flatNavigationMenuItemMaps:
-          allFlatEntityMaps.flatNavigationMenuItemMaps,
       });
 
       return allFlatEntityMaps;
