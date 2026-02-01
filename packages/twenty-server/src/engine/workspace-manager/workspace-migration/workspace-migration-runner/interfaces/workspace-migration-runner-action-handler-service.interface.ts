@@ -5,6 +5,8 @@ import { AllMetadataName } from 'twenty-shared/metadata';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
+import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
@@ -62,8 +64,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   ): BaseFlatDeleteWorkspaceMigrationAction<TMetadataName> {
     const { action, allFlatEntityMaps } = context;
 
-    const flatEntityMaps =
-      allFlatEntityMaps[getMetadataFlatEntityMapsKey(action.metadataName)];
+    const flatEntityMaps = allFlatEntityMaps[
+      getMetadataFlatEntityMapsKey(action.metadataName)
+    ] as FlatEntityMaps<MetadataFlatEntity<typeof action.metadataName>>;
 
     const flatEntity = findFlatEntityByUniversalIdentifierOrThrow({
       flatEntityMaps,

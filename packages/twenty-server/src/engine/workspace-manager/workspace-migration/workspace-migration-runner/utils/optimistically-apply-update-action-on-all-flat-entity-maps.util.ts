@@ -8,7 +8,6 @@ import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } f
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { replaceFlatNavigationMenuItemInMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/replace-flat-navigation-menu-item-in-maps-and-update-index.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
@@ -68,6 +67,7 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
     case 'pageLayoutTab':
     case 'commandMenuItem':
     case 'frontComponent':
+    case 'navigationMenuItem':
     case 'webhook': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,
@@ -87,27 +87,6 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
       replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({
         flatEntity: toFlatEntity,
         flatEntityMapsToMutate: allFlatEntityMaps[flatEntityMapsKey],
-      });
-
-      return allFlatEntityMaps;
-    }
-    case 'navigationMenuItem': {
-      const fromFlatNavigationMenuItem =
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: flatAction.entityId,
-          flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
-        });
-
-      const toFlatNavigationMenuItem = {
-        ...fromFlatNavigationMenuItem,
-        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
-      };
-
-      replaceFlatNavigationMenuItemInMapsAndUpdateIndex({
-        fromFlatNavigationMenuItem,
-        toFlatNavigationMenuItem,
-        flatNavigationMenuItemMaps:
-          allFlatEntityMaps.flatNavigationMenuItemMaps,
       });
 
       return allFlatEntityMaps;

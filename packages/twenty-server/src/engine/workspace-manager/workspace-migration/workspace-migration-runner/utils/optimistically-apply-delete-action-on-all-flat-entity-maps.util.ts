@@ -7,7 +7,6 @@ import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { deleteFlatNavigationMenuItemFromMapsAndIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/delete-flat-navigation-menu-item-from-maps-and-index.util';
 
 type FlatDeleteAction<TMetadataName extends AllMetadataName> =
   AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['delete'];
@@ -46,6 +45,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
     case 'pageLayoutTab':
     case 'commandMenuItem':
     case 'frontComponent':
+    case 'navigationMenuItem':
     case 'webhook': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
         MetadataFlatEntity<typeof flatAction.metadataName>
@@ -61,21 +61,6 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = <
         flatEntity: flatEntityToDelete,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
         metadataName: flatAction.metadataName,
-      });
-
-      return allFlatEntityMaps;
-    }
-    case 'navigationMenuItem': {
-      const flatNavigationMenuItemToDelete =
-        findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: flatAction.entityId,
-          flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
-        });
-
-      deleteFlatNavigationMenuItemFromMapsAndIndex({
-        flatNavigationMenuItem: flatNavigationMenuItemToDelete,
-        flatNavigationMenuItemMaps:
-          allFlatEntityMaps.flatNavigationMenuItemMaps,
       });
 
       return allFlatEntityMaps;

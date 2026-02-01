@@ -6,11 +6,10 @@ import {
   type WorkspaceMigrationActionType,
 } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 
-export type AllUniversalWorkspaceMigrationAction<TActionType extends WorkspaceMigrationActionType= WorkspaceMigrationActionType> =
-  MetadataUniversalWorkspaceMigrationAction<
-    AllMetadataName,
-    TActionType
-  >;
+export type AllUniversalWorkspaceMigrationAction<
+  TActionType extends
+    WorkspaceMigrationActionType = WorkspaceMigrationActionType,
+> = MetadataUniversalWorkspaceMigrationAction<AllMetadataName, TActionType>;
 
 export type AllFlatWorkspaceMigrationAction =
   MetadataFlatWorkspaceMigrationAction<

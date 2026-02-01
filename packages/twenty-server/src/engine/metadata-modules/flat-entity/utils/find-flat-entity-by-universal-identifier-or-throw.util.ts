@@ -9,21 +9,15 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
-export type FindFlatEntityByUniversalIdentifierOrThrowArgs<
-  T extends SyncableFlatEntity | UniversalSyncableFlatEntity,
-  TMaps extends FlatEntityMaps<T>,
-> = {
-  flatEntityMaps: TMaps;
-  universalIdentifier: string;
-};
-
 export const findFlatEntityByUniversalIdentifierOrThrow = <
   T extends SyncableFlatEntity | UniversalSyncableFlatEntity,
-  TMaps extends FlatEntityMaps<T>,
 >({
   flatEntityMaps,
   universalIdentifier,
-}: FindFlatEntityByUniversalIdentifierOrThrowArgs<T, TMaps>): T & {
+}: {
+  flatEntityMaps: FlatEntityMaps<T>;
+  universalIdentifier: string;
+}): T & {
   id: string;
 } => {
   const flatEntity = findFlatEntityByUniversalIdentifier({
