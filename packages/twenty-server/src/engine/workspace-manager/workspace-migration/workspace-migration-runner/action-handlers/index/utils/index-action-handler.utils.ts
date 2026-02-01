@@ -10,15 +10,15 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import {
   type FlatIndexFieldMetadata,
   type FlatIndexMetadata,
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import {
   WorkspaceMigrationActionExecutionException,
   WorkspaceMigrationActionExecutionExceptionCode,
@@ -45,15 +45,15 @@ export const computeFlatIndexFieldColumnNames = ({
       );
     }
 
-    if (isMorphOrRelationUniversalFlatFieldMetadata(flatFieldMetadata)) {
-      if (!isDefined(flatFieldMetadata.universalSettings?.joinColumnName)) {
+    if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      if (!isDefined(flatFieldMetadata.settings?.joinColumnName)) {
         throw new FlatEntityMapsException(
           'Join column name is not defined for relation field',
           FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
         );
       }
 
-      return flatFieldMetadata.universalSettings.joinColumnName;
+      return flatFieldMetadata.settings.joinColumnName;
     }
 
     if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {
@@ -140,27 +140,27 @@ export const deleteIndexMetadata = async ({
 
 export const createIndexInWorkspaceSchema = async ({
   flatIndexMetadata,
-  universalFlatObjectMetadata,
-  universalFlatFieldMetadataMaps,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
   workspaceSchemaManagerService,
   queryRunner,
   workspaceId,
 }: {
   flatIndexMetadata: FlatIndexMetadata;
-  universalFlatObjectMetadata: UniversalFlatObjectMetadata;
-  universalFlatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
   workspaceSchemaManagerService: WorkspaceSchemaManagerService;
   queryRunner: QueryRunner;
   workspaceId: string;
 }): Promise<void> => {
   const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
     workspaceId,
-    objectMetadata: universalFlatObjectMetadata,
+    objectMetadata: flatObjectMetadata,
   });
 
   const columns = computeFlatIndexFieldColumnNames({
     flatIndexFieldMetadatas: flatIndexMetadata.flatIndexFieldMetadatas,
-    flatFieldMetadataMaps: universalFlatFieldMetadataMaps,
+    flatFieldMetadataMaps,
   });
 
   await workspaceSchemaManagerService.indexManager.createIndex({
