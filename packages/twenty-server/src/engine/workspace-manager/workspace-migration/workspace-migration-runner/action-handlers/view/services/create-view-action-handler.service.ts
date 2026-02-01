@@ -4,7 +4,10 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { FlatCreateViewAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
-import { WorkspaceMigrationActionRunnerContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -13,6 +16,12 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
 ) {
   constructor() {
     super();
+  }
+
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatCreateViewAction>,
+  ): Promise<FlatCreateViewAction> {
+    return context.action;
   }
 
   async executeForMetadata(

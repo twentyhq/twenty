@@ -43,6 +43,12 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     super();
   }
 
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatCreateLogicFunctionAction>,
+  ): Promise<FlatCreateLogicFunctionAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateLogicFunctionAction>,
   ): Promise<void> {

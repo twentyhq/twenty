@@ -1,5 +1,6 @@
-import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 
 export const findFieldMetadataIdInCreateFieldContext = ({
   universalIdentifier,
