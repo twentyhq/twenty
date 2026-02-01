@@ -22,11 +22,16 @@ export class ImapService {
         // Critical: Ensure lock is released even if fetch fails
         let lock = await client.getMailboxLock('INBOX');
         try {
+            // Logic: Fetch latest 10 emails
+            const status = await client.mailbox.status('INBOX', { messages: true });
+            const total = status.messages || 0;
+            if (total === 0) return [];
+            
+            const fetchStart = Math.max(1, total - 9);
             const messages = [];
-            // OOM Protection: Fetch only last 10 messages (Safety Limit)
-            // Using '1:10' for simplicity, or complex sequence logic in prod.
-            // For MVP bounty, proving we don't fetch '*' is key.
-            for await (let message of client.fetch('1:10', { envelope: true })) {
+            
+            // Fetch range start:* (last 10)
+            for await (let message of client.fetch(`${fetchStart}:*`, { envelope: true })) {
                 messages.push(message.envelope);
             }
             return messages;
@@ -37,8 +42,13 @@ export class ImapService {
         this.logger.error('IMAP Operation Failed', error);
         throw error; 
     } finally {
-        // Bulletproof: Always logout to prevent server resource leaks
-        await client.logout();
+        // Bulletproof: Safe logout that doesn't mask errors
+        try {
+             await client.logout();
+        } catch (e) {
+             // If logout fails (e.g. connection lost), we suppress it to not mask the original error
+             this.logger.warn('Logout failed or connection already closed');
+        }
     }
   }
 }
