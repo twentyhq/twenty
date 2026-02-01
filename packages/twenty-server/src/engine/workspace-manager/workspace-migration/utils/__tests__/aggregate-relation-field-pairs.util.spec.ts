@@ -160,14 +160,13 @@ describe('aggregateRelationFieldPairs', () => {
     });
 
     // Should remain as single action (target not being created)
-    expect(result.fieldMetadata.create).toHaveLength(1);
-
-    const action = result.fieldMetadata.create[0] as UniversalCreateFieldAction;
-
-    expect(action.universalFlatFieldMetadatas).toHaveLength(1);
-    expect(action.universalFlatFieldMetadatas[0].universalIdentifier).toBe(
-      relationFieldId,
-    );
+    expect(result.fieldMetadata.create).toMatchObject([
+      {
+        universalFlatFieldMetadatas: [
+          { universalIdentifier: relationFieldId },
+        ],
+      },
+    ]);
   });
 
   it('should handle multiple independent relation pairs', () => {
