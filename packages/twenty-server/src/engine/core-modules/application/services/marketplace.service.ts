@@ -200,7 +200,7 @@ export class MarketplaceService {
 
     const manifest = JSON.parse(manifestContent) as Manifest;
 
-    const { application, packageJson } = manifest;
+    const { application } = manifest;
     const marketplaceData = application.marketplaceData;
 
     if (!marketplaceData?.author || !marketplaceData?.category) {
@@ -209,10 +209,10 @@ export class MarketplaceService {
 
     return {
       id: application.universalIdentifier,
-      name: application.displayName ?? packageJson.name,
+      name: application.displayName,
       description: application.description ?? '',
       icon: application.icon ?? 'IconApps',
-      version: packageJson.version,
+      version: application.version,
       author: marketplaceData.author,
       category: marketplaceData.category,
       logo: this.resolveAssetUrl(appPath, marketplaceData.logo),

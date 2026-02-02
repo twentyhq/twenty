@@ -294,6 +294,9 @@ export class DevModeOrchestrator {
           applicationUniversalIdentifier:
             result.manifest.application.universalIdentifier,
         });
+
+        await this.apiService.createApplicationIfNotExist(result.manifest);
+
         for (const [
           builtPath,
           { fileFolder, sourcePath },

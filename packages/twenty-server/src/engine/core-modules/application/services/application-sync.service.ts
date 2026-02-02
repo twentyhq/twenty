@@ -11,8 +11,9 @@ import {
   RelationFieldManifest,
   RoleManifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType, Sources } from 'twenty-shared/types';
+import { FieldMetadataType, FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { PackageJson } from 'type-fest';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -38,6 +39,8 @@ import { PermissionFlagService } from 'src/engine/metadata-modules/permission-fl
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -57,6 +60,7 @@ export class ApplicationSyncService {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly permissionService: PermissionFlagService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -122,7 +126,21 @@ export class ApplicationSyncService {
   }: ApplicationInput & {
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const name = manifest.application.displayName ?? manifest.packageJson.name;
+    const name = manifest.application.displayName;
+    const packageJson = JSON.parse(
+      (
+        await streamToBuffer(
+          await this.fileStorageService.readFile_v2({
+            applicationUniversalIdentifier:
+              manifest.application.universalIdentifier,
+            fileFolder: FileFolder.Source,
+            resourcePath: 'package.json',
+            workspaceId,
+          }),
+        )
+      ).toString('utf-8'),
+    ) as PackageJson;
+
     const application =
       (await this.applicationService.findByUniversalIdentifier({
         universalIdentifier: manifest.application.universalIdentifier,
@@ -132,7 +150,7 @@ export class ApplicationSyncService {
         universalIdentifier: manifest.application.universalIdentifier,
         name,
         description: manifest.application.description,
-        version: manifest.packageJson.version,
+        version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
         logicFunctionLayerId: null,
         defaultRoleId: null,
@@ -143,15 +161,15 @@ export class ApplicationSyncService {
 
     if (
       manifest.logicFunctions.length > 0 &&
-      isDefined(manifest.packageJsonChecksum) &&
-      isDefined(manifest.yarnLockChecksum)
+      isDefined(manifest.application.packageJsonChecksum) &&
+      isDefined(manifest.application.yarnLockChecksum)
     ) {
       if (!isDefined(logicFunctionLayerId)) {
         logicFunctionLayerId = (
           await this.logicFunctionLayerService.create(
             {
-              packageJsonChecksum: manifest.packageJsonChecksum,
-              yarnLockChecksum: manifest.yarnLockChecksum,
+              packageJsonChecksum: manifest.application.packageJsonChecksum,
+              yarnLockChecksum: manifest.application.yarnLockChecksum,
             },
             workspaceId,
           )
@@ -161,8 +179,8 @@ export class ApplicationSyncService {
       await this.logicFunctionLayerService.update(
         logicFunctionLayerId,
         {
-          packageJsonChecksum: manifest.packageJsonChecksum,
-          yarnLockChecksum: manifest.yarnLockChecksum,
+          packageJsonChecksum: manifest.application.packageJsonChecksum,
+          yarnLockChecksum: manifest.application.yarnLockChecksum,
         },
         workspaceId,
       );
@@ -179,7 +197,7 @@ export class ApplicationSyncService {
     return await this.applicationService.update(application.id, {
       name,
       description: manifest.application.description,
-      version: manifest.packageJson.version,
+      version: packageJson.version,
       logicFunctionLayerId,
       defaultRoleId: null,
     });

@@ -2017,6 +2017,7 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
+  createOneApplication: Application;
   createOneField: Field;
   createOneLogicFunction: LogicFunction;
   createOneLogicFunctionLayer: LogicFunctionLayer;
@@ -2314,6 +2315,15 @@ export type MutationCreateObjectEventArgs = {
 
 export type MutationCreateOneAgentArgs = {
   input: CreateAgentInput;
+};
+
+
+export type MutationCreateOneApplicationArgs = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  sourcePath: Scalars['String'];
+  universalIdentifier: Scalars['String'];
+  version: Scalars['String'];
 };
 
 

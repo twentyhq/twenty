@@ -80,11 +80,11 @@ export const manifestUpdateChecksums = ({
 
     if (fileFolder === FileFolder.Source) {
       if (rootBuiltPath === 'package.json') {
-        result.packageJsonChecksum = checksum;
+        result.application.packageJsonChecksum = checksum;
       }
 
       if (rootBuiltPath === 'yarn.lock') {
-        result.yarnLockChecksum = checksum;
+        result.application.yarnLockChecksum = checksum;
       }
     }
   }

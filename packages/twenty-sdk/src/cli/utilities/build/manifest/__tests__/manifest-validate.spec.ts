@@ -1,7 +1,6 @@
 import {
   type ApplicationManifest,
   type Manifest,
-  type PackageJson,
   type FieldManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -11,6 +10,8 @@ const validApplication: ApplicationManifest = {
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'Test App',
   defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+  packageJsonChecksum: '98592af7-4be9-4655-b5c4-9bef307a996c',
+  yarnLockChecksum: '580ee05f-15fe-4146-bac2-6c382483c94e',
 };
 
 const validField: FieldManifest = {
@@ -31,8 +32,6 @@ const validManifest: Manifest = {
   roles: [],
   publicAssets: [],
   sources: {},
-  packageJson: {} as PackageJson,
-  yarnLock: '',
 };
 
 describe('manifestValidate', () => {

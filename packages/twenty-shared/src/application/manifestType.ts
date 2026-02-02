@@ -8,7 +8,6 @@ import {
   type FieldManifest,
 } from '@/application';
 import { type Sources } from '@/types';
-import { type PackageJson } from 'type-fest';
 
 export type Manifest = {
   application: ApplicationManifest;
@@ -19,7 +18,4 @@ export type Manifest = {
   roles: RoleManifest[];
   publicAssets: AssetManifest[];
   sources: Sources;
-  packageJson: PackageJson;
-  packageJsonChecksum: string | null;
-  yarnLockChecksum: string | null;
 };

@@ -20,11 +20,13 @@ import {
   type RoleManifest,
 } from 'twenty-shared/application';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { type FrontComponentConfig, type LogicFunctionConfig } from '@/sdk';
+import {
+  type ApplicationConfig,
+  type FrontComponentConfig,
+  type LogicFunctionConfig,
+} from '@/sdk';
 import type { Sources } from 'twenty-shared/types';
 import * as fs from 'fs-extra';
-import { findPathFile } from '@/cli/utilities/file/file-find';
-import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -108,11 +110,16 @@ export const buildManifest = async (
 
     switch (entity) {
       case ManifestEntityKey.Application: {
-        const extract = await extractManifestFromFile<ApplicationManifest>({
+        const extract = await extractManifestFromFile<ApplicationConfig>({
           appPath,
           filePath,
         });
-        application = extract.config;
+
+        application = {
+          ...extract.config,
+          yarnLockChecksum: null,
+          packageJsonChecksum: null,
+        };
         errors.push(...extract.errors);
         applicationFilePaths.push(relativePath);
         break;
@@ -223,10 +230,6 @@ export const buildManifest = async (
     );
   }
 
-  const packageJson = await parseJsoncFile<Manifest['packageJson']>(
-    await findPathFile(appPath, 'package.json'),
-  );
-
   const manifest = !application
     ? null
     : {
@@ -238,9 +241,6 @@ export const buildManifest = async (
         frontComponents,
         publicAssets,
         sources: await computeSources(appPath, filePaths),
-        packageJsonChecksum: null,
-        yarnLockChecksum: null,
-        packageJson,
       };
 
   const entityFilePaths: EntityFilePaths = {

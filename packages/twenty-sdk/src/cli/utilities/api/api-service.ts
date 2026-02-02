@@ -9,10 +9,13 @@ import {
   printSchema,
 } from 'graphql/index';
 import * as path from 'path';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type ApplicationManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
-import { pascalCase } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -95,6 +98,113 @@ export class ApiService {
       return {
         authValid: false,
         serverUp: false,
+      };
+    }
+  }
+
+  async findOneApplication(
+    universalIdentifier: string,
+  ): Promise<ApiResponse<ApplicationManifest>> {
+    try {
+      const query = `
+        query FindOneApplication($universalIdentifier: String!) {
+          findOneApplication(universalIdentifier: $universalIdentifier) {
+            id
+      `;
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.findOneApplication,
+        message: `Successfully find application`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async createApplicationIfNotExist(
+    manifest: Manifest,
+  ): Promise<ApiResponse<ApplicationManifest>> {
+    const application = await this.findOneApplication(
+      manifest.application.universalIdentifier,
+    );
+
+    if (isDefined(application)) {
+      return application;
+    }
+
+    try {
+      const mutation = `
+        mutation CreateOneApplication($input: CreateOneApplicationInput!) {
+          createOneApplication(input: $input) {
+            id
+            universalIdentifier
+          }
+        }
+      `;
+
+      const variables = {
+        input: {
+          universalIdentifier: manifest.application.universalIdentifier,
+          name: manifest.application.displayName,
+          version: '0.0.1',
+          sourcePath: '',
+        },
+      };
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.syncApplication,
+        message: `Successfully create application: ${manifest.application.displayName}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
       };
     }
   }

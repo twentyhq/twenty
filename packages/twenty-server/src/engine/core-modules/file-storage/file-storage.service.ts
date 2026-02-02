@@ -97,7 +97,7 @@ export class FileStorageService {
       sourceFile,
     });
 
-    const fileEntity = await this.fileRepository.save({
+    return await this.fileRepository.save({
       path: `${fileFolder}/${resourcePath}`,
       workspaceId,
       applicationId: application.id,
@@ -108,8 +108,6 @@ export class FileStorageService {
           : sourceFile.length,
       settings,
     });
-
-    return fileEntity;
   }
 
   /**

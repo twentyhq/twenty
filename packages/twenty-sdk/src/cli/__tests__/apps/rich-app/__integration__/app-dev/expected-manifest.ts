@@ -12,7 +12,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       fileType: 'png',
     },
   ],
-  yarnLock: '',
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {
@@ -27,6 +26,8 @@ export const EXPECTED_MANIFEST: Manifest = {
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     icon: 'IconWorld',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+    yarnLockChecksum: '98362e62-0dea-497e-a8d3-bf45bab762ea',
+    packageJsonChecksum: 'a674a5a9-3a2c-4745-b733-7c81f86cff64',
   },
   frontComponents: [
     {
@@ -335,42 +336,4 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     },
   ],
-  packageJson: {
-    name: 'rich-app',
-    version: '0.1.0',
-    license: 'MIT',
-    engines: {
-      node: '^24.5.0',
-      npm: 'please-use-yarn',
-      yarn: '>=4.0.2',
-    },
-    packageManager: 'yarn@4.9.2',
-    scripts: {
-      'auth:login': 'twenty auth:login',
-      'auth:logout': 'twenty auth:logout',
-      'auth:status': 'twenty auth:status',
-      'auth:switch': 'twenty auth:switch',
-      'auth:list': 'twenty auth:list',
-      'app:dev': 'twenty app:dev',
-      'entity:add': 'twenty entity:add',
-      'app:generate': 'twenty app:generate',
-      'function:logs': 'twenty function:logs',
-      'function:execute': 'twenty function:execute',
-      'app:uninstall': 'twenty app:uninstall',
-      help: 'twenty help',
-      lint: 'eslint',
-      'lint:fix': 'eslint --fix',
-    },
-    dependencies: {
-      'twenty-sdk': 'latest',
-    },
-    devDependencies: {
-      typescript: '^5.9.3',
-      '@types/node': '^24.7.2',
-      '@types/react': '^19.0.2',
-      react: '^19.0.2',
-      eslint: '^9.32.0',
-      'typescript-eslint': '^8.50.0',
-    },
-  },
 };
