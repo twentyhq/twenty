@@ -23,11 +23,11 @@ export class LogicFunctionLayerEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'text', nullable: false })
   yarnLock: string;
 
-  @Column({ type: 'text', nullable: false })
-  packageJsonChecksum: string;
+  @Column({ type: 'text', nullable: true })
+  packageJsonChecksum?: string;
 
-  @Column({ type: 'text', nullable: false })
-  yarnLockChecksum: string;
+  @Column({ type: 'text', nullable: true })
+  yarnLockChecksum?: string;
 
   @OneToMany(
     () => LogicFunctionEntity,
