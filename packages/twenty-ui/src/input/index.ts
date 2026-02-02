@@ -99,6 +99,8 @@ export { IconListViewGrip } from './components/IconListViewGrip';
 export type { RadioProps } from './components/Radio';
 export { RadioSize, LabelPosition, Radio } from './components/Radio';
 export { RadioGroup } from './components/RadioGroup';
+export type { SearchInputProps } from './components/SearchInput';
+export { SearchInput } from './components/SearchInput';
 export type { ToggleSize, ToggleProps } from './components/Toggle';
 export { Toggle } from './components/Toggle';
 export type { ColorScheme } from './types/ColorScheme';
