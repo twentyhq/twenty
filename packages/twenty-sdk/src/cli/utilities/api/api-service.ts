@@ -163,7 +163,7 @@ export class ApiService {
           universalIdentifier: manifest.application.universalIdentifier,
           name: manifest.application.displayName,
           version: '0.0.1',
-          sourcePath: '',
+          sourcePath: 'cli-sync',
         },
       };
 
