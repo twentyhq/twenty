@@ -26,8 +26,8 @@ export const EXPECTED_MANIFEST: Manifest = {
     defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     icon: 'IconWorld',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
-    yarnLockChecksum: '98362e62-0dea-497e-a8d3-bf45bab762ea',
-    packageJsonChecksum: 'a674a5a9-3a2c-4745-b733-7c81f86cff64',
+    yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
+    packageJsonChecksum: '42c3913415952d91ff1cf67ef6452872',
   },
   frontComponents: [
     {
@@ -71,14 +71,6 @@ export const EXPECTED_MANIFEST: Manifest = {
   fields: [
     {
       objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
-      description: 'Priority level for the post card (1-10)',
-      label: 'Priority',
-      name: 'priority',
-      type: FieldType.NUMBER,
-      universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
-    },
-    {
-      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
       description: 'Post card category',
       label: 'Category',
       name: 'category',
@@ -104,6 +96,14 @@ export const EXPECTED_MANIFEST: Manifest = {
       ],
       type: FieldType.SELECT,
       universalIdentifier: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+    },
+    {
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      description: 'Priority level for the post card (1-10)',
+      label: 'Priority',
+      name: 'priority',
+      type: FieldType.NUMBER,
+      universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
     },
   ],
   objects: [
@@ -235,8 +235,8 @@ export const EXPECTED_MANIFEST: Manifest = {
         {
           canReadFieldValue: false,
           canUpdateFieldValue: false,
-          fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
-          objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+          fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
       label: 'Default function role',
@@ -246,7 +246,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
           canUpdateObjectRecords: true,
-          objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+          objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
       permissionFlags: [PermissionFlagType.APPLICATIONS],
@@ -274,10 +274,10 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/greeting.function.mjs',
+      builtHandlerPath: 'src/logic-functions/greeting.function.mjs',
       handlerName: 'default.handler',
       name: 'greeting-function',
-      sourceHandlerPath: 'src/functions/greeting.function.ts',
+      sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
       timeoutSeconds: 5,
       triggers: [
         {
@@ -292,10 +292,10 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/test-function-2.function.mjs',
-      handlerName: 'config.handler',
+      builtHandlerPath: 'src/logic-functions/test-function-2.function.mjs',
+      handlerName: 'default.handler',
       name: 'test-function-2',
-      sourceHandlerPath: 'src/functions/test-function-2.function.ts',
+      sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
       timeoutSeconds: 2,
       triggers: [
         {
@@ -308,10 +308,10 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/test-function.function.mjs',
+      builtHandlerPath: 'src/logic-functions/test-function.function.mjs',
       handlerName: 'default.handler',
       name: 'test-function',
-      sourceHandlerPath: 'src/functions/test-function.function.ts',
+      sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
       timeoutSeconds: 2,
       triggers: [
         {
