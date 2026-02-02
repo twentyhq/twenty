@@ -6,6 +6,7 @@ import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-ve
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
 import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-send-email-recipients.command';
+import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -14,6 +15,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
+import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
@@ -42,6 +44,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     FieldMetadataModule,
     ObjectMetadataModule,
     ApplicationModule,
+    LogicFunctionModule,
     GlobalWorkspaceDataSourceModule,
   ],
   providers: [
@@ -50,6 +53,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
+    MigrateWorkflowCodeStepsCommand,
   ],
   exports: [
     MigrateAttachmentToMorphRelationsCommand,
@@ -57,6 +61,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
+    MigrateWorkflowCodeStepsCommand,
   ],
 })
 export class V1_17_UpgradeVersionCommandModule {}
