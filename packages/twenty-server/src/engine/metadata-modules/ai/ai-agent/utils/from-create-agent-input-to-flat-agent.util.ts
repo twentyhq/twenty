@@ -32,7 +32,6 @@ export const fromCreateAgentInputToFlatAgent = ({
         'description',
         'prompt',
         'modelId',
-        'standardId',
         'applicationId',
         'roleId',
       ],
