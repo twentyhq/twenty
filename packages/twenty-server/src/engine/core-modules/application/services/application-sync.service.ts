@@ -21,6 +21,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -74,23 +75,25 @@ export class ApplicationSyncService {
       yarnLock,
     });
 
+    const ownerFlatApplication: FlatApplication = application;
+
     await this.syncObjects({
       objectsToSync: manifest.objects,
       workspaceId,
-      applicationId: application.id,
+      ownerFlatApplication,
     });
 
     await this.syncObjectRelations({
       objectsToSync: manifest.objects,
       workspaceId,
-      applicationId: application.id,
+      ownerFlatApplication,
     });
 
     if (manifest.fields.length > 0) {
       await this.syncFieldsOrThrow({
         fieldsToSync: manifest.fields,
         workspaceId,
-        applicationId: application.id,
+        ownerFlatApplication,
       });
     }
 
@@ -106,7 +109,7 @@ export class ApplicationSyncService {
         logicFunctionsToSync: manifest.logicFunctions,
         code: manifest.sources,
         workspaceId,
-        applicationId: application.id,
+        ownerFlatApplication,
         logicFunctionLayerId: application.logicFunctionLayerId,
       });
     }
@@ -114,7 +117,7 @@ export class ApplicationSyncService {
     await this.syncRoles({
       manifest,
       workspaceId,
-      applicationId: application.id,
+      ownerFlatApplication,
     });
 
     this.logger.log('✅ Application sync from manifest completed');
@@ -190,11 +193,11 @@ export class ApplicationSyncService {
   private async syncRoles({
     manifest,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
   }: {
     manifest: Manifest;
     workspaceId: string;
-    applicationId: string;
+    ownerFlatApplication: FlatApplication;
   }) {
     let defaultRoleId: string | null = null;
 
@@ -211,12 +214,13 @@ export class ApplicationSyncService {
             update: role,
           },
           workspaceId,
+          ownerFlatApplication,
         });
       } else {
         existingRole = await this.roleService.createRole({
           input: role,
           workspaceId,
-          applicationId,
+          ownerFlatApplication,
         });
       }
 
@@ -235,7 +239,7 @@ export class ApplicationSyncService {
     }
 
     if (isDefined(defaultRoleId)) {
-      await this.applicationService.update(applicationId, {
+      await this.applicationService.update(ownerFlatApplication.id, {
         defaultRoleId: defaultRoleId,
       });
     }
@@ -348,11 +352,11 @@ export class ApplicationSyncService {
     objectId,
     fieldsToSync,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
   }: {
     objectId: string;
     workspaceId: string;
-    applicationId: string;
+    ownerFlatApplication: FlatApplication;
     fieldsToSync: ObjectFieldManifest[];
   }) {
     const fieldsWithoutRelation = fieldsToSync.filter(
@@ -414,10 +418,12 @@ export class ApplicationSyncService {
           isActive: false,
         },
         workspaceId,
+        ownerFlatApplication,
       });
       await this.fieldMetadataService.deleteOneField({
         deleteOneFieldInput: { id: fieldToDelete.id },
         workspaceId,
+        ownerFlatApplication,
       });
     }
 
@@ -448,6 +454,7 @@ export class ApplicationSyncService {
       await this.fieldMetadataService.updateOneField({
         updateFieldInput,
         workspaceId,
+        ownerFlatApplication,
       });
     }
 
@@ -465,7 +472,7 @@ export class ApplicationSyncService {
         objectMetadataId: objectId,
         universalIdentifier: fieldToCreate.universalIdentifier,
         standardId: fieldToCreate.universalIdentifier,
-        applicationId,
+        applicationId: ownerFlatApplication.id,
         isCustom: true,
         workspaceId,
       };
@@ -473,7 +480,7 @@ export class ApplicationSyncService {
       await this.fieldMetadataService.createOneField({
         createFieldInput,
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
       });
     }
   }
@@ -482,13 +489,13 @@ export class ApplicationSyncService {
     objectId,
     fieldsToSync,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
     flatObjectMetadataMaps,
   }: {
     objectId: string;
     fieldsToSync: ObjectFieldManifest[];
     workspaceId: string;
-    applicationId: string;
+    ownerFlatApplication: FlatApplication;
     flatObjectMetadataMaps: {
       idByUniversalIdentifier: Partial<Record<string, string>>;
     };
@@ -539,7 +546,7 @@ export class ApplicationSyncService {
         objectMetadataId: objectId,
         universalIdentifier: relation.universalIdentifier,
         standardId: relation.universalIdentifier,
-        applicationId,
+        applicationId: ownerFlatApplication.id,
         isCustom: true,
         workspaceId,
         relationCreationPayload: {
@@ -553,7 +560,7 @@ export class ApplicationSyncService {
       await this.fieldMetadataService.createOneField({
         createFieldInput,
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
       });
     }
   }
@@ -561,11 +568,11 @@ export class ApplicationSyncService {
   private async syncObjects({
     objectsToSync,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
   }: {
     objectsToSync: ObjectManifest[];
     workspaceId: string;
-    applicationId: string;
+    ownerFlatApplication: FlatApplication;
   }) {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -578,7 +585,7 @@ export class ApplicationSyncService {
     const applicationObjects = Object.values(
       existingFlatObjectMetadataMaps.byId,
     ).filter(
-      (obj) => isDefined(obj) && obj.applicationId === applicationId,
+      (obj) => isDefined(obj) && obj.applicationId === ownerFlatApplication.id,
       // TODO handle when migrating to trinite usage
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any[];
@@ -615,6 +622,7 @@ export class ApplicationSyncService {
         deleteObjectInput: { id: objectToDelete.id },
         workspaceId,
         isSystemBuild: true,
+        ownerFlatApplication,
       });
     }
 
@@ -645,13 +653,14 @@ export class ApplicationSyncService {
       await this.objectMetadataService.updateOneObject({
         updateObjectInput,
         workspaceId,
+        ownerFlatApplication,
       });
 
       await this.syncObjectFieldsWithoutRelations({
         fieldsToSync: objectToSync.fields,
         objectId: objectToUpdate.id,
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
       });
     }
 
@@ -671,12 +680,12 @@ export class ApplicationSyncService {
         standardId: objectToCreate.universalIdentifier,
         dataSourceId: dataSourceMetadata.id,
         universalIdentifier: objectToCreate.universalIdentifier,
-        applicationId,
+        applicationId: ownerFlatApplication.id,
       };
 
       const createdObject = await this.objectMetadataService.createOneObject({
         createObjectInput,
-        applicationId,
+        ownerFlatApplication,
         workspaceId,
       });
 
@@ -684,7 +693,7 @@ export class ApplicationSyncService {
         fieldsToSync: objectToCreate.fields,
         objectId: createdObject.id,
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
       });
     }
   }
@@ -692,11 +701,11 @@ export class ApplicationSyncService {
   private async syncObjectRelations({
     objectsToSync,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
   }: {
     objectsToSync: ObjectManifest[];
     workspaceId: string;
-    applicationId: string;
+    ownerFlatApplication: FlatApplication;
   }) {
     const { flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -723,7 +732,7 @@ export class ApplicationSyncService {
         objectId: sourceObjectId,
         fieldsToSync: objectToSync.fields,
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
         flatObjectMetadataMaps,
       });
     }
@@ -732,11 +741,11 @@ export class ApplicationSyncService {
   private async syncFieldsOrThrow({
     fieldsToSync,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
   }: {
     fieldsToSync: FieldManifest[];
     workspaceId: string;
-    applicationId: string;
+    ownerFlatApplication: FlatApplication;
   }) {
     const { flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -763,14 +772,14 @@ export class ApplicationSyncService {
         objectId: targetObjectId,
         fieldsToSync: [fieldToSync],
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
       });
 
       await this.syncObjectFieldsRelationOnly({
         objectId: targetObjectId,
         fieldsToSync: [fieldToSync],
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
         flatObjectMetadataMaps,
       });
     }
@@ -780,13 +789,13 @@ export class ApplicationSyncService {
     logicFunctionsToSync,
     code,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
     logicFunctionLayerId,
   }: {
     logicFunctionsToSync: LogicFunctionManifest[];
     workspaceId: string;
     code: Sources;
-    applicationId: string;
+    ownerFlatApplication: FlatApplication;
     logicFunctionLayerId: string;
   }) {
     const { flatLogicFunctionMaps } =
@@ -802,7 +811,7 @@ export class ApplicationSyncService {
     ).filter(
       (logicFunction) =>
         isDefined(logicFunction) &&
-        logicFunction.applicationId === applicationId,
+        logicFunction.applicationId === ownerFlatApplication.id,
     ) as FlatLogicFunction[];
 
     const logicFunctionsToSyncUniversalIdentifiers = logicFunctionsToSync.map(
@@ -841,8 +850,8 @@ export class ApplicationSyncService {
       await this.logicFunctionService.destroyOne({
         id: logicFunctionToDelete.id,
         workspaceId,
-        applicationId,
         isSystemBuild: true,
+        ownerFlatApplication,
       });
     }
 
@@ -876,7 +885,7 @@ export class ApplicationSyncService {
           isTool: logicFunctionToSync.isTool,
         },
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
       });
 
       // Trigger settings are now embedded in the logic function entity
@@ -902,7 +911,7 @@ export class ApplicationSyncService {
           isTool: logicFunctionToCreate.isTool,
         },
         workspaceId,
-        applicationId,
+        ownerFlatApplication,
       });
     }
   }
@@ -986,6 +995,7 @@ export class ApplicationSyncService {
         },
         workspaceId,
         isSystemBuild: true,
+        applicationUniversalIdentifier,
       },
     );
 

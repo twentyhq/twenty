@@ -9,10 +9,7 @@ import {
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('frontComponent')
-export class FrontComponentEntity
-  extends SyncableEntity
-  implements Required<FrontComponentEntity>
-{
+export class FrontComponentEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

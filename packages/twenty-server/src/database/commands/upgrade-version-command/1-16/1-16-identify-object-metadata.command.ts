@@ -16,7 +16,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
@@ -101,9 +100,11 @@ export class IdentifyObjectMetadataCommand extends WorkspacesMigrationCommandRun
     const exceptions: ObjectMetadataException[] = [];
 
     for (const objectMetadataEntity of allObjectMetadataEntities) {
-      const isStandardMetadataResult = isStandardMetadata(objectMetadataEntity);
+      const shouldBelongToTwentyStandardApp =
+        !objectMetadataEntity.isCustom &&
+        isDefined(objectMetadataEntity.standardId);
 
-      if (!isStandardMetadataResult) {
+      if (!shouldBelongToTwentyStandardApp) {
         customObjectMetadataEntities.push({
           objectMetadataEntity,
           fromStandard: false,

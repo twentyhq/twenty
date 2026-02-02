@@ -153,6 +153,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an upd
   "updatedFlatEntityMaps": {
     "byId": {
       "field-id-1": {
+        "universalIdentifier": "universal-identifier-1",
         "updates": [
           {
             "from": false,
@@ -283,6 +284,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
   "updatedFlatEntityMaps": {
     "byId": {
       "field-id-1": {
+        "universalIdentifier": "universal-identifier-1",
         "updates": [
           {
             "from": true,

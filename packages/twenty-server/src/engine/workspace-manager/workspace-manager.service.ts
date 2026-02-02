@@ -121,7 +121,7 @@ export class WorkspaceManagerService {
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
+      ownerFlatApplication: workspaceCustomFlatApplication,
     });
 
     await this.workspaceRepository.update(workspaceId, {

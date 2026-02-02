@@ -1,6 +1,3 @@
-import { basename, extname, relative, sep } from 'path';
-import { readFile } from 'fs-extra';
-import { glob } from 'fast-glob';
 import {
   type EntityFilePaths,
   extractDefineEntity,
@@ -8,23 +5,26 @@ import {
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
+import { findPathFile } from '@/cli/utilities/file/file-find';
+import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
+import { type FrontComponentConfig, type LogicFunctionConfig } from '@/sdk';
+import { glob } from 'fast-glob';
+import * as fs from 'fs-extra';
+import { readFile } from 'fs-extra';
+import { basename, extname, relative, sep } from 'path';
 import {
   type ApplicationManifest,
-  type Manifest,
   type AssetManifest,
   ASSETS_DIR,
   type FieldManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
+  type Manifest,
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
-import { findPathFile } from '@/cli/utilities/file/file-find';
+import { type Sources } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { type FrontComponentConfig, type LogicFunctionConfig } from '@/sdk';
-import type { Sources } from 'twenty-shared/types';
-import * as fs from 'fs-extra';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {

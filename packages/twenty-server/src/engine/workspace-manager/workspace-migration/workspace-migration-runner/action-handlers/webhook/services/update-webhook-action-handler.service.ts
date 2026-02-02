@@ -3,8 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import { UpdateWebhookAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FlatUpdateWebhookAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
@@ -12,11 +15,17 @@ export class UpdateWebhookActionHandlerService extends WorkspaceMigrationRunnerA
   'update',
   'webhook',
 ) {
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateWebhookAction>,
+  ): Promise<FlatUpdateWebhookAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateWebhookAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateWebhookAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId, updates } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, updates } = flatAction;
 
     const webhookRepository =
       queryRunner.manager.getRepository<WebhookEntity>(WebhookEntity);
@@ -30,7 +39,7 @@ export class UpdateWebhookActionHandlerService extends WorkspaceMigrationRunnerA
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateWebhookAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateWebhookAction>,
   ): Promise<void> {
     return;
   }
