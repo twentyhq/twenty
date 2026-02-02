@@ -21,6 +21,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -40,6 +41,8 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly fileStorageService: FileStorageService,
@@ -173,15 +176,8 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     const { serverlessFunctionId, serverlessFunctionVersion } = target;
     const version = serverlessFunctionVersion ?? 'draft';
 
-    const logicFunctionRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        'logicFunction',
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const oldLogicFunction = await logicFunctionRepository.findOne({
-      where: { id: serverlessFunctionId },
+    const oldLogicFunction = await this.logicFunctionRepository.findOne({
+      where: { id: serverlessFunctionId, workspaceId },
     });
 
     if (!isDefined(oldLogicFunction)) {
