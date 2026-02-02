@@ -1,13 +1,13 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   type FieldMetadataSettings,
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
