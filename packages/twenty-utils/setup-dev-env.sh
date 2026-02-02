@@ -3,9 +3,6 @@ set -e
 
 echo "Setting up dev environment..."
 
-npx nx build twenty-shared
-npx nx build twenty-emails
-
 npx nx reset:env twenty-front
 npx nx reset:env twenty-server
 

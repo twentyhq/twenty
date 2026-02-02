@@ -55,15 +55,6 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore Nx and build cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            .nx/cache
-            .cache
-          key: claude-nx-${{ github.run_id }}
-          restore-keys: |
-            claude-nx-
       - name: Run Claude Code
         uses: anthropics/claude-code-action@v1
         with:
@@ -76,14 +67,6 @@ jobs:
                 "PG_DATABASE_URL": "postgres://postgres:postgres@localhost:5432/default"
               }
             }
-      - name: Save Nx and build cache
-        uses: actions/cache/save@v4
-        if: always()
-        with:
-          path: |
-            .nx/cache
-            .cache
-          key: claude-nx-${{ github.run_id }}
 
   claude-cross-repo:
     if: github.event_name == 'repository_dispatch'
@@ -113,15 +96,6 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
-      - name: Restore Nx and build cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            .nx/cache
-            .cache
-          key: claude-nx-${{ github.run_id }}
-          restore-keys: |
-            claude-nx-
       - name: Build prompt from dispatch payload
         id: prompt
         uses: actions/github-script@v7
@@ -151,14 +125,6 @@ jobs:
                 "PG_DATABASE_URL": "postgres://postgres:postgres@localhost:5432/default"
               }
             }
-      - name: Save Nx and build cache
-        uses: actions/cache/save@v4
-        if: always()
-        with:
-          path: |
-            .nx/cache
-            .cache
-          key: claude-nx-${{ github.run_id }}
       - name: Post response to source issue
         if: always()
         uses: actions/github-script@v7
