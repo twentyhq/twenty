@@ -21,10 +21,12 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -87,7 +89,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       return;
     }
 
-    const { twentyStandardFlatApplication } =
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
@@ -101,13 +103,20 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
     const folderIdMapping = await this.migrateFavoriteFolders({
       workspaceId,
-      applicationId: twentyStandardFlatApplication.id,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
+
+    const { flatViewMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatViewMaps'],
+    );
 
     const migratedFavoriteIds = await this.migrateFavorites({
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
       flatObjectMetadataMaps,
+      flatViewMaps,
       folderIdMapping,
     });
 
@@ -134,10 +143,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
   private async migrateFavoriteFolders({
     workspaceId,
-    applicationId,
+    workspaceCustomApplicationId,
   }: {
     workspaceId: string;
-    applicationId: string;
+    workspaceCustomApplicationId: string;
   }): Promise<Map<string, string>> {
     const favoriteFolderRepository =
       await this.twentyORMGlobalManager.getRepository<FavoriteFolderWorkspaceEntity>(
@@ -192,7 +201,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         name: favoriteFolder.name,
         position: favoriteFolder.position,
         workspaceId,
-        applicationId,
+        applicationId: workspaceCustomApplicationId,
         createdAt: now,
         updatedAt: now,
       };
@@ -214,12 +223,16 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
   private async migrateFavorites({
     workspaceId,
     twentyStandardApplicationId,
+    workspaceCustomApplicationId,
     flatObjectMetadataMaps,
+    flatViewMaps,
     folderIdMapping,
   }: {
     workspaceId: string;
     twentyStandardApplicationId: string;
+    workspaceCustomApplicationId: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatViewMaps: FlatEntityMaps<FlatView>;
     folderIdMapping: Map<string, string>;
   }): Promise<string[]> {
     const favoriteRepository =
@@ -287,6 +300,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
     const flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[] = [];
     const migratedFavoriteIds: string[] = [];
+    const usedStandardUniversalIdentifiers = new Set<string>();
 
     for (const favorite of favorites) {
       const userWorkspaceId = !isDefined(favorite.forWorkspaceMemberId)
@@ -331,12 +345,24 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           continue;
         }
 
+        const { applicationId, universalIdentifier } =
+          this.getApplicationIdAndUniversalIdentifierForViewFavorite({
+            viewId: favorite.viewId,
+            flatViewMaps,
+            existingFlatNavigationMenuItemMaps,
+            usedStandardUniversalIdentifiers,
+            twentyStandardApplicationId,
+            workspaceCustomApplicationId,
+            workspaceId,
+            userWorkspaceId,
+          });
+
         const newId = uuidv4();
         const now = new Date().toISOString();
 
         flatNavigationMenuItemsToCreate.push({
           id: newId,
-          universalIdentifier: newId,
+          universalIdentifier,
           userWorkspaceId,
           targetRecordId: null,
           targetObjectMetadataId: null,
@@ -345,7 +371,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           name: null,
           position: favorite.position,
           workspaceId,
-          applicationId: twentyStandardApplicationId,
+          applicationId,
           createdAt: now,
           updatedAt: now,
         });
@@ -393,7 +419,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         name: null,
         position: favorite.position,
         workspaceId,
-        applicationId: twentyStandardApplicationId,
+        applicationId: workspaceCustomApplicationId,
         createdAt: now,
         updatedAt: now,
       });
@@ -410,6 +436,81 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     }
 
     return migratedFavoriteIds;
+  }
+
+  private getApplicationIdAndUniversalIdentifierForViewFavorite({
+    viewId,
+    flatViewMaps,
+    existingFlatNavigationMenuItemMaps,
+    usedStandardUniversalIdentifiers,
+    twentyStandardApplicationId,
+    workspaceCustomApplicationId,
+    workspaceId,
+    userWorkspaceId: _userWorkspaceId,
+  }: {
+    viewId: string;
+    flatViewMaps: FlatEntityMaps<FlatView>;
+    existingFlatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
+    usedStandardUniversalIdentifiers: Set<string>;
+    twentyStandardApplicationId: string;
+    workspaceCustomApplicationId: string;
+    workspaceId: string;
+    userWorkspaceId: string | null;
+  }): { applicationId: string; universalIdentifier: string } {
+    const flatView = flatViewMaps.byId[viewId];
+
+    if (!isDefined(flatView)) {
+      return {
+        applicationId: workspaceCustomApplicationId,
+        universalIdentifier: uuidv4(),
+      };
+    }
+
+    const matchingStandardItem = Object.values(
+      STANDARD_NAVIGATION_MENU_ITEMS,
+    ).find(
+      (item) => item.viewUniversalIdentifier === flatView.universalIdentifier,
+    );
+
+    if (!isDefined(matchingStandardItem)) {
+      return {
+        applicationId: workspaceCustomApplicationId,
+        universalIdentifier: uuidv4(),
+      };
+    }
+
+    const standardUniversalIdentifierInExisting = Object.values(
+      existingFlatNavigationMenuItemMaps.byId,
+    ).some(
+      (item) =>
+        isDefined(item) &&
+        item.workspaceId === workspaceId &&
+        item.universalIdentifier === matchingStandardItem.universalIdentifier,
+    );
+
+    const standardUniversalIdentifierInBatch =
+      usedStandardUniversalIdentifiers.has(
+        matchingStandardItem.universalIdentifier,
+      );
+
+    const standardUniversalIdentifierAlreadyUsed =
+      standardUniversalIdentifierInExisting ||
+      standardUniversalIdentifierInBatch;
+
+    const universalIdentifier = standardUniversalIdentifierAlreadyUsed
+      ? uuidv4()
+      : matchingStandardItem.universalIdentifier;
+
+    if (!standardUniversalIdentifierAlreadyUsed) {
+      usedStandardUniversalIdentifiers.add(
+        matchingStandardItem.universalIdentifier,
+      );
+    }
+
+    return {
+      applicationId: twentyStandardApplicationId,
+      universalIdentifier,
+    };
   }
 
   private async getUserWorkspaceIdFromWorkspaceMemberId(
