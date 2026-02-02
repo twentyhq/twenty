@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
-import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -93,7 +93,7 @@ export class FlatSkillValidatorService {
       return validationResult;
     }
 
-    if (!buildOptions.isSystemBuild && isStandardMetadata(existingSkill)) {
+    if (!buildOptions.isSystemBuild && belongsToTwentyStandardApp(existingSkill)) {
       validationResult.errors.push({
         code: SkillExceptionCode.SKILL_IS_STANDARD,
         message: t`Cannot delete standard skill`,
@@ -150,7 +150,7 @@ export class FlatSkillValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
-      isStandardMetadata(fromFlatSkill) &&
+      belongsToTwentyStandardApp(fromFlatSkill) &&
       hasNonIsActiveUpdates
     ) {
       validationResult.errors.push({
@@ -162,7 +162,7 @@ export class FlatSkillValidatorService {
 
     // If only isActive is being updated on a standard skill, allow it
     if (
-      isStandardMetadata(fromFlatSkill) &&
+      belongsToTwentyStandardApp(fromFlatSkill) &&
       isDefined(isActiveUpdate) &&
       !hasNonIsActiveUpdates
     ) {
