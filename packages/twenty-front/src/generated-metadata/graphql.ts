@@ -1371,6 +1371,66 @@ export type EmailsConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type EventLogDateRangeInput = {
+  end?: InputMaybe<Scalars['DateTime']>;
+  start?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type EventLogFiltersInput = {
+  dateRange?: InputMaybe<EventLogDateRangeInput>;
+  eventType?: InputMaybe<Scalars['String']>;
+  objectMetadataId?: InputMaybe<Scalars['String']>;
+  recordId?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']>;
+};
+
+export enum EventLogOrderByDirection {
+  ASC = 'ASC',
+  DESC = 'DESC'
+}
+
+export enum EventLogOrderByField {
+  EVENT = 'EVENT',
+  TIMESTAMP = 'TIMESTAMP'
+}
+
+export type EventLogOrderByInput = {
+  direction?: EventLogOrderByDirection;
+  field?: EventLogOrderByField;
+};
+
+export type EventLogQueryInput = {
+  filters?: InputMaybe<EventLogFiltersInput>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<EventLogOrderByInput>;
+  table: EventLogTable;
+};
+
+export type EventLogQueryResult = {
+  __typename?: 'EventLogQueryResult';
+  hasNextPage: Scalars['Boolean'];
+  records: Array<EventLogRecord>;
+  totalCount: Scalars['Int'];
+};
+
+export type EventLogRecord = {
+  __typename?: 'EventLogRecord';
+  event: Scalars['String'];
+  isCustom?: Maybe<Scalars['Boolean']>;
+  objectMetadataId?: Maybe<Scalars['String']>;
+  properties?: Maybe<Scalars['JSON']>;
+  recordId?: Maybe<Scalars['String']>;
+  timestamp: Scalars['DateTime'];
+  userId?: Maybe<Scalars['String']>;
+};
+
+export enum EventLogTable {
+  OBJECT_EVENT = 'OBJECT_EVENT',
+  PAGEVIEW = 'PAGEVIEW',
+  WORKSPACE_EVENT = 'WORKSPACE_EVENT'
+}
+
 export type EventSubscription = {
   __typename?: 'EventSubscription';
   eventStreamId: Scalars['String'];
@@ -3587,6 +3647,7 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
+  getEventLogTables: Array<EventLogTable>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -3619,6 +3680,7 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   pieChartData: PieChartDataOutput;
+  queryEventLogs: EventLogQueryResult;
   search: SearchResultConnection;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
@@ -3935,6 +3997,11 @@ export type QueryObjectsArgs = {
 
 export type QueryPieChartDataArgs = {
   input: PieChartDataInput;
+};
+
+
+export type QueryQueryEventLogsArgs = {
+  input: EventLogQueryInput;
 };
 
 
