@@ -4,6 +4,7 @@ export type FieldsConfigurationFieldItem = {
   fieldMetadataId: string;
   position: number;
   conditionalDisplay?: RulesLogic;
+  // TODO: This will be replaced by a proper conditionalDisplay condition in the future
   isVisible?: boolean;
 };
 
