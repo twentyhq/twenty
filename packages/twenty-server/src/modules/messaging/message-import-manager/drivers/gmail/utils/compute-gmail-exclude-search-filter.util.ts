@@ -50,15 +50,16 @@ export const computeGmailExcludeSearchFilter = (
       ? `label:${labelNamesToInclude[0]}`
       : `(${labelNamesToInclude.map((name) => `label:${name}`).join(' OR ')})`;
 
-  const hasSystemFolderSelected = syncedFolders.some((folder) =>
-    MESSAGING_GMAIL_FOLDERS_WITH_CATEGORY_EXCLUSIONS.includes(
-      folder.externalId ?? '',
-    ),
+  const hasCustomLabelSelected = syncedFolders.some(
+    (folder) =>
+      !MESSAGING_GMAIL_FOLDERS_WITH_CATEGORY_EXCLUSIONS.includes(
+        folder.externalId ?? '',
+      ),
   );
 
-  if (hasSystemFolderSelected) {
-    return `${inclusionQuery} ${allExclusions}`;
+  if (hasCustomLabelSelected) {
+    return `${inclusionQuery} ${systemExclusions}`;
   }
 
-  return `${inclusionQuery} ${systemExclusions}`;
+  return `${inclusionQuery} ${allExclusions}`;
 };

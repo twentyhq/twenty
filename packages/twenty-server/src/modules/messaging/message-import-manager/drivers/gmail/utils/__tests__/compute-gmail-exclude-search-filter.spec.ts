@@ -76,7 +76,7 @@ describe('computeGmailExcludeSearchFilter', () => {
       expect(result).toContain('-label:spam');
     });
 
-    it('includes category exclusions when user label and INBOX are both selected', () => {
+    it('excludes category filters when user label and INBOX are both selected', () => {
       const result = computeGmailExcludeSearchFilter(
         [
           {
@@ -103,7 +103,7 @@ describe('computeGmailExcludeSearchFilter', () => {
 
       expect(result).toContain('label:crm');
       expect(result).toContain('label:inbox');
-      expect(result).toContain('-category:promotions');
+      expect(result).not.toContain('-category:promotions');
       expect(result).toContain('-label:spam');
     });
 
