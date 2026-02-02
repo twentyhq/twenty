@@ -145,7 +145,7 @@ export const PageLayoutInitializationQueryEffect = ({
   );
 
   useEffect(() => {
-    if (isInitialized === false) {
+    if (!isInitialized) {
       if (isDefined(pageLayout)) {
         initializePageLayout(pageLayout);
         onInitialized?.(pageLayout);
