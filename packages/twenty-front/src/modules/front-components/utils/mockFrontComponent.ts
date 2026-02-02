@@ -12,15 +12,7 @@ export default jsx(TwentyUiButton, {
   onClick: () => {
     console.log('Button clicked');
   },
-  text: 'Click me',
-  icon: 'arrow-right',
-  iconPosition: 'right',
-  iconSize: 'md',
-  iconColor: 'white',
-  iconBackgroundColor: 'primary',
-  iconBorderRadius: 'md',
-  iconBorderColor: 'primary',
-  iconBorderWidth: '1px',
+  title: 'Click me',
 });
 `;
 
