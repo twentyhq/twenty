@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. Cu alte cuvinte:
+`universalIdentifier` al acestui rol este apoi referențiat în `application.config.ts` ca `roleUniversalIdentifier`. Cu alte cuvinte:
 
 * **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
 * **application.config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
@@ -606,8 +606,8 @@ Când funcția rulează pe Twenty, platforma injectează acreditări ca variabil
 Notițe:
 
 * Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
-* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
+* Permisiunile cheii API sunt determinate de rolul referențiat în `application.config.ts` prin `roleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `roleUniversalIdentifier` la identificatorul universal al acelui rol.
 
 ### Exemplu Hello World
 

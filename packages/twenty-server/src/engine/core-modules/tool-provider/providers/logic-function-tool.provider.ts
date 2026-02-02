@@ -8,10 +8,10 @@ import {
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { wrapJsonSchemaForExecution } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
   readonly category = ToolCategory.LOGIC_FUNCTION;
 
   constructor(
-    private readonly logicFunctionService: LogicFunctionService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -63,7 +63,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
           const { loadingMessage: _, ...actualParams } = parameters;
 
           const result =
-            await this.logicFunctionService.executeOneLogicFunction({
+            await this.logicFunctionExecutorService.executeOneLogicFunction({
               id: logicFunction.id,
               workspaceId: context.workspaceId,
               payload: actualParams,

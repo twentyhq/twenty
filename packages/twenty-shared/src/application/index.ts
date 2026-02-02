@@ -7,7 +7,10 @@
  *                              |___/
  */
 
-export type { ApplicationManifest } from './applicationType';
+export type {
+  ApplicationMarketplaceData,
+  ApplicationManifest,
+} from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export { ASSETS_DIR } from './constants/AssetDirectory';

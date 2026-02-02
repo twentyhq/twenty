@@ -78,7 +78,9 @@ generated
 
 # dev
 /dist/
-.twenty
+
+.twenty/*
+!.twenty/output/
 
 # production
 /build

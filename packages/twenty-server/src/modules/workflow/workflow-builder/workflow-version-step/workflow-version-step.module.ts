@@ -45,6 +45,7 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
   exports: [
     WorkflowVersionStepWorkspaceService,
     WorkflowVersionStepOperationsWorkspaceService,
+    WorkflowVersionStepHelpersWorkspaceService,
   ],
 })
 export class WorkflowVersionStepModule {}

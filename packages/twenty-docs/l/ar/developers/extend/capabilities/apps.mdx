@@ -401,7 +401,7 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. بعبارة أخرى:
+يُشار بعد ذلك إلى `universalIdentifier` لهذا الدور في `application.config.ts` باسم `roleUniversalIdentifier`. بعبارة أخرى:
 
 * **\\*.role.ts** يحدد ما يمكن أن يفعله الدور الافتراضي للوظيفة.
 * **application.config.ts** يشير إلى ذلك الدور بحيث ترث وظائفك صلاحياته.
@@ -606,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 الملاحظات:
 
 * لا تحتاج إلى تمرير عنوان URL أو مفتاح واجهة برمجة التطبيقات إلى العميل المُولَّد. يقوم بقراءة `TWENTY_API_URL` و`TWENTY_API_KEY` من process.env وقت التشغيل.
-* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. هذا هو الدور الافتراضي الذي تستخدمه الوظائف المنطقية في تطبيقك.
-* يمكن للتطبيقات تعريف أدوار لاتباع مبدأ أقل الامتياز. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
+* تُحدَّد أذونات مفتاح واجهة برمجة التطبيقات بواسطة الدور المشار إليه في `application.config.ts` عبر `roleUniversalIdentifier`. هذا هو الدور الافتراضي الذي تستخدمه الوظائف المنطقية في تطبيقك.
+* يمكن للتطبيقات تعريف أدوار لاتباع مبدأ أقل الامتياز. امنح فقط الأذونات التي تحتاجها وظائفك، ثم وجّه `roleUniversalIdentifier` إلى المعرّف الشامل لذلك الدور.
 
 ### مثال Hello World
 

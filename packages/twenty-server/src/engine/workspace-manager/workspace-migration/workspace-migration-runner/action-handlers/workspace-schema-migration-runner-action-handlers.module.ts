@@ -69,13 +69,11 @@ import { UpdateViewGroupActionHandlerService } from 'src/engine/workspace-manage
 import { CreateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/create-view-action-handler.service';
 import { DeleteViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/delete-view-action-handler.service';
 import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/update-view-action-handler.service';
-import { LogicFunctionBuildModule } from 'src/engine/metadata-modules/logic-function-build/logic-function-build.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity]),
     WorkspaceSchemaManagerModule,
-    LogicFunctionBuildModule,
   ],
   providers: [
     CreateFieldActionHandlerService,
