@@ -5,12 +5,14 @@ import { type gmail_v1 as gmailV1 } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
+import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
@@ -26,6 +28,10 @@ export class GmailGetMessagesService {
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'accessToken' | 'id' | 'handle' | 'handleAliases'
+    >,
+    messageChannel: Pick<
+      MessageChannelWorkspaceEntity,
+      'messageFolders' | 'messageFolderImportPolicy'
     >,
   ): Promise<MessageWithParticipants[]> {
     if (!isDefined(connectedAccount.accessToken)) {
@@ -49,7 +55,12 @@ export class GmailGetMessagesService {
       );
     });
 
-    return messages;
+    const filteredMessages = filterGmailMessagesByFolderPolicy(
+      messages,
+      messageChannel,
+    );
+
+    return filteredMessages;
   }
 
   private formatBatchResponseAsMessage(

@@ -13,6 +13,7 @@ import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-acco
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
+  MessageFolderImportPolicy,
   type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
@@ -52,7 +53,9 @@ describe('MessagingMessagesImportService', () => {
       syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
       connectedAccountId: mockConnectedAccount.id,
       handle: 'test@gmail.com',
-    } as MessageChannelWorkspaceEntity;
+      messageFolders: [],
+      messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+    } as unknown as MessageChannelWorkspaceEntity;
 
     providersBase = [
       MessagingMessagesImportService,
@@ -237,6 +240,7 @@ describe('MessagingMessagesImportService', () => {
         accessToken: 'new-access-token',
         refreshToken: 'new-refresh-token',
       },
+      mockMessageChannel,
     );
     expect(
       saveMessagesService.saveMessagesAndEnqueueContactCreation,
