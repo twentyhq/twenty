@@ -23,7 +23,7 @@ describe('metadataModuleFactory', () => {
   } as any;
 
   it('should build schema explicitly using GraphQLSchemaFactory', async () => {
-    const config = await metadataModuleFactory(
+    await metadataModuleFactory(
       mockTwentyConfigService,
       mockExceptionHandlerService,
       mockDataloaderService,

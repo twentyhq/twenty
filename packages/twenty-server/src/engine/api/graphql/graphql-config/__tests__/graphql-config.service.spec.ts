@@ -26,22 +26,27 @@ describe('GraphQLConfigService', () => {
   });
 
   describe('createGqlOptions', () => {
-    it('should not include autoSchemaFile in the config', () => {
+    it('should include autoSchemaFile for core-engine resolvers', () => {
       const config = service.createGqlOptions();
 
-      expect(config).not.toHaveProperty('autoSchemaFile');
+      expect(config).toHaveProperty('autoSchemaFile', true);
     });
 
-    it('should not include include property in the config', () => {
+    it('should include CoreEngineModule in include list', () => {
       const config = service.createGqlOptions();
 
-      expect(config).not.toHaveProperty('include');
+      expect(config).toHaveProperty('include');
+      expect(config.include).toHaveLength(1);
     });
 
-    it('should not include buildSchemaOptions in the config', () => {
+    it('should include buildSchemaOptions with orphanedTypes', () => {
       const config = service.createGqlOptions();
 
-      expect(config).not.toHaveProperty('buildSchemaOptions');
+      expect(config).toHaveProperty('buildSchemaOptions');
+      expect(config.buildSchemaOptions?.orphanedTypes).toBeDefined();
+      expect(config.buildSchemaOptions!.orphanedTypes!.length).toBeGreaterThan(
+        0,
+      );
     });
 
     it('should include conditionalSchema in the config', () => {
