@@ -212,7 +212,8 @@ export class UserRoleService {
 
     if (
       isDefined(roleOfUserWorkspace) &&
-      roleOfUserWorkspace.universalIdentifier === STANDARD_ROLE.admin.universalIdentifier
+      roleOfUserWorkspace.universalIdentifier ===
+        STANDARD_ROLE.admin.universalIdentifier
     ) {
       const adminRole = roleOfUserWorkspace;
 
@@ -273,7 +274,8 @@ export class UserRoleService {
 
       if (
         isDefined(currentRole) &&
-        currentRole.universalIdentifier === STANDARD_ROLE.admin.universalIdentifier
+        currentRole.universalIdentifier ===
+          STANDARD_ROLE.admin.universalIdentifier
       ) {
         adminRoleIdToValidate = currentRole.id;
       }
