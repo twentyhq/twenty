@@ -59,7 +59,6 @@ export class LogicFunctionLayerService {
     return result;
   }
 
-  // TODO: Should be replaced by seed package.json and yarn.lock files in Source folder for the Custom Workspace application
   async createCommonLayerIfNotExist({
     workspaceId,
     applicationUniversalIdentifier,

@@ -224,6 +224,18 @@ export class FileStorageService {
     });
   }
 
+  downloadFile_v2(
+    params: ResourceIdentifier & { localPath: string },
+  ): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.downloadFile({
+      onStoragePath,
+      localPath: params.localPath,
+    });
+  }
+
   /**
    * @deprecated Use delete_v2 instead
    */

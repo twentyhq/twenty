@@ -178,6 +178,19 @@ export class LogicFunctionExecutorService
       );
     }
 
+    // TODO: remove when all logic functions are migrated
+    if (
+      !(await this.functionBuildService.hasLayerDependencies({
+        flatLogicFunctionLayer,
+        applicationUniversalIdentifier,
+      }))
+    ) {
+      await this.functionBuildService.uploadDependencies({
+        flatLogicFunctionLayer,
+        applicationUniversalIdentifier,
+      });
+    }
+
     if (
       !(await this.functionBuildService.isBuilt({
         flatLogicFunction,
@@ -189,6 +202,7 @@ export class LogicFunctionExecutorService
         applicationUniversalIdentifier,
       });
     }
+    // END TODO
 
     const resultLogicFunction = await this.callWithTimeout({
       callback: () =>
@@ -309,7 +323,6 @@ export class LogicFunctionExecutorService
       const packageName = match[1].split('@', 1)[0];
       const version = match[2];
 
-      // @ts-expect-error legacy noImplicitAny
       if (packageJson.dependencies?.[packageName]) {
         versions[packageName] = version;
       }

@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { promises as fs } from 'fs';
-import { dirname, join } from 'path';
+import crypto from 'crypto';
 
 import { Repository } from 'typeorm';
-import { isObject } from '@sniptt/guards';
-import { FileFolder, type Sources } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -14,17 +12,15 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getSeedProjectFiles } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/get-seed-project-files';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { CreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
 
 @Injectable()
 export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -33,7 +29,6 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 ) {
   constructor(
     private readonly fileStorageService: FileStorageService,
-    private readonly functionBuildService: LogicFunctionBuildService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {
@@ -49,10 +44,14 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     const applicationUniversalIdentifier =
       await this.getApplicationUniversalIdentifier(logicFunction.applicationId);
 
-    await this.buildAndSaveLogicFunction(
-      logicFunction,
-      applicationUniversalIdentifier,
-    );
+    let seedChecksum: string | undefined;
+
+    if (!isDefined(logicFunction.checksum)) {
+      seedChecksum = await this.seedLogicFunctionFiles(
+        logicFunction,
+        applicationUniversalIdentifier,
+      );
+    }
 
     const logicFunctionRepository =
       queryRunner.manager.getRepository<LogicFunctionEntity>(
@@ -62,6 +61,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     await logicFunctionRepository.insert({
       ...logicFunction,
       workspaceId,
+      checksum: seedChecksum ?? logicFunction.checksum,
     });
   }
 
@@ -83,67 +83,57 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     return application.universalIdentifier;
   }
 
-  private async writeSourcesToLocalFolder(
-    sources: Sources,
-    localPath: string,
-  ): Promise<void> {
-    for (const key of Object.keys(sources)) {
-      const filePath = join(localPath, key);
-      const value = sources[key];
-
-      if (isObject(value)) {
-        await this.writeSourcesToLocalFolder(value as Sources, filePath);
-        continue;
-      }
-      await fs.mkdir(dirname(filePath), { recursive: true });
-      await fs.writeFile(filePath, value);
-    }
-  }
-
-  private async buildAndSaveLogicFunction(
+  private async seedLogicFunctionFiles(
     logicFunction: FlatLogicFunction,
     applicationUniversalIdentifier: string,
-  ) {
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+  ): Promise<string> {
+    const seedProjectFiles = await getSeedProjectFiles;
 
-    try {
-      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
+    const sourceFiles = seedProjectFiles.filter((file) =>
+      file.name.endsWith('index.ts'),
+    );
 
-      if (isDefined(logicFunction?.code)) {
-        await this.writeSourcesToLocalFolder(
-          logicFunction.code,
-          sourceTemporaryDir,
-        );
-      } else {
-        for (const file of await getSeedProjectFiles) {
-          const filePath = join(sourceTemporaryDir, file.path, file.name);
+    const builtFiles = seedProjectFiles.filter((file) =>
+      file.name.endsWith('.mjs'),
+    );
 
-          await fs.mkdir(join(sourceTemporaryDir, file.path), {
-            recursive: true,
-          });
-          await fs.writeFile(filePath, file.content);
-        }
-      }
-
-      const baseFolderPath = getLogicFunctionBaseFolderPath(
-        logicFunction.sourceHandlerPath,
+    if (sourceFiles.length !== 1 || builtFiles.length !== 1) {
+      throw new LogicFunctionException(
+        'Seed project should have one index.ts file and one index.mjs file',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
       );
-
-      await this.fileStorageService.uploadFolder_v2({
-        workspaceId: logicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-        localPath: sourceTemporaryDir,
-      });
-    } finally {
-      await lambdaBuildDirectoryManager.clean();
     }
 
-    await this.functionBuildService.buildAndUpload({
-      flatLogicFunction: logicFunction,
+    const sourceFile = sourceFiles[0];
+    const builtFile = builtFiles[0];
+
+    await this.fileStorageService.writeFile_v2({
+      workspaceId: logicFunction.workspaceId,
       applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: logicFunction.sourceHandlerPath,
+      sourceFile: sourceFile.content,
+      mimeType: 'application/typescript',
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
     });
+
+    await this.fileStorageService.writeFile_v2({
+      workspaceId: logicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: logicFunction.builtHandlerPath,
+      sourceFile: builtFile.content,
+      mimeType: 'application/javascript',
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
+    });
+
+    return crypto.createHash('md5').update(builtFile.content).digest('hex');
   }
 
   async rollbackForMetadata(
