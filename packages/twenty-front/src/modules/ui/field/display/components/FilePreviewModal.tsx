@@ -16,8 +16,6 @@ const DocumentViewer = lazy(() =>
   })),
 );
 
-const StyledModal = styled(Modal)``;
-
 const StyledModalHeader = styled.div`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
