@@ -13,4 +13,5 @@ export const fromLogicFunctionLayerEntityToFlatLogicFunctionLayer = (
   createdAt: entity.createdAt.toISOString(),
   updatedAt: entity.updatedAt.toISOString(),
   logicFunctionIds: entity.logicFunctions?.map((lf) => lf.id) ?? [],
+  availablePackages: entity.availablePackages ?? {},
 });
