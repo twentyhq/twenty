@@ -32,7 +32,7 @@ export const useRecordPageLayoutId = ({
     variables: {
       objectMetadataId: objectMetadataItem.id,
     },
-    skip: !isRecordPageLayoutEditingEnabled,
+    skip: !isRecordPageLayoutEditingEnabled || !objectMetadataItem,
   });
 
   const pageLayoutId = useMemo(() => {
