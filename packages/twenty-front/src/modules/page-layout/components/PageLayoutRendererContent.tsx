@@ -86,6 +86,10 @@ export const PageLayoutRendererContent = () => {
         }
       : undefined;
 
+  const canEnableTabEditing =
+    isPageLayoutInEditMode &&
+    shouldEnableTabEditingFeatures(currentPageLayout?.type ?? null);
+
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
     isMobile,
@@ -126,8 +130,8 @@ export const PageLayoutRendererContent = () => {
             behaveAsLinks={!isInRightDrawer && !isPageLayoutInEditMode}
             componentInstanceId={tabListInstanceId}
             onAddTab={handleAddTab}
-            isReorderEnabled={isPageLayoutInEditMode}
-            onReorder={isPageLayoutInEditMode ? reorderTabs : undefined}
+            isReorderEnabled={canEnableTabEditing}
+            onReorder={canEnableTabEditing ? reorderTabs : undefined}
             pageLayoutType={currentPageLayout.type}
           />
         )}
