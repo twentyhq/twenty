@@ -289,12 +289,6 @@ export class DevModeOrchestrator {
       await this.handleManifestBuilt(result);
 
       if (!this.fileUploader) {
-        this.fileUploader = new FileUploader({
-          appPath: this.appPath,
-          applicationUniversalIdentifier:
-            result.manifest.application.universalIdentifier,
-        });
-
         const checkApplicationExistResult =
           await this.apiService.checkApplicationExist(
             result.manifest.application.universalIdentifier,
@@ -340,6 +334,12 @@ export class DevModeOrchestrator {
             return;
           }
         }
+
+        this.fileUploader = new FileUploader({
+          appPath: this.appPath,
+          applicationUniversalIdentifier:
+            result.manifest.application.universalIdentifier,
+        });
 
         for (const [
           builtPath,

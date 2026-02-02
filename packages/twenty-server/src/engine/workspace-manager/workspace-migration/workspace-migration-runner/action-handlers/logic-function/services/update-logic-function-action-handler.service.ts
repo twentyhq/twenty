@@ -68,5 +68,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     flatLogicFunction: FlatLogicFunction;
   }) {
     await this.logicFunctionExecutorService.delete(flatLogicFunction);
+
+    await this.logicFunctionExecutorService.delete(flatLogicFunction);
   }
 }

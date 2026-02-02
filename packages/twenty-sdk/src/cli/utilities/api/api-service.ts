@@ -190,7 +190,7 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.createApplication,
+        data: response.data.data.createOneApplication,
         message: `Successfully create application: ${manifest.application.displayName}`,
       };
     } catch (error) {
