@@ -20,22 +20,26 @@ export const deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow = <
   flatEntityMapsToMutate,
   entityToDeleteId,
 }: DeleteFlatEntityFromFlatEntityMapsThroughMutationOrThrowArgs<T>): void => {
-  const entityToDelete = flatEntityMapsToMutate.byId[entityToDeleteId];
+  const universalIdentifierToDelete =
+    flatEntityMapsToMutate.universalIdentifierById[entityToDeleteId];
 
-  if (!isDefined(entityToDelete)) {
+  if (!isDefined(universalIdentifierToDelete)) {
     throw new FlatEntityMapsException(
       'deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow: entity to delete not found',
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
     );
   }
 
-  delete flatEntityMapsToMutate.byId[entityToDeleteId];
+  const entityToDelete =
+    flatEntityMapsToMutate.byUniversalIdentifier[universalIdentifierToDelete];
 
-  delete flatEntityMapsToMutate.idByUniversalIdentifier[
-    entityToDelete.universalIdentifier
+  delete flatEntityMapsToMutate.byUniversalIdentifier[
+    universalIdentifierToDelete
   ];
 
-  if (isDefined(entityToDelete.applicationId)) {
+  delete flatEntityMapsToMutate.universalIdentifierById[entityToDeleteId];
+
+  if (isDefined(entityToDelete?.applicationId)) {
     const universalIdentifiers =
       flatEntityMapsToMutate.universalIdentifiersByApplicationId[
         entityToDelete.applicationId
@@ -43,7 +47,7 @@ export const deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow = <
 
     if (isDefined(universalIdentifiers)) {
       const index = universalIdentifiers.indexOf(
-        entityToDelete.universalIdentifier,
+        universalIdentifierToDelete,
       );
 
       if (index !== -1) {
