@@ -18,6 +18,7 @@ import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pa
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +28,11 @@ import {
   IconChartPie,
   IconFrame,
 } from 'twenty-ui/display';
-import { type FrontComponent, WidgetType } from '~/generated/graphql';
+import {
+  FeatureFlagKey,
+  type FrontComponent,
+  WidgetType,
+} from '~/generated/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -53,9 +58,15 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { removePageLayoutWidgetAndPreservePosition } =
     useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
 
+  const isApplicationEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APPLICATION_ENABLED,
+  );
+
   const { data: frontComponentsData } = useQuery<{
     frontComponents: FrontComponent[];
-  }>(FIND_MANY_FRONT_COMPONENTS);
+  }>(FIND_MANY_FRONT_COMPONENTS, {
+    skip: !isApplicationEnabled,
+  });
 
   const frontComponents = frontComponentsData?.frontComponents ?? [];
 
@@ -209,7 +220,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
         </SelectableListItem>
       </CommandGroup>
 
-      {frontComponents.length > 0 && (
+      {isApplicationEnabled && frontComponents.length > 0 && (
         <CommandGroup heading={t`Front Components`}>
           {frontComponents.map((frontComponent) => (
             <SelectableListItem
