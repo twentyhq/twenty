@@ -32,9 +32,12 @@ export const useRecordPageLayoutId = ({
     FIND_PAGE_LAYOUTS,
     {
       variables: {
-        objectMetadataId: objectMetadataItem.id,
+        objectMetadataId: objectMetadataItem?.id,
       },
-      skip: !isRecordPageLayoutEditingEnabled || !objectMetadataItem?.id,
+      skip:
+        !isRecordPageLayoutEditingEnabled ||
+        !objectMetadataItem ||
+        !objectMetadataItem.id,
     },
   );
 
