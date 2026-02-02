@@ -13,7 +13,7 @@ import {
   WorkspaceMigrationActionExecutionExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 
-export const fromUniversalSettingsToInsertableSettings = ({
+export const fromUniversalSettingsToFlatFieldMetadataSettings = ({
   universalSettings,
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
   flatFieldMetadataMaps,
