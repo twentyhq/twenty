@@ -38,7 +38,7 @@ export const computeTwentyORMException = async (
     const errorCode = (error as QueryFailedErrorWithCode).code;
 
     if (
-      errorCode === POSTGRESQL_ERROR_CODES['23505'] &&
+      errorCode === '23505' &&
       isDefined(objectMetadata) &&
       isDefined(entityManager) &&
       isDefined(internalContext)
