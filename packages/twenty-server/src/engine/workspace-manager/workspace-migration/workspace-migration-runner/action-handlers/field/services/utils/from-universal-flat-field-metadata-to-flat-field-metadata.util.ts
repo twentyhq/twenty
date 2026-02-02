@@ -121,7 +121,6 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
     id: generatedId,
     workspaceId,
     applicationId,
-    standardId: null,
     universalIdentifier,
     objectMetadataId,
     objectMetadataUniversalIdentifier,

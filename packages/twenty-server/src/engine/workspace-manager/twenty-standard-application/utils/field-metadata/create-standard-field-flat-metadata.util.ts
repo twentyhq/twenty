@@ -70,7 +70,6 @@ export const createStandardFieldFlatMetadata = <
   return {
     id: fieldIds[fieldName].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
-    standardId: fieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,

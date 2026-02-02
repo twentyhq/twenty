@@ -90,7 +90,6 @@ export const createStandardRelationFieldFlatMetadata = <
   return {
     id: fieldIds[fieldName as keyof typeof fieldIds].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
-    standardId: fieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,

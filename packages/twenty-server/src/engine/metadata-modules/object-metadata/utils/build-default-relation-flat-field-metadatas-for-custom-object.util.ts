@@ -16,10 +16,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import {
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  STANDARD_OBJECTS,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
 
 const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
@@ -31,7 +28,8 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 ] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
 
 const morphIdByRelationObjectNameSingular = {
-  timelineActivity: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
+  timelineActivity:
+    STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
   favorite: null,
   attachment: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
   noteTarget: null,
@@ -119,18 +117,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             flatEntityId: targetFlatObjectMetadataId,
           });
 
-        const standardId =
-          CUSTOM_OBJECT_STANDARD_FIELD_IDS[
-            targetFlatObjectMetadata.namePlural as keyof typeof CUSTOM_OBJECT_STANDARD_FIELD_IDS
-          ];
-
-        if (!isDefined(standardId)) {
-          throw new ObjectMetadataException(
-            `Standard field ID not found for target object ${targetFlatObjectMetadata.namePlural}`,
-            ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-          );
-        }
-
         const icon =
           STANDARD_OBJECT_ICONS[
             targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
@@ -165,7 +151,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
               name: targetFlatObjectMetadata.namePlural,
               label: capitalize(targetFlatObjectMetadata.labelPlural),
               objectMetadataId: sourceFlatObjectMetadata.id,
-              standardId,
               isSystem: true,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,

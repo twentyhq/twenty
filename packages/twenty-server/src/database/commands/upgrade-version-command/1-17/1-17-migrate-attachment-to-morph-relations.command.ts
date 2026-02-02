@@ -198,7 +198,8 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
 
       this.logger.log(`✅ Successfully migrated attachment records`);
 
-      const morphId = STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId;
+      const morphId =
+        STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId;
 
       for (const {
         field: fieldToMigrate,
