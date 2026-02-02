@@ -4,7 +4,7 @@ import { type FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-maps-or-throw.util';
-import { getSubFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-or-throw.util';
+import { getSubFlatEntityByIdsMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-by-ids-maps-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 
 export type ComputeFlatEntityMapsFromToArgs<T extends AllMetadataName> = {
@@ -21,7 +21,7 @@ export const computeFlatEntityMapsFromTo = <T extends AllMetadataName>({
 } => {
   const fromFlatEntityMaps =
     flatEntityToDelete.length > 0
-      ? getSubFlatEntityMapsOrThrow({
+      ? getSubFlatEntityByIdsMapsOrThrow({
           flatEntityIds: [...flatEntityToDelete, ...flatEntityToUpdate].map(
             ({ id }) => id,
           ),
