@@ -1,7 +1,13 @@
+/* eslint-disable */
 //@ts-nocheck
 import React, { useEffect, useState } from 'react';
 
-import { HtmlButton, HtmlDiv, HtmlH3, HtmlP } from '../generated/remote-components';
+import {
+  HtmlButton,
+  HtmlDiv,
+  HtmlH3,
+  HtmlP,
+} from '../generated/remote-components';
 
 const FrontComponent = () => {
   const [clickCount, setClickCount] = useState(0);
