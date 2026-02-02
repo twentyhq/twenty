@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Director pentru resurse publice (imagini, fonturi etc.)
   src/
     application.config.ts          # Obligatoriu - configurația principală a aplicației
     default-function.role.ts       # Rolul implicit pentru funcțiile serverless
@@ -162,6 +163,7 @@ Pe scurt:
 * **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
 * **eslint.config.mjs** și **tsconfig.json**: Oferă linting și configurație TypeScript pentru fișierele TypeScript ale aplicației.
 * **README.md**: Un README scurt în rădăcina aplicației, cu instrucțiuni de bază.
+* **public/**: Un folder pentru stocarea resurselor publice (imagini, fonturi, fișiere statice) care vor fi servite împreună cu aplicația ta. Fișierele plasate aici sunt încărcate în timpul sincronizării și sunt accesibile la rulare.
 * **src/**: Locul principal unde vă definiți aplicația sub formă de cod:
   * `application.config.ts`: Configurație globală pentru aplicație (metadate și conectare la runtime). Vezi "Configurația aplicației" mai jos.
   * `*.role.ts`: Definiții de rol folosite de funcțiile dvs. de logică. Vezi "Rol implicit pentru funcții" mai jos.
@@ -215,12 +217,12 @@ Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare 
 
 SDK-ul oferă patru funcții ajutătoare cu validare încorporată pentru definirea entităților aplicației:
 
-| Funcție            | Scop                                                     |
-| ------------------ | -------------------------------------------------------- |
-| `defineApp()`      | Configurați metadatele aplicației                        |
-| `defineObject()`   | Definiți obiecte personalizate cu câmpuri                |
-| `defineFunction()` | Definiți funcții de logică cu handleri                   |
-| `defineRole()`     | Configurați permisiunile rolurilor și accesul la obiecte |
+| Funcție               | Scop                                                     |
+| --------------------- | -------------------------------------------------------- |
+| `defineApplication()` | Configurați metadatele aplicației                        |
+| `defineObject()`      | Definiți obiecte personalizate cu câmpuri                |
+| `defineFunction()`    | Definiți funcții de logică cu handleri                   |
+| `defineRole()`        | Configurați permisiunile rolurilor și accesul la obiecte |
 
 Aceste funcții validează configurația în timpul execuției și oferă o completare automată mai bună în IDE și siguranța tipurilor.
 
@@ -317,14 +319,14 @@ Fiecare aplicație are un singur fișier `application.config.ts` care descrie:
 * **Cum rulează funcțiile**: ce rol folosesc pentru permisiuni.
 * **(Opțional) variabile**: perechi cheie–valoare expuse funcțiilor ca variabile de mediu.
 
-Folosiți `defineApp()` pentru a defini configurația aplicației:
+Folosiți `defineApplication()` pentru a defini configurația aplicației:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ Notițe:
 
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` trebuie să corespundă rolului pe care îl definiți în fișierul `*.role.ts` (vedeți mai jos).
+* `roleUniversalIdentifier` trebuie să corespundă rolului pe care îl definiți în fișierul `*.role.ts` (vedeți mai jos).
 
 #### Roluri și permisiuni
 
-Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `functionRoleUniversalIdentifier` din `application.config.ts` desemnează rolul implicit folosit de funcțiile de logică ale aplicației.
+Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `roleUniversalIdentifier` din `application.config.ts` desemnează rolul implicit folosit de funcțiile de logică ale aplicației.
 
 * Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
 * Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
@@ -363,11 +365,11 @@ Când generați o aplicație nouă, CLI creează și un fișier de rol implicit.
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-`universalIdentifier` al acestui rol este apoi referențiat în `application.config.ts` ca `functionRoleUniversalIdentifier`. Cu alte cuvinte:
+`universalIdentifier` al acestui rol este apoi referențiat în `application.config.ts` ca `roleUniversalIdentifier`. Cu alte cuvinte:
 
 * **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
 * **application.config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
@@ -604,8 +606,8 @@ Când funcția rulează pe Twenty, platforma injectează acreditări ca variabil
 Notițe:
 
 * Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
-* Permisiunile cheii API sunt determinate de rolul referențiat în `application.config.ts` prin `functionRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
-* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `functionRoleUniversalIdentifier` la identificatorul universal al acelui rol.
+* Permisiunile cheii API sunt determinate de rolul referențiat în `application.config.ts` prin `roleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `roleUniversalIdentifier` la identificatorul universal al acelui rol.
 
 ### Exemplu Hello World
 

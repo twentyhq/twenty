@@ -1,17 +1,19 @@
-import * as esbuild from 'esbuild';
-import path from 'path';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
+import { jsxTransformToRemoteDomWorkerFormatPlugin } from '@/cli/utilities/build/common/front-component-build/jsx-transform-to-remote-dom-worker-format-plugin';
+import { reactGlobalsPlugin } from '@/cli/utilities/build/common/front-component-build/react-globals-plugin';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
   type RestartableWatcher,
   type RestartableWatcherOptions,
 } from '@/cli/utilities/build/common/restartable-watcher-interface';
+import * as esbuild from 'esbuild';
+import path from 'path';
+import { OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
-export const FUNCTION_EXTERNAL_MODULES: string[] = [
+export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
   'path',
   'fs',
   'crypto',
@@ -37,10 +39,7 @@ export const FUNCTION_EXTERNAL_MODULES: string[] = [
 ];
 
 export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
-  'react',
   'react-dom',
-  'react/jsx-runtime',
-  'react/jsx-dev-runtime',
   'twenty-sdk',
   'twenty-sdk/*',
   'twenty-shared',
@@ -53,6 +52,7 @@ export type EsbuildWatcherConfig = {
   platform?: esbuild.Platform;
   jsx?: 'automatic';
   extraPlugins?: esbuild.Plugin[];
+  minify?: boolean;
 };
 
 export type EsbuildWatcherOptions = RestartableWatcherOptions & {
@@ -177,6 +177,7 @@ export class EsbuildWatcher implements RestartableWatcher {
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
+      minify: this.config.minify,
       plugins,
     });
 
@@ -203,14 +204,14 @@ const externalPatternsPlugin: esbuild.Plugin = {
   },
 };
 
-export const createFunctionsWatcher = (
+export const createLogicFunctionsWatcher = (
   options: RestartableWatcherOptions,
 ): EsbuildWatcher =>
   new EsbuildWatcher({
     ...options,
     config: {
-      externalModules: FUNCTION_EXTERNAL_MODULES,
-      fileFolder: FileFolder.BuiltFunction,
+      externalModules: LOGIC_FUNCTION_EXTERNAL_MODULES,
+      fileFolder: FileFolder.BuiltLogicFunction,
       platform: 'node',
       extraPlugins: [externalPatternsPlugin],
     },
@@ -225,5 +226,9 @@ export const createFrontComponentsWatcher = (
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
+      extraPlugins: [
+        reactGlobalsPlugin,
+        jsxTransformToRemoteDomWorkerFormatPlugin,
+      ],
     },
   });

@@ -42,25 +42,50 @@
 {{- regexFind "\\|(.+)$" . | trimPrefix "|" -}}
 {{- end -}}
 
-{{/* Compose DB connection URL */}}
-{{- define "twenty.dbUrl" -}}
-{{- if .Values.server.env.PG_DATABASE_URL -}}
-{{- .Values.server.env.PG_DATABASE_URL -}}
-{{- else if .Values.db.enabled -}}
-{{- $host := printf "%s-db" (include "twenty.fullname" .) -}}
-{{- $user := .Values.db.internal.appUser | default "twenty_app_user" -}}
-{{- $pass := .Values.db.internal.appPassword | default (randAlphaNum 32) -}}
-{{- $db := .Values.db.internal.database | default "twenty" -}}
-{{- printf "postgres://%s:%s@%s.%s.svc.cluster.local/%s" $user $pass $host (include "twenty.namespace" .) $db -}}
+{{/* Check if using external secret for database password */}}
+{{- define "twenty.db.useExternalSecret" -}}
+{{- if and (not .Values.db.enabled) .Values.db.external.secretName .Values.db.external.passwordKey -}}
+true
 {{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/* Database URL secret name */}}
+{{- define "twenty.dbUrl.secretName" -}}
+{{- printf "%s-db-url" (include "twenty.fullname" .) -}}
+{{- end -}}
+
+{{/* Database password secret name */}}
+{{- define "twenty.dbPassword.secretName" -}}
+{{- if eq (include "twenty.db.useExternalSecret" .) "true" -}}
+{{- .Values.db.external.secretName -}}
+{{- else -}}
+{{- include "twenty.dbUrl.secretName" . -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Database password secret key */}}
+{{- define "twenty.dbPassword.secretKey" -}}
+{{- if eq (include "twenty.db.useExternalSecret" .) "true" -}}
+{{- .Values.db.external.passwordKey -}}
+{{- else if .Values.db.enabled -}}
+appPassword
+{{- else -}}
+password
+{{- end -}}
+{{- end -}}
+
+{{/* Database URL template for external secret (will be evaluated at runtime) */}}
+{{- define "twenty.dbUrl.template" -}}
+{{- if eq (include "twenty.db.useExternalSecret" .) "true" -}}
 {{- $scheme := "postgres" -}}
 {{- $host := .Values.db.external.host -}}
 {{- $port := .Values.db.external.port | default 5432 -}}
 {{- $user := .Values.db.external.user | default "postgres" -}}
-{{- $pass := .Values.db.external.password | default "postgres" -}}
 {{- $db := .Values.db.external.database | default "twenty" -}}
 {{- $qs := ternary "?sslmode=require" "" (eq .Values.db.external.ssl true) -}}
-{{- printf "%s://%s:%s@%s:%v/%s%s" $scheme $user $pass $host $port $db $qs -}}
+{{- printf "%s://%s:$(DB_PASSWORD)@%s:%v/%s%s" $scheme $user $host $port $db $qs -}}
 {{- end -}}
 {{- end -}}
 
@@ -78,9 +103,11 @@
 {{- end -}}
 {{- end -}}
 
-{{/* Compose Server URL from ingress, else service */}}
+{{/* Compose Server URL from override, ingress, or service */}}
 {{- define "twenty.serverUrl" -}}
-{{- if and .Values.server.ingress.enabled (gt (len .Values.server.ingress.hosts) 0) -}}
+{{- if .Values.server.env.SERVER_URL -}}
+{{- .Values.server.env.SERVER_URL -}}
+{{- else if and .Values.server.ingress.enabled (gt (len .Values.server.ingress.hosts) 0) -}}
 {{- $host := (index .Values.server.ingress.hosts 0).host -}}
 {{- $tls := gt (len .Values.server.ingress.tls) 0 -}}
 {{- $scheme := ternary "https" "http" $tls -}}

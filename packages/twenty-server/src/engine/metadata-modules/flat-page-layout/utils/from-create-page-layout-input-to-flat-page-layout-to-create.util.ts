@@ -37,5 +37,6 @@ export const fromCreatePageLayoutInputToFlatPageLayoutToCreate = ({
     universalIdentifier: pageLayoutId,
     applicationId: workspaceCustomApplicationId,
     tabIds: [],
+    defaultTabToFocusOnMobileAndSidePanelId: null,
   };
 };

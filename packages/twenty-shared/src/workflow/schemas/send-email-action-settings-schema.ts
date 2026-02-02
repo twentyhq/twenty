@@ -6,7 +6,11 @@ export const workflowSendEmailActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       connectedAccountId: z.string(),
-      email: z.string(),
+      recipients: z.object({
+        to: z.string().optional().default(''),
+        cc: z.string().optional().default(''),
+        bcc: z.string().optional().default(''),
+      }),
       subject: z.string().optional(),
       body: z.string().optional(),
       files: z.array(workflowFileSchema).optional().default([]),

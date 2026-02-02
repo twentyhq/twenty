@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Složka s veřejnými prostředky (obrázky, písma apod.)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Povinné – hlavní konfigurace aplikace
+    default-function.role.ts       # Výchozí role pro bezserverové funkce
+    hello-world.function.ts        # Ukázková bezserverová funkce
+    hello-world.front-component.tsx # Ukázková front-endová komponenta
+    // vaše entity (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Konvence před konfigurací
@@ -162,6 +163,7 @@ V kostce:
 * **.nvmrc**: Fixuje verzi Node.js požadovanou projektem.
 * **eslint.config.mjs** a **tsconfig.json**: Poskytují lintování a konfiguraci TypeScriptu pro zdrojové soubory vaší aplikace v TypeScriptu.
 * **README.md**: Krátké README v kořeni aplikace se základními pokyny.
+* **public/**: Složka pro ukládání veřejných prostředků (obrázky, písma, statické soubory), které bude vaše aplikace poskytovat. Soubory umístěné zde se během synchronizace nahrají a jsou za běhu dostupné.
 * **src/**: Hlavní místo, kde definujete svou aplikaci jako kód:
   * `application.config.ts`: Globální konfigurace vaší aplikace (metadata a napojení za běhu). Viz „Konfigurace aplikace“ níže.
   * `*.role.ts`: Definice rolí používané vašimi logickými funkcemi. Viz „Výchozí role funkce“ níže.
@@ -215,12 +217,12 @@ twenty-sdk poskytuje typované stavební bloky a pomocné funkce, které použí
 
 SDK poskytuje čtyři pomocné funkce s vestavěnou validací pro definování entit vaší aplikace:
 
-| Funkce             | Účel                                             |
-| ------------------ | ------------------------------------------------ |
-| `defineApp()`      | Konfigurace metadat aplikace                     |
-| `defineObject()`   | Definice vlastních objektů s poli                |
-| `defineFunction()` | Definice logických funkcí s obslužnými funkcemi  |
-| `defineRole()`     | Konfigurace oprávnění rolí a přístupu k objektům |
+| Funkce                | Účel                                             |
+| --------------------- | ------------------------------------------------ |
+| `defineApplication()` | Konfigurace metadat aplikace                     |
+| `defineObject()`      | Definice vlastních objektů s poli                |
+| `defineFunction()`    | Definice logických funkcí s obslužnými funkcemi  |
+| `defineRole()`        | Konfigurace oprávnění rolí a přístupu k objektům |
 
 Tyto funkce validují vaši konfiguraci za běhu a poskytují lepší automatické doplňování v IDE a lepší typovou bezpečnost.
 
@@ -317,14 +319,14 @@ Každá aplikace má jeden soubor `application.config.ts`, který popisuje:
 * **Jak běží její funkce**: kterou roli používají pro oprávnění.
 * **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
 
-K definování konfigurace aplikace použijte `defineApp()`:
+Use `defineApplication()` to define your application configuration:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ Poznámky:
 
 * Pole `universalIdentifier` jsou deterministická ID, která vlastníte; vygenerujte je jednou a udržujte je stabilní napříč synchronizacemi.
 * `applicationVariables` se stanou proměnnými prostředí pro vaše funkce (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` se musí shodovat s rolí, kterou definujete ve svém souboru `*.role.ts` (viz níže).
+* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
 
 #### Role a oprávnění
 
-Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a akcím ve vašem pracovním prostoru. Pole `functionRoleUniversalIdentifier` v `application.config.ts` určuje výchozí roli používanou logickými funkcemi vaší aplikace.
+Aplikace mohou definovat role, které zapouzdřují oprávnění k objektům a akcím ve vašem pracovním prostoru. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * Běhový klíč API vložený jako `TWENTY_API_KEY` je odvozen z této výchozí role funkcí.
 * Typovaný klient bude omezen oprávněními udělenými této roli.
@@ -363,11 +365,11 @@ Když vygenerujete novou aplikaci, CLI také vytvoří výchozí soubor role. K 
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-Na `universalIdentifier` této role se poté odkazuje v `application.config.ts` jako na `functionRoleUniversalIdentifier`. Jinými slovy:
+Na `universalIdentifier` této role se poté odkazuje v `application.config.ts` jako na `roleUniversalIdentifier`. Jinými slovy:
 
 * **\*.role.ts** definuje, co může výchozí role funkce dělat.
 * **application.config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
@@ -604,8 +606,8 @@ Když vaše funkce běží na Twenty, platforma před spuštěním kódu vloží
 Poznámky:
 
 * Není nutné předávat URL ani klíč API vygenerovanému klientovi. Za běhu čte `TWENTY_API_URL` a `TWENTY_API_KEY` z process.env.
-* Oprávnění API klíče jsou určena rolí odkazovanou v `application.config.ts` prostřednictvím `functionRoleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
-* Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `functionRoleUniversalIdentifier` na univerzální identifikátor této role.
+* Oprávnění API klíče jsou určena rolí odkazovanou v `application.config.ts` prostřednictvím `roleUniversalIdentifier`. Toto je výchozí role používaná logickými funkcemi vaší aplikace.
+* Aplikace mohou definovat role podle principu nejmenších oprávnění. Udělte pouze oprávnění, která vaše funkce potřebují, a poté nastavte `roleUniversalIdentifier` na univerzální identifikátor této role.
 
 ### Příklad Hello World
 

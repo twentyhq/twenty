@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Ordner für öffentliche Assets (Bilder, Schriftarten usw.)
   src/
     application.config.ts          # Erforderlich – Hauptkonfiguration der Anwendung
     default-function.role.ts       # Standardrolle für serverlose Funktionen
@@ -162,6 +163,7 @@ Auf hoher Ebene:
 * **.nvmrc**: Legt die vom Projekt erwartete Node.js-Version fest.
 * **eslint.config.mjs** und **tsconfig.json**: Stellen Linting und TypeScript-Konfiguration für die TypeScript-Quellen Ihrer App bereit.
 * **README.md**: Ein kurzes README im App-Root mit grundlegenden Anweisungen.
+* **public/**: Ein Ordner zum Speichern öffentlicher Assets (Bilder, Schriftarten, statische Dateien), die zusammen mit Ihrer Anwendung bereitgestellt werden. Hier abgelegte Dateien werden während der Synchronisierung hochgeladen und sind zur Laufzeit zugänglich.
 * **src/**: Der Hauptort, an dem Sie Ihre Anwendung als Code definieren:
   * `application.config.ts`: Globale Konfiguration für Ihre App (Metadaten und Laufzeit-Anbindung). Siehe unten „Anwendungskonfiguration“.
   * `*.role.ts`: Rollendefinitionen, die von Ihren Logikfunktionen verwendet werden. Siehe unten „Standard-Funktionsrolle“.
@@ -215,12 +217,12 @@ Das twenty-sdk stellt typisierte Bausteine und Hilfsfunktionen bereit, die Sie i
 
 Das SDK stellt vier Hilfsfunktionen mit eingebauter Validierung bereit, um Ihre App-Entitäten zu definieren:
 
-| Funktion           | Zweck                                                |
-| ------------------ | ---------------------------------------------------- |
-| `defineApp()`      | Anwendungsmetadaten konfigurieren                    |
-| `defineObject()`   | Benutzerdefinierte Objekte mit Feldern definieren    |
-| `defineFunction()` | Logikfunktionen mit Handlern definieren              |
-| `defineRole()`     | Rollenberechtigungen und Objektzugriff konfigurieren |
+| Funktion              | Zweck                                                |
+| --------------------- | ---------------------------------------------------- |
+| `defineApplication()` | Anwendungsmetadaten konfigurieren                    |
+| `defineObject()`      | Benutzerdefinierte Objekte mit Feldern definieren    |
+| `defineFunction()`    | Logikfunktionen mit Handlern definieren              |
+| `defineRole()`        | Rollenberechtigungen und Objektzugriff konfigurieren |
 
 Diese Funktionen validieren Ihre Konfiguration zur Laufzeit und bieten bessere IDE-Autovervollständigung sowie Typsicherheit.
 
@@ -317,14 +319,14 @@ Jede App hat eine einzelne Datei `application.config.ts`, die Folgendes beschrei
 * **Wie ihre Funktionen ausgeführt werden**: welche Rolle sie für Berechtigungen verwenden.
 * **(Optional) Variablen**: Schlüssel–Wert-Paare, die Ihren Funktionen als Umgebungsvariablen zur Verfügung gestellt werden.
 
-Verwenden Sie `defineApp()`, um Ihre Anwendungskonfiguration zu definieren:
+Verwenden Sie `defineApplication()`, um Ihre Anwendungskonfiguration zu definieren:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ Notizen:
 
 * `universalIdentifier`-Felder sind deterministische IDs, die Sie besitzen; generieren Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
 * `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen (zum Beispiel ist `DEFAULT_RECIPIENT_NAME` als `process.env.DEFAULT_RECIPIENT_NAME` verfügbar).
-* `functionRoleUniversalIdentifier` muss mit der Rolle übereinstimmen, die Sie in Ihrer `*.role.ts`-Datei definieren (siehe unten).
+* `roleUniversalIdentifier` muss mit der Rolle übereinstimmen, die Sie in Ihrer `*.role.ts`-Datei definieren (siehe unten).
 
 #### Rollen und Berechtigungen
 
-Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `functionRoleUniversalIdentifier` in `application.config.ts` legt die Standardrolle fest, die von den Logikfunktionen Ihrer App verwendet wird.
+Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `roleUniversalIdentifier` in `application.config.ts` legt die Standardrolle fest, die von den Logikfunktionen Ihrer App verwendet wird.
 
 * Der zur Laufzeit als `TWENTY_API_KEY` injizierte API-Schlüssel wird von dieser Standard-Funktionsrolle abgeleitet.
 * Der typisierte Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
@@ -363,11 +365,11 @@ Wenn Sie eine neue App erzeugen, erstellt die CLI auch eine Standard-Rolldatei. 
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-Der `universalIdentifier` dieser Rolle wird anschließend in `application.config.ts` als `functionRoleUniversalIdentifier` referenziert. Anders ausgedrückt:
+Der `universalIdentifier` dieser Rolle wird anschließend in `application.config.ts` als `roleUniversalIdentifier` referenziert. Anders ausgedrückt:
 
 * **\*.role.ts** definiert, was die Standard-Funktionsrolle darf.
 * **application.config.ts** verweist auf diese Rolle, sodass Ihre Funktionen deren Berechtigungen erben.
@@ -604,8 +606,8 @@ Wenn Ihre Funktion auf Twenty läuft, injiziert die Plattform vor der Ausführun
 Notizen:
 
 * Sie müssen dem generierten Client weder URL noch API-Schlüssel übergeben. Er liest `TWENTY_API_URL` und `TWENTY_API_KEY` zur Laufzeit aus process.env.
-* Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application.config.ts` über `functionRoleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
-* Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `functionRoleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
+* Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application.config.ts` über `roleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
+* Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `roleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
 
 ### Hello-World-Beispiel
 

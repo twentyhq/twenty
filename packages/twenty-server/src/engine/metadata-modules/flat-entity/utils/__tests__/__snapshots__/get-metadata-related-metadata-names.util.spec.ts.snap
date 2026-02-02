@@ -1,10 +1,11 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for commandMenuItem 1`] = `
 [
   "objectMetadata",
+  "frontComponent",
 ]
 `;
 

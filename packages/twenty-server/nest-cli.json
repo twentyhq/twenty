@@ -11,23 +11,23 @@
     "watchAssets": true,
     "assets": [
       {
-        "include": "engine/core-modules/logic-function-executor/drivers/constants/seed-project/**",
+        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/seed-project/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function-executor/drivers/layers/*/package.json",
+        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/*/package.json",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function-executor/drivers/layers/*/yarn.lock",
+        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/*/yarn.lock",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function-executor/drivers/layers/engine/**",
+        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/engine/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function-executor/drivers/constants/executor/index.mjs",
+        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/executor/index.mjs",
         "outDir": "dist/assets"
       },
       {

@@ -24,7 +24,11 @@ const DEFAULT_ACTION: WorkflowSendEmailAction = {
   settings: {
     input: {
       connectedAccountId: '',
-      email: '',
+      recipients: {
+        to: '',
+        cc: '',
+        bcc: '',
+      },
       subject: '',
       body: '',
       files: [],
@@ -49,7 +53,11 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
   settings: {
     input: {
       connectedAccountId: mockedConnectedAccounts[0].accountOwnerId,
-      email: 'test@twenty.com',
+      recipients: {
+        to: 'test@twenty.com',
+        cc: '',
+        bcc: '',
+      },
       subject: 'Welcome to Twenty!',
       body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
       files: [],
@@ -111,8 +119,10 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('To')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
+    expect(await canvas.findByText('Advanced options')).toBeVisible();
   },
 };
 
@@ -127,8 +137,7 @@ export const Configured: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Account')).toBeVisible();
-    expect(await canvas.findByText('Subject')).toBeVisible();
-    expect(await canvas.findByText('Body')).toBeVisible();
+    expect(await canvas.findByText('To')).toBeVisible();
 
     const emailInput = await canvas.findByText('tim@twenty.com');
     expect(emailInput).toBeVisible();

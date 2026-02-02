@@ -217,7 +217,7 @@ twenty-sdk は、アプリ内で使用する型付きのビルディングブロ
 
 | 関数                 | 目的                                   |
 | ------------------ | ------------------------------------ |
-| `defineApp()`      | アプリケーションのメタデータを構成                    |
+| `defineApplication()`      | アプリケーションのメタデータを構成                    |
 | `defineObject()`   | フィールド付きのカスタムオブジェクトを定義                |
 | `defineFunction()` | Define logic functions with handlers |
 | `defineRole()`     | ロールの権限とオブジェクトアクセスを構成                 |
@@ -317,14 +317,14 @@ export default defineObject({
 * **関数の実行方法**: 権限に使用するロール。
 * **（任意）変数**: 関数に環境変数として公開されるキーと値のペア。
 
-アプリケーション設定を定義するには `defineApp()` を使用します：
+アプリケーション設定を定義するには `defineApplication()` を使用します：
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +337,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +345,11 @@ export default defineApp({
 
 * `universalIdentifier` フィールドは、あなたが管理する決定的な ID です。一度生成し、同期をまたいで安定したままにしてください。
 * `applicationVariables` は関数の環境変数になります（例：`DEFAULT_RECIPIENT_NAME` は `process.env.DEFAULT_RECIPIENT_NAME` として利用可能）。
-* `functionRoleUniversalIdentifier` は、`*.role.ts` ファイルで定義するロールと一致している必要があります（下記参照）。
+* `defaultRoleUniversalIdentifier` は、`*.role.ts` ファイルで定義するロールと一致している必要があります（下記参照）。
 
 #### ロールと権限
 
-アプリケーションは、ワークスペース内のオブジェクトやアクションに対する権限をカプセル化するロールを定義できます。 The field `functionRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+アプリケーションは、ワークスペース内のオブジェクトやアクションに対する権限をカプセル化するロールを定義できます。 The field `defaultRoleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * `TWENTY_API_KEY` として注入される実行時の API キーは、このデフォルトの関数ロールから派生します。
 * 型付きクライアントの権限は、そのロールに付与された権限に制限されます。
@@ -363,11 +363,11 @@ export default defineApp({
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +380,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +389,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +399,7 @@ export default defineRole({
 });
 ```
 
-このロールの `universalIdentifier` は、`application.config.ts` で `functionRoleUniversalIdentifier` として参照されます。 言い換えると：
+このロールの `universalIdentifier` は、`application.config.ts` で `defaultRoleUniversalIdentifier` として参照されます。 言い換えると：
 
 * **\*.role.ts** は、デフォルトの関数ロールで可能な操作を定義します。
 * **application.config.ts** でそのロールを指定することで、関数はその権限を継承します。
@@ -604,8 +604,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 ノート:
 
 * 生成されたクライアントに URL や API キーを渡す必要はありません。 実行時に process.env から `TWENTY_API_URL` と `TWENTY_API_KEY` を読み取ります。
-* API キーの権限は、`application.config.ts` で `functionRoleUniversalIdentifier` によって参照されるロールによって決まります。 This is the default role used by logic functions of your application.
-* アプリケーションは、最小権限の原則に従うロールを定義できます。 関数に必要な権限のみを付与し、`functionRoleUniversalIdentifier` をそのロールのユニバーサル識別子に指定してください。
+* API キーの権限は、`application.config.ts` で `defaultRoleUniversalIdentifier` によって参照されるロールによって決まります。 This is the default role used by logic functions of your application.
+* アプリケーションは、最小権限の原則に従うロールを定義できます。 関数に必要な権限のみを付与し、`defaultRoleUniversalIdentifier` をそのロールのユニバーサル識別子に指定してください。
 
 ### Hello World の例
 

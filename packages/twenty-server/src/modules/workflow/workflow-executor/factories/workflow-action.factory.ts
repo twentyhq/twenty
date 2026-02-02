@@ -14,6 +14,7 @@ import { FilterWorkflowAction } from 'src/modules/workflow/workflow-executor/wor
 import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
 import { IfElseWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else.workflow-action';
 import { IteratorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator.workflow-action';
+import { LogicFunctionWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
@@ -26,6 +27,7 @@ import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workf
 export class WorkflowActionFactory {
   constructor(
     private readonly codeWorkflowAction: CodeWorkflowAction,
+    private readonly logicFunctionWorkflowAction: LogicFunctionWorkflowAction,
     private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
     private readonly upsertRecordWorkflowAction: UpsertRecordWorkflowAction,
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
@@ -45,6 +47,8 @@ export class WorkflowActionFactory {
     switch (stepType) {
       case WorkflowActionType.CODE:
         return this.codeWorkflowAction;
+      case WorkflowActionType.LOGIC_FUNCTION:
+        return this.logicFunctionWorkflowAction;
       case WorkflowActionType.SEND_EMAIL:
         return this.toolExecutorWorkflowAction;
       case WorkflowActionType.CREATE_RECORD:

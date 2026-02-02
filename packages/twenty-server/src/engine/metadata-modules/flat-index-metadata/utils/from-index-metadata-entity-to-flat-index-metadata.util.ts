@@ -1,12 +1,42 @@
-import { removePropertiesFromRecord } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
-export const fromIndexMetadataEntityToFlatIndexMetadata = (
-  indexMetadataEntity: IndexMetadataEntity,
-): FlatIndexMetadata => {
+export const fromIndexMetadataEntityToFlatIndexMetadata = ({
+  entity: indexMetadataEntity,
+  applicationIdToUniversalIdentifierMap,
+  objectMetadataIdToUniversalIdentifierMap,
+}: FromEntityToFlatEntityArgs<'index'>): FlatIndexMetadata => {
+  const applicationUniversalIdentifier =
+    applicationIdToUniversalIdentifierMap.get(
+      indexMetadataEntity.applicationId,
+    );
+
+  if (!isDefined(applicationUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `Application with id ${indexMetadataEntity.applicationId} not found for index ${indexMetadataEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
+  const objectMetadataUniversalIdentifier =
+    objectMetadataIdToUniversalIdentifierMap.get(
+      indexMetadataEntity.objectMetadataId,
+    );
+
+  if (!isDefined(objectMetadataUniversalIdentifier)) {
+    throw new FlatEntityMapsException(
+      `ObjectMetadata with id ${indexMetadataEntity.objectMetadataId} not found for index ${indexMetadataEntity.id}`,
+      FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+    );
+  }
+
   const indexMetadataEntityWithoutRelations = removePropertiesFromRecord(
     indexMetadataEntity,
     getMetadataEntityRelationProperties('index'),
@@ -28,5 +58,10 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = (
         updatedAt: indexFieldMetadata.updatedAt.toISOString(),
       }),
     ),
+    __universal: {
+      universalIdentifier: indexMetadataEntity.universalIdentifier,
+      applicationUniversalIdentifier,
+      objectMetadataUniversalIdentifier,
+    },
   };
 };

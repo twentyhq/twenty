@@ -21,12 +21,14 @@ export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
+  shouldIncludeRecordPageLayouts?: boolean;
 };
 
 export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   now,
   workspaceId,
   twentyStandardApplicationId,
+  shouldIncludeRecordPageLayouts,
 }: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): TwentyStandardAllFlatEntityMaps => {
   const standardObjectMetadataRelatedEntityIds =
     getStandardObjectMetadataRelatedEntityIds();
@@ -143,7 +145,9 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     now,
     workspaceId,
     twentyStandardApplicationId,
+    standardObjectMetadataRelatedEntityIds,
     standardPageLayoutMetadataRelatedEntityIds,
+    shouldIncludeRecordPageLayouts,
   });
 
   const flatPageLayoutTabMaps = buildStandardFlatPageLayoutTabMetadataMaps({
@@ -151,6 +155,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     workspaceId,
     twentyStandardApplicationId,
     standardPageLayoutMetadataRelatedEntityIds,
+    shouldIncludeRecordPageLayouts,
   });
 
   const flatPageLayoutWidgetMaps =
@@ -160,6 +165,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       twentyStandardApplicationId,
       standardObjectMetadataRelatedEntityIds,
       standardPageLayoutMetadataRelatedEntityIds,
+      shouldIncludeRecordPageLayouts,
     });
 
   const flatNavigationMenuItemMaps = buildStandardFlatNavigationMenuItemMaps({

@@ -14,6 +14,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 type SummaryCardProps = {
   objectNameSingular: string;
@@ -37,6 +38,9 @@ export const SummaryCard = ({
       fieldName: 'createdAt',
     }),
   );
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
+  );
 
   const { onUploadPicture, useUpdateOneObjectRecordMutation } =
     useRecordShowContainerActions({
@@ -49,6 +53,7 @@ export const SummaryCard = ({
   const recordIdentifier = useRecoilValue(
     recordStoreIdentifierFamilySelector({
       recordId: objectRecordId,
+      allowRequestsToTwentyIcons,
     }),
   );
 

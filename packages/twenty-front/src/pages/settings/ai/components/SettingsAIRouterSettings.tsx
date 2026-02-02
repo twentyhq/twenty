@@ -10,11 +10,11 @@ import {
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import {
-  StyledSettingsOptionCardContent,
-  StyledSettingsOptionCardDescription,
-  StyledSettingsOptionCardIcon,
-  StyledSettingsOptionCardTitle,
-} from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
+  StyledSettingsCardContent,
+  StyledSettingsCardDescription,
+  StyledSettingsCardIcon,
+  StyledSettingsCardTitle,
+} from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
@@ -161,25 +161,23 @@ export const SettingsAIRouterSettings = () => {
 
       {noModelsAvailable ? (
         <Card rounded>
-          <StyledSettingsOptionCardContent>
+          <StyledSettingsCardContent>
             <StyledErrorMessage>
               {t`No models available. Please configure AI models in your workspace settings.`}
             </StyledErrorMessage>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
         </Card>
       ) : (
         <Card rounded>
-          <StyledSettingsOptionCardContent>
-            <StyledSettingsOptionCardIcon>
+          <StyledSettingsCardContent>
+            <StyledSettingsCardIcon>
               <SettingsOptionIconCustomizer Icon={IconBolt} />
-            </StyledSettingsOptionCardIcon>
+            </StyledSettingsCardIcon>
             <div>
-              <StyledSettingsOptionCardTitle>
-                {t`Fast Model`}
-              </StyledSettingsOptionCardTitle>
-              <StyledSettingsOptionCardDescription>
+              <StyledSettingsCardTitle>{t`Fast Model`}</StyledSettingsCardTitle>
+              <StyledSettingsCardDescription>
                 {t`Quick model for routing decisions`}
-              </StyledSettingsOptionCardDescription>
+              </StyledSettingsCardDescription>
             </div>
             <StyledSelectContainer>
               <Select
@@ -190,19 +188,19 @@ export const SettingsAIRouterSettings = () => {
                 selectSizeVariant="small"
               />
             </StyledSelectContainer>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
 
-          <StyledSettingsOptionCardContent>
-            <StyledSettingsOptionCardIcon>
+          <StyledSettingsCardContent>
+            <StyledSettingsCardIcon>
               <SettingsOptionIconCustomizer Icon={IconBrain} />
-            </StyledSettingsOptionCardIcon>
+            </StyledSettingsCardIcon>
             <div>
-              <StyledSettingsOptionCardTitle>
+              <StyledSettingsCardTitle>
                 {t`Smart Model`}
-              </StyledSettingsOptionCardTitle>
-              <StyledSettingsOptionCardDescription>
+              </StyledSettingsCardTitle>
+              <StyledSettingsCardDescription>
                 {t`Advanced model for complex planning`}
-              </StyledSettingsOptionCardDescription>
+              </StyledSettingsCardDescription>
             </div>
             <StyledSelectContainer>
               <Select
@@ -213,7 +211,7 @@ export const SettingsAIRouterSettings = () => {
                 selectSizeVariant="small"
               />
             </StyledSelectContainer>
-          </StyledSettingsOptionCardContent>
+          </StyledSettingsCardContent>
         </Card>
       )}
     </Section>

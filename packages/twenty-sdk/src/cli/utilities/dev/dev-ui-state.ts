@@ -30,6 +30,7 @@ export type DevUiState = {
   appUniversalIdentifier: string | null;
   frontendUrl?: string | null;
   manifestStatus: ManifestStatus;
+  error?: string | null;
   entities: Map<string, EntityInfo>;
   events: UiEvent[];
 };

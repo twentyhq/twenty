@@ -7,12 +7,12 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-const FileInputType = new GraphQLInputObjectType({
-  name: 'FileInput',
+const FileItemInputType = new GraphQLInputObjectType({
+  name: 'FileItemInput',
   fields: {
     fileId: { type: new GraphQLNonNull(UUIDScalarType) },
     label: { type: new GraphQLNonNull(GraphQLString) },
   },
 });
 
-export const FilesInputType = new GraphQLList(FileInputType);
+export const FilesInputType = new GraphQLList(FileItemInputType);

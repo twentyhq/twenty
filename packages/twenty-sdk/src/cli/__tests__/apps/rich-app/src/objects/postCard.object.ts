@@ -1,5 +1,4 @@
-import { defineObject } from '@/application/objects/define-object';
-import { FieldType } from '@/application/fields/field-type';
+import { defineObject, FieldType } from '@/sdk';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -8,8 +7,11 @@ enum PostCardStatus {
   RETURNED = 'RETURNED',
 }
 
+export const POST_CARD_UNIVERSAL_IDENTIFIER =
+  '54b589ca-eeed-4950-a176-358418b85c05';
+
 export default defineObject({
-  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  universalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
   nameSingular: 'postCard',
   namePlural: 'postCards',
   labelSingular: 'Post card',

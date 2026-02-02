@@ -116,10 +116,13 @@ export default [
 
   // TypeScript specific configuration
   {
-    files: ['**/*.ts'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
         project: [path.resolve(__dirname, 'tsconfig.json')],
       },
     },

@@ -12,10 +12,6 @@ describe('variable path utility functions', () => {
       expect(needsEscaping('toto toto')).toBe(true);
     });
 
-    it('should return true for keys with dots', () => {
-      expect(needsEscaping('key.with.dots')).toBe(true);
-    });
-
     it('should return true for keys with brackets', () => {
       expect(needsEscaping('key[0]')).toBe(true);
       expect(needsEscaping('[key]')).toBe(true);
@@ -33,10 +29,6 @@ describe('variable path utility functions', () => {
         expect(escapePathSegment('key with space')).toBe('[key with space]');
       });
 
-      it('should wrap keys with dots in brackets', () => {
-        expect(escapePathSegment('key.with.dots')).toBe('[key.with.dots]');
-      });
-
       it('should not modify simple keys', () => {
         expect(escapePathSegment('simpleKey')).toBe('simpleKey');
       });
@@ -52,12 +44,6 @@ describe('variable path utility functions', () => {
       it('should escape segments with spaces', () => {
         expect(joinVariablePath(['step', 'key with space', 'value'])).toBe(
           'step.[key with space].value',
-        );
-      });
-
-      it('should escape segments with dots', () => {
-        expect(joinVariablePath(['step', 'key.with.dots'])).toBe(
-          'step.[key.with.dots]',
         );
       });
 
@@ -94,13 +80,6 @@ describe('variable path utility functions', () => {
         ]);
       });
 
-      it('should parse path with bracketed segments containing dots', () => {
-        expect(parseVariablePath('step.[key.with.dots]')).toEqual([
-          'step',
-          'key.with.dots',
-        ]);
-      });
-
       it('should handle multiple bracketed segments', () => {
         expect(
           parseVariablePath('[first key].[second key].[third key]'),
@@ -131,7 +110,6 @@ describe('variable path utility functions', () => {
         const paths = [
           ['step', 'field', 'value'],
           ['step', 'key with space', 'value'],
-          ['step', 'key.with.dots'],
           ['step', 'normal', 'has space', 'another'],
         ];
 

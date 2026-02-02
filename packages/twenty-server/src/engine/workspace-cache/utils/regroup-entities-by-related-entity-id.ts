@@ -4,6 +4,8 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 
+export type RegroupedEntity = { id: string; universalIdentifier: string };
+
 export type RegroupEntitiesByRelatedEntityIdArgs<T extends AllMetadataName> =
   MetadataManyToOneJoinColumn<T> extends never
     ? never
@@ -15,7 +17,7 @@ export const regroupEntitiesByRelatedEntityId = <T extends AllMetadataName>({
   entities,
   foreignKey,
 }: RegroupEntitiesByRelatedEntityIdArgs<T>) => {
-  const entitiesByRelatedEntityId = new Map<string, { id: string }[]>();
+  const entitiesByRelatedEntityId = new Map<string, RegroupedEntity[]>();
 
   for (const entity of entities) {
     const currentRelatedEntityId = entity[
@@ -30,9 +32,10 @@ export const regroupEntitiesByRelatedEntityId = <T extends AllMetadataName>({
       entitiesByRelatedEntityId.set(currentRelatedEntityId, []);
     }
 
-    entitiesByRelatedEntityId
-      .get(currentRelatedEntityId)!
-      .push({ id: entity.id });
+    entitiesByRelatedEntityId.get(currentRelatedEntityId)!.push({
+      id: entity.id,
+      universalIdentifier: entity.universalIdentifier,
+    });
   }
 
   return entitiesByRelatedEntityId;

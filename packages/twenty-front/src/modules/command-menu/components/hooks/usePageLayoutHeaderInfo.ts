@@ -129,7 +129,7 @@ export const usePageLayoutHeaderInfo = ({
 
       const headerType =
         commandMenuPage === CommandMenuPages.PageLayoutGraphFilter
-          ? t`${graphTypeLabel} Chart`
+          ? graphTypeLabel
           : t`Chart`;
 
       const title = isDefined(editedTitle)

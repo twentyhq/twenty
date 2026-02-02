@@ -19,9 +19,9 @@ export class AuthStatusCommand {
       );
 
       if (config.apiKey) {
-        const isValid = await this.apiService.validateAuth();
+        const validateAuth = await this.apiService.validateAuth();
         console.log(
-          `Status: ${isValid ? chalk.green('✓ Valid') : chalk.red('✗ Invalid')}`,
+          `Status: ${validateAuth.authValid ? chalk.green('✓ Valid') : chalk.red('✗ Invalid')}`,
         );
       } else {
         console.log(`Status: ${chalk.yellow('⚠ Not authenticated')}`);
