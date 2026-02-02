@@ -103,7 +103,7 @@ export class WorkflowExecutionContextService {
     if (!isDefined(roleId)) {
       // Fallback: Look up admin role for existing workspaces without defaultRoleId
       const adminRole = await this.roleService.getRoleByUniversalIdentifier({
-        universalIdentifier: ADMIN_ROLE.standardId,
+        universalIdentifier: ADMIN_ROLE.universalIdentifier,
         workspaceId,
       });
 

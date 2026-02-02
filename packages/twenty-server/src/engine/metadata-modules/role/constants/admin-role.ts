@@ -1,7 +1,7 @@
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 
 export const ADMIN_ROLE = {
-  standardId: '20202020-0001-0001-0001-000000000001',
+  universalIdentifier: '20202020-0001-0001-0001-000000000001',
   label: 'Admin',
   description: 'Admin role',
   icon: 'IconUserCog',
@@ -17,7 +17,7 @@ export const ADMIN_ROLE = {
   canBeAssignedToApiKeys: true,
 } as const satisfies Pick<
   FlatRole,
-  | 'standardId'
+  | 'universalIdentifier'
   | 'label'
   | 'description'
   | 'icon'

@@ -102,7 +102,7 @@ export class WorkspaceManagerService {
   }): Promise<void> {
     const adminRole = await this.roleRepository.findOne({
       where: {
-        standardId: ADMIN_ROLE.standardId,
+        universalIdentifier: ADMIN_ROLE.universalIdentifier,
         workspaceId,
       },
     });
