@@ -417,6 +417,7 @@ export class PageLayoutUpdateService {
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
+          position: widgetInput.position ?? null,
           configuration: widgetInput.configuration ?? null,
           updatedAt: now.toISOString(),
         };
@@ -437,6 +438,7 @@ export class PageLayoutUpdateService {
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
+          position: widgetInput.position ?? null,
           configuration: widgetInput.configuration ?? null,
           deletedAt: null,
           updatedAt: now.toISOString(),

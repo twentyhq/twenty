@@ -345,10 +345,11 @@ export class FlatPageLayoutWidgetValidatorService {
       position.layoutMode !== pageLayoutTab.layoutMode
     ) {
       const layoutMode = position.layoutMode;
+      const tabLayoutMode = pageLayoutTab.layoutMode;
 
       errors.push({
         code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-        message: t`Position layoutMode "${layoutMode}" does not match tab layoutMode "${layoutMode}"`,
+        message: t`Position layoutMode "${layoutMode}" does not match tab layoutMode "${tabLayoutMode}"`,
         userFriendlyMessage: msg`Widget position type must match the tab layout mode`,
       });
     }

@@ -18,7 +18,7 @@ export const validatePageLayoutWidgetVerticalListPosition = (
     errors.push({
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       message: generatePageLayoutWidgetExceptionMessage(
-        PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
+        PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_POSITION,
         widgetTitle,
         undefined,
         `index ${position.index} must be a non-negative integer`,
@@ -31,7 +31,7 @@ export const validatePageLayoutWidgetVerticalListPosition = (
     errors.push({
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       message: generatePageLayoutWidgetExceptionMessage(
-        PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_GRID_POSITION,
+        PageLayoutWidgetExceptionMessageKey.INVALID_WIDGET_POSITION,
         widgetTitle,
         undefined,
         `index ${position.index} must be an integer`,
