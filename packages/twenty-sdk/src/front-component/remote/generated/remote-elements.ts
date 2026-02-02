@@ -608,6 +608,31 @@ export const HtmlHrElement = createRemoteElement<
   properties: HTML_COMMON_PROPERTIES_CONFIG,
   events: [...HTML_COMMON_EVENTS_ARRAY],
 });
+
+export type TwentyUiButtonProperties = HtmlCommonProperties & {
+  variant?: string;
+  accent?: string;
+  size?: string;
+  disabled?: boolean;
+  fullWidth?: boolean;
+};
+
+export const TwentyUiButtonElement = createRemoteElement<
+  TwentyUiButtonProperties,
+  Record<string, never>,
+  Record<string, never>,
+  HtmlCommonEvents
+>({
+  properties: {
+    ...HTML_COMMON_PROPERTIES_CONFIG,
+    variant: { type: String },
+    accent: { type: String },
+    size: { type: String },
+    disabled: { type: Boolean },
+    fullWidth: { type: Boolean },
+  },
+  events: [...HTML_COMMON_EVENTS_ARRAY],
+});
 customElements.define('html-div', HtmlDivElement);
 customElements.define('html-span', HtmlSpanElement);
 customElements.define('html-section', HtmlSectionElement);
@@ -651,6 +676,7 @@ customElements.define('html-th', HtmlThElement);
 customElements.define('html-td', HtmlTdElement);
 customElements.define('html-br', HtmlBrElement);
 customElements.define('html-hr', HtmlHrElement);
+customElements.define('twenty-ui-button', TwentyUiButtonElement);
 customElements.define('remote-root', RemoteRootElement);
 customElements.define('remote-fragment', RemoteFragmentElement);
 
@@ -700,6 +726,7 @@ declare global {
     'html-td': InstanceType<typeof HtmlTdElement>;
     'html-br': InstanceType<typeof HtmlBrElement>;
     'html-hr': InstanceType<typeof HtmlHrElement>;
+    'twenty-ui-button': InstanceType<typeof TwentyUiButtonElement>;
     'remote-root': InstanceType<typeof RemoteRootElement>;
     'remote-fragment': InstanceType<typeof RemoteFragmentElement>;
   }
