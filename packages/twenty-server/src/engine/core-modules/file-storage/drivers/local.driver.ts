@@ -82,7 +82,7 @@ export class LocalDriver implements StorageDriver {
 
     const content = await fs.readFile(filePath);
 
-    await fs.writeFile(path.join(params.localPath, params.localPath), content);
+    await fs.writeFile(params.localPath, content);
   }
 
   async downloadFolder(params: {

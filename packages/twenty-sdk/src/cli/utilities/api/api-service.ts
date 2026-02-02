@@ -403,11 +403,9 @@ export class ApiService {
   async executeLogicFunction({
     functionId,
     payload,
-    version = 'latest',
   }: {
     functionId: string;
     payload: Record<string, unknown>;
-    version?: string;
   }): Promise<
     ApiResponse<{
       data: unknown;
@@ -438,7 +436,6 @@ export class ApiService {
         input: {
           id: functionId,
           payload,
-          version,
         },
       };
 
