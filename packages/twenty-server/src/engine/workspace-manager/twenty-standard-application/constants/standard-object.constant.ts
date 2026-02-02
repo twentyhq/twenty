@@ -1,5 +1,3 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
-
 import {
   ATTACHMENT_STANDARD_FIELD_IDS,
   BLOCKLIST_STANDARD_FIELD_IDS,
@@ -34,7 +32,7 @@ import {
 
 export const STANDARD_OBJECTS = {
   attachment: {
-    universalIdentifier: STANDARD_OBJECT_IDS.attachment,
+    universalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
     fields: {
       id: { universalIdentifier: '20202020-a01a-4001-8a01-1d5f8e3c7b2a' },
       createdAt: {
@@ -104,7 +102,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   blocklist: {
-    universalIdentifier: STANDARD_OBJECT_IDS.blocklist,
+    universalIdentifier: '20202020-0408-4f38-b8a8-4d5e3e26e24d',
     fields: {
       id: { universalIdentifier: '20202020-b01a-4011-8b11-5a9fc27fbf6e' },
       createdAt: {
@@ -128,7 +126,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   calendarChannelEventAssociation: {
-    universalIdentifier: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
+    universalIdentifier: '20202020-491b-4aaa-9825-afd1bae6ae00',
     fields: {
       id: {
         universalIdentifier: '20202020-c01a-4021-8a21-9edf06bfef0a',
@@ -169,7 +167,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   calendarChannel: {
-    universalIdentifier: STANDARD_OBJECT_IDS.calendarChannel,
+    universalIdentifier: '20202020-e8f2-40e1-a39c-c0e0039c5034',
     fields: {
       id: { universalIdentifier: '20202020-c02a-4031-8a31-1a2f3b4c5d6e' },
       createdAt: {
@@ -234,7 +232,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   calendarEventParticipant: {
-    universalIdentifier: STANDARD_OBJECT_IDS.calendarEventParticipant,
+    universalIdentifier: '20202020-a1c3-47a6-9732-27e5b1e8436d',
     fields: {
       id: {
         universalIdentifier: '20202020-c03a-4041-8a41-5e6f7a8b9cad',
@@ -290,7 +288,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   calendarEvent: {
-    universalIdentifier: STANDARD_OBJECT_IDS.calendarEvent,
+    universalIdentifier: '20202020-8f1d-4eef-9f85-0d1965e27221',
     fields: {
       id: { universalIdentifier: '20202020-c04a-4051-8a51-9cadbe0f1e2d' },
       createdAt: {
@@ -380,7 +378,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   company: {
-    universalIdentifier: STANDARD_OBJECT_IDS.company,
+    universalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
     fields: {
       id: { universalIdentifier: '20202020-c05a-4061-8a61-1e2f3a4b5c6d' },
       createdAt: {
@@ -479,7 +477,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   connectedAccount: {
-    universalIdentifier: STANDARD_OBJECT_IDS.connectedAccount,
+    universalIdentifier: '20202020-977e-46b2-890b-c3002ddfd5c5',
     fields: {
       id: { universalIdentifier: '20202020-c06a-4071-8a71-5c6d7e8f9aab' },
       createdAt: {
@@ -543,7 +541,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   dashboard: {
-    universalIdentifier: STANDARD_OBJECT_IDS.dashboard,
+    universalIdentifier: '20202020-3840-4b6d-9425-0c5188b05ca8',
     fields: {
       id: { universalIdentifier: '20202020-da1a-41d1-8ad1-abcdefabcdef' },
       createdAt: {
@@ -605,7 +603,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   favorite: {
-    universalIdentifier: STANDARD_OBJECT_IDS.favorite,
+    universalIdentifier: '20202020-ab56-4e05-92a3-e2414a499860',
     fields: {
       id: { universalIdentifier: '20202020-f01a-4091-8a91-ddeeffaabbcc' },
       createdAt: {
@@ -678,7 +676,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   favoriteFolder: {
-    universalIdentifier: STANDARD_OBJECT_IDS.favoriteFolder,
+    universalIdentifier: '20202020-7cf8-401f-8211-a9587d27fd2d',
     fields: {
       id: { universalIdentifier: '20202020-f02a-40a1-8aa1-1f2e3d4c5b6a' },
       createdAt: {
@@ -701,7 +699,7 @@ export const STANDARD_OBJECTS = {
     indexes: {},
   },
   messageChannelMessageAssociation: {
-    universalIdentifier: STANDARD_OBJECT_IDS.messageChannelMessageAssociation,
+    universalIdentifier: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
     fields: {
       id: {
         universalIdentifier: '20202020-b01a-40b1-8ab1-5a6b7c8d9eaf',
@@ -752,7 +750,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageChannel: {
-    universalIdentifier: STANDARD_OBJECT_IDS.messageChannel,
+    universalIdentifier: '20202020-fe8c-40bc-a681-b80b771449b7',
     fields: {
       id: { universalIdentifier: '20202020-b02a-40c1-8ac1-9eafbacbdced' },
       createdAt: {
@@ -837,7 +835,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageFolder: {
-    universalIdentifier: STANDARD_OBJECT_IDS.messageFolder,
+    universalIdentifier: '20202020-4955-4fd9-8e59-2dbd373f2a46',
     fields: {
       id: { universalIdentifier: '20202020-b03a-40d1-8ad1-dcedfefaabbc' },
       createdAt: {
@@ -880,7 +878,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageParticipant: {
-    universalIdentifier: STANDARD_OBJECT_IDS.messageParticipant,
+    universalIdentifier: '20202020-a433-4456-aa2d-fd9cb26b774a',
     fields: {
       id: { universalIdentifier: '20202020-b04a-40e1-8ae1-1a2b3c4d5e6f' },
       createdAt: {
@@ -925,7 +923,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   messageThread: {
-    universalIdentifier: STANDARD_OBJECT_IDS.messageThread,
+    universalIdentifier: '20202020-849a-4c3e-84f5-a25a7d802271',
     fields: {
       id: { universalIdentifier: '20202020-b05a-40f1-8af1-5e6f7a8b9cad' },
       createdAt: {
@@ -961,7 +959,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   message: {
-    universalIdentifier: STANDARD_OBJECT_IDS.message,
+    universalIdentifier: '20202020-3f6b-4425-80ab-e468899ab4b2',
     fields: {
       id: { universalIdentifier: '20202020-b06a-4101-8a01-9cadbedfaeb1' },
       createdAt: {
@@ -1030,7 +1028,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   note: {
-    universalIdentifier: STANDARD_OBJECT_IDS.note,
+    universalIdentifier: '20202020-0b00-45cd-b6f6-6cd806fc6804',
     fields: {
       id: { universalIdentifier: '20202020-c01a-4111-8a11-dfabcddeef12' },
       createdAt: {
@@ -1086,7 +1084,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   noteTarget: {
-    universalIdentifier: STANDARD_OBJECT_IDS.noteTarget,
+    universalIdentifier: '20202020-fff0-4b44-be82-bda313884400',
     fields: {
       id: { universalIdentifier: '20202020-c02a-4121-8a21-cddeef123456' },
       createdAt: {
@@ -1121,7 +1119,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   opportunity: {
-    universalIdentifier: STANDARD_OBJECT_IDS.opportunity,
+    universalIdentifier: '20202020-9549-49dd-b2b2-883999db8938',
     fields: {
       id: { universalIdentifier: '20202020-d01a-4131-8a31-f123456789ab' },
       createdAt: {
@@ -1253,7 +1251,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   person: {
-    universalIdentifier: STANDARD_OBJECT_IDS.person,
+    universalIdentifier: '20202020-e674-48e5-a542-72570eee7213',
     fields: {
       id: { universalIdentifier: '20202020-e01a-4141-8a41-456789abcdef' },
       createdAt: {
@@ -1357,7 +1355,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   task: {
-    universalIdentifier: STANDARD_OBJECT_IDS.task,
+    universalIdentifier: '20202020-1ba1-48ba-bc83-ef7e5990ed10',
     fields: {
       id: { universalIdentifier: '20202020-a02a-4151-8a51-89abcdefabcd' },
       createdAt: {
@@ -1504,7 +1502,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   taskTarget: {
-    universalIdentifier: STANDARD_OBJECT_IDS.taskTarget,
+    universalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
     fields: {
       id: { universalIdentifier: '20202020-a03a-4161-8a61-cdefabcdefab' },
       createdAt: {
@@ -1539,7 +1537,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   timelineActivity: {
-    universalIdentifier: STANDARD_OBJECT_IDS.timelineActivity,
+    universalIdentifier: '20202020-6736-4337-b5c4-8b39fae325a5',
     fields: {
       id: { universalIdentifier: '20202020-a01a-4081-8a81-9aabbccddeff' },
       createdAt: {
@@ -1663,7 +1661,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   workflow: {
-    universalIdentifier: STANDARD_OBJECT_IDS.workflow,
+    universalIdentifier: '20202020-62be-406c-b9ca-8caa50d51392',
     fields: {
       id: { universalIdentifier: '20202020-f02a-4181-8a81-efabcdefabcd' },
       createdAt: {
@@ -1731,7 +1729,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   workflowAutomatedTrigger: {
-    universalIdentifier: STANDARD_OBJECT_IDS.workflowAutomatedTrigger,
+    universalIdentifier: '20202020-3319-4234-a34c-7f3b9d2e4d1f',
     fields: {
       id: {
         universalIdentifier: '20202020-f01a-4171-8a71-abcdefabcdef',
@@ -1764,7 +1762,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   workflowRun: {
-    universalIdentifier: STANDARD_OBJECT_IDS.workflowRun,
+    universalIdentifier: '20202020-4e28-4e95-a9d7-6c00874f843c',
     fields: {
       id: { universalIdentifier: '20202020-f03a-4191-8a91-cdefabcdefab' },
       createdAt: {
@@ -1851,7 +1849,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   workflowVersion: {
-    universalIdentifier: STANDARD_OBJECT_IDS.workflowVersion,
+    universalIdentifier: '20202020-d65d-4ab9-9344-d77bfb376a3d',
     fields: {
       id: { universalIdentifier: '20202020-f04a-41a1-8aa1-abcdefabcdef' },
       createdAt: {
@@ -1921,7 +1919,7 @@ export const STANDARD_OBJECTS = {
     },
   },
   workspaceMember: {
-    universalIdentifier: STANDARD_OBJECT_IDS.workspaceMember,
+    universalIdentifier: '20202020-3319-4234-a34c-82d5c0e881a6',
     fields: {
       id: { universalIdentifier: '20202020-fb1a-41b1-8ab1-efabcdefabcd' },
       createdAt: {

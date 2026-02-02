@@ -135,7 +135,6 @@ export const mockPersonFlatObjectMetadata = (
 ): FlatObjectMetadata => ({
   id: objectMetadataId,
   icon: 'Icon123',
-  standardId: '',
   nameSingular: 'person',
   namePlural: 'people',
   labelSingular: 'Person',

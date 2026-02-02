@@ -43,7 +43,6 @@ export const getMockObjectMetadataEntity = (
     labelSingular: 'Default mock plural singular',
     objectPermissions: [],
     shortcut: null,
-    standardId: null,
     universalIdentifier: faker.string.uuid(),
     applicationId: faker.string.uuid(),
     application: {} as ApplicationEntity,

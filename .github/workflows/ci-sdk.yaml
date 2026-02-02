@@ -47,7 +47,7 @@ jobs:
   # TODO uncomment when syncApplication resolver is fixed
   # sdk-e2e-integration-test:
   #   timeout-minutes: 30
-  #   runs-on: depot-ubuntu-24.04-8
+  #   runs-on: ubuntu-latest-8-cores
   #   needs: [changed-files-check, sdk-test]
   #   strategy:
   #     matrix:

@@ -2,7 +2,6 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 
 export const ATTACHMENT_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '819ed5ff-312f-4423-8e95-02a691cf5c27',
-  standardId: '20202020-bd3d-4c60-8dca-571c71d4447a',
   nameSingular: 'attachment',
   namePlural: 'attachments',
   labelSingular: 'Attachment',

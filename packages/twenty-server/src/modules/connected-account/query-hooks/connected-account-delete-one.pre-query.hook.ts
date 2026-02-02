@@ -1,4 +1,3 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -13,6 +12,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @WorkspaceQueryHook(`connectedAccount.destroyOne`)
@@ -62,7 +62,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
 
     const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      universalIdentifier: STANDARD_OBJECT_IDS.messageChannel,
+      universalIdentifier: STANDARD_OBJECTS.messageChannel.universalIdentifier,
     });
 
     // TODO: handle cascade events for delete

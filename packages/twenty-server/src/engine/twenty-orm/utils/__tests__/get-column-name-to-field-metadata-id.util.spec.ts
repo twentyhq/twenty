@@ -35,7 +35,6 @@ describe('getColumnNameToFieldMetadataIdMap', () => {
     description: null,
     standardOverrides: null,
     isUIReadOnly: false,
-    standardId: null,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
     duplicateCriteria: null,

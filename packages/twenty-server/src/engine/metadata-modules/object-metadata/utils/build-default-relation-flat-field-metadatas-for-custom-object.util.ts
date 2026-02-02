@@ -1,4 +1,3 @@
-import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -23,6 +22,7 @@ import {
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
+import { type STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'timelineActivity',
@@ -30,7 +30,7 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'attachment',
   'noteTarget',
   'taskTarget',
-] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
+] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
 
 const morphIdByRelationObjectNameSingular = {
   timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
@@ -47,7 +47,7 @@ const morphIdByRelationObjectNameSingular = {
 // once we migrate timeline activity to morph relations, we can add it.
 // another way to check if an object is migrated to morph relations is to check if the feature flag is enabled
 const DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS =
-  [] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
+  [] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
 
 export type BuildDefaultRelationFieldsForCustomObjectArgs = {
   existingFeatureFlagsMap: FeatureFlagMap;

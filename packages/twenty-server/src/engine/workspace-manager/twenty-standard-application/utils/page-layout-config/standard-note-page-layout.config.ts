@@ -1,6 +1,5 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
-
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import {
   TAB_PROPS,
   WIDGET_PROPS,
@@ -61,7 +60,7 @@ export const STANDARD_NOTE_PAGE_LAYOUT_CONFIG = {
   layoutName: 'noteRecordPage',
   name: 'Default Note Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECT_IDS.note,
+  objectUniversalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
   universalIdentifier: '20202020-a104-4004-8004-a0be5a11a004',
   defaultTabUniversalIdentifier: NOTE_PAGE_TABS.home.universalIdentifier,
   tabs: NOTE_PAGE_TABS,
