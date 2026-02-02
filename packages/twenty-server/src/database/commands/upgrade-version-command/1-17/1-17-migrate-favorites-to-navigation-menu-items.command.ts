@@ -101,7 +101,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         'flatObjectMetadataMaps',
       ]);
 
-    const folderIdMapping = await this.migrateFavoriteFolders({
+    const {
+      folderIdMapping,
+      flatNavigationMenuItemsToCreate: folderNavItemsToCreate,
+    } = await this.migrateFavoriteFolders({
       workspaceId,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
     });
@@ -111,7 +114,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       ['flatViewMaps'],
     );
 
-    const migratedFavoriteIds = await this.migrateFavorites({
+    const {
+      migratedFavoriteIds,
+      flatNavigationMenuItemsToCreate: favoriteNavItemsToCreate,
+    } = await this.migrateFavorites({
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
@@ -119,6 +125,24 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       flatViewMaps,
       folderIdMapping,
     });
+
+    const allFlatNavigationMenuItemsToCreate = [
+      ...folderNavItemsToCreate,
+      ...favoriteNavItemsToCreate,
+    ];
+
+    if (allFlatNavigationMenuItemsToCreate.length > 0) {
+      const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatNavigationMenuItemMaps',
+        ]);
+
+      await this.createNavigationMenuItems(
+        workspaceId,
+        allFlatNavigationMenuItemsToCreate,
+        existingFlatNavigationMenuItemMaps,
+      );
+    }
 
     await this.softDeleteMigratedFavorites({
       workspaceId,
@@ -147,7 +171,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
   }: {
     workspaceId: string;
     workspaceCustomApplicationId: string;
-  }): Promise<Map<string, string>> {
+  }): Promise<{
+    folderIdMapping: Map<string, string>;
+    flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[];
+  }> {
     const favoriteFolderRepository =
       await this.twentyORMGlobalManager.getRepository<FavoriteFolderWorkspaceEntity>(
         workspaceId,
@@ -161,7 +188,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     });
 
     if (favoriteFolders.length === 0) {
-      return new Map();
+      return {
+        folderIdMapping: new Map(),
+        flatNavigationMenuItemsToCreate: [],
+      };
     }
 
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
@@ -209,15 +239,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       flatNavigationMenuItemsToCreate.push(folderToCreate);
     }
 
-    if (flatNavigationMenuItemsToCreate.length > 0) {
-      await this.createNavigationMenuItems(
-        workspaceId,
-        flatNavigationMenuItemsToCreate,
-        existingFlatNavigationMenuItemMaps,
-      );
-    }
-
-    return folderIdMapping;
+    return {
+      folderIdMapping,
+      flatNavigationMenuItemsToCreate,
+    };
   }
 
   private async migrateFavorites({
@@ -234,7 +259,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatViewMaps: FlatEntityMaps<FlatView>;
     folderIdMapping: Map<string, string>;
-  }): Promise<string[]> {
+  }): Promise<{
+    migratedFavoriteIds: string[];
+    flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[];
+  }> {
     const favoriteRepository =
       await this.twentyORMGlobalManager.getRepository<FavoriteWorkspaceEntity>(
         workspaceId,
@@ -248,7 +276,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     });
 
     if (favorites.length === 0) {
-      return [];
+      return { migratedFavoriteIds: [], flatNavigationMenuItemsToCreate: [] };
     }
 
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
@@ -427,15 +455,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       migratedFavoriteIds.push(favorite.id);
     }
 
-    if (flatNavigationMenuItemsToCreate.length > 0) {
-      await this.createNavigationMenuItems(
-        workspaceId,
-        flatNavigationMenuItemsToCreate,
-        existingFlatNavigationMenuItemMaps,
-      );
-    }
-
-    return migratedFavoriteIds;
+    return {
+      migratedFavoriteIds,
+      flatNavigationMenuItemsToCreate,
+    };
   }
 
   private getApplicationIdAndUniversalIdentifierForViewFavorite({
