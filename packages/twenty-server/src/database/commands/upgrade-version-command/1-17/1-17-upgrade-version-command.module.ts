@@ -7,10 +7,13 @@ import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationComma
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
 import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-send-email-recipients.command';
 import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
+import { SeedWorkflowV1_16Command } from 'src/database/commands/upgrade-version-command/1-17/1-17-seed-workflow-v1-16.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -40,11 +43,13 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     WorkspaceCacheStorageModule,
     WorkspaceMetadataVersionModule,
     FeatureFlagModule,
+    FileStorageModule.forRoot(),
     WorkspaceCacheModule,
     FieldMetadataModule,
     ObjectMetadataModule,
     ApplicationModule,
     LogicFunctionModule,
+    RecordPositionModule,
     GlobalWorkspaceDataSourceModule,
   ],
   providers: [
@@ -54,6 +59,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
     MigrateWorkflowCodeStepsCommand,
+    SeedWorkflowV1_16Command,
   ],
   exports: [
     MigrateAttachmentToMorphRelationsCommand,
@@ -62,6 +68,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
     MigrateWorkflowCodeStepsCommand,
+    SeedWorkflowV1_16Command,
   ],
 })
 export class V1_17_UpgradeVersionCommandModule {}

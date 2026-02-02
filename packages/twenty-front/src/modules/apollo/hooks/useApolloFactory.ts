@@ -56,7 +56,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
           fetchPolicy: 'cache-and-network',
         },
       },
-      connectToDevTools: true,
+      connectToDevTools: process.env.IS_DEBUG_MODE === 'true',
       currentWorkspaceMember: currentWorkspaceMember,
       currentWorkspace: currentWorkspace,
       appVersion,
