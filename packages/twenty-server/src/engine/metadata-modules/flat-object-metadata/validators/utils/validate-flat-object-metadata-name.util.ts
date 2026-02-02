@@ -41,16 +41,6 @@ export const validateFlatObjectMetadataNames = ({
       });
     }
 
-    // CamelCase check
-    if (name !== camelCase(name)) {
-      errors.push({
-        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-        message: `Name should be in camelCase`,
-        userFriendlyMessage: msg`Name should be in camelCase`,
-        value: name,
-      });
-    }
-
     // Format check
     if (
       !name.match(
