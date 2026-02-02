@@ -137,11 +137,32 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           'flatNavigationMenuItemMaps',
         ]);
 
-      await this.createNavigationMenuItems(
-        workspaceId,
-        allFlatNavigationMenuItemsToCreate,
-        existingFlatNavigationMenuItemMaps,
+      const twentyStandardItems = allFlatNavigationMenuItemsToCreate.filter(
+        (item) => item.applicationId === twentyStandardFlatApplication.id,
       );
+      const workspaceCustomItems = allFlatNavigationMenuItemsToCreate.filter(
+        (item) => item.applicationId === workspaceCustomFlatApplication.id,
+      );
+
+      if (workspaceCustomItems.length > 0) {
+        await this.createNavigationMenuItems({
+          workspaceId,
+          flatNavigationMenuItemsToCreate: workspaceCustomItems,
+          existingFlatNavigationMenuItemMaps,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        });
+      }
+
+      if (twentyStandardItems.length > 0) {
+        await this.createNavigationMenuItems({
+          workspaceId,
+          flatNavigationMenuItemsToCreate: twentyStandardItems,
+          existingFlatNavigationMenuItemMaps,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+        });
+      }
     }
 
     await this.softDeleteMigratedFavorites({
@@ -623,11 +644,17 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     return { targetRecordId: null, targetObjectMetadataId: null };
   }
 
-  private async createNavigationMenuItems(
-    workspaceId: string,
-    flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[],
-    _existingFlatNavigationMenuItemMaps: FlatNavigationMenuItemMaps,
-  ): Promise<void> {
+  private async createNavigationMenuItems({
+    workspaceId,
+    flatNavigationMenuItemsToCreate,
+    existingFlatNavigationMenuItemMaps: _existingFlatNavigationMenuItemMaps,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[];
+    existingFlatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -640,6 +667,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           },
           workspaceId,
           isSystemBuild: true,
+          applicationUniversalIdentifier,
         },
       );
 
