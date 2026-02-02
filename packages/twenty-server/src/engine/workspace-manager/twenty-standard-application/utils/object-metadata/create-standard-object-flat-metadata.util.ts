@@ -62,7 +62,6 @@ export const createStandardObjectFlatMetadata = <
 
   return {
     universalIdentifier,
-    standardId: universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
     nameSingular,

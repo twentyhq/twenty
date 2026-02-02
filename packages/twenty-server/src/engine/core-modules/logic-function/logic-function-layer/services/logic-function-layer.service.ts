@@ -39,7 +39,7 @@ export class LogicFunctionLayerService {
       packageJsonChecksum,
       yarnLockChecksum,
       workspaceId,
-    });
+    } as Omit<LogicFunctionLayerEntity, 'workspace'>);
 
     const availablePackages = await this.getAvailablePackages({
       workspaceId,
@@ -60,7 +60,7 @@ export class LogicFunctionLayerService {
 
   async update(
     id: string,
-    data: QueryDeepPartialEntity<LogicFunctionLayerEntity>,
+    data: QueryDeepPartialEntity<Omit<LogicFunctionLayerEntity, 'workspace'>>,
     applicationUniversalIdentifier: string,
     workspaceId: string,
   ) {

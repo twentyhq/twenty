@@ -7,7 +7,6 @@ import {
   ObjectRecordUpsertEvent,
   type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   assertUnreachable,
   isDefined,
@@ -27,6 +26,7 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
   T extends ObjectLiteral,
@@ -47,7 +47,10 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   recordsAfter?: T[];
   recordsBefore?: T[];
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
-  if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.timelineActivity) {
+  if (
+    objectMetadataItem.universalIdentifier ===
+    STANDARD_OBJECTS.timelineActivity.universalIdentifier
+  ) {
     return;
   }
 

@@ -104,7 +104,6 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     id: generatedId,
     workspaceId,
     applicationId,
-    standardId: null,
     universalIdentifier,
     applicationUniversalIdentifier,
     labelIdentifierFieldMetadataId,
