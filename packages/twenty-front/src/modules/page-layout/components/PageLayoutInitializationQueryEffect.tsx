@@ -145,12 +145,10 @@ export const PageLayoutInitializationQueryEffect = ({
   );
 
   useEffect(() => {
-    if (!isInitialized) {
-      if (isDefined(pageLayout)) {
-        initializePageLayout(pageLayout);
-        onInitialized?.(pageLayout);
-        setIsInitialized(true);
-      }
+    if (!isInitialized && isDefined(pageLayout)) {
+      initializePageLayout(pageLayout);
+      onInitialized?.(pageLayout);
+      setIsInitialized(true);
     }
   }, [
     initializePageLayout,
