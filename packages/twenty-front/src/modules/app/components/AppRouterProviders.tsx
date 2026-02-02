@@ -25,6 +25,7 @@ import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon'
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { MetadataProviderEffect } from '@/users/components/MetadataProviderEffect';
 import { UserProvider } from '@/users/components/UserProvider';
+import { GlobalFilePreviewModal } from '@/ui/field/display/components/GlobalFilePreviewModal';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -64,6 +65,7 @@ export const AppRouterProviders = () => {
                                   <PageTitle title={pageTitle} />
                                   <PageFavicon />
                                   <Outlet />
+                                  <GlobalFilePreviewModal />
                                 </StrictMode>
                               </DialogManager>
                             </DialogComponentInstanceContext.Provider>

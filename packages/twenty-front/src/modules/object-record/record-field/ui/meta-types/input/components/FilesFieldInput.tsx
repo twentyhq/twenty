@@ -10,17 +10,14 @@ import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/re
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { filesSchema } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { FilePreviewModal } from '@/ui/field/display/components/FilePreviewModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-const PREVIEW_MODAL_ID = 'file-preview-modal';
 
 export const FilesFieldInput = () => {
   const { setDraftValue, draftValue, fieldDefinition } = useFilesField();
@@ -29,10 +26,7 @@ export const FilesFieldInput = () => {
   const { t } = useLingui();
   const [isUploading, setIsUploading] = useState(false);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [previewedFile, setPreviewedFile] = useState<FieldFilesValue | null>(
-    null,
-  );
-  const { openModal, closeModal } = useModal();
+  const setFilePreview = useSetRecoilState(filePreviewState);
   const isAttachmentPreviewEnabled = useRecoilValue(
     isAttachmentPreviewEnabledState,
   );
@@ -150,13 +144,7 @@ export const FilesFieldInput = () => {
 
   const handlePreview = (file: FieldFilesValue) => {
     if (!isAttachmentPreviewEnabled) return;
-    setPreviewedFile(file);
-    openModal(PREVIEW_MODAL_ID);
-  };
-
-  const handleClosePreview = () => {
-    closeModal(PREVIEW_MODAL_ID);
-    setPreviewedFile(null);
+    setFilePreview(file);
   };
 
   const validateInput = useCallback(
@@ -186,42 +174,35 @@ export const FilesFieldInput = () => {
     [files],
   );
 
+  if (files.length === 0) {
+    return null;
+  }
+
   return (
-    <>
-      {files.length > 0 && (
-        <MultiItemFieldInput
-          items={files}
-          onChange={handleChange}
-          onEnter={handleEnter}
-          onEscape={handleEscape}
-          onClickOutside={handleClickOutside}
-          placeholder={t`File label`}
-          fieldMetadataType={FieldMetadataType.FILES}
-          validateInput={validateInput}
-          formatInput={formatInput}
-          renderItem={({ value: file, index, handleEdit, handleDelete }) => (
-            <FilesFieldMenuItem
-              key={file.fileId}
-              dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
-              file={file}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onClick={() => handlePreview(file)}
-            />
-          )}
-          newItemLabel={isUploading ? t`Uploading...` : t`Upload file`}
-          onAddClick={handleUploadClick}
-          onError={handleError}
-          maxItemCount={maxNumberOfValues}
+    <MultiItemFieldInput
+      items={files}
+      onChange={handleChange}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onClickOutside={handleClickOutside}
+      placeholder={t`File label`}
+      fieldMetadataType={FieldMetadataType.FILES}
+      validateInput={validateInput}
+      formatInput={formatInput}
+      renderItem={({ value: file, index, handleEdit, handleDelete }) => (
+        <FilesFieldMenuItem
+          key={file.fileId}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+          file={file}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onClick={() => handlePreview(file)}
         />
       )}
-      {isAttachmentPreviewEnabled && (
-        <FilePreviewModal
-          file={previewedFile}
-          modalId={PREVIEW_MODAL_ID}
-          onClose={handleClosePreview}
-        />
-      )}
-    </>
+      newItemLabel={isUploading ? t`Uploading...` : t`Upload file`}
+      onAddClick={handleUploadClick}
+      onError={handleError}
+      maxItemCount={maxNumberOfValues}
+    />
   );
 };
