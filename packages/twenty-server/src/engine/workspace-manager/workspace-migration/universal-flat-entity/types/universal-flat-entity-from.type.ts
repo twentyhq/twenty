@@ -37,7 +37,7 @@ export type UniversalFlatEntityExtraProperties<
       NonNullable<TEntity[P]>
     >
       ? FormatRecordSerializedRelationProperties<TEntity[P]>
-      : null;
+      : TEntity[P];
   };
 
 export type UniversalFlatEntityFrom<
