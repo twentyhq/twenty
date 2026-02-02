@@ -1,10 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isObject } from '@sniptt/guards';
 import * as fs from 'fs/promises';
-import { Command } from 'nest-commander';
 import { dirname, join } from 'path';
+
+import { isObject } from '@sniptt/guards';
+import { Command } from 'nest-commander';
 import { FileFolder, type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
@@ -72,18 +73,18 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     const workflowVersions = await workflowVersionRepository.find({
       select: ['id', 'steps', 'status'],
       where: {
-        status: In([
-          WorkflowVersionStatus.DRAFT,
-          WorkflowVersionStatus.ACTIVE,
-        ]),
+        status: In([WorkflowVersionStatus.DRAFT, WorkflowVersionStatus.ACTIVE]),
       },
     });
 
     const allTargets = new Map<string, CodeStepMigrationTarget>();
+
     for (const version of workflowVersions) {
       const targets = collectCodeStepMigrationTargets(version.steps);
+
       for (const target of targets) {
         const key = `${target.serverlessFunctionId}:${target.serverlessFunctionVersion}`;
+
         if (!allTargets.has(key)) {
           allTargets.set(key, target);
         }
@@ -91,10 +92,10 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     }
 
     const targetsList = Array.from(allTargets.values());
+
     if (targetsList.length === 0) {
-      this.logger.log(
-        `No code steps to migrate in workspace ${workspaceId}`,
-      );
+      this.logger.log(`No code steps to migrate in workspace ${workspaceId}`);
+
       return;
     }
 
@@ -102,12 +103,12 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
 
     if (!isDryRun) {
       for (const target of targetsList) {
-        const newLogicFunctionId = await this.createLogicFunctionAndMigrateFiles(
-          workspaceId,
-          target,
-        );
+        const newLogicFunctionId =
+          await this.createLogicFunctionAndMigrateFiles(workspaceId, target);
+
         if (isDefined(newLogicFunctionId)) {
           const key = `${target.serverlessFunctionId}:${target.serverlessFunctionVersion}`;
+
           mapping.set(key, newLogicFunctionId);
         }
       }
@@ -118,11 +119,13 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       ) => {
         const key = `${serverlessFunctionId}:${serverlessFunctionVersion}`;
         const newId = mapping.get(key);
+
         if (!isDefined(newId)) {
           throw new Error(
             `Missing mapping for ${serverlessFunctionId}:${serverlessFunctionVersion}`,
           );
         }
+
         return newId;
       };
 
@@ -156,8 +159,8 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
   private async getApplicationUniversalIdentifier(
     applicationId: string,
   ): Promise<string | null> {
-    const application =
-      await this.applicationService.findById(applicationId);
+    const application = await this.applicationService.findById(applicationId);
+
     return application?.universalIdentifier ?? null;
   }
 
@@ -176,6 +179,7 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       this.logger.warn(
         `Logic function ${serverlessFunctionId} not found in workspace ${workspaceId}, skipping`,
       );
+
       return null;
     }
 
@@ -238,21 +242,22 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     );
     const builtTempDir = join(tempRoot, 'built');
     const sourceTempDir = join(tempRoot, 'source');
+
     await fs.mkdir(builtTempDir, { recursive: true });
     await fs.mkdir(sourceTempDir, { recursive: true });
 
     const builtSources = await this.fileStorageService.readFolder(
       oldPaths.built,
     );
-    await this.writeSourcesToLocalFolder(
-      builtSources as Sources,
-      builtTempDir,
-    );
+
+    await this.writeSourcesToLocalFolder(builtSources as Sources, builtTempDir);
 
     const sourceSources = await this.fileStorageService.readFolder(
       oldPaths.source,
     );
-    const flattened = (sourceSources.src as Sources) ?? (sourceSources as Sources);
+    const flattened =
+      (sourceSources.src as Sources) ?? (sourceSources as Sources);
+
     await this.writeSourcesToLocalFolder(flattened, sourceTempDir);
 
     return tempRoot;

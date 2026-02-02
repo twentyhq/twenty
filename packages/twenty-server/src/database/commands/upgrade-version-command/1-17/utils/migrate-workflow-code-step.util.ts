@@ -25,7 +25,9 @@ type WorkflowStep = {
 export const needsCodeStepMigration = (
   input: LegacyCodeStepInput | MigratedCodeStepInput,
 ): input is LegacyCodeStepInput => {
-  return 'serverlessFunctionId' in input && isDefined(input.serverlessFunctionId);
+  return (
+    'serverlessFunctionId' in input && isDefined(input.serverlessFunctionId)
+  );
 };
 
 export type CodeStepMigrationTarget = {
@@ -65,6 +67,7 @@ export const collectCodeStepMigrationTargets = (
 
     const version = input.serverlessFunctionVersion ?? 'draft';
     const key = `${input.serverlessFunctionId}:${version}`;
+
     if (seen.has(key)) {
       continue;
     }
@@ -104,10 +107,7 @@ export const migrateWorkflowCodeStepsWithMapping = (
 
     hasChanges = true;
     const version = input.serverlessFunctionVersion ?? 'draft';
-    const newLogicFunctionId = mapping(
-      input.serverlessFunctionId,
-      version,
-    );
+    const newLogicFunctionId = mapping(input.serverlessFunctionId, version);
 
     return {
       ...step,

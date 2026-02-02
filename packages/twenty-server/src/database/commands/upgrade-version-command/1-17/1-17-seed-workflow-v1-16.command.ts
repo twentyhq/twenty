@@ -2,8 +2,8 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { v4 as uuidv4 } from 'uuid';
-
 import { Command } from 'nest-commander';
+import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -25,7 +25,6 @@ import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-obje
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { Repository } from 'typeorm';
 
 const OLD_BUILT_FOLDER = 'built-function';
 const OLD_SOURCE_FOLDER = 'serverless-function';
@@ -77,16 +76,18 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
   override async runOnWorkspace({
     workspaceId,
   }: RunOnWorkspaceArgs): Promise<void> {
-    this.logger.log(
-      `Seeding workflow v1.16 data for workspace ${workspaceId}`,
-    );
+    this.logger.log(`Seeding workflow v1.16 data for workspace ${workspaceId}`);
 
     await this.cleanWorkflowsAndOldFileStorage(workspaceId);
 
     const workflowRepository =
-      await this.globalWorkspaceOrmManager.getRepository(workspaceId, 'workflow', {
-        shouldBypassPermissionChecks: true,
-      });
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'workflow',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
     const workflowVersionRepository =
       await this.globalWorkspaceOrmManager.getRepository(
         workspaceId,
@@ -152,20 +153,17 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
   private async seedScenarioDraftAndActiveLink(
     workspaceId: string,
     workflowRepository: Awaited<
-      ReturnType<
-        GlobalWorkspaceOrmManager['getRepository']
-      >
+      ReturnType<GlobalWorkspaceOrmManager['getRepository']>
     >,
     workflowVersionRepository: Awaited<
-      ReturnType<
-        GlobalWorkspaceOrmManager['getRepository']
-      >
+      ReturnType<GlobalWorkspaceOrmManager['getRepository']>
     >,
   ): Promise<void> {
     const logicFunctionId = await this.insertLogicFunctionRow(
       workspaceId,
       'Seed (draft+active LINK)',
     );
+
     await this.writeOldFormatFiles(logicFunctionId, SEED_VERSION_DRAFT);
     await this.writeOldFormatFiles(logicFunctionId, SEED_VERSION_PUBLISHED);
 
@@ -253,20 +251,17 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
   private async seedScenarioDraftOnlyMessage(
     workspaceId: string,
     workflowRepository: Awaited<
-      ReturnType<
-        GlobalWorkspaceOrmManager['getRepository']
-      >
+      ReturnType<GlobalWorkspaceOrmManager['getRepository']>
     >,
     workflowVersionRepository: Awaited<
-      ReturnType<
-        GlobalWorkspaceOrmManager['getRepository']
-      >
+      ReturnType<GlobalWorkspaceOrmManager['getRepository']>
     >,
   ): Promise<void> {
     const logicFunctionId = await this.insertLogicFunctionRow(
       workspaceId,
       'Seed (draft-only message)',
     );
+
     await this.writeOldFormatFiles(logicFunctionId, SEED_VERSION_DRAFT);
 
     const workflowId = uuidv4();
@@ -322,20 +317,17 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
   private async seedScenarioDraftAndActiveMixedOutputSchema(
     workspaceId: string,
     workflowRepository: Awaited<
-      ReturnType<
-        GlobalWorkspaceOrmManager['getRepository']
-      >
+      ReturnType<GlobalWorkspaceOrmManager['getRepository']>
     >,
     workflowVersionRepository: Awaited<
-      ReturnType<
-        GlobalWorkspaceOrmManager['getRepository']
-      >
+      ReturnType<GlobalWorkspaceOrmManager['getRepository']>
     >,
   ): Promise<void> {
     const logicFunctionId = await this.insertLogicFunctionRow(
       workspaceId,
       'Seed (draft+active mixed)',
     );
+
     await this.writeOldFormatFiles(logicFunctionId, SEED_VERSION_DRAFT);
     await this.writeOldFormatFiles(logicFunctionId, SEED_VERSION_PUBLISHED);
 
@@ -480,9 +472,13 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
         { shouldBypassPermissionChecks: true },
       );
     const workflowRepository =
-      await this.globalWorkspaceOrmManager.getRepository(workspaceId, 'workflow', {
-        shouldBypassPermissionChecks: true,
-      });
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'workflow',
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
 
     const deletedRuns = await workflowRunRepository.delete({});
     const deletedVersions = await workflowVersionRepository.delete({});
@@ -517,7 +513,8 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
     const sourceFolder = `${OLD_SOURCE_FOLDER}/${logicFunctionId}/${version}`;
 
     const builtSources = {
-      'index.mjs': 'export default async function main() { return { message: "ok" }; }\n',
+      'index.mjs':
+        'export default async function main() { return { message: "ok" }; }\n',
     };
     const sourceSources = {
       src: {
