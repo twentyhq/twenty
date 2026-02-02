@@ -83,7 +83,7 @@ export const Toggle = ({
       />
 
       <StyledCircle
-        initial="off"
+        initial={value ? 'on' : 'off'}
         animate={value ? 'on' : 'off'}
         variants={circleVariants}
         size={toggleSize}
