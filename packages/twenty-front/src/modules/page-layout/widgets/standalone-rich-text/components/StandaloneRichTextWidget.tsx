@@ -8,6 +8,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { StandaloneRichTextEditorContent } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextEditorContent';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -18,7 +19,6 @@ import {
   PageLayoutType,
   type StandaloneRichTextConfiguration,
 } from '~/generated/graphql';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 
 const StyledContainer = styled.div<{ isPageLayoutInEditMode?: boolean }>`
   box-sizing: border-box;

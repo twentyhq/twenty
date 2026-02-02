@@ -2,11 +2,12 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
-import { type WorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
 export const WorkspaceMigrationRunnerExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
   EXECUTION_FAILED: 'EXECUTION_FAILED',
+  APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
 } as const;
 
 const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
@@ -17,6 +18,8 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
       return msg`An unexpected error occurred.`;
     case WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED:
       return msg`Migration execution failed.`;
+    case WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND:
+      return msg`Application not found.`;
     default:
       assertUnreachable(code);
   }
@@ -25,25 +28,33 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
 export type WorkspaceMigrationRunnerExecutionErrors = {
   metadata?: Error;
   workspaceSchema?: Error;
+  actionTranspilation?: Error;
 };
+
+const {
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  EXECUTION_FAILED: WorkspaceMigrationRunnerExceptionExecutionFailedCode,
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  ...WorkspaceMigrationRunnerExceptionCodeOtherCode
+} = WorkspaceMigrationRunnerExceptionCode;
 
 type WorkspaceMigrationRunnerExceptionConstructorArgs =
   | {
       message: string;
-      code: typeof WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR;
+      code: (typeof WorkspaceMigrationRunnerExceptionCodeOtherCode)[keyof typeof WorkspaceMigrationRunnerExceptionCodeOtherCode];
       userFriendlyMessage?: MessageDescriptor;
     }
   | {
-      action: WorkspaceMigrationAction;
+      action: AllUniversalWorkspaceMigrationAction;
       errors: WorkspaceMigrationRunnerExecutionErrors;
-      code: typeof WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED;
+      code: typeof WorkspaceMigrationRunnerExceptionExecutionFailedCode;
       userFriendlyMessage?: MessageDescriptor;
     };
 
 export class WorkspaceMigrationRunnerException extends CustomError {
   code: keyof typeof WorkspaceMigrationRunnerExceptionCode;
   userFriendlyMessage: MessageDescriptor;
-  action?: WorkspaceMigrationAction;
+  action?: AllUniversalWorkspaceMigrationAction;
   errors?: WorkspaceMigrationRunnerExecutionErrors;
 
   constructor(args: WorkspaceMigrationRunnerExceptionConstructorArgs) {

@@ -11,7 +11,7 @@ export const findFlatEntityByUniversalIdentifier = <
 }: {
   flatEntityMaps: FlatEntityMaps<T>;
   universalIdentifier: string;
-}): T | undefined => {
+}): (T & { id: string }) | undefined => {
   const flatEntityId =
     flatEntityMaps.idByUniversalIdentifier[universalIdentifier];
 
@@ -19,5 +19,12 @@ export const findFlatEntityByUniversalIdentifier = <
     return;
   }
 
-  return flatEntityMaps.byId[flatEntityId];
+  const result = flatEntityMaps.byId[flatEntityId];
+
+  return isDefined(result)
+    ? {
+        ...result,
+        id: flatEntityId,
+      }
+    : undefined;
 };

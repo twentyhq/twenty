@@ -23,8 +23,11 @@ import {
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
-import { UpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
 
@@ -43,11 +46,17 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     super();
   }
 
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateLogicFunctionAction>,
+  ): Promise<FlatUpdateLogicFunctionAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateLogicFunctionAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateLogicFunctionAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
-    const { entityId, code } = action;
+    const { flatAction, queryRunner } = context;
+    const { entityId, code } = flatAction;
 
     const logicFunctionRepository =
       queryRunner.manager.getRepository<LogicFunctionEntity>(
@@ -56,7 +65,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 
     await logicFunctionRepository.update(
       entityId,
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
+      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
     );
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -64,7 +73,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       flatEntityMaps: context.allFlatEntityMaps.flatLogicFunctionMaps,
     });
 
-    for (const update of action.updates) {
+    for (const update of flatAction.updates) {
       if (update.property === 'checksum' && isDefined(code)) {
         await this.handleChecksumUpdate({
           flatLogicFunction,

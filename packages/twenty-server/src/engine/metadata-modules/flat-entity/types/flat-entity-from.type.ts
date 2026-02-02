@@ -14,15 +14,17 @@ export type SyncableFlatEntity = Omit<
   id: string;
 };
 
+type AtomicFlatEntity<TEntity> = Omit<
+  TEntity,
+  | ExtractEntityRelatedEntityProperties<TEntity>
+  | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
+>;
+
 export type FlatEntityFrom<
   TEntity,
   // Required to be passed for narrowed type
   TMetadataName extends AllMetadataName | undefined = undefined,
-> = Omit<
-  TEntity,
-  | ExtractEntityRelatedEntityProperties<TEntity>
-  | keyof CastRecordTypeOrmDatePropertiesToString<TEntity>
-> &
+> = AtomicFlatEntity<TEntity> &
   CastRecordTypeOrmDatePropertiesToString<TEntity> &
   AddSuffixToEntityOneToManyProperties<TEntity, 'ids'> &
   (TEntity extends SyncableEntity

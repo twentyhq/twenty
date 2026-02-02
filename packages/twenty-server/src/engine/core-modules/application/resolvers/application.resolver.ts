@@ -114,9 +114,18 @@ export class ApplicationResolver {
       );
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     await this.workspaceMigrationRunnerService.run({
       actions,
       workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     return true;
