@@ -1,13 +1,10 @@
-import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
 
 import { PullRequestIcon } from '@/app/_components/ui/icons/SvgIcons';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { formatIntoRelativeDate } from '@/shared-utils/formatIntoRelativeDate';
-
-// TODO: use twenty-ui Tooltip
-const StyledTooltip = styled(Tooltip)``;
+import { AppTooltip } from 'twenty-ui/display';
 
 const Item = styled.div`
   display: flex;
@@ -97,7 +94,7 @@ export const PullRequestItem = ({
           <span id={`date-${prNumber}`}>
             {formatIntoRelativeDate(mergedAt ? mergedAt : createdAt)}
           </span>
-          <StyledTooltip
+          <AppTooltip
             anchorSelect={`#date-${prNumber}`}
             content={format(
               new Date(mergedAt ? mergedAt : createdAt),
