@@ -61,7 +61,7 @@ jobs:
           path: |
             .nx/cache
             .cache
-          key: claude-nx-${{ github.sha }}
+          key: claude-nx-${{ github.run_id }}
           restore-keys: |
             claude-nx-
       - name: Run Claude Code
@@ -83,7 +83,7 @@ jobs:
           path: |
             .nx/cache
             .cache
-          key: claude-nx-${{ github.sha }}
+          key: claude-nx-${{ github.run_id }}
 
   claude-cross-repo:
     if: github.event_name == 'repository_dispatch'
@@ -119,7 +119,7 @@ jobs:
           path: |
             .nx/cache
             .cache
-          key: claude-nx-${{ github.sha }}
+          key: claude-nx-${{ github.run_id }}
           restore-keys: |
             claude-nx-
       - name: Build prompt from dispatch payload
@@ -158,7 +158,7 @@ jobs:
           path: |
             .nx/cache
             .cache
-          key: claude-nx-${{ github.sha }}
+          key: claude-nx-${{ github.run_id }}
       - name: Post response to source issue
         if: always()
         uses: actions/github-script@v7
