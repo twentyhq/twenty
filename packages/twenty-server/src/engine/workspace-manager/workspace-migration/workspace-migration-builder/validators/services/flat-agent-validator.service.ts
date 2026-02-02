@@ -99,7 +99,10 @@ export class FlatAgentValidatorService {
       return validationResult;
     }
 
-    if (!buildOptions.isSystemBuild && belongsToTwentyStandardApp(existingAgent)) {
+    if (
+      !buildOptions.isSystemBuild &&
+      belongsToTwentyStandardApp(existingAgent)
+    ) {
       validationResult.errors.push({
         code: AgentExceptionCode.AGENT_IS_STANDARD,
         message: t`Cannot delete standard agent`,
@@ -144,7 +147,10 @@ export class FlatAgentValidatorService {
       return validationResult;
     }
 
-    if (!buildOptions.isSystemBuild && belongsToTwentyStandardApp(fromFlatAgent)) {
+    if (
+      !buildOptions.isSystemBuild &&
+      belongsToTwentyStandardApp(fromFlatAgent)
+    ) {
       validationResult.errors.push({
         code: AgentExceptionCode.AGENT_IS_STANDARD,
         message: t`Cannot update standard agent`,

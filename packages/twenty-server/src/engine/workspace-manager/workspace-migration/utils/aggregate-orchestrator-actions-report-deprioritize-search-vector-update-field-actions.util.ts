@@ -13,8 +13,7 @@ export const aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFie
   }: AggregateOrchestratorActionsReportArgs): OrchestratorActionsReport => {
     assertIsDefinedOrThrow(flatFieldMetadataMaps);
 
-    const updateFieldActions = orchestratorActionsReport.fieldMetadata
-      .update;
+    const updateFieldActions = orchestratorActionsReport.fieldMetadata.update;
 
     const { searchVectorUpdateFieldActions, otherUpdateFieldActions } =
       updateFieldActions.reduce<{

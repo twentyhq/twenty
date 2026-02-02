@@ -14,8 +14,7 @@ type FieldWithActionContext = {
 export const aggregateRelationFieldPairs = ({
   orchestratorActionsReport,
 }: AggregateOrchestratorActionsReportArgs): OrchestratorActionsReport => {
-  const createFieldActions = orchestratorActionsReport.fieldMetadata
-    .create;
+  const createFieldActions = orchestratorActionsReport.fieldMetadata.create;
 
   const fieldByUniversalIdentifier = new Map<string, FieldWithActionContext>();
 

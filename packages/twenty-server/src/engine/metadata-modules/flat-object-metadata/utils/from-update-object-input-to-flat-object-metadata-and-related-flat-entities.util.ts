@@ -60,7 +60,9 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       );
     }
 
-    const isStandardObject = belongsToTwentyStandardApp(existingFlatObjectMetadata);
+    const isStandardObject = belongsToTwentyStandardApp(
+      existingFlatObjectMetadata,
+    );
     const { standardOverrides, updatedEditableObjectProperties } =
       sanitizeRawUpdateObjectInput({
         existingFlatObjectMetadata,

@@ -23,7 +23,9 @@ export const sanitizeRawUpdateObjectInput = ({
   existingFlatObjectMetadata,
   rawUpdateObjectInput,
 }: SanitizeRawUpdateObjectInputArgs) => {
-  const isStandardObject = belongsToTwentyStandardApp(existingFlatObjectMetadata);
+  const isStandardObject = belongsToTwentyStandardApp(
+    existingFlatObjectMetadata,
+  );
   const updatedEditableObjectProperties = extractAndSanitizeObjectStringFields(
     rawUpdateObjectInput.update,
     [

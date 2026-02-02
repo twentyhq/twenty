@@ -93,7 +93,10 @@ export class FlatSkillValidatorService {
       return validationResult;
     }
 
-    if (!buildOptions.isSystemBuild && belongsToTwentyStandardApp(existingSkill)) {
+    if (
+      !buildOptions.isSystemBuild &&
+      belongsToTwentyStandardApp(existingSkill)
+    ) {
       validationResult.errors.push({
         code: SkillExceptionCode.SKILL_IS_STANDARD,
         message: t`Cannot delete standard skill`,
