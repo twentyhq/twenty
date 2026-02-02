@@ -1,7 +1,7 @@
 import {
-  FieldMetadataSettingsMapping,
+  type FieldMetadataSettingsMapping,
   FieldMetadataType,
-  type NonNullableRequired
+  type NonNullableRequired,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -420,13 +420,12 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   };
 
   const searchVectorFieldId = v4();
-  const searchVectorSettings: FieldMetadataSettingsMapping['TS_VECTOR'] =
-    {
-      asExpression: getTsVectorColumnExpressionFromFields(
-        nameField ? [nameField] : [],
-      ),
-      generatedType: 'STORED',
-    };
+  const searchVectorSettings: FieldMetadataSettingsMapping['TS_VECTOR'] = {
+    asExpression: getTsVectorColumnExpressionFromFields(
+      nameField ? [nameField] : [],
+    ),
+    generatedType: 'STORED',
+  };
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
     type: FieldMetadataType.TS_VECTOR,
     mainGroupByFieldMetadataViewIds: [],
