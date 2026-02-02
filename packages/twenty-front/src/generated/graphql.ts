@@ -913,6 +913,14 @@ export type CreateApiKeyInput = {
   roleId: Scalars['UUID'];
 };
 
+export type CreateApplicationInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  sourcePath: Scalars['String'];
+  universalIdentifier: Scalars['String'];
+  version: Scalars['String'];
+};
+
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
@@ -2319,11 +2327,7 @@ export type MutationCreateOneAgentArgs = {
 
 
 export type MutationCreateOneApplicationArgs = {
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  sourcePath: Scalars['String'];
-  universalIdentifier: Scalars['String'];
-  version: Scalars['String'];
+  input: CreateApplicationInput;
 };
 
 

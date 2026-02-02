@@ -917,6 +917,14 @@ export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime'];
 };
 
+export type CreateApplicationInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  sourcePath: Scalars['String'];
+  universalIdentifier: Scalars['String'];
+  version: Scalars['String'];
+};
+
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
@@ -2373,11 +2381,7 @@ export type MutationCreateOneAppTokenArgs = {
 
 
 export type MutationCreateOneApplicationArgs = {
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  sourcePath: Scalars['String'];
-  universalIdentifier: Scalars['String'];
-  version: Scalars['String'];
+  input: CreateApplicationInput;
 };
 
 
