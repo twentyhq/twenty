@@ -1,5 +1,5 @@
+import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { PageLayoutType } from '~/generated/graphql';
-import { shouldEnableTabEditingFeatures } from '../shouldEnableTabEditingFeatures';
 
 describe('shouldEnableTabEditingFeatures', () => {
   it('should return true for DASHBOARD layout type', () => {
@@ -17,11 +17,6 @@ describe('shouldEnableTabEditingFeatures', () => {
     expect(result).toBe(false);
   });
 
-  it('should return false for null layout type', () => {
-    const result = shouldEnableTabEditingFeatures(null);
-    expect(result).toBe(false);
-  });
-
   describe('behavior validation', () => {
     it('should enable tab editing features only for dashboards', () => {
       // Dashboards should allow adding tabs and opening settings on click
@@ -35,14 +30,9 @@ describe('shouldEnableTabEditingFeatures', () => {
       );
 
       // Record index pages should NOT allow adding tabs or opening settings on click
-      expect(
-        shouldEnableTabEditingFeatures(PageLayoutType.RECORD_INDEX),
-      ).toBe(false);
-    });
-
-    it('should handle edge case of null safely', () => {
-      // When layout type is not yet loaded or undefined
-      expect(shouldEnableTabEditingFeatures(null)).toBe(false);
+      expect(shouldEnableTabEditingFeatures(PageLayoutType.RECORD_INDEX)).toBe(
+        false,
+      );
     });
   });
 });

@@ -28,8 +28,8 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { type PageLayoutType } from '~/generated/graphql';
 import { useContext } from 'react';
+import { type PageLayoutType } from '~/generated/graphql';
 
 const StyledOverflowDropdownListDraggableWrapper = styled.div`
   display: flex;
@@ -50,7 +50,7 @@ type PageLayoutTabListReorderableOverflowDropdownProps = {
   onSelect: (tabId: string) => void;
   visibleTabCount: number;
   onClose: () => void;
-  pageLayoutType: PageLayoutType | null;
+  pageLayoutType: PageLayoutType;
 };
 
 export const PageLayoutTabListReorderableOverflowDropdown = ({
@@ -79,8 +79,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   );
 
   const shouldShowEditButton =
-    isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(pageLayoutType);
+    isPageLayoutInEditMode && shouldEnableTabEditingFeatures(pageLayoutType);
 
   const isTabDragging = useRecoilComponentValue(
     isPageLayoutTabDraggingComponentState,

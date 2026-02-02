@@ -1,7 +1,7 @@
 import { PageLayoutType } from '~/generated/graphql';
 
 export const shouldEnableTabEditingFeatures = (
-  pageLayoutType: PageLayoutType | null,
+  pageLayoutType: PageLayoutType,
 ): boolean => {
   return pageLayoutType === PageLayoutType.DASHBOARD;
 };

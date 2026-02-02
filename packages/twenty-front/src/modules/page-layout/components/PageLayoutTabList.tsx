@@ -42,8 +42,8 @@ import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/Ta
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { type PageLayoutType } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { type PageLayoutType } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -77,7 +77,7 @@ type PageLayoutTabListProps = Omit<TabListProps, 'tabs'> & {
   onAddTab?: () => void;
   onReorder?: (result: DropResult, provided: ResponderProvided) => boolean;
   behaveAsLinks: boolean;
-  pageLayoutType: PageLayoutType | null;
+  pageLayoutType: PageLayoutType;
 };
 
 export const PageLayoutTabList = ({
@@ -237,13 +237,15 @@ export const PageLayoutTabList = ({
         isPageLayoutInEditMode &&
         shouldEnableTabEditingFeatures(pageLayoutType);
 
-      if (shouldOpenSettings === true && activeTabId === tabId) {
+      if (shouldOpenSettings && activeTabId === tabId) {
         openTabSettings(tabId);
         return;
       }
-      if (shouldOpenSettings === true && isTabSettingsOpen === true) {
+
+      if (shouldOpenSettings && isTabSettingsOpen) {
         openTabSettings(tabId);
       }
+
       selectTab(tabId);
     },
     [
@@ -262,14 +264,16 @@ export const PageLayoutTabList = ({
         isPageLayoutInEditMode &&
         shouldEnableTabEditingFeatures(pageLayoutType);
 
-      if (shouldOpenSettings === true && activeTabId === tabId) {
+      if (shouldOpenSettings && activeTabId === tabId) {
         openTabSettings(tabId);
         closeOverflowDropdown();
         return;
       }
-      if (shouldOpenSettings === true && isTabSettingsOpen === true) {
+
+      if (shouldOpenSettings && isTabSettingsOpen) {
         openTabSettings(tabId);
       }
+
       selectTabFromDropdown(tabId);
     },
     [
