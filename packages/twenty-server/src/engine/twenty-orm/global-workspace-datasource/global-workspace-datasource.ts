@@ -33,15 +33,18 @@ type CreateQueryBuilderOptions = {
 
 export class GlobalWorkspaceDataSource extends DataSource {
   readonly eventEmitterService: WorkspaceEventEmitter;
+  readonly coreDataSource: DataSource;
   private _isConstructing = true;
   dataSourceWithOverridenCreateQueryBuilder: GlobalWorkspaceDataSource;
 
   constructor(
     options: DataSourceOptions,
     eventEmitterService: WorkspaceEventEmitter,
+    coreDataSource: DataSource,
   ) {
     super(options);
     this.eventEmitterService = eventEmitterService;
+    this.coreDataSource = coreDataSource;
     this._isConstructing = false;
 
     Object.defineProperty(this, 'manager', {

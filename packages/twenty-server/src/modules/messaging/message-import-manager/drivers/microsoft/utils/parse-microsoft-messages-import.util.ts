@@ -11,6 +11,14 @@ export const parseMicrosoftMessagesImportError = (
   },
   options?: { cause?: Error },
 ): MessageImportDriverException => {
+  if (error.statusCode === 400) {
+    return new MessageImportDriverException(
+      `Invalid request to Microsoft Graph API: ${error.message}`,
+      MessageImportDriverExceptionCode.UNKNOWN,
+      { cause: options?.cause },
+    );
+  }
+
   if (error.statusCode === 401) {
     return new MessageImportDriverException(
       'Unauthorized access to Microsoft Graph API',
@@ -47,22 +55,25 @@ export const parseMicrosoftMessagesImportError = (
     }
   }
 
+  if (error.statusCode === 410) {
+    return new MessageImportDriverException(
+      `Sync cursor error: ${error.message}`,
+      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+      { cause: options?.cause },
+    );
+  }
+
   if (
     error.statusCode === 429 ||
+    error.statusCode === 500 ||
+    error.statusCode === 502 ||
     error.statusCode === 503 ||
+    error.statusCode === 504 ||
     error.statusCode === 509
   ) {
     return new MessageImportDriverException(
       `Microsoft Graph API ${error.code} ${error.statusCode} error: ${error.message}`,
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
-      { cause: options?.cause },
-    );
-  }
-
-  if (error.statusCode === 410) {
-    return new MessageImportDriverException(
-      `Sync cursor error: ${error.message}`,
-      MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR,
       { cause: options?.cause },
     );
   }

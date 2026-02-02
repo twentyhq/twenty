@@ -8,11 +8,16 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
@@ -26,8 +31,10 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { type EmailRecipients } from 'twenty-shared/workflow';
 import { IconPlus } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -58,7 +65,7 @@ type WorkflowFile = {
 
 type SendEmailFormData = {
   connectedAccountId: string;
-  email: string;
+  recipients: Required<EmailRecipients>;
   subject: string;
   body: string;
   files: WorkflowFile[];
@@ -82,13 +89,40 @@ export const WorkflowEditActionSendEmail = ({
 
   const redirectUrl = `/object/workflow/${workflowVisualizerWorkflowId}`;
 
-  const [formData, setFormData] = useState<SendEmailFormData>({
-    connectedAccountId: action.settings.input.connectedAccountId,
-    email: action.settings.input.email,
-    subject: action.settings.input.subject ?? '',
-    body: action.settings.input.body ?? '',
-    files: action.settings.input.files ?? [],
+  const [formData, setFormData] = useState<SendEmailFormData>(() => {
+    const inputRecipients = action.settings.input.recipients;
+
+    return {
+      connectedAccountId: action.settings.input.connectedAccountId,
+      recipients: {
+        to: inputRecipients?.to ?? '',
+        cc: inputRecipients?.cc ?? '',
+        bcc: inputRecipients?.bcc ?? '',
+      },
+      subject: action.settings.input.subject ?? '',
+      body: action.settings.input.body ?? '',
+      files: action.settings.input.files ?? [],
+    };
   });
+
+  const [visibleAdvancedFields, setVisibleAdvancedFields] = useState<{
+    cc: boolean;
+    bcc: boolean;
+  }>(() => {
+    const inputRecipients = action.settings.input.recipients;
+
+    return {
+      cc: Boolean(inputRecipients?.cc),
+      bcc: Boolean(inputRecipients?.bcc),
+    };
+  });
+
+  const { closeDropdown } = useCloseDropdown();
+
+  const advancedOptionsDropdownId = 'send-email-advanced-options';
+
+  const hasAvailableAdvancedOptions =
+    !visibleAdvancedFields.cc || !visibleAdvancedFields.bcc;
 
   const checkConnectedAccountScopes = async (
     connectedAccountId: string | null,
@@ -143,7 +177,7 @@ export const WorkflowEditActionSendEmail = ({
           ...action.settings,
           input: {
             connectedAccountId: formData.connectedAccountId,
-            email: formData.email,
+            recipients: formData.recipients,
             subject: formData.subject,
             body: formData.body,
             files: formData.files,
@@ -286,16 +320,95 @@ export const WorkflowEditActionSendEmail = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
-          <FormTextFieldInput
-            label={t`Email`}
-            placeholder={t`Enter receiver email`}
+          <FormMultiTextFieldInput
+            label={t`To`}
+            placeholder={t`Enter emails, comma-separated`}
             readonly={actionOptions.readonly}
-            defaultValue={formData.email}
-            onChange={(email) => {
-              handleFieldChange('email', email);
+            defaultValue={formData.recipients.to}
+            onChange={(value) => {
+              handleFieldChange('recipients', {
+                ...formData.recipients,
+                to: value,
+              });
             }}
             VariablePicker={WorkflowVariablePicker}
           />
+          {visibleAdvancedFields.cc && (
+            <FormMultiTextFieldInput
+              label={t`CC`}
+              placeholder={t`Enter CC emails, comma-separated`}
+              readonly={actionOptions.readonly}
+              defaultValue={formData.recipients.cc}
+              onChange={(value) => {
+                handleFieldChange('recipients', {
+                  ...formData.recipients,
+                  cc: value,
+                });
+              }}
+              VariablePicker={WorkflowVariablePicker}
+            />
+          )}
+          {visibleAdvancedFields.bcc && (
+            <FormMultiTextFieldInput
+              label={t`BCC`}
+              placeholder={t`Enter BCC emails, comma-separated`}
+              readonly={actionOptions.readonly}
+              defaultValue={formData.recipients.bcc}
+              onChange={(value) => {
+                handleFieldChange('recipients', {
+                  ...formData.recipients,
+                  bcc: value,
+                });
+              }}
+              VariablePicker={WorkflowVariablePicker}
+            />
+          )}
+          {!actionOptions.readonly && hasAvailableAdvancedOptions && (
+            <Dropdown
+              dropdownId={advancedOptionsDropdownId}
+              dropdownPlacement="bottom-start"
+              clickableComponent={
+                <Button
+                  title={t`Advanced options`}
+                  variant="secondary"
+                  accent="default"
+                  size="small"
+                />
+              }
+              dropdownComponents={
+                <DropdownContent
+                  widthInPixels={GenericDropdownContentWidth.Medium}
+                >
+                  <DropdownMenuItemsContainer>
+                    {!visibleAdvancedFields.cc && (
+                      <MenuItem
+                        text={t`Add CC`}
+                        onClick={() => {
+                          setVisibleAdvancedFields((prev) => ({
+                            ...prev,
+                            cc: true,
+                          }));
+                          closeDropdown(advancedOptionsDropdownId);
+                        }}
+                      />
+                    )}
+                    {!visibleAdvancedFields.bcc && (
+                      <MenuItem
+                        text={t`Add BCC`}
+                        onClick={() => {
+                          setVisibleAdvancedFields((prev) => ({
+                            ...prev,
+                            bcc: true,
+                          }));
+                          closeDropdown(advancedOptionsDropdownId);
+                        }}
+                      />
+                    )}
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )}
           <FormTextFieldInput
             label={t`Subject`}
             placeholder={t`Enter email subject`}

@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -459,6 +459,11 @@ export class RowLevelPermissionPredicateService {
     groupsToUpdate: FlatRowLevelPermissionPredicateGroup[];
     groupsToDelete: FlatRowLevelPermissionPredicateGroup[];
   }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -479,6 +484,8 @@ export class RowLevelPermissionPredicateService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

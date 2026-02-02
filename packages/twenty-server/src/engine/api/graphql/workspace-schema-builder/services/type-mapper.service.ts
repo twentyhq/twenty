@@ -110,7 +110,11 @@ export class TypeMapperService {
   }: {
     fieldMetadataType: FieldMetadataType;
     typeOptions?: TypeOptions;
-  }): GraphQLScalarType | GraphQLList<GraphQLInputType> | undefined {
+  }):
+    | GraphQLScalarType
+    | GraphQLList<GraphQLInputType>
+    | GraphQLInputObjectType
+    | undefined {
     if (this.isIdOrRelationType(fieldMetadataType, typeOptions)) {
       return GraphQLID;
     }

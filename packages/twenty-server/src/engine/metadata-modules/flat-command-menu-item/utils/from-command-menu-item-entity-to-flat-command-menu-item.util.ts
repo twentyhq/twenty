@@ -11,6 +11,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
   entity: commandMenuItemEntity,
   applicationIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
+  frontComponentIdToUniversalIdentifierMap,
 }: FromEntityToFlatEntityArgs<'commandMenuItem'>): FlatCommandMenuItem => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(
@@ -40,9 +41,26 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     }
   }
 
+  let frontComponentUniversalIdentifier: string | null = null;
+
+  if (isDefined(commandMenuItemEntity.frontComponentId)) {
+    frontComponentUniversalIdentifier =
+      frontComponentIdToUniversalIdentifierMap.get(
+        commandMenuItemEntity.frontComponentId,
+      ) ?? null;
+
+    if (!isDefined(frontComponentUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `FrontComponent with id ${commandMenuItemEntity.frontComponentId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
   return {
     id: commandMenuItemEntity.id,
     workflowVersionId: commandMenuItemEntity.workflowVersionId,
+    frontComponentId: commandMenuItemEntity.frontComponentId,
     label: commandMenuItemEntity.label,
     icon: commandMenuItemEntity.icon,
     isPinned: commandMenuItemEntity.isPinned,
@@ -58,6 +76,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
       universalIdentifier: commandMenuItemEntity.universalIdentifier,
       applicationUniversalIdentifier,
       availabilityObjectMetadataUniversalIdentifier,
+      frontComponentUniversalIdentifier,
     },
   };
 };

@@ -33,7 +33,7 @@ const EXCLUDED_DIRECTORIES = [
   '**/internal/**',
   '**/cli/**',
 ] as const;
-const ROOT_DIRECTORIES = ['application'];
+const ROOT_DIRECTORIES = ['sdk'];
 
 const prettierConfigFile = prettier.resolveConfigFile();
 if (prettierConfigFile == null) {

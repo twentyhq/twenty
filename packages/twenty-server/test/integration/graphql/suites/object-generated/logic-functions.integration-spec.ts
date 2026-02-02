@@ -12,8 +12,6 @@ describe('logicFunctionsResolver (e2e)', () => {
             name
             description
             runtime
-            latestVersion
-            publishedVersions
             createdAt
             updatedAt
           }
@@ -43,8 +41,6 @@ describe('logicFunctionsResolver (e2e)', () => {
           expect(logicFunction).toHaveProperty('name');
           expect(logicFunction).toHaveProperty('description');
           expect(logicFunction).toHaveProperty('runtime');
-          expect(logicFunction).toHaveProperty('latestVersion');
-          expect(logicFunction).toHaveProperty('publishedVersions');
           expect(logicFunction).toHaveProperty('createdAt');
           expect(logicFunction).toHaveProperty('updatedAt');
         }

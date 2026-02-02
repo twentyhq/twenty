@@ -51,8 +51,12 @@ const buildDateGroupByObject = ({
     result.timeZone = timeZone;
   }
 
+  const shouldIncludeWeekStartDay =
+    usedDateGranularity === ObjectRecordGroupByDateGranularity.WEEK ||
+    usedDateGranularity === ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK;
+
   if (
-    usedDateGranularity === ObjectRecordGroupByDateGranularity.WEEK &&
+    shouldIncludeWeekStartDay &&
     isDefined(firstDayOfTheWeek) &&
     firstDayOfTheWeek !== CalendarStartDay.SYSTEM
   ) {

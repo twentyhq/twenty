@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ComputeTwentyStandardWorkspaceMigrationCommand } from 'src/database/commands/compute-twenty-standard-workspace-migration.command';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list-and-delete-orphaned-workspace-entities.command';
@@ -14,9 +13,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { CronTriggerModule } from 'src/engine/metadata-modules/cron-trigger/cron-trigger.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { DatabaseEventTriggerModule } from 'src/engine/metadata-modules/database-event-trigger/database-event-trigger.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
@@ -51,15 +48,12 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkspaceCacheStorageModule,
     ApiKeyModule,
     FeatureFlagModule,
-    CronTriggerModule,
-    DatabaseEventTriggerModule,
     WorkspaceCleanerModule,
     WorkspaceMigrationModule,
     TrashCleanupModule,
     PublicDomainModule,
   ],
   providers: [
-    ComputeTwentyStandardWorkspaceMigrationCommand,
     DataSeedWorkspaceCommand,
     ConfirmationQuestion,
     CronRegisterAllCommand,

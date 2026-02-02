@@ -6,7 +6,7 @@ import {
   type UiEvent,
   type DevUiState,
 } from '@/cli/utilities/dev/dev-ui-state';
-import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-build';
+import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
 const MAX_EVENT_NUMBER = 200;
 
@@ -92,7 +92,7 @@ export class DevUiStateManager {
       ...this.state,
       ...(manifestStatus ? { manifestStatus } : {}),
       ...(appName ? { appName } : {}),
-      ...(error ? { error } : {}),
+      ...(error ? { error } : { error: undefined }),
     };
 
     this.notify();
@@ -104,16 +104,14 @@ export class DevUiStateManager {
     switch (entityType) {
       case 'objects':
         return SyncableEntity.Object;
-      case 'objectExtensions':
-        return SyncableEntity.ObjectExtension;
-      case 'functions':
-        return SyncableEntity.Function;
+      case 'fields':
+        return SyncableEntity.Field;
+      case 'logicFunctions':
+        return SyncableEntity.LogicFunction;
       case 'frontComponents':
         return SyncableEntity.FrontComponent;
       case 'roles':
         return SyncableEntity.Role;
-      case 'assets':
-        return SyncableEntity.PublicAsset;
       default:
         return;
     }

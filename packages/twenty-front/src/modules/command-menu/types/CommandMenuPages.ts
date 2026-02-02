@@ -23,4 +23,5 @@ export enum CommandMenuPages {
   PageLayoutTabSettings = 'page-layout-tab-settings',
   PageLayoutFieldsSettings = 'page-layout-fields-settings',
   PageLayoutFieldsLayout = 'page-layout-fields-layout',
+  ViewFrontComponent = 'view-front-component',
 }

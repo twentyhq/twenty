@@ -32,7 +32,6 @@ describe('removeStep', () => {
     settings: {
       input: {
         logicFunctionId: 'test',
-        logicFunctionVersion: '1.0.0',
         logicFunctionInput: {},
       },
       outputSchema: {},

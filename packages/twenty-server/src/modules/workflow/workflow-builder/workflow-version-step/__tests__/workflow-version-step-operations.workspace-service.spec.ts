@@ -3,12 +3,14 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -34,11 +36,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
 
   beforeEach(async () => {
     logicFunctionService = {
-      createOneLogicFunction: jest.fn(),
-      hasLogicFunctionPublishedVersion: jest.fn(),
-      deleteOneLogicFunction: jest.fn(),
+      createOne: jest.fn(),
+      destroyOne: jest.fn(),
       duplicateLogicFunction: jest.fn(),
-      createDraftFromPublishedVersion: jest.fn(),
     } as unknown as jest.Mocked<LogicFunctionService>;
 
     agentRepository = {
@@ -114,6 +114,15 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           provide: WorkspaceCacheService,
           useValue: workspaceCacheService,
         },
+        {
+          provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
+          useValue: {
+            flushFlatEntityMaps: jest.fn(),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest
+              .fn()
+              .mockResolvedValue(createEmptyAllFlatEntityMaps()),
+          },
+        },
       ],
     }).compile();
 
@@ -131,7 +140,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: 'function-id',
-            logicFunctionVersion: 'v1',
           },
           outputSchema: {},
           errorHandlingOptions: {
@@ -141,19 +149,14 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         },
       } as unknown as WorkflowAction;
 
-      logicFunctionService.hasLogicFunctionPublishedVersion.mockResolvedValue(
-        false,
-      );
-
       await service.runWorkflowVersionStepDeletionSideEffects({
         step,
         workspaceId: mockWorkspaceId,
       });
 
-      expect(logicFunctionService.deleteOneLogicFunction).toHaveBeenCalledWith({
+      expect(logicFunctionService.destroyOne).toHaveBeenCalledWith({
         id: 'function-id',
         workspaceId: mockWorkspaceId,
-        softDelete: false,
       });
     });
 
@@ -241,8 +244,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         id: 'new-function-id',
         name: 'Test Function',
         description: 'Test Description',
-        latestVersion: 'v1',
-        publishedVersions: [],
         workspaceId: mockWorkspaceId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -263,9 +264,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         httpRouteTriggerSettings: null,
       };
 
-      logicFunctionService.createOneLogicFunction.mockResolvedValue(
-        mockFlatLogicFunction,
-      );
+      logicFunctionService.createOne.mockResolvedValue(mockFlatLogicFunction);
 
       const result = await service.runStepCreationSideEffectsAndBuildStep({
         type: WorkflowActionType.CODE,
@@ -278,13 +277,11 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: string;
-            logicFunctionVersion: string;
           };
         };
       };
 
       expect(codeResult.settings.input.logicFunctionId).toBe('new-function-id');
-      expect(codeResult.settings.input.logicFunctionVersion).toBe('draft');
     });
 
     it('should create form step', async () => {
@@ -309,7 +306,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: 'function-id',
-            logicFunctionVersion: 'v1',
           },
         },
         nextStepIds: ['next-step'],
@@ -319,8 +315,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         id: 'new-function-id',
         name: 'Test Function',
         description: 'Test Description',
-        latestVersion: 'v1',
-        publishedVersions: [],
         workspaceId: mockWorkspaceId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -359,13 +353,11 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: string;
-            logicFunctionVersion: string;
           };
         };
       };
 
       expect(codeResult.settings.input.logicFunctionId).toBe('new-function-id');
-      expect(codeResult.settings.input.logicFunctionVersion).toBe('draft');
 
       expect(duplicateStep.nextStepIds).toEqual([]);
     });

@@ -8,7 +8,7 @@ type PageLayoutWidgetConfiguration = PageLayoutWidgetEntity['configuration'];
 
 type UniversalPageLayoutWidgetConfiguration = NonNullable<
   FlatPageLayoutWidget['__universal']
->['configuration'];
+>['universalConfiguration'];
 
 // Field metadata IDs in widget configurations don't need to reference existing entities
 const getFieldMetadataUniversalIdentifier = ({

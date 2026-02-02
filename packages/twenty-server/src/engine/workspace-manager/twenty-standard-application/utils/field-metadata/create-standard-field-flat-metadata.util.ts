@@ -1,8 +1,8 @@
 import {
-  type FieldMetadataDefaultValue,
-  type FieldMetadataSettings,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
+  type FieldMetadataDefaultValue,
+  type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
@@ -100,5 +100,16 @@ export const createStandardFieldFlatMetadata = <
     mainGroupByFieldMetadataViewIds: [],
     createdAt: now,
     updatedAt: now,
+    applicationUniversalIdentifier: twentyStandardApplicationId,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[objectName].universalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: settings ?? null,
   };
 };

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -117,6 +117,8 @@ export class ViewGroupService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -148,6 +150,13 @@ export class ViewGroupService {
     workspaceId: string;
     updateViewGroupInput: UpdateViewGroupInput;
   }): Promise<ViewGroupDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewGroupMaps: existingFlatViewGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -174,6 +183,8 @@ export class ViewGroupService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -207,6 +218,13 @@ export class ViewGroupService {
     deleteViewGroupInput: DeleteViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewGroupMaps: existingFlatViewGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -235,6 +253,8 @@ export class ViewGroupService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -268,6 +288,13 @@ export class ViewGroupService {
     destroyViewGroupInput: DestroyViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewGroupMaps: existingFlatViewGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -294,6 +321,8 @@ export class ViewGroupService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

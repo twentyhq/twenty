@@ -1,16 +1,21 @@
 import { useTheme } from '@emotion/react';
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { Banner, IconChevronDown, IconInfoCircle } from 'twenty-ui/display';
 
-const StyledBanner = styled(Banner)<{ allMatched: boolean }>`
+const StyledBanner = styled(Banner, {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'allMatched',
+})<{ allMatched: boolean }>`
   background: ${({ allMatched, theme }) =>
     allMatched ? theme.accent.secondary : theme.background.transparent.light};
   border-radius: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(2.5)};
 `;
 
-const StyledText = styled.div<{ allMatched: boolean }>`
+const StyledText = styled('div', {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'allMatched',
+})<{ allMatched: boolean }>`
   color: ${({ allMatched, theme }) =>
     allMatched ? theme.color.blue : theme.font.color.secondary};
   flex: 1;
@@ -19,7 +24,10 @@ const StyledText = styled.div<{ allMatched: boolean }>`
   white-space: nowrap;
 `;
 
-const StyledTransitionedIconChevronDown = styled(IconChevronDown)<{
+const StyledTransitionedIconChevronDown = styled(IconChevronDown, {
+  shouldForwardProp: (prop) =>
+    isPropValid(prop) && !['isExpanded', 'allMatched'].includes(prop),
+})<{
   isExpanded: boolean;
   allMatched: boolean;
 }>`

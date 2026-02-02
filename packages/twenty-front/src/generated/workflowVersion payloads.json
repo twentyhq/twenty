@@ -1,0 +1,39 @@
+On v1.16
+
+"settings": {"input": {"serverlessFunctionId": "e8a6a1c8-3e63-4d8b-aaa7-d8c932a6b314", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "draft"}, "outputSchema": {"message": {"type": "string", "label": "message", "value": "Hello, input: null and null", "isLeaf": true}}
+"settings": {"input": {"serverlessFunctionId": "84d3e16c-10bb-4eed-ae15-714f657a2726", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "draft"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+"settings": {"input": {"serverlessFunctionId": "cfc3c41f-5520-41f5-a83e-6a56ca6b90ba", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "1"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+"settings": {"input": {"serverlessFunctionId": "42b11c8c-0238-4044-a5d3-9cc662066de4", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "1"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+"settings": {"input": {"serverlessFunctionId": "42b11c8c-0238-4044-a5d3-9cc662066de4", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "draft"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+"settings": {"input": {"serverlessFunctionId": "a7d07444-092f-4a96-8e3c-b379bc49f6e3", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "draft"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+"settings": {"input": {"serverlessFunctionId": "a3d42cb4-a5bd-4eb1-b564-5a207fa98dc6", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "1"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+"settings": {"input": {"serverlessFunctionId": "8fdff250-0b7d-4d20-ae5f-8defe4ff9d37", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "1"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+"settings": {"input": {"serverlessFunctionId": "a3d42cb4-a5bd-4eb1-b564-5a207fa98dc6", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "1"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+"settings": {"input": {"serverlessFunctionId": "798f33e3-04ee-453f-94a1-ddc1518e4618", "serverlessFunctionInput": {"a": null, "b": null}, "serverlessFunctionVersion": "1"}, "outputSchema": {"link": {"tab": "test", "icon": "IconVariable", "label": "Generate Function Output", "isLeaf": true}, "_outputSchemaType": "LINK"}
+
+built-function/42b11c8c-0238-4044-a5d3-9cc662066de4/1/index.mjs
+built-function/42b11c8c-0238-4044-a5d3-9cc662066de4/draft/index.mjs
+built-function/798f33e3-04ee-453f-94a1-ddc1518e4618/1/index.mjs
+built-function/798f33e3-04ee-453f-94a1-ddc1518e4618/draft/index.mjs
+built-function/84d3e16c-10bb-4eed-ae15-714f657a2726/draft/index.mjs
+built-function/8fdff250-0b7d-4d20-ae5f-8defe4ff9d37/1/index.mjs
+built-function/8fdff250-0b7d-4d20-ae5f-8defe4ff9d37/draft/index.mjs
+built-function/a3d42cb4-a5bd-4eb1-b564-5a207fa98dc6/1/index.mjs
+built-function/a3d42cb4-a5bd-4eb1-b564-5a207fa98dc6/draft/index.mjs
+built-function/a7d07444-092f-4a96-8e3c-b379bc49f6e3/draft/index.mjs
+built-function/cfc3c41f-5520-41f5-a83e-6a56ca6b90ba/1/index.mjs
+built-function/cfc3c41f-5520-41f5-a83e-6a56ca6b90ba/draft/index.mjs
+built-function/e8a6a1c8-3e63-4d8b-aaa7-d8c932a6b314/draft/index.mjs
+serverless-function/42b11c8c-0238-4044-a5d3-9cc662066de4/1/src/index.ts
+serverless-function/42b11c8c-0238-4044-a5d3-9cc662066de4/draft/src/index.ts
+serverless-function/798f33e3-04ee-453f-94a1-ddc1518e4618/1/src/index.ts
+serverless-function/798f33e3-04ee-453f-94a1-ddc1518e4618/draft/src/index.ts
+serverless-function/84d3e16c-10bb-4eed-ae15-714f657a2726/draft/src/index.ts
+serverless-function/8fdff250-0b7d-4d20-ae5f-8defe4ff9d37/1/src/index.ts
+serverless-function/8fdff250-0b7d-4d20-ae5f-8defe4ff9d37/draft/src/index.ts
+serverless-function/a3d42cb4-a5bd-4eb1-b564-5a207fa98dc6/1/src/index.ts
+serverless-function/a3d42cb4-a5bd-4eb1-b564-5a207fa98dc6/draft/src/index.ts
+serverless-function/a7d07444-092f-4a96-8e3c-b379bc49f6e3/draft/src/index.ts
+serverless-function/cfc3c41f-5520-41f5-a83e-6a56ca6b90ba/1/src/index.ts
+serverless-function/cfc3c41f-5520-41f5-a83e-6a56ca6b90ba/draft/src/index.ts
+serverless-function/e8a6a1c8-3e63-4d8b-aaa7-d8c932a6b314/draft/src/index.ts

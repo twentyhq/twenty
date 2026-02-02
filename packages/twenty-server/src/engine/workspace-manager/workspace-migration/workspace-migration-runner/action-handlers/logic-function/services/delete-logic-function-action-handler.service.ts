@@ -5,11 +5,17 @@ import { FileFolder } from 'twenty-shared/types';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { getLogicFunctionFolderOrThrow } from 'src/engine/core-modules/logic-function-executor/utils/get-logic-function-folder-or-throw.utils';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { DeleteLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import {
+  FlatDeleteLogicFunctionAction,
+  UniversalDeleteLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -20,15 +26,20 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     super();
   }
 
-  async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<DeleteLogicFunctionAction>,
-  ): Promise<void> {
-    const { action, queryRunner, workspaceId, allFlatEntityMaps } = context;
-    const { universalIdentifier } = action;
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalDeleteLogicFunctionAction>,
+  ): Promise<FlatDeleteLogicFunctionAction> {
+    return this.transpileUniversalDeleteActionToFlatDeleteAction(context);
+  }
 
-    const flatLogicFunction = findFlatEntityByUniversalIdentifierOrThrow({
+  async executeForMetadata(
+    context: WorkspaceMigrationActionRunnerContext<FlatDeleteLogicFunctionAction>,
+  ): Promise<void> {
+    const { flatAction, queryRunner, workspaceId, allFlatEntityMaps } = context;
+
+    const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
-      universalIdentifier,
+      flatEntityId: flatAction.entityId,
     });
 
     const logicFunctionRepository =
@@ -37,62 +48,23 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       );
 
     await logicFunctionRepository.delete({
-      id: flatLogicFunction.id,
+      id: flatAction.entityId,
       workspaceId,
     });
 
-    // TODO: Should implement a cron task or a job to delete the files after a certain period of time
-    await this.fileStorageService.move({
-      from: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction,
-          fileFolder: FileFolder.LogicFunction,
-        }),
-      },
-      to: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction,
-          fileFolder: FileFolder.LogicFunctionToDelete,
-        }),
-      },
-    });
+    const sourceBaseFolderPath = getLogicFunctionBaseFolderPath(
+      flatLogicFunction.sourceHandlerPath,
+    );
+    const builtBaseFolderPath = getLogicFunctionBaseFolderPath(
+      flatLogicFunction.builtHandlerPath,
+    );
 
-    // We can delete built code as it can be computed from source code if rollback occurs
-    await this.fileStorageService.delete({
-      folderPath: getLogicFunctionFolderOrThrow({
-        flatLogicFunction,
-        fileFolder: FileFolder.BuiltFunction,
-      }),
-    });
+    const sourceFolderPath = `workspace-${workspaceId}/${FileFolder.Source}/${sourceBaseFolderPath}`;
+    const builtFolderPath = `workspace-${workspaceId}/${FileFolder.BuiltLogicFunction}/${builtBaseFolderPath}`;
+
+    await this.fileStorageService.delete({ folderPath: sourceFolderPath });
+    await this.fileStorageService.delete({ folderPath: builtFolderPath });
   }
 
-  async rollbackForMetadata(
-    context: Omit<
-      WorkspaceMigrationActionRunnerArgs<DeleteLogicFunctionAction>,
-      'queryRunner'
-    >,
-  ): Promise<void> {
-    const { action, allFlatEntityMaps } = context;
-    const { universalIdentifier } = action;
-
-    const flatLogicFunction = findFlatEntityByUniversalIdentifierOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
-      universalIdentifier,
-    });
-
-    await this.fileStorageService.move({
-      from: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction,
-          fileFolder: FileFolder.LogicFunctionToDelete,
-        }),
-      },
-      to: {
-        folderPath: getLogicFunctionFolderOrThrow({
-          flatLogicFunction,
-          fileFolder: FileFolder.LogicFunction,
-        }),
-      },
-    });
-  }
+  async rollbackForMetadata(): Promise<void> {}
 }

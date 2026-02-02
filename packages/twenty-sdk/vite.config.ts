@@ -52,6 +52,11 @@ export default defineConfig(() => {
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-sdk',
+    resolve: {
+      alias: {
+        '@/': path.resolve(__dirname, 'src') + '/',
+      },
+    },
     plugins: [
       tsconfigPaths({
         root: __dirname,
@@ -81,6 +86,23 @@ export default defineConfig(() => {
         },
       }),
     ],
+    worker: {
+      format: 'iife',
+      rollupOptions: {
+        output: {
+          inlineDynamicImports: true,
+        },
+      },
+      plugins: () => [
+        {
+          name: 'define-process-env',
+          transform: (code: string) =>
+            code
+              .replace(/process\.env\.NODE_ENV/g, JSON.stringify('production'))
+              .replace(/process\.env/g, '{}'),
+        },
+      ],
+    },
     build: {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-sdk' },
@@ -89,12 +111,14 @@ export default defineConfig(() => {
           ...Object.keys((packageJson as any).dependencies || {}),
           'path',
           'fs',
+          'fs/promises',
           'url',
           'crypto',
           'stream',
           'util',
           'os',
           'module',
+          /^node:/,
         ],
         output: [
           {

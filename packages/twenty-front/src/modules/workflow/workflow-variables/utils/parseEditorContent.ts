@@ -23,6 +23,10 @@ export const parseEditorContent = (json: JSONContent): string => {
       return node.attrs?.variable || '';
     }
 
+    if (node.type === 'textTag') {
+      return node.attrs?.text || '';
+    }
+
     return '';
   };
 

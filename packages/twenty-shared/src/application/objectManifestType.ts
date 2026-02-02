@@ -1,6 +1,5 @@
-import { type FieldManifest } from '@/application';
-import { type RelationFieldManifest } from '@/application/relationFieldManifestType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type';
 
 export type ObjectManifest = SyncableEntityOptions & {
   nameSingular: string;
@@ -9,5 +8,5 @@ export type ObjectManifest = SyncableEntityOptions & {
   labelPlural: string;
   description?: string;
   icon?: string;
-  fields: (FieldManifest | RelationFieldManifest)[];
+  fields: ObjectFieldManifest[];
 };

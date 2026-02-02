@@ -18,28 +18,20 @@
     "@prettier/sync": "^0.5.2",
     "@types/babel__preset-env": "^7",
     "@types/handlebars": "^4.1.0",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
     "babel-plugin-module-resolver": "^5.0.2",
     "glob": "^11.1.0",
-    "ts-morph": "^25.0.0",
     "tsx": "^4.19.3",
     "vite": "^7.0.0",
     "vite-plugin-dts": "3.8.1",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
-    "@quilted/threads": "^4.0.1",
-    "@remote-dom/core": "^1.10.1",
-    "@remote-dom/react": "^1.2.2",
     "@sniptt/guards": "^0.2.0",
     "class-validator": "^0.14.0",
     "handlebars": "^4.7.8",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
     "qs": "^6.11.2",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
     "react-router-dom": "^6.4.4",
     "transliteration": "^2.3.5",
     "zod": "^4.1.11"
@@ -69,11 +61,6 @@
       "types": "./dist/database-events/index.d.ts",
       "import": "./dist/database-events.mjs",
       "require": "./dist/database-events.cjs"
-    },
-    "./front-component": {
-      "types": "./dist/front-component/index.d.ts",
-      "import": "./dist/front-component.mjs",
-      "require": "./dist/front-component.cjs"
     },
     "./metadata": {
       "types": "./dist/metadata/index.d.ts",
@@ -117,7 +104,6 @@
     "application",
     "constants",
     "database-events",
-    "front-component",
     "metadata",
     "testing",
     "translations",
@@ -139,9 +125,6 @@
       ],
       "database-events": [
         "dist/database-events/index.d.ts"
-      ],
-      "front-component": [
-        "dist/front-component/index.d.ts"
       ],
       "metadata": [
         "dist/metadata/index.d.ts"

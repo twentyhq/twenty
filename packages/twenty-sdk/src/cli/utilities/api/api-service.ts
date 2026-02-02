@@ -9,7 +9,7 @@ import {
   printSchema,
 } from 'graphql/index';
 import * as path from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { pascalCase } from 'twenty-shared/utils';
@@ -99,7 +99,7 @@ export class ApiService {
     }
   }
 
-  async syncApplication(manifest: ApplicationManifest): Promise<ApiResponse> {
+  async syncApplication(manifest: Manifest): Promise<ApiResponse> {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {

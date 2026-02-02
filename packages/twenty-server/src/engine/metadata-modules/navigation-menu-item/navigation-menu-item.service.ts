@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -184,6 +184,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -223,6 +225,11 @@ export class NavigationMenuItemService {
     authApiKeyId?: string;
     authApplicationId?: string;
   }): Promise<NavigationMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -266,6 +273,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -305,6 +314,11 @@ export class NavigationMenuItemService {
     authApiKeyId?: string;
     authApplicationId?: string;
   }): Promise<NavigationMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -339,6 +353,8 @@ export class NavigationMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -367,9 +383,9 @@ export class NavigationMenuItemService {
 
     if (
       isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultLogicFunctionRoleId)
+      isDefined(authContext.application.defaultRoleId)
     ) {
-      return authContext.application.defaultLogicFunctionRoleId;
+      return authContext.application.defaultRoleId;
     }
 
     if (isUserAuthContext(authContext)) {

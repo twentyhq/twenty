@@ -1,36 +1,30 @@
+import {
+  STANDARD_COMPANY_PAGE_LAYOUT_CONFIG,
+  STANDARD_DASHBOARD_PAGE_LAYOUT_CONFIG,
+  STANDARD_NOTE_PAGE_LAYOUT_CONFIG,
+  STANDARD_OPPORTUNITY_PAGE_LAYOUT_CONFIG,
+  STANDARD_PERSON_PAGE_LAYOUT_CONFIG,
+  STANDARD_TASK_PAGE_LAYOUT_CONFIG,
+  STANDARD_WORKFLOW_PAGE_LAYOUT_CONFIG,
+  STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG,
+  STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config';
+import { type StandardRecordPageLayouts } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.types';
+
 export const STANDARD_PAGE_LAYOUTS = {
-  myFirstDashboard: {
-    universalIdentifier: '20202020-d001-4d01-8d01-da5ab0a00001',
-    tabs: {
-      tab1: {
-        universalIdentifier: '20202020-d011-4d11-8d11-da5ab0a01001',
-        widgets: {
-          welcomeRichText: {
-            universalIdentifier: '20202020-d111-4d11-8d11-da5ab0a11001',
-          },
-          dealsByCompany: {
-            universalIdentifier: '20202020-d111-4d11-8d11-da5ab0a11002',
-          },
-          pipelineValueByStage: {
-            universalIdentifier: '20202020-d111-4d11-8d11-da5ab0a11003',
-          },
-          revenueTimeline: {
-            universalIdentifier: '20202020-d111-4d11-8d11-da5ab0a11004',
-          },
-          opportunitiesByOwner: {
-            universalIdentifier: '20202020-d111-4d11-8d11-da5ab0a11005',
-          },
-          stockMarketIframe: {
-            universalIdentifier: '20202020-d111-4d11-8d11-da5ab0a11006',
-          },
-          dealsCreatedThisMonth: {
-            universalIdentifier: '20202020-d111-4d11-8d11-da5ab0a11007',
-          },
-          dealValueCreatedThisMonth: {
-            universalIdentifier: '20202020-d111-4d11-8d11-da5ab0a11008',
-          },
-        },
-      },
-    },
-  },
+  myFirstDashboard: STANDARD_DASHBOARD_PAGE_LAYOUT_CONFIG,
+  companyRecordPage: STANDARD_COMPANY_PAGE_LAYOUT_CONFIG,
+  personRecordPage: STANDARD_PERSON_PAGE_LAYOUT_CONFIG,
+  opportunityRecordPage: STANDARD_OPPORTUNITY_PAGE_LAYOUT_CONFIG,
+  noteRecordPage: STANDARD_NOTE_PAGE_LAYOUT_CONFIG,
+  taskRecordPage: STANDARD_TASK_PAGE_LAYOUT_CONFIG,
+  workflowRecordPage: STANDARD_WORKFLOW_PAGE_LAYOUT_CONFIG,
+  workflowVersionRecordPage: STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG,
+  workflowRunRecordPage: STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG,
 } as const;
+
+const { myFirstDashboard: _myFirstDashboard, ...recordPageLayouts } =
+  STANDARD_PAGE_LAYOUTS;
+
+export const STANDARD_RECORD_PAGE_LAYOUTS =
+  recordPageLayouts satisfies StandardRecordPageLayouts;

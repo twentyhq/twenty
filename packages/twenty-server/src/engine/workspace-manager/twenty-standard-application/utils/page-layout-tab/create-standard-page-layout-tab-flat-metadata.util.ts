@@ -1,56 +1,47 @@
-import { isDefined } from 'class-validator';
+import { type PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
-import { type AllStandardPageLayoutName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-name.type';
-import { type AllStandardPageLayoutTabName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-tab-name.type';
+import { type StandardPageLayoutTabDefinition } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.types';
 import { type StandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
 
-export type CreateStandardPageLayoutTabContext<
-  L extends AllStandardPageLayoutName,
-> = {
-  layoutName: L;
-  tabName: AllStandardPageLayoutTabName<L>;
+export type CreateStandardPageLayoutTabContext = {
+  layoutName: string;
+  tabTitle: string;
   title: string;
   position: number;
+  icon: string | null;
+  layoutMode: PageLayoutTabLayoutMode;
 };
 
-export type CreateStandardPageLayoutTabArgs<
-  L extends AllStandardPageLayoutName = AllStandardPageLayoutName,
-> = {
+export type CreateStandardPageLayoutTabArgs = {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
   standardPageLayoutMetadataRelatedEntityIds: StandardPageLayoutMetadataRelatedEntityIds;
-  context: CreateStandardPageLayoutTabContext<L>;
+  context: CreateStandardPageLayoutTabContext;
 };
 
-export const createStandardPageLayoutTabFlatMetadata = <
-  L extends AllStandardPageLayoutName,
->({
-  context: { layoutName, tabName, title, position },
+export const createStandardPageLayoutTabFlatMetadata = ({
+  context: { layoutName, tabTitle, title, position, icon, layoutMode },
   workspaceId,
   twentyStandardApplicationId,
   standardPageLayoutMetadataRelatedEntityIds,
   now,
-}: CreateStandardPageLayoutTabArgs<L>): FlatPageLayoutTab => {
+}: CreateStandardPageLayoutTabArgs): FlatPageLayoutTab => {
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
-  // @ts-expect-error ignore
-  const tabDefinition = STANDARD_PAGE_LAYOUTS[layoutName].tabs[tabName] as {
-    universalIdentifier: string;
-  };
+  const layout = STANDARD_PAGE_LAYOUTS[
+    layoutName as keyof typeof STANDARD_PAGE_LAYOUTS
+  ] as { tabs: Record<string, StandardPageLayoutTabDefinition> };
+  const tabDefinition = layout.tabs[tabTitle];
 
   if (!isDefined(tabDefinition)) {
-    throw new Error(
-      `Invalid configuration ${layoutName} ${tabName.toString()}`,
-    );
+    throw new Error(`Invalid configuration ${layoutName} ${tabTitle}`);
   }
 
-  const tabIds = layoutIds.tabs[tabName];
-
-  const widgetIds = Object.values(tabIds.widgets).map(
-    (widget: { id: string }) => widget.id,
-  );
+  const tabIds = layoutIds.tabs[tabTitle];
+  const widgetIds = Object.values(tabIds.widgets).map((widget) => widget.id);
 
   return {
     id: tabIds.id,
@@ -64,5 +55,7 @@ export const createStandardPageLayoutTabFlatMetadata = <
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    icon,
+    layoutMode,
   };
 };

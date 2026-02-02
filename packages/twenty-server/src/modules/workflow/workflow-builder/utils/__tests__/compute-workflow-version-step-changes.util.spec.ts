@@ -41,7 +41,11 @@ describe('computeWorkflowVersionStepChanges', () => {
       settings: {
         input: {
           connectedAccountId: '',
-          email: '',
+          recipients: {
+            to: '',
+            cc: '',
+            bcc: '',
+          },
           subject: '',
           body: '',
         },
@@ -99,7 +103,6 @@ describe('computeWorkflowVersionStepChanges', () => {
         settings: {
           input: {
             logicFunctionId: '',
-            logicFunctionVersion: '',
             logicFunctionInput: {},
           },
           errorHandlingOptions: {
