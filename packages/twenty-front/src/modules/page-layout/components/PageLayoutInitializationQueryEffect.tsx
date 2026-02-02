@@ -28,10 +28,12 @@ import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const getDefaultLayoutById = (layoutId: string): PageLayout => {
@@ -71,6 +73,10 @@ export const PageLayoutInitializationQueryEffect = ({
     pageLayoutIsInitializedComponentState,
   );
 
+  const isRecordPageLayoutEditingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+  );
+
   const isDefaultLayout =
     pageLayoutId === DEFAULT_RECORD_PAGE_LAYOUT_ID ||
     pageLayoutId === DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID ||
@@ -82,17 +88,19 @@ export const PageLayoutInitializationQueryEffect = ({
     pageLayoutId === DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID ||
     pageLayoutId === DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID;
 
+  const shouldSkipQuery = isDefaultLayout && !isRecordPageLayoutEditingEnabled;
+
   const { data } = useQuery(FIND_ONE_PAGE_LAYOUT, {
     variables: {
       id: pageLayoutId,
     },
-    skip: isDefaultLayout,
+    skip: shouldSkipQuery,
   });
 
-  const basePageLayout: PageLayout | undefined = isDefaultLayout
-    ? getDefaultLayoutById(pageLayoutId)
-    : data?.getPageLayout
-      ? transformPageLayout(data.getPageLayout)
+  const basePageLayout: PageLayout | undefined = data?.getPageLayout
+    ? transformPageLayout(data.getPageLayout)
+    : isDefaultLayout
+      ? getDefaultLayoutById(pageLayoutId)
       : undefined;
 
   const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
@@ -137,10 +145,12 @@ export const PageLayoutInitializationQueryEffect = ({
   );
 
   useEffect(() => {
-    if (!isInitialized && isDefined(pageLayout)) {
-      initializePageLayout(pageLayout);
-      onInitialized?.(pageLayout);
-      setIsInitialized(true);
+    if (isInitialized === false) {
+      if (isDefined(pageLayout)) {
+        initializePageLayout(pageLayout);
+        onInitialized?.(pageLayout);
+        setIsInitialized(true);
+      }
     }
   }, [
     initializePageLayout,
