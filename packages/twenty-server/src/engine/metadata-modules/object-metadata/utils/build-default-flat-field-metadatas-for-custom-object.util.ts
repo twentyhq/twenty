@@ -1,4 +1,5 @@
 import {
+  type FieldMetadataSettingsMapping,
   FieldMetadataType,
   type NonNullableRequired,
 } from 'twenty-shared/types';
@@ -419,6 +420,12 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
   };
 
   const searchVectorFieldId = v4();
+  const searchVectorSettings: FieldMetadataSettingsMapping['TS_VECTOR'] = {
+    asExpression: getTsVectorColumnExpressionFromFields(
+      nameField ? [nameField] : [],
+    ),
+    generatedType: 'STORED',
+  };
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
     type: FieldMetadataType.TS_VECTOR,
     mainGroupByFieldMetadataViewIds: [],
@@ -450,12 +457,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     standardOverrides: null,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    settings: {
-      asExpression: getTsVectorColumnExpressionFromFields(
-        nameField ? [nameField] : [],
-      ),
-      generatedType: 'STORED',
-    },
+    settings: searchVectorSettings,
     morphId: null,
     applicationId,
     applicationUniversalIdentifier,
@@ -467,7 +469,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-    universalSettings: null,
+    universalSettings: searchVectorSettings,
   };
 
   return {

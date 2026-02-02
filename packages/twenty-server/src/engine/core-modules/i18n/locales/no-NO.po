@@ -352,6 +352,7 @@ msgid "API key role not found."
 msgstr "API-nøkkelrolle ikke funnet."
 
 #. js-lingui-id: ltvmAF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts

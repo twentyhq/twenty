@@ -7,6 +7,7 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -61,10 +62,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   async updateOneObject({
     updateObjectInput,
     workspaceId,
+    ownerFlatApplication,
   }: {
     workspaceId: string;
     updateObjectInput: UpdateOneObjectInput;
+    ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata> {
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ??
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication;
+
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -130,6 +141,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
         },
       );
 
@@ -171,15 +184,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     deleteObjectInput,
     workspaceId,
     isSystemBuild = false,
+    ownerFlatApplication,
   }: {
     deleteObjectInput: DeleteOneObjectInput;
     workspaceId: string;
     isSystemBuild?: boolean;
+    ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata> {
     const deletedObjectMetadataDtos = await this.deleteManyObjectMetadatas({
       deleteObjectInputs: [deleteObjectInput],
       workspaceId,
       isSystemBuild,
+      ownerFlatApplication,
     });
 
     if (deletedObjectMetadataDtos.length !== 1) {
@@ -198,14 +214,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId,
     deleteObjectInputs,
     isSystemBuild = false,
+    ownerFlatApplication,
   }: {
     deleteObjectInputs: DeleteOneObjectInput[];
     workspaceId: string;
     isSystemBuild?: boolean;
+    ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata[]> {
     if (deleteObjectInputs.length === 0) {
       return [];
     }
+
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ??
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication;
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -301,6 +327,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           },
           workspaceId,
           isSystemBuild,
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
         },
       );
 
@@ -317,15 +345,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   async createOneObject({
     createObjectInput,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
   }: {
     createObjectInput: CreateObjectInput;
     workspaceId: string;
-    /**
-     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
-     * when interacting with another application than workspace custom one
-     * */
-    applicationId?: string;
+    ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -333,26 +357,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
         },
       );
+
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ?? workspaceCustomFlatApplication;
+
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       featureFlagsMap: existingFeatureFlagsMap,
-      flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'featureFlagsMap',
-      'flatApplicationMaps',
     ]);
-
-    const ownerFlatApplication = isDefined(applicationId)
-      ? flatApplicationMaps.byId[applicationId]
-      : workspaceCustomFlatApplication;
-
-    if (!isDefined(ownerFlatApplication)) {
-      throw new ObjectMetadataException(
-        `Could not find related application ${applicationId}`,
-        ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
 
     const {
       flatObjectMetadataToCreate,
@@ -362,7 +377,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     } = fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate({
       createObjectInput,
       workspaceId,
-      flatApplication: ownerFlatApplication,
+      flatApplication: resolvedOwnerFlatApplication,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       existingFeatureFlagsMap,
     });
@@ -452,6 +467,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
         },
       );
 

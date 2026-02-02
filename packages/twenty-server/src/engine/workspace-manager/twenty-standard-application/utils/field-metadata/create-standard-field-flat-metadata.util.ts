@@ -1,8 +1,8 @@
 import {
-  type FieldMetadataDefaultValue,
-  type FieldMetadataSettings,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
+  type FieldMetadataDefaultValue,
+  type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
@@ -110,6 +110,6 @@ export const createStandardFieldFlatMetadata = <
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-    universalSettings: null,
+    universalSettings: settings ?? null,
   };
 };

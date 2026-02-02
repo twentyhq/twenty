@@ -73,6 +73,6 @@ export const getDefaultFlatFieldMetadata = ({
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-    universalSettings: null,
+    universalSettings: settings ?? null,
   } as const satisfies FlatFieldMetadata;
 };

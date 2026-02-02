@@ -11,6 +11,7 @@ import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPag
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { DashboardsBlockEditor } from '@/page-layout/widgets/standalone-rich-text/components/DashboardsBlockEditor';
+import { StandaloneRichTextWidgetAutoFocusEffect } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidgetAutoFocusEffect';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/ui/input/editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/ui/input/editor/hooks/useAttachmentSync';
 import { parseInitialBlocknote } from '@/ui/input/editor/utils/parseInitialBlocknote';
@@ -182,6 +183,11 @@ export const StandaloneRichTextWidget = ({
       ref={containerElementRef}
       isPageLayoutInEditMode={isPageLayoutInEditMode}
     >
+      <StandaloneRichTextWidgetAutoFocusEffect
+        shouldFocus={isEditable}
+        editor={editor}
+        containerElement={containerElementRef.current}
+      />
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-rich-text-widget-${widget.id}`}
       >

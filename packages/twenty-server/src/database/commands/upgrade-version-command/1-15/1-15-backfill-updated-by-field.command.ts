@@ -16,7 +16,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
@@ -100,7 +100,7 @@ export class BackfillUpdatedByFieldCommand extends ActiveOrSuspendedWorkspacesMi
     const createFieldInputs: CreateFieldInput[] = [];
 
     for (const flatObjectMetadata of objectMetadataList) {
-      const isStandardObject = isStandardMetadata(flatObjectMetadata);
+      const isStandardObject = belongsToTwentyStandardApp(flatObjectMetadata);
       const updatedByStandardId = !isStandardObject
         ? CUSTOM_OBJECT_STANDARD_FIELD_IDS.updatedBy
         : isDefined(flatObjectMetadata.standardId)

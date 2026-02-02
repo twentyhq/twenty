@@ -119,6 +119,8 @@ export class TwentyStandardApplicationService {
           additionalCacheDataMaps: {
             featureFlagsMap,
           },
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
         },
       );
 

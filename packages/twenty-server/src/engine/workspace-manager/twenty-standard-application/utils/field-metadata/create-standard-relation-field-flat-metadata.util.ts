@@ -133,6 +133,6 @@ export const createStandardRelationFieldFlatMetadata = <
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-    universalSettings: null,
+    universalSettings: settings,
   };
 };

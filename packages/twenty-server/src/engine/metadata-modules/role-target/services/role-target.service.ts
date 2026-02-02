@@ -102,6 +102,8 @@ export class RoleTargetService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -129,6 +131,13 @@ export class RoleTargetService {
   }
 
   async delete({ id, workspaceId }: DeleteRoleTargetInput): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatRoleTargetMaps: existingFlatRoleTargetMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -154,6 +163,8 @@ export class RoleTargetService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
