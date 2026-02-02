@@ -103,13 +103,12 @@ export class WorkspaceEventEmitterResolver {
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
 
-    const eventStreamAlreadyExists =
-      await this.eventStreamService.checkIfEventStreamExists({
-        workspaceId: workspace.id,
-        eventStreamChannelId,
-      });
+    const streamData = await this.eventStreamService.getStreamData(
+      workspace.id,
+      eventStreamChannelId,
+    );
 
-    if (eventStreamAlreadyExists) {
+    if (isDefined(streamData)) {
       throw new EventStreamException(
         'Event stream already exists',
         EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS,

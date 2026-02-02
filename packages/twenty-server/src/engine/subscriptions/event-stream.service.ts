@@ -50,20 +50,6 @@ export class EventStreamService implements OnModuleInit {
     );
   }
 
-  async checkIfEventStreamExists({
-    workspaceId,
-    eventStreamChannelId,
-  }: {
-    workspaceId: string;
-    eventStreamChannelId: string;
-  }): Promise<boolean> {
-    const key = this.getEventStreamKey(workspaceId, eventStreamChannelId);
-
-    const existing = await this.cacheStorageService.get<EventStreamData>(key);
-
-    return isDefined(existing);
-  }
-
   async createEventStream({
     workspaceId,
     eventStreamChannelId,
