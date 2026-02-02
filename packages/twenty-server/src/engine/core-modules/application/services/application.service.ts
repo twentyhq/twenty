@@ -132,7 +132,7 @@ export class ApplicationService {
     universalIdentifier?: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    if (!(isDefined(id) && isDefined(universalIdentifier))) {
+    if (!isDefined(id) && !isDefined(universalIdentifier)) {
       throw new ApplicationException(
         `Either id or universalIdentifier must be provided to find application.`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,

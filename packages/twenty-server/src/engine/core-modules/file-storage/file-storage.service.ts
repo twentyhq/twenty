@@ -97,16 +97,27 @@ export class FileStorageService {
       sourceFile,
     });
 
-    return await this.fileRepository.save({
-      path: `${fileFolder}/${resourcePath}`,
-      workspaceId,
-      applicationId: application.id,
-      id: fileId,
-      size:
-        typeof sourceFile === 'string'
-          ? Buffer.byteLength(sourceFile)
-          : sourceFile.length,
-      settings,
+    await this.fileRepository.upsert(
+      {
+        path: `${fileFolder}/${resourcePath}`,
+        workspaceId,
+        applicationId: application.id,
+        id: fileId,
+        size:
+          typeof sourceFile === 'string'
+            ? Buffer.byteLength(sourceFile)
+            : sourceFile.length,
+        settings,
+      },
+      ['path', 'workspaceId', 'applicationId'],
+    );
+
+    return await this.fileRepository.findOneOrFail({
+      where: {
+        path: `${fileFolder}/${resourcePath}`,
+        applicationId: application.id,
+        workspaceId,
+      },
     });
   }
 
