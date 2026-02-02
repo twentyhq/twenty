@@ -35,10 +35,10 @@ export const computeTwentyORMException = async (
       );
     }
 
+    const errorCode = (error as QueryFailedErrorWithCode).code;
+
     if (
-      error.message.includes(
-        'duplicate key value violates unique constraint',
-      ) &&
+      errorCode === POSTGRESQL_ERROR_CODES['23505'] &&
       isDefined(objectMetadata) &&
       isDefined(entityManager) &&
       isDefined(internalContext)
@@ -51,38 +51,16 @@ export const computeTwentyORMException = async (
       );
     }
 
-    if (error.message.includes('invalid input value for')) {
+    // invalid input syntax or value
+    if (errorCode === '22P02') {
       return new TwentyORMException(
-        error.message,
+        error.message, // safe and useful
         TwentyORMExceptionCode.INVALID_INPUT,
       );
     }
-
-    if (error.message.includes('invalid input syntax for type')) {
-      return new TwentyORMException(
-        error.message,
-        TwentyORMExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (error.message.includes('malformed array literal')) {
-      return new TwentyORMException(
-        error.message,
-        TwentyORMExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (error.message.match(/column .+ does not exist/)) {
-      return new TwentyORMException(
-        error.message,
-        TwentyORMExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const errorCode = (error as QueryFailedErrorWithCode).code;
 
     if (isDefined(errorCode) && POSTGRESQL_ERROR_CODES.includes(errorCode)) {
-      throw new PostgresException(error.message, errorCode);
+      throw new PostgresException('Data validation error.', errorCode);
     }
     throw error;
   }
