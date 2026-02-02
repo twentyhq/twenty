@@ -8,8 +8,8 @@ import { STANDARD_RECORD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twent
 import { type StandardRecordPageLayoutDefinition } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.types';
 import { computeMyFirstDashboardWidgets } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/compute-my-first-dashboard-widgets.util';
 import {
-  type CreateStandardPageLayoutWidgetArgs,
-  createStandardPageLayoutWidgetFlatMetadata,
+    type CreateStandardPageLayoutWidgetArgs,
+    createStandardPageLayoutWidgetFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/create-standard-page-layout-widget-flat-metadata.util';
 import { findObjectNameByUniversalIdentifier } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/create-standard-page-layout-flat-metadata.util';
 
@@ -88,6 +88,7 @@ const computeRecordPageWidgets = ({
               title: widget.title,
               type: widget.type,
               gridPosition: widget.gridPosition,
+              position: widget.position ?? null,
               configuration: {
                 configurationType: WidgetConfigurationType.FIELDS,
               },

@@ -23,7 +23,6 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
-import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -200,16 +199,7 @@ export class PageLayoutWidgetService {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    const existingWidget = this.getExistingWidgetOrThrow(
-      id,
-      existingFlatPageLayoutWidgetMaps,
-    );
-
-    if (updateData.gridPosition) {
-      const titleForValidation = updateData.title ?? existingWidget.title;
-
-      validateWidgetGridPosition(updateData.gridPosition, titleForValidation);
-    }
+    this.getExistingWidgetOrThrow(id, existingFlatPageLayoutWidgetMaps);
 
     const updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId = {
       id,

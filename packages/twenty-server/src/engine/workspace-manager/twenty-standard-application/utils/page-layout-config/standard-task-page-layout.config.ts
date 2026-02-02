@@ -21,7 +21,10 @@ const TASK_PAGE_TABS = {
       },
       richText: {
         universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5512',
-        ...WIDGET_PROPS.richText,
+        title: WIDGET_PROPS.richText.title,
+        type: WIDGET_PROPS.richText.type,
+        gridPosition: WIDGET_PROPS.richText.gridPosition,
+        position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
       },
     },
   },

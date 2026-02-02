@@ -390,6 +390,7 @@ export class PageLayoutUpdateService {
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
+          position: widgetInput.position ?? null,
           configuration: widgetInput.configuration ?? null,
           workspaceId,
           createdAt: now.toISOString(),
