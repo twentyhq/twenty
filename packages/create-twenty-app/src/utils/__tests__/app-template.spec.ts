@@ -32,7 +32,7 @@ describe('copyBaseApplicationProject', () => {
     }
   });
 
-  it('should create the correct folder structure with src/app/', async () => {
+  it('should create the correct folder structure with src/', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -48,8 +48,8 @@ describe('copyBaseApplicationProject', () => {
     const appConfigPath = join(srcAppPath, 'application.config.ts');
     expect(await fs.pathExists(appConfigPath)).toBe(true);
 
-    // Verify default-function.role.ts exists in src/app/
-    const roleConfigPath = join(srcAppPath, 'default-function.role.ts');
+    // Verify default.role.ts exists in src/app/
+    const roleConfigPath = join(srcAppPath, 'default.role.ts');
     expect(await fs.pathExists(roleConfigPath)).toBe(true);
   });
 
@@ -102,7 +102,7 @@ describe('copyBaseApplicationProject', () => {
     expect(yarnLockContent).toContain('yarn lockfile v1');
   });
 
-  it('should create application.config.ts with defineApp and correct values', async () => {
+  it('should create application.config.ts with defineApplication and correct values', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -117,15 +117,15 @@ describe('copyBaseApplicationProject', () => {
     );
     const appConfigContent = await fs.readFile(appConfigPath, 'utf8');
 
-    // Verify it uses defineApp
+    // Verify it uses defineApplication
     expect(appConfigContent).toContain(
-      "import { defineApp } from 'twenty-sdk'",
+      "import { defineApplication } from 'twenty-sdk'",
     );
-    expect(appConfigContent).toContain('export default defineApp({');
+    expect(appConfigContent).toContain('export default defineApplication({');
 
     // Verify it imports the role identifier
     expect(appConfigContent).toContain(
-      "import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default-function.role'",
+      "import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/default.role'",
     );
 
     // Verify display name and description
@@ -139,11 +139,11 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it references the role
     expect(appConfigContent).toContain(
-      'functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER',
+      'defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
   });
 
-  it('should create default-function.role.ts with defineRole and correct values', async () => {
+  it('should create default.role.ts with defineRole and correct values', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -151,11 +151,7 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: testAppDirectory,
     });
 
-    const roleConfigPath = join(
-      testAppDirectory,
-      'src',
-      'default-function.role.ts',
-    );
+    const roleConfigPath = join(testAppDirectory, 'src', 'default.role.ts');
     const roleConfigContent = await fs.readFile(roleConfigPath, 'utf8');
 
     // Verify it uses defineRole
@@ -166,7 +162,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it exports the universal identifier constant
     expect(roleConfigContent).toContain(
-      'export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER',
+      'export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER',
     );
 
     // Verify role label includes app name
@@ -182,7 +178,7 @@ describe('copyBaseApplicationProject', () => {
 
     // Verify it has a universalIdentifier (UUID format)
     expect(roleConfigContent).toMatch(
-      /universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER/,
+      /universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER/,
     );
   });
 
@@ -283,19 +279,19 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: secondAppDir,
     });
 
-    // Read both role configs
     const firstRoleConfig = await fs.readFile(
-      join(firstAppDir, 'src', 'default-function.role.ts'),
+      join(firstAppDir, 'src', 'default.role.ts'),
       'utf8',
     );
+
     const secondRoleConfig = await fs.readFile(
-      join(secondAppDir, 'src', 'default-function.role.ts'),
+      join(secondAppDir, 'src', 'default.role.ts'),
       'utf8',
     );
 
     // Extract UUIDs using regex
     const uuidRegex =
-      /DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
+      /DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =\s*'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'/;
     const firstUuid = firstRoleConfig.match(uuidRegex)?.[1];
     const secondUuid = secondRoleConfig.match(uuidRegex)?.[1];
 

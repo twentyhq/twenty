@@ -147,11 +147,10 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
   const isStreaming = status === 'streaming';
 
-  const isLoading =
-    !currentAIChatThread || isStreaming || agentChatSelectedFiles.length > 0;
+  const isLoading = isStreaming || agentChatSelectedFiles.length > 0;
 
   const handleSendMessage = async () => {
-    if (agentChatInput.trim() === '' || isLoading === true) {
+    if (agentChatInput.trim() === '' || isLoading || !currentAIChatThread) {
       return;
     }
 

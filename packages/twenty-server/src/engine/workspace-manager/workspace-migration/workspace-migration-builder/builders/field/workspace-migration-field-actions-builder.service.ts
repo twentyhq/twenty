@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
@@ -73,7 +72,6 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
         type: 'delete',
         metadataName: 'fieldMetadata',
         universalIdentifier: flatFieldMetadataToValidate.universalIdentifier,
-        objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
       },
     };
   }
@@ -96,23 +94,12 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const {
-      flatEntityId,
-      flatEntityUpdates,
-      optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-    } = args;
-
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatEntityId,
-      flatEntityMaps:
-        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatFieldMetadataMaps,
-    });
+    const { flatEntityId, flatEntityUpdates } = args;
 
     const updateFieldAction: UpdateFieldAction = {
       type: 'update',
       metadataName: 'fieldMetadata',
       entityId: flatEntityId,
-      objectMetadataId: flatFieldMetadata.objectMetadataId,
       updates: flatEntityUpdates,
     };
 

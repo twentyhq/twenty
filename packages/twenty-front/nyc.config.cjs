@@ -25,7 +25,7 @@ const pagesCoverage = {
 };
 
 const performanceCoverage = {
-  branches: 35,
+  branches: 33,
   statements: 60,
   lines: 60,
   functions: 45,

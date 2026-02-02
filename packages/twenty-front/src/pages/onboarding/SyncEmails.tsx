@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -27,6 +27,8 @@ import {
   MessageChannelVisibility,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated-metadata/graphql';
+import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
+import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
@@ -56,6 +58,9 @@ export const SyncEmails = () => {
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.SHARE_EVERYTHING,
   );
+  const [lastAuthenticatedMethod] = useRecoilState(
+    lastAuthenticatedMethodState,
+  );
   const [skipSyncEmailOnboardingStatusMutation] =
     useSkipSyncEmailOnboardingStepMutation();
 
@@ -77,6 +82,9 @@ export const SyncEmails = () => {
     await skipSyncEmailOnboardingStatusMutation();
     setNextOnboardingStatus();
   };
+
+  const userAuthenticatedWithSSO =
+    lastAuthenticatedMethod === AuthenticatedMethod.SSO;
 
   const isGoogleMessagingEnabled = useRecoilValue(
     isGoogleMessagingEnabledState,
@@ -118,7 +126,7 @@ export const SyncEmails = () => {
         />
       </StyledSyncEmailsContainer>
       <StyledProviderContainer>
-        {isGoogleProviderEnabled && (
+        {!userAuthenticatedWithSSO && isGoogleProviderEnabled && (
           <MainButton
             title={t`Sync with Google`}
             onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
@@ -126,7 +134,7 @@ export const SyncEmails = () => {
             Icon={() => <IconGoogle size={theme.icon.size.sm} />}
           />
         )}
-        {isMicrosoftProviderEnabled && (
+        {!userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
           <MainButton
             title={t`Sync with Outlook`}
             onClick={() =>
@@ -140,6 +148,22 @@ export const SyncEmails = () => {
           <MainButton
             title={t`Continue`}
             onClick={continueWithoutSync}
+            width={144}
+          />
+        )}
+        {userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
+          <MainButton
+            title={t`Continue`}
+            onClick={() =>
+              handleButtonClick(ConnectedAccountProvider.MICROSOFT)
+            }
+            width={144}
+          />
+        )}
+        {userAuthenticatedWithSSO && isGoogleProviderEnabled && (
+          <MainButton
+            title={t`Continue`}
+            onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
             width={144}
           />
         )}

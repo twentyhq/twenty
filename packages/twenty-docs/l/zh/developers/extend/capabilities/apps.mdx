@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # 公共资源文件夹（图像、字体等）
   src/
     application.config.ts          # 必需 - 主应用程序配置
     default-function.role.ts       # 用于无服务器函数的默认角色
@@ -162,6 +163,7 @@ src/
 * **.nvmrc**：固定项目期望的 Node.js 版本。
 * **eslint.config.mjs** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
 * **README.md**：应用根目录中的简短 README，包含基本说明。
+* **public/**: 一个用于存储公共资源（图像、字体、静态文件）的文件夹，这些资源将随你的应用程序一起提供。 放置在此处的文件会在同步期间上传，并可在运行时访问。
 * **src/**：你以代码形式定义应用的主要位置：
   * `application.config.ts`：应用的全局配置（元数据和运行时关联）。 参见下方“应用配置”。
   * `*.role.ts`：你的逻辑函数所使用的角色定义。 参见下方“默认函数角色”。
@@ -215,12 +217,12 @@ twenty-sdk 提供你在应用中使用的类型化构件和辅助函数。 以�
 
 该 SDK 提供四个带内置校验的辅助函数，用于定义你的应用实体：
 
-| 函数                 | 目的           |
-| ------------------ | ------------ |
-| `defineApp()`      | 配置应用元数据      |
-| `defineObject()`   | 定义带字段的自定义对象  |
-| `defineFunction()` | 定义带处理程序的逻辑函数 |
-| `defineRole()`     | 配置角色权限和对象访问  |
+| 函数                    | 目的           |
+| --------------------- | ------------ |
+| `defineApplication()` | 配置应用元数据      |
+| `defineObject()`      | 定义带字段的自定义对象  |
+| `defineFunction()`    | 定义带处理程序的逻辑函数 |
+| `defineRole()`        | 配置角色权限和对象访问  |
 
 这些函数会在运行时校验你的配置，并提供更好的 IDE 自动补全和类型安全。
 
@@ -317,14 +319,14 @@ export default defineObject({
 * **函数如何运行**：它们用于权限的角色。
 * **（可选）变量**：以环境变量形式提供给函数的键值对。
 
-使用 `defineApp()` 定义你的应用配置：
+使用 `defineApplication()` 定义你的应用配置：
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ export default defineApp({
 
 * `universalIdentifier` 字段是你拥有的确定性 ID；生成一次并在多次同步中保持稳定。
 * `applicationVariables` 会变成函数可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
-* `functionRoleUniversalIdentifier` 必须与在 `*.role.ts` 文件中定义的角色一致（见下文）。
+* `roleUniversalIdentifier` 必须与在 `*.role.ts` 文件中定义的角色一致（见下文）。
 
 #### 角色和权限
 
-应用可以定义角色，以封装对工作空间对象与操作的权限。 `application.config.ts` 中的 `functionRoleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
+应用可以定义角色，以封装对工作空间对象与操作的权限。 `application.config.ts` 中的 `roleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
 
 * 作为 `TWENTY_API_KEY` 注入的运行时 API 密钥源自该默认函数角色。
 * 类型化客户端将受限于该角色授予的权限。
@@ -363,11 +365,11 @@ export default defineApp({
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-随后，该角色的 `universalIdentifier` 会在 `application.config.ts` 中以 `functionRoleUniversalIdentifier` 引用。 换句话说：
+随后，该角色的 `universalIdentifier` 会在 `application.config.ts` 中被引用为 `roleUniversalIdentifier`。 换句话说：
 
 * **\*.role.ts** 定义默认函数角色可以执行的操作。
 * **application.config.ts** 指向该角色，使你的函数继承其权限。
@@ -604,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 备注:
 
 * 你无需向生成的客户端传递 URL 或 API 密钥。 它会在运行时从 process.env 读取 `TWENTY_API_URL` 和 `TWENTY_API_KEY`。
-* API 密钥的权限由 `application.config.ts` 中通过 `functionRoleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
-* 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `functionRoleUniversalIdentifier` 指向该角色的通用标识符。
+* API 密钥的权限由 `application.config.ts` 中通过 `roleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
+* 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `roleUniversalIdentifier` 指向该角色的通用标识符。
 
 ### Hello World 示例
 

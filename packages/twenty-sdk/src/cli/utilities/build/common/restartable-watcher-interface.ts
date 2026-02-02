@@ -11,7 +11,7 @@ export interface RestartableWatcher {
 export type OnFileBuiltCallback = (options: {
   fileFolder: FileFolder;
   builtPath: string;
-  filePath: string;
+  sourcePath: string;
   checksum: string;
 }) => void | Promise<void>;
 

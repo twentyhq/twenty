@@ -180,7 +180,7 @@ export const EmptyForm: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const messageContainer = await canvas.findByTestId(
-      'empty-form-message-title',
+      'workflow-message-title',
     );
 
     expect(messageContainer).toBeVisible();

@@ -24,7 +24,7 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 
 jest.mock('src/engine/core-modules/auth/auth.util', () => ({
   encryptText: jest.fn((text) => `${text}`),
-  decryptText: jest.fn((text) => text.replace('', '')),
+  decryptText: jest.fn((text) => `${text}`),
 }));
 
 describe('ConfigStorageService', () => {

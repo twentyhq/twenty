@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # مجلد الأصول العامة (صور، خطوط، إلخ)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # مطلوب - التكوين الرئيسي للتطبيق
+    default-function.role.ts       # الدور الافتراضي للوظائف بدون خادم
+    hello-world.function.ts        # مثال لوظيفة بدون خادم
+    hello-world.front-component.tsx # مثال لمكوّن الواجهة الأمامية
+    // كياناتك (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### الاتفاقية فوق التهيئة
@@ -162,6 +163,7 @@ src/
 * **.nvmrc**: يثبّت إصدار Node.js المتوقع للمشروع.
 * **eslint.config.mjs** و**tsconfig.json**: يقدّمان إعدادات الفحص والتهيئة لـ TypeScript لمصادر TypeScript في تطبيقك.
 * **README.md**: ملف README قصير في جذر التطبيق يتضمن تعليمات أساسية.
+* **public/**: مجلد لتخزين الأصول العامة (صور، خطوط، ملفات ثابتة) التي سيتم تقديمها مع تطبيقك. الملفات الموضوعة هنا تُرفع أثناء المزامنة وتكون متاحة أثناء وقت التشغيل.
 * **src/**: المكان الرئيسي حيث تعرّف تطبيقك ككود:
   * `application.config.ts`: التكوين العام لتطبيقك (بيانات وصفية وربط وقت التشغيل). انظر "تكوين التطبيق" أدناه.
   * `*.role.ts`: تعريفات الأدوار المستخدمة بواسطة وظائفك المنطقية. انظر "الدور الافتراضي للوظيفة" أدناه.
@@ -215,12 +217,12 @@ Once you've switched workspaces with `auth:switch`, all subsequent commands will
 
 يوفّر SDK أربع دوال مساعدة مع تحقق مدمج لتعريف كيانات تطبيقك:
 
-| دالة               | الغرض                                    |
-| ------------------ | ---------------------------------------- |
-| `defineApp()`      | تهيئة بيانات التطبيق الوصفية             |
-| `defineObject()`   | تعريف كائنات مخصصة مع حقول               |
-| `defineFunction()` | تعريف وظائف منطقية مع معالجات            |
-| `defineRole()`     | تهيئة صلاحيات الدور والوصول إلى الكائنات |
+| دالة                  | الغرض                                    |
+| --------------------- | ---------------------------------------- |
+| `defineApplication()` | تهيئة بيانات التطبيق الوصفية             |
+| `defineObject()`      | تعريف كائنات مخصصة مع حقول               |
+| `defineFunction()`    | تعريف وظائف منطقية مع معالجات            |
+| `defineRole()`        | تهيئة صلاحيات الدور والوصول إلى الكائنات |
 
 تتحقق هذه الدوال من تكوينك في وقت التشغيل وتوفر إكمالًا تلقائيًا أفضل في بيئة التطوير وأمان أنواع أعلى.
 
@@ -317,14 +319,14 @@ export default defineObject({
 * **كيفية تشغيل وظائفه**: الدور الذي تستخدمه للأذونات.
 * **متغيرات (اختياري)**: أزواج مفتاح-قيمة تُعرض لوظائفك كمتغيرات بيئة.
 
-استخدم `defineApp()` لتعريف تهيئة تطبيقك:
+Use `defineApplication()` to define your application configuration:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ export default defineApp({
 
 * حقول `universalIdentifier` هي معرّفات حتمية تخصك؛ أنشئها مرة واحدة واحتفظ بها ثابتة عبر عمليات المزامنة.
 * `applicationVariables` تصبح متغيرات بيئة لوظائفك (على سبيل المثال، `DEFAULT_RECIPIENT_NAME` متاح كـ `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` يجب أن يطابق الدور الذي تعرّفه في ملف `*.role.ts` (انظر أدناه).
+* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
 
 #### الأدوار والصلاحيات
 
-يمكن للتطبيقات تعريف أدوار تُغلّف الصلاحيات على كائنات وإجراءات مساحة العمل لديك. يعين الحقل `functionRoleUniversalIdentifier` في `application.config.ts` الدور الافتراضي الذي تستخدمه وظائف المنطق في تطبيقك.
+يمكن للتطبيقات تعريف أدوار تُغلّف الصلاحيات على كائنات وإجراءات مساحة العمل لديك. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * مفتاح واجهة البرمجة في وقت التشغيل المحقون باسم `TWENTY_API_KEY` مستمد من دور الوظيفة الافتراضي هذا.
 * سيُقيَّد العميل مضبوط الأنواع بالأذونات الممنوحة لذلك الدور.
@@ -363,11 +365,11 @@ export default defineApp({
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-يُشار بعد ذلك إلى `universalIdentifier` لهذا الدور في `application.config.ts` باسم `functionRoleUniversalIdentifier`. بعبارة أخرى:
+يُشار بعد ذلك إلى `universalIdentifier` لهذا الدور في `application.config.ts` باسم `roleUniversalIdentifier`. بعبارة أخرى:
 
 * **\\*.role.ts** يحدد ما يمكن أن يفعله الدور الافتراضي للوظيفة.
 * **application.config.ts** يشير إلى ذلك الدور بحيث ترث وظائفك صلاحياته.
@@ -604,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 الملاحظات:
 
 * لا تحتاج إلى تمرير عنوان URL أو مفتاح واجهة برمجة التطبيقات إلى العميل المُولَّد. يقوم بقراءة `TWENTY_API_URL` و`TWENTY_API_KEY` من process.env وقت التشغيل.
-* تُحدَّد أذونات مفتاح واجهة برمجة التطبيقات بواسطة الدور المشار إليه في `application.config.ts` عبر `functionRoleUniversalIdentifier`. هذا هو الدور الافتراضي الذي تستخدمه الوظائف المنطقية في تطبيقك.
-* يمكن للتطبيقات تعريف أدوار لاتباع مبدأ أقل الامتياز. امنح فقط الأذونات التي تحتاجها وظائفك، ثم وجّه `functionRoleUniversalIdentifier` إلى المعرّف الشامل لذلك الدور.
+* تُحدَّد أذونات مفتاح واجهة برمجة التطبيقات بواسطة الدور المشار إليه في `application.config.ts` عبر `roleUniversalIdentifier`. هذا هو الدور الافتراضي الذي تستخدمه الوظائف المنطقية في تطبيقك.
+* يمكن للتطبيقات تعريف أدوار لاتباع مبدأ أقل الامتياز. امنح فقط الأذونات التي تحتاجها وظائفك، ثم وجّه `roleUniversalIdentifier` إلى المعرّف الشامل لذلك الدور.
 
 ### مثال Hello World
 

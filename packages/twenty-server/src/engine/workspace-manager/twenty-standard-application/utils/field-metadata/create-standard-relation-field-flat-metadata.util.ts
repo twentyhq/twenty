@@ -83,6 +83,10 @@ export const createStandardRelationFieldFlatMetadata = <
   const targetFieldIds =
     standardObjectMetadataRelatedEntityIds[targetObjectName].fields;
 
+  const targetObjectFields = STANDARD_OBJECTS[targetObjectName].fields;
+  const targetFieldDefinition =
+    targetObjectFields[targetFieldName as keyof typeof targetObjectFields];
+
   return {
     id: fieldIds[fieldName as keyof typeof fieldIds].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
@@ -117,5 +121,18 @@ export const createStandardRelationFieldFlatMetadata = <
     mainGroupByFieldMetadataViewIds: [],
     createdAt: now,
     updatedAt: now,
+    applicationUniversalIdentifier: twentyStandardApplicationId,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[objectName].universalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[targetObjectName].universalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier:
+      targetFieldDefinition.universalIdentifier,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: null,
   };
 };

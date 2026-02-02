@@ -127,7 +127,6 @@ describe('getWorkflowVersionDiagram', () => {
               },
               input: {
                 logicFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
-                logicFunctionVersion: '1',
                 logicFunctionInput: {},
               },
               outputSchema: {},

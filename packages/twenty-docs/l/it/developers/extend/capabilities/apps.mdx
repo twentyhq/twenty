@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Cartella delle risorse pubbliche (immagini, font, ecc.)
   src/
     application.config.ts          # Obbligatorio - configurazione principale dell'applicazione
     default-function.role.ts       # Ruolo predefinito per le funzioni serverless
@@ -162,6 +163,7 @@ A livello generale:
 * **.nvmrc**: Fissa la versione di Node.js prevista dal progetto.
 * **eslint.config.mjs** e **tsconfig.json**: Forniscono linting e configurazione TypeScript per i sorgenti TypeScript della tua app.
 * **README.md**: Un breve README nella radice dell'app con istruzioni di base.
+* **public/**: Una cartella per archiviare risorse pubbliche (immagini, font, file statici) che saranno servite con la tua applicazione. I file collocati qui vengono caricati durante la sincronizzazione e sono accessibili in fase di esecuzione.
 * **src/**: Il luogo principale in cui definisci la tua applicazione come codice:
   * `application.config.ts`: Configurazione globale della tua app (metadati e collegamenti di runtime). Vedi "Configurazione dell'applicazione" qui sotto.
   * `*.role.ts`: Definizioni di ruoli usate dalle tue funzioni logiche. Vedi "Ruolo funzione predefinito" qui sotto.
@@ -215,12 +217,12 @@ Il pacchetto twenty-sdk fornisce blocchi tipizzati e funzioni helper da usare ne
 
 L'SDK fornisce quattro funzioni helper con convalida integrata per definire le entità della tua app:
 
-| Funzione           | Scopo                                                   |
-| ------------------ | ------------------------------------------------------- |
-| `defineApp()`      | Configura i metadati dell'applicazione                  |
-| `defineObject()`   | Definisci oggetti personalizzati con campi              |
-| `defineFunction()` | Definisci funzioni logiche con handler                  |
-| `defineRole()`     | Configura i permessi dei ruoli e l'accesso agli oggetti |
+| Funzione              | Scopo                                                   |
+| --------------------- | ------------------------------------------------------- |
+| `defineApplication()` | Configura i metadati dell'applicazione                  |
+| `defineObject()`      | Definisci oggetti personalizzati con campi              |
+| `defineFunction()`    | Definisci funzioni logiche con handler                  |
+| `defineRole()`        | Configura i permessi dei ruoli e l'accesso agli oggetti |
 
 Queste funzioni convalidano la configurazione a runtime e offrono un migliore completamento automatico nell'IDE e una maggiore sicurezza dei tipi.
 
@@ -317,14 +319,14 @@ Ogni app ha un singolo file `application.config.ts` che descrive:
 * **Come vengono eseguite le sue funzioni**: quale ruolo usano per i permessi.
 * **Variabili (opzionali)**: coppie chiave–valore esposte alle funzioni come variabili d'ambiente.
 
-Usa `defineApp()` per definire la configurazione della tua applicazione:
+Usa `defineApplication()` per definire la configurazione della tua applicazione:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ Note:
 
 * I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` deve corrispondere al ruolo che definisci nel tuo file `*.role.ts` (vedi sotto).
+* `roleUniversalIdentifier` deve corrispondere al ruolo che definisci nel tuo file `*.role.ts` (vedi sotto).
 
 #### Ruoli e permessi
 
-Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. Il campo `functionRoleUniversalIdentifier` in `application.config.ts` designa il ruolo predefinito utilizzato dalle funzioni logiche della tua app.
+Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. Il campo `roleUniversalIdentifier` in `application.config.ts` designa il ruolo predefinito utilizzato dalle funzioni logiche della tua app.
 
 * La chiave API di runtime iniettata come `TWENTY_API_KEY` è derivata da questo ruolo funzione predefinito.
 * Il client tipizzato sarà limitato ai permessi concessi a quel ruolo.
@@ -363,11 +365,11 @@ Quando generi una nuova app con lo scaffolder, la CLI crea anche un file di ruol
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-L'`universalIdentifier` di questo ruolo viene quindi referenziato in `application.config.ts` come `functionRoleUniversalIdentifier`. In altre parole:
+L'`universalIdentifier` di questo ruolo viene quindi referenziato in `application.config.ts` come `roleUniversalIdentifier`. In altre parole:
 
 * **\*.role.ts** definisce ciò che il ruolo funzione predefinito può fare.
 * **application.config.ts** punta a quel ruolo in modo che le tue funzioni ne ereditino i permessi.
@@ -604,8 +606,8 @@ Quando la tua funzione viene eseguita su Twenty, la piattaforma inietta le crede
 Note:
 
 * Non è necessario passare URL o chiave API al client generato. Legge `TWENTY_API_URL` e `TWENTY_API_KEY` da process.env in fase di esecuzione.
-* I permessi della chiave API sono determinati dal ruolo referenziato in `application.config.ts` tramite `functionRoleUniversalIdentifier`. Questo è il ruolo predefinito utilizzato dalle funzioni logiche della tua applicazione.
-* Le applicazioni possono definire ruoli per seguire il principio del privilegio minimo. Concedi solo i permessi necessari alle tue funzioni, quindi punta `functionRoleUniversalIdentifier` all'identificatore universale di quel ruolo.
+* I permessi della chiave API sono determinati dal ruolo referenziato in `application.config.ts` tramite `roleUniversalIdentifier`. Questo è il ruolo predefinito utilizzato dalle funzioni logiche della tua applicazione.
+* Le applicazioni possono definire ruoli per seguire il principio del privilegio minimo. Concedi solo i permessi necessari alle tue funzioni, quindi punta `roleUniversalIdentifier` all'identificatore universale di quel ruolo.
 
 ### Esempio Hello World
 

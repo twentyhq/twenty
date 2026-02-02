@@ -243,7 +243,6 @@ describe('shouldExecuteStep', () => {
         settings: {
           input: {
             logicFunctionId: 'mock-function-id',
-            logicFunctionVersion: 'mock-function-version',
             logicFunctionInput: {},
           },
           errorHandlingOptions: {

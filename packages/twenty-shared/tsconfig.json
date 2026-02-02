@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react",
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
@@ -17,7 +18,14 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    "scripts/**/*.ts",
     "**/__mocks__/**/*",
     "jest.config.mjs"
+  ],
+  "exclude": [
+    "src/front-component/remote/mock/**/*",
+    "src/front-component/host/generated/host-component-registry.ts",
+    "src/front-component/remote/generated/remote-components.ts",
+    "src/front-component/remote/generated/remote-elements.ts"
   ]
 }

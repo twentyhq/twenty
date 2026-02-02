@@ -78,8 +78,8 @@ export class AuthSwitchCommand {
       );
 
       if (hasCredentials) {
-        const isValid = await this.apiService.validateAuth();
-        if (isValid) {
+        const validateAuth = await this.apiService.validateAuth();
+        if (validateAuth.authValid) {
           console.log(chalk.green('✓ Authentication is valid'));
         } else {
           console.log(

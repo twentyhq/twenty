@@ -25,7 +25,6 @@ export const oneSucceededWorkflowRunQueryResult = {
                 logicFunctionInput: {
                   userId: '{{trigger.userId}}',
                 },
-                logicFunctionVersion: '1',
               },
               outputSchema: {
                 link: {
@@ -55,7 +54,6 @@ export const oneSucceededWorkflowRunQueryResult = {
               input: {
                 logicFunctionId: '605efcda-6689-43b3-b24c-2eb76948f523',
                 logicFunctionInput: {},
-                logicFunctionVersion: '2',
               },
               outputSchema: {
                 link: {
@@ -4494,7 +4492,6 @@ export const oneSucceededWorkflowRunQueryResult = {
               logicFunctionInput: {
                 userId: '{{trigger.userId}}',
               },
-              logicFunctionVersion: '1',
             },
             outputSchema: {
               link: {
@@ -4524,7 +4521,6 @@ export const oneSucceededWorkflowRunQueryResult = {
             input: {
               logicFunctionId: '605efcda-6689-43b3-b24c-2eb76948f523',
               logicFunctionInput: {},
-              logicFunctionVersion: '2',
             },
             outputSchema: {
               link: {

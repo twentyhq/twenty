@@ -31,6 +31,7 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -62,6 +63,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         FlatFieldMetadataModule,
         IndexMetadataModule,
         WorkspaceManyOrAllFlatEntityMapsCacheModule,
+        WorkspaceCacheModule,
       ],
       services: [FieldMetadataService],
       resolvers: [

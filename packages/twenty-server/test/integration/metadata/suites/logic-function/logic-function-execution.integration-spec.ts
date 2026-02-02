@@ -1,7 +1,6 @@
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-one-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
-import { publishLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/publish-logic-function.util';
 import { updateLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function.util';
 
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -60,14 +59,6 @@ describe('Logic Function Execution', () => {
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
 
-    // Publish the function
-    const { data: publishData } = await publishLogicFunction({
-      input: { id: functionId },
-      expectToFail: false,
-    });
-
-    expect(publishData?.publishLogicFunction?.latestVersion).toBeDefined();
-
     // Execute with the default template's expected params: { a: string, b: number }
     const { data: executeData } = await executeLogicFunction({
       input: {
@@ -113,12 +104,6 @@ describe('Logic Function Execution', () => {
           code: EXTERNAL_PACKAGES_FUNCTION_CODE,
         },
       },
-      expectToFail: false,
-    });
-
-    // Publish the function
-    await publishLogicFunction({
-      input: { id: functionId },
       expectToFail: false,
     });
 
@@ -185,12 +170,6 @@ describe('Logic Function Execution', () => {
           code: ERROR_FUNCTION_CODE,
         },
       },
-      expectToFail: false,
-    });
-
-    // Publish the function
-    await publishLogicFunction({
-      input: { id: functionId },
       expectToFail: false,
     });
 

@@ -176,7 +176,7 @@ export const WorkflowDropdownStepOutputItems = ({
     updateStepFilter({
       rawVariableName: getVariableTemplateFromPath({
         stepId: step.id,
-        path: [...currentPath, 'id'],
+        path: [...currentPath, currentSubStep.object.fieldIdName ?? 'id'],
       }),
       isFullRecord: true,
     });

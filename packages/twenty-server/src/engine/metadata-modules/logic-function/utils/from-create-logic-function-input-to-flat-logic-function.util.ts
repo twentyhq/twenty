@@ -12,6 +12,8 @@ import {
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 
+const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
+
 export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
   createLogicFunctionInput: CreateLogicFunctionInput & {
     logicFunctionLayerId: string;
@@ -28,6 +30,15 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   const id = v4();
   const currentDate = new Date();
 
+  // Build full paths including the base folder
+  const baseFolder = `${WORKFLOW_BASE_FOLDER_PREFIX}/${id}`;
+  const sourceHandlerPath =
+    rawCreateLogicFunctionInput.sourceHandlerPath ??
+    `${baseFolder}/${DEFAULT_SOURCE_HANDLER_PATH}`;
+  const builtHandlerPath =
+    rawCreateLogicFunctionInput.builtHandlerPath ??
+    `${baseFolder}/${DEFAULT_BUILT_HANDLER_PATH}`;
+
   return {
     id,
     cronTriggerSettings: null,
@@ -35,21 +46,15 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     httpRouteTriggerSettings: null,
     name: rawCreateLogicFunctionInput.name,
     description: rawCreateLogicFunctionInput.description ?? null,
-    sourceHandlerPath:
-      rawCreateLogicFunctionInput.sourceHandlerPath ??
-      DEFAULT_SOURCE_HANDLER_PATH,
+    sourceHandlerPath,
     handlerName:
       rawCreateLogicFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
-    builtHandlerPath:
-      rawCreateLogicFunctionInput.builtHandlerPath ??
-      DEFAULT_BUILT_HANDLER_PATH,
+    builtHandlerPath,
     universalIdentifier:
       rawCreateLogicFunctionInput.universalIdentifier ?? v4(),
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),
     deletedAt: null,
-    latestVersion: null,
-    publishedVersions: [],
     applicationId: workspaceCustomApplicationId,
     runtime: LogicFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,

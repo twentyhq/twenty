@@ -1,37 +1,26 @@
 import { computeBarChartGroupedLabels } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeBarChartGroupedLabels';
-import { type BarDatum, type ComputedBarDatum } from '@nivo/bar';
+import { type BarPosition } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarPosition';
 
-type MockBarData = {
-  id?: string;
-  indexValue?: string;
-  value?: number;
-};
+const createMockBar = (overrides: Partial<BarPosition> = {}): BarPosition => ({
+  x: 0,
+  y: 0,
+  width: 50,
+  height: 100,
+  value: 100,
+  indexValue: 'Category1',
+  seriesId: 'series1',
+  color: 'red',
+  shouldRoundFreeEnd: false,
+  seriesIndex: 0,
+  ...overrides,
+});
 
 describe('computeBarChartGroupedLabels', () => {
-  const createMockBar = (overrides: {
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    data?: MockBarData;
-  }): ComputedBarDatum<BarDatum> =>
-    ({
-      x: overrides.x ?? 0,
-      y: overrides.y ?? 0,
-      width: overrides.width ?? 50,
-      height: overrides.height ?? 100,
-      data: {
-        id: overrides.data?.id ?? 'bar1',
-        indexValue: overrides.data?.indexValue ?? 'Category1',
-        value: overrides.data?.value ?? 100,
-      },
-    }) as unknown as ComputedBarDatum<BarDatum>;
-
   describe('basic label computation', () => {
     it('should return labels for each bar', () => {
       const bars = [
-        createMockBar({ data: { id: 'bar1', indexValue: 'Cat1', value: 100 } }),
-        createMockBar({ data: { id: 'bar2', indexValue: 'Cat2', value: 200 } }),
+        createMockBar({ seriesId: 'bar1', indexValue: 'Cat1', value: 100 }),
+        createMockBar({ seriesId: 'bar2', indexValue: 'Cat2', value: 200 }),
       ];
 
       const result = computeBarChartGroupedLabels(bars);
@@ -41,8 +30,8 @@ describe('computeBarChartGroupedLabels', () => {
 
     it('should generate unique keys for each label', () => {
       const bars = [
-        createMockBar({ data: { id: 'sales', indexValue: 'Jan', value: 100 } }),
-        createMockBar({ data: { id: 'sales', indexValue: 'Feb', value: 150 } }),
+        createMockBar({ seriesId: 'sales', indexValue: 'Jan', value: 100 }),
+        createMockBar({ seriesId: 'sales', indexValue: 'Feb', value: 150 }),
       ];
 
       const result = computeBarChartGroupedLabels(bars);
@@ -70,13 +59,7 @@ describe('computeBarChartGroupedLabels', () => {
     });
 
     it('should set verticalY to top of bar for positive values', () => {
-      const bars = [
-        createMockBar({
-          y: 50,
-          height: 100,
-          data: { id: 'bar1', indexValue: 'Cat1', value: 100 },
-        }),
-      ];
+      const bars = [createMockBar({ y: 50, height: 100, value: 100 })];
 
       const result = computeBarChartGroupedLabels(bars);
 
@@ -85,13 +68,7 @@ describe('computeBarChartGroupedLabels', () => {
     });
 
     it('should set verticalY to bottom of bar for negative values', () => {
-      const bars = [
-        createMockBar({
-          y: 50,
-          height: 100,
-          data: { id: 'bar1', indexValue: 'Cat1', value: -100 },
-        }),
-      ];
+      const bars = [createMockBar({ y: 50, height: 100, value: -100 })];
 
       const result = computeBarChartGroupedLabels(bars);
 
@@ -100,13 +77,7 @@ describe('computeBarChartGroupedLabels', () => {
     });
 
     it('should set horizontalX to right edge for positive values', () => {
-      const bars = [
-        createMockBar({
-          x: 50,
-          width: 100,
-          data: { id: 'bar1', indexValue: 'Cat1', value: 100 },
-        }),
-      ];
+      const bars = [createMockBar({ x: 50, width: 100, value: 100 })];
 
       const result = computeBarChartGroupedLabels(bars);
 
@@ -114,13 +85,7 @@ describe('computeBarChartGroupedLabels', () => {
     });
 
     it('should set horizontalX to left edge for negative values', () => {
-      const bars = [
-        createMockBar({
-          x: 50,
-          width: 100,
-          data: { id: 'bar1', indexValue: 'Cat1', value: -100 },
-        }),
-      ];
+      const bars = [createMockBar({ x: 50, width: 100, value: -100 })];
 
       const result = computeBarChartGroupedLabels(bars);
 
@@ -129,10 +94,8 @@ describe('computeBarChartGroupedLabels', () => {
   });
 
   describe('value handling', () => {
-    it('should extract numeric value from bar data', () => {
-      const bars = [
-        createMockBar({ data: { id: 'bar1', indexValue: 'Cat1', value: 42 } }),
-      ];
+    it('should extract numeric value from bar', () => {
+      const bars = [createMockBar({ value: 42 })];
 
       const result = computeBarChartGroupedLabels(bars);
 
@@ -140,9 +103,7 @@ describe('computeBarChartGroupedLabels', () => {
     });
 
     it('should handle zero values', () => {
-      const bars = [
-        createMockBar({ data: { id: 'bar1', indexValue: 'Cat1', value: 0 } }),
-      ];
+      const bars = [createMockBar({ value: 0 })];
 
       const result = computeBarChartGroupedLabels(bars);
 
@@ -151,11 +112,7 @@ describe('computeBarChartGroupedLabels', () => {
     });
 
     it('should handle decimal values', () => {
-      const bars = [
-        createMockBar({
-          data: { id: 'bar1', indexValue: 'Cat1', value: 123.456 },
-        }),
-      ];
+      const bars = [createMockBar({ value: 123.456 })];
 
       const result = computeBarChartGroupedLabels(bars);
 
@@ -171,15 +128,7 @@ describe('computeBarChartGroupedLabels', () => {
     });
 
     it('should handle bars with zero dimensions', () => {
-      const bars = [
-        createMockBar({
-          x: 0,
-          y: 0,
-          width: 0,
-          height: 0,
-          data: { id: 'bar1', indexValue: 'Cat1', value: 100 },
-        }),
-      ];
+      const bars = [createMockBar({ x: 0, y: 0, width: 0, height: 0 })];
 
       const result = computeBarChartGroupedLabels(bars);
 

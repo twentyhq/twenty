@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react';
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconChevronDown } from 'twenty-ui/display';
@@ -17,7 +18,9 @@ const StyledTitleLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledChevronIcon = styled(IconChevronDown)<{ isExpanded: boolean }>`
+const StyledChevronIcon = styled(IconChevronDown, {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isExpanded',
+})<{ isExpanded: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   transform: ${({ isExpanded }) =>
     isExpanded ? 'rotate(180deg)' : 'rotate(0deg)'};

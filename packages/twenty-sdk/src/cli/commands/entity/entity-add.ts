@@ -1,138 +1,120 @@
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
-import { getFunctionBaseFile } from '@/cli/utilities/entity/entity-function-template';
+import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
 import inquirer from 'inquirer';
-import camelcase from 'lodash.camelcase';
 import kebabcase from 'lodash.kebabcase';
-import { join } from 'path';
+import { join, relative } from 'path';
+import { SyncableEntity } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { assertUnreachable } from 'twenty-shared/utils';
+import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
 
 const APP_FOLDER = 'src';
-
-export enum SyncableEntity {
-  AGENT = 'agent',
-  OBJECT = 'object',
-  FUNCTION = 'function',
-  FRONT_COMPONENT = 'front-component',
-  ROLE = 'role',
-}
-
-export const isSyncableEntity = (value: string): value is SyncableEntity => {
-  return Object.values(SyncableEntity).includes(value as SyncableEntity);
-};
 
 export class EntityAddCommand {
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
-      // Default to src/ folder, allow override with path parameter
+      const entity = entityType ?? (await this.getEntity());
+
+      const entityName = this.getFolderName(entity);
+
       const appPath = path
         ? join(CURRENT_EXECUTION_DIRECTORY, path)
-        : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER);
+        : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER, entityName);
 
       await fs.ensureDir(appPath);
 
-      const entity = entityType ?? (await this.getEntity());
+      const { name, file } = await this.getEntityData(entity);
 
-      if (entity === SyncableEntity.OBJECT) {
-        const entityData = await this.getObjectData();
+      const filePath = join(appPath, this.getFileName(name, entity));
 
-        const name = entityData.nameSingular;
-
-        // Use *.object.ts naming convention
-        const objectFileName = `${camelcase(name)}.object.ts`;
-
-        const decoratedObject = getObjectBaseFile({
-          data: entityData,
-          name,
-        });
-
-        const filePath = join(appPath, objectFileName);
-
-        await fs.writeFile(filePath, decoratedObject);
-
-        console.log(
-          chalk.green(`✓ Created object:`),
-          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
-        );
-
-        return;
+      if (await fs.pathExists(filePath)) {
+        const { overwrite } = await this.handleFileExist();
+        if (!overwrite) {
+          return;
+        }
       }
 
-      if (entity === SyncableEntity.FUNCTION) {
-        const entityName = await this.getEntityName(entity);
+      await fs.writeFile(filePath, file);
 
-        // Use *.function.ts naming convention
-        const functionFileName = `${kebabcase(entityName)}.function.ts`;
-
-        const decoratedLogicFunction = getFunctionBaseFile({
-          name: entityName,
-        });
-
-        const filePath = join(appPath, functionFileName);
-
-        await fs.writeFile(filePath, decoratedLogicFunction);
-
-        console.log(
-          chalk.green(`✓ Created function:`),
-          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
-        );
-
-        return;
-      }
-
-      if (entity === SyncableEntity.FRONT_COMPONENT) {
-        const entityName = await this.getEntityName(entity);
-
-        // Use *.front-component.tsx naming convention
-        const frontComponentFileName = `${kebabcase(entityName)}.front-component.tsx`;
-
-        const decoratedFrontComponent = getFrontComponentBaseFile({
-          name: entityName,
-        });
-
-        const filePath = join(appPath, frontComponentFileName);
-
-        await fs.writeFile(filePath, decoratedFrontComponent);
-
-        console.log(
-          chalk.green(`✓ Created front component:`),
-          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
-        );
-
-        return;
-      }
-
-      if (entity === SyncableEntity.ROLE) {
-        const entityName = await this.getEntityName(entity);
-
-        // Use *.role.ts naming convention
-        const roleFileName = `${kebabcase(entityName)}.role.ts`;
-
-        const roleFileContent = getRoleBaseFile({
-          name: entityName,
-        });
-
-        const filePath = join(appPath, roleFileName);
-
-        await fs.writeFile(filePath, roleFileContent);
-
-        console.log(
-          chalk.green(`✓ Created role:`),
-          chalk.cyan(filePath.replace(CURRENT_EXECUTION_DIRECTORY + '/', '')),
-        );
-
-        return;
-      }
+      console.log(
+        chalk.green(`✓ Created ${entityName}:`),
+        chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, filePath)),
+      );
     } catch (error) {
       console.error(
         chalk.red(`Add new entity failed:`),
         error instanceof Error ? error.message : error,
       );
       process.exit(1);
+    }
+  }
+
+  private async getEntityData(entity: SyncableEntity) {
+    switch (entity) {
+      case SyncableEntity.Object: {
+        const entityData = await this.getObjectData();
+
+        const name = entityData.nameSingular;
+
+        const file = getObjectBaseFile({
+          data: entityData,
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.Field: {
+        const entityData = await this.getFieldData();
+
+        const name = entityData.name;
+
+        const file = getFieldBaseFile({
+          data: entityData,
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.LogicFunction: {
+        const name = await this.getEntityName(entity);
+
+        const file = getLogicFunctionBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.FrontComponent: {
+        const name = await this.getEntityName(entity);
+
+        const file = getFrontComponentBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.Role: {
+        const name = await this.getEntityName(entity);
+
+        const file = getRoleBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      default:
+        assertUnreachable(entity);
     }
   }
 
@@ -143,16 +125,22 @@ export class EntityAddCommand {
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: [
-          SyncableEntity.FUNCTION,
-          SyncableEntity.FRONT_COMPONENT,
-          SyncableEntity.OBJECT,
-          SyncableEntity.ROLE,
-        ],
+        choices: Object.values(SyncableEntity),
       },
     ]);
 
     return entity;
+  }
+
+  private async handleFileExist() {
+    return await inquirer.prompt<{ overwrite: boolean }>([
+      {
+        type: 'confirm',
+        name: 'overwrite',
+        message: `File already exists. Do you want to overwrite it?`,
+        default: false,
+      },
+    ]);
   }
 
   private async getEntityName(entity: SyncableEntity) {
@@ -167,10 +155,6 @@ export class EntityAddCommand {
             return `${entity} name is required`;
           }
 
-          if (!/^[a-z0-9-]+$/.test(input)) {
-            return 'Name must contain only lowercase letters, numbers, and hyphens';
-          }
-
           return true;
         },
       },
@@ -179,8 +163,76 @@ export class EntityAddCommand {
     return name;
   }
 
+  private async getFieldData() {
+    return inquirer.prompt<{
+      name: string;
+      label: string;
+      type: FieldMetadataType;
+      objectUniversalIdentifier: string;
+      description: string;
+    }>([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'Enter a name for your field:',
+        default: '',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'label',
+        message: 'Enter a label for your field:',
+        default: (answers: any) => {
+          return convertToLabel(answers.name);
+        },
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'select',
+        name: 'type',
+        message: 'Select the field type:',
+        choices: Object.values(FieldMetadataType),
+        default: FieldMetadataType.TEXT,
+      },
+      {
+        type: 'input',
+        name: 'objectUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the object this field belongs to:',
+        default: 'fill-later',
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'description',
+        message: 'Enter a description for your field (optional):',
+        default: '',
+      },
+    ]);
+  }
+
   private async getObjectData() {
-    return inquirer.prompt([
+    return inquirer.prompt<{
+      nameSingular: string;
+      namePlural: string;
+      labelSingular: string;
+      labelPlural: string;
+    }>([
       {
         type: 'input',
         name: 'nameSingular',
@@ -237,5 +289,20 @@ export class EntityAddCommand {
         },
       },
     ]);
+  }
+
+  getFolderName(entity: SyncableEntity) {
+    return `${kebabcase(entity)}s`;
+  }
+
+  getFileName(name: string, entity: SyncableEntity) {
+    switch (entity) {
+      case SyncableEntity.FrontComponent: {
+        return `${kebabcase(name)}.tsx`;
+      }
+      default: {
+        return `${kebabcase(name)}.ts`;
+      }
+    }
   }
 }
