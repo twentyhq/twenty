@@ -1,6 +1,5 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
-
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import {
   TAB_PROPS,
   WIDGET_PROPS,
@@ -37,7 +36,8 @@ export const STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG = {
   layoutName: 'workflowVersionRecordPage',
   name: 'Default Workflow Version Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECT_IDS.workflowVersion,
+  objectUniversalIdentifier:
+    STANDARD_OBJECTS.workflowVersion.universalIdentifier,
   universalIdentifier: '20202020-a107-4007-8007-a0bcf10ab007',
   defaultTabUniversalIdentifier:
     WORKFLOW_VERSION_PAGE_TABS.flow.universalIdentifier,

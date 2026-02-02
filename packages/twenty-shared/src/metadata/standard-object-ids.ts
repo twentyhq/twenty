@@ -5,6 +5,7 @@
  * For readability keys can be edited but the values should not be changed.
  */
 
+// TODO remove once fieldMetadata standard id has been deprecated
 export const STANDARD_OBJECT_IDS = {
   // TODO: check if activity, activityTarget and comment can be deleted
   activityTarget: '20202020-2945-440e-8d1a-f84672d33d5e',

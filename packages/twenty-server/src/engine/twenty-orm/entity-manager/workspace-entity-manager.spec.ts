@@ -115,7 +115,6 @@ describe('WorkspaceEntityManager', () => {
       imageIdentifierFieldMetadataId: null,
       labelIdentifierFieldMetadataId: null,
       shortcut: null,
-      standardId: null,
       standardOverrides: null,
       applicationId: 'test-application-id',
       isLabelSyncedWithName: false,
@@ -242,8 +241,8 @@ describe('WorkspaceEntityManager', () => {
         IS_NAVIGATION_MENU_ITEM_ENABLED: false,
         IS_FILES_FIELD_ENABLED: false,
         IS_APPLICATION_INSTALLATION_FROM_TARBALL_ENABLED: false,
-        IS_MARKETPLACE_ENABLED: false,
         IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED: false,
+        IS_MARKETPLACE_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
