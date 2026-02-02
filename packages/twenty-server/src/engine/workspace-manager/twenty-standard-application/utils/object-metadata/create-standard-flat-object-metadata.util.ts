@@ -1,10 +1,11 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import {
-    type CreateStandardObjectArgs,
-    createStandardObjectFlatMetadata,
+  type CreateStandardObjectArgs,
+  createStandardObjectFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-object-flat-metadata.util';
-import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: ({

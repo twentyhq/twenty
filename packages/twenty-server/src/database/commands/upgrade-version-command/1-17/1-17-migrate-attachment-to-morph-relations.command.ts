@@ -2,11 +2,12 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import {
-    FieldMetadataType,
-    type FieldMetadataSettings,
+  FieldMetadataType,
+  type FieldMetadataSettings,
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -29,7 +30,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 type RelationFieldMetadataSettings =
   FieldMetadataSettings<FieldMetadataType.RELATION>;

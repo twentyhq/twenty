@@ -1,17 +1,18 @@
 import {
-    ObjectRecordCreateEvent,
-    ObjectRecordDeleteEvent,
-    ObjectRecordDestroyEvent,
-    ObjectRecordRestoreEvent,
-    ObjectRecordUpdateEvent,
-    ObjectRecordUpsertEvent,
-    type ObjectRecordDiff,
+  ObjectRecordCreateEvent,
+  ObjectRecordDeleteEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordRestoreEvent,
+  ObjectRecordUpdateEvent,
+  ObjectRecordUpsertEvent,
+  type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
 import {
-    assertUnreachable,
-    isDefined,
-    isNonEmptyArray,
+  assertUnreachable,
+  isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import type { ObjectLiteral } from 'typeorm';
 
@@ -22,11 +23,10 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-    TwentyORMException,
-    TwentyORMExceptionCode,
+  TwentyORMException,
+  TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
   T extends ObjectLiteral,

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class DropStandardIdFromCoreEntities1770047816358
   implements MigrationInterface
@@ -24,9 +24,7 @@ export class DropStandardIdFromCoreEntities1770047816358
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."skill" ADD "standardId" uuid`,
-    );
+    await queryRunner.query(`ALTER TABLE "core"."skill" ADD "standardId" uuid`);
     await queryRunner.query(
       `ALTER TABLE "core"."objectMetadata" ADD "standardId" uuid`,
     );
@@ -34,8 +32,6 @@ export class DropStandardIdFromCoreEntities1770047816358
       `ALTER TABLE "core"."fieldMetadata" ADD "standardId" uuid`,
     );
     await queryRunner.query(`ALTER TABLE "core"."role" ADD "standardId" uuid`);
-    await queryRunner.query(
-      `ALTER TABLE "core"."agent" ADD "standardId" uuid`,
-    );
+    await queryRunner.query(`ALTER TABLE "core"."agent" ADD "standardId" uuid`);
   }
 }

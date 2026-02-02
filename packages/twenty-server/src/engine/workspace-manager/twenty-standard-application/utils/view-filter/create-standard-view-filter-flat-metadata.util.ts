@@ -1,6 +1,7 @@
 import { type ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -8,7 +9,6 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 import { type AllStandardObjectViewFilterName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-filter-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
-import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 export type CreateStandardViewFilterOptions<
   O extends AllStandardObjectName,

@@ -1,4 +1,5 @@
 import { isDefined } from 'class-validator';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -10,7 +11,6 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type AllStandardObjectViewName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
-import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 export type CreateStandardViewOptions<O extends AllStandardObjectName> = {
   viewName: AllStandardObjectViewName<O>;
