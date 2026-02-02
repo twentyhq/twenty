@@ -6,7 +6,6 @@ const { TwentyUiButton } = globalThis.RemoteComponents;
 
 export default jsx(TwentyUiButton, {
   variant: 'primary',
-  size: 'md',
   disabled: false,
   fullWidth: false,
   onClick: () => {
