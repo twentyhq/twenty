@@ -23,7 +23,7 @@ export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
       {
         updates: FlatEntityPropertiesUpdates<T>;
         // TMP remove when maps is universal based
-        universalIdentfier: string;
+        universalIdentifier: string;
       }
     >;
   };
@@ -106,7 +106,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     }
 
     initialDispatcher.updatedFlatEntityMaps.byId[toFlatEntity.id] = {
-      universalIdentfier: fromFlatEntity.universalIdentifier,
+      universalIdentifier: fromFlatEntity.universalIdentifier,
       updates,
     };
   }

@@ -73,7 +73,7 @@ export class LogicFunctionService {
           logicFunctionLayerId: logicFunctionToCreateLayerId,
         },
         workspaceId,
-        workspaceCustomApplicationId: resolvedOwnerFlatApplication.id,
+        ownerFlatApplication: resolvedOwnerFlatApplication,
       });
 
     const validateAndBuildResult =
