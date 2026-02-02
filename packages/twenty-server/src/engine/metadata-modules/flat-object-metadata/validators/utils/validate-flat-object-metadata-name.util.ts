@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import camelCase from 'lodash.camelcase';
 import { RESERVED_METADATA_NAME_KEYWORDS } from 'twenty-shared/metadata';
 
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
