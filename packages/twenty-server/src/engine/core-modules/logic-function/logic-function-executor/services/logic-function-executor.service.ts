@@ -6,7 +6,7 @@ import {
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -35,6 +35,7 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -68,6 +69,7 @@ export class LogicFunctionExecutorService
     private readonly functionBuildService: LogicFunctionBuildService,
     private readonly subscriptionService: SubscriptionService,
     private readonly auditService: AuditService,
+    private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
@@ -302,33 +304,35 @@ export class LogicFunctionExecutorService
     }
   }
 
-  // TODO: compute that when builing logic function layer and store it in logicFunctionLayer record
   async getAvailablePackages(logicFunctionId: string) {
     const logicFunction = await this.logicFunctionRepository.findOneOrFail({
       where: { id: logicFunctionId },
-      relations: ['logicFunctionLayer'],
+      relations: ['logicFunctionLayer', 'application'],
     });
 
-    const packageJson = logicFunction.logicFunctionLayer.packageJson;
+    console.log(
+      'getAvailablePackages',
+      logicFunction.logicFunctionLayer.availablePackages,
+      isEmptyObject(logicFunction.logicFunctionLayer.availablePackages),
+    );
 
-    const yarnLock = logicFunction.logicFunctionLayer.yarnLock;
+    if (isEmptyObject(logicFunction.logicFunctionLayer.availablePackages)) {
+      await this.logicFunctionLayerService.update(
+        logicFunction.logicFunctionLayer.id,
+        {},
+        logicFunction.application.universalIdentifier,
+        logicFunction.workspaceId,
+      );
 
-    const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
-
-    const versions: Record<string, string> = {};
-
-    let match: RegExpExecArray | null;
-
-    while ((match = packageVersionRegex.exec(yarnLock)) !== null) {
-      const packageName = match[1].split('@', 1)[0];
-      const version = match[2];
-
-      if (packageJson.dependencies?.[packageName]) {
-        versions[packageName] = version;
-      }
+      return (
+        await this.logicFunctionRepository.findOneOrFail({
+          where: { id: logicFunctionId },
+          relations: ['logicFunctionLayer'],
+        })
+      ).logicFunctionLayer.availablePackages;
     }
 
-    return versions;
+    return logicFunction.logicFunctionLayer.availablePackages;
   }
 
   private async throttleExecution(workspaceId: string) {

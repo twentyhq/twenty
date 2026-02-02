@@ -1,6 +1,3 @@
-import { basename, extname, relative, sep } from 'path';
-import { readFile } from 'fs-extra';
-import { glob } from 'fast-glob';
 import {
   type EntityFilePaths,
   extractDefineEntity,
@@ -9,23 +6,26 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import {
+  type FrontComponentConfig,
+  type LogicFunctionConfig,
+  type ApplicationConfig,
+} from '@/sdk';
+import { glob } from 'fast-glob';
+import { readFile } from 'fs-extra';
+import { basename, extname, relative, sep } from 'path';
+import {
   type ApplicationManifest,
-  type Manifest,
   type AssetManifest,
   ASSETS_DIR,
   type FieldManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
+  type Manifest,
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
 import { assertUnreachable } from 'twenty-shared/utils';
-import {
-  type ApplicationConfig,
-  type FrontComponentConfig,
-  type LogicFunctionConfig,
-} from '@/sdk';
-import type { Sources } from 'twenty-shared/types';
+import { type Sources } from 'twenty-shared/types';
 import * as fs from 'fs-extra';
 
 const loadSources = async (appPath: string): Promise<string[]> => {

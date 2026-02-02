@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/logic-function/constants/default-tool-input-schema.constant';
 import { type CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import {
@@ -19,13 +20,13 @@ export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
     logicFunctionLayerId: string;
   };
   workspaceId: string;
-  workspaceCustomApplicationId: string;
+  ownerFlatApplication: FlatApplication;
 };
 
 export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   createLogicFunctionInput: rawCreateLogicFunctionInput,
   workspaceId,
-  workspaceCustomApplicationId,
+  ownerFlatApplication,
 }: FromCreateLogicFunctionInputToFlatLogicFunctionArgs): FlatLogicFunction => {
   const id = v4();
   const currentDate = new Date();
@@ -39,6 +40,9 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     rawCreateLogicFunctionInput.builtHandlerPath ??
     `${baseFolder}/${DEFAULT_BUILT_HANDLER_PATH}`;
 
+  const universalIdentifier =
+    rawCreateLogicFunctionInput.universalIdentifier ?? v4();
+
   return {
     id,
     cronTriggerSettings: null,
@@ -50,12 +54,11 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     handlerName:
       rawCreateLogicFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
     builtHandlerPath,
-    universalIdentifier:
-      rawCreateLogicFunctionInput.universalIdentifier ?? v4(),
+    universalIdentifier,
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),
     deletedAt: null,
-    applicationId: workspaceCustomApplicationId,
+    applicationId: ownerFlatApplication.id,
     runtime: LogicFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,
     logicFunctionLayerId: rawCreateLogicFunctionInput.logicFunctionLayerId,
@@ -74,5 +77,9 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
         ? DEFAULT_TOOL_INPUT_SCHEMA
         : null,
     isTool: rawCreateLogicFunctionInput?.isTool ?? false,
+    __universal: {
+      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
+      universalIdentifier,
+    },
   };
 };

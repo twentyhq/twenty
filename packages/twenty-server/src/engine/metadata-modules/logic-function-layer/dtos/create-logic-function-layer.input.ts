@@ -11,4 +11,7 @@ export class CreateLogicFunctionLayerInput {
   @IsString()
   @Field(() => String, { nullable: false })
   yarnLockChecksum: string;
+
+  @Field(() => String)
+  applicationUniversalIdentifier: string;
 }

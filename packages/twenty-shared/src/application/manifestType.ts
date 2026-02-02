@@ -1,13 +1,11 @@
-import {
-  type ApplicationManifest,
-  type ObjectManifest,
-  type LogicFunctionManifest,
-  type AssetManifest,
-  type FrontComponentManifest,
-  type RoleManifest,
-  type FieldManifest,
-} from '@/application';
 import { type Sources } from '@/types';
+import { type ApplicationManifest } from './applicationType';
+import { type AssetManifest } from './assetManifestType';
+import { type FieldManifest } from './fieldManifestType';
+import { type FrontComponentManifest } from './frontComponentManifestType';
+import { type LogicFunctionManifest } from './logicFunctionManifestType';
+import { type ObjectManifest } from './objectManifestType';
+import { type RoleManifest } from './roleManifestType';
 
 export type Manifest = {
   application: ApplicationManifest;

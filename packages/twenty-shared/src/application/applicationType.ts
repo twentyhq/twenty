@@ -1,7 +1,5 @@
-import {
-  type ApplicationVariables,
-  type SyncableEntityOptions,
-} from '@/application';
+import { type ApplicationVariables } from './applicationVariablesType';
+import { type SyncableEntityOptions } from './syncableEntityOptionsType';
 
 export type ApplicationMarketplaceData = {
   author?: string;

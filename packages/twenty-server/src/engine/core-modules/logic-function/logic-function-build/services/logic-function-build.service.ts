@@ -61,7 +61,7 @@ export class LogicFunctionBuildService {
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: 'package.json',
-      sourceFile: JSON.stringify(flatLogicFunctionLayer.packageJson),
+      sourceFile: JSON.stringify(flatLogicFunctionLayer.packageJson, null, 2),
       mimeType: undefined,
       settings: {
         isTemporaryFile: false,
@@ -74,7 +74,7 @@ export class LogicFunctionBuildService {
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: 'yarn.lock',
-      sourceFile: JSON.stringify(flatLogicFunctionLayer.yarnLock),
+      sourceFile: flatLogicFunctionLayer.yarnLock,
       mimeType: undefined,
       settings: {
         isTemporaryFile: false,

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { FileFolder } from 'twenty-shared/types';
+import { PackageJson } from 'type-fest';
 
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -13,6 +14,7 @@ import { getLastCommonLayerDependencies } from 'src/engine/core-modules/logic-fu
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
 export class LogicFunctionLayerService {
@@ -24,7 +26,11 @@ export class LogicFunctionLayerService {
   ) {}
 
   async create(
-    { packageJsonChecksum, yarnLockChecksum }: CreateLogicFunctionLayerInput,
+    {
+      packageJsonChecksum,
+      yarnLockChecksum,
+      applicationUniversalIdentifier,
+    }: CreateLogicFunctionLayerInput,
     workspaceId: string,
   ) {
     const logicFunctionLayer = this.logicFunctionLayerRepository.create({
@@ -35,8 +41,15 @@ export class LogicFunctionLayerService {
       workspaceId,
     });
 
-    const savedLayer =
-      await this.logicFunctionLayerRepository.save(logicFunctionLayer);
+    const availablePackages = await this.getAvailablePackages({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    const savedLayer = await this.logicFunctionLayerRepository.save({
+      ...logicFunctionLayer,
+      availablePackages,
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'logicFunctionLayerMaps',
@@ -48,9 +61,18 @@ export class LogicFunctionLayerService {
   async update(
     id: string,
     data: QueryDeepPartialEntity<LogicFunctionLayerEntity>,
+    applicationUniversalIdentifier: string,
     workspaceId: string,
   ) {
-    const result = await this.logicFunctionLayerRepository.update(id, data);
+    const availablePackages = await this.getAvailablePackages({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    const result = await this.logicFunctionLayerRepository.update(id, {
+      ...data,
+      availablePackages,
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'logicFunctionLayerMaps',
@@ -106,6 +128,58 @@ export class LogicFunctionLayerService {
       return commonLayer;
     }
 
-    return this.create({ packageJsonChecksum, yarnLockChecksum }, workspaceId);
+    return this.create(
+      { packageJsonChecksum, yarnLockChecksum, applicationUniversalIdentifier },
+      workspaceId,
+    );
+  }
+
+  private async getAvailablePackages({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }) {
+    const packageJson = JSON.parse(
+      (
+        await streamToBuffer(
+          await this.fileStorageService.readFile_v2({
+            workspaceId,
+            applicationUniversalIdentifier,
+            fileFolder: FileFolder.Source,
+            resourcePath: 'package.json',
+          }),
+        )
+      ).toString('utf-8'),
+    ) as PackageJson;
+
+    const yarnLock = (
+      await streamToBuffer(
+        await this.fileStorageService.readFile_v2({
+          workspaceId,
+          applicationUniversalIdentifier,
+          fileFolder: FileFolder.Source,
+          resourcePath: 'yarn.lock',
+        }),
+      )
+    ).toString('utf-8');
+
+    const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
+
+    const versions: Record<string, string> = {};
+
+    let match: RegExpExecArray | null;
+
+    while ((match = packageVersionRegex.exec(yarnLock)) !== null) {
+      const packageName = match[1].split('@', 1)[0];
+      const version = match[2];
+
+      if (packageJson.dependencies?.[packageName]) {
+        versions[packageName] = version;
+      }
+    }
+
+    return versions;
   }
 }

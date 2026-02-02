@@ -27,6 +27,7 @@ jobs:
         packages/twenty-front/**
         packages/twenty-ui/**
         packages/twenty-shared/**
+        packages/twenty-sdk/**
   changed-files-check-e2e:
     uses: ./.github/workflows/changed-files.yaml
     with:
@@ -85,6 +86,7 @@ jobs:
         run: |
           npx nx build twenty-shared
           npx nx build twenty-ui
+          npx nx build twenty-sdk
       - name: Install Playwright
         run: |
           cd packages/twenty-front

@@ -15,7 +15,7 @@ import {
 } from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import { pascalCase } from 'twenty-shared/utils';
 
 export class ApiService {
   private client: AxiosInstance;
@@ -102,14 +102,14 @@ export class ApiService {
     }
   }
 
-  async findOneApplication(
+  async checkApplicationExist(
     universalIdentifier: string,
-  ): Promise<ApiResponse<ApplicationManifest>> {
+  ): Promise<ApiResponse<boolean>> {
     try {
       const query = `
-        query FindOneApplication($universalIdentifier: String!) {
-          findOneApplication(universalIdentifier: $universalIdentifier) {
-            id
+        query CheckApplicationExist($universalIdentifier: UUID!) {
+          checkApplicationExist(universalIdentifier: $universalIdentifier)
+        }
       `;
       const response = await this.client.post(
         '/metadata',
@@ -134,7 +134,7 @@ export class ApiService {
 
       return {
         success: true,
-        data: response.data.data.findOneApplication,
+        data: response.data.data.checkApplicationExist,
         message: `Successfully find application`,
       };
     } catch (error) {
@@ -145,20 +145,12 @@ export class ApiService {
     }
   }
 
-  async createApplicationIfNotExist(
+  async createApplication(
     manifest: Manifest,
   ): Promise<ApiResponse<ApplicationManifest>> {
-    const application = await this.findOneApplication(
-      manifest.application.universalIdentifier,
-    );
-
-    if (isDefined(application)) {
-      return application;
-    }
-
     try {
       const mutation = `
-        mutation CreateOneApplication($input: CreateOneApplicationInput!) {
+        mutation CreateOneApplication($input: CreateApplicationInput!) {
           createOneApplication(input: $input) {
             id
             universalIdentifier

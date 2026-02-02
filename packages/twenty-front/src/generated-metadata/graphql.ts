@@ -2392,6 +2392,7 @@ export type MutationCreateOneLogicFunctionArgs = {
 
 
 export type MutationCreateOneLogicFunctionLayerArgs = {
+  applicationUniversalIdentifier: Scalars['String'];
   packageJsonChecksum: Scalars['JSON'];
   yarnLockChecksum: Scalars['String'];
 };
@@ -3555,6 +3556,7 @@ export type Query = {
   chatMessages: Array<AgentMessage>;
   chatThread: AgentChatThread;
   chatThreads: Array<AgentChatThread>;
+  checkApplicationExist: Scalars['Boolean'];
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   commandMenuItem?: Maybe<CommandMenuItem>;
@@ -3667,6 +3669,12 @@ export type QueryChatThreadArgs = {
 };
 
 
+export type QueryCheckApplicationExistArgs = {
+  id?: InputMaybe<Scalars['UUID']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
+};
+
+
 export type QueryCheckUserExistsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -3700,7 +3708,8 @@ export type QueryFindOneAgentArgs = {
 
 
 export type QueryFindOneApplicationArgs = {
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
 

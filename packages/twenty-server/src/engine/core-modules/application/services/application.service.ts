@@ -123,6 +123,20 @@ export class ApplicationService {
     });
   }
 
+  async checkApplicationExist({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }) {
+    return isDefined(
+      await this.findOneApplication({ id, universalIdentifier, workspaceId }),
+    );
+  }
+
   async findOneApplication({
     id,
     universalIdentifier,
@@ -131,7 +145,7 @@ export class ApplicationService {
     id?: string;
     universalIdentifier?: string;
     workspaceId: string;
-  }): Promise<ApplicationEntity> {
+  }): Promise<ApplicationEntity | null> {
     if (!isDefined(id) && !isDefined(universalIdentifier)) {
       throw new ApplicationException(
         `Either id or universalIdentifier must be provided to find application.`,
@@ -143,7 +157,8 @@ export class ApplicationService {
       workspaceId,
       ...(isDefined(id) ? { id } : { universalIdentifier }),
     };
-    const application = await this.applicationRepository.findOne({
+
+    return await this.applicationRepository.findOne({
       where,
       relations: [
         'logicFunctions',
@@ -151,6 +166,22 @@ export class ApplicationService {
         'objects',
         'applicationVariables',
       ],
+    });
+  }
+
+  async findOneApplicationOrThrow({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity> {
+    const application = await this.findOneApplication({
+      id,
+      universalIdentifier,
+      workspaceId,
     });
 
     if (!isDefined(application)) {

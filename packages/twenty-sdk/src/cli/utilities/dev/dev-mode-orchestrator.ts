@@ -295,7 +295,51 @@ export class DevModeOrchestrator {
             result.manifest.application.universalIdentifier,
         });
 
-        await this.apiService.createApplicationIfNotExist(result.manifest);
+        const checkApplicationExistResult =
+          await this.apiService.checkApplicationExist(
+            result.manifest.application.universalIdentifier,
+          );
+
+        if (!checkApplicationExistResult.success) {
+          this.uiStateManager.addEvent({
+            message: `Failed to check if application ${result.manifest.application.universalIdentifier} already exists`,
+            status: 'error',
+          });
+          this.uiStateManager.updateManifestState({
+            manifestStatus: 'error',
+            error: `Failed to check if application already exists`,
+          });
+          return;
+        }
+
+        const applicationExists = checkApplicationExistResult.data;
+
+        if (!applicationExists) {
+          this.uiStateManager.addEvent({
+            message: 'Creating application',
+            status: 'info',
+          });
+
+          const createApplicationResult =
+            await this.apiService.createApplication(result.manifest);
+
+          if (createApplicationResult.success) {
+            this.uiStateManager.addEvent({
+              message: 'Application created',
+              status: 'success',
+            });
+          } else {
+            this.uiStateManager.addEvent({
+              message: `Application creation failed with error ${JSON.stringify(createApplicationResult.error, null, 2)}`,
+              status: 'error',
+            });
+            this.uiStateManager.updateManifestState({
+              manifestStatus: 'error',
+              error: `Application creation failed with error ${JSON.stringify(createApplicationResult.error, null, 2)}`,
+            });
+            return;
+          }
+        }
 
         for (const [
           builtPath,

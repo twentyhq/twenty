@@ -65,6 +65,21 @@ export class ApplicationResolver {
     return this.applicationService.findManyApplications(workspaceId);
   }
 
+  @Query(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async checkApplicationExist(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
+    @Args('universalIdentifier', { type: () => UUIDScalarType, nullable: true })
+    universalIdentifier?: string,
+  ) {
+    return await this.applicationService.checkApplicationExist({
+      id,
+      universalIdentifier,
+      workspaceId,
+    });
+  }
+
   @Query(() => ApplicationDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async findOneApplication(
@@ -73,7 +88,7 @@ export class ApplicationResolver {
     @Args('universalIdentifier', { type: () => UUIDScalarType, nullable: true })
     universalIdentifier?: string,
   ) {
-    return await this.applicationService.findOneApplication({
+    return await this.applicationService.findOneApplicationOrThrow({
       id,
       universalIdentifier,
       workspaceId,
@@ -82,11 +97,11 @@ export class ApplicationResolver {
 
   @Mutation(() => ApplicationDTO)
   async createOneApplication(
-    @Args() data: CreateApplicationInput,
+    @Args('input') input: CreateApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     return await this.applicationService.create({
-      ...data,
+      ...input,
       sourceType: 'local',
       workspaceId,
     });
@@ -126,9 +141,18 @@ export class ApplicationResolver {
       );
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     await this.workspaceMigrationRunnerService.run({
       actions,
       workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     return true;
