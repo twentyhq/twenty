@@ -28,15 +28,22 @@ export const useRecordPageLayoutId = ({
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const { data: pageLayoutsData } = useQuery(FIND_PAGE_LAYOUTS, {
-    variables: {
-      objectMetadataId: objectMetadataItem.id,
+  const { data: pageLayoutsData, loading: pageLayoutsLoading } = useQuery(
+    FIND_PAGE_LAYOUTS,
+    {
+      variables: {
+        objectMetadataId: objectMetadataItem.id,
+      },
+      skip: !isRecordPageLayoutEditingEnabled || !objectMetadataItem?.id,
     },
-    skip: !isRecordPageLayoutEditingEnabled || !objectMetadataItem?.id,
-  });
+  );
 
   const pageLayoutId = useMemo(() => {
     if (isRecordPageLayoutEditingEnabled) {
+      if (pageLayoutsLoading) {
+        return null;
+      }
+
       const recordPageLayout = pageLayoutsData?.getPageLayouts?.find(
         (layout) => layout.type === PageLayoutType.RECORD_PAGE,
       );
@@ -52,6 +59,7 @@ export const useRecordPageLayoutId = ({
     });
   }, [
     isRecordPageLayoutEditingEnabled,
+    pageLayoutsLoading,
     pageLayoutsData,
     record,
     targetObjectNameSingular,
