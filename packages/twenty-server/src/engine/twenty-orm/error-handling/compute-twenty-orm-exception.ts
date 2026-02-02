@@ -58,6 +58,27 @@ export const computeTwentyORMException = async (
       );
     }
 
+    if (error.message.includes('invalid input syntax for type')) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (error.message.includes('malformed array literal')) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (error.message.match(/column .+ does not exist/)) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const errorCode = (error as QueryFailedErrorWithCode).code;
 
     if (isDefined(errorCode) && POSTGRESQL_ERROR_CODES.includes(errorCode)) {
