@@ -146,14 +146,6 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
           `Migrated workflow version ${version.id} in workspace ${workspaceId}`,
         );
       }
-
-      const oldServerlessFunctionIds = [
-        ...new Set(targetsList.map((target) => target.serverlessFunctionId)),
-      ];
-      await this.deleteOldLogicFunctions(
-        workspaceId,
-        oldServerlessFunctionIds,
-      );
     } else {
       this.logger.log(
         `[DRY RUN] Would create ${targetsList.length} new logic function(s), migrate files, update workflow steps, and delete ${new Set(targetsList.map((t) => t.serverlessFunctionId)).size} old logic function(s) in workspace ${workspaceId}`,
@@ -235,9 +227,10 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     serverlessFunctionId: string,
     version: string,
   ): Promise<string> {
+    const workspacePrefix = `workspace-${workspaceId}`;
     const oldPaths = {
-      built: `${OLD_BUILT_FOLDER}/${serverlessFunctionId}/${version}`,
-      source: `${OLD_SOURCE_FOLDER}/${serverlessFunctionId}/${version}`,
+      built: `${workspacePrefix}/${OLD_BUILT_FOLDER}/${serverlessFunctionId}/${version}`,
+      source: `${workspacePrefix}/${OLD_SOURCE_FOLDER}/${serverlessFunctionId}/${version}`,
     };
 
     const tempRoot = await fs.mkdtemp(
@@ -290,22 +283,6 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       resourcePath,
       localPath: sourceTempDir,
     });
-  }
-
-  private async deleteOldLogicFunctions(
-    workspaceId: string,
-    oldServerlessFunctionIds: string[],
-  ): Promise<void> {
-    for (const id of oldServerlessFunctionIds) {
-      await this.logicFunctionService.destroyOne({
-        id,
-        workspaceId,
-        isSystemBuild: true,
-      });
-      this.logger.log(
-        `Deleted old logic function ${id} in workspace ${workspaceId}`,
-      );
-    }
   }
 
   private async writeSourcesToLocalFolder(

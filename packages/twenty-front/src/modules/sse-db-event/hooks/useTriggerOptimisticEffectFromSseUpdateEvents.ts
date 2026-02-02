@@ -34,8 +34,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       objectRecordEvents: ObjectRecordEvent[];
       objectMetadataItem: ObjectMetadataItem;
     }) => {
-
-
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
