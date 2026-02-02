@@ -1,3 +1,4 @@
+import camelCase from 'lodash.camelcase';
 import { type STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -18,8 +19,8 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   ATTACHMENT_STANDARD_FIELD_IDS,
+  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
@@ -138,7 +139,9 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
           ] || 'IconBuildingSkyscraper';
 
-        const morphFieldName = `target${capitalize(sourceFlatObjectMetadata.nameSingular)}`;
+        const morphFieldName = camelCase(
+          `target_${capitalize(sourceFlatObjectMetadata.nameSingular)}`,
+        );
         const fieldName = isObjectMigratedToMorphRelations
           ? morphFieldName
           : sourceFlatObjectMetadata.nameSingular;
