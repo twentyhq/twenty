@@ -67,6 +67,12 @@ export const PageLayoutRendererContent = () => {
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
+  const isMobile = useIsMobile();
+
+  if (!isDefined(currentPageLayout)) {
+    return null;
+  }
+
   const handleAddTab =
     isPageLayoutInEditMode &&
     shouldEnableTabEditingFeatures(currentPageLayout?.type ?? null)
@@ -79,12 +85,6 @@ export const PageLayoutRendererContent = () => {
           });
         }
       : undefined;
-
-  const isMobile = useIsMobile();
-
-  if (!isDefined(currentPageLayout)) {
-    return null;
-  }
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
