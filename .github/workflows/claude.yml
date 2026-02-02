@@ -74,7 +74,7 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           additional_permissions: |
             actions: read
-          claude_args: "--max-turns 50"
+          claude_args: "--max-turns 50 --model opus"
 
   claude-cross-repo:
     if: github.event_name == 'repository_dispatch'
@@ -139,7 +139,7 @@ jobs:
           prompt: ${{ steps.prompt.outputs.prompt }}
           additional_permissions: |
             actions: read
-          claude_args: "--max-turns 50"
+          claude_args: "--max-turns 50 --model opus"
       - name: Post response to source issue
         if: always()
         uses: actions/github-script@v7
