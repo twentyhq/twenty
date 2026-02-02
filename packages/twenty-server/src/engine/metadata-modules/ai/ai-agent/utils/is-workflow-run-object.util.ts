@@ -1,5 +1,5 @@
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
+import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 // All workflow-related standard object IDs that should be filtered out from agent access
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [

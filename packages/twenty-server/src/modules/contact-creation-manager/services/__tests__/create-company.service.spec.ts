@@ -3,17 +3,17 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import axios from 'axios';
 import {
-  ConnectedAccountProvider,
-  FieldActorSource,
+    ConnectedAccountProvider,
+    FieldActorSource,
 } from 'twenty-shared/types';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import {
-  type CompanyToCreate,
-  CreateCompanyService,
+    type CompanyToCreate,
+    CreateCompanyService,
 } from 'src/modules/contact-creation-manager/services/create-company.service';
+import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 jest.mock('axios');
 

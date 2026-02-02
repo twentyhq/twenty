@@ -1,13 +1,13 @@
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import {
-  TAB_PROPS,
-  WIDGET_PROPS,
+    TAB_PROPS,
+    WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
 import {
-  type StandardPageLayoutConfig,
-  type StandardPageLayoutTabConfig,
+    type StandardPageLayoutConfig,
+    type StandardPageLayoutTabConfig,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
+import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 const OPPORTUNITY_PAGE_TABS = {
   home: {

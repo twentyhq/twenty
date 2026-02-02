@@ -1,16 +1,16 @@
 import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-  type FieldMetadataDefaultValueForAnyType,
-  type FieldMetadataSettings,
-  type FieldMetadataType,
+    type FieldMetadataComplexOption,
+    type FieldMetadataDefaultOption,
+    type FieldMetadataDefaultValueForAnyType,
+    type FieldMetadataSettings,
+    type FieldMetadataType,
 } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
+import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 export type CreateStandardRelationFieldContext<
   O extends AllStandardObjectName,

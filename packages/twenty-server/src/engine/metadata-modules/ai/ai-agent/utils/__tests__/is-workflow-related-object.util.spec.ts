@@ -1,5 +1,5 @@
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
+import { STANDARD_OBJECTS } from "twenty-shared/metadata";
 
 describe('isWorkflowRelatedObject', () => {
   it('should return true for workflow-related objects', () => {
