@@ -6,8 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import {
-    FlatEntityMapsException,
-    FlatEntityMapsExceptionCode,
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { MetadataFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';

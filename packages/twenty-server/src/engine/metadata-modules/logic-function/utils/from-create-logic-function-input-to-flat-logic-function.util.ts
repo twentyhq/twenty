@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/logic-function/constants/default-tool-input-schema.constant';
 import { type CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import {
@@ -42,6 +42,7 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
 
   const universalIdentifier =
     rawCreateLogicFunctionInput.universalIdentifier ?? v4();
+
   return {
     id,
     cronTriggerSettings: null,
