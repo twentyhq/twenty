@@ -6,7 +6,7 @@ import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -396,6 +396,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataId,
       });
 
+    const isNavigationMenuItemEnabled =
+      existingFeatureFlagsMap[FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED] ??
+      false;
+
+    const flatNavigationMenuItemToCreate = isNavigationMenuItemEnabled
+      ? await this.computeFlatNavigationMenuItemToCreate({
+          view: flatDefaultViewToCreate,
+          workspaceId,
+          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        })
+      : null;
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -428,6 +440,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
+            ...(isDefined(flatNavigationMenuItemToCreate)
+              ? {
+                  navigationMenuItem: {
+                    flatEntityToCreate: [flatNavigationMenuItemToCreate],
+                    flatEntityToDelete: [],
+                    flatEntityToUpdate: [],
+                  },
+                }
+              : {}),
           },
           workspaceId,
           isSystemBuild: false,
@@ -459,19 +480,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    const isNavigationMenuItemEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED,
-        workspaceId,
-      );
-
-    if (isNavigationMenuItemEnabled) {
-      await this.createWorkspaceNavigationMenuItemForNewObjectDefaultView({
-        view: flatDefaultViewToCreate,
-        workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
-      });
-    } else {
+    if (!isNavigationMenuItemEnabled) {
       await this.createWorkspaceFavoriteForNewObjectDefaultView({
         view: flatDefaultViewToCreate,
         workspaceId,
@@ -548,7 +557,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return defaultViewFields;
   }
 
-  private async createWorkspaceNavigationMenuItemForNewObjectDefaultView({
+  private async computeFlatNavigationMenuItemToCreate({
     view,
     workspaceId,
     workspaceCustomApplicationId,
@@ -556,7 +565,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     view: FlatView;
     workspaceId: string;
     workspaceCustomApplicationId: string;
-  }) {
+  }): Promise<FlatNavigationMenuItem> {
     const { flatNavigationMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatNavigationMenuItemMaps',
@@ -576,7 +585,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const newId = uuidv4();
     const now = new Date().toISOString();
 
-    const flatNavigationMenuItemToCreate: FlatNavigationMenuItem = {
+    return {
       id: newId,
       universalIdentifier: newId,
       userWorkspaceId: null,
@@ -591,32 +600,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdAt: now,
       updatedAt: now,
     };
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            navigationMenuItem: {
-              flatEntityToCreate: [flatNavigationMenuItemToCreate],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-          },
-          workspaceId,
-          isSystemBuild: true,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Failed to create workspace navigation menu item for new object default view',
-      );
-    }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatNavigationMenuItemMaps',
-    ]);
   }
 
   private async createWorkspaceFavoriteForNewObjectDefaultView({
