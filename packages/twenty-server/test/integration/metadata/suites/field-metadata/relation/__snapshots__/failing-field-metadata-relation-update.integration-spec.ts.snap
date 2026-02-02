@@ -11,12 +11,6 @@ exports[`Field metadata relation update should fail relation when name is not in
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Name should be in camelCase",
-                "userFriendlyMessage": "Name should be in camelCase",
-                "value": "New Name",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
                 "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
                 "value": "New Name",
