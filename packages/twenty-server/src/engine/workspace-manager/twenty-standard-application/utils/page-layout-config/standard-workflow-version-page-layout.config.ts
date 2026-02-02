@@ -36,7 +36,8 @@ export const STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG = {
   layoutName: 'workflowVersionRecordPage',
   name: 'Default Workflow Version Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+  objectUniversalIdentifier:
+    STANDARD_OBJECTS.workflowVersion.universalIdentifier,
   universalIdentifier: '20202020-a107-4007-8007-a0bcf10ab007',
   defaultTabUniversalIdentifier:
     WORKFLOW_VERSION_PAGE_TABS.flow.universalIdentifier,

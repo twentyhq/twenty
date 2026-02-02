@@ -60,8 +60,11 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       const objectRecordsPermissions: ObjectsPermissions = {};
 
       for (const objectMetadata of workspaceObjectMetadataCollection) {
-        const { id: objectMetadataId, isSystem, universalIdentifier } =
-          objectMetadata;
+        const {
+          id: objectMetadataId,
+          isSystem,
+          universalIdentifier,
+        } = objectMetadata;
 
         let canRead = role.canReadAllObjectRecords;
         let canUpdate = role.canUpdateAllObjectRecords;

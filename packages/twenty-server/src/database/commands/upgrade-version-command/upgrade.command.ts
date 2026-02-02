@@ -32,7 +32,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
 
-     // 1.17 Commands
+    // 1.17 Commands
     protected readonly deleteFileRecordsCommand: DeleteFileRecordsCommand,
     protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
     protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,

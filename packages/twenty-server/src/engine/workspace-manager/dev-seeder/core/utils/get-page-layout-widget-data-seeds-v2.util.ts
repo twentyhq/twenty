@@ -26,7 +26,8 @@ export const getPageLayoutWidgetDataSeedsV2 = (
 ): SeederFlatPageLayoutWidget[] => {
   const opportunityObject = objectMetadataItems.find(
     (obj) =>
-      obj.universalIdentifier === STANDARD_OBJECTS.opportunity.universalIdentifier,
+      obj.universalIdentifier ===
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
   );
   const companyObject = objectMetadataItems.find(
     (obj) =>
