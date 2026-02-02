@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { ADMIN_ROLE } from 'src/engine/metadata-modules/role/constants/admin-role';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -98,10 +98,10 @@ export class WorkflowExecutionContextService {
 
     // Use the application's role if set, otherwise fall back to admin role
     // In the future we should probably assign the Admin role to the Standard Application
-    let roleId = application.defaultLogicFunctionRoleId;
+    let roleId = application.defaultRoleId;
 
     if (!isDefined(roleId)) {
-      // Fallback: Look up admin role for existing workspaces without defaultLogicFunctionRoleId
+      // Fallback: Look up admin role for existing workspaces without defaultRoleId
       const adminRole = await this.roleService.getRoleByUniversalIdentifier({
         universalIdentifier: ADMIN_ROLE.standardId,
         workspaceId,
@@ -118,7 +118,7 @@ export class WorkflowExecutionContextService {
       workspace,
       application: {
         ...application,
-        defaultLogicFunctionRoleId: roleId,
+        defaultRoleId: roleId,
       },
     });
 

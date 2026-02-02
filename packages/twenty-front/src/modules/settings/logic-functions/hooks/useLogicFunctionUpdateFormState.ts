@@ -28,10 +28,8 @@ type SetLogicFunctionFormValues = Dispatch<
 
 export const useLogicFunctionUpdateFormState = ({
   logicFunctionId,
-  logicFunctionVersion = 'draft',
 }: {
   logicFunctionId: string;
-  logicFunctionVersion?: string;
 }): {
   formValues: LogicFunctionFormValues;
   logicFunction: LogicFunction | null;
@@ -67,7 +65,6 @@ export const useLogicFunctionUpdateFormState = ({
   const { loading: logicFunctionSourceCodeLoading } =
     useGetOneLogicFunctionSourceCode({
       id: logicFunctionId,
-      version: logicFunctionVersion,
       onCompleted: async (data: FindOneLogicFunctionSourceCodeQuery) => {
         const code = data?.getLogicFunctionSourceCode;
 

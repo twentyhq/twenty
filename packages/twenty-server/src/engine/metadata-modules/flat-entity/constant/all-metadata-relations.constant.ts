@@ -85,6 +85,11 @@ export const ALL_METADATA_RELATIONS = {
         flatEntityForeignKeyAggregator: null,
         foreignKey: 'availabilityObjectMetadataId',
       },
+      frontComponent: {
+        metadataName: 'frontComponent',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'frontComponentId',
+      },
     },
     oneToMany: {},
   },
@@ -306,6 +311,11 @@ export const ALL_METADATA_RELATIONS = {
         foreignKey: 'objectMetadataId',
       },
       application: null,
+      defaultTabToFocusOnMobileAndSidePanel: {
+        metadataName: 'pageLayoutTab',
+        flatEntityForeignKeyAggregator: null,
+        foreignKey: 'defaultTabToFocusOnMobileAndSidePanelId',
+      },
     },
     oneToMany: {
       tabs: { metadataName: 'pageLayoutTab' },

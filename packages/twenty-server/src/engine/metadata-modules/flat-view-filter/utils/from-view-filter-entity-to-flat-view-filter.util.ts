@@ -81,7 +81,6 @@ export const fromViewFilterEntityToFlatViewFilter = ({
       fieldMetadataUniversalIdentifier,
       viewFilterGroupUniversalIdentifier,
       viewUniversalIdentifier,
-      value: viewFilterEntityWithoutRelations.value,
     },
   };
 };

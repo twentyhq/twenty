@@ -59,6 +59,16 @@ const failingCommandMenuItemCreationTestCases: EachTestingContext<TestContext>[]
         },
       },
     },
+    {
+      title: 'when creating with both workflowVersionId and frontComponentId',
+      context: {
+        input: {
+          workflowVersionId: faker.string.uuid(),
+          frontComponentId: faker.string.uuid(),
+          label: 'Test Label',
+        },
+      },
+    },
   ];
 
 describe('CommandMenuItem creation should fail', () => {

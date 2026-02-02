@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
 import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/delete-agent-action-handler.service';
@@ -67,10 +69,12 @@ import { UpdateViewGroupActionHandlerService } from 'src/engine/workspace-manage
 import { CreateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/create-view-action-handler.service';
 import { DeleteViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/delete-view-action-handler.service';
 import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/update-view-action-handler.service';
-import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/function-build.module';
 
 @Module({
-  imports: [WorkspaceSchemaManagerModule, FunctionBuildModule],
+  imports: [
+    TypeOrmModule.forFeature([ApplicationEntity]),
+    WorkspaceSchemaManagerModule,
+  ],
   providers: [
     CreateFieldActionHandlerService,
     UpdateFieldActionHandlerService,

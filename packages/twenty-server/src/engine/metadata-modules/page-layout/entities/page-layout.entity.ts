@@ -59,6 +59,16 @@ export class PageLayoutEntity
   })
   tabs: Relation<PageLayoutTabEntity[]>;
 
+  @Column({ nullable: true, type: 'uuid' })
+  defaultTabToFocusOnMobileAndSidePanelId: string | null;
+
+  @ManyToOne(() => PageLayoutTabEntity, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'defaultTabToFocusOnMobileAndSidePanelId' })
+  defaultTabToFocusOnMobileAndSidePanel: Relation<PageLayoutTabEntity> | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

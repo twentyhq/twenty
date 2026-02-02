@@ -389,66 +389,43 @@ export const failingCreateInputByFieldMetadataType: {
   [FieldMetadataType.FILES]: [
     {
       input: {
-        filesField: 'not-a-files-array',
+        filesField: 'not-an-addFiles-property',
       },
     },
     {
       input: {
-        filesField: [{ invalidField: 'test' }],
+        filesField: { addFiles: [{ invalidField: 'test' }] },
       },
     },
     {
       input: {
-        filesField: [{ fileId: 'not-a-uuid', label: 'Document.pdf' }],
-      },
-    },
-    {
-      input: {
-        filesField: [
-          { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 12345 },
-        ],
+        filesField: {
+          addFiles: [{ fileId: 'not-a-uuid', label: 'Document.pdf' }],
+        },
       },
     },
     {
       input: {
         filesField: [
           {
-            fileId: '550e8400-e29b-41d4-a716-446655440000',
-            label: 'Document.pdf',
-            fileType: 'application/pdf',
+            addFiles: [
+              { fileId: '550e8400-e29b-41d4-a716-446655440000', label: 12345 },
+            ],
           },
         ],
       },
     },
-    //Should fail because max number of files is 2
     {
       input: {
-        filesField: [
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440000',
-            label: 'Document.pdf',
-          },
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440001',
-            label: 'Document.pdf',
-          },
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440002',
-            label: 'Document.pdf',
-          },
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440003',
-            label: 'Document.pdf',
-          },
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440004',
-            label: 'Document.pdf',
-          },
-          {
-            fileId: '550e8400-e29b-41d4-a716-446655440005',
-            label: 'Document.pdf',
-          },
-        ],
+        filesField: {
+          addFiles: [
+            {
+              fileId: '550e8400-e29b-41d4-a716-446655440000',
+              label: 'Document.pdf',
+              extension: 'not-allowed-in-input',
+            },
+          ],
+        },
       },
     },
   ],

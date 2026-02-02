@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
+import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
+import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -10,6 +12,7 @@ import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/com
 
 describe('CommandMenuItem creation should succeed', () => {
   let createdCommandMenuItemId: string;
+  let createdFrontComponentId: string | undefined;
   let companyObjectMetadataId: string;
   let personObjectMetadataId: string;
 
@@ -63,6 +66,13 @@ describe('CommandMenuItem creation should succeed', () => {
         input: { id: createdCommandMenuItemId },
       });
       createdCommandMenuItemId = undefined as unknown as string;
+    }
+    if (createdFrontComponentId) {
+      await deleteFrontComponent({
+        expectToFail: false,
+        input: { id: createdFrontComponentId },
+      });
+      createdFrontComponentId = undefined;
     }
   });
 
@@ -160,6 +170,36 @@ describe('CommandMenuItem creation should succeed', () => {
       workflowVersionId,
       label: 'Global Command',
       availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    });
+  });
+
+  it('should create command menu item with frontComponentId', async () => {
+    const { data: frontComponentData } = await createFrontComponent({
+      expectToFail: false,
+      input: { name: 'Test Front Component' },
+    });
+
+    createdFrontComponentId = frontComponentData?.createFrontComponent?.id;
+    jestExpectToBeDefined(createdFrontComponentId);
+
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        frontComponentId: createdFrontComponentId,
+        label: 'Front Component Command',
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      frontComponentId: createdFrontComponentId,
+      label: 'Front Component Command',
+      frontComponent: {
+        id: createdFrontComponentId,
+        name: 'Test Front Component',
+      },
     });
   });
 });

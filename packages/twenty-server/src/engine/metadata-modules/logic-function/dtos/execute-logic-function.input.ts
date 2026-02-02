@@ -19,11 +19,4 @@ export class ExecuteLogicFunctionInput {
   })
   @IsObject()
   payload: JSON;
-
-  @Field(() => String, {
-    nullable: false,
-    description: 'Version of the logic function to execute',
-    defaultValue: 'latest',
-  })
-  version: string;
 }

@@ -1,79 +1,35 @@
 import { v4 } from 'uuid';
 
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
-import { type AllStandardPageLayoutName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-name.type';
-import { type AllStandardPageLayoutTabName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-tab-name.type';
-import { type AllStandardPageLayoutWidgetName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-page-layout-widget-name.type';
 
-type StandardPageLayoutWidgetIds<
-  L extends AllStandardPageLayoutName,
-  T extends AllStandardPageLayoutTabName<L>,
-> = Record<AllStandardPageLayoutWidgetName<L, T>, { id: string }>;
+type WidgetIds = Record<string, { id: string }>;
 
-type StandardPageLayoutTabIds<L extends AllStandardPageLayoutName> = {
-  [T in AllStandardPageLayoutTabName<L>]: {
-    id: string;
-    widgets: StandardPageLayoutWidgetIds<L, T>;
-  };
-};
+type TabIds = Record<string, { id: string; widgets: WidgetIds }>;
 
-export type StandardPageLayoutMetadataRelatedEntityIds = {
-  [L in AllStandardPageLayoutName]: {
-    id: string;
-    tabs: StandardPageLayoutTabIds<L>;
-  };
-};
+export type StandardPageLayoutMetadataRelatedEntityIds = Record<
+  string,
+  { id: string; tabs: TabIds }
+>;
 
-const computeStandardPageLayoutWidgetIds = <
-  L extends AllStandardPageLayoutName,
-  T extends AllStandardPageLayoutTabName<L>,
->({
-  layoutName,
-  tabName,
-}: {
-  layoutName: L;
-  tabName: T;
-}): StandardPageLayoutWidgetIds<L, T> => {
-  // @ts-expect-error legacy generic pattern
-  const tabDefinition = STANDARD_PAGE_LAYOUTS[layoutName].tabs[tabName] as {
-    widgets: Record<string, unknown>;
-  };
+const computeWidgetIds = (widgets: Record<string, unknown>): WidgetIds => {
+  const widgetIds: WidgetIds = {};
 
-  const widgetNames = Object.keys(
-    tabDefinition.widgets,
-  ) as AllStandardPageLayoutWidgetName<L, T>[];
-
-  const widgetIds = {} as StandardPageLayoutWidgetIds<L, T>;
-
-  for (const widgetName of widgetNames) {
+  for (const widgetName of Object.keys(widgets)) {
     widgetIds[widgetName] = { id: v4() };
   }
 
   return widgetIds;
 };
 
-const computeStandardPageLayoutTabIds = <L extends AllStandardPageLayoutName>({
-  layoutName,
-}: {
-  layoutName: L;
-}): StandardPageLayoutTabIds<L> => {
-  const layoutDefinition = STANDARD_PAGE_LAYOUTS[layoutName];
+const computeTabIds = (
+  tabs: Record<string, { widgets: Record<string, unknown> }>,
+): TabIds => {
+  const tabIds: TabIds = {};
 
-  const tabNames = Object.keys(
-    layoutDefinition.tabs,
-  ) as AllStandardPageLayoutTabName<L>[];
-
-  const tabIds = {} as StandardPageLayoutTabIds<L>;
-
-  for (const tabName of tabNames) {
-    const widgetIds = computeStandardPageLayoutWidgetIds({
-      layoutName,
-      tabName,
-    });
-
-    tabIds[tabName] = {
+  for (const tabTitle of Object.keys(tabs)) {
+    tabIds[tabTitle] = {
       id: v4(),
-      widgets: widgetIds,
+      widgets: computeWidgetIds(tabs[tabTitle].widgets),
     };
   }
 
@@ -82,18 +38,16 @@ const computeStandardPageLayoutTabIds = <L extends AllStandardPageLayoutName>({
 
 export const getStandardPageLayoutMetadataRelatedEntityIds =
   (): StandardPageLayoutMetadataRelatedEntityIds => {
-    const result = {} as StandardPageLayoutMetadataRelatedEntityIds;
+    const result: StandardPageLayoutMetadataRelatedEntityIds = {};
 
-    for (const layoutName of Object.keys(
-      STANDARD_PAGE_LAYOUTS,
-    ) as AllStandardPageLayoutName[]) {
-      const tabIds = computeStandardPageLayoutTabIds({
-        layoutName,
-      });
+    for (const layoutName of Object.keys(STANDARD_PAGE_LAYOUTS)) {
+      const layout = STANDARD_PAGE_LAYOUTS[
+        layoutName as keyof typeof STANDARD_PAGE_LAYOUTS
+      ] as { tabs: Record<string, { widgets: Record<string, unknown> }> };
 
       result[layoutName] = {
         id: v4(),
-        tabs: tabIds,
+        tabs: computeTabIds(layout.tabs),
       };
     }
 

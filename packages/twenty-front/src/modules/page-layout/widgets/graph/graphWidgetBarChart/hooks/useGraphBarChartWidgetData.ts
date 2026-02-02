@@ -4,6 +4,7 @@ import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetad
 import { BAR_CHART_DATA } from '@/page-layout/widgets/graph/graphql/queries/barChartData';
 import { type BarChartSeriesWithColor } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartSeries';
 import { getEffectiveGroupMode } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/getEffectiveGroupMode';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
 import { determineChartItemColor } from '@/page-layout/widgets/graph/utils/determineChartItemColor';
@@ -11,7 +12,6 @@ import { determineGraphColorMode } from '@/page-layout/widgets/graph/utils/deter
 import { extractBarChartDataConfiguration } from '@/page-layout/widgets/graph/utils/extractBarChartDataConfiguration';
 import { parseGraphColor } from '@/page-layout/widgets/graph/utils/parseGraphColor';
 import { useQuery } from '@apollo/client';
-import { type BarDatum } from '@nivo/bar';
 import { isString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -28,7 +28,7 @@ type UseGraphBarChartWidgetDataProps = {
 };
 
 type UseGraphBarChartWidgetDataResult = {
-  data: BarDatum[];
+  data: BarChartDatum[];
   indexBy: string;
   keys: string[];
   series: BarChartSeriesWithColor[];
@@ -39,6 +39,7 @@ type UseGraphBarChartWidgetDataResult = {
   layout?: BarChartLayout;
   groupMode: 'grouped' | 'stacked' | undefined;
   loading: boolean;
+  isRefetching: boolean;
   error?: Error;
   hasTooManyGroups: boolean;
   formattedToRawLookup: Map<string, RawDimensionValue>;
@@ -65,6 +66,7 @@ export const useGraphBarChartWidgetData = ({
 
   const {
     data: queryData,
+    previousData,
     loading,
     error,
   } = useQuery(BAR_CHART_DATA, {
@@ -77,10 +79,18 @@ export const useGraphBarChartWidgetData = ({
     },
   });
 
-  const chartData = (queryData?.barChartData?.data as BarDatum[]) ?? [];
+  const effectiveQueryData = queryData ?? previousData;
 
-  const formattedToRawLookup = queryData?.barChartData?.formattedToRawLookup
-    ? new Map(Object.entries(queryData.barChartData.formattedToRawLookup))
+  const indexBy = effectiveQueryData?.barChartData?.indexBy ?? 'id';
+  const keys = effectiveQueryData?.barChartData?.keys ?? [];
+  const chartData =
+    (effectiveQueryData?.barChartData?.data as BarChartDatum[]) ?? [];
+
+  const formattedToRawLookup = effectiveQueryData?.barChartData
+    ?.formattedToRawLookup
+    ? new Map(
+        Object.entries(effectiveQueryData.barChartData.formattedToRawLookup),
+      )
     : new Map();
 
   const colorDeterminingFieldId = isDefined(
@@ -116,7 +126,7 @@ export const useGraphBarChartWidgetData = ({
     selectFieldOptions,
   });
 
-  const series = queryData?.barChartData?.series?.map(
+  const series = effectiveQueryData?.barChartData?.series?.map(
     (seriesItem: BarChartSeries): BarChartSeriesWithColor => {
       const rawValue = formattedToRawLookup.get(seriesItem.key);
 
@@ -136,23 +146,25 @@ export const useGraphBarChartWidgetData = ({
 
   return {
     data: chartData,
-    indexBy: queryData?.barChartData?.indexBy ?? 'id',
-    keys: queryData?.barChartData?.keys ?? [],
+    indexBy,
+    keys,
     series,
-    xAxisLabel: queryData?.barChartData?.xAxisLabel ?? '',
-    yAxisLabel: queryData?.barChartData?.yAxisLabel ?? '',
+    xAxisLabel: effectiveQueryData?.barChartData?.xAxisLabel ?? '',
+    yAxisLabel: effectiveQueryData?.barChartData?.yAxisLabel ?? '',
     showDataLabels: configuration.displayDataLabel ?? false,
     showLegend: configuration.displayLegend ?? true,
-    layout: queryData?.barChartData?.layout,
+    layout: effectiveQueryData?.barChartData?.layout,
     groupMode: getEffectiveGroupMode(
       configuration.groupMode,
       configuration.secondaryAxisGroupByFieldMetadataId,
     ),
-    hasTooManyGroups: queryData?.barChartData?.hasTooManyGroups ?? false,
+    hasTooManyGroups:
+      effectiveQueryData?.barChartData?.hasTooManyGroups ?? false,
     colorMode,
     formattedToRawLookup,
     objectMetadataItem,
-    loading,
+    loading: loading && !previousData,
+    isRefetching: loading && !!previousData,
     error,
   };
 };

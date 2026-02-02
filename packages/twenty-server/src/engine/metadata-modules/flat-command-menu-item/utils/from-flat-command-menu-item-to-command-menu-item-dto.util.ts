@@ -5,7 +5,8 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   flatCommandMenuItem: FlatCommandMenuItem,
 ): CommandMenuItemDTO => ({
   id: flatCommandMenuItem.id,
-  workflowVersionId: flatCommandMenuItem.workflowVersionId,
+  workflowVersionId: flatCommandMenuItem.workflowVersionId ?? undefined,
+  frontComponentId: flatCommandMenuItem.frontComponentId ?? undefined,
   label: flatCommandMenuItem.label,
   icon: flatCommandMenuItem.icon ?? undefined,
   isPinned: flatCommandMenuItem.isPinned,

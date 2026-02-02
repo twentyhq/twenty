@@ -1,6 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import GraphQLJSON from 'graphql-type-json';
+import { PageLayoutWidgetConditionalDisplay } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
@@ -46,6 +48,9 @@ export class PageLayoutWidgetDTO {
 
   @Field(() => WidgetConfiguration, { nullable: false })
   configuration: AllPageLayoutWidgetConfiguration;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
 
   @Field()
   createdAt: Date;

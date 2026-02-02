@@ -11,12 +11,15 @@ import {
 } from '@remote-dom/core/elements';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { jsx, jsxs } from 'react/jsx-runtime';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 import * as RemoteComponents from '../generated/remote-components';
 
 (globalThis as Record<string, unknown>).React = React;
 (globalThis as Record<string, unknown>).RemoteComponents = RemoteComponents;
+(globalThis as Record<string, unknown>).jsx = jsx;
+(globalThis as Record<string, unknown>).jsxs = jsxs;
 
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,

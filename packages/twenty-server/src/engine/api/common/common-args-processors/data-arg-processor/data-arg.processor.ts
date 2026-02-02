@@ -251,7 +251,7 @@ export class DataArgProcessor {
         const validatedValue = validateFilesFieldOrThrow(
           value,
           key,
-          fieldMetadata.settings as FieldMetadataSettingsMapping['FILES'],
+          fieldMetadata.settings as FieldMetadataSettingsMapping[FieldMetadataType.FILES],
         );
 
         return transformRawJsonField(validatedValue);

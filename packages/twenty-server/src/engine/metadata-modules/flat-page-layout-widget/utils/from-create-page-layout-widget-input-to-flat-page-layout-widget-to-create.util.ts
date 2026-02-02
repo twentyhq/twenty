@@ -44,5 +44,6 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     gridPosition: createPageLayoutWidgetInput.gridPosition,
     configuration: createPageLayoutWidgetInput.configuration,
     applicationId: workspaceCustomApplicationId,
+    conditionalDisplay: null,
   };
 };

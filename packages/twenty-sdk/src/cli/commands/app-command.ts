@@ -8,14 +8,11 @@ import { AuthListCommand } from './auth/auth-list';
 import { AuthLoginCommand } from './auth/auth-login';
 import { AuthLogoutCommand } from './auth/auth-logout';
 import { AuthStatusCommand } from './auth/auth-status';
-import { FunctionExecuteCommand } from './function/function-execute';
-import { FunctionLogsCommand } from './function/function-logs';
+import { LogicFunctionExecuteCommand } from './logic-function/logic-function-execute';
+import { LogicFunctionLogsCommand } from './logic-function/logic-function-logs';
 import { AuthSwitchCommand } from './auth/auth-switch';
-import {
-  EntityAddCommand,
-  isSyncableEntity,
-  SyncableEntity,
-} from './entity/entity-add';
+import { EntityAddCommand } from './entity/entity-add';
+import { SyncableEntity } from 'twenty-shared/application';
 
 export const registerCommands = (program: Command): void => {
   // Auth commands
@@ -67,8 +64,8 @@ export const registerCommands = (program: Command): void => {
   const uninstallCommand = new AppUninstallCommand();
   const addCommand = new EntityAddCommand();
   const generateCommand = new AppGenerateCommand();
-  const logsCommand = new FunctionLogsCommand();
-  const executeCommand = new FunctionExecuteCommand();
+  const logsCommand = new LogicFunctionLogsCommand();
+  const executeCommand = new LogicFunctionExecuteCommand();
 
   program
     .command('app:dev [appPath]')
@@ -101,14 +98,6 @@ export const registerCommands = (program: Command): void => {
       `Add a new entity to your application (${Object.values(SyncableEntity).join('|')})`,
     )
     .action(async (entityType?: string, options?: { path?: string }) => {
-      if (entityType && !isSyncableEntity(entityType)) {
-        console.error(
-          chalk.red(
-            `Invalid entity type "${entityType}". Must be one of: ${Object.values(SyncableEntity).join('|')}`,
-          ),
-        );
-        process.exit(1);
-      }
       await addCommand.execute(entityType as SyncableEntity, options?.path);
     });
 

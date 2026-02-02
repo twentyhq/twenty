@@ -15,9 +15,14 @@ import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/com
 @InputType()
 export class CreateCommandMenuItemInput {
   @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  workflowVersionId: string;
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  workflowVersionId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  frontComponentId?: string;
 
   @IsString()
   @IsNotEmpty()

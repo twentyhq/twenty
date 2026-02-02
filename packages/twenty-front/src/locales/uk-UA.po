@@ -258,11 +258,6 @@ msgstr "{formattedCreatedRecordsProgress} із {formattedRecordsToImportCount} �
 msgid "{grantedBy, plural, one {Granted for {grantedBy} object} other {Granted for {grantedBy} objects}}"
 msgstr "{grantedBy, plural, one {Доступ надано для {grantedBy} об'єкта} few {Доступ надано для {grantedBy} об'єктів} many {Доступ надано для {grantedBy} об'єктів} other {Доступ надано для {grantedBy} об'єктів}}"
 
-#. js-lingui-id: 2EPGDl
-#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
-msgid "{graphTypeLabel} Chart"
-msgstr "Діаграма {graphTypeLabel} "
-
 #. js-lingui-id: LB2Hw6
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "{headersCount} headers received"
@@ -591,6 +586,8 @@ msgstr "Скасувати"
 
 #. js-lingui-id: uyJsf6
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
@@ -782,11 +779,21 @@ msgstr "Додати обліковий запис"
 msgid "Add Approved Access Domain"
 msgstr "Додати затверджений домен доступу"
 
+#. js-lingui-id: Qi4JMf
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Add BCC"
+msgstr ""
+
 #. js-lingui-id: We0vOO
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
 #: src/modules/page-layout/widgets/standalone-rich-text/components/DashboardBlockDragHandleMenu.tsx
 msgid "Add Block"
 msgstr "Додати блок"
+
+#. js-lingui-id: 02qdT/
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Add CC"
+msgstr ""
 
 #. js-lingui-id: 3O3+7h
 #: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
@@ -1086,6 +1093,11 @@ msgstr ""
 #: src/modules/command-menu/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 msgid "Advanced objects"
 msgstr "Розширені об'єкти"
+
+#. js-lingui-id: x4BdSX
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Advanced options"
+msgstr ""
 
 #. js-lingui-id: WsKDNF
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
@@ -1621,6 +1633,9 @@ msgstr ""
 
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -1936,6 +1951,7 @@ msgid "Availability"
 msgstr "Доступність"
 
 #. js-lingui-id: csDS2L
+#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
 msgstr "Доступно"
@@ -1991,6 +2007,11 @@ msgstr "Кольори фону"
 #. js-lingui-id: EbQe8o
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Base Credits"
+msgstr ""
+
+#. js-lingui-id: PFohi3
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "BCC"
 msgstr ""
 
 #. js-lingui-id: EmSrGB
@@ -2114,6 +2135,11 @@ msgstr ""
 #. js-lingui-id: s1c0ja
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
+msgstr ""
+
+#. js-lingui-id: 8ds4Hj
+#: src/pages/settings/applications/components/SettingsAvailableApplicationCard.tsx
+msgid "by {author}"
 msgstr ""
 
 #. js-lingui-id: 8Pfllj
@@ -2307,6 +2333,16 @@ msgstr "Капча (перевірка проти ботів) ще завант�
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "Каталонська"
+
+#. js-lingui-id: K7tIrx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Category"
+msgstr ""
+
+#. js-lingui-id: XdZeJk
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "CC"
+msgstr ""
 
 #. js-lingui-id: tHntRt
 #: src/modules/ui/input/editor/components/CustomSideMenu.tsx
@@ -2617,7 +2653,7 @@ msgid "command menu item"
 msgstr ""
 
 #. js-lingui-id: 4XlFx/
-#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
 msgid "Commands copied to clipboard"
 msgstr "Команди скопійовані в буфер обміну"
 
@@ -2863,9 +2899,16 @@ msgid "Contains"
 msgstr "Містить"
 
 #. js-lingui-id: 4b3oEV
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Content"
 msgstr "Вміст"
+
+#. js-lingui-id: 9+fW4I
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Content tab"
+msgstr ""
 
 #. js-lingui-id: M73whl
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -2894,6 +2937,8 @@ msgid "Context size"
 msgstr "Розмір контексту"
 
 #. js-lingui-id: xGVfLh
+#: src/pages/onboarding/SyncEmails.tsx
+#: src/pages/onboarding/SyncEmails.tsx
 #: src/pages/onboarding/SyncEmails.tsx
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -2959,7 +3004,7 @@ msgid "Copy code"
 msgstr "Копіювати код"
 
 #. js-lingui-id: Es0ros
-#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
 msgid "Copy commands"
 msgstr "Копіювати команди"
 
@@ -3132,8 +3177,13 @@ msgstr "Створіть процес та поверніться сюди, що
 msgid "Create a workspace"
 msgstr "Створити робочий простір"
 
-#. js-lingui-id: /WlFSf
+#. js-lingui-id: f1uv2a
 #: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Create an app"
+msgstr ""
+
+#. js-lingui-id: /WlFSf
+#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
 msgid "Create an application"
 msgstr "Створити застосунок"
 
@@ -3256,6 +3306,11 @@ msgstr "Створено"
 #. js-lingui-id: 4fBuqE
 #: src/modules/command-menu/components/CommandMenuRecordInfo.tsx
 msgid "Created {beautifiedCreatedAt}"
+msgstr ""
+
+#. js-lingui-id: NCIYDF
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Created by"
 msgstr ""
 
 #. js-lingui-id: fR16ki
@@ -4067,6 +4122,11 @@ msgstr "Від’єднати"
 msgid "Details"
 msgstr "Деталі"
 
+#. js-lingui-id: irW7LP
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Developers links"
+msgstr ""
+
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -4422,7 +4482,6 @@ msgstr ""
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/auth/PasswordReset.tsx
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -4699,10 +4758,25 @@ msgstr "Введіть елемент"
 msgid "Enter array of items or variable expression"
 msgstr "Введіть масив елементів або змінний вираз"
 
+#. js-lingui-id: Pfwdl3
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Enter BCC emails, comma-separated"
+msgstr ""
+
+#. js-lingui-id: mPsuKh
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Enter CC emails, comma-separated"
+msgstr ""
+
 #. js-lingui-id: MJoxIi
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Enter email subject"
 msgstr "Введіть тему листа"
+
+#. js-lingui-id: TRQdC1
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "Enter emails, comma-separated"
+msgstr ""
 
 #. js-lingui-id: 8Ao1Tl
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect.tsx
@@ -4766,11 +4840,6 @@ msgstr ""
 msgid "Enter phone number"
 msgstr "Введіть номер телефону"
 
-#. js-lingui-id: l+91lo
-#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
-msgid "Enter receiver email"
-msgstr "Введіть електронну адресу одержувача"
-
 #. js-lingui-id: xCiJkz
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
 msgid "Enter test value"
@@ -4818,6 +4887,11 @@ msgstr "Введіть ID користувача або електронну а�
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterDropdownNumberInput.tsx
 msgid "Enter value"
 msgstr "Введіть значення"
+
+#. js-lingui-id: UX/3E/
+#: src/modules/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput.tsx
+msgid "Enter values, comma-separated"
+msgstr ""
 
 #. js-lingui-id: OjkRLQ
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -5570,6 +5644,11 @@ msgstr "Назва поля"
 msgid "Field on destination"
 msgstr "Поле на призначенні"
 
+#. js-lingui-id: RnX5oc
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "fields"
+msgstr ""
+
 #. js-lingui-id: vF68cg
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -5629,7 +5708,6 @@ msgid "File \"{fileName}\" uploaded successfully"
 msgstr "Файл \"{fileName}\" успішно завантажено"
 
 #. js-lingui-id: o7J4JM
-#: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/ai/components/SettingsSkillsTable.tsx
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -5791,6 +5869,11 @@ msgstr "з {startDay} по {endDay}"
 msgid "front component"
 msgstr ""
 
+#. js-lingui-id: +M+QLN
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "front components"
+msgstr ""
+
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -5800,6 +5883,11 @@ msgstr "Повний доступ"
 #. js-lingui-id: AHOl4W
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionLabelContainer.tsx
 msgid "Function name"
+msgstr ""
+
+#. js-lingui-id: SHkEmV
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "functions"
 msgstr ""
 
 #. js-lingui-id: xANKBj
@@ -6476,10 +6564,20 @@ msgstr "Налаштування введення"
 msgid "Insert a JSON input, then press \"Run\" to test your function."
 msgstr "Введіть JSON дані, а потім натисніть \"Запустити\" для тестування вашої функції."
 
+#. js-lingui-id: TKQ7K+
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Install"
+msgstr ""
+
 #. js-lingui-id: 4ZM8/a
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Install and manage applications"
 msgstr "Встановіть і керуйте застосунками"
+
+#. js-lingui-id: eQkgKV
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Installed"
+msgstr ""
 
 #. js-lingui-id: N52taw
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
@@ -6990,6 +7088,7 @@ msgid "Last payment failed. Please update your billing details."
 msgstr "Останній платіж не вдався. Будь ласка, оновіть свої платіжні дані."
 
 #. js-lingui-id: wL3cK8
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
 msgstr "Останні"
@@ -7151,6 +7250,11 @@ msgstr "Робоча URL-адреса"
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore.tsx
 msgid "Load more"
 msgstr "Завантажити ще"
+
+#. js-lingui-id: fS/QXs
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "Loading applications..."
+msgstr ""
 
 #. js-lingui-id: Nx262D
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -8022,6 +8126,11 @@ msgstr "Немає доступних ключів API"
 msgid "No API keys match your search"
 msgstr "Жоден ключ API не відповідає вашому запиту"
 
+#. js-lingui-id: rxBnh8
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
+msgid "No applications available"
+msgstr ""
+
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"
@@ -8543,6 +8652,11 @@ msgstr "Унікальні поля об'єкта"
 msgid "Object-Level"
 msgstr "Рівень об'єкта"
 
+#. js-lingui-id: Oq4fl6
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "objects"
+msgstr ""
+
 #. js-lingui-id: B3toQF
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -9047,6 +9161,7 @@ msgstr "Назавжди знищити Workflow"
 
 #. js-lingui-id: 9cDpsw
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
@@ -9057,6 +9172,11 @@ msgstr "Дозволи"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "Permissions · {objectLabelSingular}"
 msgstr "Дозволи · {objectLabelSingular}"
+
+#. js-lingui-id: 89ldLL
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Permissions tab"
+msgstr ""
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -9298,6 +9418,11 @@ msgstr "Пріоритетний"
 msgid "Priority"
 msgstr "Пріоритет"
 
+#. js-lingui-id: k62X/2
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "Priority support"
+msgstr ""
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -9355,6 +9480,11 @@ msgstr "Значення властивості"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Provide your OIDC provider details"
 msgstr "Надайте деталі вашого OIDC провайдера"
+
+#. js-lingui-id: jerYcl
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Providers"
+msgstr ""
 
 #. js-lingui-id: AULPv1
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -9463,7 +9593,7 @@ msgid "Read changelog"
 msgstr "Переглянути журнал змін"
 
 #. js-lingui-id: ibPuCP
-#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
 msgid "Read documentation"
 msgstr "Читати документацію"
 
@@ -10182,6 +10312,7 @@ msgid "Search an agent..."
 msgstr "Пошук агента..."
 
 #. js-lingui-id: fGTI3o
+#: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 msgid "Search an application"
 msgstr "Пошук застосунку"
@@ -10531,6 +10662,12 @@ msgstr "Виберіть стовпець заголовка"
 msgid "Select matching field"
 msgstr "Виберіть відповідне поле"
 
+#. js-lingui-id: fExHRM
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
+msgid "Select objects..."
+msgstr ""
+
 #. js-lingui-id: 8eJcRS
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Select one or several standard objects to activate below"
@@ -10724,6 +10861,7 @@ msgstr "Налаштування вашої бази даних..."
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -10747,6 +10885,11 @@ msgstr "Повний доступ до налаштувань"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Settings permissions"
 msgstr "Налаштування дозволів"
+
+#. js-lingui-id: rl/5Qa
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Settings tab"
+msgstr ""
 
 #. js-lingui-id: J2TlKG
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
@@ -11501,6 +11644,11 @@ msgstr "Завдання"
 msgid "Temporary Failure"
 msgstr "Тимчасова помилка"
 
+#. js-lingui-id: h0xgxg
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Terms / Privacy"
+msgstr ""
+
 #. js-lingui-id: xowcRf
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -11919,6 +12067,11 @@ msgstr "Таймінг"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "title"
 msgstr "заголовок"
+
+#. js-lingui-id: /jQctM
+#: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
+msgid "To"
+msgstr ""
 
 #. js-lingui-id: ecUA8p
 #: src/utils/date-utils.ts
@@ -12894,6 +13047,11 @@ msgstr "Для оновлення потрібен ID Webhook"
 msgid "Webhooks"
 msgstr "Веб-хуки"
 
+#. js-lingui-id: On0aF2
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+msgid "Website"
+msgstr ""
+
 #. js-lingui-id: zx4BuL
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -13015,6 +13173,8 @@ msgstr "Робочі процеси"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -13182,7 +13342,7 @@ msgid "You are not allowed to create records for this object"
 msgstr "Ви не маєте права створювати записи для цього об'єкта"
 
 #. js-lingui-id: iibZbD
-#: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
 msgid "You can either create a private app or share it to others"
 msgstr "Ви можете створити приватний застосунок або поділитися ним з іншими"
 

@@ -7,8 +7,8 @@ import {
 } from 'src/engine/core-modules/__mocks__/mockFlatObjectMetadatas';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 describe('SearchService', () => {
   let service: SearchService;
@@ -18,8 +18,8 @@ describe('SearchService', () => {
       providers: [
         SearchService,
         { provide: GlobalWorkspaceOrmManager, useValue: {} },
-        { provide: WorkspaceCacheStorageService, useValue: {} },
         { provide: FileService, useValue: {} },
+        { provide: TwentyConfigService, useValue: { get: () => false } },
       ],
     }).compile();
 
