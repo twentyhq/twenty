@@ -95,7 +95,13 @@ export class FlatSkillValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
-      belongsToTwentyStandardApp(existingSkill)
+      // TODO refactor once skill has been migrated to universal pattern
+      isDefined(existingSkill.__universal) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: existingSkill.universalIdentifier,
+        applicationUniversalIdentifier:
+          existingSkill.__universal.applicationUniversalIdentifier,
+      })
     ) {
       validationResult.errors.push({
         code: SkillExceptionCode.SKILL_IS_STANDARD,
@@ -151,9 +157,18 @@ export class FlatSkillValidatorService {
       (update) => update.property !== 'isActive',
     );
 
+    // TODO refactor once skill has been migrated to universal pattern
+    const isTwentyStandardSkill =
+      isDefined(fromFlatSkill.__universal) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: fromFlatSkill.universalIdentifier,
+        applicationUniversalIdentifier:
+          fromFlatSkill.__universal.applicationUniversalIdentifier,
+      });
+
     if (
       !buildOptions.isSystemBuild &&
-      belongsToTwentyStandardApp(fromFlatSkill) &&
+      isTwentyStandardSkill &&
       hasNonIsActiveUpdates
     ) {
       validationResult.errors.push({
@@ -165,7 +180,7 @@ export class FlatSkillValidatorService {
 
     // If only isActive is being updated on a standard skill, allow it
     if (
-      belongsToTwentyStandardApp(fromFlatSkill) &&
+      isTwentyStandardSkill &&
       isDefined(isActiveUpdate) &&
       !hasNonIsActiveUpdates
     ) {

@@ -101,7 +101,13 @@ export class FlatAgentValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
-      belongsToTwentyStandardApp(existingAgent)
+      // TODO refactor once agent has been migrated to universal pattern
+      isDefined(existingAgent.__universal) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: existingAgent.universalIdentifier,
+        applicationUniversalIdentifier:
+          existingAgent.__universal.applicationUniversalIdentifier,
+      })
     ) {
       validationResult.errors.push({
         code: AgentExceptionCode.AGENT_IS_STANDARD,
@@ -149,7 +155,13 @@ export class FlatAgentValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
-      belongsToTwentyStandardApp(fromFlatAgent)
+      // TODO refactor once agent has been migrated to universal pattern
+      isDefined(fromFlatAgent.__universal) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: fromFlatAgent.universalIdentifier,
+        applicationUniversalIdentifier:
+          fromFlatAgent.__universal.applicationUniversalIdentifier,
+      })
     ) {
       validationResult.errors.push({
         code: AgentExceptionCode.AGENT_IS_STANDARD,
