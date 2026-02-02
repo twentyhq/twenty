@@ -3,6 +3,28 @@
  * - Never ever mutate an existing universal identifier
  * - Deleting an existing unniversal identifier should be very rare
  */
+
+export const BASE_OBJECT_STANDARD_FIELD_IDS = {
+  id: '20202020-eda0-4cee-9577-3eb357e3c22b',
+  createdAt: '20202020-66ac-4502-9975-e4d959c50311',
+  updatedAt: '20202020-d767-4622-bdcf-d8a084834d86',
+  deletedAt: '20202020-b9a7-48d8-8387-b9a3090a50ec',
+} as const;
+
+export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
+  name: '20202020-ba07-4ffd-ba63-009491f5749c',
+  position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
+  createdBy: '20202020-be0e-4971-865b-32ca87cbb315',
+  updatedBy: 'd047ccb4-9469-4514-a982-29c4ae49317d',
+  activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
+  noteTargets: '20202020-01fd-4f37-99dc-9427a444018a',
+  taskTargets: '20202020-0860-4566-b865-bff3c626c303',
+  favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
+  attachments: '20202020-8d59-46ca-b7b2-73d167712134',
+  timelineActivities: '20202020-f1ef-4ba4-8f33-1a4577afa477',
+  searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
+} as const;
+
 export const STANDARD_OBJECTS = {
   attachment: {
     universalIdentifier: '20202020-bd3d-4c60-8dca-571c71d4447a',
@@ -49,6 +71,9 @@ export const STANDARD_OBJECTS = {
       targetWorkflow: {
         universalIdentifier: '20202020-f1e8-4c9d-8a7b-3f5e1d2c9a8b',
       },
+    },
+    morphIds: {
+      targetMorphId: { morphId: '20202020-f634-435d-ab8d-e1168b375c69' },
     },
     indexes: {
       taskIdIndex: {
@@ -1559,6 +1584,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-c595-449d-9f89-562758c9ee69',
       },
     },
+    morphIds: {
+      targetMorphId: { morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1' },
+    },
     indexes: {
       workspaceMemberIdIndex: {
         universalIdentifier: '6961c6d0-7992-4b4e-6c3d-90a1b92a3a91',
@@ -2000,6 +2028,7 @@ export const STANDARD_OBJECTS = {
   string,
   {
     universalIdentifier: string;
+    morphIds?: Record<string, { morphId: string }>;
     fields: Record<string, { universalIdentifier: string }>;
     indexes: Record<string, { universalIdentifier: string }>;
     views?: Record<

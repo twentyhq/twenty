@@ -18,11 +18,9 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  ATTACHMENT_STANDARD_FIELD_IDS,
-  TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
+  STANDARD_OBJECTS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
-import { type STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'timelineActivity',
@@ -33,9 +31,9 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 ] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
 
 const morphIdByRelationObjectNameSingular = {
-  timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+  timelineActivity: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
   favorite: null,
-  attachment: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+  attachment: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
   noteTarget: null,
   taskTarget: null,
 } satisfies Record<

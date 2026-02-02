@@ -11,7 +11,7 @@ import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-mana
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;

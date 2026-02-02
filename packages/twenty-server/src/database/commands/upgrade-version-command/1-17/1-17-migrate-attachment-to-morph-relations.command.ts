@@ -30,7 +30,6 @@ import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/wor
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 type RelationFieldMetadataSettings =
   FieldMetadataSettings<FieldMetadataType.RELATION>;
@@ -199,7 +198,7 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
 
       this.logger.log(`✅ Successfully migrated attachment records`);
 
-      const morphId = ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId;
+      const morphId = STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId;
 
       for (const {
         field: fieldToMigrate,
