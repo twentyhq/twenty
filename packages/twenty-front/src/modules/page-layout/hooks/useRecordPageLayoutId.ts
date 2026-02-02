@@ -1,4 +1,4 @@
-import { FIND_PAGE_LAYOUTS } from '@/dashboards/graphql/queries/findPageLayouts';
+import { FIND_PAGE_LAYOUTS } from '@/page-layout/graphql/queries/findPageLayouts';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
