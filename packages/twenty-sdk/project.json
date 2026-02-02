@@ -4,8 +4,7 @@
   "sourceRoot": "packages/twenty-sdk/src",
   "projectType": "library",
   "tags": [
-    "scope:sdk",
-    "scope:shared"
+    "scope:frontend"
   ],
   "targets": {
     "build": {
