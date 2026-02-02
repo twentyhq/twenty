@@ -75,7 +75,7 @@ export const PageLayoutRendererContent = () => {
 
   const handleAddTab =
     isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(currentPageLayout?.type ?? null)
+    shouldEnableTabEditingFeatures(currentPageLayout.type)
       ? () => {
           const newTabId = createPageLayoutTab(t`Untitled`);
           setTabSettingsOpenTabId(newTabId);
@@ -88,7 +88,7 @@ export const PageLayoutRendererContent = () => {
 
   const canEnableTabEditing =
     isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(currentPageLayout?.type ?? null);
+    shouldEnableTabEditingFeatures(currentPageLayout.type);
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
