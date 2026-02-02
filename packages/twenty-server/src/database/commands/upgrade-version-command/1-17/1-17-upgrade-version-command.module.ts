@@ -13,11 +13,13 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { CoreLogicFunctionLayerModule } from 'src/engine/core-modules/logic-function/logic-function-layer/logic-function-layer.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -38,6 +40,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
       AttachmentWorkspaceEntity,
       WebhookEntity,
       FileEntity,
+      LogicFunctionEntity,
     ]),
     DataSourceModule,
     WorkspaceCacheStorageModule,
@@ -48,6 +51,7 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
     FieldMetadataModule,
     ObjectMetadataModule,
     ApplicationModule,
+    CoreLogicFunctionLayerModule,
     LogicFunctionModule,
     RecordPositionModule,
     GlobalWorkspaceDataSourceModule,

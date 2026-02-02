@@ -7,11 +7,19 @@ import { Command } from 'nest-commander';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import {
+  DEFAULT_BUILT_HANDLER_PATH,
+  DEFAULT_HANDLER_NAME,
+  DEFAULT_SOURCE_HANDLER_PATH,
+  LogicFunctionEntity,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -21,12 +29,13 @@ import { Repository } from 'typeorm';
 
 const OLD_BUILT_FOLDER = 'built-function';
 const OLD_SOURCE_FOLDER = 'serverless-function';
-const SEED_VERSION = 'draft';
+const SEED_VERSION_DRAFT = 'draft';
+const SEED_VERSION_PUBLISHED = '1';
 
 @Command({
   name: 'upgrade:1-17:seed-workflow-v1-16',
   description:
-    '[Temporary] Seed a workflow + workflowVersion + logic function in v1.16 format (serverlessFunctionId, old file paths) for testing the 1-17 migrate-workflow-code-steps command.',
+    '[Temporary] Clean existing workflow runs, workflow versions, workflows and old file storage (built-function, serverless-function), then seed a workflow + two workflowVersions (DRAFT and ACTIVE) + logic function in v1.16 format for testing the 1-17 migrate-workflow-code-steps command.',
 })
 export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   protected readonly logger = new Logger(SeedWorkflowV1_16Command.name);
@@ -34,9 +43,12 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
-    private readonly logicFunctionService: LogicFunctionService,
+    private readonly applicationService: ApplicationService,
+    private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly fileStorageService: FileStorageService,
     private readonly recordPositionService: RecordPositionService,
   ) {
@@ -50,23 +62,18 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
       `Seeding workflow v1.16 data for workspace ${workspaceId}`,
     );
 
-    const flatLogicFunction = await this.logicFunctionService.createOne({
-      input: {
-        name: 'Seed code step (v1.16)',
-        description: 'Temporary logic function for 1.17 migration testing',
-        timeoutSeconds: 300,
-        isTool: false,
-      },
-      workspaceId,
-    });
+    await this.cleanWorkflowsAndOldFileStorage(workspaceId);
 
-    const logicFunctionId = flatLogicFunction.id;
+    const logicFunctionId = await this.insertLogicFunctionRow(workspaceId);
 
-    await this.writeOldFormatFiles(logicFunctionId);
+    await this.writeOldFormatFiles(logicFunctionId, SEED_VERSION_DRAFT);
+    await this.writeOldFormatFiles(logicFunctionId, SEED_VERSION_PUBLISHED);
 
     const workflowId = uuidv4();
-    const workflowVersionId = uuidv4();
-    const codeStepId = uuidv4();
+    const draftVersionId = uuidv4();
+    const activeVersionId = uuidv4();
+    const draftCodeStepId = uuidv4();
+    const activeCodeStepId = uuidv4();
 
     const workflowPosition =
       await this.recordPositionService.buildRecordPosition({
@@ -78,9 +85,19 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
         workspaceId,
       });
 
-    const workflowVersionPosition =
+    const draftVersionPosition =
       await this.recordPositionService.buildRecordPosition({
         value: 'first',
+        objectMetadata: {
+          isCustom: false,
+          nameSingular: 'workflowVersion',
+        },
+        workspaceId,
+      });
+
+    const activeVersionPosition =
+      await this.recordPositionService.buildRecordPosition({
+        value: 'last',
         objectMetadata: {
           isCustom: false,
           nameSingular: 'workflowVersion',
@@ -113,16 +130,16 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
       settings: { outputSchema: {} },
     };
 
-    const steps = [
+    const draftSteps = [
       {
-        id: codeStepId,
-        name: 'Code step',
+        id: draftCodeStepId,
+        name: 'Code step (draft)',
         type: WorkflowActionType.CODE,
         settings: {
           input: {
             serverlessFunctionId: logicFunctionId,
             serverlessFunctionInput: {},
-            serverlessFunctionVersion: SEED_VERSION,
+            serverlessFunctionVersion: SEED_VERSION_DRAFT,
           },
           outputSchema: {
             link: {
@@ -139,23 +156,150 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
     ];
 
     await workflowVersionRepository.insert({
-      id: workflowVersionId,
+      id: draftVersionId,
       workflowId,
       name: 'v1',
       status: WorkflowVersionStatus.DRAFT,
       trigger,
-      steps,
-      position: workflowVersionPosition,
+      steps: draftSteps,
+      position: draftVersionPosition,
+    });
+
+    const activeSteps = [
+      {
+        id: activeCodeStepId,
+        name: 'Code step (v1)',
+        type: WorkflowActionType.CODE,
+        settings: {
+          input: {
+            serverlessFunctionId: logicFunctionId,
+            serverlessFunctionInput: {},
+            serverlessFunctionVersion: SEED_VERSION_PUBLISHED,
+          },
+          outputSchema: {
+            link: {
+              tab: 'test',
+              icon: 'IconVariable',
+              label: 'Generate Function Output',
+              isLeaf: true,
+            },
+            _outputSchemaType: 'LINK',
+          },
+        },
+        valid: true,
+      },
+    ];
+
+    await workflowVersionRepository.insert({
+      id: activeVersionId,
+      workflowId,
+      name: 'v2',
+      status: WorkflowVersionStatus.ACTIVE,
+      trigger,
+      steps: activeSteps,
+      position: activeVersionPosition,
+    });
+
+    await workflowRepository.update(workflowId, {
+      lastPublishedVersionId: activeVersionId,
+      statuses: [WorkflowStatus.ACTIVE],
     });
 
     this.logger.log(
-      `Seeded workflow ${workflowId}, workflowVersion ${workflowVersionId}, logicFunction ${logicFunctionId} (v1.16 format) in workspace ${workspaceId}. Run upgrade:1-17:migrate-workflow-code-steps to test migration.`,
+      `Seeded workflow ${workflowId} with workflowVersions ${draftVersionId} (DRAFT) and ${activeVersionId} (ACTIVE), logicFunction ${logicFunctionId} (v1.16 format) in workspace ${workspaceId}. Run upgrade:1-17:migrate-workflow-code-steps to test migration.`,
     );
   }
 
-  private async writeOldFormatFiles(logicFunctionId: string): Promise<void> {
-    const builtFolder = `${OLD_BUILT_FOLDER}/${logicFunctionId}/${SEED_VERSION}`;
-    const sourceFolder = `${OLD_SOURCE_FOLDER}/${logicFunctionId}/${SEED_VERSION}`;
+  private async insertLogicFunctionRow(
+    workspaceId: string,
+  ): Promise<string> {
+    const { id: logicFunctionLayerId } =
+      await this.logicFunctionLayerService.createCommonLayerIfNotExist(
+        workspaceId,
+      );
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+    const applicationId = workspaceCustomFlatApplication.id;
+    const id = uuidv4();
+    const universalIdentifier = uuidv4();
+    const now = new Date();
+
+    await this.logicFunctionRepository.insert({
+      id,
+      workspaceId,
+      universalIdentifier,
+      applicationId,
+      name: 'Seed code step (v1.16)',
+      description: 'Temporary logic function for 1.17 migration testing',
+      sourceHandlerPath: DEFAULT_SOURCE_HANDLER_PATH,
+      builtHandlerPath: DEFAULT_BUILT_HANDLER_PATH,
+      handlerName: DEFAULT_HANDLER_NAME,
+      runtime: LogicFunctionRuntime.NODE22,
+      timeoutSeconds: 300,
+      checksum: null,
+      toolInputSchema: null,
+      isTool: false,
+      logicFunctionLayerId,
+      cronTriggerSettings: null,
+      databaseEventTriggerSettings: null,
+      httpRouteTriggerSettings: null,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+    });
+
+    return id;
+  }
+
+  private async cleanWorkflowsAndOldFileStorage(
+    workspaceId: string,
+  ): Promise<void> {
+    const workflowRunRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'workflowRun',
+        { shouldBypassPermissionChecks: true },
+      );
+    const workflowVersionRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        'workflowVersion',
+        { shouldBypassPermissionChecks: true },
+      );
+    const workflowRepository =
+      await this.globalWorkspaceOrmManager.getRepository(workspaceId, 'workflow', {
+        shouldBypassPermissionChecks: true,
+      });
+
+    const deletedRuns = await workflowRunRepository.delete({});
+    const deletedVersions = await workflowVersionRepository.delete({});
+    const deletedWorkflows = await workflowRepository.delete({});
+
+    this.logger.log(
+      `Cleaned workspace ${workspaceId}: ${deletedRuns.affected ?? 0} workflow run(s), ${deletedVersions.affected ?? 0} workflow version(s), ${deletedWorkflows.affected ?? 0} workflow(s)`,
+    );
+
+    try {
+      await this.fileStorageService.delete({ folderPath: OLD_BUILT_FOLDER });
+      await this.fileStorageService.delete({ folderPath: OLD_SOURCE_FOLDER });
+      this.logger.log(
+        `Cleaned old file storage: ${OLD_BUILT_FOLDER}, ${OLD_SOURCE_FOLDER}`,
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Old file storage cleanup skipped (folders may not exist): ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async writeOldFormatFiles(
+    logicFunctionId: string,
+    version: string,
+  ): Promise<void> {
+    const builtFolder = `${OLD_BUILT_FOLDER}/${logicFunctionId}/${version}`;
+    const sourceFolder = `${OLD_SOURCE_FOLDER}/${logicFunctionId}/${version}`;
 
     const builtSources = {
       'index.mjs': 'export default async function main() { return { message: "ok" }; }\n',
