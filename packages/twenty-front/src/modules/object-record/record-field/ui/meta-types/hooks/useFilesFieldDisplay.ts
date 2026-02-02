@@ -13,7 +13,7 @@ export const useFilesFieldDisplay = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValue<FieldFilesValue | undefined>(
+  const fieldValue = useRecordFieldValue<FieldFilesValue[] | undefined>(
     recordId,
     fieldName,
     fieldDefinition,
