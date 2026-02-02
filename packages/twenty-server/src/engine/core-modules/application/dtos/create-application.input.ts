@@ -25,6 +25,7 @@ export class CreateApplicationInput {
   version: string;
 
   @IsString()
+  @IsNotEmpty()
   @Field()
   sourcePath: string;
 }

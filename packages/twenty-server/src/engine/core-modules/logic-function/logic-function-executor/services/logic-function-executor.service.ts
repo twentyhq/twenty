@@ -310,12 +310,6 @@ export class LogicFunctionExecutorService
       relations: ['logicFunctionLayer', 'application'],
     });
 
-    console.log(
-      'getAvailablePackages',
-      logicFunction.logicFunctionLayer.availablePackages,
-      isEmptyObject(logicFunction.logicFunctionLayer.availablePackages),
-    );
-
     if (isEmptyObject(logicFunction.logicFunctionLayer.availablePackages)) {
       await this.logicFunctionLayerService.update(
         logicFunction.logicFunctionLayer.id,

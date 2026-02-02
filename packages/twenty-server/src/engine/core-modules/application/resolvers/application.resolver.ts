@@ -96,6 +96,7 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => ApplicationDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async createOneApplication(
     @Args('input') input: CreateApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -108,6 +109,7 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async syncApplication(
     @Args() { manifest }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -121,6 +123,7 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async installApplication(
     @Args() { workspaceMigration: { actions } }: InstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -159,6 +162,7 @@ export class ApplicationResolver {
   }
 
   @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async uninstallApplication(
     @Args() { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -173,6 +177,7 @@ export class ApplicationResolver {
 
   @Mutation(() => FileDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })

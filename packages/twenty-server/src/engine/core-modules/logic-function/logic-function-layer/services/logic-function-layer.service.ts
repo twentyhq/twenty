@@ -165,14 +165,15 @@ export class LogicFunctionLayerService {
       )
     ).toString('utf-8');
 
-    const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
+    const packageVersionRegex =
+      /^"(@?[^@]+(?:\/[^@]+)?)@.*?":\n\s+version:\s*(.+)$/gm;
 
     const versions: Record<string, string> = {};
 
     let match: RegExpExecArray | null;
 
     while ((match = packageVersionRegex.exec(yarnLock)) !== null) {
-      const packageName = match[1].split('@', 1)[0];
+      const packageName = match[1];
       const version = match[2];
 
       if (packageJson.dependencies?.[packageName]) {
