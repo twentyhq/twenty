@@ -1,10 +1,12 @@
+import { type GraphQLSchemaFactory } from '@nestjs/graphql';
+
 import { type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
-import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { metadataResolvers } from 'src/engine/api/graphql/metadata-resolvers';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { useDisableIntrospectionAndSuggestionsForUnauthenticatedUsers } from 'src/engine/core-modules/graphql/hooks/use-disable-introspection-and-suggestions-for-unauthenticated-users.hook';
@@ -23,13 +25,14 @@ export const metadataModuleFactory = async (
   cacheStorageService: CacheStorageService,
   metricsService: MetricsService,
   i18nService: I18nService,
+  graphQLSchemaFactory: GraphQLSchemaFactory,
 ): Promise<YogaDriverConfig> => {
+  const schema = await graphQLSchemaFactory.create([...metadataResolvers], {
+    numberScalarMode: 'integer',
+  });
+
   const config: YogaDriverConfig = {
-    autoSchemaFile: true,
-    include: [MetadataGraphQLApiModule],
-    renderGraphiQL() {
-      return renderApolloPlayground({ path: 'metadata' });
-    },
+    schema,
     resolvers: { JSON: GraphQLJSON },
     plugins: [
       useGraphQLErrorHandlerHook({

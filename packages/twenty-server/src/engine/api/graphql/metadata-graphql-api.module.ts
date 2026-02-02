@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
+import {
+  GraphQLModule,
+  GraphQLSchemaBuilderModule,
+  GraphQLSchemaFactory,
+} from '@nestjs/graphql';
 
 import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 
@@ -26,6 +30,7 @@ import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engin
         DataloaderModule,
         MetricsModule,
         I18nModule,
+        GraphQLSchemaBuilderModule,
       ],
       inject: [
         TwentyConfigService,
@@ -34,6 +39,7 @@ import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engin
         CacheStorageNamespace.EngineWorkspace,
         MetricsService,
         I18nService,
+        GraphQLSchemaFactory,
       ],
     }),
     MetadataEngineModule,
