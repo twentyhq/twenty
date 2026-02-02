@@ -4,26 +4,30 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
-import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { isExistingWidgetMissingOrDifferentType } from '@/command-menu/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
-import { useOpportunityDefaultChartConfig } from '@/page-layout/hooks/useOpportunityDefaultChartConfig';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
+import { useCreatePageLayoutFrontComponentWidget } from '@/page-layout/hooks/useCreatePageLayoutFrontComponentWidget';
 import { useCreatePageLayoutGraphWidget } from '@/page-layout/hooks/useCreatePageLayoutGraphWidget';
 import { useCreatePageLayoutIframeWidget } from '@/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { useCreatePageLayoutStandaloneRichTextWidget } from '@/page-layout/hooks/useCreatePageLayoutStandaloneRichTextWidget';
+import { useOpportunityDefaultChartConfig } from '@/page-layout/hooks/useOpportunityDefaultChartConfig';
 import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hooks/useRemovePageLayoutWidgetAndPreservePosition';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useQuery } from '@apollo/client';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlignBoxLeftTop,
+  IconApps,
   IconChartPie,
   IconFrame,
 } from 'twenty-ui/display';
-import { WidgetType } from '~/generated/graphql';
+import { type FrontComponent, WidgetType } from '~/generated/graphql';
 
 export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { pageLayoutId } = usePageLayoutIdFromContextStoreTargetedRecord();
@@ -43,8 +47,17 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   const { createPageLayoutStandaloneRichTextWidget } =
     useCreatePageLayoutStandaloneRichTextWidget(pageLayoutId);
 
+  const { createPageLayoutFrontComponentWidget } =
+    useCreatePageLayoutFrontComponentWidget(pageLayoutId);
+
   const { removePageLayoutWidgetAndPreservePosition } =
     useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
+
+  const { data: frontComponentsData } = useQuery<{
+    frontComponents: FrontComponent[];
+  }>(FIND_MANY_FRONT_COMPONENTS);
+
+  const frontComponents = frontComponentsData?.frontComponents ?? [];
 
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
@@ -127,11 +140,38 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     closeCommandMenu();
   };
 
+  const handleCreateFrontComponentWidget = (frontComponent: FrontComponent) => {
+    if (
+      isExistingWidgetMissingOrDifferentType(
+        existingWidget?.type,
+        WidgetType.FRONT_COMPONENT,
+      )
+    ) {
+      if (isDefined(pageLayoutEditingWidgetId)) {
+        removePageLayoutWidgetAndPreservePosition(pageLayoutEditingWidgetId);
+      }
+
+      const newWidget = createPageLayoutFrontComponentWidget(
+        frontComponent.name,
+        frontComponent.id,
+      );
+      setPageLayoutEditingWidgetId(newWidget.id);
+    }
+
+    closeCommandMenu();
+  };
+
+  const selectableItemIds = [
+    'chart',
+    'iframe',
+    'rich-text',
+    ...frontComponents.map(
+      (frontComponent) => `front-component-${frontComponent.id}`,
+    ),
+  ];
+
   return (
-    <CommandMenuList
-      commandGroups={[]}
-      selectableItemIds={['chart', 'iframe', 'rich-text']}
-    >
+    <CommandMenuList commandGroups={[]} selectableItemIds={selectableItemIds}>
       <CommandGroup heading={t`Widget type`}>
         <SelectableListItem
           itemId="chart"
@@ -168,6 +208,25 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
           />
         </SelectableListItem>
       </CommandGroup>
+
+      {frontComponents.length > 0 && (
+        <CommandGroup heading={t`Front Components`}>
+          {frontComponents.map((frontComponent) => (
+            <SelectableListItem
+              key={frontComponent.id}
+              itemId={`front-component-${frontComponent.id}`}
+              onEnter={() => handleCreateFrontComponentWidget(frontComponent)}
+            >
+              <CommandMenuItem
+                Icon={IconApps}
+                label={frontComponent.name}
+                id={`front-component-${frontComponent.id}`}
+                onClick={() => handleCreateFrontComponentWidget(frontComponent)}
+              />
+            </SelectableListItem>
+          ))}
+        </CommandGroup>
+      )}
     </CommandMenuList>
   );
 };

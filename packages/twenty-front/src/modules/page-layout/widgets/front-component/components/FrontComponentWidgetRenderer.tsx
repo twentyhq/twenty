@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { Suspense, lazy } from 'react';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -5,6 +6,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { isWidgetConfigurationOfType } from '@/command-menu/pages/page-layout/utils/isWidgetConfigurationOfType';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
+
+const StyledContainer = styled.div`
+  height: 100%;
+  overflow: auto;
+  width: 100%;
+`;
 
 const FrontComponentRenderer = lazy(() =>
   import('@/front-components/components/FrontComponentRenderer').then(
@@ -31,8 +38,10 @@ export const FrontComponentWidgetRenderer = ({
   const frontComponentId = configuration.frontComponentId;
 
   return (
-    <Suspense fallback={null}>
-      <FrontComponentRenderer frontComponentId={frontComponentId} />
-    </Suspense>
+    <StyledContainer>
+      <Suspense fallback={null}>
+        <FrontComponentRenderer frontComponentId={frontComponentId} />
+      </Suspense>
+    </StyledContainer>
   );
 };
