@@ -16,18 +16,12 @@ export class DropStandardIdFromCoreEntities1770047816358
       `ALTER TABLE "core"."fieldMetadata" DROP COLUMN "standardId"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."objectMetadata" DROP COLUMN "standardId"`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."skill" DROP COLUMN "standardId"`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "core"."skill" ADD "standardId" uuid`);
-    await queryRunner.query(
-      `ALTER TABLE "core"."objectMetadata" ADD "standardId" uuid`,
-    );
     await queryRunner.query(
       `ALTER TABLE "core"."fieldMetadata" ADD "standardId" uuid`,
     );
