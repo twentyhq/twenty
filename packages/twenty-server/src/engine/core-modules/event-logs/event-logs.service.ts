@@ -187,12 +187,12 @@ export class EventLogsService {
 
     if (isDefined(filters.dateRange?.start)) {
       whereClauses.push('"timestamp" >= {startDate:DateTime64(3)}');
-      params.startDate = filters.dateRange.start;
+      params.startDate = this.formatDateForClickHouse(filters.dateRange.start);
     }
 
     if (isDefined(filters.dateRange?.end)) {
       whereClauses.push('"timestamp" <= {endDate:DateTime64(3)}');
-      params.endDate = filters.dateRange.end;
+      params.endDate = this.formatDateForClickHouse(filters.dateRange.end);
     }
 
     if (table === EventLogTable.OBJECT_EVENT) {
@@ -206,6 +206,11 @@ export class EventLogsService {
         params.objectMetadataId = filters.objectMetadataId;
       }
     }
+  }
+
+  private formatDateForClickHouse(date: Date): string {
+    // ClickHouse DateTime64(3) expects format: YYYY-MM-DD HH:mm:ss.SSS (no 'Z' suffix)
+    return date.toISOString().replace('T', ' ').replace('Z', '');
   }
 
   private encodeCursor(timestamp: Date): string {

@@ -5,7 +5,9 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
+import { EventLogsGraphqlApiExceptionFilter } from 'src/engine/core-modules/event-logs/filters/event-logs-graphql-api-exception.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,15 +23,20 @@ import { EventLogQueryResult } from './dtos/event-log-result.output';
 
 @Resolver()
 @UseFilters(
+  AuthGraphqlApiExceptionFilter,
+  EventLogsGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 @UsePipes(ResolverValidationPipe)
-@UseGuards(SettingsPermissionGuard(PermissionFlagType.SECURITY))
 export class EventLogsResolver {
   constructor(private readonly eventLogsService: EventLogsService) {}
 
-  @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    EnterpriseFeaturesEnabledGuard,
+    SettingsPermissionGuard(PermissionFlagType.SECURITY),
+  )
   @Query(() => EventLogQueryResult)
   async eventLogs(
     @AuthWorkspace() workspace: WorkspaceEntity,
