@@ -9,17 +9,6 @@ import { useState } from 'react';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-const StyledSectionHeaderLeftComponent = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledGripIcon = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-`;
-
 const StyledFieldsContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -38,13 +27,6 @@ export const FieldsConfigurationSectionEditor = ({
   onSectionChange,
 }: FieldsConfigurationSectionEditorProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
-
-  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onSectionChange({
-      ...section,
-      title: event.target.value,
-    });
-  };
 
   const handleFieldChange = (
     fieldMetadataId: string,

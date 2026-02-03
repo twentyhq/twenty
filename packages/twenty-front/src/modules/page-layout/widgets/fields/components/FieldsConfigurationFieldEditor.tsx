@@ -13,7 +13,6 @@ type FieldsConfigurationFieldEditorProps = {
 export const FieldsConfigurationFieldEditor = ({
   field,
   fieldMetadata,
-  index,
   onToggleVisibility,
 }: FieldsConfigurationFieldEditorProps) => {
   const { getIcon } = useIcons();
