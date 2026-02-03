@@ -1,4 +1,9 @@
-import { Catch, type ExceptionFilter, ForbiddenException } from '@nestjs/common';
+import {
+  Catch,
+  type ExceptionFilter,
+  ForbiddenException,
+} from '@nestjs/common';
+
 import { msg } from '@lingui/core/macro';
 
 import { AuthenticationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -11,4 +16,3 @@ export class ForbiddenExceptionGraphqlFilter implements ExceptionFilter {
     });
   }
 }
-

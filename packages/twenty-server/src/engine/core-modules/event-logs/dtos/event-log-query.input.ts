@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsInt, IsOptional, Max, Min } from 'class-validator';
 
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
 import { EventLogTable } from 'twenty-shared/types';
 
 import { EventLogFiltersInput } from './event-log-filters.input';
