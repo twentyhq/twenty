@@ -9,4 +9,3 @@ export const formatDateForClickHouse = (date: Date): string => {
   // Extract date (YYYY-MM-DD) and time with milliseconds (HH:mm:ss.SSS)
   return `${iso.slice(0, 10)} ${iso.slice(11, 23)}`;
 };
-
