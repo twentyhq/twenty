@@ -3564,7 +3564,7 @@ export type PublicFeatureFlag = {
 export type PublicFeatureFlagMetadata = {
   __typename?: 'PublicFeatureFlagMetadata';
   description: Scalars['String'];
-  imagePath: Scalars['String'];
+  imagePath?: Maybe<Scalars['String']>;
   label: Scalars['String'];
 };
 

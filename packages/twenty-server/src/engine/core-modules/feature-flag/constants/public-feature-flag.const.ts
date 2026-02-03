@@ -3,7 +3,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 type FeatureFlagMetadata = {
   label: string;
   description: string;
-  imagePath: string;
+  imagePath?: string;
 };
 
 export type PublicFeatureFlag = {
@@ -18,7 +18,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Junction Relations',
       description:
         'Enable many-to-many relations through junction tables configuration',
-      imagePath: 'https://twenty.com/images/lab/is-junction-relations.png',
     },
   },
   {
