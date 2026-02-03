@@ -9,6 +9,8 @@
 
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
 export { componentRegistry } from './host/generated/host-component-registry';
+export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
+export { FrontComponentUpdateContextEffect } from './remote/components/FrontComponentUpdateContextEffect';
 export { FrontComponentWorkerEffect } from './remote/components/FrontComponentWorkerEffect';
 export {
   HtmlDiv,

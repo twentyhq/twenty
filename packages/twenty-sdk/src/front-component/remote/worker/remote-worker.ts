@@ -29,9 +29,6 @@ const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
 ) => {
-  (globalThis as Record<string, unknown>).frontComponentExecutionContext =
-    renderContext.executionContext;
-
   const batchedConnection = new BatchingRemoteConnection(connection);
   const root = document.createElement('remote-root') as RemoteRootElement;
   root.connect(batchedConnection);
@@ -44,4 +41,11 @@ const render: WorkerExports['render'] = async (
   reactRoot.render(componentModule.default);
 };
 
-ThreadWebWorker.self.export({ render });
+const updateContext: WorkerExports['updateContext'] = async (
+  context: FrontComponentExecutionContext,
+) => {
+  (globalThis as Record<string, unknown>).frontComponentExecutionContext =
+    context;
+};
+
+ThreadWebWorker.self.export({ render, updateContext });
