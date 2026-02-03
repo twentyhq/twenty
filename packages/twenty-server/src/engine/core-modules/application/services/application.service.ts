@@ -340,7 +340,10 @@ export class ApplicationService {
   }
 
   async uploadDefaultPackageFilesAndSetFileIds(
-    application: ApplicationEntity,
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
     const defaultPackageFields = await getDefaultApplicationPackageFields();
@@ -353,7 +356,10 @@ export class ApplicationService {
   }
 
   private async uploadDefaultPackageFilesAndUpdateApplication(
-    application: ApplicationEntity,
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >,
     defaultPackageFields: Awaited<
       ReturnType<typeof getDefaultApplicationPackageFields>
     >,

@@ -7,13 +7,14 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { LogicFunctionLayerEntity } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Command({
   name: 'upgrade:1-17:backfill-application-package-files',
@@ -28,6 +29,7 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
     protected readonly dataSourceService: DataSourceService,
     protected readonly applicationService: ApplicationService,
     protected readonly fileStorageService: FileStorageService,
+    protected readonly workspaceCacheService: WorkspaceCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -59,21 +61,16 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
         { workspaceId },
       );
 
-    const applicationRepository =
-      this.coreDataSource.getRepository(ApplicationEntity);
-    const applications = await applicationRepository.find({
-      where: { workspaceId },
-      select: [
-        'id',
-        'universalIdentifier',
-        'workspaceId',
-        'packageJsonFileId',
-        'yarnLockFileId',
-        'logicFunctionLayerId',
-      ],
-    });
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
 
-    for (const application of applications) {
+    const flatApplications = Object.values(
+      flatApplicationMaps.byId,
+    ) as FlatApplication[];
+
+    for (const application of flatApplications) {
       const needsDefaultBackfill =
         (application.id === twentyStandardFlatApplication.id ||
           application.id === workspaceCustomFlatApplication.id) &&
@@ -86,13 +83,8 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
         );
 
         if (!dryRun) {
-          const fullApplication = await applicationRepository.findOneOrFail({
-            where: { id: application.id },
-            relations: ['packageJsonFile', 'yarnLockFile'],
-          });
-
           await this.applicationService.uploadDefaultPackageFilesAndSetFileIds(
-            fullApplication,
+            application,
           );
         }
 
@@ -118,7 +110,7 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
 
   private async backfillApplicationFromLogicFunctionLayer(
     application: Pick<
-      ApplicationEntity,
+      FlatApplication,
       'id' | 'universalIdentifier' | 'workspaceId' | 'logicFunctionLayerId'
     >,
   ): Promise<void> {
