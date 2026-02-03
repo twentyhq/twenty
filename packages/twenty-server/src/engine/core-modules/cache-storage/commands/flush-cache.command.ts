@@ -3,8 +3,8 @@ import { Inject, Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-
 import { isNonEmptyString } from '@sniptt/guards';
+
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
@@ -29,24 +29,27 @@ export class FlushCacheCommand extends CommandRunner {
     options?: Record<string, string>,
   ): Promise<void> {
     try {
-    const namespaceArg = options?.namespace;
-    const namespacesToFlush = this.computeNamespacesToFlushOrThrow(
-      namespaceArg,
-    );
-    const pattern = options?.pattern ?? '*';
+      const namespaceArg = options?.namespace;
+      const namespacesToFlush =
+        this.computeNamespacesToFlushOrThrow(namespaceArg);
+      const pattern = options?.pattern ?? '*';
 
-    this.logger.log(
-      namespacesToFlush.length === 1
-        ? `Flushing namespace ${namespacesToFlush[0]} for pattern: ${pattern}...`
-        : `Flushing all namespaces for pattern: ${pattern}...`,
-    );
+      this.logger.log(
+        namespacesToFlush.length === 1
+          ? `Flushing namespace ${namespacesToFlush[0]} for pattern: ${pattern}...`
+          : `Flushing all namespaces for pattern: ${pattern}...`,
+      );
 
-    for (const namespace of namespacesToFlush) {
-      const cacheStorage = new CacheStorageService(this.cacheManager, namespace);
-      await cacheStorage.flushByPattern(pattern);
-    }
+      for (const namespace of namespacesToFlush) {
+        const cacheStorage = new CacheStorageService(
+          this.cacheManager,
+          namespace,
+        );
 
-    this.logger.log('Cache flushed');
+        await cacheStorage.flushByPattern(pattern);
+      }
+
+      this.logger.log('Cache flushed');
     } catch (error) {
       this.logger.error(error.message);
     }
@@ -60,15 +63,21 @@ export class FlushCacheCommand extends CommandRunner {
     }
 
     if (!isNonEmptyString(value)) {
-      throw new Error(`Invalid --namespace: ${value}. Valid values: ${NAMESPACE_VALUES.join(', ')}`);
+      throw new Error(
+        `Invalid --namespace: ${value}. Valid values: ${NAMESPACE_VALUES.join(', ')}`,
+      );
     }
+
     return [this.parseNamespaceOrThrow(value)];
   }
 
   private parseNamespaceOrThrow(value: string): CacheStorageNamespace {
     if (!NAMESPACE_VALUES.includes(value as CacheStorageNamespace)) {
-      throw new Error(`Invalid --namespace: ${value}. Valid values: ${NAMESPACE_VALUES.join(', ')}`);
+      throw new Error(
+        `Invalid --namespace: ${value}. Valid values: ${NAMESPACE_VALUES.join(', ')}`,
+      );
     }
+
     return value as CacheStorageNamespace;
   }
 
