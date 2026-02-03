@@ -34,7 +34,7 @@ const render: WorkerExports['render'] = async (
   const componentModule = await import(renderContext.componentUrl);
 
   const reactRoot = createRoot(root);
-  reactRoot.render(componentModule.default);
+  reactRoot.render(React.createElement(componentModule.default));
 };
 
 ThreadWebWorker.self.export({ render });
