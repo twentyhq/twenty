@@ -102,7 +102,7 @@ my-twenty-app/
 
 A livello generale:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and authentication commands that delegate to the local `twenty` CLI.
+* **package.json**: Dichiara il nome dell'app, la versione, i motori (Node 24+, Yarn 4) e aggiunge `twenty-sdk`, oltre a script come `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` e comandi di autenticazione che delegano alla CLI locale `twenty`.
 * **.gitignore**: Ignora i file generati comuni come `node_modules`, `.yarn`, `generated/` (client tipizzato), `dist/`, `build/`, cartelle di coverage, file di log e file `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Bloccano e configurano la toolchain Yarn 4 utilizzata dal progetto.
 * **.nvmrc**: Fissa la versione di Node.js prevista dal progetto.
@@ -111,23 +111,23 @@ A livello generale:
 * **public/**: Una cartella per archiviare risorse pubbliche (immagini, font, file statici) che saranno servite con la tua applicazione. I file collocati qui vengono caricati durante la sincronizzazione e sono accessibili in fase di esecuzione.
 * **src/**: Il luogo principale in cui definisci la tua applicazione come codice
 
-### Entity detection
+### Rilevamento delle entità
 
-The SDK detects entities by parsing your TypeScript files for **`export default define<Entity>({...})`** calls. Each entity type has a corresponding helper function exported from `twenty-sdk`:
+L'SDK rileva le entità analizzando i tuoi file TypeScript alla ricerca di chiamate **`export default define<Entity>({...})`**. Ogni tipo di entità ha una corrispondente funzione helper esportata da `twenty-sdk`:
 
-| Helper function          | Tipo di entità                        |
-| ------------------------ | ------------------------------------- |
-| `defineObject()`         | Definizioni di oggetti personalizzati |
-| `defineLogicFunction()`  | Logic function definitions            |
-| `defineFrontComponent()` | Definizioni dei componenti front-end  |
-| `defineRole()`           | Definizioni di ruoli                  |
-| `defineField()`          | Field extensions for existing objects |
+| Funzione helper          | Tipo di entità                            |
+| ------------------------ | ----------------------------------------- |
+| `defineObject()`         | Definizioni di oggetti personalizzati     |
+| `defineLogicFunction()`  | Definizioni di funzioni logiche           |
+| `defineFrontComponent()` | Definizioni dei componenti front-end      |
+| `defineRole()`           | Definizioni di ruoli                      |
+| `defineField()`          | Estensioni di campo per oggetti esistenti |
 
 <Note>
-  **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
+  **La denominazione dei file è flessibile.** Il rilevamento delle entità è basato sull'AST — l'SDK esegue la scansione dei file sorgente alla ricerca del pattern `export default define<Entity>({...})`. Puoi organizzare file e cartelle come preferisci. Raggruppare per tipo di entità (ad es., `logic-functions/`, `roles/`) è solo una convenzione per l'organizzazione del codice, non un requisito.
 </Note>
 
-Example of a detected entity:
+Esempio di entità rilevata:
 
 ```typescript
 // This file can be named anything and placed anywhere in src/
@@ -184,18 +184,18 @@ Il pacchetto twenty-sdk fornisce blocchi tipizzati e funzioni helper da usare ne
 
 ### Funzioni helper
 
-The SDK provides helper functions for defining your app entities. As described in [Entity detection](#entity-detection), you must use `export default define<Entity>({...})` for your entities to be detected:
+L'SDK fornisce funzioni helper per definire le entità della tua app. Come descritto in [Rilevamento delle entità](#entity-detection), devi usare `export default define<Entity>({...})` affinché le tue entità vengano rilevate:
 
-| Funzione                 | Scopo                                                   |
-| ------------------------ | ------------------------------------------------------- |
-| `defineApplication()`    | Configure application metadata (required, one per app)  |
-| `defineObject()`         | Definisci oggetti personalizzati con campi              |
-| `defineLogicFunction()`  | Definisci funzioni logiche con handler                  |
-| `defineFrontComponent()` | Define front components for custom UI                   |
-| `defineRole()`           | Configura i permessi dei ruoli e l'accesso agli oggetti |
-| `defineField()`          | Extend existing objects with additional fields          |
+| Funzione                 | Scopo                                                                   |
+| ------------------------ | ----------------------------------------------------------------------- |
+| `defineApplication()`    | Configura i metadati dell'applicazione (obbligatorio, uno per app)      |
+| `defineObject()`         | Definisci oggetti personalizzati con campi                              |
+| `defineLogicFunction()`  | Definisci funzioni logiche con handler                                  |
+| `defineFrontComponent()` | Definisci componenti front-end per un'interfaccia utente personalizzata |
+| `defineRole()`           | Configura i permessi dei ruoli e l'accesso agli oggetti                 |
+| `defineField()`          | Estendi gli oggetti esistenti con campi aggiuntivi                      |
 
-These functions validate your configuration at build time and provide IDE autocompletion and type safety.
+Queste funzioni convalidano la configurazione in fase di build e offrono il completamento automatico nell'IDE e la sicurezza dei tipi.
 
 ### Definizione degli oggetti
 
@@ -318,11 +318,11 @@ Note:
 
 * I campi `universalIdentifier` sono ID deterministici sotto il tuo controllo; generali una volta e mantienili stabili tra le sincronizzazioni.
 * `applicationVariables` diventano variabili d'ambiente per le tue funzioni (ad esempio, `DEFAULT_RECIPIENT_NAME` è disponibile come `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must match the role file (see below).
+* `defaultRoleUniversalIdentifier` deve corrispondere al file del ruolo (vedi sotto).
 
 #### Ruoli e permessi
 
-Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. The field `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions.
+Le applicazioni possono definire ruoli che incapsulano i permessi sugli oggetti e sulle azioni del tuo spazio di lavoro. Il campo `defaultRoleUniversalIdentifier` in `application-config.ts` indica il ruolo predefinito utilizzato dalle funzioni logiche della tua app.
 
 * La chiave API di runtime iniettata come `TWENTY_API_KEY` è derivata da questo ruolo funzione predefinito.
 * Il client tipizzato sarà limitato ai permessi concessi a quel ruolo.
@@ -372,10 +372,10 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`. In altre parole:
+L'`universalIdentifier` di questo ruolo viene quindi referenziato in `application-config.ts` come `defaultRoleUniversalIdentifier`. In altre parole:
 
 * **\*.role.ts** definisce ciò che il ruolo funzione predefinito può fare.
-* **application-config.ts** points to that role so your functions inherit its permissions.
+* **application-config.ts** punta a quel ruolo in modo che le tue funzioni ne ereditino i permessi.
 
 Note:
 
@@ -386,7 +386,7 @@ Note:
 
 ### Configurazione e punto di ingresso della funzione logica
 
-Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
+Ogni file di funzione usa `defineLogicFunction()` per esportare una configurazione con un handler e trigger opzionali.
 
 ```typescript
 // src/app/createPostCard.logic-function.ts
@@ -551,12 +551,12 @@ const handler = async (event: RoutePayload) => {
 
 Puoi creare nuove funzioni in due modi:
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new logic function. Questo genera un file iniziale con un handler e una configurazione.
-* **Manual**: Create a new `*.logic-function.ts` file and use `defineLogicFunction()`, following the same pattern.
+* **Generata dallo scaffolder**: Esegui `yarn entity:add` e scegli l'opzione per aggiungere una nuova funzione logica. Questo genera un file iniziale con un handler e una configurazione.
+* **Manuale**: Crea un nuovo file `*.logic-function.ts` e usa `defineLogicFunction()`, seguendo lo stesso schema.
 
-### Front components
+### Componenti front-end
 
-Front components let you build custom React components that render within Twenty's UI. Use `defineFrontComponent()` to define components with built-in validation:
+I componenti front-end ti consentono di creare componenti React personalizzati che vengono renderizzati all'interno dell'interfaccia di Twenty. Usa `defineFrontComponent()` per definire componenti con convalida integrata:
 
 ```typescript
 // src/my-widget.front-component.tsx
@@ -581,15 +581,15 @@ export default defineFrontComponent({
 
 Punti chiave:
 
-* Front components are React components that render in isolated contexts within Twenty.
+* I componenti front-end sono componenti React che eseguono il rendering in contesti isolati all'interno di Twenty.
 * Usa il suffisso di file `*.front-component.tsx` per il rilevamento automatico.
-* The `component` field references your React component.
-* Components are built and synced automatically during `yarn app:dev`.
+* Il campo `component` fa riferimento al tuo componente React.
+* I componenti vengono compilati e sincronizzati automaticamente durante `yarn app:dev`.
 
-You can create new front components in two ways:
+Puoi creare nuovi componenti front-end in due modi:
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new front component.
-* **Manual**: Create a new `*.front-component.tsx` file and use `defineFrontComponent()`.
+* **Generata dallo scaffolder**: Esegui `yarn entity:add` e scegli l'opzione per aggiungere un nuovo componente front-end.
+* **Manuale**: Crea un nuovo file `*.front-component.tsx` e usa `defineFrontComponent()`.
 
 ### Client tipizzato generato
 
@@ -614,12 +614,12 @@ Quando la tua funzione viene eseguita su Twenty, la piattaforma inietta le crede
 Note:
 
 * Non è necessario passare URL o chiave API al client generato. Legge `TWENTY_API_URL` e `TWENTY_API_KEY` da process.env in fase di esecuzione.
-* The API key's permissions are determined by the role referenced in your `application-config.ts` via `defaultRoleUniversalIdentifier`. Questo è il ruolo predefinito utilizzato dalle funzioni logiche della tua applicazione.
-* Le applicazioni possono definire ruoli per seguire il principio del privilegio minimo. Grant only the permissions your functions need, then point `defaultRoleUniversalIdentifier` to that role's universal identifier.
+* I permessi della chiave API sono determinati dal ruolo referenziato nel tuo `application-config.ts` tramite `defaultRoleUniversalIdentifier`. Questo è il ruolo predefinito utilizzato dalle funzioni logiche della tua applicazione.
+* Le applicazioni possono definire ruoli per seguire il principio del privilegio minimo. Concedi solo i permessi necessari alle tue funzioni, quindi punta `defaultRoleUniversalIdentifier` all'identificatore universale di quel ruolo.
 
 ### Esempio Hello World
 
-Explore a minimal, end-to-end example that demonstrates objects, logic functions, front components, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Esplora un esempio minimale end-to-end che dimostra oggetti, funzioni logiche, componenti front-end e trigger multipli [qui](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
 ## Configurazione manuale (senza lo scaffolder)
 

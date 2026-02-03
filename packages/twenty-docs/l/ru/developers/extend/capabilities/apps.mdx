@@ -102,7 +102,7 @@ my-twenty-app/
 
 В общих чертах:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and authentication commands that delegate to the local `twenty` CLI.
+* **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипты вроде `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` и команды аутентификации, которые делегируют выполнение локальному CLI `twenty`.
 * **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `generated/` (типизированный клиент), `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Фиксируют и настраивают используемый в проекте инструментарий Yarn 4.
 * **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
@@ -111,23 +111,23 @@ my-twenty-app/
 * **public/**: Папка для хранения общедоступных ресурсов (изображений, шрифтов, статических файлов), которые будут отдаваться вашим приложением. Файлы, размещённые здесь, загружаются во время синхронизации и доступны во время выполнения.
 * **src/**: Основное место, где вы определяете приложение как код
 
-### Entity detection
+### Обнаружение сущностей
 
-The SDK detects entities by parsing your TypeScript files for **`export default define<Entity>({...})`** calls. Each entity type has a corresponding helper function exported from `twenty-sdk`:
+SDK обнаруживает сущности, разбирая ваши файлы TypeScript в поисках вызовов **`export default define<Entity>({...})`**. Для каждого типа сущности существует соответствующая вспомогательная функция, экспортируемая из `twenty-sdk`:
 
-| Helper function          | Тип сущности                          |
-| ------------------------ | ------------------------------------- |
-| `defineObject()`         | Определения пользовательских объектов |
-| `defineLogicFunction()`  | Logic function definitions            |
-| `defineFrontComponent()` | Определения компонентов фронтенда     |
-| `defineRole()`           | Определения ролей                     |
-| `defineField()`          | Field extensions for existing objects |
+| Вспомогательная функция  | Тип сущности                               |
+| ------------------------ | ------------------------------------------ |
+| `defineObject()`         | Определения пользовательских объектов      |
+| `defineLogicFunction()`  | Определения логических функций             |
+| `defineFrontComponent()` | Определения компонентов фронтенда          |
+| `defineRole()`           | Определения ролей                          |
+| `defineField()`          | Расширения полей для существующих объектов |
 
 <Note>
-  **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
+  **Имена файлов заданы гибко.** Обнаружение сущностей основано на AST — SDK сканирует ваши исходные файлы в поисках шаблона `export default define<Entity>({...})`. Вы можете организовывать файлы и папки как угодно. Группировка по типу сущности (например, `logic-functions/`, `roles/`) — это лишь соглашение для организации кода, а не требование.
 </Note>
 
-Example of a detected entity:
+Пример обнаруженной сущности:
 
 ```typescript
 // This file can be named anything and placed anywhere in src/
@@ -184,18 +184,18 @@ yarn auth:status
 
 ### Вспомогательные функции
 
-The SDK provides helper functions for defining your app entities. As described in [Entity detection](#entity-detection), you must use `export default define<Entity>({...})` for your entities to be detected:
+SDK предоставляет вспомогательные функции для определения сущностей вашего приложения. Как описано в [Обнаружение сущностей](#entity-detection), вы должны использовать `export default define<Entity>({...})`, чтобы ваши сущности были обнаружены:
 
-| Функция                  | Назначение                                             |
-| ------------------------ | ------------------------------------------------------ |
-| `defineApplication()`    | Configure application metadata (required, one per app) |
-| `defineObject()`         | Определяет пользовательские объекты с полями           |
-| `defineLogicFunction()`  | Определение логических функций с обработчиками         |
-| `defineFrontComponent()` | Define front components for custom UI                  |
-| `defineRole()`           | Настраивает права роли и доступ к объектам             |
-| `defineField()`          | Extend existing objects with additional fields         |
+| Функция                  | Назначение                                                             |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `defineApplication()`    | Настройка метаданных приложения (обязательно, по одному на приложение) |
+| `defineObject()`         | Определяет пользовательские объекты с полями                           |
+| `defineLogicFunction()`  | Определение логических функций с обработчиками                         |
+| `defineFrontComponent()` | Определение фронт-компонентов для настраиваемого интерфейса            |
+| `defineRole()`           | Настраивает права роли и доступ к объектам                             |
+| `defineField()`          | Расширение существующих объектов дополнительными полями                |
 
-These functions validate your configuration at build time and provide IDE autocompletion and type safety.
+Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
 ### Определение объектов
 
@@ -318,11 +318,11 @@ export default defineApplication({
 
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must match the role file (see below).
+* `defaultRoleUniversalIdentifier` должен соответствовать файлу роли (см. ниже).
 
 #### Роли и разрешения
 
-Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. The field `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `defaultRoleUniversalIdentifier` в `application-config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
@@ -372,10 +372,10 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`. Иными словами:
+Значение `universalIdentifier` этой роли затем указывается в `application-config.ts` как `defaultRoleUniversalIdentifier`. Иными словами:
 
 * **\*.role.ts** определяет, что может делать роль функции по умолчанию.
-* **application-config.ts** points to that role so your functions inherit its permissions.
+* **application-config.ts** указывает на эту роль, чтобы ваши функции наследовали её права.
 
 Заметки:
 
@@ -386,7 +386,7 @@ The `universalIdentifier` of this role is then referenced in `application-config
 
 ### Конфигурация логической функции и точка входа
 
-Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
+Каждый файл функции использует `defineLogicFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами.
 
 ```typescript
 // src/app/createPostCard.logic-function.ts
@@ -551,12 +551,12 @@ const handler = async (event: RoutePayload) => {
 
 Вы можете создать новые функции двумя способами:
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new logic function. Это создаёт стартовый файл с обработчиком и конфигурацией.
-* **Manual**: Create a new `*.logic-function.ts` file and use `defineLogicFunction()`, following the same pattern.
+* **Сгенерировано**: Запустите `yarn entity:add` и выберите опцию добавления новой логической функции. Это создаёт стартовый файл с обработчиком и конфигурацией.
+* **Вручную**: Создайте новый файл `*.logic-function.ts` и используйте `defineLogicFunction()`, следуя тому же шаблону.
 
-### Front components
+### Фронт-компоненты
 
-Front components let you build custom React components that render within Twenty's UI. Use `defineFrontComponent()` to define components with built-in validation:
+Фронт-компоненты позволяют создавать пользовательские компоненты React, которые рендерятся внутри интерфейса Twenty. Используйте `defineFrontComponent()` для определения компонентов со встроенной валидацией:
 
 ```typescript
 // src/my-widget.front-component.tsx
@@ -581,15 +581,15 @@ export default defineFrontComponent({
 
 Основные моменты:
 
-* Front components are React components that render in isolated contexts within Twenty.
+* Фронт-компоненты — это компоненты React, которые рендерятся в изолированных контекстах внутри Twenty.
 * Используйте суффикс файла `*.front-component.tsx` для автоматического обнаружения.
-* The `component` field references your React component.
-* Components are built and synced automatically during `yarn app:dev`.
+* Поле `component` ссылается на ваш компонент React.
+* Компоненты автоматически собираются и синхронизируются во время `yarn app:dev`.
 
-You can create new front components in two ways:
+Вы можете создать новые фронт-компоненты двумя способами:
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new front component.
-* **Manual**: Create a new `*.front-component.tsx` file and use `defineFrontComponent()`.
+* **Сгенерировано**: Запустите `yarn entity:add` и выберите опцию добавления нового фронт-компонента.
+* **Вручную**: Создайте новый файл `*.front-component.tsx` и используйте `defineFrontComponent()`.
 
 ### Сгенерированный типизированный клиент
 
@@ -614,12 +614,12 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 Заметки:
 
 * Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
-* The API key's permissions are determined by the role referenced in your `application-config.ts` via `defaultRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
-* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Grant only the permissions your functions need, then point `defaultRoleUniversalIdentifier` to that role's universal identifier.
+* Права ключа API определяются ролью, на которую ссылается ваш `application-config.ts` через `defaultRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
+* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Предоставляйте только те права, которые нужны вашим функциям, затем укажите в `defaultRoleUniversalIdentifier` универсальный идентификатор этой роли.
 
 ### Пример Hello World
 
-Explore a minimal, end-to-end example that demonstrates objects, logic functions, front components, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Ознакомьтесь с минимальным сквозным примером, демонстрирующим объекты, логические функции, фронт-компоненты и несколько триггеров, [здесь](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
 ## Ручная настройка (без генератора)
 
