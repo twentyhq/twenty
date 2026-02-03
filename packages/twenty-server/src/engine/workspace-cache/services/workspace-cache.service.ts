@@ -353,11 +353,8 @@ export class WorkspaceCacheService implements OnModuleInit {
   ): void {
     for (const keyName of cacheKeyNames) {
       const localKey = this.buildCacheKey(workspaceId, keyName);
-      const entry = this.localCache.get(localKey);
 
-      if (isDefined(entry)) {
-        entry.lastHashCheckedAt = 0;
-      }
+      this.localCache.delete(localKey);
     }
   }
 
