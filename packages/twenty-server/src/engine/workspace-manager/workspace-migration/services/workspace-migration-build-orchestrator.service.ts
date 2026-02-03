@@ -177,16 +177,16 @@ export class WorkspaceMigrationBuildOrchestratorService {
             // Note: That's a hacky way to allow validating object against field metadatas, not optimal
             dependencyOptimisticFlatEntityMaps: {
               flatFieldMetadataMaps: {
-                byId: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byId,
-                  ...flatFieldMetadataMaps?.from.byId,
-                  ...flatFieldMetadataMaps?.to.byId,
+                byUniversalIdentifier: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.from.byUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.to.byUniversalIdentifier,
                 },
-                idByUniversalIdentifier: {
+                universalIdentifierById: {
                   ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                    ?.idByUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
+                    ?.universalIdentifierById,
+                  ...flatFieldMetadataMaps?.from.universalIdentifierById,
+                  ...flatFieldMetadataMaps?.to.universalIdentifierById,
                 },
                 universalIdentifiersByApplicationId: {
                   ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
