@@ -9,7 +9,6 @@ type ClickHouseSelectQueryOptions = {
   filter?: Record<string, unknown>;
   orderBy?: Array<Record<string, string>>;
   limit?: number;
-  offset?: number;
   workspaceId?: string;
 };
 
@@ -33,7 +32,6 @@ export const buildClickHouseSelectQuery = (
     filter,
     orderBy,
     limit = 100,
-    offset = 0,
     workspaceId,
   } = options;
 
@@ -64,7 +62,6 @@ export const buildClickHouseSelectQuery = (
 
   const orderByClause = parseClickHouseOrderBy(orderBy);
   const limitClause = `LIMIT ${limit}`;
-  const offsetClause = offset > 0 ? `OFFSET ${offset}` : '';
 
   const query = [
     `SELECT ${selectClause}`,
@@ -72,7 +69,6 @@ export const buildClickHouseSelectQuery = (
     fullWhereClause,
     orderByClause,
     limitClause,
-    offsetClause,
   ]
     .filter(Boolean)
     .join(' ');

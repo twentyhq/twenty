@@ -51,15 +51,15 @@ export class EventLogsService {
       throw new BadRequestException(`Invalid table: ${input.table}`);
     }
 
-    const limit = Math.min(input.limit ?? 100, MAX_LIMIT);
-    const offset = input.offset ?? 0;
+    const limit = Math.min(input.first ?? 100, MAX_LIMIT);
 
     const resolvedFilters = await this.resolveWorkspaceMemberFilter(
       workspaceId,
       input.filters,
     );
 
-    const filter = this.buildFilter(resolvedFilters, input.table);
+    const cursorFilter = this.buildCursorFilter(input.after);
+    const filter = this.buildFilter(resolvedFilters, input.table, cursorFilter);
     const orderBy = this.buildOrderBy(input.orderBy);
 
     const { query, params } = buildClickHouseSelectQuery({
@@ -67,7 +67,6 @@ export class EventLogsService {
       filter,
       orderBy,
       limit: limit + 1,
-      offset,
       workspaceId,
     });
 
@@ -79,7 +78,7 @@ export class EventLogsService {
     const { query: countQuery, params: countParams } =
       buildClickHouseCountQuery({
         tableName: input.table,
-        filter,
+        filter: this.buildFilter(resolvedFilters, input.table),
         workspaceId,
       });
 
@@ -95,23 +94,61 @@ export class EventLogsService {
     }
 
     const normalizedRecords = this.normalizeRecords(records, input.table);
+    const endCursor =
+      normalizedRecords.length > 0
+        ? this.encodeCursor(
+            normalizedRecords[normalizedRecords.length - 1].timestamp,
+          )
+        : undefined;
 
     return {
       records: normalizedRecords,
       totalCount,
-      hasNextPage,
+      pageInfo: {
+        endCursor,
+        hasNextPage,
+      },
+    };
+  }
+
+  private encodeCursor(timestamp: Date): string {
+    return Buffer.from(timestamp.toISOString()).toString('base64');
+  }
+
+  private decodeCursor(cursor: string): Date {
+    const decoded = Buffer.from(cursor, 'base64').toString('utf-8');
+
+    return new Date(decoded);
+  }
+
+  private buildCursorFilter(
+    cursor: string | undefined,
+  ): Record<string, unknown> | undefined {
+    if (!isDefined(cursor)) {
+      return undefined;
+    }
+
+    const cursorDate = this.decodeCursor(cursor);
+
+    return {
+      timestamp: { lt: cursorDate.toISOString() },
     };
   }
 
   private buildFilter(
     filters: EventLogFiltersInput | undefined,
     table: EventLogTable,
+    cursorFilter?: Record<string, unknown>,
   ): Record<string, unknown> | undefined {
-    if (!isDefined(filters)) {
-      return undefined;
+    const filterObj: Record<string, unknown> = {};
+
+    if (isDefined(cursorFilter)) {
+      Object.assign(filterObj, cursorFilter);
     }
 
-    const filterObj: Record<string, unknown> = {};
+    if (!isDefined(filters)) {
+      return Object.keys(filterObj).length > 0 ? filterObj : undefined;
+    }
 
     if (isDefined(filters.eventType)) {
       const eventFieldName =

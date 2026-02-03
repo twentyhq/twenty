@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
 import {
@@ -45,10 +45,10 @@ const StyledLabel = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledDatePickerContainer = styled.div<{ top: number; left: number }>`
-  position: fixed;
-  top: ${({ top }) => top}px;
-  left: ${({ left }) => left}px;
+const StyledDatePickerContainer = styled.div`
+  left: 0;
+  position: absolute;
+  top: 100%;
   z-index: 1000;
 `;
 
@@ -72,23 +72,10 @@ export const EventLogDatePickerInput = ({
 }: EventLogDatePickerInputProps) => {
   const { t } = useLingui();
   const [isOpen, setIsOpen] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLDivElement>(null);
 
   const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
   const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
-
-  useEffect(() => {
-    if (isOpen && isDefined(inputRef.current)) {
-      const rect = inputRef.current.getBoundingClientRect();
-
-      setPosition({
-        top: rect.bottom + 4,
-        left: rect.left,
-      });
-    }
-  }, [isOpen]);
 
   const closeAllDropdowns = () => {
     closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
@@ -152,18 +139,14 @@ export const EventLogDatePickerInput = ({
   return (
     <StyledInputContainer ref={containerRef}>
       <StyledLabel>{label}</StyledLabel>
-      <StyledInput
-        ref={inputRef}
-        hasValue={isDefined(value)}
-        onClick={() => setIsOpen(true)}
-      >
+      <StyledInput hasValue={isDefined(value)} onClick={() => setIsOpen(true)}>
         <StyledIconContainer>
           <IconCalendar size={16} />
         </StyledIconContainer>
         {formatDisplayValue(value)}
       </StyledInput>
       {isOpen && (
-        <StyledDatePickerContainer top={position.top} left={position.left}>
+        <StyledDatePickerContainer>
           <OverlayContainer>
             <DateTimePicker
               instanceId={`event-log-date-picker-${label}`}

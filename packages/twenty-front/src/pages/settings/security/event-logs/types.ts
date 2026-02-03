@@ -14,10 +14,15 @@ export type EventLogRecord = {
   isCustom?: boolean | null;
 };
 
+export type EventLogPageInfo = {
+  endCursor?: string | null;
+  hasNextPage: boolean;
+};
+
 export type EventLogQueryResult = {
   records: EventLogRecord[];
   totalCount: number;
-  hasNextPage: boolean;
+  pageInfo: EventLogPageInfo;
 };
 
 export type EventLogFiltersInput = {
@@ -35,6 +40,6 @@ export type EventLogFiltersInput = {
 export type EventLogQueryInput = {
   table: EventLogTable;
   filters?: EventLogFiltersInput;
-  limit?: number;
-  offset?: number;
+  first?: number;
+  after?: string;
 };

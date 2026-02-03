@@ -6,9 +6,9 @@ import type {
   EventLogRecord,
 } from '~/pages/settings/security/event-logs/types';
 
-const QUERY_EVENT_LOGS = gql`
-  query QueryEventLogs($input: EventLogQueryInput!) {
-    queryEventLogs(input: $input) {
+const EVENT_LOGS_QUERY = gql`
+  query EventLogs($input: EventLogQueryInput!) {
+    eventLogs(input: $input) {
       records {
         event
         timestamp
@@ -19,34 +19,38 @@ const QUERY_EVENT_LOGS = gql`
         isCustom
       }
       totalCount
-      hasNextPage
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
     }
   }
 `;
 
-type QueryEventLogsData = {
-  queryEventLogs: EventLogQueryResult;
+type EventLogsData = {
+  eventLogs: EventLogQueryResult;
 };
 
-type QueryEventLogsVariables = {
+type EventLogsVariables = {
   input: EventLogQueryInput;
 };
 
-export const useQueryEventLogs = (input: EventLogQueryInput) => {
+export const useEventLogs = (input: EventLogQueryInput) => {
   const { data, loading, error, refetch, fetchMore } = useQuery<
-    QueryEventLogsData,
-    QueryEventLogsVariables
-  >(QUERY_EVENT_LOGS, {
+    EventLogsData,
+    EventLogsVariables
+  >(EVENT_LOGS_QUERY, {
     variables: { input },
     fetchPolicy: 'network-only',
   });
 
-  const records = data?.queryEventLogs.records ?? ([] as EventLogRecord[]);
-  const totalCount = data?.queryEventLogs.totalCount ?? 0;
-  const hasNextPage = data?.queryEventLogs.hasNextPage ?? false;
+  const records = data?.eventLogs.records ?? ([] as EventLogRecord[]);
+  const totalCount = data?.eventLogs.totalCount ?? 0;
+  const endCursor = data?.eventLogs.pageInfo.endCursor;
+  const hasNextPage = data?.eventLogs.pageInfo.hasNextPage ?? false;
 
   const loadMore = () => {
-    if (!hasNextPage || loading) {
+    if (!hasNextPage || loading || !endCursor) {
       return;
     }
 
@@ -54,7 +58,7 @@ export const useQueryEventLogs = (input: EventLogQueryInput) => {
       variables: {
         input: {
           ...input,
-          offset: records.length,
+          after: endCursor,
         },
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
@@ -63,11 +67,11 @@ export const useQueryEventLogs = (input: EventLogQueryInput) => {
         }
 
         return {
-          queryEventLogs: {
-            ...fetchMoreResult.queryEventLogs,
+          eventLogs: {
+            ...fetchMoreResult.eventLogs,
             records: [
-              ...previousResult.queryEventLogs.records,
-              ...fetchMoreResult.queryEventLogs.records,
+              ...previousResult.eventLogs.records,
+              ...fetchMoreResult.eventLogs.records,
             ],
           },
         };

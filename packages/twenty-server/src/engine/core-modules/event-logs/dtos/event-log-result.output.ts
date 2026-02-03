@@ -27,6 +27,15 @@ export class EventLogRecord {
 }
 
 @ObjectType()
+export class EventLogPageInfo {
+  @Field(() => String, { nullable: true })
+  endCursor?: string;
+
+  @Field(() => Boolean)
+  hasNextPage: boolean;
+}
+
+@ObjectType()
 export class EventLogQueryResult {
   @Field(() => [EventLogRecord])
   records: EventLogRecord[];
@@ -34,6 +43,6 @@ export class EventLogQueryResult {
   @Field(() => Int)
   totalCount: number;
 
-  @Field(() => Boolean)
-  hasNextPage: boolean;
+  @Field(() => EventLogPageInfo)
+  pageInfo: EventLogPageInfo;
 }

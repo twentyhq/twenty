@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro';
 import { useCallback, useEffect, useRef } from 'react';
+import Skeleton from 'react-loading-skeleton';
 
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -8,8 +9,6 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-import { IconRefresh } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
 
 import {
   type EventLogRecord,
@@ -22,9 +21,7 @@ type EventLogResultsTableProps = {
   records: EventLogRecord[];
   loading: boolean;
   hasNextPage: boolean;
-  totalCount: number;
   onLoadMore: () => void;
-  onRefresh: () => void;
   selectedTable: EventLogTable;
 };
 
@@ -33,6 +30,7 @@ const StyledTableContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
+  height: 100%;
   overflow: hidden;
 `;
 
@@ -49,51 +47,36 @@ const StyledTableBody = styled(TableBody)`
   padding: 0;
 `;
 
-const StyledFooter = styled.div`
-  align-items: center;
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
-  display: flex;
-  justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledFooterInfo = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-`;
-
 const StyledEmptyState = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: ${({ theme }) => theme.spacing(8)};
   text-align: center;
 `;
 
-const StyledLoadingState = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  padding: ${({ theme }) => theme.spacing(4)};
-  text-align: center;
+const StyledSkeletonContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(4)};
 `;
 
 const GRID_COLUMNS_DEFAULT = '2fr 1fr 1fr 3fr';
 const GRID_COLUMNS_OBJECT_EVENT = '2fr 1fr 1fr 1fr 1fr 2fr';
+const SKELETON_ROW_COUNT = 5;
 
 export const EventLogResultsTable = ({
   records,
   loading,
   hasNextPage,
-  totalCount,
   onLoadMore,
-  onRefresh,
   selectedTable,
 }: EventLogResultsTableProps) => {
-  const { t } = useLingui();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const recordCount = records.length;
   const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
   const gridColumns = showObjectEventColumns
     ? GRID_COLUMNS_OBJECT_EVENT
     : GRID_COLUMNS_DEFAULT;
+
+  const isInitialLoading = loading && records.length === 0;
+  const isLoadingMore = loading && records.length > 0;
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -123,6 +106,46 @@ export const EventLogResultsTable = ({
       container.removeEventListener('scroll', handleScroll);
     };
   }, [handleScroll]);
+
+  if (isInitialLoading) {
+    return (
+      <StyledTableContainer>
+        <StyledScrollContainer>
+          <StyledTable>
+            <TableRow gridAutoColumns={gridColumns}>
+              <TableHeader>
+                <Trans>Event</Trans>
+              </TableHeader>
+              <TableHeader>
+                <Trans>Timestamp</Trans>
+              </TableHeader>
+              <TableHeader>
+                <Trans>User ID</Trans>
+              </TableHeader>
+              {showObjectEventColumns && (
+                <>
+                  <TableHeader>
+                    <Trans>Record ID</Trans>
+                  </TableHeader>
+                  <TableHeader>
+                    <Trans>Object ID</Trans>
+                  </TableHeader>
+                </>
+              )}
+              <TableHeader>
+                <Trans>Properties</Trans>
+              </TableHeader>
+            </TableRow>
+          </StyledTable>
+          <StyledSkeletonContainer>
+            {Array.from({ length: SKELETON_ROW_COUNT }).map((_, index) => (
+              <Skeleton height={48} borderRadius={4} key={index} />
+            ))}
+          </StyledSkeletonContainer>
+        </StyledScrollContainer>
+      </StyledTableContainer>
+    );
+  }
 
   return (
     <StyledTableContainer>
@@ -176,10 +199,12 @@ export const EventLogResultsTable = ({
             ))}
           </StyledTableBody>
         </StyledTable>
-        {loading && (
-          <StyledLoadingState>
-            <Trans>Loading...</Trans>
-          </StyledLoadingState>
+        {isLoadingMore && (
+          <StyledSkeletonContainer>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Skeleton height={48} borderRadius={4} key={index} />
+            ))}
+          </StyledSkeletonContainer>
         )}
         {!loading && records.length === 0 && (
           <StyledEmptyState>
@@ -187,18 +212,6 @@ export const EventLogResultsTable = ({
           </StyledEmptyState>
         )}
       </StyledScrollContainer>
-      <StyledFooter>
-        <StyledFooterInfo>
-          {t`${recordCount} of ${totalCount} records`}
-        </StyledFooterInfo>
-        <Button
-          Icon={IconRefresh}
-          variant="tertiary"
-          size="small"
-          onClick={onRefresh}
-          title={t`Refresh`}
-        />
-      </StyledFooter>
     </StyledTableContainer>
   );
 };

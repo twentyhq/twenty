@@ -22,7 +22,7 @@ export class EventLogsResolver {
   constructor(private readonly eventLogsService: EventLogsService) {}
 
   @Query(() => EventLogQueryResult)
-  async queryEventLogs(
+  async eventLogs(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('input') input: EventLogQueryInput,
   ): Promise<EventLogQueryResult> {

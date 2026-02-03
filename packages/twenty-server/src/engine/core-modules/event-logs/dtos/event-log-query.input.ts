@@ -13,10 +13,10 @@ export class EventLogQueryInput {
   filters?: EventLogFiltersInput;
 
   @Field(() => Int, { nullable: true, defaultValue: 100 })
-  limit?: number;
+  first?: number;
 
-  @Field(() => Int, { nullable: true, defaultValue: 0 })
-  offset?: number;
+  @Field(() => String, { nullable: true })
+  after?: string;
 
   @Field(() => EventLogOrderByInput, { nullable: true })
   orderBy?: EventLogOrderByInput;
