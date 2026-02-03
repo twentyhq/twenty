@@ -390,6 +390,11 @@ msgstr ""
 msgid "{totalCount} selected"
 msgstr ""
 
+#. js-lingui-id: WwbakM
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+msgid "{totalFieldsCount} fields"
+msgstr ""
+
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -3453,6 +3458,11 @@ msgstr ""
 msgid "Customization"
 msgstr ""
 
+#. js-lingui-id: srRMnJ
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+msgid "Customize"
+msgstr ""
+
 #. js-lingui-id: CMhr4u
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
@@ -4393,6 +4403,7 @@ msgstr ""
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
 msgstr ""
@@ -5677,9 +5688,19 @@ msgstr ""
 msgid "Fields Permissions"
 msgstr ""
 
+#. js-lingui-id: n7J1Rh
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Fields Settings"
+msgstr ""
+
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 msgid "Fields to update"
+msgstr ""
+
+#. js-lingui-id: YlwXq3
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Fields Widget"
 msgstr ""
 
 #. js-lingui-id: hT0Flb
@@ -7117,6 +7138,9 @@ msgstr ""
 #. js-lingui-id: rdU729
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsLayout.tsx
 msgid "Layout"
 msgstr ""
 

@@ -395,6 +395,11 @@ msgstr "{totalCost} 积分"
 msgid "{totalCount} selected"
 msgstr ""
 
+#. js-lingui-id: WwbakM
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+msgid "{totalFieldsCount} fields"
+msgstr ""
+
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -3458,6 +3463,11 @@ msgstr ""
 msgid "Customization"
 msgstr "自定义"
 
+#. js-lingui-id: srRMnJ
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+msgid "Customize"
+msgstr ""
+
 #. js-lingui-id: CMhr4u
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
@@ -4398,6 +4408,7 @@ msgstr "编辑字段值"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
 msgstr "编辑字段"
@@ -5682,10 +5693,20 @@ msgstr "字段计数"
 msgid "Fields Permissions"
 msgstr "字段权限"
 
+#. js-lingui-id: n7J1Rh
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Fields Settings"
+msgstr ""
+
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 msgid "Fields to update"
 msgstr "要更新的字段"
+
+#. js-lingui-id: YlwXq3
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Fields Widget"
+msgstr ""
 
 #. js-lingui-id: hT0Flb
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -7122,6 +7143,9 @@ msgstr "手动启动"
 #. js-lingui-id: rdU729
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsLayout.tsx
 msgid "Layout"
 msgstr "布局"
 
