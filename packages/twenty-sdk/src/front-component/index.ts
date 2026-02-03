@@ -13,6 +13,10 @@ export { FrontComponentErrorEffect } from './remote/components/FrontComponentErr
 export { FrontComponentUpdateContextEffect } from './remote/components/FrontComponentUpdateContextEffect';
 export { FrontComponentWorkerEffect } from './remote/components/FrontComponentWorkerEffect';
 export {
+  FrontComponentExecutionContextStore,
+  frontComponentExecutionContextStore,
+} from './remote/context/FrontComponentExecutionContextStore';
+export {
   HtmlDiv,
   HtmlSpan,
   HtmlSection,
@@ -119,6 +123,7 @@ export {
   RemoteRootElement,
   RemoteFragmentElement,
 } from './remote/generated/remote-elements';
+export { useFrontComponentExecutionContext } from './remote/hooks/useFrontComponentExecutionContext';
 export { createRemoteWorker } from './remote/worker/createRemoteWorker';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';

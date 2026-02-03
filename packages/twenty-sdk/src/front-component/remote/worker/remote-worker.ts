@@ -15,15 +15,15 @@ import { jsx, jsxs } from 'react/jsx-runtime';
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
+import { frontComponentExecutionContextStore } from '../context/FrontComponentExecutionContextStore';
 import * as RemoteComponents from '../generated/remote-components';
 
 (globalThis as Record<string, unknown>).React = React;
 (globalThis as Record<string, unknown>).RemoteComponents = RemoteComponents;
 (globalThis as Record<string, unknown>).jsx = jsx;
 (globalThis as Record<string, unknown>).jsxs = jsxs;
-
-(globalThis as Record<string, unknown>).frontComponentExecutionContext =
-  undefined as FrontComponentExecutionContext | undefined;
+(globalThis as Record<string, unknown>).frontComponentExecutionContextStore =
+  frontComponentExecutionContextStore;
 
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
@@ -44,8 +44,7 @@ const render: WorkerExports['render'] = async (
 const updateContext: WorkerExports['updateContext'] = async (
   context: FrontComponentExecutionContext,
 ) => {
-  (globalThis as Record<string, unknown>).frontComponentExecutionContext =
-    context;
+  frontComponentExecutionContextStore.setContext(context);
 };
 
 ThreadWebWorker.self.export({ render, updateContext });
