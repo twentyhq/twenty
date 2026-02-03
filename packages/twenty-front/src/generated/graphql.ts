@@ -268,6 +268,7 @@ export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
   applicationVariables: Array<ApplicationVariable>;
+  availablePackages: Scalars['JSON'];
   canBeUninstalled: Scalars['Boolean'];
   defaultLogicFunctionRole?: Maybe<Role>;
   defaultRoleId?: Maybe<Scalars['String']>;
@@ -276,8 +277,12 @@ export type Application = {
   logicFunctions: Array<LogicFunction>;
   name: Scalars['String'];
   objects: Array<Object>;
+  packageJsonChecksum?: Maybe<Scalars['String']>;
+  packageJsonFileId?: Maybe<Scalars['UUID']>;
   universalIdentifier: Scalars['String'];
   version: Scalars['String'];
+  yarnLockChecksum?: Maybe<Scalars['String']>;
+  yarnLockFileId?: Maybe<Scalars['UUID']>;
 };
 
 export type ApplicationVariable = {
