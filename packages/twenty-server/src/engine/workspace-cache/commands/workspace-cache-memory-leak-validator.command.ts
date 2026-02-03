@@ -15,9 +15,10 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type ValidatorCommandOptions = ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
-  invalidationsPerWorkspace?: number;
-};
+type ValidatorCommandOptions =
+  ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
+    invalidationsPerWorkspace?: number;
+  };
 
 type CacheStats = {
   totalEntries: number;
@@ -50,7 +51,8 @@ export class WorkspaceCacheMemoryLeakValidatorCommand extends ActiveOrSuspendedW
 
   @Option({
     flags: '--invalidations-per-workspace <count>',
-    description: 'Number of invalidateAndRecompute calls per workspace (default: 5)',
+    description:
+      'Number of invalidateAndRecompute calls per workspace (default: 5)',
     required: false,
   })
   parseInvalidationsPerWorkspace(val: string): number {
@@ -125,15 +127,19 @@ export class WorkspaceCacheMemoryLeakValidatorCommand extends ActiveOrSuspendedW
     this.logger.log(`  Workspaces processed: ${this.processedWorkspaces}`);
     this.logger.log(`  Total invalidations performed: ${totalInvalidations}`);
 
-    const versionGrowth = finalStats.totalVersions - this.initialStats.totalVersions;
     const entriesWithMultipleVersionsGrowth =
       finalStats.entriesWithMultipleVersions -
       this.initialStats.entriesWithMultipleVersions;
 
-    if (finalStats.maxVersionsInEntry > 1 || entriesWithMultipleVersionsGrowth > 0) {
+    if (
+      finalStats.maxVersionsInEntry > 1 ||
+      entriesWithMultipleVersionsGrowth > 0
+    ) {
       this.logger.log('');
       this.logger.log(
-        chalk.red('⚠️  MEMORY LEAK DETECTED: Multiple versions accumulating in cache entries'),
+        chalk.red(
+          '⚠️  MEMORY LEAK DETECTED: Multiple versions accumulating in cache entries',
+        ),
       );
       this.logger.log(
         chalk.red(
@@ -141,12 +147,16 @@ export class WorkspaceCacheMemoryLeakValidatorCommand extends ActiveOrSuspendedW
         ),
       );
       this.logger.log(
-        chalk.red(`   Max versions in a single entry: ${finalStats.maxVersionsInEntry}`),
+        chalk.red(
+          `   Max versions in a single entry: ${finalStats.maxVersionsInEntry}`,
+        ),
       );
     } else {
       this.logger.log('');
       this.logger.log(
-        chalk.green('✓ No memory leak detected: Cache entries properly cleaned up'),
+        chalk.green(
+          '✓ No memory leak detected: Cache entries properly cleaned up',
+        ),
       );
     }
 
@@ -188,7 +198,9 @@ export class WorkspaceCacheMemoryLeakValidatorCommand extends ActiveOrSuspendedW
 
       this.logger.log('  Initial getOrRecompute completed');
     } catch {
-      this.logger.log('  Initial getOrRecompute failed (workspace may not have data source)');
+      this.logger.log(
+        '  Initial getOrRecompute failed (workspace may not have data source)',
+      );
 
       return;
     }
@@ -230,7 +242,11 @@ export class WorkspaceCacheMemoryLeakValidatorCommand extends ActiveOrSuspendedW
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const localCache = (this.workspaceCacheService as any).localCache as Map<
       string,
-      { versions: Map<string, unknown>; latestHash: string; lastHashCheckedAt: number }
+      {
+        versions: Map<string, unknown>;
+        latestHash: string;
+        lastHashCheckedAt: number;
+      }
     >;
 
     let totalVersions = 0;
@@ -261,10 +277,14 @@ export class WorkspaceCacheMemoryLeakValidatorCommand extends ActiveOrSuspendedW
 
   private logCacheStats(stats: CacheStats): void {
     this.logger.log(`  Total cache entries: ${stats.totalEntries}`);
-    this.logger.log(`  Total versions across all entries: ${stats.totalVersions}`);
+    this.logger.log(
+      `  Total versions across all entries: ${stats.totalVersions}`,
+    );
     this.logger.log(
       `  Entries with multiple versions: ${stats.entriesWithMultipleVersions}`,
     );
-    this.logger.log(`  Max versions in a single entry: ${stats.maxVersionsInEntry}`);
+    this.logger.log(
+      `  Max versions in a single entry: ${stats.maxVersionsInEntry}`,
+    );
   }
 }
