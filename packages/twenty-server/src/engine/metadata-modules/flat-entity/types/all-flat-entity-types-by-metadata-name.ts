@@ -202,6 +202,7 @@ import {
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
     flatEntityMaps: FlatEntityMaps<FlatFieldMetadata>;
+    universalMigrated: true;
     universalActions: {
       create: UniversalCreateFieldAction;
       update: UniversalUpdateFieldAction;
@@ -221,6 +222,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   objectMetadata: {
     flatEntityMaps: FlatEntityMaps<FlatObjectMetadata>;
+    universalMigrated: true;
     universalActions: {
       create: UniversalCreateObjectAction;
       update: UniversalUpdateObjectAction;
@@ -237,6 +239,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   view: {
     flatEntityMaps: FlatViewMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateViewAction;
       update: FlatUpdateViewAction;
@@ -253,6 +256,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   viewField: {
     flatEntityMaps: FlatViewFieldMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateViewFieldAction;
       update: FlatUpdateViewFieldAction;
@@ -269,6 +273,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   viewGroup: {
     flatEntityMaps: FlatViewGroupMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateViewGroupAction;
       update: FlatUpdateViewGroupAction;
@@ -285,6 +290,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   rowLevelPermissionPredicate: {
     flatEntityMaps: FlatRowLevelPermissionPredicateMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateRowLevelPermissionPredicateAction;
       update: FlatUpdateRowLevelPermissionPredicateAction;
@@ -301,6 +307,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   rowLevelPermissionPredicateGroup: {
     flatEntityMaps: FlatRowLevelPermissionPredicateGroupMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateRowLevelPermissionPredicateGroupAction;
       update: FlatUpdateRowLevelPermissionPredicateGroupAction;
@@ -317,6 +324,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   viewFilterGroup: {
     flatEntityMaps: FlatViewFilterGroupMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateViewFilterGroupAction;
       update: FlatUpdateViewFilterGroupAction;
@@ -333,6 +341,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   index: {
     flatEntityMaps: FlatEntityMaps<FlatIndexMetadata>;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateIndexAction;
       update: FlatUpdateIndexAction;
@@ -349,6 +358,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   logicFunction: {
     flatEntityMaps: FlatEntityMaps<FlatLogicFunction>;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateLogicFunctionAction;
       update: FlatUpdateLogicFunctionAction;
@@ -365,6 +375,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   viewFilter: {
     flatEntityMaps: FlatViewFilterMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateViewFilterAction;
       update: FlatUpdateViewFilterAction;
@@ -381,6 +392,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   role: {
     flatEntityMaps: FlatEntityMaps<FlatRole>;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateRoleAction;
       update: FlatUpdateRoleAction;
@@ -397,6 +409,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   roleTarget: {
     flatEntityMaps: FlatRoleTargetMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateRoleTargetAction;
       update: FlatUpdateRoleTargetAction;
@@ -413,6 +426,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   agent: {
     flatEntityMaps: FlatAgentMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateAgentAction;
       update: FlatUpdateAgentAction;
@@ -429,6 +443,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   skill: {
     flatEntityMaps: FlatSkillMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateSkillAction;
       update: FlatUpdateSkillAction;
@@ -445,6 +460,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   commandMenuItem: {
     flatEntityMaps: FlatCommandMenuItemMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateCommandMenuItemAction;
       update: FlatUpdateCommandMenuItemAction;
@@ -461,6 +477,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   navigationMenuItem: {
     flatEntityMaps: FlatNavigationMenuItemMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateNavigationMenuItemAction;
       update: FlatUpdateNavigationMenuItemAction;
@@ -477,6 +494,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   pageLayout: {
     flatEntityMaps: FlatPageLayoutMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreatePageLayoutAction;
       update: FlatUpdatePageLayoutAction;
@@ -493,6 +511,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   pageLayoutWidget: {
     flatEntityMaps: FlatPageLayoutWidgetMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreatePageLayoutWidgetAction;
       update: FlatUpdatePageLayoutWidgetAction;
@@ -512,6 +531,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   pageLayoutTab: {
     flatEntityMaps: FlatPageLayoutTabMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreatePageLayoutTabAction;
       update: FlatUpdatePageLayoutTabAction;
@@ -528,6 +548,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   frontComponent: {
     flatEntityMaps: FlatFrontComponentMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateFrontComponentAction;
       update: FlatUpdateFrontComponentAction;
@@ -544,6 +565,7 @@ export type AllFlatEntityTypesByMetadataName = {
   };
   webhook: {
     flatEntityMaps: FlatWebhookMaps;
+    universalMigrated: false;
     universalActions: {
       create: FlatCreateWebhookAction;
       update: FlatUpdateWebhookAction;
