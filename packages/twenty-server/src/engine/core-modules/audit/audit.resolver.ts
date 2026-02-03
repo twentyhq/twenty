@@ -38,7 +38,11 @@ export class AuditResolver {
     workspace: WorkspaceEntity | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ) {
-    return this.trackAnalytics(createAnalyticsInput, workspace, userWorkspaceId);
+    return this.trackAnalytics(
+      createAnalyticsInput,
+      workspace,
+      userWorkspaceId,
+    );
   }
 
   @Mutation(() => Analytics)

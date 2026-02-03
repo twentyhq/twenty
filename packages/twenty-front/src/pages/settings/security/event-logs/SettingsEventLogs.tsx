@@ -113,7 +113,12 @@ export const SettingsEventLogs = () => {
     filters: {
       eventType: filters.eventType,
       userWorkspaceId: filters.userWorkspaceId,
-      dateRange: filters.dateRange,
+      dateRange: filters.dateRange
+        ? {
+            start: filters.dateRange.start?.toISOString(),
+            end: filters.dateRange.end?.toISOString(),
+          }
+        : undefined,
       recordId: filters.recordId,
       objectMetadataId: filters.objectMetadataId,
     },
