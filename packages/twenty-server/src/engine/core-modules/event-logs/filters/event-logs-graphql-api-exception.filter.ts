@@ -11,4 +11,3 @@ export class EventLogsGraphqlApiExceptionFilter implements ExceptionFilter {
     return eventLogsGraphqlApiExceptionHandler(exception);
   }
 }
-
