@@ -229,8 +229,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // Execute a command (DELETE, ALTER, etc.)
-  public async command(
+  public async executeCommand(
     query: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: Record<string, any>,

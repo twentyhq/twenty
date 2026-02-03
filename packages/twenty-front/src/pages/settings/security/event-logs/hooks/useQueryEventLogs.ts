@@ -1,31 +1,11 @@
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import {
   type EventLogQueryInput,
   type EventLogQueryResult,
   type EventLogRecord,
 } from '~/generated-metadata/graphql';
-
-const EVENT_LOGS_QUERY = gql`
-  query EventLogs($input: EventLogQueryInput!) {
-    eventLogs(input: $input) {
-      records {
-        event
-        timestamp
-        userId
-        properties
-        recordId
-        objectMetadataId
-        isCustom
-      }
-      totalCount
-      pageInfo {
-        endCursor
-        hasNextPage
-      }
-    }
-  }
-`;
+import { GET_EVENT_LOGS } from '~/pages/settings/security/event-logs/graphql/queries/getEventLogs';
 
 type EventLogsData = {
   eventLogs: EventLogQueryResult;
@@ -39,7 +19,7 @@ export const useEventLogs = (input: EventLogQueryInput) => {
   const { data, loading, error, refetch, fetchMore } = useQuery<
     EventLogsData,
     EventLogsVariables
-  >(EVENT_LOGS_QUERY, {
+  >(GET_EVENT_LOGS, {
     variables: { input },
     fetchPolicy: 'network-only',
   });

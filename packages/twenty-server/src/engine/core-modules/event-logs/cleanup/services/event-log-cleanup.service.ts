@@ -46,7 +46,7 @@ export class EventLogCleanupService {
       try {
         // ClickHouse ALTER TABLE DELETE is async by default
         // We use lightweight deletes (mutations) which are efficient
-        const success = await this.clickHouseService.command(
+        const success = await this.clickHouseService.executeCommand(
           `ALTER TABLE ${tableName} DELETE WHERE "workspaceId" = {workspaceId:String} AND "timestamp" < {cutoffDate:DateTime64(3)}`,
           {
             workspaceId,
