@@ -6,6 +6,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { ApplyCalendarEventsVisibilityRestrictionsService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/apply-calendar-events-visibility-restrictions.service';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -25,10 +26,19 @@ export class CalendarEventFindManyPostQueryHook
     _objectName: string,
     payload: CalendarEventWorkspaceEntity[],
   ): Promise<void> {
-    const { user, apiKey } = authContext;
+    const { user, apiKey, application } = authContext;
 
-    if (!isDefined(user) && !isDefined(apiKey)) {
-      throw new ForbiddenError('User is required');
+    const isTwentyStandardApplication =
+      isDefined(application) &&
+      application.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION.universalIdentifier;
+
+    if (
+      !isDefined(user) &&
+      !isDefined(apiKey) &&
+      !isTwentyStandardApplication
+    ) {
+      throw new ForbiddenError('Authentication is required');
     }
 
     const workspace = authContext.workspace;
