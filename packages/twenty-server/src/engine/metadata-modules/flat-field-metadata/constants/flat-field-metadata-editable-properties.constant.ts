@@ -11,7 +11,8 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'label',
     'name',
     'options',
-    'settings',
+    // TODO prastoin
+    'universalSettings',
   ],
   standard: [
     'defaultValue',

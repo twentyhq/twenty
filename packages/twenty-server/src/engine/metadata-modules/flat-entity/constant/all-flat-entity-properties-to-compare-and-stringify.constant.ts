@@ -2,7 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { FLAT_AGENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-agent/constants/flat-agent-editable-properties.constant';
 import { FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-command-menu-item/constants/flat-command-menu-item-editable-properties.constant';
-import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { FLAT_FRONT_COMPONENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-front-component/constants/flat-front-component-editable-properties.constant';
 import { FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/flat-navigation-menu-item-editable-properties.constant';
@@ -23,8 +23,9 @@ import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-
 import { FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/logic-function/constants/flat-logic-function-editable-properties.constant';
 
 type OneFlatEntityConfiguration<T extends AllMetadataName> = {
-  propertiesToCompare: (keyof MetadataFlatEntity<T>)[];
-  propertiesToStringify: (keyof MetadataFlatEntity<T>)[];
+  propertiesToCompare: (keyof MetadataUniversalFlatEntity<T>)[];
+  // TODO refactor to be jsonb strictly typed and record oriented to have minimal extension
+  propertiesToStringify: (keyof MetadataUniversalFlatEntity<T>)[];
 };
 export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   fieldMetadata: {
@@ -34,7 +35,7 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
     ],
     propertiesToStringify: [
       'options',
-      'settings',
+      'universalSettings',
       'standardOverrides',
       'defaultValue',
     ],
