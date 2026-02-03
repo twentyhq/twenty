@@ -24,8 +24,10 @@ export class FlatViewGroupValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
   >): FailedFlatEntityValidation<'viewGroup', 'update'> {
-    const existingFlatViewGroup =
-      optimisticFlatViewGroupMaps.byId[flatEntityId];
+    const existingFlatViewGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatViewGroupMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -100,8 +102,10 @@ export class FlatViewGroupValidatorService {
       type: 'delete',
     });
 
-    const existingFlatViewGroup =
-      optimisticFlatViewGroupMaps.byId[viewGroupIdToDelete];
+    const existingFlatViewGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewGroupIdToDelete,
+      flatEntityMaps: optimisticFlatViewGroupMaps,
+    });
 
     if (!isDefined(existingFlatViewGroup)) {
       validationResult.errors.push({
@@ -133,8 +137,10 @@ export class FlatViewGroupValidatorService {
       type: 'create',
     });
 
-    const existingFlatViewGroup =
-      optimisticFlatViewGroupMaps.byId[flatViewGroupToValidate.id];
+    const existingFlatViewGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewGroupToValidate.id,
+      flatEntityMaps: optimisticFlatViewGroupMaps,
+    });
 
     if (isDefined(existingFlatViewGroup)) {
       const flatViewGroupId = flatViewGroupToValidate.id;
@@ -146,7 +152,10 @@ export class FlatViewGroupValidatorService {
       });
     }
 
-    const flatView = flatViewMaps.byId[flatViewGroupToValidate.viewId];
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewGroupToValidate.viewId,
+      flatEntityMaps: flatViewMaps,
+    });
 
     if (!isDefined(flatView)) {
       validationResult.errors.push({
