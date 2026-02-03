@@ -8,7 +8,6 @@ import {
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
@@ -74,16 +73,7 @@ export const EventLogDatePickerInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
-  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
-
-  const closeAllDropdowns = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-  };
-
   const handleClose = () => {
-    closeAllDropdowns();
     setIsOpen(false);
   };
 
@@ -97,12 +87,6 @@ export const EventLogDatePickerInput = ({
       MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
     ],
   });
-
-  const handleDateTimeChange = (newDateTime: Temporal.ZonedDateTime | null) => {
-    if (isDefined(newDateTime)) {
-      onChange(new Date(newDateTime.epochMilliseconds));
-    }
-  };
 
   const handleDateTimeSelect = (newDateTime: Temporal.ZonedDateTime | null) => {
     if (isDefined(newDateTime)) {
@@ -151,7 +135,7 @@ export const EventLogDatePickerInput = ({
             <DateTimePicker
               instanceId={`event-log-date-picker-${label}`}
               date={zonedDateTime}
-              onChange={handleDateTimeChange}
+              onChange={handleDateTimeSelect}
               onClose={handleDateTimeSelect}
               onClear={handleClear}
               clearable

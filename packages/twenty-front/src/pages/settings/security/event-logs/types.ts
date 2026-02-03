@@ -1,9 +1,7 @@
-export enum EventLogTable {
-  WORKSPACE_EVENT = 'WORKSPACE_EVENT',
-  PAGEVIEW = 'PAGEVIEW',
-  OBJECT_EVENT = 'OBJECT_EVENT',
-}
+// Re-export EventLogTable from twenty-shared for consistent usage
+export { EventLogTable } from 'twenty-shared/types';
 
+// Types matching the GraphQL schema - these will be auto-generated once schema is synced
 export type EventLogRecord = {
   event: string;
   timestamp: string;
@@ -38,7 +36,7 @@ export type EventLogFiltersInput = {
 };
 
 export type EventLogQueryInput = {
-  table: EventLogTable;
+  table: string;
   filters?: EventLogFiltersInput;
   first?: number;
   after?: string;

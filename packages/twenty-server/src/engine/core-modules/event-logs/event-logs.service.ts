@@ -1,26 +1,27 @@
+/* @license Enterprise */
+
 import { BadRequestException, Injectable } from '@nestjs/common';
 
+import { EventLogTable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import {
-  buildClickHouseCountQuery,
-  buildClickHouseSelectQuery,
-} from 'src/engine/core-modules/event-logs/utils/clickhouse-query-builder.util';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-import { EventLogFiltersInput } from './dtos/event-log-filters.input';
 import {
-  EventLogOrderByDirection,
-  EventLogOrderByField,
-} from './dtos/event-log-order-by.input';
+  EventLogsException,
+  EventLogsExceptionCode,
+} from './event-logs.exception';
+
+import { EventLogFiltersInput } from './dtos/event-log-filters.input';
 import { EventLogQueryInput } from './dtos/event-log-query.input';
 import {
   EventLogQueryResult,
   EventLogRecord,
 } from './dtos/event-log-result.output';
-import { EventLogTable } from './dtos/event-log-table.enum';
 
 type ClickHouseEventRecord = {
   event?: string;
@@ -47,52 +48,79 @@ export class EventLogsService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly billingService: BillingService,
   ) {}
 
   async queryEventLogs(
     workspaceId: string,
     input: EventLogQueryInput,
   ): Promise<EventLogQueryResult> {
+    await this.validateAccess(workspaceId);
+
     if (!ALLOWED_TABLES.includes(input.table)) {
       throw new BadRequestException(`Invalid table: ${input.table}`);
     }
 
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
+    const tableName = CLICKHOUSE_TABLE_NAMES[input.table];
+    const eventFieldName =
+      input.table === EventLogTable.PAGEVIEW ? 'name' : 'event';
 
     const resolvedFilters = await this.resolveWorkspaceMemberFilter(
       workspaceId,
       input.filters,
     );
 
-    const cursorFilter = this.buildCursorFilter(input.after);
-    const filter = this.buildFilter(resolvedFilters, input.table, cursorFilter);
-    const orderBy = this.buildOrderBy(input.orderBy);
+    // Build parameterized query - workspaceId is always the first filter (primary key)
+    const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
+    const params: Record<string, unknown> = { workspaceId };
 
-    const clickHouseTableName = CLICKHOUSE_TABLE_NAMES[input.table];
-
-    const { query, params } = buildClickHouseSelectQuery({
-      tableName: clickHouseTableName,
-      filter,
-      orderBy,
-      limit: limit + 1,
-      workspaceId,
-    });
-
-    const records = await this.clickHouseService.select<ClickHouseEventRecord>(
-      query,
+    this.applyFilters(
+      whereClauses,
       params,
+      resolvedFilters,
+      eventFieldName,
+      input.table,
     );
 
-    const { query: countQuery, params: countParams } =
-      buildClickHouseCountQuery({
-        tableName: clickHouseTableName,
-        filter: this.buildFilter(resolvedFilters, input.table),
-        workspaceId,
-      });
+    // Cursor-based pagination using epoch milliseconds
+    const paginationClauses = [...whereClauses];
 
-    const countResult = await this.clickHouseService.select<{
-      totalCount: number;
-    }>(countQuery, countParams);
+    if (isDefined(input.after)) {
+      const cursorMs = this.decodeCursor(input.after);
+
+      paginationClauses.push(
+        '"timestamp" < fromUnixTimestamp64Milli({cursorMs:Int64})',
+      );
+      params.cursorMs = cursorMs;
+    }
+
+    const filterWhereClause = whereClauses.join(' AND ');
+    const paginationWhereClause = paginationClauses.join(' AND ');
+
+    // Use same filters for count query for accurate filtered count
+    const countQuery = `
+      SELECT count() as totalCount
+      FROM ${tableName}
+      WHERE ${filterWhereClause}
+    `;
+
+    const query = `
+      SELECT *
+      FROM ${tableName}
+      WHERE ${paginationWhereClause}
+      ORDER BY "timestamp" DESC
+      LIMIT {limit:Int32}
+    `;
+
+    params.limit = limit + 1;
+
+    // Execute queries in parallel for better performance
+
+    const [records, countResult] = await Promise.all([
+      this.clickHouseService.select<ClickHouseEventRecord>(query, params),
+      this.clickHouseService.select<{ totalCount: number }>(countQuery, params),
+    ]);
 
     const totalCount = countResult[0]?.totalCount ?? 0;
     const hasNextPage = records.length > limit;
@@ -102,11 +130,10 @@ export class EventLogsService {
     }
 
     const normalizedRecords = this.normalizeRecords(records, input.table);
+    const lastRecord = normalizedRecords[normalizedRecords.length - 1];
     const endCursor =
-      normalizedRecords.length > 0
-        ? this.encodeCursor(
-            normalizedRecords[normalizedRecords.length - 1].timestamp,
-          )
+      hasNextPage && lastRecord
+        ? this.encodeCursor(lastRecord.timestamp)
         : undefined;
 
     return {
@@ -119,102 +146,82 @@ export class EventLogsService {
     };
   }
 
-  private encodeCursor(timestamp: Date): string {
-    return Buffer.from(timestamp.toISOString()).toString('base64');
-  }
-
-  private decodeCursor(cursor: string): Date {
-    const decoded = Buffer.from(cursor, 'base64').toString('utf-8');
-
-    return new Date(decoded);
-  }
-
-  private buildCursorFilter(
-    cursor: string | undefined,
-  ): Record<string, unknown> | undefined {
-    if (!isDefined(cursor)) {
-      return undefined;
+  private async validateAccess(workspaceId: string): Promise<void> {
+    // Check if ClickHouse is configured
+    if (!this.clickHouseService.getMainClient()) {
+      throw new EventLogsException(
+        'Audit logs require ClickHouse to be configured. Please set the CLICKHOUSE_URL environment variable.',
+        EventLogsExceptionCode.CLICKHOUSE_NOT_CONFIGURED,
+      );
     }
 
-    const cursorDate = this.decodeCursor(cursor);
+    // Check for billing entitlement (for cloud users)
+    const hasEntitlement = await this.billingService.hasEntitlement(
+      workspaceId,
+      BillingEntitlementKey.AUDIT_LOGS,
+    );
 
-    return {
-      timestamp: { lt: cursorDate.toISOString() },
-    };
+    if (!hasEntitlement) {
+      throw new EventLogsException(
+        'Audit logs require an Enterprise subscription.',
+        EventLogsExceptionCode.NO_ENTITLEMENT,
+      );
+    }
   }
 
-  private buildFilter(
+  private applyFilters(
+    whereClauses: string[],
+    params: Record<string, unknown>,
     filters: EventLogFiltersInput | undefined,
+    eventFieldName: string,
     table: EventLogTable,
-    cursorFilter?: Record<string, unknown>,
-  ): Record<string, unknown> | undefined {
-    const filterObj: Record<string, unknown> = {};
-
-    if (isDefined(cursorFilter)) {
-      Object.assign(filterObj, cursorFilter);
-    }
-
+  ): void {
     if (!isDefined(filters)) {
-      return Object.keys(filterObj).length > 0 ? filterObj : undefined;
+      return;
     }
 
     if (isDefined(filters.eventType)) {
-      const eventFieldName =
-        table === EventLogTable.PAGEVIEW ? 'name' : 'event';
-
-      filterObj[eventFieldName] = { ilike: `%${filters.eventType}%` };
+      whereClauses.push(
+        `lower("${eventFieldName}") LIKE {eventTypePattern:String}`,
+      );
+      params.eventTypePattern = `%${filters.eventType.toLowerCase()}%`;
     }
 
     if (isDefined(filters.userId)) {
-      filterObj.userId = { eq: filters.userId };
+      whereClauses.push('"userId" = {userId:String}');
+      params.userId = filters.userId;
     }
 
-    if (isDefined(filters.dateRange)) {
-      const timestampFilter: Record<string, unknown> = {};
-
-      if (isDefined(filters.dateRange.start)) {
-        const startDate =
-          filters.dateRange.start instanceof Date
-            ? filters.dateRange.start
-            : new Date(filters.dateRange.start);
-
-        timestampFilter.gte = startDate.toISOString();
-      }
-      if (isDefined(filters.dateRange.end)) {
-        const endDate =
-          filters.dateRange.end instanceof Date
-            ? filters.dateRange.end
-            : new Date(filters.dateRange.end);
-
-        timestampFilter.lte = endDate.toISOString();
-      }
-      if (Object.keys(timestampFilter).length > 0) {
-        filterObj.timestamp = timestampFilter;
-      }
+    if (isDefined(filters.dateRange?.start)) {
+      whereClauses.push('"timestamp" >= {startDate:DateTime64(3)}');
+      params.startDate = filters.dateRange.start;
     }
 
+    if (isDefined(filters.dateRange?.end)) {
+      whereClauses.push('"timestamp" <= {endDate:DateTime64(3)}');
+      params.endDate = filters.dateRange.end;
+    }
+
+    // Object event specific filters
     if (table === EventLogTable.OBJECT_EVENT) {
       if (isDefined(filters.recordId)) {
-        filterObj.recordId = { eq: filters.recordId };
+        whereClauses.push('"recordId" = {recordId:String}');
+        params.recordId = filters.recordId;
       }
+
       if (isDefined(filters.objectMetadataId)) {
-        filterObj.objectMetadataId = { eq: filters.objectMetadataId };
+        whereClauses.push('"objectMetadataId" = {objectMetadataId:String}');
+        params.objectMetadataId = filters.objectMetadataId;
       }
     }
-
-    return Object.keys(filterObj).length > 0 ? filterObj : undefined;
   }
 
-  private buildOrderBy(
-    orderBy:
-      | { field: EventLogOrderByField; direction: EventLogOrderByDirection }
-      | undefined,
-  ): Array<Record<string, string>> {
-    if (!isDefined(orderBy)) {
-      return [{ timestamp: 'DESC' }];
-    }
+  private encodeCursor(timestamp: Date): string {
+    return Buffer.from(String(timestamp.getTime())).toString('base64');
+  }
 
-    return [{ [orderBy.field]: orderBy.direction }];
+  private decodeCursor(cursor: string): number {
+    return parseInt(Buffer.from(cursor, 'base64').toString('utf-8'), 10);
   }
 
   private normalizeRecords(
@@ -259,11 +266,9 @@ export class EventLogsService {
       },
     });
 
-    const userId = workspaceMember?.userId;
-
     return {
       ...filters,
-      userId: userId ?? filters.userId,
+      userId: workspaceMember?.userId ?? filters.userId,
     };
   }
 }

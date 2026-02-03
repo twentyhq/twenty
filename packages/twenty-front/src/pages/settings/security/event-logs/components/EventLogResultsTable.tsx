@@ -1,10 +1,12 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Trans } from '@lingui/react/macro';
-import { useCallback, useEffect, useRef } from 'react';
-import Skeleton from 'react-loading-skeleton';
+import { msg } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { useCallback, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -14,6 +16,8 @@ import {
   type EventLogRecord,
   EventLogTable,
 } from '~/pages/settings/security/event-logs/types';
+
+import { type MessageDescriptor } from '@lingui/core';
 
 import { EventLogJsonCell } from './EventLogJsonCell';
 
@@ -25,26 +29,95 @@ type EventLogResultsTableProps = {
   selectedTable: EventLogTable;
 };
 
-const StyledTableContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-`;
+type ColumnConfig = {
+  id: string;
+  label: MessageDescriptor;
+  minWidth: number;
+  defaultWidth: number;
+};
+
+const DEFAULT_COLUMNS: ColumnConfig[] = [
+  { id: 'event', label: msg`Event`, minWidth: 100, defaultWidth: 200 },
+  { id: 'timestamp', label: msg`Timestamp`, minWidth: 100, defaultWidth: 150 },
+  { id: 'userId', label: msg`User ID`, minWidth: 100, defaultWidth: 150 },
+  {
+    id: 'properties',
+    label: msg`Properties`,
+    minWidth: 200,
+    defaultWidth: 400,
+  },
+];
+
+const OBJECT_EVENT_COLUMNS: ColumnConfig[] = [
+  { id: 'event', label: msg`Event`, minWidth: 100, defaultWidth: 180 },
+  { id: 'timestamp', label: msg`Timestamp`, minWidth: 100, defaultWidth: 130 },
+  { id: 'userId', label: msg`User ID`, minWidth: 100, defaultWidth: 130 },
+  { id: 'recordId', label: msg`Record ID`, minWidth: 100, defaultWidth: 130 },
+  {
+    id: 'objectMetadataId',
+    label: msg`Object ID`,
+    minWidth: 100,
+    defaultWidth: 130,
+  },
+  {
+    id: 'properties',
+    label: msg`Properties`,
+    minWidth: 150,
+    defaultWidth: 300,
+  },
+];
 
 const StyledScrollContainer = styled.div`
-  flex: 1;
+  height: 100%;
   overflow: auto;
 `;
 
 const StyledTable = styled(Table)`
+  border-collapse: collapse;
   min-width: 100%;
+  table-layout: fixed;
 `;
 
-const StyledTableBody = styled(TableBody)`
-  padding: 0;
+const StyledHeaderRow = styled(TableRow)<{ gridTemplateColumns: string }>`
+  display: grid;
+  grid-template-columns: ${({ gridTemplateColumns }) => gridTemplateColumns};
+`;
+
+const StyledDataRow = styled(TableRow)<{ gridTemplateColumns: string }>`
+  display: grid;
+  grid-template-columns: ${({ gridTemplateColumns }) => gridTemplateColumns};
+`;
+
+const StyledResizableHeader = styled(TableHeader)<{ isResizing?: boolean }>`
+  position: relative;
+  user-select: ${({ isResizing }) => (isResizing ? 'none' : 'auto')};
+`;
+
+const StyledResizeHandle = styled.div<{ isResizing: boolean }>`
+  background: ${({ isResizing, theme }) =>
+    isResizing ? theme.color.blue : 'transparent'};
+  bottom: 0;
+  cursor: col-resize;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 4px;
+
+  &:hover {
+    background: ${({ theme }) => theme.color.blue};
+  }
+`;
+
+const StyledTableCell = styled(TableCell)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  & > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 const StyledEmptyState = styled.div`
@@ -53,13 +126,36 @@ const StyledEmptyState = styled.div`
   text-align: center;
 `;
 
-const StyledSkeletonContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(4)};
+const StyledLoadingMore = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: ${({ theme }) => theme.spacing(4)};
+  text-align: center;
 `;
 
-const GRID_COLUMNS_DEFAULT = '2fr 1fr 1fr 3fr';
-const GRID_COLUMNS_OBJECT_EVENT = '2fr 1fr 1fr 1fr 1fr 2fr';
-const SKELETON_ROW_COUNT = 5;
+const StyledSkeletonContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledIntersectionObserver = styled.div`
+  height: 1px;
+`;
+
+const SKELETON_ROW_COUNT = 8;
+
+const buildGridTemplateColumns = (
+  columns: ColumnConfig[],
+  widths: Record<string, number>,
+): string => {
+  return columns
+    .map((col, index) => {
+      const isLastColumn = index === columns.length - 1;
+      const width = widths[col.id] ?? col.defaultWidth;
+
+      // eslint-disable-next-line lingui/no-unlocalized-strings
+      return isLastColumn ? `minmax(${width}px, 1fr)` : `${width}px`;
+    })
+    .join(' ');
+};
 
 export const EventLogResultsTable = ({
   records,
@@ -68,150 +164,144 @@ export const EventLogResultsTable = ({
   onLoadMore,
   selectedTable,
 }: EventLogResultsTableProps) => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { _: translate } = useLingui();
+  const theme = useTheme();
 
   const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
-  const gridColumns = showObjectEventColumns
-    ? GRID_COLUMNS_OBJECT_EVENT
-    : GRID_COLUMNS_DEFAULT;
+  const baseColumns = showObjectEventColumns
+    ? OBJECT_EVENT_COLUMNS
+    : DEFAULT_COLUMNS;
+
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>
+    Object.fromEntries(baseColumns.map((col) => [col.id, col.defaultWidth])),
+  );
+
+  const [resizingColumn, setResizingColumn] = useState<string | null>(null);
+
+  const handleResizeStart = useCallback(
+    (columnId: string, event: React.PointerEvent) => {
+      event.preventDefault();
+      setResizingColumn(columnId);
+      const startX = event.clientX;
+      const startWidth = columnWidths[columnId];
+
+      const handlePointerMove = (moveEvent: PointerEvent) => {
+        const delta = moveEvent.clientX - startX;
+        const column = baseColumns.find((col) => col.id === columnId);
+        const newWidth = Math.max(column?.minWidth ?? 50, startWidth + delta);
+
+        setColumnWidths((prev) => ({ ...prev, [columnId]: newWidth }));
+      };
+
+      const handlePointerUp = () => {
+        setResizingColumn(null);
+        document.removeEventListener('pointermove', handlePointerMove);
+        document.removeEventListener('pointerup', handlePointerUp);
+      };
+
+      document.addEventListener('pointermove', handlePointerMove);
+      document.addEventListener('pointerup', handlePointerUp);
+    },
+    [columnWidths, baseColumns],
+  );
+
+  const gridTemplateColumns = buildGridTemplateColumns(
+    baseColumns,
+    columnWidths,
+  );
+
+  const { ref: fetchMoreRef } = useInView({
+    onChange: (inView) => {
+      if (inView && hasNextPage && !loading) {
+        onLoadMore();
+      }
+    },
+  });
 
   const isInitialLoading = loading && records.length === 0;
-  const isLoadingMore = loading && records.length > 0;
-
-  const handleScroll = useCallback(() => {
-    const container = scrollContainerRef.current;
-
-    if (!container || loading || !hasNextPage) {
-      return;
-    }
-
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    const isNearBottom = scrollTop + clientHeight >= scrollHeight - 100;
-
-    if (isNearBottom) {
-      onLoadMore();
-    }
-  }, [loading, hasNextPage, onLoadMore]);
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-
-    if (!container) {
-      return;
-    }
-
-    container.addEventListener('scroll', handleScroll);
-
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-    };
-  }, [handleScroll]);
 
   if (isInitialLoading) {
     return (
-      <StyledTableContainer>
-        <StyledScrollContainer>
-          <StyledTable>
-            <TableRow gridAutoColumns={gridColumns}>
-              <TableHeader>
-                <Trans>Event</Trans>
+      <StyledScrollContainer>
+        <StyledTable>
+          <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
+            {baseColumns.map((column) => (
+              <TableHeader key={column.id}>
+                {translate(column.label)}
               </TableHeader>
-              <TableHeader>
-                <Trans>Timestamp</Trans>
-              </TableHeader>
-              <TableHeader>
-                <Trans>User ID</Trans>
-              </TableHeader>
-              {showObjectEventColumns && (
-                <>
-                  <TableHeader>
-                    <Trans>Record ID</Trans>
-                  </TableHeader>
-                  <TableHeader>
-                    <Trans>Object ID</Trans>
-                  </TableHeader>
-                </>
-              )}
-              <TableHeader>
-                <Trans>Properties</Trans>
-              </TableHeader>
-            </TableRow>
-          </StyledTable>
+            ))}
+          </StyledHeaderRow>
+        </StyledTable>
+        <SkeletonTheme
+          baseColor={theme.background.tertiary}
+          highlightColor={theme.background.transparent.lighter}
+          borderRadius={4}
+        >
           <StyledSkeletonContainer>
             {Array.from({ length: SKELETON_ROW_COUNT }).map((_, index) => (
-              <Skeleton height={48} borderRadius={4} key={index} />
+              <Skeleton height={40} key={index} style={{ marginBottom: 4 }} />
             ))}
           </StyledSkeletonContainer>
-        </StyledScrollContainer>
-      </StyledTableContainer>
+        </SkeletonTheme>
+      </StyledScrollContainer>
+    );
+  }
+
+  if (!loading && records.length === 0) {
+    return (
+      <StyledEmptyState>
+        <Trans>No event logs found</Trans>
+      </StyledEmptyState>
     );
   }
 
   return (
-    <StyledTableContainer>
-      <StyledScrollContainer ref={scrollContainerRef}>
-        <StyledTable>
-          <TableRow gridAutoColumns={gridColumns}>
-            <TableHeader>
-              <Trans>Event</Trans>
-            </TableHeader>
-            <TableHeader>
-              <Trans>Timestamp</Trans>
-            </TableHeader>
-            <TableHeader>
-              <Trans>User ID</Trans>
-            </TableHeader>
+    <StyledScrollContainer>
+      <StyledTable>
+        <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
+          {baseColumns.map((column) => (
+            <StyledResizableHeader
+              key={column.id}
+              isResizing={resizingColumn === column.id}
+            >
+              {translate(column.label)}
+              <StyledResizeHandle
+                isResizing={resizingColumn === column.id}
+                onPointerDown={(event) => handleResizeStart(column.id, event)}
+              />
+            </StyledResizableHeader>
+          ))}
+        </StyledHeaderRow>
+        {records.map((record, index) => (
+          <StyledDataRow
+            key={`${record.timestamp}-${record.event}-${index}`}
+            gridTemplateColumns={gridTemplateColumns}
+          >
+            <StyledTableCell>{record.event}</StyledTableCell>
+            <StyledTableCell>
+              {beautifyPastDateRelativeToNow(record.timestamp)}
+            </StyledTableCell>
+            <StyledTableCell>{record.userId ?? '-'}</StyledTableCell>
             {showObjectEventColumns && (
               <>
-                <TableHeader>
-                  <Trans>Record ID</Trans>
-                </TableHeader>
-                <TableHeader>
-                  <Trans>Object ID</Trans>
-                </TableHeader>
+                <StyledTableCell>{record.recordId ?? '-'}</StyledTableCell>
+                <StyledTableCell>
+                  {record.objectMetadataId ?? '-'}
+                </StyledTableCell>
               </>
             )}
-            <TableHeader>
-              <Trans>Properties</Trans>
-            </TableHeader>
-          </TableRow>
-          <StyledTableBody>
-            {records.map((record, index) => (
-              <TableRow
-                key={`${record.timestamp}-${record.event}-${index}`}
-                gridAutoColumns={gridColumns}
-              >
-                <TableCell>{record.event}</TableCell>
-                <TableCell>
-                  {beautifyPastDateRelativeToNow(record.timestamp)}
-                </TableCell>
-                <TableCell>{record.userId ?? '-'}</TableCell>
-                {showObjectEventColumns && (
-                  <>
-                    <TableCell>{record.recordId ?? '-'}</TableCell>
-                    <TableCell>{record.objectMetadataId ?? '-'}</TableCell>
-                  </>
-                )}
-                <TableCell>
-                  <EventLogJsonCell value={record.properties} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </StyledTableBody>
-        </StyledTable>
-        {isLoadingMore && (
-          <StyledSkeletonContainer>
-            {Array.from({ length: 3 }).map((_, index) => (
-              <Skeleton height={48} borderRadius={4} key={index} />
-            ))}
-          </StyledSkeletonContainer>
-        )}
-        {!loading && records.length === 0 && (
-          <StyledEmptyState>
-            <Trans>No event logs found</Trans>
-          </StyledEmptyState>
-        )}
-      </StyledScrollContainer>
-    </StyledTableContainer>
+            <StyledTableCell>
+              <EventLogJsonCell value={record.properties} />
+            </StyledTableCell>
+          </StyledDataRow>
+        ))}
+      </StyledTable>
+      <StyledIntersectionObserver ref={fetchMoreRef} />
+      {loading && records.length > 0 && (
+        <StyledLoadingMore>
+          <Trans>Loading more...</Trans>
+        </StyledLoadingMore>
+      )}
+    </StyledScrollContainer>
   );
 };

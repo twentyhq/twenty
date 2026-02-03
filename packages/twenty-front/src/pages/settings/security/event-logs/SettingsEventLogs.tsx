@@ -4,8 +4,8 @@ import { useState } from 'react';
 
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { IconRefresh } from 'twenty-ui/display';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { IconAlertTriangle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -17,18 +17,20 @@ import { EventLogTable } from './types';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
   height: 100%;
-  padding: ${({ theme }) => theme.spacing(4)};
+  overflow: hidden;
 `;
 
-const StyledControlsRow = styled.div`
+const StyledHeader = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledHeaderRow = styled.div`
@@ -42,10 +44,38 @@ const StyledRecordCount = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
-const StyledTableContainer = styled.div`
+const StyledTableWrapper = styled.div`
   flex: 1;
   min-height: 0;
   overflow: hidden;
+`;
+
+const StyledErrorContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(4)};
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(8)};
+  text-align: center;
+`;
+
+const StyledErrorIcon = styled.div`
+  color: ${({ theme }) => theme.color.orange};
+`;
+
+const StyledErrorTitle = styled.h3`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin: 0;
+`;
+
+const StyledErrorMessage = styled.p`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin: 0;
+  max-width: 400px;
 `;
 
 export type EventLogFiltersState = {
@@ -69,18 +99,25 @@ export const SettingsEventLogs = () => {
   );
   const [filters, setFilters] = useState<EventLogFiltersState>({});
 
-  const { records, totalCount, hasNextPage, loading, refetch, loadMore } =
-    useEventLogs({
-      table: selectedTable,
-      filters: {
-        eventType: filters.eventType,
-        workspaceMemberId: filters.workspaceMemberId,
-        dateRange: filters.dateRange,
-        recordId: filters.recordId,
-        objectMetadataId: filters.objectMetadataId,
-      },
-      first: RECORDS_PER_PAGE,
-    });
+  const {
+    records,
+    totalCount,
+    hasNextPage,
+    loading,
+    error,
+    refetch,
+    loadMore,
+  } = useEventLogs({
+    table: selectedTable,
+    filters: {
+      eventType: filters.eventType,
+      workspaceMemberId: filters.workspaceMemberId,
+      dateRange: filters.dateRange,
+      recordId: filters.recordId,
+      objectMetadataId: filters.objectMetadataId,
+    },
+    first: RECORDS_PER_PAGE,
+  });
 
   const handleTableChange = (table: EventLogTable) => {
     setSelectedTable(table);
@@ -97,6 +134,40 @@ export const SettingsEventLogs = () => {
 
   const recordCount = records.length;
 
+  const getErrorContent = () => {
+    if (!isDefined(error)) {
+      return null;
+    }
+
+    const errorMessage = error.message || '';
+    const isClickHouseError = errorMessage.includes('ClickHouse');
+    const isEntitlementError =
+      errorMessage.includes('Enterprise') ||
+      errorMessage.includes('entitlement');
+
+    if (isClickHouseError) {
+      return {
+        title: t`ClickHouse Not Configured`,
+        message: t`Audit logs require ClickHouse to be configured. Please contact your administrator to set up ClickHouse.`,
+      };
+    }
+
+    if (isEntitlementError) {
+      return {
+        title: t`Enterprise Feature`,
+        message: t`Audit logs are available with an Enterprise subscription. Please upgrade to access this feature.`,
+      };
+    }
+
+    return {
+      title: t`Error Loading Audit Logs`,
+      message:
+        errorMessage || t`An unexpected error occurred. Please try again.`,
+    };
+  };
+
+  const errorContent = getErrorContent();
+
   return (
     <FullScreenContainer
       exitFullScreen={handleExitFullScreen}
@@ -109,42 +180,59 @@ export const SettingsEventLogs = () => {
           children: <Trans>Security</Trans>,
           href: getSettingsPath(SettingsPath.Security),
         },
-        { children: <Trans>Event Logs</Trans> },
+        { children: <Trans>Audit Logs</Trans> },
       ]}
     >
       <StyledContainer>
-        <StyledControlsRow>
-          <EventLogTableSelector
-            value={selectedTable}
-            onChange={handleTableChange}
-          />
-          <EventLogFilters
-            table={selectedTable}
-            value={filters}
-            onChange={handleFiltersChange}
-          />
-          <StyledHeaderRow>
-            <StyledRecordCount>
-              {t`${recordCount} of ${totalCount} records`}
-            </StyledRecordCount>
+        {isDefined(errorContent) ? (
+          <StyledErrorContainer>
+            <StyledErrorIcon>
+              <IconAlertTriangle size={48} />
+            </StyledErrorIcon>
+            <StyledErrorTitle>{errorContent.title}</StyledErrorTitle>
+            <StyledErrorMessage>{errorContent.message}</StyledErrorMessage>
             <Button
-              Icon={IconRefresh}
-              variant="tertiary"
-              size="small"
-              onClick={() => refetch()}
-              title={t`Refresh`}
+              title={t`Go Back`}
+              variant="secondary"
+              onClick={handleExitFullScreen}
             />
-          </StyledHeaderRow>
-        </StyledControlsRow>
-        <StyledTableContainer>
-          <EventLogResultsTable
-            records={records}
-            loading={loading}
-            hasNextPage={hasNextPage}
-            onLoadMore={loadMore}
-            selectedTable={selectedTable}
-          />
-        </StyledTableContainer>
+          </StyledErrorContainer>
+        ) : (
+          <>
+            <StyledHeader>
+              <EventLogTableSelector
+                value={selectedTable}
+                onChange={handleTableChange}
+              />
+              <EventLogFilters
+                table={selectedTable}
+                value={filters}
+                onChange={handleFiltersChange}
+              />
+              <StyledHeaderRow>
+                <StyledRecordCount>
+                  {t`${recordCount} of ${totalCount} records`}
+                </StyledRecordCount>
+                <Button
+                  Icon={IconRefresh}
+                  variant="tertiary"
+                  size="small"
+                  onClick={() => refetch()}
+                  title={t`Refresh`}
+                />
+              </StyledHeaderRow>
+            </StyledHeader>
+            <StyledTableWrapper>
+              <EventLogResultsTable
+                records={records}
+                loading={loading}
+                hasNextPage={hasNextPage}
+                onLoadMore={loadMore}
+                selectedTable={selectedTable}
+              />
+            </StyledTableWrapper>
+          </>
+        )}
       </StyledContainer>
     </FullScreenContainer>
   );

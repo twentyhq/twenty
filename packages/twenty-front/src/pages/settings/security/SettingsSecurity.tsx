@@ -1,9 +1,12 @@
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { Link } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
@@ -24,7 +27,6 @@ import { Tag } from 'twenty-ui/components';
 import { H2Title, IconHistory, IconLock, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -42,11 +44,19 @@ const StyledSection = styled(Section)`
   flex-shrink: 0;
 `;
 
+const StyledLink = styled(Link, {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'isDisabled',
+})<{ isDisabled: boolean }>`
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+  text-decoration: none;
+`;
+
 export const SettingsSecurity = () => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isClickHouseConfigured = useRecoilValue(isClickHouseConfiguredState);
   const authProviders = useRecoilValue(authProvidersState);
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
@@ -104,6 +114,9 @@ export const SettingsSecurity = () => {
     hasSsoIdentityProviders &&
     !hasDirectAuthEnabled &&
     hasBypassProviderAvailable;
+
+  const hasEnterpriseAccess = currentWorkspace?.hasValidEnterpriseKey === true;
+  const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
 
   return (
     <SubMenuTopBarContainer
@@ -174,22 +187,40 @@ export const SettingsSecurity = () => {
           )}
           <Section>
             <H2Title
-              title={t`Event Logs`}
+              title={t`Audit Logs`}
               description={t`View workspace activity logs`}
+              adornment={
+                <Tag
+                  text={t`Enterprise`}
+                  color="transparent"
+                  Icon={IconLock}
+                  variant="border"
+                />
+              }
             />
             <Card rounded>
               <SettingsOptionCardContentButton
                 Icon={IconHistory}
-                title={t`Event Logs`}
-                description={t`View and filter workspace events, page views, and object changes`}
+                title={t`Audit Logs`}
+                description={
+                  !isClickHouseConfigured
+                    ? t`ClickHouse is required for audit logs. Contact your administrator.`
+                    : !hasEnterpriseAccess
+                      ? t`Upgrade to Enterprise to access audit logs`
+                      : t`View and filter events, page views, object changes`
+                }
                 Button={
-                  <UndecoratedLink to={getSettingsPath(SettingsPath.EventLogs)}>
+                  <StyledLink
+                    to={getSettingsPath(SettingsPath.EventLogs)}
+                    isDisabled={!isEventLogsEnabled}
+                  >
                     <Button
                       title={t`View Logs`}
                       variant="secondary"
                       size="small"
+                      disabled={!isEventLogsEnabled}
                     />
-                  </UndecoratedLink>
+                  </StyledLink>
                 }
               />
             </Card>

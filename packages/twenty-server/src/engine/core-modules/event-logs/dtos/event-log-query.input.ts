@@ -1,8 +1,11 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 
+import { EventLogTable } from 'twenty-shared/types';
+
 import { EventLogFiltersInput } from './event-log-filters.input';
-import { EventLogOrderByInput } from './event-log-order-by.input';
-import { EventLogTable } from './event-log-table.enum';
+import { registerEventLogTableEnum } from './event-log-table.enum';
+
+registerEventLogTableEnum();
 
 @InputType()
 export class EventLogQueryInput {
@@ -17,7 +20,4 @@ export class EventLogQueryInput {
 
   @Field(() => String, { nullable: true })
   after?: string;
-
-  @Field(() => EventLogOrderByInput, { nullable: true })
-  orderBy?: EventLogOrderByInput;
 }

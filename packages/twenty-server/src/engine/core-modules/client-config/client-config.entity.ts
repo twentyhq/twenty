@@ -203,4 +203,7 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isCloudflareIntegrationEnabled: boolean;
+
+  @Field(() => Boolean)
+  isClickHouseConfigured: boolean;
 }
