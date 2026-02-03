@@ -4,19 +4,19 @@
 -- Step 1: Create new table with optimized structure
 CREATE TABLE IF NOT EXISTS workspaceEvent_v2
 (
-    `event`       LowCardinality(String) NOT NULL,
-    `timestamp`   DateTime64(3) NOT NULL,
-    `userId`      String DEFAULT '',
-    `workspaceId` String NOT NULL,
-    `properties`  JSON
+    `event`           LowCardinality(String) NOT NULL,
+    `timestamp`       DateTime64(3) NOT NULL,
+    `userWorkspaceId` String DEFAULT '',
+    `workspaceId`     String NOT NULL,
+    `properties`      JSON
 )
     ENGINE = MergeTree
-    ORDER BY (workspaceId, timestamp, event, userId)
+    ORDER BY (workspaceId, timestamp, event, userWorkspaceId)
     TTL timestamp + INTERVAL 3 YEAR DELETE;
 
--- Step 2: Migrate existing data
+-- Step 2: Migrate existing data (userWorkspaceId will be empty for historical data)
 INSERT INTO workspaceEvent_v2
-SELECT event, timestamp, userId, workspaceId, properties
+SELECT event, timestamp, '' as userWorkspaceId, workspaceId, properties
 FROM workspaceEvent;
 
 -- Step 3: Atomic swap (EXCHANGE is atomic and instant)

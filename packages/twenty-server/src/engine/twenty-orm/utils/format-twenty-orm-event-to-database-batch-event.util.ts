@@ -7,12 +7,12 @@ import {
   ObjectRecordUpsertEvent,
   type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   assertUnreachable,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import type { ObjectLiteral } from 'typeorm';
 

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS objectEvent_v2
 (
     `event`            LowCardinality(String) NOT NULL,
     `timestamp`        DateTime64(3) NOT NULL,
-    `userId`           String DEFAULT '',
+    `userWorkspaceId`  String DEFAULT '',
     `workspaceId`      String NOT NULL,
     `recordId`         String NOT NULL,
     `objectMetadataId` String NOT NULL,
@@ -14,12 +14,12 @@ CREATE TABLE IF NOT EXISTS objectEvent_v2
     `isCustom`         Boolean DEFAULT FALSE
 )
     ENGINE = MergeTree
-    ORDER BY (workspaceId, timestamp, objectMetadataId, recordId, event, userId)
+    ORDER BY (workspaceId, timestamp, objectMetadataId, recordId, event, userWorkspaceId)
     TTL timestamp + INTERVAL 3 YEAR DELETE;
 
--- Step 2: Migrate existing data
+-- Step 2: Migrate existing data (userWorkspaceId will be empty for historical data)
 INSERT INTO objectEvent_v2
-SELECT event, timestamp, userId, workspaceId, recordId, objectMetadataId, properties, isCustom
+SELECT event, timestamp, '' as userWorkspaceId, workspaceId, recordId, objectMetadataId, properties, isCustom
 FROM objectEvent;
 
 -- Step 3: Atomic swap
