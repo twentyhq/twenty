@@ -9,6 +9,7 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
@@ -218,15 +219,10 @@ const checkUniqueConstraintFullyPopulated = (
     flatFieldMetadataMaps,
   );
 
-  const indexMetadatas = flatObjectMetadata.indexMetadataIds
-    .map((indexId) =>
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: indexId,
-        flatEntityMaps: flatIndexMaps,
-      }),
-    )
-    .filter(isDefined)
-    .map((index) => ({
+  const indexMetadatas = findManyFlatEntityByIdInFlatEntityMaps({
+    flatEntityIds: flatObjectMetadata.indexMetadataIds,
+    flatEntityMaps: flatIndexMaps,
+  }).map((index) => ({
       id: index.id,
       isUnique: index.isUnique,
       indexFieldMetadatas: index.flatIndexFieldMetadatas.map(
