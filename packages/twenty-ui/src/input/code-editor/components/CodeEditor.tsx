@@ -51,6 +51,10 @@ const StyledEditorLoader = styled.div<{
   }}
 `;
 
+const StyledCodeEditorContainer = styled.div`
+  display: contents;
+`;
+
 const StyledEditor = styled(Editor)<{
   variant: CodeEditorVariant;
   transparentBackground?: boolean;
@@ -140,7 +144,7 @@ export const CodeEditor = ({
       <Loader />
     </StyledEditorLoader>
   ) : (
-    <div onKeyDown={handleKeyDown}>
+    <StyledCodeEditorContainer onKeyDown={handleKeyDown}>
       <input
         type="hidden"
         data-testid="code-editor-value"
@@ -199,6 +203,6 @@ export const CodeEditor = ({
           ...options,
         }}
       />
-    </div>
+    </StyledCodeEditorContainer>
   );
 };
