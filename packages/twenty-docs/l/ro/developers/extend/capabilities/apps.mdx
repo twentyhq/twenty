@@ -102,7 +102,7 @@ my-twenty-app/
 
 Pe scurt:
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and authentication commands that delegate to the local `twenty` CLI.
+* **package.json**: Declară numele aplicației, versiunea, motoarele (Node 24+, Yarn 4) și adaugă `twenty-sdk` plus scripturi precum `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, precum și comenzi de autentificare care deleagă către CLI-ul local `twenty`.
 * **.gitignore**: Ignoră artefacte comune precum `node_modules`, `.yarn`, `generated/` (client tipizat), `dist/`, `build/`, foldere de coverage, fișiere jurnal și fișiere `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Blochează și configurează lanțul de instrumente Yarn 4 folosit de proiect.
 * **.nvmrc**: Fixează versiunea Node.js așteptată de proiect.
@@ -111,23 +111,23 @@ Pe scurt:
 * **public/**: Un folder pentru stocarea resurselor publice (imagini, fonturi, fișiere statice) care vor fi servite împreună cu aplicația ta. Fișierele plasate aici sunt încărcate în timpul sincronizării și sunt accesibile la rulare.
 * **src/**: Locul principal unde vă definiți aplicația sub formă de cod
 
-### Entity detection
+### Detectarea entităților
 
-The SDK detects entities by parsing your TypeScript files for **`export default define<Entity>({...})`** calls. Each entity type has a corresponding helper function exported from `twenty-sdk`:
+SDK-ul detectează entitățile analizând fișierele TypeScript pentru apeluri **`export default define<Entity>({...})`**. Fiecare tip de entitate are o funcție ajutătoare corespunzătoare, exportată din `twenty-sdk`:
 
-| Helper function          | Tipul entității                          |
-| ------------------------ | ---------------------------------------- |
-| `defineObject()`         | Definiții de obiecte personalizate       |
-| `defineLogicFunction()`  | Logic function definitions               |
-| `defineFrontComponent()` | Definiții ale componentelor de interfață |
-| `defineRole()`           | Definiții de rol                         |
-| `defineField()`          | Field extensions for existing objects    |
+| Funcție ajutătoare       | Tipul entității                             |
+| ------------------------ | ------------------------------------------- |
+| `defineObject()`         | Definiții de obiecte personalizate          |
+| `defineLogicFunction()`  | Definiții de funcții de logică              |
+| `defineFrontComponent()` | Definiții ale componentelor de interfață    |
+| `defineRole()`           | Definiții de rol                            |
+| `defineField()`          | Extensii de câmp pentru obiectele existente |
 
 <Note>
-  **File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
+  **Denumirea fișierelor este flexibilă.** Detectarea entităților se bazează pe AST — SDK-ul scanează fișierele sursă pentru tiparul `export default define<Entity>({...})`. Puteți organiza fișierele și folderele cum doriți. Gruparea după tipul de entitate (de exemplu, `logic-functions/`, `roles/`) este doar o convenție pentru organizarea codului, nu o cerință.
 </Note>
 
-Example of a detected entity:
+Exemplu de entitate detectată:
 
 ```typescript
 // This file can be named anything and placed anywhere in src/
@@ -184,18 +184,18 @@ Biblioteca twenty-sdk oferă blocuri de bază tipizate și funcții ajutătoare 
 
 ### Funcții ajutătoare
 
-The SDK provides helper functions for defining your app entities. As described in [Entity detection](#entity-detection), you must use `export default define<Entity>({...})` for your entities to be detected:
+SDK-ul oferă funcții ajutătoare pentru definirea entităților aplicației. După cum este descris în [Detectarea entităților](#entity-detection), trebuie să folosiți `export default define<Entity>({...})` pentru ca entitățile să fie detectate:
 
-| Funcție                  | Scop                                                     |
-| ------------------------ | -------------------------------------------------------- |
-| `defineApplication()`    | Configure application metadata (required, one per app)   |
-| `defineObject()`         | Definiți obiecte personalizate cu câmpuri                |
-| `defineLogicFunction()`  | Definiți funcții de logică cu handleri                   |
-| `defineFrontComponent()` | Define front components for custom UI                    |
-| `defineRole()`           | Configurați permisiunile rolurilor și accesul la obiecte |
-| `defineField()`          | Extend existing objects with additional fields           |
+| Funcție                  | Scop                                                                   |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `defineApplication()`    | Configurați metadatele aplicației (obligatoriu, una per aplicație)     |
+| `defineObject()`         | Definiți obiecte personalizate cu câmpuri                              |
+| `defineLogicFunction()`  | Definiți funcții de logică cu handleri                                 |
+| `defineFrontComponent()` | Definiți componente Front pentru interfața de utilizator personalizată |
+| `defineRole()`           | Configurați permisiunile rolurilor și accesul la obiecte               |
+| `defineField()`          | Extindeți obiectele existente cu câmpuri suplimentare                  |
 
-These functions validate your configuration at build time and provide IDE autocompletion and type safety.
+Aceste funcții validează configurația în timpul build-ului și oferă completare automată în IDE și siguranța tipurilor.
 
 ### Definirea obiectelor
 
@@ -318,11 +318,11 @@ Notițe:
 
 * Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți; generați-le o singură dată și păstrați-le stabile între sincronizări.
 * `applicationVariables` devin variabile de mediu pentru funcțiile dvs. (de exemplu, `DEFAULT_RECIPIENT_NAME` este disponibil ca `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` must match the role file (see below).
+* `defaultRoleUniversalIdentifier` trebuie să corespundă fișierului de rol (vedeți mai jos).
 
 #### Roluri și permisiuni
 
-Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. The field `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions.
+Aplicațiile pot defini roluri care încapsulează permisiuni asupra obiectelor și acțiunilor din spațiul dvs. de lucru. Câmpul `defaultRoleUniversalIdentifier` din `application-config.ts` desemnează rolul implicit utilizat de funcțiile de logică ale aplicației.
 
 * Cheia API de runtime injectată ca `TWENTY_API_KEY` este derivată din acest rol implicit pentru funcții.
 * Clientul tipizat va fi restricționat la permisiunile acordate acelui rol.
@@ -372,10 +372,10 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`. Cu alte cuvinte:
+`universalIdentifier` al acestui rol este apoi referențiat în `application-config.ts` ca `defaultRoleUniversalIdentifier`. Cu alte cuvinte:
 
 * **\*.role.ts** definește ce poate face rolul implicit pentru funcții.
-* **application-config.ts** points to that role so your functions inherit its permissions.
+* **application-config.ts** indică acel rol, astfel încât funcțiile moștenesc permisiunile lui.
 
 Notițe:
 
@@ -386,7 +386,7 @@ Notițe:
 
 ### Configurația funcției de logică și punctul de intrare
 
-Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
+Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta o configurație cu un handler și declanșatoare opționale.
 
 ```typescript
 // src/app/createPostCard.logic-function.ts
@@ -551,12 +551,12 @@ const handler = async (event: RoutePayload) => {
 
 Puteți crea funcții noi în două moduri:
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new logic function. Aceasta generează un fișier inițial cu un handler și o configurație.
-* **Manual**: Create a new `*.logic-function.ts` file and use `defineLogicFunction()`, following the same pattern.
+* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o funcție de logică nouă. Aceasta generează un fișier inițial cu un handler și o configurație.
+* **Manual**: Creați un fișier nou `*.logic-function.ts` și folosiți `defineLogicFunction()`, urmând același model.
 
-### Front components
+### Componente Front
 
-Front components let you build custom React components that render within Twenty's UI. Use `defineFrontComponent()` to define components with built-in validation:
+Componentele Front vă permit să construiți componente React personalizate care sunt randate în interfața Twenty. Utilizați `defineFrontComponent()` pentru a defini componente cu validare încorporată:
 
 ```typescript
 // src/my-widget.front-component.tsx
@@ -581,15 +581,15 @@ export default defineFrontComponent({
 
 Puncte cheie:
 
-* Front components are React components that render in isolated contexts within Twenty.
+* Componentele Front sunt componente React care sunt randate în contexte izolate în cadrul Twenty.
 * Folosiți sufixul de fișier `*.front-component.tsx` pentru detectare automată.
-* The `component` field references your React component.
-* Components are built and synced automatically during `yarn app:dev`.
+* Câmpul `component` face referire la componenta React.
+* Componentele sunt construite și sincronizate automat în timpul `yarn app:dev`.
 
-You can create new front components in two ways:
+Puteți crea componente Front noi în două moduri:
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new front component.
-* **Manual**: Create a new `*.front-component.tsx` file and use `defineFrontComponent()`.
+* **Generat**: Rulați `yarn entity:add` și alegeți opțiunea de a adăuga o componentă Front nouă.
+* **Manual**: Creați un fișier nou `*.front-component.tsx` și folosiți `defineFrontComponent()`.
 
 ### Client tipizat generat
 
@@ -614,12 +614,12 @@ Când funcția rulează pe Twenty, platforma injectează acreditări ca variabil
 Notițe:
 
 * Nu trebuie să transmiteți URL-ul sau cheia API către clientul generat. Acesta citește `TWENTY_API_URL` și `TWENTY_API_KEY` din process.env la runtime.
-* The API key's permissions are determined by the role referenced in your `application-config.ts` via `defaultRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
-* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Grant only the permissions your functions need, then point `defaultRoleUniversalIdentifier` to that role's universal identifier.
+* Permisiunile cheii API sunt determinate de rolul referențiat în `application-config.ts` prin `defaultRoleUniversalIdentifier`. Acesta este rolul implicit folosit de funcțiile de logică ale aplicației.
+* Aplicațiile pot defini roluri pentru a urma principiul celui mai mic privilegiu. Acordați doar permisiunile de care au nevoie funcțiile, apoi setați `defaultRoleUniversalIdentifier` la identificatorul universal al acelui rol.
 
 ### Exemplu Hello World
 
-Explore a minimal, end-to-end example that demonstrates objects, logic functions, front components, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Explorați un exemplu minim, cap la cap, care demonstrează obiecte, funcții de logică, componente Front și declanșatoare multiple [aici](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
 ## Configurare manuală (fără generator)
 
