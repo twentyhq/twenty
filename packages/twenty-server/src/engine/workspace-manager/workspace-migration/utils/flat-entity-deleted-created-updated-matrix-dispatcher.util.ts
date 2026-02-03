@@ -7,16 +7,16 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { type FlatEntityPropertiesToStringify } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-stringify.type';
 import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
-import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
-import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
+import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
-  createdFlatEntityMaps: MetadataFlatEntityMaps<T>;
-  deletedFlatEntityMaps: MetadataFlatEntityMaps<T>;
+  createdFlatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
+  deletedFlatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
   updatedFlatEntityMaps: {
     byUniversalIdentifier: Record<
       string,
@@ -35,7 +35,7 @@ export type UniversalIdentifierItem = {
 
 type FlatEntityDeletedCreatedUpdatedMatrixDispatcherArgs<
   T extends AllMetadataName,
-> = FromTo<MetadataFlatEntity<T>[]> & {
+> = FromTo<MetadataUniversalFlatEntity<T>[]> & {
   metadataName: T;
   buildOptions: WorkspaceMigrationBuilderOptions;
 };
@@ -62,9 +62,11 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
       if (toMap.has(universalIdentifier)) {
         continue;
       }
-      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: fromEntity,
-        flatEntityMapsToMutate: initialDispatcher.deletedFlatEntityMaps,
+
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromEntity,
+        universalFlatEntityMapsToMutate:
+          initialDispatcher.deletedFlatEntityMaps,
       });
     }
   }
@@ -73,9 +75,9 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     if (fromMap.has(universalIdentifier)) {
       continue;
     }
-    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-      flatEntity: toFlatEntity,
-      flatEntityMapsToMutate: initialDispatcher.createdFlatEntityMaps,
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: toFlatEntity,
+      universalFlatEntityMapsToMutate: initialDispatcher.createdFlatEntityMaps,
     });
   }
 
@@ -93,11 +95,11 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
       toFlatEntity,
       propertiesToCompare: propertiesToCompare as unknown as Extract<
         FlatEntityPropertiesToCompare<T>,
-        keyof MetadataFlatEntity<T>
+        keyof MetadataUniversalFlatEntity<T>
       >[],
       propertiesToStringify: propertiesToStringify as unknown as Extract<
         FlatEntityPropertiesToStringify<T>,
-        keyof MetadataFlatEntity<T>
+        keyof MetadataUniversalFlatEntity<T>
       >[],
     });
 
@@ -108,6 +110,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     initialDispatcher.updatedFlatEntityMaps.byUniversalIdentifier[
       fromFlatEntity.universalIdentifier
     ] = {
+      // TODO to handle as we want api metadata to allow doing so anyway
       id: toFlatEntity.id,
       update,
     };

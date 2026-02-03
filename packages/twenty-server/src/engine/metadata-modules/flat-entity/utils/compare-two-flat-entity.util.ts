@@ -5,14 +5,14 @@ import { parseJson } from 'twenty-shared/utils';
 
 import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { transformFlatEntityForComparison } from 'src/engine/metadata-modules/flat-entity/utils/transform-flat-entity-for-comparison.util';
 
 export const compareTwoFlatEntity = <
   T extends AllMetadataName,
   PToCompare extends Extract<
     FlatEntityPropertiesToCompare<T>,
-    keyof MetadataFlatEntity<T>
+    keyof MetadataUniversalFlatEntity<T>
   >,
   PJsonB extends PToCompare = PToCompare,
 >({
@@ -20,7 +20,7 @@ export const compareTwoFlatEntity = <
   toFlatEntity,
   propertiesToCompare,
   propertiesToStringify,
-}: FromTo<MetadataFlatEntity<T>, 'flatEntity'> & {
+}: FromTo<MetadataUniversalFlatEntity<T>, 'flatEntity'> & {
   propertiesToCompare: readonly PToCompare[];
   propertiesToStringify: readonly PJsonB[];
 }): FlatEntityUpdate<T> | undefined => {
