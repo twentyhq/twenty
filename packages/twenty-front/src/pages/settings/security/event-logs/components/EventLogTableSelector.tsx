@@ -1,8 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { Select } from '@/ui/input/components/Select';
-
-import { EventLogTable } from '~/pages/settings/security/event-logs/types';
+import { EventLogTable } from '~/generated-metadata/graphql';
 
 type EventLogTableSelectorProps = {
   value: EventLogTable;

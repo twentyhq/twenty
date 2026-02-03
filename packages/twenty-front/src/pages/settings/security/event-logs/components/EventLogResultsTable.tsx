@@ -14,12 +14,12 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
+import { type MessageDescriptor } from '@lingui/core';
+
 import {
   type EventLogRecord,
   EventLogTable,
-} from '~/pages/settings/security/event-logs/types';
-
-import { type MessageDescriptor } from '@lingui/core';
+} from '~/generated-metadata/graphql';
 
 import { EventLogJsonCell } from './EventLogJsonCell';
 

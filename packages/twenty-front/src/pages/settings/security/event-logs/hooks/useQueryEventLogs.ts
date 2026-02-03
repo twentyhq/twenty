@@ -1,10 +1,10 @@
 import { gql, useQuery } from '@apollo/client';
 
-import type {
-  EventLogQueryInput,
-  EventLogQueryResult,
-  EventLogRecord,
-} from '~/pages/settings/security/event-logs/types';
+import {
+  type EventLogQueryInput,
+  type EventLogQueryResult,
+  type EventLogRecord,
+} from '~/generated-metadata/graphql';
 
 const EVENT_LOGS_QUERY = gql`
   query EventLogs($input: EventLogQueryInput!) {

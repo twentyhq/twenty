@@ -9,8 +9,8 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { IconUser, IconBox, useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 
+import { EventLogTable } from '~/generated-metadata/graphql';
 import { type EventLogFiltersState } from '~/pages/settings/security/event-logs/SettingsEventLogs';
-import { EventLogTable } from '~/pages/settings/security/event-logs/types';
 
 import { EventLogDatePickerInput } from './EventLogDatePickerInput';
 
