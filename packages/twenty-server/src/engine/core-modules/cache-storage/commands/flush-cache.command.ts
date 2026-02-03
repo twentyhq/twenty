@@ -2,7 +2,9 @@ import { CACHE_MANAGER, type Cache } from '@nestjs/cache-manager';
 import { Inject, Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 
@@ -24,29 +26,18 @@ export class FlushCacheCommand extends CommandRunner {
 
   async run(
     _passedParams: string[],
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    options?: Record<string, any>,
+    options?: Record<string, string>,
   ): Promise<void> {
+    try {
     const namespaceArg = options?.namespace;
-    const namespace = this.parseNamespace(namespaceArg);
+    const namespacesToFlush = this.computeNamespacesToFlushOrThrow(
+      namespaceArg,
+    );
     const pattern = options?.pattern ?? '*';
 
-    if (
-      namespaceArg !== undefined &&
-      namespaceArg !== null &&
-      namespaceArg !== '' &&
-      !namespace
-    ) {
-      throw new Error(
-        `Invalid --namespace. Valid values: ${NAMESPACE_VALUES.join(', ')}`,
-      );
-    }
-
-    const namespacesToFlush = namespace ? [namespace] : NAMESPACE_VALUES;
-
     this.logger.log(
-      namespace
-        ? `Flushing namespace ${namespace} for pattern: ${pattern}...`
+      namespacesToFlush.length === 1
+        ? `Flushing namespace ${namespacesToFlush[0]} for pattern: ${pattern}...`
         : `Flushing all namespaces for pattern: ${pattern}...`,
     );
 
@@ -56,16 +47,29 @@ export class FlushCacheCommand extends CommandRunner {
     }
 
     this.logger.log('Cache flushed');
+    } catch (error) {
+      this.logger.error(error.message);
+    }
   }
 
-  private parseNamespace(value: unknown): CacheStorageNamespace | null {
-    if (
-      typeof value === 'string' &&
-      NAMESPACE_VALUES.includes(value as CacheStorageNamespace)
-    ) {
-      return value as CacheStorageNamespace;
+  private computeNamespacesToFlushOrThrow(
+    value: unknown,
+  ): CacheStorageNamespace[] {
+    if (!isDefined(value)) {
+      return NAMESPACE_VALUES;
     }
-    return null;
+
+    if (!isNonEmptyString(value)) {
+      throw new Error(`Invalid --namespace: ${value}. Valid values: ${NAMESPACE_VALUES.join(', ')}`);
+    }
+    return [this.parseNamespaceOrThrow(value)];
+  }
+
+  private parseNamespaceOrThrow(value: string): CacheStorageNamespace {
+    if (!NAMESPACE_VALUES.includes(value as CacheStorageNamespace)) {
+      throw new Error(`Invalid --namespace: ${value}. Valid values: ${NAMESPACE_VALUES.join(', ')}`);
+    }
+    return value as CacheStorageNamespace;
   }
 
   @Option({
