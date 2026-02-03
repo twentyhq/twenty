@@ -4,7 +4,7 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -18,7 +18,7 @@ import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-exec
 @Injectable()
 export class CodeWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
 
   async execute({
@@ -48,11 +48,10 @@ export class CodeWorkflowAction implements WorkflowAction {
       const { workspaceId } = runInfo;
 
       const result =
-        await this.serverlessFunctionService.executeOneServerlessFunction({
-          id: workflowActionInput.serverlessFunctionId,
+        await this.logicFunctionExecutorService.executeOneLogicFunction({
+          id: workflowActionInput.logicFunctionId,
           workspaceId,
-          payload: workflowActionInput.serverlessFunctionInput,
-          version: workflowActionInput.serverlessFunctionVersion,
+          payload: workflowActionInput.logicFunctionInput,
         });
 
       if (result.error) {

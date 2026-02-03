@@ -7,7 +7,7 @@ Generați sau preluați automat un PDF și atașați-l la o înregistrare în Tw
 
 ## Prezentare generală
 
-Acest flux de lucru folosește un **Manual Trigger** pentru ca utilizatorii să poată genera un PDF la cerere pentru orice înregistrare selectată. O **Serverless Function** se ocupă de:
+Acest flux de lucru folosește un **Manual Trigger** pentru ca utilizatorii să poată genera un PDF la cerere pentru orice înregistrare selectată. O **funcție logică** se ocupă de:
 
 1. Descărcarea PDF-ului dintr-un URL (de la un serviciu de generare PDF)
 2. Încărcarea fișierului în Twenty
@@ -17,7 +17,7 @@ Acest flux de lucru folosește un **Manual Trigger** pentru ca utilizatorii să 
 
 Înainte de a configura fluxul de lucru:
 
-1. **Creați o cheie API**: Accesați **Settings → APIs** și creați o nouă cheie API. Veți avea nevoie de acest token pentru funcția serverless.
+1. **Creați o cheie API**: Accesați **Settings → APIs** și creați o nouă cheie API. Veți avea nevoie de acest token pentru funcția logică.
 2. **Configurați un serviciu de generare PDF** (opțional): Dacă doriți să generați dinamic fișiere PDF (de ex., oferte), utilizați un serviciu precum Carbone, PDFMonkey sau DocuSeal pentru a crea PDF-ul și a obține un URL de descărcare.
 
 ## Configurare pas cu pas
@@ -32,9 +32,9 @@ Acest flux de lucru folosește un **Manual Trigger** pentru ca utilizatorii să 
   Cu un Manual Trigger, utilizatorii pot rula acest flux de lucru folosind un buton care apare în dreapta sus după selectarea unei înregistrări, pentru a genera și atașa un PDF.
 </Tip>
 
-### Pasul 2: Adăugați o Serverless Function
+### Pasul 2: Adăugați o funcție logică
 
-1. Adăugați o acțiune **Serverless Function**
+1. Adăugați o acțiune **Code** (funcție logică)
 2. Creați o funcție nouă cu codul de mai jos
 3. Configurați parametrii de intrare
 
@@ -45,10 +45,10 @@ Acest flux de lucru folosește un **Manual Trigger** pentru ca utilizatorii să 
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  Dacă atașați la un alt obiect (Persoană, Oportunitate etc.), redenumiți parametrul în mod corespunzător (de ex., `personId`, `opportunityId`) și actualizați funcția serverless.
+  Dacă atașați la un alt obiect (Persoană, Oportunitate etc.), redenumiți parametrul în mod corespunzător (de ex., `personId`, `opportunityId`) și actualizați funcția logică.
 </Note>
 
-#### Cod pentru Serverless Function
+#### Codul funcției logice
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ Actualizați atât parametrul funcției, cât și obiectul `variables.data` în 
 Dacă utilizați un serviciu de generare PDF, puteți:
 
 1. Mai întâi creați o acțiune HTTP Request pentru a genera PDF-ul
-2. Transmiteți URL-ul PDF returnat către funcția serverless ca parametru
+2. Transmiteți URL-ul PDF returnat către funcția logică ca parametru
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ Pentru crearea de oferte sau facturi dinamice:
 * **DocuSeal** - Platformă de automatizare a documentelor
 * **Documint** - Generare de documente orientată pe API
 
-Fiecare serviciu oferă un API care returnează un URL către PDF, pe care îl puteți apoi transmite funcției serverless.
+Fiecare serviciu oferă un API care returnează un URL către PDF, pe care îl puteți apoi transmite funcției logice.
 
 ## Depanare
 
@@ -224,5 +224,5 @@ Fiecare serviciu oferă un API care returnează un URL către PDF, pe care îl p
 ## Conexe
 
 * [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
-* [Funcții serverless](/l/ro/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Funcții logice](/l/ro/user-guide/workflows/capabilities/workflow-actions#code)
 * [Generați o ofertă sau o factură din Twenty](/l/ro/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

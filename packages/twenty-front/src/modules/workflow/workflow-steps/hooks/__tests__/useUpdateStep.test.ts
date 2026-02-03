@@ -41,9 +41,8 @@ describe('useUpdateStep', () => {
       type: 'CODE' as const,
       settings: {
         input: {
-          serverlessFunctionId: 'id',
-          serverlessFunctionVersion: '1',
-          serverlessFunctionInput: {},
+          logicFunctionId: 'id',
+          logicFunctionInput: {},
         },
         outputSchema: {},
         errorHandlingOptions: {

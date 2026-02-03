@@ -1,4 +1,4 @@
-import { defineRole } from '@/application/roles/define-role';
+import { defineRole } from '@/sdk';
 
 export default defineRole({
   universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000040',

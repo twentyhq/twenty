@@ -24,6 +24,7 @@ const StyledSparkleIcon = styled.div`
 
 const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.lg};
+  color: ${({ theme }) => theme.font.color.primary};
   font-weight: 600;
 `;
 

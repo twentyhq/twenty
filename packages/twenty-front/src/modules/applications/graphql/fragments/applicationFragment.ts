@@ -1,11 +1,11 @@
 import { gql } from '@apollo/client';
 import { AGENT_FRAGMENT } from '@/ai/graphql/fragments/agentFragment';
-import { SERVERLESS_FUNCTION_FRAGMENT } from '@/settings/serverless-functions/graphql/fragments/serverlessFunctionFragment';
+import { LOGIC_FUNCTION_FRAGMENT } from '@/settings/logic-functions/graphql/fragments/logicFunctionFragment';
 import { OBJECT_METADATA_FRAGMENT } from '@/object-metadata/graphql/fragment';
 
 export const APPLICATION_FRAGMENT = gql`
   ${AGENT_FRAGMENT}
-  ${SERVERLESS_FUNCTION_FRAGMENT}
+  ${LOGIC_FUNCTION_FRAGMENT}
   ${OBJECT_METADATA_FRAGMENT}
   fragment ApplicationFields on Application {
     id
@@ -27,8 +27,8 @@ export const APPLICATION_FRAGMENT = gql`
     objects {
       ...ObjectMetadataFields
     }
-    serverlessFunctions {
-      ...ServerlessFunctionFields
+    logicFunctions {
+      ...LogicFunctionFields
     }
   }
 `;

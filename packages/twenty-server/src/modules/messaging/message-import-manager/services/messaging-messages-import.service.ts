@@ -198,7 +198,7 @@ export class MessagingMessagesImportService {
         );
       } catch (error) {
         this.logger.error(
-          `Error (${error.code}) importing messages for workspace ${workspaceId.slice(0, 8)} and account ${connectedAccount.id.slice(0, 8)}: ${error.message} - ${error.body}`,
+          `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error (${error.code}) importing messages: ${error.message}`,
         );
         await this.cacheStorage.setAdd(
           `messages-to-import:${workspaceId}:${messageChannel.id}`,

@@ -16,7 +16,7 @@ import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVa
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'application', schema: 'core' })
@@ -54,13 +54,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   sourcePath: string;
 
   @Column({ nullable: true, type: 'uuid' })
-  serverlessFunctionLayerId: string | null;
+  logicFunctionLayerId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  defaultServerlessFunctionRoleId: string | null;
+  defaultRoleId: string | null;
 
   @Field(() => RoleDTO, { nullable: true })
-  defaultServerlessFunctionRole: RoleDTO | null;
+  defaultRole: RoleDTO | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
@@ -71,13 +71,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   agents: Relation<AgentEntity[]>;
 
   @OneToMany(
-    () => ServerlessFunctionEntity,
-    (serverlessFunction) => serverlessFunction.application,
+    () => LogicFunctionEntity,
+    (logicFunction) => logicFunction.application,
     {
       onDelete: 'CASCADE',
     },
   )
-  serverlessFunctions: Relation<ServerlessFunctionEntity[]>;
+  logicFunctions: Relation<LogicFunctionEntity[]>;
 
   @OneToMany(() => ObjectMetadataEntity, (object) => object.application, {
     onDelete: 'CASCADE',

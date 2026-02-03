@@ -10,13 +10,14 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
 
   public async getOrRecomputeManyOrAllFlatEntityMaps<
     T extends (keyof AllFlatEntityMaps)[] = (keyof AllFlatEntityMaps)[],
+    TWithCustomMapsProperties extends boolean = true,
   >({
     flatMapsKeys,
     workspaceId,
   }: {
     workspaceId: string;
     flatMapsKeys?: T;
-  }): Promise<Pick<AllFlatEntityMaps, T[number]>> {
+  }): Promise<Pick<AllFlatEntityMaps<TWithCustomMapsProperties>, T[number]>> {
     return await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       flatMapsKeys ?? ALL_FLAT_ENTITY_MAPS_PROPERTIES,

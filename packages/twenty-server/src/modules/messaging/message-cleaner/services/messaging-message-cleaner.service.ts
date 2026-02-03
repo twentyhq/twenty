@@ -88,7 +88,7 @@ export class MessagingMessageCleanerService {
           continue;
         }
 
-        this.logger.log(
+        this.logger.debug(
           `WorkspaceId: ${workspaceId} Deleting ${orphanMessages.length} orphan messages`,
         );
 
@@ -109,7 +109,7 @@ export class MessagingMessageCleanerService {
           continue;
         }
 
-        this.logger.log(
+        this.logger.debug(
           `WorkspaceId: ${workspaceId} Deleting ${orphanMessageThreads.length} orphan message threads`,
         );
 
@@ -171,7 +171,7 @@ export class MessagingMessageCleanerService {
               workspaceId: string,
               transactionManager?: WorkspaceEntityManager,
             ) => {
-              this.logger.log(
+              this.logger.debug(
                 `WorkspaceId: ${workspaceId} Deleting ${ids.length} messages from message cleaner`,
               );
               await messageRepository.delete(ids, transactionManager);

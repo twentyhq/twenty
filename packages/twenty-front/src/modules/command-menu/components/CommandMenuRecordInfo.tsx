@@ -19,6 +19,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { CommandMenuPageInfoLayout } from './CommandMenuPageInfoLayout';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 export const CommandMenuRecordInfo = ({
   commandMenuPageInstanceId,
@@ -28,6 +29,9 @@ export const CommandMenuRecordInfo = ({
   const viewableRecordNameSingular = useRecoilComponentValue(
     viewableRecordNameSingularComponentState,
     commandMenuPageInstanceId,
+  );
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
   );
 
   const viewableRecordId = useRecoilComponentValue(
@@ -50,6 +54,7 @@ export const CommandMenuRecordInfo = ({
   const recordIdentifier = useRecoilValue(
     recordStoreIdentifierFamilySelector({
       recordId: objectRecordId,
+      allowRequestsToTwentyIcons,
     }),
   );
 

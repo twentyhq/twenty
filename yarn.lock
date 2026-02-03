@@ -12130,32 +12130,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nivo/bar@npm:^0.99.0":
-  version: 0.99.0
-  resolution: "@nivo/bar@npm:0.99.0"
-  dependencies:
-    "@nivo/annotations": "npm:0.99.0"
-    "@nivo/axes": "npm:0.99.0"
-    "@nivo/canvas": "npm:0.99.0"
-    "@nivo/colors": "npm:0.99.0"
-    "@nivo/core": "npm:0.99.0"
-    "@nivo/legends": "npm:0.99.0"
-    "@nivo/scales": "npm:0.99.0"
-    "@nivo/text": "npm:0.99.0"
-    "@nivo/theming": "npm:0.99.0"
-    "@nivo/tooltip": "npm:0.99.0"
-    "@react-spring/web": "npm:9.4.5 || ^9.7.2 || ^10.0"
-    "@types/d3-scale": "npm:^4.0.8"
-    "@types/d3-shape": "npm:^3.1.6"
-    d3-scale: "npm:^4.0.2"
-    d3-shape: "npm:^3.2.0"
-    lodash: "npm:^4.17.21"
-  peerDependencies:
-    react: ^16.14 || ^17.0 || ^18.0 || ^19.0
-  checksum: 10c0/17860f18fed48b5c5d7a76e30b5be73481e810aa8bc417a5afc5c2350b1051ee7148bcd32f4444b6d8486839e9b9ffaa8c614b9a53d89196d4494703b0bd05c5
-  languageName: node
-  linkType: hard
-
 "@nivo/calendar@npm:^0.99.0":
   version: 0.99.0
   resolution: "@nivo/calendar@npm:0.99.0"
@@ -12175,13 +12149,6 @@ __metadata:
   peerDependencies:
     react: ^16.14 || ^17.0 || ^18.0 || ^19.0
   checksum: 10c0/b647566eb890e7fc839bc36de99c5426f62c11b35841fcb54afca167c45150ea159ef4a7a1706c3b1ca2ca12da99d6b8b26fe5499656d037deea92e35a4cfa9a
-  languageName: node
-  linkType: hard
-
-"@nivo/canvas@npm:0.99.0":
-  version: 0.99.0
-  resolution: "@nivo/canvas@npm:0.99.0"
-  checksum: 10c0/530f074b3368328b9bbadefaa64f5bdaafd210edb0c1446beed749ff4fa9ac805eae44418c88501ac137724db2c685e293da9d38067ea8e7fe9fd1aa500279d9
   languageName: node
   linkType: hard
 
@@ -16054,14 +16021,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@preact/signals-core@npm:^1.8.0":
+  version: 1.12.2
+  resolution: "@preact/signals-core@npm:1.12.2"
+  checksum: 10c0/25ccf7639522179452ee4636290cd70573048c613bc1fffaa5f5deecd0a750611c170c954769ba3c71fca97aa4b951edcdd3a2b2c96b172c87e4ba3bc81ddccd
+  languageName: node
+  linkType: hard
+
 "@prettier/sync@npm:^0.5.2":
-  version: 0.5.3
-  resolution: "@prettier/sync@npm:0.5.3"
+  version: 0.5.5
+  resolution: "@prettier/sync@npm:0.5.5"
   dependencies:
-    make-synchronized: "npm:^0.2.10"
+    make-synchronized: "npm:^0.4.2"
   peerDependencies:
     prettier: "*"
-  checksum: 10c0/c2e56230c7e195e14e3617217b96d15b76be9fd8fb735f20b8cb2f44507b2a26d043ad2e7d468ef34bdd8d8b64d2c8d86a855260f5d83f9e2b49b8874b63237a
+  checksum: 10c0/65d6854a58f47f42fe734d192b9c67ab5651bbab462cc5f8f1121e9259dd3ab91a77b8cd4b4a32baf4ba0a25148dad052732efe483b76fcdd6692d0cc48fb262
   languageName: node
   linkType: hard
 
@@ -16280,6 +16254,29 @@ __metadata:
   bin:
     browsers: lib/cjs/main-cli.js
   checksum: 10c0/8665a7d5be5e1489855780b7684bf94a55647b54a8391474cbdc1defdb2e4e6642722ef1d20bfabe49d3aed3eec2c8db41d6eabc24440f4a16d071effc5a1049
+  languageName: node
+  linkType: hard
+
+"@quilted/events@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "@quilted/events@npm:2.1.3"
+  dependencies:
+    "@preact/signals-core": "npm:^1.8.0"
+  checksum: 10c0/7f0906c7f15d956f0e9aaa7e736c97b0a130e7cf651efb3b64ffc5868b352197d029acfd55787a36abf41064608421c5653de958b1490e6fb00948a942ee829d
+  languageName: node
+  linkType: hard
+
+"@quilted/threads@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@quilted/threads@npm:4.0.1"
+  dependencies:
+    "@quilted/events": "npm:^2.1.3"
+  peerDependencies:
+    "@preact/signals-core": ^1.8.0
+  peerDependenciesMeta:
+    "@preact/signals-core":
+      optional: true
+  checksum: 10c0/6156b008e82aeb41aac101777f61da17911e75380acb11fa823155828fa51f4d1f7563b801ffdbb72acff64915be9204e404d5fd8c739a03d90f6593ae75caed
   languageName: node
   linkType: hard
 
@@ -18864,6 +18861,46 @@ __metadata:
   version: 1.23.2
   resolution: "@remix-run/router@npm:1.23.2"
   checksum: 10c0/7096b7f2086b2cd80c9e06873b71a8317e04858c01edc06a6fed187b660408a90f47c8e120e8af4c369cf1fa6b6a316a66b0917f42b6eb8a566e98b277c50449
+  languageName: node
+  linkType: hard
+
+"@remote-dom/core@npm:^1.10.1, @remote-dom/core@npm:^1.7.0":
+  version: 1.10.1
+  resolution: "@remote-dom/core@npm:1.10.1"
+  dependencies:
+    "@remote-dom/polyfill": "npm:^1.5.1"
+    htm: "npm:^3.1.1"
+  peerDependencies:
+    "@preact/signals-core": ^1.3.0
+  peerDependenciesMeta:
+    "@preact/signals-core":
+      optional: true
+    preact:
+      optional: true
+  checksum: 10c0/53db62196471f8201665accfad2bc1ca8db4b305d2485bdd57cd700975e93d1ce02f0abf95a90ad1d36dd8c06ff91e81e153bb9dd2ab487a5e7a6f827b3b8145
+  languageName: node
+  linkType: hard
+
+"@remote-dom/polyfill@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "@remote-dom/polyfill@npm:1.5.1"
+  checksum: 10c0/753836a286214e9ac8d6246501d4d7824fe600ae4b49c3fe6ac5467934b5a15aeb0f80e773f7c7219f829ac5758be077468ede6da9a5de14260f3627ffcd6e1f
+  languageName: node
+  linkType: hard
+
+"@remote-dom/react@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "@remote-dom/react@npm:1.2.2"
+  dependencies:
+    "@remote-dom/core": "npm:^1.7.0"
+    "@types/react": "npm:^18.0.0"
+    htm: "npm:^3.1.1"
+  peerDependencies:
+    react: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 10c0/87883e06dab4a2a52cf9aa6f397166a25054aebf0a9f401bfb67831038dac59fb549754054a297617ba7ca8f33c8967765570fed3cf27a280d921d8f73d2dd64
   languageName: node
   linkType: hard
 
@@ -23201,6 +23238,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ts-morph/common@npm:~0.26.0":
+  version: 0.26.1
+  resolution: "@ts-morph/common@npm:0.26.1"
+  dependencies:
+    fast-glob: "npm:^3.3.2"
+    minimatch: "npm:^9.0.4"
+    path-browserify: "npm:^1.0.1"
+  checksum: 10c0/49d33162de3f09fb2a242e38c04a7fa30966977a5282d97d0e27c1d68541956e917ac4de9aac6b41182dbae188482665da6e919c3f6ef0dcb90cea24e4d637e0
+  languageName: node
+  linkType: hard
+
 "@tsconfig/node10@npm:^1.0.7":
   version: 1.0.11
   resolution: "@tsconfig/node10@npm:1.0.11"
@@ -24875,6 +24923,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react@npm:^18, @types/react@npm:^18.0.0":
+  version: 18.3.27
+  resolution: "@types/react@npm:18.3.27"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    csstype: "npm:^3.2.2"
+  checksum: 10c0/a761d2f58de03d0714806cc65d32bb3d73fb33a08dd030d255b47a295e5fff2a775cf1c20b786824d8deb6454eaccce9bc6998d9899c14fc04bbd1b0b0b72897
+  languageName: node
+  linkType: hard
+
 "@types/react@npm:^18.2.39":
   version: 18.3.3
   resolution: "@types/react@npm:18.3.3"
@@ -24882,15 +24940,6 @@ __metadata:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
   checksum: 10c0/fe455f805c5da13b89964c3d68060cebd43e73ec15001a68b34634604a78140e6fc202f3f61679b9d809dde6d7a7c2cb3ed51e0fd1462557911db09879b55114
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^19.0.2":
-  version: 19.2.8
-  resolution: "@types/react@npm:19.2.8"
-  dependencies:
-    csstype: "npm:^3.2.2"
-  checksum: 10c0/832834998c4ee971fca72ecf1eb95dc924ad3931a2112c687a4dae498aabd115c5fa4db09186853e34a646226b0223808c8f867df03d17601168f9cf119448de
   languageName: node
   linkType: hard
 
@@ -30820,6 +30869,13 @@ __metadata:
   version: 4.6.0
   resolution: "co@npm:4.6.0"
   checksum: 10c0/c0e85ea0ca8bf0a50cbdca82efc5af0301240ca88ebe3644a6ffb8ffe911f34d40f8fbcf8f1d52c5ddd66706abd4d3bfcd64259f1e8e2371d4f47573b0dc8c28
+  languageName: node
+  linkType: hard
+
+"code-block-writer@npm:^13.0.3":
+  version: 13.0.3
+  resolution: "code-block-writer@npm:13.0.3"
+  checksum: 10c0/87db97b37583f71cfd7eced8bf3f0a0a0ca53af912751a734372b36c08cd27f3e8a4878ec05591c0cd9ae11bea8add1423e132d660edd86aab952656dd41fd66
   languageName: node
   linkType: hard
 
@@ -38836,6 +38892,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"htm@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "htm@npm:3.1.1"
+  checksum: 10c0/0de4c8fff2b8e76c162235ae80dbf93ca5eef1575bd50596a06ce9bebf1a6da5efc467417c53034a9ffa2ab9ecff819cbec041dc9087894b2b900ad4de26c7e7
+  languageName: node
+  linkType: hard
+
 "html-element-attributes@npm:^1.0.0":
   version: 1.3.1
   resolution: "html-element-attributes@npm:1.3.1"
@@ -44348,10 +44411,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-synchronized@npm:^0.2.10":
-  version: 0.2.10
-  resolution: "make-synchronized@npm:0.2.10"
-  checksum: 10c0/8c94eeb6923a7237d61455c0a98720d5cb349be6c377c84406b39bd7d4e268a75c0556b9892d802269ca2adf4cac88412c0039154e7824d1a4288226f843e875
+"make-synchronized@npm:^0.4.2":
+  version: 0.4.2
+  resolution: "make-synchronized@npm:0.4.2"
+  checksum: 10c0/29015b2101dfbed9dcb486d3fe557d86305887952b47a632bfba70d5a69fe31d02d713c55224f0efb7bd10d3bcb28adb026902b951e727f657d017adb9093b39
   languageName: node
   linkType: hard
 
@@ -50975,9 +51038,11 @@ __metadata:
   linkType: hard
 
 "psl@npm:^1.1.28, psl@npm:^1.1.33, psl@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "psl@npm:1.9.0"
-  checksum: 10c0/6a3f805fdab9442f44de4ba23880c4eba26b20c8e8e0830eff1cb31007f6825dace61d17203c58bfe36946842140c97a1ba7f67bc63ca2d88a7ee052b65d97ab
+  version: 1.15.0
+  resolution: "psl@npm:1.15.0"
+  dependencies:
+    punycode: "npm:^2.3.1"
+  checksum: 10c0/d8d45a99e4ca62ca12ac3c373e63d80d2368d38892daa40cfddaa1eb908be98cd549ac059783ef3a56cfd96d57ae8e2fd9ae53d1378d90d42bc661ff924e102a
   languageName: node
   linkType: hard
 
@@ -51923,7 +51988,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0":
+"react@npm:18.3.1, react@npm:^18, react@npm:^18.0.0, react@npm:^18.2.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -51936,13 +52001,6 @@ __metadata:
   version: 19.2.3
   resolution: "react@npm:19.2.3"
   checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
-  languageName: node
-  linkType: hard
-
-"react@npm:^19.0.0":
-  version: 19.2.4
-  resolution: "react@npm:19.2.4"
-  checksum: 10c0/cd2c9ff67a720799cc3b38a516009986f7fc4cb8d3e15716c6211cf098d1357ee3e348ab05ad0600042bbb0fd888530ba92e329198c92eafa0994f5213396596
   languageName: node
   linkType: hard
 
@@ -57175,6 +57233,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-morph@npm:^25.0.0":
+  version: 25.0.1
+  resolution: "ts-morph@npm:25.0.1"
+  dependencies:
+    "@ts-morph/common": "npm:~0.26.0"
+    code-block-writer: "npm:^13.0.3"
+  checksum: 10c0/4e8b67d7fc521d5dcc7e4e6dfb2e10bc63fcaaef8c31b91d3c9eb98eacd42db70bde3359075dcb8e988a5510f02e2ee6f98a02f89045d648bfda72a5207d78ba
+  languageName: node
+  linkType: hard
+
 "ts-node@npm:10.9.1":
   version: 10.9.1
   resolution: "ts-node@npm:10.9.1"
@@ -57469,7 +57537,6 @@ __metadata:
     "@lingui/swc-plugin": "npm:^5.6.0"
     "@lingui/vite-plugin": "npm:^5.1.2"
     "@monaco-editor/react": "npm:^4.7.0"
-    "@nivo/bar": "npm:^0.99.0"
     "@nivo/core": "npm:^0.99.0"
     "@nivo/line": "npm:^0.99.0"
     "@nivo/pie": "npm:^0.99.0"
@@ -57564,6 +57631,7 @@ __metadata:
     remark-gfm: "npm:^4.0.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
     transliteration: "npm:^2.3.5"
+    twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
     use-debounce: "npm:^10.0.0"
@@ -57573,18 +57641,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-sdk@workspace:packages/twenty-sdk":
+"twenty-sdk@workspace:*, twenty-sdk@workspace:packages/twenty-sdk":
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
+    "@prettier/sync": "npm:^0.5.2"
+    "@quilted/threads": "npm:^4.0.1"
+    "@remote-dom/core": "npm:^1.10.1"
+    "@remote-dom/react": "npm:^1.2.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/archiver": "npm:^6.0.0"
     "@types/fs-extra": "npm:^11.0.0"
     "@types/inquirer": "npm:^9.0.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/node": "npm:^24.0.0"
-    "@types/react": "npm:^19.0.2"
+    "@types/react": "npm:^18"
     archiver: "npm:^7.0.1"
     axios: "npm:^1.6.0"
     chalk: "npm:^5.3.0"
@@ -57600,7 +57672,8 @@ __metadata:
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
-    react: "npm:^19.0.0"
+    react: "npm:^18.0.0"
+    ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
@@ -57608,6 +57681,7 @@ __metadata:
     vite-plugin-dts: "npm:^4.5.4"
     vite-tsconfig-paths: "npm:^4.2.1"
     wait-on: "npm:^7.2.0"
+    zod: "npm:^4.1.11"
   bin:
     twenty: dist/cli.cjs
   languageName: unknown

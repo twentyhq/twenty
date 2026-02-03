@@ -57,7 +57,7 @@ export const useVariableDropdown = ({
   );
   const setActiveTabId = useSetRecoilComponentState(
     activeTabIdComponentState,
-    'workflow-serverless-function-tab-list-component-id',
+    'workflow-logic-function-tab-list-component-id',
   );
   const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,

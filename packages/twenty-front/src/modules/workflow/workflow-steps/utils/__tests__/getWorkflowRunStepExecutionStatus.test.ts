@@ -21,18 +21,16 @@ describe('getWorkflowRunStepExecutionStatus', () => {
             steps: [
               {
                 id: stepId,
-                name: 'Code - Serverless Function',
+                name: 'Code - Logic Function',
                 type: 'CODE',
                 valid: false,
                 settings: {
                   input: {
-                    serverlessFunctionId:
-                      '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c',
-                    serverlessFunctionInput: {
+                    logicFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c',
+                    logicFunctionInput: {
                       a: null,
                       b: null,
                     },
-                    serverlessFunctionVersion: 'draft',
                   },
                   outputSchema: {
                     link: {
@@ -87,18 +85,16 @@ describe('getWorkflowRunStepExecutionStatus', () => {
             steps: [
               {
                 id: stepId,
-                name: 'Code - Serverless Function',
+                name: 'Code - Logic Function',
                 type: 'CODE',
                 valid: false,
                 settings: {
                   input: {
-                    serverlessFunctionId:
-                      '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c',
-                    serverlessFunctionInput: {
+                    logicFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c',
+                    logicFunctionInput: {
                       a: null,
                       b: null,
                     },
-                    serverlessFunctionVersion: 'draft',
                   },
                   outputSchema: {
                     link: {
@@ -154,18 +150,16 @@ describe('getWorkflowRunStepExecutionStatus', () => {
             steps: [
               {
                 id: stepId,
-                name: 'Code - Serverless Function',
+                name: 'Code - Logic Function',
                 type: 'CODE',
                 valid: false,
                 settings: {
                   input: {
-                    serverlessFunctionId:
-                      '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c',
-                    serverlessFunctionInput: {
+                    logicFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c',
+                    logicFunctionInput: {
                       a: null,
                       b: null,
                     },
-                    serverlessFunctionVersion: 'draft',
                   },
                   outputSchema: {
                     link: {
@@ -188,18 +182,16 @@ describe('getWorkflowRunStepExecutionStatus', () => {
               },
               {
                 id: secondStepId,
-                name: 'Code - Serverless Function',
+                name: 'Code - Logic Function',
                 type: 'CODE',
                 valid: false,
                 settings: {
                   input: {
-                    serverlessFunctionId:
-                      '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c',
-                    serverlessFunctionInput: {
+                    logicFunctionId: '5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c',
+                    logicFunctionInput: {
                       a: null,
                       b: null,
                     },
-                    serverlessFunctionVersion: 'draft',
                   },
                   outputSchema: {
                     link: {

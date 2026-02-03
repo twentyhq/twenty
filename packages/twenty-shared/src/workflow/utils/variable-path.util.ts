@@ -1,6 +1,5 @@
 // Characters that require bracket escaping in variable paths
-// Spaces, dots, and brackets would break the dot-notation parsing
-const SPECIAL_CHARS_REGEX = /[\s.[]/;
+const SPECIAL_CHARS_REGEX = /[\s[]/;
 
 export const needsEscaping = (key: string): boolean =>
   SPECIAL_CHARS_REGEX.test(key);

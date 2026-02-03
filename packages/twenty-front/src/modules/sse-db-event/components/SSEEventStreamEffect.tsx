@@ -1,22 +1,82 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { SseClientContext } from '@/sse-db-event/contexts/SseClientContext';
-import { useSubscribeToSseEventStream } from '@/sse-db-event/hooks/useSubscribeToSseEventStream';
-import { useContext, useEffect } from 'react';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { useTriggerEventStreamCreation } from '@/sse-db-event/hooks/useTriggerEventStreamCreation';
+import { useTriggerEventStreamDestroy } from '@/sse-db-event/hooks/useTriggerEventStreamDestroy';
+import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
+import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
+import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
+import { sseClientState } from '@/sse-db-event/states/sseClientState';
+import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isNonEmptyArray } from '@apollo/client/utilities';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey, OnboardingStatus } from '~/generated/graphql';
 
 export const SSEEventStreamEffect = () => {
-  const sseClient = useContext(SseClientContext);
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const sseClient = useRecoilValue(sseClientState);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const { subscribeToSseEventStream } = useSubscribeToSseEventStream();
+  const sseEventStreamId = useRecoilValue(sseEventStreamIdState);
+  const isCreatingSseEventStream = useRecoilValue(
+    isCreatingSseEventStreamState,
+  );
+  const shouldDestroyEventStream = useRecoilValue(
+    shouldDestroyEventStreamState,
+  );
+  const isDestroyingEventStream = useRecoilValue(isDestroyingEventStreamState);
+
+  const isLoggedIn = useIsLogged();
+  const isSseDbEventsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
+  );
+  const currentUser = useRecoilValue(currentUserState);
+
+  const { triggerEventStreamCreation } = useTriggerEventStreamCreation();
+  const { triggerEventStreamDestroy } = useTriggerEventStreamDestroy();
 
   useEffect(() => {
-    if (!isDefined(sseClient) || objectMetadataItems.length === 0) {
-      return;
-    }
+    const isSseClientAvailabble =
+      isDefined(sseClient) &&
+      !isCreatingSseEventStream &&
+      !isDestroyingEventStream;
 
-    subscribeToSseEventStream(sseClient);
-  }, [sseClient, subscribeToSseEventStream, objectMetadataItems]);
+    const willCreateEventStream =
+      isSseClientAvailabble &&
+      isLoggedIn &&
+      isSseDbEventsEnabled &&
+      isDefined(currentUser) &&
+      currentUser.onboardingStatus === OnboardingStatus.COMPLETED &&
+      !shouldDestroyEventStream &&
+      !isNonEmptyString(sseEventStreamId) &&
+      isNonEmptyArray(objectMetadataItems);
+
+    const willDestroyEventStream =
+      isSseClientAvailabble &&
+      isNonEmptyString(sseEventStreamId) &&
+      shouldDestroyEventStream;
+
+    if (willDestroyEventStream) {
+      triggerEventStreamDestroy();
+    } else if (willCreateEventStream) {
+      triggerEventStreamCreation(sseClient);
+    }
+  }, [
+    isCreatingSseEventStream,
+    triggerEventStreamCreation,
+    isLoggedIn,
+    currentUser,
+    isSseDbEventsEnabled,
+    isDestroyingEventStream,
+    triggerEventStreamDestroy,
+    sseClient,
+    shouldDestroyEventStream,
+    sseEventStreamId,
+    objectMetadataItems,
+  ]);
 
   return null;
 };

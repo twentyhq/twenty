@@ -55,7 +55,7 @@ export class MessagingDeleteGroupEmailMessagesService {
           });
 
         if (!firstRecord) {
-          this.logger.log(
+          this.logger.debug(
             `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - No message associations found`,
           );
 
@@ -125,7 +125,7 @@ export class MessagingDeleteGroupEmailMessagesService {
 
                 totalDeletedCount += messageExternalIdsChunk.length;
 
-                this.logger.log(
+                this.logger.debug(
                   `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - Deleted ${messageExternalIdsChunk.length} group email messages`,
                 );
               }

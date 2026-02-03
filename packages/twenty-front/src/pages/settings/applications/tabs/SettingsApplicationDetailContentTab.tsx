@@ -1,5 +1,5 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { SettingsServerlessFunctionsTable } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTable';
+import { SettingsLogicFunctionsTable } from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,10 +22,10 @@ export const SettingsApplicationDetailContentTab = ({
     return null;
   }
 
-  const { serverlessFunctions, agents, objects } = application;
+  const { logicFunctions, agents, objects } = application;
 
-  const shouldDisplayServerlessFunctions =
-    isDefined(serverlessFunctions) && serverlessFunctions?.length > 0;
+  const shouldDisplayLogicFunctions =
+    isDefined(logicFunctions) && logicFunctions?.length > 0;
 
   const shouldDisplayAgents = isDefined(agents) && agents.length > 0;
 
@@ -51,15 +51,13 @@ export const SettingsApplicationDetailContentTab = ({
           />
         </Section>
       )}
-      {shouldDisplayServerlessFunctions && (
+      {shouldDisplayLogicFunctions && (
         <Section>
           <H2Title
             title={t`Functions`}
-            description={t`Serverless functions powering this app`}
+            description={t`Logic functions powering this app`}
           />
-          <SettingsServerlessFunctionsTable
-            serverlessFunctions={serverlessFunctions}
-          />
+          <SettingsLogicFunctionsTable logicFunctions={logicFunctions} />
         </Section>
       )}
       {shouldDisplayAgents && (

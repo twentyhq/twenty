@@ -72,9 +72,11 @@ const MarkdownRenderer = lazy(async () => {
     default: ({
       children,
       TableScrollContainer,
+      StyledParagraph,
     }: {
       children: string;
       TableScrollContainer: React.ComponentType<{ children: React.ReactNode }>;
+      StyledParagraph: React.ComponentType<{ children: React.ReactNode }>;
     }) => (
       <Markdown
         remarkPlugins={[remarkGfm]}
@@ -84,7 +86,11 @@ const MarkdownRenderer = lazy(async () => {
               <table>{children}</table>
             </TableScrollContainer>
           ),
-          p: ({ children }) => <p>{processChildrenForRecordLinks(children)}</p>,
+          p: ({ children }) => (
+            <StyledParagraph>
+              {processChildrenForRecordLinks(children)}
+            </StyledParagraph>
+          ),
           li: ({ children }) => (
             <li>{processChildrenForRecordLinks(children)}</li>
           ),
@@ -113,6 +119,19 @@ const StyledTableScrollContainer = styled.div`
   th {
     background-color: ${({ theme }) => theme.background.secondary};
     font-weight: ${({ theme }) => theme.font.weight.medium};
+  }
+`;
+
+// Using div instead of p to allow RecordLink (which contains div elements) as children
+const StyledParagraph = styled.div`
+  margin-block: 1em;
+
+  &:first-child {
+    margin-block-start: 0;
+  }
+
+  &:last-child {
+    margin-block-end: 0;
   }
 `;
 
@@ -161,7 +180,10 @@ const LoadingSkeleton = () => {
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
   return (
     <Suspense fallback={<LoadingSkeleton />}>
-      <MarkdownRenderer TableScrollContainer={StyledTableScrollContainer}>
+      <MarkdownRenderer
+        TableScrollContainer={StyledTableScrollContainer}
+        StyledParagraph={StyledParagraph}
+      >
         {text}
       </MarkdownRenderer>
     </Suspense>

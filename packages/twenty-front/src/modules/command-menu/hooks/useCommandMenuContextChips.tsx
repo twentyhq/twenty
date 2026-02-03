@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
 const StyledIconWrapper = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -23,6 +24,10 @@ const StyledIconWrapper = styled.div`
 export const useCommandMenuContextChips = () => {
   const commandMenuNavigationStack = useRecoilValue(
     commandMenuNavigationStackState,
+  );
+
+  const allowRequestsToTwentyIcons = useRecoilValue(
+    allowRequestsToTwentyIconsState,
   );
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
@@ -44,6 +49,7 @@ export const useCommandMenuContextChips = () => {
   const recordIdentifiers = useRecoilValue(
     recordStoreIdentifiersFamilySelector({
       recordIds: allRecordIds,
+      allowRequestsToTwentyIcons,
     }),
   );
   const records = useRecoilValue(

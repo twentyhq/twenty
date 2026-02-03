@@ -6,7 +6,7 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
+import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { WorkflowCreateManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.post-query.hook';
 import { WorkflowCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-many.pre-query.hook';
 import { WorkflowCreateOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-create-one.post-query.hook';
@@ -37,7 +37,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
 @Module({
   imports: [
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
-    ServerlessFunctionModule,
+    LogicFunctionModule,
     RecordPositionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ObjectMetadataModule,

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
 import { DeleteAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/delete-agent-action-handler.service';
@@ -40,9 +42,9 @@ import { UpdateRowLevelPermissionPredicateGroupActionHandlerService } from 'src/
 import { CreateRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate/services/create-row-level-permission-predicate-action-handler.service';
 import { DeleteRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate/services/delete-row-level-permission-predicate-action-handler.service';
 import { UpdateRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate/services/update-row-level-permission-predicate-action-handler.service';
-import { CreateServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/serverless-function/services/create-serverless-function-action-handler.service';
-import { DeleteServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/serverless-function/services/delete-serverless-function-action-handler.service';
-import { UpdateServerlessFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/serverless-function/services/update-serverless-function-action-handler.service';
+import { CreateLogicFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/logic-function/services/create-logic-function-action-handler.service';
+import { DeleteLogicFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/logic-function/services/delete-logic-function-action-handler.service';
+import { UpdateLogicFunctionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/logic-function/services/update-logic-function-action-handler.service';
 import { CreateSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/skill/services/create-skill-action-handler.service';
 import { DeleteSkillActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/skill/services/delete-skill-action-handler.service';
 import { CreateFrontComponentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/front-component/services/create-front-component-action-handler.service';
@@ -67,10 +69,12 @@ import { UpdateViewGroupActionHandlerService } from 'src/engine/workspace-manage
 import { CreateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/create-view-action-handler.service';
 import { DeleteViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/delete-view-action-handler.service';
 import { UpdateViewActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view/services/update-view-action-handler.service';
-import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/function-build.module';
 
 @Module({
-  imports: [WorkspaceSchemaManagerModule, FunctionBuildModule],
+  imports: [
+    TypeOrmModule.forFeature([ApplicationEntity]),
+    WorkspaceSchemaManagerModule,
+  ],
   providers: [
     CreateFieldActionHandlerService,
     UpdateFieldActionHandlerService,
@@ -104,9 +108,9 @@ import { FunctionBuildModule } from 'src/engine/metadata-modules/function-build/
     UpdateViewGroupActionHandlerService,
     DeleteViewGroupActionHandlerService,
 
-    CreateServerlessFunctionActionHandlerService,
-    DeleteServerlessFunctionActionHandlerService,
-    UpdateServerlessFunctionActionHandlerService,
+    CreateLogicFunctionActionHandlerService,
+    DeleteLogicFunctionActionHandlerService,
+    UpdateLogicFunctionActionHandlerService,
 
     CreateRoleActionHandlerService,
     UpdateRoleActionHandlerService,

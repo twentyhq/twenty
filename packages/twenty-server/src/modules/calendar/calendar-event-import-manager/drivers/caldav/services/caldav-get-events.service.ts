@@ -23,7 +23,7 @@ export class CalDavGetEventsService {
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
-    this.logger.log(`Getting calendar events for ${connectedAccount.handle}`);
+    this.logger.debug(`Getting calendar events for ${connectedAccount.handle}`);
 
     try {
       const caldavCalendarClient =
@@ -46,7 +46,7 @@ export class CalDavGetEventsService {
         syncCursor: syncCursor ? JSON.parse(syncCursor) : undefined,
       });
 
-      this.logger.log(
+      this.logger.debug(
         `Found ${result.events.length} calendar events for ${connectedAccount.handle}`,
       );
 

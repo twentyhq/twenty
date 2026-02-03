@@ -292,19 +292,19 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
-## Sunucusuz İşlevler
+## Mantıksal işlevler
 
-Twenty, iş akışları ve özel mantık için sunucusuz işlevleri destekler. Yürütme ortamı, `SERVERLESS_TYPE` ortam değişkeni aracılığıyla yapılandırılır.
+Twenty, iş akışları ve özel mantık için mantıksal işlevleri destekler. Yürütme ortamı, `SERVERLESS_TYPE` ortam değişkeni aracılığıyla yapılandırılır.
 
 <Warning>
-  **Güvenlik Notu:** Yerel sunucusuz sürücü (`SERVERLESS_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
+  **Güvenlik Notu:** Yerel sürücü (`SERVERLESS_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Güvenilmeyen kodu işleyen üretim dağıtımları için `SERVERLESS_TYPE=LAMBDA` veya `SERVERLESS_TYPE=DISABLED` kullanmanızı şiddetle öneririz.
 </Warning>
 
 ### Kullanılabilir Sürücüler
 
 | Sürücü     | Ortam Değişkeni            | Kullanım alanı                                 | Güvenlik Düzeyi                      |
 | ---------- | -------------------------- | ---------------------------------------------- | ------------------------------------ |
-| Devre dışı | `SERVERLESS_TYPE=DISABLED` | Sunucusuz işlevleri tamamen devre dışı bırakın | Uygulanamaz                          |
+| Devre dışı | `SERVERLESS_TYPE=DISABLED` | Mantıksal işlevleri tamamen devre dışı bırakın | Uygulanamaz                          |
 | Yerel      | `SERVERLESS_TYPE=LOCAL`    | Geliştirme ve güvenilir ortamlar               | Düşük (sandbox yok)                  |
 | Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Güvenilmeyen kodla üretim                      | Yüksek (donanım düzeyinde izolasyon) |
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**Sunucusuz işlevleri devre dışı bırakmak için:**
+**Mantıksal işlevleri devre dışı bırakmak için:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  `SERVERLESS_TYPE=DISABLED` kullanıldığında, bir sunucusuz işlevi yürütmeye yönelik herhangi bir girişim bir hata döndürür. Bu, Twenty'yi sunucusuz işlev yetenekleri olmadan çalıştırmak istiyorsanız kullanışlıdır.
+  `SERVERLESS_TYPE=DISABLED` kullanıldığında, bir mantıksal işlevi yürütmeye yönelik herhangi bir girişim bir hata döndürür. Bu, Twenty'yi mantıksal işlev yetenekleri olmadan çalıştırmak istiyorsanız kullanışlıdır.
 </Note>

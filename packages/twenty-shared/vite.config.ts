@@ -48,7 +48,7 @@ export default defineConfig(() => {
     },
     plugins: [
       tsconfigPaths({
-        root: __dirname
+        root: __dirname,
       }),
       dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
     ],

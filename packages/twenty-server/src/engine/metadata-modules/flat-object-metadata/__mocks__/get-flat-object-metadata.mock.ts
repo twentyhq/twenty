@@ -10,6 +10,11 @@ export const getFlatObjectMetadataMock = (
   overrides: FlatObjectMetadataOverrides,
 ): FlatObjectMetadata => {
   const createdAt = '2024-01-01T00:00:00.000Z';
+  const applicationId = overrides.applicationId ?? faker.string.uuid();
+  const labelIdentifierFieldMetadataId =
+    overrides.labelIdentifierFieldMetadataId ?? faker.string.uuid();
+  const imageIdentifierFieldMetadataId =
+    overrides.imageIdentifierFieldMetadataId ?? faker.string.uuid();
 
   return {
     viewIds: [],
@@ -18,7 +23,7 @@ export const getFlatObjectMetadataMock = (
     description: 'default flat object metadata description',
     icon: 'icon',
     id: faker.string.uuid(),
-    imageIdentifierFieldMetadataId: faker.string.uuid(),
+    imageIdentifierFieldMetadataId,
     isActive: true,
     isAuditLogged: true,
     isCustom: true,
@@ -27,20 +32,27 @@ export const getFlatObjectMetadataMock = (
     isSearchable: true,
     isSystem: false,
     isUIReadOnly: false,
-    labelIdentifierFieldMetadataId: faker.string.uuid(),
+    labelIdentifierFieldMetadataId,
     labelPlural: 'default flat object metadata label plural',
     labelSingular: 'default flat object metadata label singular',
     namePlural: 'defaultflatObjectMetadataNamePlural',
     nameSingular: 'defaultflatObjectMetadataNameSingular',
     shortcut: 'shortcut',
-    standardId: null,
-    applicationId: faker.string.uuid(),
+    applicationId,
     standardOverrides: null,
     targetTableName: '',
     workspaceId: faker.string.uuid(),
     createdAt,
     updatedAt: createdAt,
     duplicateCriteria: null,
+    applicationUniversalIdentifier: applicationId,
+    fieldUniversalIdentifiers: [],
+    viewUniversalIdentifiers: [],
+    indexMetadataUniversalIdentifiers: [],
+    labelIdentifierFieldMetadataUniversalIdentifier:
+      labelIdentifierFieldMetadataId,
+    imageIdentifierFieldMetadataUniversalIdentifier:
+      imageIdentifierFieldMetadataId,
     ...overrides,
   };
 };
@@ -49,7 +61,6 @@ export const getStandardFlatObjectMetadataMock = (
   overrides: Omit<FlatObjectMetadataOverrides, 'isCustom' | 'isSystem'>,
 ) => {
   return getFlatObjectMetadataMock({
-    standardId: faker.string.uuid(),
     standardOverrides: {},
     isCustom: false,
     isSystem: true,

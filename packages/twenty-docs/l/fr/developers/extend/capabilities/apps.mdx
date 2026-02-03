@@ -9,12 +9,12 @@ description: Créez et gérez les personnalisations Twenty sous forme de code.
 
 ## Que sont les applications ?
 
-Les applications vous permettent de créer et de gérer des personnalisations Twenty **sous forme de code**. Au lieu de tout configurer via l’interface utilisateur, vous définissez votre modèle de données et des fonctions sans serveur dans le code — ce qui accélère la création, la maintenance et le déploiement sur plusieurs espaces de travail.
+Les applications vous permettent de créer et de gérer des personnalisations Twenty **sous forme de code**. Au lieu de tout configurer via l’interface utilisateur, vous définissez votre modèle de données et vos fonctions logiques dans le code — ce qui accélère la création, la maintenance et le déploiement sur plusieurs espaces de travail.
 
 **Ce que vous pouvez faire aujourd'hui:**
 
 * Définir des objets et des champs personnalisés sous forme de code (modèle de données géré)
-* Créer des fonctions sans serveur avec des déclencheurs personnalisés
+* Créer des fonctions logiques avec des déclencheurs personnalisés
 * Déployer la même application sur plusieurs espaces de travail
 
 **Bientôt disponible :**
@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Dossier de ressources publiques (images, polices, etc.)
   src/
     application.config.ts          # Obligatoire - configuration principale de l'application
     default-function.role.ts       # Rôle par défaut pour les fonctions serverless
@@ -156,23 +157,24 @@ src/
 
 Dans les grandes lignes :
 
-* **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
+* **package.json** : Déclare le nom de l’application, la version, les moteurs (Node 24+, Yarn 4), et ajoute `twenty-sdk` ainsi que des scripts comme `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` et `auth:login` qui délèguent à la CLI locale `twenty`.
 * **.gitignore** : Ignore les artefacts courants tels que `node_modules`, `.yarn`, `generated/` (client typé), `dist/`, `build/`, les dossiers de couverture, les fichiers journaux et les fichiers `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/** : Verrouillent et configurent la chaîne d’outils Yarn 4 utilisée par le projet.
 * **.nvmrc** : Fige la version de Node.js attendue par le projet.
 * **eslint.config.mjs** et **tsconfig.json** : Fournissent la configuration de linting et TypeScript pour les sources TypeScript de votre application.
 * **README.md** : Un bref README à la racine de l’application avec des instructions de base.
-* **src/**: The main place where you define your application-as-code:
+* **public/**: Un dossier pour stocker des ressources publiques (images, polices, fichiers statiques) qui seront servies avec votre application. Les fichiers placés ici sont téléversés lors de la synchronisation et accessibles à l'exécution.
+* **src/** : L’endroit principal où vous définissez votre application sous forme de code :
   * `application.config.ts` : Configuration globale de votre application (métadonnées et liaisons d’exécution). Voir « Configuration de l’application » ci-dessous.
-  * `*.role.ts` : Définitions de rôles utilisées par vos fonctions sans serveur. Voir « Rôle de fonction par défaut » ci-dessous.
+  * `*.role.ts` : Définitions de rôles utilisées par vos fonctions logiques. Voir « Rôle de fonction par défaut » ci-dessous.
   * `*.object.ts` : Définitions d’objets personnalisés.
-  * `*.function.ts` : Définitions de fonctions sans serveur.
-  * `*.front-component.tsx`: Front component definitions.
+  * `*.function.ts` : Définitions de fonctions logiques.
+  * `*.front-component.tsx` : Définitions des composants front-end.
 
 Des commandes ultérieures ajouteront d’autres fichiers et dossiers :
 
 * `yarn app:generate` créera un dossier `generated/` (client Twenty typé + types de l’espace de travail).
-* `yarn entity:add` will add entity definition files under `src/` for your custom objects, functions, front components, or roles.
+* `yarn entity:add` ajoutera des fichiers de définition d’entité sous `src/` pour vos objets, fonctions, composants front-end ou rôles personnalisés.
 
 ## Authentification
 
@@ -217,9 +219,9 @@ Le SDK fournit quatre fonctions utilitaires avec validation intégrée pour déf
 
 | Fonction           | Objectif                                                   |
 | ------------------ | ---------------------------------------------------------- |
-| `defineApp()`      | Configurer les métadonnées de l’application                |
+| `defineApplication()`      | Configurer les métadonnées de l’application                |
 | `defineObject()`   | Définir des objets personnalisés avec des champs           |
-| `defineFunction()` | Définir des fonctions sans serveur avec des gestionnaires  |
+| `defineFunction()` | Définir des fonctions logiques avec des gestionnaires      |
 | `defineRole()`     | Configurer les autorisations de rôle et l’accès aux objets |
 
 Ces fonctions valident votre configuration à l’exécution et offrent une meilleure autocomplétion IDE et une sécurité de typage accrue.
@@ -303,7 +305,7 @@ Points clés :
 * Le `universalIdentifier` doit être unique et stable entre les déploiements.
 * Chaque champ nécessite un `name`, un `type`, un `label` et son propre `universalIdentifier` stable.
 * Le tableau `fields` est facultatif — vous pouvez définir des objets sans champs personnalisés.
-* You can scaffold new objects using `yarn entity:add`, which guides you through naming, fields, and relationships.
+* Vous pouvez générer de nouveaux objets avec `yarn entity:add`, qui vous guide à travers le nommage, les champs et les relations.
 
 <Note>
   **Les champs de base sont créés automatiquement.** Lorsque vous définissez un objet personnalisé, Twenty ajoute automatiquement des champs standard tels que `name`, `createdAt`, `updatedAt`, `createdBy`, `position` et `deletedAt`. Vous n'avez pas besoin de les définir dans votre tableau `fields` — ajoutez uniquement vos champs personnalisés.
@@ -317,14 +319,14 @@ Chaque application dispose d’un seul fichier `application.config.ts` qui décr
 * **Exécution des fonctions** : le rôle utilisé pour les autorisations.
 * **Variables (facultatif)** : paires clé–valeur exposées à vos fonctions en tant que variables d’environnement.
 
-Utilisez `defineApp()` pour définir la configuration de votre application :
+Utilisez `defineApplication()` pour définir la configuration de votre application :
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ Notes :
 
 * Les champs `universalIdentifier` sont des identifiants déterministes que vous possédez ; générez-les une fois et conservez-les stables entre les synchronisations.
 * `applicationVariables` deviennent des variables d’environnement pour vos fonctions (par exemple, `DEFAULT_RECIPIENT_NAME` est disponible sous `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` doit correspondre au rôle que vous définissez dans votre fichier `*.role.ts` (voir ci-dessous).
+* `defaultRoleUniversalIdentifier` doit correspondre au rôle que vous définissez dans votre fichier `*.role.ts` (voir ci-dessous).
 
 #### Rôles et autorisations
 
-Les applications peuvent définir des rôles qui encapsulent des autorisations sur les objets et actions de votre espace de travail. Le champ `functionRoleUniversalIdentifier` dans `application.config.ts` désigne le rôle par défaut utilisé par les fonctions sans serveur de votre application.
+Les applications peuvent définir des rôles qui encapsulent des autorisations sur les objets et actions de votre espace de travail. Le champ `defaultRoleUniversalIdentifier` dans `application.config.ts` désigne le rôle par défaut utilisé par les fonctions logiques de votre application.
 
 * La clé API d’exécution injectée sous `TWENTY_API_KEY` est dérivée de ce rôle de fonction par défaut.
 * Le client typé sera limité aux autorisations accordées à ce rôle.
@@ -363,11 +365,11 @@ Lorsque vous générez une nouvelle application, la CLI crée également un fich
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-Le `universalIdentifier` de ce rôle est ensuite référencé dans `application.config.ts` en tant que `functionRoleUniversalIdentifier`. En d’autres termes :
+Le `universalIdentifier` de ce rôle est ensuite référencé dans `application.config.ts` en tant que `defaultRoleUniversalIdentifier`. En d’autres termes :
 
 * **\*.role.ts** définit ce que le rôle de fonction par défaut peut faire.
 * **application.config.ts** pointe vers ce rôle afin que vos fonctions héritent de ses autorisations.
@@ -411,7 +413,7 @@ Notes :
 * `permissionFlags` contrôlent l’accès aux capacités au niveau de la plateforme. Gardez-les au minimum ; n’ajoutez que ce dont vous avez besoin.
 * Voir un exemple fonctionnel dans l’application Hello World : [`packages/twenty-apps/hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
-### Configuration et point d’entrée des fonctions sans serveur
+### Configuration et point d’entrée des fonctions logiques
 
 Chaque fichier de fonction utilise `defineFunction()` pour exporter une configuration avec un gestionnaire et des déclencheurs facultatifs. Utilisez le suffixe de fichier `*.function.ts` pour la détection automatique.
 
@@ -510,7 +512,7 @@ Notes :
   **Pour migrer les fonctions existantes :** Mettez à jour votre gestionnaire pour déstructurer à partir de `event.body`, `event.queryStringParameters` ou `event.pathParameters` plutôt que directement à partir de l'objet params.
 </Warning>
 
-Lorsqu'un déclencheur de route appelle votre fonction, elle reçoit un objet `RoutePayload` qui suit le format AWS HTTP API v2. Importez le type depuis `twenty-sdk` :
+Lorsqu’un déclencheur de route appelle votre fonction logique, elle reçoit un objet `RoutePayload` qui suit le format AWS HTTP API v2. Importez le type depuis `twenty-sdk` :
 
 ```typescript
 import { defineFunction, type RoutePayload } from 'twenty-sdk';
@@ -540,7 +542,7 @@ Le type `RoutePayload` a la structure suivante :
 
 ### Transfert des en-têtes HTTP
 
-Par défaut, les en-têtes HTTP des requêtes entrantes ne sont pas transmis à votre fonction sans serveur pour des raisons de sécurité. Pour accéder à des en-têtes spécifiques, listez-les explicitement dans le tableau `forwardedRequestHeaders` :
+Par défaut, les en-têtes HTTP des requêtes entrantes ne sont pas transmis à votre fonction logique pour des raisons de sécurité. Pour accéder à des en-têtes spécifiques, listez-les explicitement dans le tableau `forwardedRequestHeaders` :
 
 ```typescript
 export default defineFunction({
@@ -578,7 +580,7 @@ const handler = async (event: RoutePayload) => {
 
 Vous pouvez créer de nouvelles fonctions de deux façons :
 
-* **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. Cela génère un fichier de démarrage avec un gestionnaire et une configuration.
+* **Générée** : Exécutez `yarn entity:add` et choisissez l’option pour ajouter une nouvelle fonction. Cela génère un fichier de démarrage avec un gestionnaire et une configuration.
 * **Manuelle** : Créez un nouveau fichier `*.function.ts` et utilisez `defineFunction()`, en suivant le même modèle.
 
 ### Client typé généré
@@ -592,9 +594,9 @@ const client = new Twenty();
 const { me } = await client.query({ me: { id: true, displayName: true } });
 ```
 
-Le client est régénéré par `yarn app:generate`. Re-run after changing your objects or when onboarding to a new workspace.
+Le client est régénéré par `yarn app:generate`. Relancez après avoir modifié vos objets ou lors de l’intégration à un nouvel espace de travail.
 
-#### Identifiants d’exécution dans les fonctions sans serveur
+#### Identifiants d’exécution dans les fonctions logiques
 
 Lorsque votre fonction s’exécute sur Twenty, la plateforme injecte des identifiants sous forme de variables d’environnement avant l’exécution de votre code :
 
@@ -604,8 +606,8 @@ Lorsque votre fonction s’exécute sur Twenty, la plateforme injecte des identi
 Notes:
 
 * Vous n’avez pas besoin de passer l’URL ou la clé API au client généré. Il lit `TWENTY_API_URL` et `TWENTY_API_KEY` depuis process.env à l’exécution.
-* Les autorisations de la clé API sont déterminées par le rôle référencé dans votre `application.config.ts` via `functionRoleUniversalIdentifier`. Il s’agit du rôle par défaut utilisé par les fonctions sans serveur de votre application.
-* Les applications peuvent définir des rôles pour appliquer le principe du moindre privilège. N’accordez que les autorisations dont vos fonctions ont besoin, puis faites pointer `functionRoleUniversalIdentifier` vers l’identifiant universel de ce rôle.
+* Les autorisations de la clé API sont déterminées par le rôle référencé dans votre `application.config.ts` via `defaultRoleUniversalIdentifier`. Il s’agit du rôle par défaut utilisé par les fonctions logiques de votre application.
+* Les applications peuvent définir des rôles pour appliquer le principe du moindre privilège. N’accordez que les autorisations dont vos fonctions ont besoin, puis faites pointer `defaultRoleUniversalIdentifier` vers l’identifiant universel de ce rôle.
 
 ### Exemple Hello World
 
@@ -640,13 +642,13 @@ Ajoutez ensuite des scripts comme ceux-ci :
 }
 ```
 
-Now you can run the same commands via Yarn, e.g. `yarn app:dev`, `yarn app:generate`, etc.
+Vous pouvez désormais exécuter les mêmes commandes via Yarn, par exemple `yarn app:dev`, `yarn app:generate`, etc.
 
 ## Résolution des problèmes
 
 * Erreurs d’authentification : exécutez `yarn auth:login` et assurez-vous que votre clé API dispose des autorisations requises.
 * Impossible de se connecter au serveur : vérifiez l’URL de l’API et que le serveur Twenty est accessible.
-* Types or client missing/outdated: run `yarn app:generate`.
+* Types ou client manquants/obsolètes : exécutez `yarn app:generate`.
 * Le mode dev ne se synchronise pas : assurez-vous que `yarn app:dev` est en cours d’exécution et que les modifications ne sont pas ignorées par votre environnement.
 
 Canal d’aide Discord : https://discord.com/channels/1130383047699738754/1130386664812982322

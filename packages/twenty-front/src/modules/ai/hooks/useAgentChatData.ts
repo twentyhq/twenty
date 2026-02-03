@@ -4,6 +4,7 @@ import {
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageState';
 import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import {
   type SetterOrUpdater,
@@ -13,6 +14,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import {
   type AgentChatThread,
+  useCreateChatThreadMutation,
   useGetChatMessagesQuery,
   useGetChatThreadsQuery,
 } from '~/generated-metadata/graphql';
@@ -43,8 +45,22 @@ export const useAgentChatData = () => {
     currentAIChatThreadState,
   );
   const setAgentChatUsage = useSetRecoilState(agentChatUsageState);
+  const [isCreatingChatThread, setIsCreatingChatThread] = useRecoilState(
+    isCreatingChatThreadState,
+  );
 
   const { scrollToBottom } = useAgentChatScrollToBottom();
+
+  const [createChatThread] = useCreateChatThreadMutation({
+    onCompleted: (data) => {
+      setIsCreatingChatThread(false);
+      setCurrentAIChatThread(data.createChatThread.id);
+      setAgentChatUsage(null);
+    },
+    onError: () => {
+      setIsCreatingChatThread(false);
+    },
+  });
 
   const { loading: threadsLoading } = useGetChatThreadsQuery({
     skip: isDefined(currentAIChatThread),
@@ -54,6 +70,9 @@ export const useAgentChatData = () => {
 
         setCurrentAIChatThread(firstThread.id);
         setUsageFromThread(firstThread, setAgentChatUsage);
+      } else if (!isCreatingChatThread) {
+        setIsCreatingChatThread(true);
+        createChatThread();
       }
     },
   });

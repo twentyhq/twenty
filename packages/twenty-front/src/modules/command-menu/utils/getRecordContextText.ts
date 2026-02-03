@@ -6,8 +6,13 @@ export const getSelectedRecordsContextText = (
   objectMetadataItem: ObjectMetadataItem,
   records: ObjectRecord[],
   totalCount: number,
+  allowRequestsToTwentyIcons: boolean,
 ) => {
   return totalCount === 1
-    ? getObjectRecordIdentifier({ objectMetadataItem, record: records[0] }).name
+    ? getObjectRecordIdentifier({
+        objectMetadataItem,
+        record: records[0],
+        allowRequestsToTwentyIcons,
+      }).name
     : `${totalCount} ${objectMetadataItem.labelPlural}`;
 };

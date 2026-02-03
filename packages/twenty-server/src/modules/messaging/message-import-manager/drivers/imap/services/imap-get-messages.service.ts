@@ -107,7 +107,7 @@ export class ImapGetMessagesService {
     client: ImapFlow,
     connectedAccount: ConnectedAccount,
   ): Promise<MessageWithParticipants[]> {
-    this.logger.log(
+    this.logger.debug(
       `Fetching ${messageUids.length} messages from ${folderPath}`,
     );
     const startTime = Date.now();
@@ -146,7 +146,7 @@ export class ImapGetMessagesService {
       );
     }
 
-    this.logger.log(
+    this.logger.debug(
       `Parsed ${messages.length}/${results.length} messages from ${folderPath} in ${Date.now() - startTime}ms`,
     );
 

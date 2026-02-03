@@ -8,7 +8,7 @@ import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { createOneServerlessFunction } from 'test/integration/metadata/suites/serverless-function/utils/create-one-serverless-function.util';
+import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-one-logic-function.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -189,11 +189,11 @@ describe('Successful user and workspace creation', () => {
       expectToFail: false,
     });
 
-    // Create a serverless function for workspace deletion test
-    await createOneServerlessFunction({
+    // Create a logic function for workspace deletion test
+    await createOneLogicFunction({
       input: {
         name: 'test-function-for-deletion',
-        description: 'A test serverless function for workspace deletion test',
+        description: 'A test logic function for workspace deletion test',
       },
       token: newWorkspaceAccessToken,
       expectToFail: false,
@@ -217,8 +217,8 @@ describe('Successful user and workspace creation', () => {
       'objectPermission',
       'fieldPermission',
       'permissionFlag',
-      'serverlessFunction',
-      'serverlessFunctionLayer',
+      'logicFunction',
+      'logicFunctionLayer',
       'agent',
       'view',
       'viewField',

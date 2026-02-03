@@ -20,10 +20,20 @@ const StyledPriceUnitSpan = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
+const formatYearlyPriceToMonthly = (price: number): number => {
+  const monthlyPrice = price / 12;
+
+  return Number.isInteger(monthlyPrice)
+    ? monthlyPrice
+    : Number(monthlyPrice.toFixed(2));
+};
+
 export const SubscriptionPrice = ({ type, price }: SubscriptionPriceProps) => {
   const { t } = useLingui();
   const pricePerSeat =
-    type === SubscriptionInterval.Year ? (price / 12).toFixed(2) : price;
+    type === SubscriptionInterval.Year
+      ? formatYearlyPriceToMonthly(price)
+      : price;
 
   let priceUnit = '';
   switch (type) {

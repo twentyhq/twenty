@@ -8,6 +8,8 @@ import { selectOptionsSchema } from '@/object-metadata/validation-schemas/select
 import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
 import { selectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/selectFieldDefaultValueSchema';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
+import { convertBulkTextToOptions } from '@/settings/data-model/fields/forms/select/utils/convertBulkTextToOptions';
+import { convertOptionsToBulkText } from '@/settings/data-model/fields/forms/select/utils/convertOptionsToBulkText';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -19,6 +21,12 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
+import { TextArea } from '@/ui/input/components/TextArea';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -26,9 +34,16 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus, IconPoint } from 'twenty-ui/display';
-import { LightButton } from 'twenty-ui/input';
+import {
+  IconDotsVertical,
+  IconPencil,
+  IconPlus,
+  IconPoint,
+  IconTrash,
+} from 'twenty-ui/display';
+import { LightButton, LightIconButton } from 'twenty-ui/input';
 import { CardContent, CardFooter } from 'twenty-ui/layout';
+import { MenuItem } from 'twenty-ui/navigation';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
@@ -58,6 +73,7 @@ const StyledContainer = styled(CardContent)`
 
 const StyledOptionsLabel = styled.div<{
   isAdvancedModeEnabled: boolean;
+  isBulkInputMode: boolean;
 }>`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -65,8 +81,9 @@ const StyledOptionsLabel = styled.div<{
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
   margin-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
-  margin-left: ${({ theme, isAdvancedModeEnabled }) =>
-    theme.spacing(isAdvancedModeEnabled ? 10 : 0)};
+  margin-left: ${({ theme, isAdvancedModeEnabled, isBulkInputMode }) =>
+    theme.spacing(isAdvancedModeEnabled && !isBulkInputMode ? 10 : 0)};
+};
 `;
 
 const StyledApiKeyContainer = styled.div`
@@ -82,14 +99,18 @@ const StyledApiKey = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1.5)};
   margin-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+
   white-space: nowrap;
 `;
 
 const StyledLabelContainer = styled.div`
+  align-items: center;
   display: flex;
+  width: 100%;
 `;
 
 const StyledIconContainer = styled.div`
+  align-items: center;
   border-right: 1px solid ${({ theme }) => theme.color.yellow};
   display: flex;
 
@@ -109,6 +130,26 @@ const StyledFooter = styled(CardFooter)`
 const StyledButton = styled(LightButton)`
   justify-content: center;
   width: 100%;
+`;
+
+const StyledOptionsHeaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+`;
+
+const StyledTextAreaContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledHelpText = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDataModelFieldSelectForm = ({
@@ -137,6 +178,12 @@ export const SettingsDataModelFieldSelectForm = ({
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
   const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
+  const [isBulkInputMode, setIsBulkInputMode] = useState(false);
+  const [bulkInputText, setBulkInputText] = useState('');
+
+  const OPTIONS_DROPDOWN_ID =
+    'settings-data-model-field-select-options-dropdown';
+  const { closeDropdown: closeOptionsDropdown } = useCloseDropdown();
 
   useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
@@ -270,109 +317,191 @@ export const SettingsDataModelFieldSelectForm = ({
         render={({ field: { onChange, value: options } }) => (
           <>
             <StyledContainer>
-              <StyledLabelContainer>
-                <AdvancedSettingsWrapper animationDimension="width" hideDot>
-                  <StyledApiKeyContainer>
-                    <StyledIconContainer>
-                      <StyledIconPoint
-                        size={12}
-                        color={theme.color.yellow}
-                        fill={theme.color.yellow}
+              <StyledOptionsHeaderContainer>
+                <StyledLabelContainer>
+                  {!isBulkInputMode && (
+                    <AdvancedSettingsWrapper animationDimension="width" hideDot>
+                      <StyledApiKeyContainer>
+                        <StyledIconContainer>
+                          <StyledIconPoint
+                            size={12}
+                            color={theme.color.yellow}
+                            fill={theme.color.yellow}
+                          />
+                        </StyledIconContainer>
+                        <StyledApiKey>{t`API values`}</StyledApiKey>
+                      </StyledApiKeyContainer>
+                    </AdvancedSettingsWrapper>
+                  )}
+                  <StyledOptionsLabel
+                    isAdvancedModeEnabled={isAdvancedModeEnabled}
+                    isBulkInputMode={isBulkInputMode}
+                  >
+                    {t`Options`}
+                  </StyledOptionsLabel>
+                </StyledLabelContainer>
+                {!disabled && (
+                  <Dropdown
+                    dropdownId={OPTIONS_DROPDOWN_ID}
+                    clickableComponent={
+                      <LightIconButton
+                        Icon={IconDotsVertical}
+                        accent="tertiary"
                       />
-                    </StyledIconContainer>
-                    <StyledApiKey>{t`API values`}</StyledApiKey>
-                  </StyledApiKeyContainer>
-                </AdvancedSettingsWrapper>
-                <StyledOptionsLabel
-                  isAdvancedModeEnabled={isAdvancedModeEnabled}
-                >
-                  {t`Options`}
-                </StyledOptionsLabel>
-              </StyledLabelContainer>
-              <DraggableList
-                onDragEnd={(result) =>
-                  !disabled
-                    ? handleDragEnd(options, result, onChange)
-                    : undefined
-                }
-                draggableItems={
-                  <>
-                    {options.map((option, index) => (
-                      <DraggableItem
-                        isInsideScrollableContainer
-                        key={option.id}
-                        draggableId={option.id}
-                        index={index}
-                        isDragDisabled={options.length === 1}
-                        itemComponent={
-                          <SettingsDataModelFieldSelectFormOptionRow
-                            key={option.id}
-                            option={option}
-                            isNewRow={index === options.length - 1}
-                            onChange={(nextOption) => {
-                              if (disabled) {
-                                return;
+                    }
+                    dropdownComponents={
+                      <DropdownContent
+                        widthInPixels={GenericDropdownContentWidth.Narrow}
+                      >
+                        <DropdownMenuItemsContainer>
+                          <MenuItem
+                            text={
+                              isBulkInputMode ? t`Single edit` : t`Bulk edit`
+                            }
+                            LeftIcon={IconPencil}
+                            onClick={() => {
+                              if (!isBulkInputMode) {
+                                setBulkInputText(
+                                  convertOptionsToBulkText(options),
+                                );
                               }
-                              const nextOptions = toSpliced(
-                                options,
-                                index,
-                                1,
-                                nextOption,
+                              setIsBulkInputMode(
+                                (currentInputMode) => !currentInputMode,
                               );
-                              onChange(nextOptions);
-
-                              // Update option value in defaultValue if value has changed
-                              if (
-                                nextOption.value !== option.value &&
-                                isOptionDefaultValue(option.value)
-                              ) {
-                                handleRemoveOptionAsDefault(option.value);
-                                handleSetOptionAsDefault(nextOption.value);
-                              }
-                            }}
-                            onRemove={() => {
-                              if (disabled) {
-                                return;
-                              }
-                              const nextOptions = toSpliced(
-                                options,
-                                index,
-                                1,
-                              ).map((option, nextOptionIndex) => ({
-                                ...option,
-                                position: nextOptionIndex,
-                              }));
-                              onChange(nextOptions);
-                            }}
-                            isDefault={isOptionDefaultValue(option.value)}
-                            fieldIsNullable={!!isNullable}
-                            onSetAsDefault={() => {
-                              if (disabled) {
-                                return;
-                              }
-                              handleSetOptionAsDefault(option.value);
-                            }}
-                            onRemoveAsDefault={() => {
-                              if (disabled) {
-                                return;
-                              }
-                              handleRemoveOptionAsDefault(option.value);
-                            }}
-                            onInputEnter={() => {
-                              if (disabled) {
-                                return;
-                              }
-                              handleInputEnter();
+                              closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                             }}
                           />
-                        }
-                      />
-                    ))}
-                  </>
-                }
-              />
+                          <MenuItem
+                            text={t`Remove all`}
+                            accent="danger"
+                            LeftIcon={IconTrash}
+                            onClick={() => {
+                              onChange([]);
+                              closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
+                            }}
+                          />
+                        </DropdownMenuItemsContainer>
+                      </DropdownContent>
+                    }
+                  />
+                )}
+              </StyledOptionsHeaderContainer>
+
+              {isBulkInputMode ? (
+                <StyledTextAreaContainer>
+                  <TextArea
+                    textAreaId="bulk-options-input"
+                    placeholder={t`Enter one option per line`}
+                    value={bulkInputText}
+                    onChange={(nextOptionAsText) => {
+                      if (disabled) {
+                        return;
+                      }
+
+                      const nextOptions = convertBulkTextToOptions(
+                        nextOptionAsText,
+                        options,
+                      );
+
+                      onChange(nextOptions);
+                      setBulkInputText(nextOptionAsText);
+                    }}
+                    minRows={5}
+                    maxRows={15}
+                    disabled={disabled}
+                  />
+                  <StyledHelpText>
+                    {t`Enter one option per line. Each line will become a new option.`}
+                  </StyledHelpText>
+                </StyledTextAreaContainer>
+              ) : (
+                <>
+                  <DraggableList
+                    onDragEnd={(result) =>
+                      !disabled
+                        ? handleDragEnd(options, result, onChange)
+                        : undefined
+                    }
+                    draggableItems={
+                      <>
+                        {options.map((option, index) => (
+                          <DraggableItem
+                            isInsideScrollableContainer
+                            key={option.id}
+                            draggableId={option.id}
+                            index={index}
+                            isDragDisabled={options.length === 1}
+                            itemComponent={
+                              <SettingsDataModelFieldSelectFormOptionRow
+                                key={option.id}
+                                option={option}
+                                isNewRow={index === options.length - 1}
+                                onChange={(nextOption) => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  const nextOptions = toSpliced(
+                                    options,
+                                    index,
+                                    1,
+                                    nextOption,
+                                  );
+                                  onChange(nextOptions);
+
+                                  // Update option value in defaultValue if value has changed
+                                  if (
+                                    nextOption.value !== option.value &&
+                                    isOptionDefaultValue(option.value)
+                                  ) {
+                                    handleRemoveOptionAsDefault(option.value);
+                                    handleSetOptionAsDefault(nextOption.value);
+                                  }
+                                }}
+                                onRemove={() => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  const nextOptions = toSpliced(
+                                    options,
+                                    index,
+                                    1,
+                                  ).map((option, nextOptionIndex) => ({
+                                    ...option,
+                                    position: nextOptionIndex,
+                                  }));
+                                  onChange(nextOptions);
+                                }}
+                                isDefault={isOptionDefaultValue(option.value)}
+                                fieldIsNullable={!!isNullable}
+                                onSetAsDefault={() => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  handleSetOptionAsDefault(option.value);
+                                }}
+                                onRemoveAsDefault={() => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  handleRemoveOptionAsDefault(option.value);
+                                }}
+                                onInputEnter={() => {
+                                  if (disabled) {
+                                    return;
+                                  }
+                                  handleInputEnter();
+                                }}
+                              />
+                            }
+                          />
+                        ))}
+                      </>
+                    }
+                  />
+                </>
+              )}
             </StyledContainer>
-            {!disabled && (
+            {!disabled && !isBulkInputMode && (
               <StyledFooter>
                 <StyledButton
                   title={t`Add option`}

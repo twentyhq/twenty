@@ -292,21 +292,21 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Modo somente ambiente:** Se você definir `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adicione estas variáveis ao seu arquivo `.env`.
 </Warning>
 
-## Funções serverless
+## Funções lógicas
 
-O Twenty oferece suporte a funções serverless para fluxos de trabalho e lógica personalizada. O ambiente de execução é configurado por meio da variável de ambiente `SERVERLESS_TYPE`.
+O Twenty oferece suporte a funções lógicas para fluxos de trabalho e lógica personalizada. O ambiente de execução é configurado por meio da variável de ambiente `SERVERLESS_TYPE`.
 
 <Warning>
-  **Aviso de segurança:** O driver serverless local (`SERVERLESS_TYPE=LOCAL`) executa código diretamente no host em um processo Node.js sem sandbox. Deve ser usado apenas para código confiável em desenvolvimento. Para implantações de produção que lidam com código não confiável, recomendamos fortemente usar `SERVERLESS_TYPE=LAMBDA` ou `SERVERLESS_TYPE=DISABLED`.
+  **Aviso de segurança:** O driver local (`SERVERLESS_TYPE=LOCAL`) executa código diretamente no host em um processo Node.js sem sandbox. Deve ser usado apenas para código confiável em desenvolvimento. Para implantações de produção que lidam com código não confiável, recomendamos fortemente usar `SERVERLESS_TYPE=LAMBDA` ou `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### Drivers disponíveis
 
-| Driver     | Variável de ambiente       | Caso de uso                                   | Nível de segurança                     |
-| ---------- | -------------------------- | --------------------------------------------- | -------------------------------------- |
-| Desativado | `SERVERLESS_TYPE=DISABLED` | Desativar completamente as funções serverless | N/A                                    |
-| Local      | `SERVERLESS_TYPE=LOCAL`    | Desenvolvimento e ambientes confiáveis        | Baixo (sem sandbox)                    |
-| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Produção com código não confiável             | Alto (isolamento em nível de hardware) |
+| Driver     | Variável de ambiente       | Caso de uso                                | Nível de segurança                     |
+| ---------- | -------------------------- | ------------------------------------------ | -------------------------------------- |
+| Desativado | `SERVERLESS_TYPE=DISABLED` | Desativar completamente as funções lógicas | N/A                                    |
+| Local      | `SERVERLESS_TYPE=LOCAL`    | Desenvolvimento e ambientes confiáveis     | Baixo (sem sandbox)                    |
+| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | Produção com código não confiável          | Alto (isolamento em nível de hardware) |
 
 ### Configuração recomendada
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**Para desativar as funções serverless:**
+**Para desativar as funções lógicas:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  Ao usar `SERVERLESS_TYPE=DISABLED`, qualquer tentativa de executar uma função serverless retornará um erro. Isso é útil se você quiser executar o Twenty sem recursos de funções serverless.
+  Ao usar `SERVERLESS_TYPE=DISABLED`, qualquer tentativa de executar uma função lógica retornará um erro. Isso é útil se você quiser executar o Twenty sem recursos de funções lógicas.
 </Note>

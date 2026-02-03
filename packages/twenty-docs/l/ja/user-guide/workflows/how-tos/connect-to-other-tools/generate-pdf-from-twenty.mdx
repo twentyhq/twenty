@@ -7,7 +7,7 @@ Twenty で PDF を自動生成または取得し、レコードに添付しま�
 
 ## 概要
 
-このワークフローでは **手動トリガー** を使用し、選択した任意のレコードに対してオンデマンドで PDF を生成できるようにします。 次を **サーバーレス関数** が処理します:
+このワークフローでは **手動トリガー** を使用し、選択した任意のレコードに対してオンデマンドで PDF を生成できるようにします。 A **Logic Function** handles:
 
 1. URL（PDF 生成サービスから）から PDF をダウンロードする
 2. ファイルを Twenty にアップロードする
@@ -17,7 +17,7 @@ Twenty で PDF を自動生成または取得し、レコードに添付しま�
 
 ワークフローを設定する前に:
 
-1. **API キーを作成**: **Settings → APIs** に移動して新しい API キーを作成します。 サーバーレス関数でこのトークンが必要になります。
+1. **API キーを作成**: **Settings → APIs** に移動して新しい API キーを作成します。 You'll need this token for the logic function.
 2. **PDF 生成サービスを設定**（任意）：PDF を動的に生成したい場合（例: 見積書）は、Carbone、PDFMonkey、DocuSeal のようなサービスを使用して PDF を作成し、ダウンロード URL を取得します。
 
 ## ステップバイステップの設定
@@ -32,9 +32,9 @@ Twenty で PDF を自動生成または取得し、レコードに添付しま�
   手動トリガーを使用すると、レコードを選択すると右上に表示されるボタンからこのワークフローを実行し、PDF を生成して添付できます。
 </Tip>
 
-### ステップ 2: サーバーレス関数を追加する
+### Step 2: Add a Logic Function
 
-1. **サーバーレス関数** アクションを追加します
+1. Add a **Code** action (logic function)
 2. 以下のコードで新しい関数を作成します
 3. 入力パラメーターを設定します
 
@@ -45,10 +45,10 @@ Twenty で PDF を自動生成または取得し、レコードに添付しま�
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  別のオブジェクト（Person、Opportunity など）に添付する場合は、適切にパラメーター名を変更（例: `personId`、`opportunityId`）し、サーバーレス関数を更新します。
+  If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
 </Note>
 
-#### サーバーレス関数のコード
+#### Logic Function Code
 
 ```typescript
 export const main = async (
@@ -172,7 +172,7 @@ export const main = async (
 PDF 生成サービスを使用する場合、次のことができます:
 
 1. まず HTTP Request アクションで PDF を生成します
-2. 返された PDF URL をパラメーターとしてサーバーレス関数に渡します
+2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
 export const main = async (
@@ -211,7 +211,7 @@ export const main = async (
 * **DocuSeal** - ドキュメント自動化プラットフォーム
 * **Documint** - API ファーストのドキュメント生成
 
-各サービスは PDF URL を返す API を提供しており、その URL をサーバーレス関数に渡すことができます。
+Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
 
 ## トラブルシューティング
 
@@ -224,5 +224,5 @@ export const main = async (
 ## 関連
 
 * [ワークフローのトリガー](/l/ja/user-guide/workflows/capabilities/workflow-triggers)
-* [サーバーレス関数](/l/ja/user-guide/workflows/capabilities/workflow-actions#serverless-function)
+* [Logic Functions](/l/ja/user-guide/workflows/capabilities/workflow-actions#code)
 * [Twenty から見積書または請求書を生成する](/l/ja/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

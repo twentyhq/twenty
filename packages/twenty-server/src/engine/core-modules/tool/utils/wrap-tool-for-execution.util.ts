@@ -18,7 +18,7 @@ export const wrapSchemaForExecution = <T extends z.ZodRawShape>(
   }) as z.ZodObject<T & { loadingMessage: z.ZodString }>;
 };
 
-// For non-Zod schemas (serverless functions with JSON Schema)
+// For non-Zod schemas (logic functions with JSON Schema)
 export const wrapJsonSchemaForExecution = (
   schema: Record<string, unknown>,
 ): Record<string, unknown> => {

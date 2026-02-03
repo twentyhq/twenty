@@ -11,7 +11,7 @@ import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { sanitizeRawUpdateFieldInput } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-raw-update-field-input';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 type ComputeFlatFieldToUpdateAndRelatedFlatFieldToUpdateReturnType = {
@@ -44,7 +44,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
       isSystemBuild,
     });
 
-  const isStandardField = isStandardMetadata(fromFlatFieldMetadata);
+  const isStandardField = belongsToTwentyStandardApp(fromFlatFieldMetadata);
 
   const toFlatFieldMetadata = {
     ...mergeUpdateInExistingRecord({

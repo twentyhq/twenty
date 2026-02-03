@@ -9,11 +9,14 @@ export const transformPageLayout = (
     ...pageLayout,
     tabs: (pageLayout.tabs ?? [])
       .toSorted((a, b) => a.position - b.position)
-      .map(
-        (tab): PageLayoutTab => ({
-          ...tab,
+      .map((tab): PageLayoutTab => {
+        // TODO: remove this once the frontend consumes the new type
+        const { layoutMode: _layoutMode, ...tabWithoutLayoutMode } = tab;
+
+        return {
+          ...tabWithoutLayoutMode,
           widgets: tab.widgets ?? [],
-        }),
-      ),
+        };
+      }),
   };
 };

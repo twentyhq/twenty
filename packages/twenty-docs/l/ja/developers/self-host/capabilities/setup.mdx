@@ -294,21 +294,21 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
 </Warning>
 
-## サーバーレス関数
+## Logic Functions
 
-Twenty は、ワークフローやカスタムロジックのためのサーバーレス関数をサポートします。 実行環境は、`SERVERLESS_TYPE` 環境変数で設定されます。
+Twenty supports logic functions for workflows and custom logic. 実行環境は、`SERVERLESS_TYPE` 環境変数で設定されます。
 
 <Warning>
-  **セキュリティに関する注意:** ローカルのサーバーレスドライバー（`SERVERLESS_TYPE=LOCAL`）は、ホスト上の Node.js プロセス内でサンドボックスなしにコードを直接実行します。 開発では、信頼できるコードにのみ使用してください。 信頼できないコードを扱う本番デプロイでは、`SERVERLESS_TYPE=LAMBDA` または `SERVERLESS_TYPE=DISABLED` の使用を強く推奨します。
+  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. 開発では、信頼できるコードにのみ使用してください。 信頼できないコードを扱う本番デプロイでは、`SERVERLESS_TYPE=LAMBDA` または `SERVERLESS_TYPE=DISABLED` の使用を強く推奨します。
 </Warning>
 
 ### 利用可能なドライバー
 
-| ドライバー  | 環境変数                       | ユースケース            | セキュリティレベル       |
-| ------ | -------------------------- | ----------------- | --------------- |
-| 無効     | `SERVERLESS_TYPE=DISABLED` | サーバーレス関数を完全に無効化する | 該当なし            |
-| ローカル   | `SERVERLESS_TYPE=LOCAL`    | 開発および信頼できる環境      | 低（サンドボックスなし）    |
-| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 信頼できないコードを扱う本番環境  | 高（ハードウェアレベルの分離） |
+| ドライバー  | 環境変数                       | ユースケース                           | セキュリティレベル       |
+| ------ | -------------------------- | -------------------------------- | --------------- |
+| 無効     | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | 該当なし            |
+| ローカル   | `SERVERLESS_TYPE=LOCAL`    | 開発および信頼できる環境                     | 低（サンドボックスなし）    |
+| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 信頼できないコードを扱う本番環境                 | 高（ハードウェアレベルの分離） |
 
 ### 推奨構成
 
@@ -328,12 +328,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**サーバーレス関数を無効化するには:**
+**To disable logic functions:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  `SERVERLESS_TYPE=DISABLED` を使用している場合、サーバーレス関数を実行しようとするとエラーが返されます。 これは、サーバーレス関数の機能なしで Twenty を実行したい場合に便利です。
+  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
 </Note>

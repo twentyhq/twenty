@@ -292,21 +292,21 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Mode réservé à l'environnement :** Si vous définissez `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, ajoutez ces variables à votre fichier `.env` à la place.
 </Warning>
 
-## Fonctions sans serveur
+## Fonctions logiques
 
-Twenty prend en charge les fonctions sans serveur pour les flux de travail et la logique personnalisée. L'environnement d'exécution est configuré via la variable d'environnement `SERVERLESS_TYPE`.
+Twenty prend en charge les fonctions logiques pour les flux de travail et la logique personnalisée. L'environnement d'exécution est configuré via la variable d'environnement `SERVERLESS_TYPE`.
 
 <Warning>
-  **Avis de sécurité :** Le pilote local de fonctions sans serveur (`SERVERLESS_TYPE=LOCAL`) exécute le code directement sur l'hôte dans un processus Node.js sans sandboxing. Il ne doit être utilisé que pour du code approuvé en développement. Pour les déploiements de production traitant du code non approuvé, nous recommandons fortement d'utiliser `SERVERLESS_TYPE=LAMBDA` ou `SERVERLESS_TYPE=DISABLED`.
+  **Avis de sécurité :** Le pilote local (`SERVERLESS_TYPE=LOCAL`) exécute le code directement sur l'hôte dans un processus Node.js sans sandboxing. Il ne doit être utilisé que pour du code approuvé en développement. Pour les déploiements de production traitant du code non approuvé, nous recommandons fortement d'utiliser `SERVERLESS_TYPE=LAMBDA` ou `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### Pilotes disponibles
 
-| Pilote    | Variable d'environnement   | Cas d'utilisation                                  | Niveau de sécurité                   |
-| --------- | -------------------------- | -------------------------------------------------- | ------------------------------------ |
-| Désactivé | `SERVERLESS_TYPE=DISABLED` | Désactiver complètement les fonctions sans serveur | N/A                                  |
-| Local     | `SERVERLESS_TYPE=LOCAL`    | Environnements de développement et approuvés       | Faible (aucun sandboxing)            |
-| Lambda    | `SERVERLESS_TYPE=LAMBDA`   | Production avec du code non approuvé               | Élevé (isolement au niveau matériel) |
+| Pilote    | Variable d'environnement   | Cas d'utilisation                              | Niveau de sécurité                   |
+| --------- | -------------------------- | ---------------------------------------------- | ------------------------------------ |
+| Désactivé | `SERVERLESS_TYPE=DISABLED` | Désactiver complètement les fonctions logiques | N/A                                  |
+| Local     | `SERVERLESS_TYPE=LOCAL`    | Environnements de développement et approuvés   | Faible (aucun sandboxing)            |
+| Lambda    | `SERVERLESS_TYPE=LAMBDA`   | Production avec du code non approuvé           | Élevé (isolement au niveau matériel) |
 
 ### Configuration recommandée
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**Pour désactiver les fonctions sans serveur:**
+**Pour désactiver les fonctions logiques:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  Lorsque vous utilisez `SERVERLESS_TYPE=DISABLED`, toute tentative d'exécuter une fonction sans serveur renverra une erreur. Cela est utile si vous souhaitez exécuter Twenty sans les capacités de fonctions sans serveur.
+  Lorsque vous utilisez `SERVERLESS_TYPE=DISABLED`, toute tentative d'exécuter une fonction logique renverra une erreur. Cela est utile si vous souhaitez exécuter Twenty sans la prise en charge des fonctions logiques.
 </Note>

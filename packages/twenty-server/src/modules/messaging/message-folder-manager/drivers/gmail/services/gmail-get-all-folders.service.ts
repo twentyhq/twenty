@@ -100,7 +100,7 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
         });
       }
 
-      this.logger.log(
+      this.logger.debug(
         `Found ${folders.length} folders for Gmail account ${connectedAccount.handle}`,
       );
 

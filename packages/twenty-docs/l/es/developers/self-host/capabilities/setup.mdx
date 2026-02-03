@@ -292,21 +292,21 @@ yarn command:prod cron:workflow:automated-cron-trigger
   **Modo solo de entorno:** Si establece `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, agregue estas variables a su archivo `.env` en su lugar.
 </Warning>
 
-## Funciones sin servidor
+## Funciones de lógica
 
-Twenty admite funciones sin servidor para flujos de trabajo y lógica personalizada. El entorno de ejecución se configura mediante la variable de entorno `SERVERLESS_TYPE`.
+Twenty admite funciones de lógica para flujos de trabajo y lógica personalizada. El entorno de ejecución se configura mediante la variable de entorno `SERVERLESS_TYPE`.
 
 <Warning>
-  **Aviso de seguridad:** El controlador local sin servidor (`SERVERLESS_TYPE=LOCAL`) ejecuta código directamente en el host en un proceso de Node.js sin aislamiento. Solo debe utilizarse para código de confianza en desarrollo. Para implementaciones de producción que manejen código no confiable, recomendamos encarecidamente usar `SERVERLESS_TYPE=LAMBDA` o `SERVERLESS_TYPE=DISABLED`.
+  **Aviso de seguridad:** El controlador local (`SERVERLESS_TYPE=LOCAL`) ejecuta código directamente en el host en un proceso de Node.js sin aislamiento. Solo debe utilizarse para código de confianza en desarrollo. Para implementaciones de producción que manejen código no confiable, recomendamos encarecidamente usar `SERVERLESS_TYPE=LAMBDA` o `SERVERLESS_TYPE=DISABLED`.
 </Warning>
 
 ### Controladores disponibles
 
-| Controlador | Variable de entorno        | Caso de uso                                         | Nivel de seguridad                     |
-| ----------- | -------------------------- | --------------------------------------------------- | -------------------------------------- |
-| Desactivado | `SERVERLESS_TYPE=DISABLED` | Desactivar completamente las funciones sin servidor | N/A                                    |
-| Local       | `SERVERLESS_TYPE=LOCAL`    | Entornos de desarrollo y de confianza               | Bajo (sin aislamiento)                 |
-| Lambda      | `SERVERLESS_TYPE=LAMBDA`   | Producción con código no confiable                  | Alto (aislamiento a nivel de hardware) |
+| Controlador | Variable de entorno        | Caso de uso                                      | Nivel de seguridad                     |
+| ----------- | -------------------------- | ------------------------------------------------ | -------------------------------------- |
+| Desactivado | `SERVERLESS_TYPE=DISABLED` | Desactivar completamente las funciones de lógica | N/A                                    |
+| Local       | `SERVERLESS_TYPE=LOCAL`    | Entornos de desarrollo y de confianza            | Bajo (sin aislamiento)                 |
+| Lambda      | `SERVERLESS_TYPE=LAMBDA`   | Producción con código no confiable               | Alto (aislamiento a nivel de hardware) |
 
 ### Configuración recomendada
 
@@ -326,12 +326,12 @@ SERVERLESS_LAMBDA_ACCESS_KEY_ID=your-access-key
 SERVERLESS_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
-**Para desactivar las funciones sin servidor:**
+**Para desactivar las funciones de lógica:**
 
 ```bash
 SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  Al usar `SERVERLESS_TYPE=DISABLED`, cualquier intento de ejecutar una función sin servidor devolverá un error. Esto es útil si desea ejecutar Twenty sin capacidades de funciones sin servidor.
+  Al usar `SERVERLESS_TYPE=DISABLED`, cualquier intento de ejecutar una función de lógica devolverá un error. Esto es útil si desea ejecutar Twenty sin capacidades de funciones de lógica.
 </Note>
