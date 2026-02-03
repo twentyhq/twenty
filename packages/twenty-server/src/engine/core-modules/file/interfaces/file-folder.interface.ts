@@ -45,10 +45,7 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.FilesField]: {
     ignoreExpirationToken: false,
   },
-  [FileFolder.PackageJson]: {
-    ignoreExpirationToken: false,
-  },
-  [FileFolder.YarnLock]: {
+  [FileFolder.Dependencies]: {
     ignoreExpirationToken: false,
   },
 };

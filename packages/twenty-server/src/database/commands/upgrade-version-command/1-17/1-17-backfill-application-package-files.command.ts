@@ -1,6 +1,8 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -12,8 +14,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { LogicFunctionLayerEntity } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 @Command({
   name: 'upgrade:1-17:backfill-application-package-files',
@@ -119,14 +119,12 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
   private async backfillApplicationFromLogicFunctionLayer(
     application: Pick<
       ApplicationEntity,
-      | 'id'
-      | 'universalIdentifier'
-      | 'workspaceId'
-      | 'logicFunctionLayerId'
+      'id' | 'universalIdentifier' | 'workspaceId' | 'logicFunctionLayerId'
     >,
   ): Promise<void> {
-    const layerRepository =
-      this.coreDataSource.getRepository(LogicFunctionLayerEntity);
+    const layerRepository = this.coreDataSource.getRepository(
+      LogicFunctionLayerEntity,
+    );
     const layer = await layerRepository.findOne({
       where: {
         id: application.logicFunctionLayerId as string,
@@ -155,7 +153,7 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
     const packageJsonFile = await this.fileStorageService.writeFile_v2({
       sourceFile: packageJsonContent,
       mimeType: undefined,
-      fileFolder: FileFolder.PackageJson,
+      fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,
       resourcePath: 'package.json',
@@ -165,7 +163,7 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
     const yarnLockFile = await this.fileStorageService.writeFile_v2({
       sourceFile: layer.yarnLock,
       mimeType: undefined,
-      fileFolder: FileFolder.YarnLock,
+      fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,
       resourcePath: 'yarn.lock',
