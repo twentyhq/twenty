@@ -100,6 +100,12 @@ export class UpdateWorkspaceInput {
   trashRetentionDays?: number;
 
   @Field({ nullable: true })
+  @IsInt()
+  @Min(30) // Minimum 30 days retention for audit compliance
+  @IsOptional()
+  eventLogRetentionDays?: number;
+
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   fastModel?: string;

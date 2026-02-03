@@ -229,6 +229,35 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  // Execute a command (DELETE, ALTER, etc.)
+  public async command(
+    query: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    params?: Record<string, any>,
+    clientId?: string,
+  ): Promise<boolean> {
+    try {
+      const client = clientId
+        ? await this.connectToClient(clientId)
+        : this.mainClient;
+
+      if (!client) {
+        return false;
+      }
+
+      await client.command({
+        query,
+        query_params: params,
+      });
+
+      return true;
+    } catch (err) {
+      this.logger.error('Error executing command in ClickHouse', err);
+
+      return false;
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async insertInChunks<T extends Record<string, any>>(
     client: ClickHouseClient,

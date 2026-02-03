@@ -104,6 +104,10 @@ export class WorkspaceEntity {
   @Column({ type: 'integer', default: 14 })
   trashRetentionDays: number;
 
+  @Field()
+  @Column({ type: 'integer', default: 730 })
+  eventLogRetentionDays: number;
+
   // Relations
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {
     cascade: true,
