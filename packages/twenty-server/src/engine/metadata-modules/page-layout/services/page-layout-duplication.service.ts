@@ -192,7 +192,9 @@ export class PageLayoutDuplicationService {
   ): { tab: FlatPageLayoutTab; widgets: FlatPageLayoutWidget[] }[] {
     const widgetsByTabId = new Map<string, FlatPageLayoutWidget[]>();
 
-    for (const widget of Object.values(flatPageLayoutWidgetMaps.byId)) {
+    for (const widget of Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    )) {
       if (!isDefined(widget) || isDefined(widget.deletedAt)) {
         continue;
       }
@@ -203,7 +205,7 @@ export class PageLayoutDuplicationService {
       widgetsByTabId.set(widget.pageLayoutTabId, existingWidgets);
     }
 
-    const tabs = Object.values(flatPageLayoutTabMaps.byId)
+    const tabs = Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
       .filter(
         (tab): tab is FlatPageLayoutTab =>
           isDefined(tab) &&
