@@ -1,9 +1,9 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const workflowRefetchRequestedFamilyState = createFamilyState<
+export const shouldWorkflowRefetchRequestFamilyState = createFamilyState<
   boolean,
   string
 >({
-  key: 'workflowRefetchRequestedFamilyState',
+  key: 'shouldWorkflowRefetchRequestFamilyState',
   defaultValue: false,
 });
