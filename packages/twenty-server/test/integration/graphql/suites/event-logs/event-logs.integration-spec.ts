@@ -34,7 +34,6 @@ describe('Event Logs (integration)', () => {
   const seedTestData = async () => {
     const now = new Date();
 
-    // pageview table uses 'name' field, not 'event'
     const pageviewRecords = Array.from({ length: 25 }, (_, i) => ({
       workspaceId: testWorkspaceId,
       userId: testUserId,
