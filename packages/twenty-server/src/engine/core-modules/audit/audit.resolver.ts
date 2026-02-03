@@ -3,8 +3,8 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { AuditExceptionFilter } from 'src/engine/core-modules/audit/audit-exception-filter';
 import {
-  AuditException,
-  AuditExceptionCode,
+    AuditException,
+    AuditExceptionCode,
 } from 'src/engine/core-modules/audit/audit.exception';
 import { CreateObjectEventInput } from 'src/engine/core-modules/audit/dtos/create-object-event.input';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -20,9 +20,9 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 import { Analytics } from './dtos/analytics.dto';
 import {
-  CreateAnalyticsInputV2,
-  isPageviewAnalyticsInput,
-  isTrackAnalyticsInput,
+    CreateAnalyticsInputV2,
+    isPageviewAnalyticsInput,
+    isTrackAnalyticsInput,
 } from './dtos/create-analytics.input';
 import { AuditService } from './services/audit.service';
 
@@ -39,8 +39,9 @@ export class AuditResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ) {
-    return this.trackAnalytics(createAnalyticsInput, workspace, user);
+    return this.trackAnalytics(createAnalyticsInput, workspace, user, userWorkspaceId);
   }
 
   @Mutation(() => Analytics)

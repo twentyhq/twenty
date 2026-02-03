@@ -57,11 +57,13 @@ describe('AuditResolver', () => {
       input,
       { id: 'workspace-1' } as WorkspaceEntity,
       { id: 'user-1' } as UserEntity,
+      'user-workspace-1',
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({
       workspaceId: 'workspace-1',
       userId: 'user-1',
+      userWorkspaceId: 'user-workspace-1',
     });
     expect(mockInsertPageviewEvent).toHaveBeenCalledWith('Test Page', {});
     expect(result).toBe('Pageview created');
@@ -87,11 +89,13 @@ describe('AuditResolver', () => {
       input,
       { id: 'workspace-2' } as WorkspaceEntity,
       { id: 'user-2' } as UserEntity,
+      'user-workspace-2',
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({
       workspaceId: 'workspace-2',
       userId: 'user-2',
+      userWorkspaceId: 'user-workspace-2',
     });
     expect(mockInsertWorkspaceEvent).toHaveBeenCalledWith(
       'Custom Domain Activated',
@@ -122,11 +126,13 @@ describe('AuditResolver', () => {
       input,
       { id: 'workspace-3' } as WorkspaceEntity,
       { id: 'user-3' } as UserEntity,
+      'user-workspace-3',
     );
 
     expect(auditService.createContext).toHaveBeenCalledWith({
       workspaceId: 'workspace-3',
       userId: 'user-3',
+      userWorkspaceId: 'user-workspace-3',
     });
 
     expect(mockInsertObjectEvent).toHaveBeenCalledWith(
@@ -145,7 +151,7 @@ describe('AuditResolver', () => {
     const invalidInput = { type: 'invalid' };
 
     await expect(
-      resolver.trackAnalytics(invalidInput as any, undefined, undefined),
+      resolver.trackAnalytics(invalidInput as any, undefined, undefined, undefined),
     ).rejects.toThrowError(
       new AuditException(
         'Invalid analytics input',
@@ -162,7 +168,7 @@ describe('AuditResolver', () => {
     };
 
     await expect(
-      resolver.createObjectEvent(input, undefined, undefined),
+      resolver.createObjectEvent(input, undefined, undefined, undefined),
     ).rejects.toThrowError(
       new AuditException('Missing workspace', AuditExceptionCode.INVALID_INPUT),
     );
