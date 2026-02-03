@@ -20,10 +20,10 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/constants/default-application-package-fields.constant';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
@@ -147,34 +147,34 @@ export class ApplicationSyncService {
 
     const defaultPackageFields = await getDefaultApplicationPackageFields();
 
-    const application =
-      (await this.applicationService.findByUniversalIdentifier({
+    let application = await this.applicationService.findByUniversalIdentifier({
+      universalIdentifier: manifest.application.universalIdentifier,
+      workspaceId,
+    });
+
+    if (!application) {
+      const created = await this.applicationService.create({
         universalIdentifier: manifest.application.universalIdentifier,
+        name,
+        description: manifest.application.description,
+        version: packageJson.version,
+        sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
+        logicFunctionLayerId: null,
+        defaultRoleId: null,
         workspaceId,
-      })) ??
-      (await (async () => {
-        const created = await this.applicationService.create({
-          universalIdentifier: manifest.application.universalIdentifier,
-          name,
-          description: manifest.application.description,
-          version: packageJson.version,
-          sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-          logicFunctionLayerId: null,
-          defaultRoleId: null,
-          workspaceId,
-          packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
-          packageJsonFileId: null,
-          yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
-          yarnLockFileId: null,
-          availablePackages: defaultPackageFields.availablePackages,
-        });
+        packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
+        packageJsonFileId: null,
+        yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
+        yarnLockFileId: null,
+        availablePackages: defaultPackageFields.availablePackages,
+      });
 
-        await this.applicationService.uploadDefaultPackageFilesAndSetFileIds(
-          created,
-        );
+      await this.applicationService.uploadDefaultPackageFilesAndSetFileIds(
+        created,
+      );
 
-        return created;
-      })());
+      application = created;
+    }
 
     let logicFunctionLayerId = application.logicFunctionLayerId;
 

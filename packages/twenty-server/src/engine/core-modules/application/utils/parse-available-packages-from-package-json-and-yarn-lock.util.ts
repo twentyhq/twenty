@@ -3,6 +3,8 @@ import { type PackageJson } from 'type-fest';
 const PACKAGE_VERSION_REGEX =
   /^"(@?[^@]+(?:\/[^@]+)?)@.*?":\n\s+version:\s*(.+)$/gm;
 
+const MAX_PACKAGE_VERSION_MATCHES = 1_000;
+
 export const parseAvailablePackagesFromPackageJsonAndYarnLock = (
   packageJsonContent: string,
   yarnLockContent: string,
@@ -10,8 +12,13 @@ export const parseAvailablePackagesFromPackageJsonAndYarnLock = (
   const packageJson = JSON.parse(packageJsonContent) as PackageJson;
   const versions: Record<string, string> = {};
   let match: RegExpExecArray | null;
+  let matchCount = 0;
 
-  while ((match = PACKAGE_VERSION_REGEX.exec(yarnLockContent)) !== null) {
+  while (
+    matchCount < MAX_PACKAGE_VERSION_MATCHES &&
+    (match = PACKAGE_VERSION_REGEX.exec(yarnLockContent)) !== null
+  ) {
+    matchCount += 1;
     const packageName = match[1];
     const version = match[2];
 
