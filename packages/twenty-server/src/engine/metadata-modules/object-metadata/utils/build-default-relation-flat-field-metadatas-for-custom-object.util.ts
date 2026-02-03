@@ -1,5 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -16,13 +17,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import {
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  ATTACHMENT_STANDARD_FIELD_IDS,
-  TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
-import { type STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'timelineActivity',
@@ -33,9 +28,10 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 ] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
 
 const morphIdByRelationObjectNameSingular = {
-  timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.targetMorphId,
+  timelineActivity:
+    STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
   favorite: null,
-  attachment: ATTACHMENT_STANDARD_FIELD_IDS.targetMorphId,
+  attachment: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
   noteTarget: null,
   taskTarget: null,
 } satisfies Record<
@@ -121,18 +117,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             flatEntityId: targetFlatObjectMetadataId,
           });
 
-        const standardId =
-          CUSTOM_OBJECT_STANDARD_FIELD_IDS[
-            targetFlatObjectMetadata.namePlural as keyof typeof CUSTOM_OBJECT_STANDARD_FIELD_IDS
-          ];
-
-        if (!isDefined(standardId)) {
-          throw new ObjectMetadataException(
-            `Standard field ID not found for target object ${targetFlatObjectMetadata.namePlural}`,
-            ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-          );
-        }
-
         const icon =
           STANDARD_OBJECT_ICONS[
             targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
@@ -167,7 +151,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
               name: targetFlatObjectMetadata.namePlural,
               label: capitalize(targetFlatObjectMetadata.labelPlural),
               objectMetadataId: sourceFlatObjectMetadata.id,
-              standardId,
               isSystem: true,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,

@@ -8,10 +8,6 @@ import { v4 } from 'uuid';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import {
-  BASE_OBJECT_STANDARD_FIELD_IDS,
-  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-} from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 type BuildDefaultFlatFieldMetadataForCustomObjectArgs = {
   workspaceId: string;
@@ -55,7 +51,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     objectMetadataId,
     universalIdentifier: idFieldId,
     workspaceId,
-    standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     name: 'id',
     label: 'Id',
     icon: 'Icon123',
@@ -105,7 +100,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           objectMetadataId,
           universalIdentifier: nameFieldId!,
           workspaceId,
-          standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
           name: 'name',
           label: 'Name',
           icon: 'IconAbc',
@@ -152,7 +146,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     objectMetadataId,
     universalIdentifier: createdAtFieldId,
     workspaceId,
-    standardId: BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
     name: 'createdAt',
     label: 'Creation date',
     icon: 'IconCalendar',
@@ -199,7 +192,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     objectMetadataId,
     universalIdentifier: updatedAtFieldId,
     workspaceId,
-    standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     name: 'updatedAt',
     label: 'Last update',
     icon: 'IconCalendarClock',
@@ -246,7 +238,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     objectMetadataId,
     universalIdentifier: deletedAtFieldId,
     workspaceId,
-    standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     name: 'deletedAt',
     label: 'Deleted at',
     icon: 'IconCalendarClock',
@@ -293,7 +284,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     objectMetadataId,
     universalIdentifier: createdByFieldId,
     workspaceId,
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     name: 'createdBy',
     label: 'Created by',
     icon: 'IconCreativeCommonsSa',
@@ -339,7 +329,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     objectMetadataId,
     universalIdentifier: updatedByFieldId,
     workspaceId,
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.updatedBy,
     name: 'updatedBy',
     label: 'Updated by',
     icon: 'IconUserCircle',
@@ -385,7 +374,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     objectMetadataId,
     universalIdentifier: positionFieldId,
     workspaceId,
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     name: 'position',
     label: 'Position',
     icon: 'IconHierarchy2',
@@ -438,7 +426,6 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     objectMetadataId,
     universalIdentifier: searchVectorFieldId,
     workspaceId,
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
     name: 'searchVector',
     label: 'Search vector',
     icon: 'IconSearch',

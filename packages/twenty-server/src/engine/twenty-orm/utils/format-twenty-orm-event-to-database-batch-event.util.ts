@@ -12,6 +12,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import type { ObjectLiteral } from 'typeorm';
 
@@ -26,7 +27,6 @@ import {
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
   T extends ObjectLiteral,

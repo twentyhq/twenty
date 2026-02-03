@@ -25,7 +25,6 @@ export const fromSkillEntityToFlatSkill = ({
     createdAt: skillEntity.createdAt.toISOString(),
     updatedAt: skillEntity.updatedAt.toISOString(),
     id: skillEntity.id,
-    standardId: skillEntity.standardId,
     name: skillEntity.name,
     label: skillEntity.label,
     icon: skillEntity.icon,
