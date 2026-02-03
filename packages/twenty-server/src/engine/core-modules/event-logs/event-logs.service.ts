@@ -71,7 +71,6 @@ export class EventLogsService {
       input.filters,
     );
 
-    // Build parameterized query - workspaceId is always the first filter (primary key)
     const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
     const params: Record<string, unknown> = { workspaceId };
 
@@ -83,7 +82,6 @@ export class EventLogsService {
       input.table,
     );
 
-    // Cursor-based pagination using epoch milliseconds
     const paginationClauses = [...whereClauses];
 
     if (isDefined(input.after)) {
@@ -98,7 +96,6 @@ export class EventLogsService {
     const filterWhereClause = whereClauses.join(' AND ');
     const paginationWhereClause = paginationClauses.join(' AND ');
 
-    // Use same filters for count query for accurate filtered count
     const countQuery = `
       SELECT count() as totalCount
       FROM ${tableName}
@@ -114,8 +111,6 @@ export class EventLogsService {
     `;
 
     params.limit = limit + 1;
-
-    // Execute queries in parallel for better performance
 
     const [records, countResult] = await Promise.all([
       this.clickHouseService.select<ClickHouseEventRecord>(query, params),
@@ -147,7 +142,6 @@ export class EventLogsService {
   }
 
   private async validateAccess(workspaceId: string): Promise<void> {
-    // Check if ClickHouse is configured
     if (!this.clickHouseService.getMainClient()) {
       throw new EventLogsException(
         'Audit logs require ClickHouse to be configured. Please set the CLICKHOUSE_URL environment variable.',
@@ -155,7 +149,6 @@ export class EventLogsService {
       );
     }
 
-    // Check for billing entitlement (for cloud users)
     const hasEntitlement = await this.billingService.hasEntitlement(
       workspaceId,
       BillingEntitlementKey.AUDIT_LOGS,
@@ -202,7 +195,6 @@ export class EventLogsService {
       params.endDate = filters.dateRange.end;
     }
 
-    // Object event specific filters
     if (table === EventLogTable.OBJECT_EVENT) {
       if (isDefined(filters.recordId)) {
         whereClauses.push('"recordId" = {recordId:String}');
