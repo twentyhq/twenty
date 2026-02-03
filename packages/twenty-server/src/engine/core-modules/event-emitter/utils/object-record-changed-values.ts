@@ -1,12 +1,12 @@
 import deepEqual from 'deep-equal';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { fastDeepEqual } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 
 const LARGE_JSON_FIELDS: Record<string, Set<string>> = {
   [STANDARD_OBJECTS.workflowVersion.universalIdentifier]: new Set([
