@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -102,7 +103,7 @@ export class PageLayoutWidgetService {
     const flatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return Object.values(flatPageLayoutWidgetMaps.byId)
+    return Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (widget) =>
@@ -127,7 +128,10 @@ export class PageLayoutWidgetService {
     const flatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    const flatWidget = flatPageLayoutWidgetMaps.byId[id];
+    const flatWidget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutWidgetMaps,
+    });
 
     if (!isDefined(flatWidget) || isDefined(flatWidget.deletedAt)) {
       throw new PageLayoutWidgetException(
@@ -255,7 +259,10 @@ export class PageLayoutWidgetService {
     id: string,
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps,
   ): FlatPageLayoutWidget {
-    const existingWidget = flatPageLayoutWidgetMaps.byId[id];
+    const existingWidget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutWidgetMaps,
+    });
 
     if (!isDefined(existingWidget) || isDefined(existingWidget.deletedAt)) {
       throw new PageLayoutWidgetException(

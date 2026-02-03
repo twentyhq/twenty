@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
@@ -48,7 +49,7 @@ export class PageLayoutTabService {
     const { flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
       await this.getPageLayoutTabFlatEntityMaps(workspaceId);
 
-    return Object.values(flatPageLayoutTabMaps.byId)
+    return Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (tab) => tab.pageLayoutId === pageLayoutId && !isDefined(tab.deletedAt),
@@ -74,7 +75,10 @@ export class PageLayoutTabService {
     const { flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
       await this.getPageLayoutTabFlatEntityMaps(workspaceId);
 
-    const flatTab = flatPageLayoutTabMaps.byId[id];
+    const flatTab = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutTabMaps,
+    });
 
     if (!isDefined(flatTab) || isDefined(flatTab.deletedAt)) {
       throw new PageLayoutTabException(
