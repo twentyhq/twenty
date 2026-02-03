@@ -16,6 +16,7 @@ import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/rel
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
@@ -458,7 +459,10 @@ export class DataloaderService {
 
       return dataLoaderParams.map(
         ({ indexMetadata: { id: indexMetadataId } }) => {
-          const indexMetadataEntity = flatIndexMaps.byId[indexMetadataId];
+          const indexMetadataEntity = findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: indexMetadataId,
+            flatEntityMaps: flatIndexMaps,
+          });
 
           if (!isDefined(indexMetadataEntity)) {
             return [];
@@ -498,8 +502,10 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map((dataLoaderParam) => {
-        const flatObjectMetadata =
-          flatObjectMetadataMaps.byId[dataLoaderParam.objectMetadataId];
+        const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: dataLoaderParam.objectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        });
 
         if (!isDefined(flatObjectMetadata)) {
           return null;

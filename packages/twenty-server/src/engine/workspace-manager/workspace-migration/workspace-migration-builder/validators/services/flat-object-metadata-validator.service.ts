@@ -4,6 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
 import { validateFlatObjectMetadataNameAndLabels } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
@@ -27,8 +28,10 @@ export class FlatObjectMetadataValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<'objectMetadata', 'update'> {
-    const existingFlatObjectMetadata =
-      optimisticFlatObjectMetadataMaps.byId[flatEntityId];
+    const existingFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatObjectMetadataMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -114,8 +117,10 @@ export class FlatObjectMetadataValidatorService {
       type: 'delete',
     });
 
-    const flatObjectMetadataToDelete =
-      optimisticFlatObjectMetadataMaps.byId[objectMetadataToDeleteId];
+    const flatObjectMetadataToDelete = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataToDeleteId,
+      flatEntityMaps: optimisticFlatObjectMetadataMaps,
+    });
 
     if (!isDefined(flatObjectMetadataToDelete)) {
       validationResult.errors.push({
@@ -176,7 +181,10 @@ export class FlatObjectMetadataValidatorService {
 
     if (
       isDefined(
-        optimisticFlatObjectMetadataMaps.byId[flatObjectMetadataToValidate.id],
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatObjectMetadataToValidate.id,
+          flatEntityMaps: optimisticFlatObjectMetadataMaps,
+        }),
       )
     ) {
       objectValidationResult.errors.push({

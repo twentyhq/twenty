@@ -4,6 +4,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -72,21 +73,26 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
     });
 
     expect(
-      flatEntityAndRelatedMapsToMutate.flatViewMaps.byId[mockView.id],
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: mockView.id,
+        flatEntityMaps: flatEntityAndRelatedMapsToMutate.flatViewMaps,
+      }),
     ).toMatchObject(mockView);
 
     expect(
-      flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps.byId[
-        objectMetadataId
-      ],
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectMetadataId,
+        flatEntityMaps: flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps,
+      }),
     ).toMatchObject<Partial<FlatObjectMetadata>>({
       viewIds: [mockView.id],
     });
 
     expect(
-      flatEntityAndRelatedMapsToMutate.flatFieldMetadataMaps.byId[
-        mockFieldMetadata.id
-      ],
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: mockFieldMetadata.id,
+        flatEntityMaps: flatEntityAndRelatedMapsToMutate.flatFieldMetadataMaps,
+      }),
     ).toMatchObject<Partial<FlatFieldMetadata>>({
       calendarViewIds: [mockView.id],
     });

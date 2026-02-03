@@ -39,7 +39,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
     // Filter logic functions that are marked as tools
     const logicFunctionsWithSchema = Object.values(
-      flatLogicFunctionMaps.byId,
+      flatLogicFunctionMaps.byUniversalIdentifier,
     ).filter(
       (fn): fn is FlatLogicFunction =>
         isDefined(fn) && fn.isTool === true && fn.deletedAt === null,

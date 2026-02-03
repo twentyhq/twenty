@@ -5,5 +5,6 @@ export const FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES = [
   'type',
   'objectMetadataId',
   'gridPosition',
+  'position',
   'configuration',
 ] as const satisfies (keyof FlatPageLayoutWidget)[];

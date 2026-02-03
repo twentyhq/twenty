@@ -8,6 +8,7 @@ import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadat
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
@@ -74,7 +75,10 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     createFieldInput.settings,
   );
   const junctionTargetFlatFieldMetadata = isDefined(junctionTargetFieldId)
-    ? existingFlatFieldMetadataMaps.byId[junctionTargetFieldId]
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: junctionTargetFieldId,
+        flatEntityMaps: existingFlatFieldMetadataMaps,
+      })
     : undefined;
 
   const morphRelationCreationPayload =

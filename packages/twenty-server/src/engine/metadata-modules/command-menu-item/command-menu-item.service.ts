@@ -38,7 +38,7 @@ export class CommandMenuItemService {
         },
       );
 
-    return Object.values(flatCommandMenuItemMaps.byId)
+    return Object.values(flatCommandMenuItemMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.label.localeCompare(b.label))
       .map(fromFlatCommandMenuItemToCommandMenuItemDto);
@@ -263,7 +263,7 @@ export class CommandMenuItemService {
         },
       );
 
-    return Object.values(flatCommandMenuItemMaps.byId)
+    return Object.values(flatCommandMenuItemMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.label.localeCompare(b.label));
   }
@@ -281,7 +281,7 @@ export class CommandMenuItemService {
       );
 
     const flatCommandMenuItem = Object.values(
-      flatCommandMenuItemMaps.byId,
+      flatCommandMenuItemMaps.byUniversalIdentifier,
     ).find(
       (item) => isDefined(item) && item.workflowVersionId === workflowVersionId,
     );

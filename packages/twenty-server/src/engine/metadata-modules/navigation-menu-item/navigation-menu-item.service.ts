@@ -64,7 +64,7 @@ export class NavigationMenuItemService {
         },
       );
 
-    return Object.values(flatNavigationMenuItemMaps.byId)
+    return Object.values(flatNavigationMenuItemMaps.byUniversalIdentifier)
       .filter(
         (item): item is NonNullable<typeof item> =>
           isDefined(item) &&
@@ -424,7 +424,10 @@ export class NavigationMenuItemService {
         },
       );
 
-    const objectMetadata = flatObjectMetadataMaps.byId[targetObjectMetadataId];
+    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: targetObjectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
 
     if (!isDefined(objectMetadata)) {
       return null;

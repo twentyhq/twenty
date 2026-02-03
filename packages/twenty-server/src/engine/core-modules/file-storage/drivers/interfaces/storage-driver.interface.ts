@@ -17,6 +17,11 @@ export interface StorageDriver {
     onStoragePath: string;
   }): Promise<void>;
 
+  downloadFile(params: {
+    onStoragePath: string;
+    localPath: string;
+  }): Promise<void>;
+
   delete(params: { folderPath: string; filename?: string }): Promise<void>;
   move(params: {
     from: { folderPath: string; filename?: string };

@@ -21,7 +21,10 @@ const NOTE_PAGE_TABS = {
       },
       richText: {
         universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a412',
-        ...WIDGET_PROPS.richText,
+        title: WIDGET_PROPS.richText.title,
+        type: WIDGET_PROPS.richText.type,
+        gridPosition: WIDGET_PROPS.richText.gridPosition,
+        position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
       },
     },
   },

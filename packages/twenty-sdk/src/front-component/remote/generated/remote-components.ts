@@ -52,6 +52,7 @@ import {
   HtmlTdElement,
   HtmlBrElement,
   HtmlHrElement,
+  TwentyUiButtonElement,
 } from './remote-elements';
 
 export const HtmlDiv = createRemoteComponent('html-div', HtmlDivElement, {
@@ -1126,3 +1127,31 @@ export const HtmlHr = createRemoteComponent('html-hr', HtmlHrElement, {
     onDrag: { event: 'drag' },
   },
 });
+export const TwentyUiButton = createRemoteComponent(
+  'twenty-ui-button',
+  TwentyUiButtonElement,
+  {
+    eventProps: {
+      onClick: { event: 'click' },
+      onDblclick: { event: 'dblclick' },
+      onMousedown: { event: 'mousedown' },
+      onMouseup: { event: 'mouseup' },
+      onMouseover: { event: 'mouseover' },
+      onMouseout: { event: 'mouseout' },
+      onMouseenter: { event: 'mouseenter' },
+      onMouseleave: { event: 'mouseleave' },
+      onKeydown: { event: 'keydown' },
+      onKeyup: { event: 'keyup' },
+      onKeypress: { event: 'keypress' },
+      onFocus: { event: 'focus' },
+      onBlur: { event: 'blur' },
+      onChange: { event: 'change' },
+      onInput: { event: 'input' },
+      onSubmit: { event: 'submit' },
+      onScroll: { event: 'scroll' },
+      onWheel: { event: 'wheel' },
+      onContextmenu: { event: 'contextmenu' },
+      onDrag: { event: 'drag' },
+    },
+  },
+);

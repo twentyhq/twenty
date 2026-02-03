@@ -131,6 +131,12 @@ export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGra
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { OrderBy } from './OrderBy';
+export type {
+  PageLayoutWidgetGridPosition,
+  PageLayoutWidgetVerticalListPosition,
+  PageLayoutWidgetCanvasPosition,
+  PageLayoutWidgetPosition,
+} from './page-layout/page-layout-widget-position.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';

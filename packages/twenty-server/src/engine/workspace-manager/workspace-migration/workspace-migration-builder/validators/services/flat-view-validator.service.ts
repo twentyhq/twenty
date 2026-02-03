@@ -27,7 +27,10 @@ export class FlatViewValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<'view', 'update'> {
-    const existingFlatView = optimisticFlatViewMaps.byId[flatEntityId];
+    const existingFlatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatViewMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -164,8 +167,10 @@ export class FlatViewValidatorService {
       type: 'delete',
     });
 
-    const existingFlatView =
-      optimisticFlatViewMaps.byId[flatEntityToValidate.id];
+    const existingFlatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatEntityToValidate.id,
+      flatEntityMaps: optimisticFlatViewMaps,
+    });
 
     if (!isDefined(existingFlatView)) {
       validationResult.errors.push({
@@ -197,8 +202,10 @@ export class FlatViewValidatorService {
       type: 'create',
     });
 
-    const optimisticFlatObjectMetadata =
-      flatObjectMetadataMaps.byId[flatViewToValidate.objectMetadataId];
+    const optimisticFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewToValidate.objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
 
     if (!isDefined(optimisticFlatObjectMetadata)) {
       validationResult.errors.push({
@@ -208,7 +215,14 @@ export class FlatViewValidatorService {
       });
     }
 
-    if (isDefined(optimisticFlatViewMaps.byId[flatViewToValidate.id])) {
+    if (
+      isDefined(
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatViewToValidate.id,
+          flatEntityMaps: optimisticFlatViewMaps,
+        }),
+      )
+    ) {
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View with same id is already exists`,

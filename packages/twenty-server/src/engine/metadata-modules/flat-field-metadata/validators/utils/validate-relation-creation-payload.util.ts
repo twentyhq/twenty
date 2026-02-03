@@ -11,6 +11,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -53,10 +54,10 @@ export const validateRelationCreationPayload = async ({
     }
   }
 
-  const targetFlatObjectMetadata =
-    existingFlatObjectMetadataMaps.byId[
-      relationCreationPayload.targetObjectMetadataId
-    ];
+  const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: relationCreationPayload.targetObjectMetadataId,
+    flatEntityMaps: existingFlatObjectMetadataMaps,
+  });
 
   if (!isDefined(targetFlatObjectMetadata)) {
     return {

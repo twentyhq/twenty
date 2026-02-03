@@ -1,10 +1,10 @@
-/* eslint-disable no-console */
 import * as prettier from '@prettier/sync';
 import * as fs from 'fs';
 import * as path from 'path';
 import { IndentationText, Project, QuoteKind } from 'ts-morph';
 
 import { ALLOWED_HTML_ELEMENTS } from '../../src/front-component-constants/AllowedHtmlElements';
+import { ALLOWED_UI_COMPONENTS } from '../../src/front-component-constants/AllowedUiComponents';
 import { COMMON_HTML_EVENTS } from '../../src/front-component-constants/CommonHtmlEvents';
 import { EVENT_TO_REACT } from '../../src/front-component-constants/EventToReact';
 import { HTML_COMMON_PROPERTIES } from '../../src/front-component-constants/HtmlCommonProperties';
@@ -17,6 +17,7 @@ import {
   generateRemoteElements,
   HtmlElementConfigArrayZ,
   OUTPUT_FILES,
+  UiComponentConfigArrayZ,
 } from './generators';
 
 const SCRIPT_DIR = path.dirname(new URL(import.meta.url).pathname);
@@ -56,6 +57,28 @@ const getHtmlElementSchemas = (): ComponentSchema[] => {
     events: COMMON_HTML_EVENTS,
     isHtmlElement: true,
     htmlTag: extractHtmlTag(element.tag),
+  }));
+};
+
+const getUiComponentSchemas = (): ComponentSchema[] => {
+  const result = UiComponentConfigArrayZ.safeParse(ALLOWED_UI_COMPONENTS);
+
+  if (!result.success) {
+    throw new Error(
+      `Invalid UI component configuration:\n${formatZodError(result.error)}`,
+    );
+  }
+
+  return result.data.map((component) => ({
+    name: component.name,
+    tagName: component.name,
+    customElementName: component.tag,
+    properties: component.properties,
+    events: COMMON_HTML_EVENTS,
+    isHtmlElement: false,
+    htmlTag: undefined,
+    componentImport: component.componentImport,
+    componentPath: component.componentPath,
   }));
 };
 
@@ -99,8 +122,11 @@ const main = (): void => {
   console.log('📖 Generating remote DOM elements...\n');
 
   let htmlElements: ComponentSchema[];
+  let uiComponents: ComponentSchema[];
+
   try {
     htmlElements = getHtmlElementSchemas();
+    uiComponents = getUiComponentSchemas();
   } catch (error) {
     console.error('❌ Validation failed:', error);
     process.exit(1);
@@ -113,7 +139,14 @@ const main = (): void => {
   console.log(
     `  Events: ${COMMON_HTML_EVENTS.length} common events per element`,
   );
+
+  console.log(`\nUI Components: ${uiComponents.length} components`);
+  console.log(
+    `  Tags: ${uiComponents.map((component) => component.customElementName).join(', ')}`,
+  );
   console.log('');
+
+  const allComponents = [...htmlElements, ...uiComponents];
 
   ensureDirectoriesExist();
 
@@ -122,7 +155,7 @@ const main = (): void => {
   console.log('Host files:');
   const hostRegistry = generateHostRegistry(
     project,
-    htmlElements,
+    allComponents,
     EVENT_TO_REACT,
   );
   writeGeneratedFile(
@@ -134,7 +167,7 @@ const main = (): void => {
   console.log('\nRemote files:');
   const remoteElements = generateRemoteElements(
     project,
-    htmlElements,
+    allComponents,
     HTML_COMMON_PROPERTIES,
     COMMON_HTML_EVENTS,
   );
@@ -144,7 +177,7 @@ const main = (): void => {
     remoteElements.getFullText(),
   );
 
-  const remoteComponents = generateRemoteComponents(project, htmlElements);
+  const remoteComponents = generateRemoteComponents(project, allComponents);
   writeGeneratedFile(
     REMOTE_GENERATED_DIR,
     OUTPUT_FILES.REMOTE_COMPONENTS,

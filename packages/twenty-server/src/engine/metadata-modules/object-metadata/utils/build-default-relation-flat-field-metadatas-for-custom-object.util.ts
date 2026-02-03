@@ -71,7 +71,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   flatApplication,
 }: BuildDefaultRelationFieldsForCustomObjectArgs): SourceAndTargetFlatFieldMetadatasRecord => {
   const objectIdByNameSingular = Object.values(
-    existingFlatObjectMetadataMaps.byId,
+    existingFlatObjectMetadataMaps.byUniversalIdentifier,
   ).reduce<Record<string, string>>((acc, flatObject) => {
     if (!isDefined(flatObject)) {
       return acc;

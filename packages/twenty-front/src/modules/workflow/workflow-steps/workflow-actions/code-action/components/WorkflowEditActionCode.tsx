@@ -443,6 +443,7 @@ export const WorkflowEditActionCode = ({
                   scrollBeyondLastLine: false,
                   padding: { top: 4, bottom: 4 },
                   lineNumbersMinChars: 2,
+                  fixedOverflowWidgets: true,
                 }}
                 readonly={actionOptions.readonly}
                 onEnterFullScreen={handleEnterFullScreen}

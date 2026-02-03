@@ -35,6 +35,7 @@ const StyledEditor = styled.div`
     background: transparent;
     font-size: 13px;
     color: ${({ theme }) => theme.font.color.primary};
+    user-select: text;
   }
   & .editor [class^='_inlineContent']:before {
     color: ${({ theme }) => theme.font.color.tertiary};
@@ -179,19 +180,23 @@ export const DashboardsBlockEditor = ({
         formattingToolbar={false}
         editable={!readonly}
       >
-        <DashboardFormattingToolbar boundaryElement={boundaryElement} />
-        <DashboardEditorSideMenu
-          editor={editor}
-          boundaryElement={boundaryElement}
-        />
-        <SuggestionMenuController
-          triggerCharacter="/"
-          getItems={async (query) => {
-            const items = getSlashMenu(editor);
-            return filterSuggestionItems<SuggestionItem>(items, query);
-          }}
-          suggestionMenuComponent={CustomSlashMenu}
-        />
+        {!readonly && (
+          <>
+            <DashboardFormattingToolbar boundaryElement={boundaryElement} />
+            <DashboardEditorSideMenu
+              editor={editor}
+              boundaryElement={boundaryElement}
+            />
+            <SuggestionMenuController
+              triggerCharacter="/"
+              getItems={async (query) => {
+                const items = getSlashMenu(editor);
+                return filterSuggestionItems<SuggestionItem>(items, query);
+              }}
+              suggestionMenuComponent={CustomSlashMenu}
+            />
+          </>
+        )}
       </BlockNoteView>
     </StyledEditor>
   );

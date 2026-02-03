@@ -268,6 +268,7 @@ export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
   applicationVariables: Array<ApplicationVariable>;
+  availablePackages: Scalars['JSON'];
   canBeUninstalled: Scalars['Boolean'];
   defaultLogicFunctionRole?: Maybe<Role>;
   defaultRoleId?: Maybe<Scalars['String']>;
@@ -276,8 +277,12 @@ export type Application = {
   logicFunctions: Array<LogicFunction>;
   name: Scalars['String'];
   objects: Array<Object>;
+  packageJsonChecksum?: Maybe<Scalars['String']>;
+  packageJsonFileId?: Maybe<Scalars['UUID']>;
   universalIdentifier: Scalars['String'];
   version: Scalars['String'];
+  yarnLockChecksum?: Maybe<Scalars['String']>;
+  yarnLockFileId?: Maybe<Scalars['UUID']>;
 };
 
 export type ApplicationVariable = {
@@ -912,6 +917,14 @@ export type CreateApiKeyInput = {
   roleId: Scalars['UUID'];
 };
 
+export type CreateApplicationInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  sourcePath: Scalars['String'];
+  universalIdentifier: Scalars['String'];
+  version: Scalars['String'];
+};
+
 export type CreateApprovedAccessDomainInput = {
   domain: Scalars['String'];
   email: Scalars['String'];
@@ -1015,6 +1028,7 @@ export type CreatePageLayoutWidgetInput = {
   gridPosition: GridPositionInput;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
+  position?: InputMaybe<Scalars['JSON']>;
   title: Scalars['String'];
   type: WidgetType;
 };
@@ -2016,6 +2030,7 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
+  createOneApplication: Application;
   createOneField: Field;
   createOneLogicFunction: LogicFunction;
   createOneLogicFunctionLayer: LogicFunctionLayer;
@@ -2316,6 +2331,11 @@ export type MutationCreateOneAgentArgs = {
 };
 
 
+export type MutationCreateOneApplicationArgs = {
+  input: CreateApplicationInput;
+};
+
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -2327,8 +2347,9 @@ export type MutationCreateOneLogicFunctionArgs = {
 
 
 export type MutationCreateOneLogicFunctionLayerArgs = {
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
+  applicationUniversalIdentifier: Scalars['String'];
+  packageJsonChecksum: Scalars['JSON'];
+  yarnLockChecksum: Scalars['String'];
 };
 
 
@@ -2758,8 +2779,6 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
 };
 
 
@@ -3311,9 +3330,32 @@ export type PageLayoutWidget = {
   id: Scalars['UUID'];
   objectMetadataId?: Maybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
+  position?: Maybe<PageLayoutWidgetPosition>;
   title: Scalars['String'];
   type: WidgetType;
   updatedAt: Scalars['DateTime'];
+};
+
+export type PageLayoutWidgetCanvasPosition = {
+  __typename?: 'PageLayoutWidgetCanvasPosition';
+  layoutMode: PageLayoutTabLayoutMode;
+};
+
+export type PageLayoutWidgetGridPosition = {
+  __typename?: 'PageLayoutWidgetGridPosition';
+  column: Scalars['Int'];
+  columnSpan: Scalars['Int'];
+  layoutMode: PageLayoutTabLayoutMode;
+  row: Scalars['Int'];
+  rowSpan: Scalars['Int'];
+};
+
+export type PageLayoutWidgetPosition = PageLayoutWidgetCanvasPosition | PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition;
+
+export type PageLayoutWidgetVerticalListPosition = {
+  __typename?: 'PageLayoutWidgetVerticalListPosition';
+  index: Scalars['Int'];
+  layoutMode: PageLayoutTabLayoutMode;
 };
 
 export type PermissionFlag = {
@@ -3427,7 +3469,7 @@ export type PublicFeatureFlag = {
 export type PublicFeatureFlagMetadata = {
   __typename?: 'PublicFeatureFlagMetadata';
   description: Scalars['String'];
-  imagePath: Scalars['String'];
+  imagePath?: Maybe<Scalars['String']>;
   label: Scalars['String'];
 };
 
@@ -3447,6 +3489,7 @@ export type Query = {
   apiKeys: Array<ApiKey>;
   barChartData: BarChartDataOutput;
   billingPortalSession: BillingSessionOutput;
+  checkApplicationExist: Scalars['Boolean'];
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   commandMenuItem?: Maybe<CommandMenuItem>;
@@ -3540,6 +3583,12 @@ export type QueryBillingPortalSessionArgs = {
 };
 
 
+export type QueryCheckApplicationExistArgs = {
+  id?: InputMaybe<Scalars['UUID']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
+};
+
+
 export type QueryCheckUserExistsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -3562,7 +3611,8 @@ export type QueryFindOneAgentArgs = {
 
 
 export type QueryFindOneApplicationArgs = {
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -4513,6 +4563,7 @@ export type UpdatePageLayoutWidgetInput = {
   configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition?: InputMaybe<GridPositionInput>;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  position?: InputMaybe<Scalars['JSON']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<WidgetType>;
 };
@@ -4523,6 +4574,7 @@ export type UpdatePageLayoutWidgetWithIdInput = {
   id: Scalars['UUID'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
+  position?: InputMaybe<Scalars['JSON']>;
   title: Scalars['String'];
   type: WidgetType;
 };
