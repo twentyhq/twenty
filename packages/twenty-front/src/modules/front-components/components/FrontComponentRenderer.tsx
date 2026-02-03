@@ -4,7 +4,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { getMockFrontComponentUrl } from '@/front-components/utils/mockFrontComponent';
+import { useRecoilValue } from 'recoil';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component';
 
 type FrontComponentRendererProps = {
@@ -17,6 +19,7 @@ export const FrontComponentRenderer = ({
   const [hasError, setHasError] = useState(false);
 
   const { enqueueErrorSnackBar } = useSnackBar();
+  const currentUser = useRecoilValue(currentUserState);
 
   const handleError = (error?: Error) => {
     if (isDefined(error)) {
@@ -36,6 +39,9 @@ export const FrontComponentRenderer = ({
   return (
     <SharedFrontComponentRenderer
       componentUrl={getMockFrontComponentUrl()}
+      executionContext={{
+        userId: currentUser?.id ?? '',
+      }}
       onError={handleError}
     />
   );

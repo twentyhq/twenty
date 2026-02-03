@@ -118,6 +118,7 @@ export {
   RemoteFragmentElement,
 } from './remote/generated/remote-elements';
 export { createRemoteWorker } from './remote/worker/createRemoteWorker';
+export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
 export type { PropertySchema } from './types/PropertySchema';
 export type { WorkerExports } from './types/WorkerExports';

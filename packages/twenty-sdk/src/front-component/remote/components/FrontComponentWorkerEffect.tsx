@@ -1,3 +1,4 @@
+import { type FrontComponentExecutionContext } from '@/front-component/types/FrontComponentExecutionContext';
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect } from 'react';
@@ -6,12 +7,14 @@ import { createRemoteWorker } from '../worker/createRemoteWorker';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
+  executionContext: FrontComponentExecutionContext;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   onError: (error?: Error) => void;
 };
 
 export const FrontComponentWorkerEffect = ({
   componentUrl,
+  executionContext,
   setReceiver,
   onError,
 }: FrontComponentWorkerEffectProps) => {
@@ -27,7 +30,7 @@ export const FrontComponentWorkerEffect = ({
     const thread = new ThreadWebWorker<WorkerExports>(worker);
 
     thread.imports
-      .render(newReceiver.connection, { componentUrl })
+      .render(newReceiver.connection, { componentUrl, executionContext })
       .catch((error: Error) => {
         onError(error);
       });
@@ -37,7 +40,7 @@ export const FrontComponentWorkerEffect = ({
     return () => {
       worker.terminate();
     };
-  }, [componentUrl, onError, setReceiver]);
+  }, [componentUrl, executionContext, onError, setReceiver]);
 
   return null;
 };

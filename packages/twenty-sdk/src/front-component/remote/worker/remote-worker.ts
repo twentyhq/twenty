@@ -12,6 +12,7 @@ import {
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
+import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
 import * as RemoteComponents from '../generated/remote-components';
@@ -21,10 +22,16 @@ import * as RemoteComponents from '../generated/remote-components';
 (globalThis as Record<string, unknown>).jsx = jsx;
 (globalThis as Record<string, unknown>).jsxs = jsxs;
 
+(globalThis as Record<string, unknown>).frontComponentExecutionContext =
+  undefined as FrontComponentExecutionContext | undefined;
+
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
   renderContext: HostToWorkerRenderContext,
 ) => {
+  (globalThis as Record<string, unknown>).frontComponentExecutionContext =
+    renderContext.executionContext;
+
   const batchedConnection = new BatchingRemoteConnection(connection);
   const root = document.createElement('remote-root') as RemoteRootElement;
   root.connect(batchedConnection);
