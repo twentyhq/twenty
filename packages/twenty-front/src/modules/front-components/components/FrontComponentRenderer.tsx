@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
@@ -21,28 +21,32 @@ export const FrontComponentRenderer = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const currentUser = useRecoilValue(currentUserState);
 
-  const handleError = (error?: Error) => {
-    if (isDefined(error)) {
-      const errorMessage = error.message;
+  const MemoizedFrontComponentRenderer = useMemo(() => {
+    const handleError = (error?: Error) => {
+      if (isDefined(error)) {
+        const errorMessage = error.message;
 
-      enqueueErrorSnackBar({
-        message: t`Failed to load front component: ${errorMessage}`,
-      });
-    }
-    setHasError(true);
-  };
+        enqueueErrorSnackBar({
+          message: t`Failed to load front component: ${errorMessage}`,
+        });
+      }
+      setHasError(true);
+    };
+
+    return (
+      <SharedFrontComponentRenderer
+        componentUrl={getMockFrontComponentUrl()}
+        executionContext={{
+          userId: currentUser?.id ?? '',
+        }}
+        onError={handleError}
+      />
+    );
+  }, [currentUser?.id, enqueueErrorSnackBar]);
 
   if (hasError) {
     return null;
   }
 
-  return (
-    <SharedFrontComponentRenderer
-      componentUrl={getMockFrontComponentUrl()}
-      executionContext={{
-        userId: currentUser?.id ?? '',
-      }}
-      onError={handleError}
-    />
-  );
+  return MemoizedFrontComponentRenderer;
 };
