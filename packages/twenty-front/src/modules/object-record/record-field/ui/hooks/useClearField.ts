@@ -6,6 +6,8 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 export const useClearField = () => {
   const {
@@ -48,11 +50,20 @@ export const useClearField = () => {
           emptyFieldValue,
         );
 
+        const isManyToOneRelation =
+          foundFieldMetadataItem.type === FieldMetadataType.RELATION &&
+          foundFieldMetadataItem.settings?.relationType ===
+            RelationType.MANY_TO_ONE;
+
+        const updateFieldName = isManyToOneRelation
+          ? getForeignKeyNameFromRelationFieldName(fieldName)
+          : fieldName;
+
         updateRecord?.({
           variables: {
             where: { id: recordId },
             updateOneRecordInput: {
-              [fieldName]: emptyFieldValue,
+              [updateFieldName]: emptyFieldValue,
             },
           },
         });
