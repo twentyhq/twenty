@@ -41,10 +41,11 @@ export class FlatFieldMetadataValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldMetadata
   >): FailedFlatEntityValidation<'fieldMetadata', 'update'> {
-    const existingFlatFieldMetadataToUpdate = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
-      flatEntityMaps: optimisticFlatFieldMetadataMaps,
-    });
+    const existingFlatFieldMetadataToUpdate =
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId,
+        flatEntityMaps: optimisticFlatFieldMetadataMaps,
+      });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {

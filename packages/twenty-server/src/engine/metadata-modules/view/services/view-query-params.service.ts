@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-    OrderByDirection,
-    RecordFilterGroupLogicalOperator,
-    type RecordGqlOperationFilter,
+  OrderByDirection,
+  RecordFilterGroupLogicalOperator,
+  type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import {
-    computeRecordGqlOperationFilter,
-    isDefined,
-    type RecordFilter,
-    type RecordFilterGroup,
+  computeRecordGqlOperationFilter,
+  isDefined,
+  type RecordFilter,
+  type RecordFilterGroup,
 } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';

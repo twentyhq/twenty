@@ -52,7 +52,9 @@ export class PageLayoutService {
       flatPageLayoutWidgetMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-    const activeLayouts = Object.values(flatPageLayoutMaps.byUniversalIdentifier)
+    const activeLayouts = Object.values(
+      flatPageLayoutMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((layout) => !isDefined(layout.deletedAt));
 
@@ -80,7 +82,9 @@ export class PageLayoutService {
       flatPageLayoutWidgetMaps,
     } = await this.getPageLayoutFlatEntityMaps(workspaceId);
 
-    const activeLayouts = Object.values(flatPageLayoutMaps.byUniversalIdentifier)
+    const activeLayouts = Object.values(
+      flatPageLayoutMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter(
         (layout) =>

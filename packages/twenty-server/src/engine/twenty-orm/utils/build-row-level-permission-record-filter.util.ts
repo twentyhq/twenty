@@ -53,7 +53,9 @@ export const buildRowLevelPermissionRecordFilter = ({
     return null;
   }
 
-  const predicates = Object.values(flatRowLevelPermissionPredicateMaps.byUniversalIdentifier)
+  const predicates = Object.values(
+    flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
+  )
     .filter(isDefined)
     .filter(
       (predicate) =>
@@ -87,10 +89,12 @@ export const buildRowLevelPermissionRecordFilter = ({
       let predicateValue: RowLevelPermissionPredicateValue = predicate.value;
 
       if (isDefined(workspaceMemberFieldMetadataId)) {
-        const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: workspaceMemberFieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
+        const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps(
+          {
+            flatEntityId: workspaceMemberFieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          },
+        );
 
         if (!isDefined(workspaceMemberFieldMetadata)) {
           throw new PermissionsException(

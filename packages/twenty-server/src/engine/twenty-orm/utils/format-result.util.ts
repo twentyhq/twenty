@@ -84,7 +84,7 @@ export function formatResult<T>(
     const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldMetadataId,
       flatEntityMaps: flatFieldMetadataMaps,
-    })
+    });
 
     const isRelation = fieldMetadata
       ? isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)

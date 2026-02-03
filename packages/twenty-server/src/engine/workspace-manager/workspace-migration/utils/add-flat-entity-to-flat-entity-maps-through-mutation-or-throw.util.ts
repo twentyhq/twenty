@@ -33,9 +33,8 @@ export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
     );
   }
 
-  flatEntityMapsToMutate.byUniversalIdentifier[
-    flatEntity.universalIdentifier
-  ] = flatEntity;
+  flatEntityMapsToMutate.byUniversalIdentifier[flatEntity.universalIdentifier] =
+    flatEntity;
 
   flatEntityMapsToMutate.universalIdentifierById[flatEntity.id] =
     flatEntity.universalIdentifier;

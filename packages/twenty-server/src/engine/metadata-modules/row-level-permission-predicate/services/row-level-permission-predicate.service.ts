@@ -60,7 +60,9 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    return Object.values(flatRowLevelPermissionPredicateMaps.byUniversalIdentifier)
+    return Object.values(
+      flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((predicate) => predicate.deletedAt === null)
       .sort(
@@ -91,7 +93,9 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    return Object.values(flatRowLevelPermissionPredicateMaps.byUniversalIdentifier)
+    return Object.values(
+      flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter(
         (predicate) =>
@@ -239,7 +243,9 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    const resultPredicates = Object.values(updatedPredicateMaps.byUniversalIdentifier)
+    const resultPredicates = Object.values(
+      updatedPredicateMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter(
         (predicate) =>

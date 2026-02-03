@@ -46,9 +46,7 @@ export const deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow = <
       ];
 
     if (isDefined(universalIdentifiers)) {
-      const index = universalIdentifiers.indexOf(
-        universalIdentifierToDelete,
-      );
+      const index = universalIdentifiers.indexOf(universalIdentifierToDelete);
 
       if (index !== -1) {
         universalIdentifiers.splice(index, 1);

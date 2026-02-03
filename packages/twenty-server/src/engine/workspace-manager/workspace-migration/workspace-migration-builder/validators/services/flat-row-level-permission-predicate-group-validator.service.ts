@@ -210,9 +210,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     }
 
     if (
-      isDefined(
-        updatedPredicateGroup.parentRowLevelPermissionPredicateGroupId,
-      )
+      isDefined(updatedPredicateGroup.parentRowLevelPermissionPredicateGroupId)
     ) {
       const parentGroup = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId:

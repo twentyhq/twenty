@@ -3,7 +3,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
+import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 
 export type MetadataFlatEntityMaps<
   T extends AllMetadataName,
@@ -29,5 +29,5 @@ export type AllUniversalFlatEntityMaps = {
 };
 
 const tmp = {} as AllUniversalFlatEntityMaps;
-const toto = tmp.flatFieldMetadataMaps.byUniversalIdentifier['test']
-const titi = tmp.flatViewFieldMaps.byUniversalIdentifier['test']
+const toto = tmp.flatFieldMetadataMaps.byUniversalIdentifier['test'];
+const titi = tmp.flatViewFieldMaps.byUniversalIdentifier['test'];

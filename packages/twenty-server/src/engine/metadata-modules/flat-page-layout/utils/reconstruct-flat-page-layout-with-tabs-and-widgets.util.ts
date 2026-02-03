@@ -31,7 +31,9 @@ export const reconstructFlatPageLayoutWithTabsAndWidgets = ({
     .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
 
   const tabsWithWidgets: FlatPageLayoutTabWithWidgets[] = tabs.map((tab) => {
-    const widgets = Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier)
+    const widgets = Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter(
         (widget) =>

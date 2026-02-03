@@ -370,9 +370,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       joinColumnName: string | undefined;
     }> = [];
 
-    for (const field of Object.values(flatFieldMetadataMaps.byUniversalIdentifier).filter(
-      isDefined,
-    )) {
+    for (const field of Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined)) {
       if (
         !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
         field.relationTargetObjectMetadataId !== flatObjectMetadata.id ||
