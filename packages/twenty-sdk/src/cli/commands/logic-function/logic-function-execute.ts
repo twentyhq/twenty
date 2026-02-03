@@ -95,7 +95,6 @@ export class LogicFunctionExecuteCommand {
       const result = await this.apiService.executeLogicFunction({
         functionId: targetFunction.id,
         payload: parsedPayload,
-        version: 'draft',
       });
 
       if (!result.success) {
