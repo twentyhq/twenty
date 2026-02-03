@@ -19,13 +19,6 @@ export type FromUniversalFlatFieldMetadataToFlatFieldMetadataArgs = {
   objectMetadataId?: string;
 };
 
-const getIdFromUniversalIdentifier = (
-  universalIdentifier: string,
-  flatEntityMaps: { idByUniversalIdentifier: Partial<Record<string, string>> },
-): string | null => {
-  return flatEntityMaps.idByUniversalIdentifier[universalIdentifier] ?? null;
-};
-
 export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
   universalFlatFieldMetadata,
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
@@ -66,10 +59,10 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
 
   const objectMetadataId =
     optionalObjectMetadataId ??
-    getIdFromUniversalIdentifier(
-      objectMetadataUniversalIdentifier,
-      allFlatEntityMaps.flatObjectMetadataMaps,
-    );
+    allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+      objectMetadataUniversalIdentifier
+    ]?.id ??
+    null;
 
   if (!isDefined(objectMetadataId)) {
     throw new Error(
@@ -96,10 +89,10 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
   let relationTargetObjectMetadataId: string | null = null;
 
   if (isDefined(relationTargetObjectMetadataUniversalIdentifier)) {
-    relationTargetObjectMetadataId = getIdFromUniversalIdentifier(
-      relationTargetObjectMetadataUniversalIdentifier,
-      allFlatEntityMaps.flatObjectMetadataMaps,
-    );
+    relationTargetObjectMetadataId =
+      allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        relationTargetObjectMetadataUniversalIdentifier
+      ]?.id ?? null;
 
     if (!isDefined(relationTargetObjectMetadataId)) {
       throw new Error(

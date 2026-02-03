@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
@@ -78,7 +79,10 @@ export class BarChartDataService {
         );
       }
 
-      const flatObjectMetadata = flatObjectMetadataMaps.byId[objectMetadataId];
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
 
       if (!isDefined(flatObjectMetadata)) {
         throw new ChartDataException(
@@ -92,12 +96,12 @@ export class BarChartDataService {
 
       const primaryAxisGroupByField = getFieldMetadata(
         configuration.primaryAxisGroupByFieldMetadataId,
-        flatFieldMetadataMaps.byId,
+        flatFieldMetadataMaps,
       );
 
       const aggregateField = getFieldMetadata(
         configuration.aggregateFieldMetadataId,
-        flatFieldMetadataMaps.byId,
+        flatFieldMetadataMaps,
       );
 
       const isTwoDimensional = isDefined(
@@ -109,7 +113,7 @@ export class BarChartDataService {
       if (isTwoDimensional) {
         secondaryAxisGroupByField = getFieldMetadata(
           configuration.secondaryAxisGroupByFieldMetadataId!,
-          flatFieldMetadataMaps.byId,
+          flatFieldMetadataMaps,
         );
       }
 
@@ -131,11 +135,11 @@ export class BarChartDataService {
 
       const objectIdByNameSingular: Record<string, string> = {};
 
-      for (const objectId in flatObjectMetadataMaps.byId) {
-        const objMetadata = flatObjectMetadataMaps.byId[objectId];
-
+      for (const objMetadata of Object.values(
+        flatObjectMetadataMaps.byUniversalIdentifier,
+      )) {
         if (isDefined(objMetadata)) {
-          objectIdByNameSingular[objMetadata.nameSingular] = objectId;
+          objectIdByNameSingular[objMetadata.nameSingular] = objMetadata.id;
         }
       }
 

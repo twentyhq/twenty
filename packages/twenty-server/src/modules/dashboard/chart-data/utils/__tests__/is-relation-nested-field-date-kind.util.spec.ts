@@ -63,19 +63,24 @@ describe('isRelationNestedFieldDateKind', () => {
   });
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
-    byId: {
-      [companyObjectId]: companyObject,
+    byUniversalIdentifier: {
+      [companyObject.universalIdentifier as string]: companyObject,
     },
-    idByUniversalIdentifier: {},
+    universalIdentifierById: {
+      [companyObjectId]: companyObject.universalIdentifier as string,
+    },
     universalIdentifiersByApplicationId: {},
   };
 
   const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
-    byId: {
-      [createdAtFieldId]: createdAtField,
-      [nameFieldId]: nameField,
+    byUniversalIdentifier: {
+      [createdAtField.universalIdentifier as string]: createdAtField,
+      [nameField.universalIdentifier as string]: nameField,
     },
-    idByUniversalIdentifier: {},
+    universalIdentifierById: {
+      [createdAtFieldId]: createdAtField.universalIdentifier as string,
+      [nameFieldId]: nameField.universalIdentifier as string,
+    },
     universalIdentifiersByApplicationId: {},
   };
 
@@ -193,13 +198,23 @@ describe('isRelationNestedFieldDateKind', () => {
       relationFieldMetadata: personRelationField,
       relationNestedFieldName: 'birthDate',
       flatObjectMetadataMaps: {
-        byId: { 'object-with-date-id': objectWithDateField },
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {
+          [objectWithDateField.universalIdentifier as string]:
+            objectWithDateField,
+        },
+        universalIdentifierById: {
+          'object-with-date-id':
+            objectWithDateField.universalIdentifier as string,
+        },
         universalIdentifiersByApplicationId: {},
       },
       flatFieldMetadataMaps: {
-        byId: { [dateFieldId]: dateField },
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {
+          [dateField.universalIdentifier as string]: dateField,
+        },
+        universalIdentifierById: {
+          [dateFieldId]: dateField.universalIdentifier as string,
+        },
         universalIdentifiersByApplicationId: {},
       },
     });
