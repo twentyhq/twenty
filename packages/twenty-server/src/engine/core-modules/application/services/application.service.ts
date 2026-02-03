@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, type Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -300,14 +299,15 @@ export class ApplicationService {
   async createWorkspaceCustomApplication(
     {
       workspaceId,
+      applicationId,
       workspaceDisplayName,
     }: {
       workspaceId: string;
+      applicationId: string;
       workspaceDisplayName?: string;
     },
     queryRunner?: QueryRunner,
   ) {
-    const applicationId = v4();
     const defaultPackageFields = await getDefaultApplicationPackageFields();
 
     const workspaceCustomApplication = await this.create(
@@ -317,7 +317,7 @@ export class ApplicationService {
         sourcePath: 'workspace-custom',
         version: '1.0.0',
         universalIdentifier: applicationId,
-        workspaceId: workspaceId,
+        workspaceId,
         id: applicationId,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
@@ -367,6 +367,7 @@ export class ApplicationService {
       workspaceId: application.workspaceId,
       resourcePath: 'package.json',
       settings: { isTemporaryFile: false, toDelete: false },
+      queryRunner,
     });
 
     const yarnLockFile = await this.fileStorageService.writeFile_v2({
@@ -377,6 +378,7 @@ export class ApplicationService {
       workspaceId: application.workspaceId,
       resourcePath: 'yarn.lock',
       settings: { isTemporaryFile: false, toDelete: false },
+      queryRunner,
     });
 
     if (queryRunner) {

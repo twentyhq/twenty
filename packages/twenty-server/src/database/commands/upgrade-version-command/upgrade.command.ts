@@ -9,6 +9,7 @@ import {
   UpgradeCommandRunner,
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
+import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
 import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files.command';
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
@@ -34,6 +35,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly dataSourceService: DataSourceService,
 
     // 1.17 Commands
+    protected readonly backfillApplicationPackageFilesCommand: BackfillApplicationPackageFilesCommand,
     protected readonly deleteFileRecordsCommand: DeleteFileRecordsCommand,
     protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
     protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
@@ -57,6 +59,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
       this.migrateWorkflowCodeStepsCommand,
       this.deleteFileRecordsCommand,
+      this.backfillApplicationPackageFilesCommand,
     ];
 
     this.allCommands = {

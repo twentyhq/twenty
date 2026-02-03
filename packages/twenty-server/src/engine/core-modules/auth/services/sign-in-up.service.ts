@@ -465,26 +465,19 @@ export class SignInUpService {
       isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceId = v4();
+    const workspaceCustomApplicationId = v4();
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const workspaceCustomApplication =
-        await this.applicationService.createWorkspaceCustomApplication(
-          {
-            workspaceId,
-          },
-          queryRunner,
-        );
-
       const workspaceToCreate = this.workspaceRepository.create({
         id: workspaceId,
         subdomain: await this.subdomainManagerService.generateSubdomain(
           isWorkEmailFound ? { userEmail: email } : {},
         ),
-        workspaceCustomApplicationId: workspaceCustomApplication.id,
+        workspaceCustomApplicationId,
         displayName: '',
         inviteHash: v4(),
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
@@ -494,6 +487,14 @@ export class SignInUpService {
       const workspace = await queryRunner.manager.save(
         WorkspaceEntity,
         workspaceToCreate,
+      );
+
+      await this.applicationService.createWorkspaceCustomApplication(
+        {
+          workspaceId,
+          applicationId: workspaceCustomApplicationId,
+        },
+        queryRunner,
       );
 
       const isExistingUser = userData.type === 'existingUser';
