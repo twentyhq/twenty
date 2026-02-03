@@ -226,9 +226,7 @@ export const EventLogResultsTable = ({
         <StyledTable>
           <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
             {baseColumns.map((column) => (
-              <TableHeader key={column.id}>
-                {t(column.label)}
-              </TableHeader>
+              <TableHeader key={column.id}>{t(column.label)}</TableHeader>
             ))}
           </StyledHeaderRow>
         </StyledTable>
