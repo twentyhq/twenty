@@ -185,7 +185,7 @@ export const EventLogResultsTable = ({
     setColumnWidths(
       Object.fromEntries(baseColumns.map((col) => [col.id, col.defaultWidth])),
     );
-  }, [selectedTable]);
+  }, [selectedTable, baseColumns]);
 
   const handleResizeStart = useCallback(
     (columnId: string, event: React.PointerEvent) => {
