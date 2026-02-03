@@ -41,8 +41,8 @@ export class FlushCacheCommand extends CommandRunner {
         : `Flushing all namespaces for pattern: ${pattern}...`,
     );
 
-    for (const ns of namespacesToFlush) {
-      const cacheStorage = new CacheStorageService(this.cacheManager, ns);
+    for (const namespace of namespacesToFlush) {
+      const cacheStorage = new CacheStorageService(this.cacheManager, namespace);
       await cacheStorage.flushByPattern(pattern);
     }
 
