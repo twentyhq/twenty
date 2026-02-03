@@ -9,11 +9,12 @@ import { IconAlertTriangle, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
+import { EventLogTable } from '~/generated-metadata/graphql';
+
 import { EventLogFilters } from './components/EventLogFilters';
 import { EventLogResultsTable } from './components/EventLogResultsTable';
 import { EventLogTableSelector } from './components/EventLogTableSelector';
 import { useEventLogs } from './hooks/useQueryEventLogs';
-import { EventLogTable } from './types';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.primary};
@@ -80,7 +81,7 @@ const StyledErrorMessage = styled.p`
 
 export type EventLogFiltersState = {
   eventType?: string;
-  workspaceMemberId?: string;
+  userWorkspaceId?: string;
   dateRange?: {
     start?: Date;
     end?: Date;
@@ -111,7 +112,7 @@ export const SettingsEventLogs = () => {
     table: selectedTable,
     filters: {
       eventType: filters.eventType,
-      workspaceMemberId: filters.workspaceMemberId,
+      userWorkspaceId: filters.userWorkspaceId,
       dateRange: filters.dateRange,
       recordId: filters.recordId,
       objectMetadataId: filters.objectMetadataId,

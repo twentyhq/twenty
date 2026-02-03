@@ -6,7 +6,7 @@ export const GET_EVENT_LOGS = gql`
       records {
         event
         timestamp
-        userId
+        userWorkspaceId
         properties
         recordId
         objectMetadataId
@@ -20,4 +20,3 @@ export const GET_EVENT_LOGS = gql`
     }
   }
 `;
-

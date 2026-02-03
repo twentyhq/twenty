@@ -41,7 +41,12 @@ type ColumnConfig = {
 const DEFAULT_COLUMNS: ColumnConfig[] = [
   { id: 'event', label: msg`Event`, minWidth: 100, defaultWidth: 200 },
   { id: 'timestamp', label: msg`Timestamp`, minWidth: 100, defaultWidth: 150 },
-  { id: 'userId', label: msg`User ID`, minWidth: 100, defaultWidth: 150 },
+  {
+    id: 'userWorkspaceId',
+    label: msg`User Workspace`,
+    minWidth: 100,
+    defaultWidth: 150,
+  },
   {
     id: 'properties',
     label: msg`Properties`,
@@ -53,7 +58,12 @@ const DEFAULT_COLUMNS: ColumnConfig[] = [
 const OBJECT_EVENT_COLUMNS: ColumnConfig[] = [
   { id: 'event', label: msg`Event`, minWidth: 100, defaultWidth: 180 },
   { id: 'timestamp', label: msg`Timestamp`, minWidth: 100, defaultWidth: 130 },
-  { id: 'userId', label: msg`User ID`, minWidth: 100, defaultWidth: 130 },
+  {
+    id: 'userWorkspaceId',
+    label: msg`User Workspace`,
+    minWidth: 100,
+    defaultWidth: 130,
+  },
   { id: 'recordId', label: msg`Record ID`, minWidth: 100, defaultWidth: 130 },
   {
     id: 'objectMetadataId',
@@ -308,7 +318,7 @@ export const EventLogResultsTable = ({
             <StyledTableCell>
               {beautifyPastDateRelativeToNow(record.timestamp)}
             </StyledTableCell>
-            <StyledTableCell>{record.userId ?? '-'}</StyledTableCell>
+            <StyledTableCell>{record.userWorkspaceId ?? '-'}</StyledTableCell>
             {showObjectEventColumns && (
               <>
                 <StyledTableCell>{record.recordId ?? '-'}</StyledTableCell>

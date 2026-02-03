@@ -12,6 +12,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -49,6 +50,7 @@ export class AuditResolver {
     createObjectEventInput: CreateObjectEventInput,
     @AuthWorkspace() workspace: WorkspaceEntity | undefined,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ) {
     if (!workspace) {
       throw new AuditException(
@@ -60,6 +62,7 @@ export class AuditResolver {
     const analyticsContext = this.auditService.createContext({
       workspaceId: workspace.id,
       userId: user?.id,
+      userWorkspaceId,
     });
 
     return analyticsContext.createObjectEvent(createObjectEventInput.event, {
@@ -78,10 +81,12 @@ export class AuditResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
+    @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ) {
     const analyticsContext = this.auditService.createContext({
       workspaceId: workspace?.id,
       userId: user?.id,
+      userWorkspaceId,
     });
 
     if (isPageviewAnalyticsInput(createAnalyticsInput)) {

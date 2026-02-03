@@ -8,7 +8,7 @@ const client = request(`http://localhost:${APP_PORT}`);
 describe('Event Logs (integration)', () => {
   let clickHouseClient: ClickHouseClient;
   const testWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-  const testUserId = '20202020-e6b5-4680-8a32-b82097371560';
+  const testUserWorkspaceId = '20202020-3957-45c9-be39-337dc4d9100a';
 
   beforeAll(async () => {
     jest.useRealTimers();
@@ -36,7 +36,7 @@ describe('Event Logs (integration)', () => {
 
     const pageviewRecords = Array.from({ length: 25 }, (_, i) => ({
       workspaceId: testWorkspaceId,
-      userId: testUserId,
+      userWorkspaceId: testUserWorkspaceId,
       name: i % 2 === 0 ? 'settings/profile' : 'objects/companies',
       timestamp: new Date(now.getTime() - i * 60000)
         .toISOString()
@@ -47,7 +47,7 @@ describe('Event Logs (integration)', () => {
 
     const workspaceEventRecords = Array.from({ length: 15 }, (_, i) => ({
       workspaceId: testWorkspaceId,
-      userId: testUserId,
+      userWorkspaceId: testUserWorkspaceId,
       event:
         i % 3 === 0
           ? 'user.login'
@@ -63,7 +63,7 @@ describe('Event Logs (integration)', () => {
 
     const objectEventRecords = Array.from({ length: 20 }, (_, i) => ({
       workspaceId: testWorkspaceId,
-      userId: testUserId,
+      userWorkspaceId: testUserWorkspaceId,
       event: i % 2 === 0 ? 'company.created' : 'company.updated',
       timestamp: new Date(now.getTime() - i * 90000)
         .toISOString()
@@ -127,7 +127,7 @@ describe('Event Logs (integration)', () => {
               records {
                 event
                 timestamp
-                userId
+                userWorkspaceId
                 properties
                 recordId
                 objectMetadataId

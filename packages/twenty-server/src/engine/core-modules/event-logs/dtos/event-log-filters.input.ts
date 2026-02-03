@@ -15,10 +15,7 @@ export class EventLogFiltersInput {
   eventType?: string;
 
   @Field(() => String, { nullable: true })
-  userId?: string;
-
-  @Field(() => String, { nullable: true })
-  workspaceMemberId?: string;
+  userWorkspaceId?: string;
 
   @Field(() => EventLogDateRangeInput, { nullable: true })
   dateRange?: EventLogDateRangeInput;

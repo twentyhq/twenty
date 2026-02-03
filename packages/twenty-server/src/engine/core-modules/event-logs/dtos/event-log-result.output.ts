@@ -11,7 +11,7 @@ export class EventLogRecord {
   timestamp: Date;
 
   @Field(() => String, { nullable: true })
-  userId?: string;
+  userWorkspaceId?: string;
 
   @Field(() => GraphQLJSON, { nullable: true })
   properties?: Record<string, unknown>;

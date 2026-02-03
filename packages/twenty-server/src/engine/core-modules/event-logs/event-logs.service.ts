@@ -9,8 +9,6 @@ import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import {
   EventLogsException,
@@ -28,7 +26,7 @@ type ClickHouseEventRecord = {
   event?: string;
   name?: string;
   timestamp: string;
-  userId?: string;
+  userWorkspaceId?: string;
   properties?: Record<string, unknown>;
   recordId?: string;
   objectMetadataId?: string;
@@ -48,7 +46,6 @@ const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
 export class EventLogsService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly billingService: BillingService,
   ) {}
 
@@ -67,18 +64,13 @@ export class EventLogsService {
     const eventFieldName =
       input.table === EventLogTable.PAGEVIEW ? 'name' : 'event';
 
-    const resolvedFilters = await this.resolveWorkspaceMemberFilter(
-      workspaceId,
-      input.filters,
-    );
-
     const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
     const params: Record<string, unknown> = { workspaceId };
 
     this.applyFilters(
       whereClauses,
       params,
-      resolvedFilters,
+      input.filters,
       eventFieldName,
       input.table,
     );
@@ -181,9 +173,9 @@ export class EventLogsService {
       params.eventTypePattern = `%${filters.eventType.toLowerCase()}%`;
     }
 
-    if (isDefined(filters.userId)) {
-      whereClauses.push('"userId" = {userId:String}');
-      params.userId = filters.userId;
+    if (isDefined(filters.userWorkspaceId)) {
+      whereClauses.push('"userWorkspaceId" = {userWorkspaceId:String}');
+      params.userWorkspaceId = filters.userWorkspaceId;
     }
 
     if (isDefined(filters.dateRange?.start)) {
@@ -230,38 +222,12 @@ export class EventLogsService {
       return {
         event: eventName,
         timestamp: new Date(record.timestamp),
-        userId: record.userId,
+        userWorkspaceId: record.userWorkspaceId,
         properties: record.properties,
         recordId: record.recordId,
         objectMetadataId: record.objectMetadataId,
         isCustom: record.isCustom,
       };
     });
-  }
-
-  private async resolveWorkspaceMemberFilter(
-    workspaceId: string,
-    filters: EventLogFiltersInput | undefined,
-  ): Promise<EventLogFiltersInput | undefined> {
-    if (!isDefined(filters) || !isDefined(filters.workspaceMemberId)) {
-      return filters;
-    }
-
-    const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        id: filters.workspaceMemberId,
-      },
-    });
-
-    return {
-      ...filters,
-      userId: workspaceMember?.userId ?? filters.userId,
-    };
   }
 }

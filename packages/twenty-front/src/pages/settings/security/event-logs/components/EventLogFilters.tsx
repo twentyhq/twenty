@@ -47,8 +47,8 @@ export const EventLogFilters = ({
     onChange({ ...value, eventType: eventType || undefined });
   };
 
-  const handleWorkspaceMemberChange = (workspaceMemberId: string | null) => {
-    onChange({ ...value, workspaceMemberId: workspaceMemberId || undefined });
+  const handleUserWorkspaceChange = (userWorkspaceId: string | null) => {
+    onChange({ ...value, userWorkspaceId: userWorkspaceId || undefined });
   };
 
   const handleStartDateChange = (date: Date | undefined) => {
@@ -82,14 +82,16 @@ export const EventLogFilters = ({
   const eventLabel =
     table === EventLogTable.PAGEVIEW ? t`Page Name` : t`Event Type`;
 
-  const workspaceMemberOptions: SelectOption<string | null>[] = [
+  const userWorkspaceOptions: SelectOption<string | null>[] = [
     { label: t`All Members`, value: null, Icon: IconUser },
-    ...currentWorkspaceMembers.map((workspaceMember) => ({
-      label:
-        `${workspaceMember.name.firstName ?? ''} ${workspaceMember.name.lastName ?? ''}`.trim(),
-      value: workspaceMember.id,
-      Icon: IconUser,
-    })),
+    ...currentWorkspaceMembers
+      .filter((member) => member.userWorkspaceId)
+      .map((workspaceMember) => ({
+        label:
+          `${workspaceMember.name.firstName ?? ''} ${workspaceMember.name.lastName ?? ''}`.trim(),
+        value: workspaceMember.userWorkspaceId as string,
+        Icon: IconUser,
+      })),
   ];
 
   const objectMetadataOptions: SelectOption<string | null>[] = [
@@ -115,11 +117,11 @@ export const EventLogFilters = ({
 
       <StyledFilterItem>
         <Select
-          dropdownId="event-log-workspace-member-filter"
+          dropdownId="event-log-user-workspace-filter"
           label={t`Workspace Member`}
-          value={value.workspaceMemberId ?? null}
-          options={workspaceMemberOptions}
-          onChange={handleWorkspaceMemberChange}
+          value={value.userWorkspaceId ?? null}
+          options={userWorkspaceOptions}
+          onChange={handleUserWorkspaceChange}
           fullWidth
           withSearchInput
         />
