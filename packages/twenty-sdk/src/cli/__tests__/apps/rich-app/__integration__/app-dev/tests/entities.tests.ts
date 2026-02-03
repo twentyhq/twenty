@@ -11,6 +11,7 @@ export const defineEntitiesTests = (appPath: string): void => {
 
       expect(sortedFiles).toEqual([
         'manifest.json',
+        'package.json',
         'public',
         'public/favicon.png',
         'src',
@@ -21,17 +22,18 @@ export const defineEntitiesTests = (appPath: string): void => {
         'src/components/greeting.front-component.mjs.map',
         'src/components/test.front-component.mjs',
         'src/components/test.front-component.mjs.map',
-        'src/functions',
-        'src/functions/greeting.function.mjs',
-        'src/functions/greeting.function.mjs.map',
-        'src/functions/test-function-2.function.mjs',
-        'src/functions/test-function-2.function.mjs.map',
-        'src/functions/test-function.function.mjs',
-        'src/functions/test-function.function.mjs.map',
+        'src/logic-functions',
+        'src/logic-functions/greeting.function.mjs',
+        'src/logic-functions/greeting.function.mjs.map',
+        'src/logic-functions/test-function-2.function.mjs',
+        'src/logic-functions/test-function-2.function.mjs.map',
+        'src/logic-functions/test-function.function.mjs',
+        'src/logic-functions/test-function.function.mjs.map',
         'src/root.front-component.mjs',
         'src/root.front-component.mjs.map',
         'src/root.function.mjs',
         'src/root.function.mjs.map',
+        'yarn.lock',
       ]);
     });
 

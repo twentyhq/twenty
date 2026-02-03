@@ -1,16 +1,17 @@
 import {
   type ApplicationManifest,
   type Manifest,
-  type PackageJson,
   type FieldManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { validateManifest } from '@/cli/utilities/build/manifest/validate-manifest';
+import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
 
 const validApplication: ApplicationManifest = {
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'Test App',
   defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+  packageJsonChecksum: '98592af7-4be9-4655-b5c4-9bef307a996c',
+  yarnLockChecksum: '580ee05f-15fe-4146-bac2-6c382483c94e',
 };
 
 const validField: FieldManifest = {
@@ -31,14 +32,12 @@ const validManifest: Manifest = {
   roles: [],
   publicAssets: [],
   sources: {},
-  packageJson: {} as PackageJson,
-  yarnLock: '',
 };
 
-describe('validateManifest - objectExtensions', () => {
+describe('manifestValidate', () => {
   describe('valid object extensions', () => {
     it('should pass validation with valid object extension by nameSingular', () => {
-      const result = validateManifest({
+      const result = manifestValidate({
         ...validManifest,
         fields: [validField],
       });
@@ -56,7 +55,7 @@ describe('validateManifest - objectExtensions', () => {
         label: 'Custom Note',
       };
 
-      const result = validateManifest({
+      const result = manifestValidate({
         ...validManifest,
         fields: [extensionByUuid],
       });
@@ -74,7 +73,7 @@ describe('validateManifest - objectExtensions', () => {
         label: 'Nickname',
       };
 
-      const result = validateManifest({
+      const result = manifestValidate({
         ...validManifest,
         fields: [validField, anotherExtension],
       });
@@ -101,7 +100,7 @@ describe('validateManifest - objectExtensions', () => {
           },
         ],
       };
-      const result = validateManifest({
+      const result = manifestValidate({
         ...validManifest,
         fields: [extensionWithSelect],
       });
@@ -132,7 +131,7 @@ describe('validateManifest - objectExtensions', () => {
         },
       ];
 
-      const result = validateManifest({
+      const result = manifestValidate({
         ...validManifest,
         fields: fieldsWithDuplicates,
       });
@@ -149,7 +148,7 @@ describe('validateManifest - objectExtensions', () => {
     it('should fail when extension field ID conflicts with object field ID', () => {
       const sharedId = '550e8400-e29b-41d4-a716-446655440001';
 
-      const result = validateManifest({
+      const result = manifestValidate({
         ...validManifest,
         objects: [
           {
