@@ -10,4 +10,6 @@ export enum FileFolder {
   PublicAsset = 'public-asset',
   Source = 'source',
   FilesField = 'files-field',
+  PackageJson = 'package-json',
+  YarnLock = 'yarn-lock',
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -10,6 +11,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/constants/default-application-package-fields.constant';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -21,6 +24,7 @@ export class ApplicationService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -261,13 +265,26 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
+    const defaultPackageFields = await getDefaultApplicationPackageFields();
+
     const twentyStandardApplication = await this.create(
       {
         ...TWENTY_STANDARD_APPLICATION,
         logicFunctionLayerId: null,
         workspaceId,
         canBeUninstalled: false,
+        packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
+        packageJsonFileId: null,
+        yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
+        yarnLockFileId: null,
+        availablePackages: defaultPackageFields.availablePackages,
       },
+      queryRunner,
+    );
+
+    await this.uploadDefaultPackageFilesAndUpdateApplication(
+      twentyStandardApplication,
+      defaultPackageFields,
       queryRunner,
     );
 
@@ -291,6 +308,8 @@ export class ApplicationService {
     queryRunner?: QueryRunner,
   ) {
     const applicationId = v4();
+    const defaultPackageFields = await getDefaultApplicationPackageFields();
+
     const workspaceCustomApplication = await this.create(
       {
         description: 'Workspace custom application',
@@ -302,11 +321,80 @@ export class ApplicationService {
         id: applicationId,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
+        packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
+        packageJsonFileId: null,
+        yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
+        yarnLockFileId: null,
+        availablePackages: defaultPackageFields.availablePackages,
       },
       queryRunner,
     );
 
+    await this.uploadDefaultPackageFilesAndUpdateApplication(
+      workspaceCustomApplication,
+      defaultPackageFields,
+      queryRunner,
+    );
+
     return workspaceCustomApplication;
+  }
+
+  async uploadDefaultPackageFilesAndSetFileIds(
+    application: ApplicationEntity,
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
+    const defaultPackageFields = await getDefaultApplicationPackageFields();
+
+    return this.uploadDefaultPackageFilesAndUpdateApplication(
+      application,
+      defaultPackageFields,
+      queryRunner,
+    );
+  }
+
+  private async uploadDefaultPackageFilesAndUpdateApplication(
+    application: ApplicationEntity,
+    defaultPackageFields: Awaited<
+      ReturnType<typeof getDefaultApplicationPackageFields>
+    >,
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
+    const packageJsonFile = await this.fileStorageService.writeFile_v2({
+      sourceFile: defaultPackageFields.packageJsonContent,
+      mimeType: undefined,
+      fileFolder: FileFolder.PackageJson,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId: application.workspaceId,
+      resourcePath: 'package.json',
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    const yarnLockFile = await this.fileStorageService.writeFile_v2({
+      sourceFile: defaultPackageFields.yarnLockContent,
+      mimeType: undefined,
+      fileFolder: FileFolder.YarnLock,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId: application.workspaceId,
+      resourcePath: 'yarn.lock',
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    if (queryRunner) {
+      await queryRunner.manager.update(
+        ApplicationEntity,
+        { id: application.id },
+        {
+          packageJsonFileId: packageJsonFile.id,
+          yarnLockFileId: yarnLockFile.id,
+        },
+      );
+    } else {
+      await this.update(application.id, {
+        packageJsonFileId: packageJsonFile.id,
+        yarnLockFileId: yarnLockFile.id,
+        workspaceId: application.workspaceId,
+      });
+    }
   }
 
   async create(
