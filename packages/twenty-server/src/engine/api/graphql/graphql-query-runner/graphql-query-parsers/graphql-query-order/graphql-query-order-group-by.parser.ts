@@ -36,6 +36,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrderByClause } from './types/order-by-condition.type';
 
 export class GraphqlQueryOrderGroupByParser {
@@ -71,7 +72,12 @@ export class GraphqlQueryOrderGroupByParser {
     const parsedOrderBy: Record<string, OrderByClause>[] = [];
 
     const fields = this.flatObjectMetadata.fieldIds
-      .map((id) => this.flatFieldMetadataMaps.byId[id])
+      .map((id) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: id,
+          flatEntityMaps: this.flatFieldMetadataMaps,
+        }),
+      )
       .filter(isDefined);
 
     const availableAggregations: Record<string, AggregationField> =
@@ -97,7 +103,10 @@ export class GraphqlQueryOrderGroupByParser {
 
       const fieldName = Object.keys(orderByArg)[0];
       const fieldMetadataId = this.fieldIdByName[fieldName];
-      const fieldMetadata = this.flatFieldMetadataMaps.byId[fieldMetadataId];
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadataId,
+        flatEntityMaps: this.flatFieldMetadataMaps,
+      });
 
       if (!isDefined(fieldMetadata)) {
         throw new UserInputError(`Cannot orderBy unknown field: ${fieldName}.`);
