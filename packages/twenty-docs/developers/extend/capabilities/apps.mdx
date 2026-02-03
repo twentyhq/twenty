@@ -90,14 +90,13 @@ my-twenty-app/
   README.md
   public/                           # Public assets folder (images, fonts, etc.)
   src/
-    application-config.ts           # Required - main application configuration
-    roles/
-      default-role.ts               # Default role for logic functions
-    logic-functions/
-      hello-world.ts                # Example logic function
-    front-components/
-      hello-world.tsx               # Example front component
-
+  ├── application-config.ts           # Required - main application configuration
+  ├── roles/
+  │   └── default-role.ts               # Default role for logic functions
+  ├── logic-functions/
+  │   └── hello-world.ts                # Example logic function
+  └── front-components/
+      └── hello-world.tsx               # Example front component
 ```
 
 At a high level:
@@ -293,7 +292,7 @@ Every app has a single `application-config.ts` file that describes:
 Use `defineApplication()` to define your application configuration:
 
 ```typescript
-// src/app/application-config.ts
+// src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
@@ -332,7 +331,7 @@ Applications can define roles that encapsulate permissions on your workspace's o
 When you scaffold a new app, the CLI also creates a default role file. Use `defineRole()` to define roles with built-in validation:
 
 ```typescript
-// src/default-role.ts
+// src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
