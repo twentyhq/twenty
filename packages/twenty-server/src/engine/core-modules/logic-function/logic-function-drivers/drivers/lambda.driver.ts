@@ -29,7 +29,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { copyAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-and-build-dependencies';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import {
@@ -139,12 +139,43 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
   }
 
   private getLayerName(flatLogicFunctionLayer: FlatLogicFunctionLayer) {
-    return flatLogicFunctionLayer.checksum;
+    return flatLogicFunctionLayer.yarnLockChecksum;
   }
 
-  private async createLayerIfNotExists(
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ): Promise<string> {
+  private async copyDependenciesInMemory({
+    applicationUniversalIdentifier,
+    workspaceId,
+    inMemoryLayerFolderPath,
+  }: {
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+    inMemoryLayerFolderPath: string;
+  }) {
+    await Promise.all([
+      this.fileStorageService.downloadFile_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: 'package.json',
+        localPath: join(inMemoryLayerFolderPath, 'package.json'),
+      }),
+      this.fileStorageService.downloadFile_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: 'yarn.lock',
+        localPath: join(inMemoryLayerFolderPath, 'yarn.lock'),
+      }),
+    ]);
+  }
+
+  private async createLayerIfNotExists({
+    flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    applicationUniversalIdentifier: string;
+  }): Promise<string> {
     const layerName = this.getLayerName(flatLogicFunctionLayer);
 
     const listLayerParams: ListLayerVersionsCommandInput = {
@@ -171,10 +202,12 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       NODE_LAYER_SUBFOLDER,
     );
 
-    await copyAndBuildDependencies(
-      nodeDependenciesFolder,
-      flatLogicFunctionLayer,
-    );
+    await this.copyDependenciesInMemory({
+      applicationUniversalIdentifier,
+      workspaceId: flatLogicFunctionLayer.workspaceId,
+      inMemoryLayerFolderPath: nodeDependenciesFolder,
+    });
+    await copyYarnEngineAndBuildDependencies(nodeDependenciesFolder);
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
@@ -257,15 +290,23 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     return false;
   }
 
-  private async build(
-    flatLogicFunction: FlatLogicFunction,
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ) {
+  private async build({
+    flatLogicFunction,
+    flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    applicationUniversalIdentifier: string;
+  }) {
     if (await this.isAlreadyBuilt(flatLogicFunction, flatLogicFunctionLayer)) {
       return;
     }
 
-    const layerArn = await this.createLayerIfNotExists(flatLogicFunctionLayer);
+    const layerArn = await this.createLayerIfNotExists({
+      flatLogicFunctionLayer,
+      applicationUniversalIdentifier,
+    });
 
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
@@ -317,7 +358,11 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     payload,
     env,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    await this.build(flatLogicFunction, flatLogicFunctionLayer);
+    await this.build({
+      flatLogicFunction,
+      flatLogicFunctionLayer,
+      applicationUniversalIdentifier,
+    });
 
     await this.waitFunctionUpdates(flatLogicFunction);
 

@@ -12,7 +12,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   happensAt: getFlatFieldMetadataMock({
     id: 'f8bbe593-cc45-4509-ba5f-aff1b4ae78a9',
-    standardId: '20202020-9526-4993-b339-c4318c4d39f0',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.DATE_TIME,
     name: 'happensAt',
@@ -36,7 +35,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   name: getFlatFieldMetadataMock({
     id: '8271b048-89c8-4db9-ba49-e20d1e634cea',
-    standardId: '20202020-7207-46e8-9dab-849505ae8497',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.TEXT,
     name: 'name',
@@ -60,7 +58,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   properties: getFlatFieldMetadataMock({
     id: '5067203a-5fc0-47a7-8fb3-466e8edc8e82',
-    standardId: '20202020-f142-4b04-b91b-6a2b4af3bf11',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RAW_JSON,
     name: 'properties',
@@ -84,7 +81,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   linkedRecordCachedName: getFlatFieldMetadataMock({
     id: '6192bb0a-dcff-4ce9-9373-6b3efd74def3',
-    standardId: '20202020-cfdb-4bef-bbce-a29f41230934',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.TEXT,
     name: 'linkedRecordCachedName',
@@ -108,7 +104,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   linkedRecordId: getFlatFieldMetadataMock({
     id: '1a1b9069-0274-4d89-a189-6944ebd8afd5',
-    standardId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.UUID,
     name: 'linkedRecordId',
@@ -132,7 +127,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   linkedObjectMetadataId: getFlatFieldMetadataMock({
     id: 'aa0a6096-ddd6-44b3-a8c1-ec4c1ec70c52',
-    standardId: '20202020-c595-449d-9f89-562758c9ee69',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.UUID,
     name: 'linkedObjectMetadataId',
@@ -156,7 +150,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   id: getFlatFieldMetadataMock({
     id: 'e78264fa-48bc-46cd-afc1-c5f2b5eb9472',
-    standardId: '20202020-eda0-4cee-9577-3eb357e3c22b',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.UUID,
     name: 'id',
@@ -180,7 +173,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   createdAt: getFlatFieldMetadataMock({
     id: 'cb8b2800-2a6e-443c-b671-df51c8a8ccdc',
-    standardId: '20202020-66ac-4502-9975-e4d959c50311',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.DATE_TIME,
     name: 'createdAt',
@@ -204,7 +196,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: 'cc7b974c-4cb3-4b61-821a-824b4764fc6b',
-    standardId: '20202020-d767-4622-bdcf-d8a084834d86',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.DATE_TIME,
     name: 'updatedAt',
@@ -228,7 +219,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: '544fdd41-6418-43e4-a46a-086c2c55924d',
-    standardId: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.DATE_TIME,
     name: 'deletedAt',
@@ -252,7 +242,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   workspaceMember: getFlatFieldMetadataMock({
     id: 'c8d9c315-034a-4ffd-a6b3-e6386092d0a8',
-    standardId: '20202020-af23-4479-9a30-868edc474b36',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'workspaceMember',
@@ -280,7 +269,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   person: getFlatFieldMetadataMock({
     id: 'dbd02754-4bef-4149-b39d-54759983ab47',
-    standardId: '20202020-c414-45b9-a60a-ac27aa96229f',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'person',
@@ -308,7 +296,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   company: getFlatFieldMetadataMock({
     id: 'fd8cabe5-7dc8-4d6a-8053-43434488b3e4',
-    standardId: '20202020-04ad-4221-a744-7a8278a5ce21',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'company',
@@ -336,7 +323,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   opportunity: getFlatFieldMetadataMock({
     id: '026cbaa7-860c-4ed4-b878-8d78849e6c28',
-    standardId: '20202020-7664-4a35-a3df-580d389fd527',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'opportunity',
@@ -364,7 +350,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   note: getFlatFieldMetadataMock({
     id: '2b9f1c90-9e35-4ccc-8d84-b42de31ef127',
-    standardId: '20202020-ec55-4135-8da5-3a20badc0156',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'note',
@@ -392,7 +377,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   task: getFlatFieldMetadataMock({
     id: '187eaeb8-62c8-4925-815f-946b4768b786',
-    standardId: '20202020-b2f5-415c-9135-a31dfe49501b',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'task',
@@ -420,7 +404,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   workflow: getFlatFieldMetadataMock({
     id: '9973da2e-cc65-41b2-8f52-4130cfa31fc6',
-    standardId: '20202020-616c-4ad3-a2e9-c477c341e295',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'workflow',
@@ -448,7 +431,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   workflowVersion: getFlatFieldMetadataMock({
     id: '7e5b7033-8c4f-4bdc-9156-6954c268fbb8',
-    standardId: '20202020-74f1-4711-a129-e14ca0ecd744',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'workflowVersion',
@@ -476,7 +458,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   workflowRun: getFlatFieldMetadataMock({
     id: '1cd2b19c-f5c5-40b4-ad41-cc7aa3e955b2',
-    standardId: '20202020-96f0-401b-9186-a3a0759225ac',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'workflowRun',
@@ -504,7 +485,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   rocket: getFlatFieldMetadataMock({
     id: 'eebb9590-817b-4a51-88f7-9792aa8e0a59',
-    standardId: '20202020-0be6-444e-88f0-12e0c64ac27d',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'rocket',
@@ -532,7 +512,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   pet: getFlatFieldMetadataMock({
     id: '3cb86390-4ee7-42fa-bd1e-bd6326b47610',
-    standardId: '20202020-d88f-4020-8c85-d6c600903762',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'pet',
@@ -560,7 +539,6 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
   }),
   surveyResult: getFlatFieldMetadataMock({
     id: '06010d88-dc3c-4172-92c9-8c73924f950d',
-    standardId: '20202020-d13a-4342-8df0-df48bd783787',
     objectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
     type: FieldMetadataType.RELATION,
     name: 'surveyResult',

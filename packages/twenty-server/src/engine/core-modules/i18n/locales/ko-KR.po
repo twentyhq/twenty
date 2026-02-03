@@ -2483,13 +2483,6 @@ msgstr "이름이 너무 짧습니다"
 msgid "Name must be in camelCase format."
 msgstr "이름은 camelCase 형식이어야 합니다."
 
-#. js-lingui-id: P+jdmX
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
-msgid "Name should be in camelCase"
-msgstr "이름은 camelCase 방식이어야 합니다"
-
 #. js-lingui-id: Dr0xtb
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts

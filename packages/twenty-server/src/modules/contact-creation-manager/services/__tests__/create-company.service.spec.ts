@@ -2,11 +2,11 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import axios from 'axios';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import {
   ConnectedAccountProvider,
   FieldActorSource,
 } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -128,7 +128,7 @@ describe('CreateCompanyService', () => {
           useValue: {
             findOne: jest.fn().mockResolvedValue({
               id: 'mock-object-metadata-id',
-              standardId: STANDARD_OBJECT_IDS.company,
+              universalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
               workspaceId,
               nameSingular: 'company',
               namePlural: 'companies',

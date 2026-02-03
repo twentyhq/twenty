@@ -34,14 +34,12 @@ export class FilesFieldResolver {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 
-    const fileEntity = await this.filesFieldService.uploadFile({
+    return await this.filesFieldService.uploadFile({
       file: buffer,
       filename,
       declaredMimeType: mimetype,
       workspaceId,
       applicationId: workspaceCustomApplicationId,
     });
-
-    return fileEntity;
   }
 }

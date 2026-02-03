@@ -1,7 +1,7 @@
 import deepEqual from 'deep-equal';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { fastDeepEqual } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -9,22 +9,23 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const LARGE_JSON_FIELDS: Record<string, Set<string>> = {
-  [STANDARD_OBJECT_IDS.workflowVersion]: new Set(['steps', 'trigger']),
-  [STANDARD_OBJECT_IDS.workflowAutomatedTrigger]: new Set(['settings']),
-  [STANDARD_OBJECT_IDS.workflowRun]: new Set(['state']),
+  [STANDARD_OBJECTS.workflowVersion.universalIdentifier]: new Set([
+    'steps',
+    'trigger',
+  ]),
+  [STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier]: new Set([
+    'settings',
+  ]),
+  [STANDARD_OBJECTS.workflowRun.universalIdentifier]: new Set(['state']),
 };
 
 const isLargeJsonField = (
-  objectMetadataItem: Pick<FlatObjectMetadata, 'standardId'>,
+  objectMetadataItem: Pick<FlatObjectMetadata, 'universalIdentifier'>,
   key: string,
 ): boolean => {
-  const standardId = objectMetadataItem.standardId;
+  const universalIdentifier = objectMetadataItem.universalIdentifier;
 
-  if (!standardId) {
-    return false;
-  }
-
-  return LARGE_JSON_FIELDS[standardId]?.has(key) ?? false;
+  return LARGE_JSON_FIELDS[universalIdentifier]?.has(key) ?? false;
 };
 
 export const objectRecordChangedValues = (

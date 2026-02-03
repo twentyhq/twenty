@@ -41,6 +41,10 @@ export class ManifestWatcher {
 
       const isAssetFile = relativePath.startsWith(ASSETS_DIR);
 
+      const isDependencyFile = ['package.json', 'yarn.lock'].includes(
+        relativePath,
+      );
+
       const isTypeScriptFile =
         relativePath.endsWith('.ts') || relativePath.endsWith('.tsx');
 
@@ -48,7 +52,7 @@ export class ManifestWatcher {
 
       const shouldIgnore = isInIgnoredDir || !isTypeScriptFile || isHiddenFile;
 
-      if (shouldIgnore && !isAssetFile) {
+      if (shouldIgnore && !isAssetFile && !isDependencyFile) {
         return;
       }
 

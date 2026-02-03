@@ -97,19 +97,28 @@ export class FileStorageService {
       sourceFile,
     });
 
-    const fileEntity = await this.fileRepository.save({
-      path: `${fileFolder}/${resourcePath}`,
-      workspaceId,
-      applicationId: application.id,
-      id: fileId,
-      size:
-        typeof sourceFile === 'string'
-          ? Buffer.byteLength(sourceFile)
-          : sourceFile.length,
-      settings,
-    });
+    await this.fileRepository.upsert(
+      {
+        path: `${fileFolder}/${resourcePath}`,
+        workspaceId,
+        applicationId: application.id,
+        id: fileId,
+        size:
+          typeof sourceFile === 'string'
+            ? Buffer.byteLength(sourceFile)
+            : sourceFile.length,
+        settings,
+      },
+      ['path', 'workspaceId', 'applicationId'],
+    );
 
-    return fileEntity;
+    return await this.fileRepository.findOneOrFail({
+      where: {
+        path: `${fileFolder}/${resourcePath}`,
+        applicationId: application.id,
+        workspaceId,
+      },
+    });
   }
 
   /**
@@ -219,6 +228,18 @@ export class FileStorageService {
     const onStoragePath = this.buildOnStoragePath(params);
 
     return driver.downloadFolder({
+      onStoragePath,
+      localPath: params.localPath,
+    });
+  }
+
+  downloadFile_v2(
+    params: ResourceIdentifier & { localPath: string },
+  ): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.downloadFile({
       onStoragePath,
       localPath: params.localPath,
     });

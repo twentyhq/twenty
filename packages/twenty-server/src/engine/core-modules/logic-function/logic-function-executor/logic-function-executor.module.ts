@@ -12,6 +12,7 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SubscriptionsModule,
     WorkspaceCacheModule,
     LogicFunctionBuildModule,
+    LogicFunctionLayerModule,
     FileModule,
     TypeOrmModule.forFeature([LogicFunctionEntity]),
   ],

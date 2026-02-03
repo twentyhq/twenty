@@ -72,6 +72,19 @@ export class LocalDriver implements StorageDriver {
     await fs.writeFile(filePath, params.sourceFile);
   }
 
+  async downloadFile(params: {
+    onStoragePath: string;
+    localPath: string;
+  }): Promise<void> {
+    await this.createFolder(dirname(params.localPath));
+
+    const filePath = join(`${this.options.storagePath}/`, params.onStoragePath);
+
+    const content = await fs.readFile(filePath);
+
+    await fs.writeFile(params.localPath, content);
+  }
+
   async downloadFolder(params: {
     onStoragePath: string;
     localPath: string;
