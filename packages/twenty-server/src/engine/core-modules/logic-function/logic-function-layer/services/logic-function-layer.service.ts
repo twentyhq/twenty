@@ -81,7 +81,7 @@ export class LogicFunctionLayerService {
     return result;
   }
 
-  async createCommonLayerIfNotExist({
+  async createCommonLayer({
     workspaceId,
     applicationUniversalIdentifier,
   }: {

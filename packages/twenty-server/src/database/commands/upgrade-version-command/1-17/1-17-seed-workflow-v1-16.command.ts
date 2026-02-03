@@ -422,7 +422,7 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
       );
     const applicationId = workspaceCustomFlatApplication.id;
     const { id: logicFunctionLayerId } =
-      await this.logicFunctionLayerService.createCommonLayerIfNotExist({
+      await this.logicFunctionLayerService.createCommonLayer({
         workspaceId,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
