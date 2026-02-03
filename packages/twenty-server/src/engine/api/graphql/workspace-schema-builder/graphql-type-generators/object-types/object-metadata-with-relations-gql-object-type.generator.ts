@@ -110,10 +110,10 @@ export class ObjectMetadataWithRelationsGqlObjectTypeGenerator {
         );
       }
 
-      const objectMetadataTarget =
-        context.flatObjectMetadataMaps.byId[
-          flatFieldMetadata.relationTargetObjectMetadataId
-        ];
+      const objectMetadataTarget = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatFieldMetadata.relationTargetObjectMetadataId,
+        flatEntityMaps: context.flatObjectMetadataMaps,
+      });
 
       if (!isDefined(objectMetadataTarget)) {
         throw new Error(

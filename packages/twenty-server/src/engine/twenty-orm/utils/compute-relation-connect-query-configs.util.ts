@@ -8,6 +8,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
@@ -147,8 +148,10 @@ const computeRecordToConnectCondition = (
   uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
-  const field =
-    flatFieldMetadataMaps.byId[fieldMaps.fieldIdByName[connectFieldName]];
+  const field = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: fieldMaps.fieldIdByName[connectFieldName],
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   if (
     !isDefined(field) ||
@@ -168,8 +171,12 @@ const computeRecordToConnectCondition = (
   }
   checkNoRelationFieldConflictOrThrow(entity, connectFieldName);
 
-  const targetObjectMetadata =
-    flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId || ''];
+  const targetObjectMetadata = field.relationTargetObjectMetadataId
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: field.relationTargetObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      })
+    : undefined;
 
   if (!isDefined(targetObjectMetadata)) {
     throw new TwentyORMException(
@@ -212,7 +219,12 @@ const checkUniqueConstraintFullyPopulated = (
   );
 
   const indexMetadatas = flatObjectMetadata.indexMetadataIds
-    .map((indexId) => flatIndexMaps.byId[indexId])
+    .map((indexId) =>
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: indexId,
+        flatEntityMaps: flatIndexMaps,
+      }),
+    )
     .filter(isDefined)
     .map((index) => ({
       id: index.id,
