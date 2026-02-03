@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { workflowRefetchRequestedFamilyState } from '@/workflow/states/workflowRefetchRequestedFamilyState';
 import {
   type Workflow,
   type WorkflowVersion,
@@ -16,23 +20,34 @@ type WorkflowWithAllVersions = Omit<Workflow, 'versions'> & {
 export const useWorkflowWithCurrentVersion = (
   workflowId: string | undefined,
 ): WorkflowWithCurrentVersion | undefined => {
-  const { record: workflow } = useFindOneRecord<WorkflowWithAllVersions>({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-    objectRecordId: workflowId,
-    recordGqlFields: {
-      id: true,
-      name: true,
-      statuses: true,
-      lastPublishedVersionId: true,
-      versions: {
+  const [workflowRefetchRequested, setWorkflowRefetchRequested] =
+    useRecoilState(workflowRefetchRequestedFamilyState(workflowId ?? ''));
+
+  const { record: workflow, refetch: refetchWorkflow } =
+    useFindOneRecord<WorkflowWithAllVersions>({
+      objectNameSingular: CoreObjectNameSingular.Workflow,
+      objectRecordId: workflowId,
+      recordGqlFields: {
         id: true,
-        status: true,
         name: true,
-        createdAt: true,
+        statuses: true,
+        lastPublishedVersionId: true,
+        versions: {
+          id: true,
+          status: true,
+          name: true,
+          createdAt: true,
+        },
       },
-    },
-    skip: !isDefined(workflowId),
-  });
+      skip: !isDefined(workflowId),
+    });
+
+  useEffect(() => {
+    if (workflowRefetchRequested) {
+      setWorkflowRefetchRequested(false);
+      refetchWorkflow();
+    }
+  }, [workflowRefetchRequested, setWorkflowRefetchRequested, refetchWorkflow]);
 
   const draftVersion = workflow?.versions.find(
     (workflowVersion) => workflowVersion.status === 'DRAFT',

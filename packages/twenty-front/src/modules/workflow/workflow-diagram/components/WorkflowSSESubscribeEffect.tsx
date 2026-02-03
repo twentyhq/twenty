@@ -1,5 +1,12 @@
+import { useCallback } from 'react';
+import { useSetRecoilState } from 'recoil';
+
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useListenToObjectRecordOperationBrowserEvent } from '@/object-record/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { type ObjectRecordOperationBrowserEventDetail } from '@/object-record/types/ObjectRecordOperationBrowserEventDetail';
 import { useListenToObjectRecordEventsForQuery } from '@/sse-db-event/hooks/useListenToObjectRecordEventsForQuery';
+import { workflowRefetchRequestedFamilyState } from '@/workflow/states/workflowRefetchRequestedFamilyState';
 
 export const WorkflowSSESubscribeEffect = ({
   workflowId,
@@ -7,6 +14,15 @@ export const WorkflowSSESubscribeEffect = ({
   workflowId: string;
 }) => {
   const queryId = `workflow-versions-for-workflow-${workflowId}`;
+
+  const setWorkflowRefetchRequested = useSetRecoilState(
+    workflowRefetchRequestedFamilyState(workflowId),
+  );
+
+  const { objectMetadataItem: workflowVersionMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    });
 
   useListenToObjectRecordEventsForQuery({
     queryId,
@@ -18,6 +34,23 @@ export const WorkflowSSESubscribeEffect = ({
         },
       },
     },
+  });
+
+  const handleWorkflowVersionCreateOne = useCallback(
+    (detail: ObjectRecordOperationBrowserEventDetail) => {
+      const { operation } = detail;
+
+      if (operation.type === 'create-one') {
+        setWorkflowRefetchRequested(true);
+      }
+    },
+    [setWorkflowRefetchRequested],
+  );
+
+  useListenToObjectRecordOperationBrowserEvent({
+    onObjectRecordOperationBrowserEvent: handleWorkflowVersionCreateOne,
+    objectMetadataItemId: workflowVersionMetadataItem.id,
+    operationTypes: ['create-one'],
   });
 
   return null;
