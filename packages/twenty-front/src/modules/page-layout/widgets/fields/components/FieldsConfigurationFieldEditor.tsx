@@ -1,6 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldsConfigurationFieldItem } from '@/page-layout/types/FieldsConfiguration';
-import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { IconEye, IconEyeOff, useIcons } from 'twenty-ui/display';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
 
@@ -21,7 +20,7 @@ export const FieldsConfigurationFieldEditor = ({
   const isVisible = field.isVisible !== false;
   const FieldIcon = getIcon(fieldMetadata.icon);
 
-  const fieldContent = (
+  return (
     <MenuItemDraggable
       LeftIcon={FieldIcon}
       text={fieldMetadata.label}
@@ -36,14 +35,6 @@ export const FieldsConfigurationFieldEditor = ({
           },
         },
       ]}
-    />
-  );
-
-  return (
-    <DraggableItem
-      draggableId={field.fieldMetadataId}
-      index={index}
-      itemComponent={fieldContent}
     />
   );
 };
