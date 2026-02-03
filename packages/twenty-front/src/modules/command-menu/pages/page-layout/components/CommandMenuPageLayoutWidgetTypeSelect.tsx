@@ -4,6 +4,7 @@ import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
 import { usePageLayoutIdFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutFromContextStoreTargetedRecord';
+import { getFrontComponentWidgetTypeSelectItemId } from '@/command-menu/pages/page-layout/utils/getFrontComponentWidgetTypeSelectItemId';
 import { isExistingWidgetMissingOrDifferentType } from '@/command-menu/pages/page-layout/utils/isExistingWidgetMissingOrDifferentType';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/findManyFrontComponents';
@@ -69,6 +70,13 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   });
 
   const frontComponents = frontComponentsData?.frontComponents ?? [];
+
+  const frontComponentsWithSelectItemId = frontComponents.map(
+    (frontComponent) => ({
+      frontComponent,
+      selectItemId: getFrontComponentWidgetTypeSelectItemId(frontComponent.id),
+    }),
+  );
 
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilComponentState(
@@ -176,9 +184,7 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
     'chart',
     'iframe',
     'rich-text',
-    ...frontComponents.map(
-      (frontComponent) => `front-component-${frontComponent.id}`,
-    ),
+    ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
   ];
 
   return (
@@ -220,22 +226,26 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
         </SelectableListItem>
       </CommandGroup>
 
-      {isApplicationEnabled && frontComponents.length > 0 && (
+      {isApplicationEnabled && frontComponentsWithSelectItemId.length > 0 && (
         <CommandGroup heading={t`Front Components`}>
-          {frontComponents.map((frontComponent) => (
-            <SelectableListItem
-              key={frontComponent.id}
-              itemId={`front-component-${frontComponent.id}`}
-              onEnter={() => handleCreateFrontComponentWidget(frontComponent)}
-            >
-              <CommandMenuItem
-                Icon={IconApps}
-                label={frontComponent.name}
-                id={`front-component-${frontComponent.id}`}
-                onClick={() => handleCreateFrontComponentWidget(frontComponent)}
-              />
-            </SelectableListItem>
-          ))}
+          {frontComponentsWithSelectItemId.map(
+            ({ frontComponent, selectItemId }) => (
+              <SelectableListItem
+                key={frontComponent.id}
+                itemId={selectItemId}
+                onEnter={() => handleCreateFrontComponentWidget(frontComponent)}
+              >
+                <CommandMenuItem
+                  Icon={IconApps}
+                  label={frontComponent.name}
+                  id={selectItemId}
+                  onClick={() =>
+                    handleCreateFrontComponentWidget(frontComponent)
+                  }
+                />
+              </SelectableListItem>
+            ),
+          )}
         </CommandGroup>
       )}
     </CommandMenuList>
