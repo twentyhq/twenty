@@ -2,7 +2,6 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 
 export const TASK_TARGET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: 'bb2b29b8-7f46-4106-a8ae-3a32df9c9166',
-  standardId: '20202020-5a9a-44e8-95df-771cd06d0fb1',
   nameSingular: 'taskTarget',
   namePlural: 'taskTargets',
   labelSingular: 'Task Target',

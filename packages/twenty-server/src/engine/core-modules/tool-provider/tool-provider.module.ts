@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { ToolGeneratorModule } from 'src/engine/core-modules/tool-generator/tool-generator.module';
@@ -12,6 +13,7 @@ import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
@@ -46,6 +48,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,
     UserRoleModule,
+    TypeOrmModule.forFeature([UserEntity]),
   ],
   providers: [
     ToolIndexResolver,

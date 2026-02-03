@@ -42,7 +42,6 @@ describe('useUpdateStep', () => {
       settings: {
         input: {
           logicFunctionId: 'id',
-          logicFunctionVersion: '1',
           logicFunctionInput: {},
         },
         outputSchema: {},

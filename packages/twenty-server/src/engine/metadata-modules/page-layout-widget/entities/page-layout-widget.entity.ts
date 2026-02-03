@@ -1,6 +1,10 @@
 import { ObjectType } from '@nestjs/graphql';
 
 import {
+  PageLayoutWidgetConditionalDisplay,
+  PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
+import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -70,8 +74,14 @@ export class PageLayoutWidgetEntity<
   @JoinColumn({ name: 'objectMetadataId' })
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
+  @Column({ type: 'jsonb', nullable: true })
+  conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
+
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: JsonbProperty<GridPosition>;
+
+  @Column({ type: 'jsonb', nullable: true })
+  position: JsonbProperty<PageLayoutWidgetPosition | null>;
 
   @Column({ type: 'jsonb', nullable: false })
   configuration: JsonbProperty<

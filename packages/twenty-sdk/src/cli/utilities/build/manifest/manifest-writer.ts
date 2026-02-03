@@ -1,11 +1,10 @@
 import * as fs from 'fs-extra';
 import path from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
+import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 
 export const writeManifestToOutput = async (
   appPath: string,
-  manifest: ApplicationManifest,
+  manifest: Manifest,
 ): Promise<string> => {
   const outputDir = path.join(appPath, OUTPUT_DIR);
   await fs.ensureDir(outputDir);

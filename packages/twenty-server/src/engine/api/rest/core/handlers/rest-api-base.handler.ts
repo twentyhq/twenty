@@ -7,8 +7,6 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
 import { CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { RestToCommonSelectedFieldsHandler } from 'src/engine/api/rest/core/rest-to-common-args-handlers/selected-fields-handler';
@@ -17,12 +15,17 @@ import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.typ
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -79,28 +82,15 @@ export abstract class RestApiBaseHandler {
     FormatResult | { data: FormatResult[] } | CommonGroupByOutputItem[]
   >;
 
-  public getAuthContextFromRequest(
-    request: AuthenticatedRequest,
-  ): WorkspaceAuthContext {
-    return request;
-  }
-
   private getObjectsPermissions = async (authContext: WorkspaceAuthContext) => {
     let roleId: string;
 
-    if (isDefined(authContext.apiKey)) {
+    if (isApiKeyAuthContext(authContext)) {
       roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
         authContext.apiKey.id,
         authContext.workspace.id,
       );
-    } else {
-      if (!isDefined(authContext.userWorkspaceId)) {
-        throw new PermissionsException(
-          'No user workspace ID found in authentication context',
-          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
-        );
-      }
-
+    } else if (isUserAuthContext(authContext)) {
       const userWorkspaceRoleId =
         await this.userRoleService.getRoleIdForUserWorkspace({
           userWorkspaceId: authContext.userWorkspaceId,
@@ -115,6 +105,11 @@ export abstract class RestApiBaseHandler {
       }
 
       roleId = userWorkspaceRoleId;
+    } else {
+      throw new PermissionsException(
+        'Authentication context is invalid',
+        PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      );
     }
 
     const { rolesPermissions } =
@@ -161,7 +156,7 @@ export abstract class RestApiBaseHandler {
       objectIdByNameSingular,
     } = await this.getObjectMetadata(request, parsedObject);
 
-    const authContext = this.getAuthContextFromRequest(request);
+    const authContext = getWorkspaceAuthContext();
 
     return {
       authContext,
@@ -232,13 +227,19 @@ export abstract class RestApiBaseHandler {
 
     let objectId = idByNamePlural[parsedObject];
     let flatObjectMetadataItem = objectId
-      ? flatObjectMetadataMaps.byId[objectId]
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: objectId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        })
       : undefined;
 
     if (!flatObjectMetadataItem) {
       const wrongObjectId = idByNameSingular[parsedObject];
       const wrongFlatObjectMetadataItem = wrongObjectId
-        ? flatObjectMetadataMaps.byId[wrongObjectId]
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: wrongObjectId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
         : undefined;
 
       let hint = 'eg: companies';

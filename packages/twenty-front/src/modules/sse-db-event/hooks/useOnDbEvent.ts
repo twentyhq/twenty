@@ -1,6 +1,6 @@
+import { SseClientContext } from '@/sse-db-event/contexts/SseClientContext';
 import { ON_DB_EVENT } from '@/sse-db-event/graphql/subscriptions/onDbEvent';
-import { useSseClient } from '@/sse-db-event/hooks/useSseClient.util';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import {
   type Subscription,
   type SubscriptionOnDbEventArgs,
@@ -20,7 +20,7 @@ export const useOnDbEvent = ({
   input,
   skip = false,
 }: OnDbEventArgs) => {
-  const { sseClient } = useSseClient();
+  const sseClient = useContext(SseClientContext);
 
   useEffect(() => {
     if (skip === true) {
@@ -29,7 +29,8 @@ export const useOnDbEvent = ({
     const next = (value: { data: Subscription }) => onData?.(value.data);
     const error = (err: unknown) => onError?.(err);
     const complete = () => onComplete?.();
-    const unsubscribe = sseClient.subscribe(
+
+    const unsubscribe = sseClient?.subscribe(
       {
         query: ON_DB_EVENT.loc?.source.body || '',
         variables: { input },
@@ -42,7 +43,7 @@ export const useOnDbEvent = ({
     );
 
     return () => {
-      unsubscribe();
+      unsubscribe?.();
     };
   }, [input, onComplete, onData, onError, skip, sseClient]);
 };

@@ -14,7 +14,6 @@ describe('getWorkflowVariablesUsedInStep', () => {
           logicFunctionInput: {
             a: '{{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a.b.c.d}}',
           },
-          logicFunctionVersion: 'draft',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -106,7 +105,6 @@ Set {
           logicFunctionInput: {
             a: '{{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.b}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.c}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.d}}',
           },
-          logicFunctionVersion: 'draft',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -146,7 +144,6 @@ Set {
           logicFunctionInput: {
             a: '{{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}} {{5f7b9b44-bb07-41ba-aef8-ec0eaa5eea2c.a}}',
           },
-          logicFunctionVersion: 'draft',
         },
         outputSchema: {},
         errorHandlingOptions: {

@@ -293,10 +293,10 @@ export class ProcessNestedRelationsV2Helper {
       );
     }
 
-    const targetRelation =
-      flatFieldMetadataMaps.byId[
-        targetFieldMetadata.relationTargetFieldMetadataId
-      ];
+    const targetRelation = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: targetFieldMetadata.relationTargetFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     const targetRelationName = targetRelation?.name;
 

@@ -8,7 +8,9 @@
     "twenty": "dist/cli.cjs"
   },
   "files": [
-    "dist"
+    "dist",
+    "front-component",
+    "front-component-constants"
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build"
@@ -26,11 +28,24 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./front-component": {
+      "types": "./dist/front-component/index.d.ts",
+      "import": "./dist/front-component.mjs",
+      "require": "./dist/front-component.cjs"
+    },
+    "./front-component-constants": {
+      "types": "./dist/front-component-constants/index.d.ts",
+      "import": "./dist/front-component-constants.mjs",
+      "require": "./dist/front-component-constants.cjs"
     }
   },
   "license": "AGPL-3.0",
   "dependencies": {
     "@genql/cli": "^3.0.3",
+    "@quilted/threads": "^4.0.1",
+    "@remote-dom/core": "^1.10.1",
+    "@remote-dom/react": "^1.2.2",
     "@sniptt/guards": "^0.2.0",
     "archiver": "^7.0.1",
     "axios": "^1.6.0",
@@ -47,19 +62,23 @@
     "inquirer": "^10.0.0",
     "jsonc-parser": "^3.2.0",
     "lodash.camelcase": "^4.3.0",
-    "react": "^19.0.0",
+    "react": "^18.0.0",
+    "twenty-ui": "workspace:*",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@prettier/sync": "^0.5.2",
     "@types/archiver": "^6.0.0",
     "@types/fs-extra": "^11.0.0",
     "@types/inquirer": "^9.0.0",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/node": "^24.0.0",
-    "@types/react": "^19.0.2",
+    "@types/react": "^18",
+    "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
     "vite-plugin-dts": "^4.5.4",
     "wait-on": "^7.2.0"
@@ -69,6 +88,13 @@
     "yarn": "^4.0.2"
   },
   "typesVersions": {
-    "*": {}
+    "*": {
+      "front-component": [
+        "dist/front-component/index.d.ts"
+      ],
+      "front-component-constants": [
+        "dist/front-component-constants/index.d.ts"
+      ]
+    }
   }
 }

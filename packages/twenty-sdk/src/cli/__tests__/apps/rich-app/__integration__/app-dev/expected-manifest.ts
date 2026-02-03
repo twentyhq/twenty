@@ -1,10 +1,17 @@
-import { FieldType } from '@/application';
-import type { ApplicationManifest } from 'twenty-shared/application';
+import { FieldType } from '@/sdk';
+import type { Manifest } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-export const EXPECTED_MANIFEST: ApplicationManifest = {
+export const EXPECTED_MANIFEST: Manifest = {
   sources: {},
-  yarnLock: '',
+  publicAssets: [
+    {
+      checksum: '99496069dcc2a1488e1cae9f826d2707',
+      fileName: 'favicon.png',
+      filePath: 'public/favicon.png',
+      fileType: 'png',
+    },
+  ],
   application: {
     applicationVariables: {
       DEFAULT_RECIPIENT_NAME: {
@@ -16,9 +23,11 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     },
     description: 'A simple hello world app',
     displayName: 'Hello World',
-    functionRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+    defaultRoleUniversalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     icon: 'IconWorld',
     universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
+    yarnLockChecksum: 'd41d8cd98f00b204e9800998ecf8427e',
+    packageJsonChecksum: '42c3913415952d91ff1cf67ef6452872',
   },
   frontComponents: [
     {
@@ -58,47 +67,43 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
       universalIdentifier: 'f1234567-abcd-4000-8000-000000000001',
     },
   ],
-  objectExtensions: [
+
+  fields: [
     {
-      fields: [
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      description: 'Post card category',
+      label: 'Category',
+      name: 'category',
+      options: [
         {
-          description: 'Priority level for the post card (1-10)',
-          label: 'Priority',
-          name: 'priority',
-          type: FieldType.NUMBER,
-          universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+          color: 'blue',
+          label: 'Personal',
+          position: 0,
+          value: 'PERSONAL',
         },
         {
-          description: 'Post card category',
-          label: 'Category',
-          name: 'category',
-          options: [
-            {
-              color: 'blue',
-              label: 'Personal',
-              position: 0,
-              value: 'PERSONAL',
-            },
-            {
-              color: 'green',
-              label: 'Business',
-              position: 1,
-              value: 'BUSINESS',
-            },
-            {
-              color: 'orange',
-              label: 'Promotional',
-              position: 2,
-              value: 'PROMOTIONAL',
-            },
-          ],
-          type: FieldType.SELECT,
-          universalIdentifier: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+          color: 'green',
+          label: 'Business',
+          position: 1,
+          value: 'BUSINESS',
+        },
+        {
+          color: 'orange',
+          label: 'Promotional',
+          position: 2,
+          value: 'PROMOTIONAL',
         },
       ],
-      targetObject: {
-        nameSingular: 'postCard',
-      },
+      type: FieldType.SELECT,
+      universalIdentifier: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+    },
+    {
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      description: 'Priority level for the post card (1-10)',
+      label: 'Priority',
+      name: 'priority',
+      type: FieldType.NUMBER,
+      universalIdentifier: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
     },
   ],
   objects: [
@@ -202,44 +207,6 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
       universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
     },
   ],
-  packageJson: {
-    name: 'rich-app',
-    version: '0.1.0',
-    license: 'MIT',
-    engines: {
-      node: '^24.5.0',
-      npm: 'please-use-yarn',
-      yarn: '>=4.0.2',
-    },
-    packageManager: 'yarn@4.9.2',
-    scripts: {
-      'auth:login': 'twenty auth:login',
-      'auth:logout': 'twenty auth:logout',
-      'auth:status': 'twenty auth:status',
-      'auth:switch': 'twenty auth:switch',
-      'auth:list': 'twenty auth:list',
-      'app:dev': 'twenty app:dev',
-      'entity:add': 'twenty entity:add',
-      'app:generate': 'twenty app:generate',
-      'function:logs': 'twenty function:logs',
-      'function:execute': 'twenty function:execute',
-      'app:uninstall': 'twenty app:uninstall',
-      help: 'twenty help',
-      lint: 'eslint',
-      'lint:fix': 'eslint --fix',
-    },
-    dependencies: {
-      'twenty-sdk': 'latest',
-    },
-    devDependencies: {
-      typescript: '^5.9.3',
-      '@types/node': '^24.7.2',
-      '@types/react': '^19.0.2',
-      react: '^19.0.2',
-      eslint: '^9.32.0',
-      'typescript-eslint': '^8.50.0',
-    },
-  },
   roles: [
     {
       canBeAssignedToAgents: false,
@@ -268,8 +235,8 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
         {
           canReadFieldValue: false,
           canUpdateFieldValue: false,
-          fieldName: 'content',
-          objectNameSingular: 'postCard',
+          fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
       label: 'Default function role',
@@ -279,14 +246,14 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
           canUpdateObjectRecords: true,
-          objectNameSingular: 'postCard',
+          objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
       permissionFlags: [PermissionFlagType.APPLICATIONS],
       universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     },
   ],
-  functions: [
+  logicFunctions: [
     {
       builtHandlerChecksum: '[checksum]',
       builtHandlerPath: 'src/root.function.mjs',
@@ -307,10 +274,10 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/greeting.function.mjs',
+      builtHandlerPath: 'src/logic-functions/greeting.function.mjs',
       handlerName: 'default.handler',
       name: 'greeting-function',
-      sourceHandlerPath: 'src/functions/greeting.function.ts',
+      sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
       timeoutSeconds: 5,
       triggers: [
         {
@@ -325,10 +292,10 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/test-function-2.function.mjs',
-      handlerName: 'config.handler',
+      builtHandlerPath: 'src/logic-functions/test-function-2.function.mjs',
+      handlerName: 'default.handler',
       name: 'test-function-2',
-      sourceHandlerPath: 'src/functions/test-function-2.function.ts',
+      sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
       timeoutSeconds: 2,
       triggers: [
         {
@@ -341,10 +308,10 @@ export const EXPECTED_MANIFEST: ApplicationManifest = {
     },
     {
       builtHandlerChecksum: '[checksum]',
-      builtHandlerPath: 'src/functions/test-function.function.mjs',
+      builtHandlerPath: 'src/logic-functions/test-function.function.mjs',
       handlerName: 'default.handler',
       name: 'test-function',
-      sourceHandlerPath: 'src/functions/test-function.function.ts',
+      sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
       timeoutSeconds: 2,
       triggers: [
         {

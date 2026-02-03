@@ -28,7 +28,6 @@ describe('getStepInfoHistoryItem', () => {
     settings: {
       input: {
         logicFunctionId: 'func',
-        logicFunctionVersion: '1.0.0',
         logicFunctionInput: {},
       },
       outputSchema: {},

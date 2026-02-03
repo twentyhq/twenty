@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import {
@@ -24,7 +25,10 @@ export const fromDeleteViewFilterInputToFlatViewFilterOrThrow = ({
     ['id'],
   );
 
-  const existingFlatViewFilterToDelete = flatViewFilterMaps.byId[viewFilterId];
+  const existingFlatViewFilterToDelete = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewFilterId,
+    flatEntityMaps: flatViewFilterMaps,
+  });
 
   if (!isDefined(existingFlatViewFilterToDelete)) {
     throw new ViewFilterException(

@@ -8,39 +8,43 @@ import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twent
 describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   const createMockFlatObjectMetadata = (
     fieldIds: string[],
-  ): FlatObjectMetadata =>
-    ({
-      id: 'test-object-id',
-      nameSingular: 'test',
-      namePlural: 'tests',
-      labelSingular: 'Test',
-      labelPlural: 'Tests',
-      icon: 'IconTest',
-      targetTableName: 'test',
-      isCustom: false,
-      isRemote: false,
-      isActive: true,
-      isSystem: false,
-      isAuditLogged: false,
-      isSearchable: false,
-      workspaceId: 'test-workspace-id',
-      universalIdentifier: 'test-object-id',
-      indexMetadataIds: [],
-      fieldIds,
-      viewIds: [],
-      applicationId: 'test-application-id',
-      isLabelSyncedWithName: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      shortcut: null,
-      description: null,
-      standardOverrides: null,
-      isUIReadOnly: false,
-      standardId: null,
-      labelIdentifierFieldMetadataId: null,
-      imageIdentifierFieldMetadataId: null,
-      duplicateCriteria: null,
-    }) as FlatObjectMetadata;
+  ): FlatObjectMetadata => ({
+    id: 'test-object-id',
+    nameSingular: 'test',
+    namePlural: 'tests',
+    labelSingular: 'Test',
+    labelPlural: 'Tests',
+    icon: 'IconTest',
+    targetTableName: 'test',
+    isCustom: false,
+    isRemote: false,
+    isActive: true,
+    isSystem: false,
+    isAuditLogged: false,
+    isSearchable: false,
+    workspaceId: 'test-workspace-id',
+    universalIdentifier: 'test-object-id',
+    indexMetadataIds: [],
+    fieldIds,
+    viewIds: [],
+    applicationId: 'test-application-id',
+    isLabelSyncedWithName: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    shortcut: null,
+    description: null,
+    standardOverrides: null,
+    isUIReadOnly: false,
+    labelIdentifierFieldMetadataId: null,
+    imageIdentifierFieldMetadataId: null,
+    duplicateCriteria: null,
+    applicationUniversalIdentifier: 'test-application-id',
+    fieldUniversalIdentifiers: fieldIds,
+    viewUniversalIdentifiers: [],
+    indexMetadataUniversalIdentifiers: [],
+    labelIdentifierFieldMetadataUniversalIdentifier: null,
+    imageIdentifierFieldMetadataUniversalIdentifier: null,
+  });
 
   const createMockFlatFieldMetadata = (
     id: string,
@@ -71,17 +75,17 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
   ): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: fields.reduce(
+    byUniversalIdentifier: fields.reduce(
       (accumulator, field) => {
-        accumulator[field.id] = field;
+        accumulator[field.universalIdentifier] = field;
 
         return accumulator;
       },
       {} as Record<string, FlatFieldMetadata>,
     ),
-    idByUniversalIdentifier: fields.reduce(
+    universalIdentifierById: fields.reduce(
       (accumulator, field) => {
-        accumulator[field.universalIdentifier] = field.id;
+        accumulator[field.id] = field.universalIdentifier;
 
         return accumulator;
       },

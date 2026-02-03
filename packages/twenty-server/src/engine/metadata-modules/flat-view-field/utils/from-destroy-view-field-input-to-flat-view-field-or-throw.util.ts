@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
 import {
@@ -24,7 +25,10 @@ export const fromDestroyViewFieldInputToFlatViewFieldOrThrow = ({
     ['id'],
   );
 
-  const existingFlatViewFieldToDestroy = flatViewFieldMaps.byId[viewFieldId];
+  const existingFlatViewFieldToDestroy = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewFieldId,
+    flatEntityMaps: flatViewFieldMaps,
+  });
 
   if (!isDefined(existingFlatViewFieldToDestroy)) {
     throw new ViewFieldException(

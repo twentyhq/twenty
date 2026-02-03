@@ -7,6 +7,7 @@ import {
   type workflowCreateRecordActionSchema,
   type workflowCronTriggerSchema,
   type workflowDatabaseEventTriggerSchema,
+  type workflowDelayActionSchema,
   type workflowDeleteRecordActionSchema,
   type workflowEmptyActionSchema,
   type workflowFilterActionSchema,
@@ -15,6 +16,7 @@ import {
   type workflowHttpRequestActionSchema,
   type workflowIfElseActionSchema,
   type workflowIteratorActionSchema,
+  type workflowLogicFunctionActionSchema,
   type workflowManualTriggerSchema,
   type workflowRunSchema,
   type workflowRunStateSchema,
@@ -25,11 +27,13 @@ import {
   type workflowUpdateRecordActionSchema,
   type workflowUpsertRecordActionSchema,
   type workflowWebhookTriggerSchema,
-  type workflowDelayActionSchema,
 } from 'twenty-shared/workflow';
 import { type z } from 'zod';
 
 export type WorkflowCodeAction = z.infer<typeof workflowCodeActionSchema>;
+export type WorkflowLogicFunctionAction = z.infer<
+  typeof workflowLogicFunctionActionSchema
+>;
 export type WorkflowSendEmailAction = z.infer<
   typeof workflowSendEmailActionSchema
 >;
@@ -63,6 +67,7 @@ export type WorkflowEmptyAction = z.infer<typeof workflowEmptyActionSchema>;
 
 export type WorkflowAction =
   | WorkflowCodeAction
+  | WorkflowLogicFunctionAction
   | WorkflowSendEmailAction
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction

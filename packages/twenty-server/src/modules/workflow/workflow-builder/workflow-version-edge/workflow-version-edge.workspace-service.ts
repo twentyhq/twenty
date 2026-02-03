@@ -535,7 +535,7 @@ export class WorkflowVersionEdgeWorkspaceService {
                 input: {
                   ...sourceStep.settings.input,
                   initialLoopStepIds: currentInitialLoopStepIds.filter(
-                    (id) => id !== target,
+                    (id: string) => id !== target,
                   ),
                 },
               },

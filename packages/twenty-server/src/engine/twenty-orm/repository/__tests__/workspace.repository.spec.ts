@@ -87,7 +87,6 @@ describe('WorkspaceRepository', () => {
       options: null,
       settings: null,
       morphId: null,
-      standardId: null,
       standardOverrides: null,
       applicationId: 'application-id',
       relationTargetFieldMetadataId: null,
@@ -97,35 +96,47 @@ describe('WorkspaceRepository', () => {
       kanbanAggregateOperationViewIds: [],
       viewFieldIds: [],
       mainGroupByFieldMetadataViewIds: [],
+      applicationUniversalIdentifier: 'application-id',
+      objectMetadataUniversalIdentifier: 'test-metadata-id',
+      relationTargetObjectMetadataUniversalIdentifier: null,
+      relationTargetFieldMetadataUniversalIdentifier: null,
+      viewFilterUniversalIdentifiers: [],
+      viewFieldUniversalIdentifiers: [],
+      kanbanAggregateOperationViewUniversalIdentifiers: [],
+      calendarViewUniversalIdentifiers: [],
+      mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+      universalSettings: null,
     };
 
     mockInternalContext = {
       workspaceId: 'test-workspace-id',
       flatObjectMetadataMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       flatFieldMetadataMaps: {
-        byId: {
-          'test-field-id': mockFieldMetadata,
+        byUniversalIdentifier: {
+          'id-field-universal-id': mockFieldMetadata,
         },
-        idByUniversalIdentifier: {},
+        universalIdentifierById: {
+          'test-field-id': 'id-field-universal-id',
+        },
         universalIdentifiersByApplicationId: {},
       },
       flatIndexMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       flatRowLevelPermissionPredicateMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       flatRowLevelPermissionPredicateGroupMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       objectIdByNameSingular: {},

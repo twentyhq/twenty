@@ -7,7 +7,6 @@ import { FileFolder } from 'twenty-shared/types';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
-import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { SignedFileDTO } from 'src/engine/core-modules/file/file-upload/dtos/signed-file.dto';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
@@ -52,28 +51,6 @@ export class FileUploadResolver {
     }
 
     return files[0];
-  }
-
-  @Mutation(() => FileDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async uploadFilesFieldFile(
-    @AuthWorkspace()
-    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<FileDTO> {
-    const stream = createReadStream();
-    const buffer = await streamToBuffer(stream);
-
-    const fileEntity = await this.fileUploadService.uploadFilesFieldFile({
-      file: buffer,
-      filename,
-      declaredMimeType: mimetype,
-      workspaceId,
-      applicationId: workspaceCustomApplicationId,
-    });
-
-    return fileEntity;
   }
 
   @Mutation(() => SignedFileDTO)

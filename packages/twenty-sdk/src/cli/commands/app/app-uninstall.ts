@@ -1,9 +1,9 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
-import { runManifestBuild } from '@/cli/utilities/build/manifest/manifest-build';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 
 export class AppUninstallCommand {
   private apiService = new ApiService();
@@ -25,7 +25,7 @@ export class AppUninstallCommand {
         process.exit(1);
       }
 
-      const { manifest } = await runManifestBuild(appPath);
+      const { manifest } = await buildManifest(appPath);
 
       if (!manifest) {
         return { success: false, error: 'Build failed' };

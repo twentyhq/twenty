@@ -4,8 +4,7 @@ import {
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 

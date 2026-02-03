@@ -8,14 +8,21 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity('file')
 @Index('IDX_FILE_WORKSPACE_ID', ['workspaceId'])
+@Unique('IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE', [
+  'workspaceId',
+  'applicationId',
+  'path',
+])
 export class FileEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -46,4 +53,7 @@ export class FileEntity extends WorkspaceRelatedEntity {
 
   @Column({ nullable: false, default: false })
   isStaticAsset: boolean;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  settings: FileSettings | null;
 }

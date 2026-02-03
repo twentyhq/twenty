@@ -15,8 +15,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -35,7 +33,9 @@ import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runne
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
 import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -247,8 +247,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           flatFieldMetadataMaps,
           flatObjectMetadata,
         );
-        const fieldMetadata =
-          flatFieldMetadataMaps.byId[fieldIdByName[fieldName]];
+        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldIdByName[fieldName],
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
 
         if (!fieldMetadata) {
           return;
@@ -283,7 +285,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       flatFieldMetadataMaps,
       flatObjectMetadata,
     );
-    const fieldMetadata = flatFieldMetadataMaps.byId[fieldIdByName[fieldName]];
+    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldIdByName[fieldName],
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     return fieldMetadata?.isSystem ?? false;
   }
@@ -365,9 +370,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       joinColumnName: string | undefined;
     }> = [];
 
-    for (const field of Object.values(flatFieldMetadataMaps.byId).filter(
-      isDefined,
-    )) {
+    for (const field of Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined)) {
       if (
         !isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) ||
         field.relationTargetObjectMetadataId !== flatObjectMetadata.id ||
@@ -387,7 +392,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         continue;
       }
 
-      const objMetadata = flatObjectMetadataMaps.byId[field.objectMetadataId];
+      const objMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: field.objectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
 
       if (!objMetadata) {
         continue;

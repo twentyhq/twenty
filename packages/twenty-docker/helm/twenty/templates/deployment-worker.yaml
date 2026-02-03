@@ -52,11 +52,21 @@ spec:
           env:
             - name: SERVER_URL
               value: {{ include "twenty.serverUrl" . | quote }}
+            {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "twenty.dbPassword.secretName" . }}
+                  key: {{ include "twenty.dbPassword.secretKey" . }}
+            - name: PG_DATABASE_URL
+              value: {{ include "twenty.dbUrl.template" . | quote }}
+            {{- else }}
             - name: PG_DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "twenty.fullname" . }}-db-url
+                  name: {{ include "twenty.dbUrl.secretName" . }}
                   key: url
+            {{- end }}
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: STORAGE_TYPE

@@ -6,12 +6,36 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   generateMorphOrRelationFlatFieldMetadataPair,
   type SourceTargetMorphOrRelationFlatFieldAndFlatIndex,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
+
+const MOCK_FLAT_APPLICATION: FlatApplication = {
+  id: '20202020-81ee-42da-a281-668632f32fe7',
+  universalIdentifier: '20202020-81ee-42da-a281-668632f32fe7',
+  workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+  name: 'Workspace Custom Application',
+  description: null,
+  version: null,
+  sourceType: 'local',
+  sourcePath: '',
+  packageJsonChecksum: null,
+  packageJsonFileId: null,
+  yarnLockChecksum: null,
+  yarnLockFileId: null,
+  availablePackages: {},
+  logicFunctionLayerId: null,
+  defaultRoleId: null,
+  defaultRole: null,
+  canBeUninstalled: false,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  deletedAt: null,
+};
 
 type GenerateMorphOrRelationFlatFieldMetadataPairTestInput = Parameters<
   typeof generateMorphOrRelationFlatFieldMetadataPair
@@ -28,8 +52,6 @@ type TestCase = EachTestingContext<{
 
 describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () => {
   const mockWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-  const mockWorkspaceCustomApplicationId =
-    '20202020-81ee-42da-a281-668632f32fe7';
 
   describe('Success cases', () => {
     const testCases: TestCase[] = [
@@ -43,7 +65,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
@@ -79,7 +101,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
@@ -115,7 +137,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'petId',
             workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             createFieldInput: {
               name: 'pets',
               label: 'Pets',
@@ -151,7 +173,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
             workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',
@@ -188,7 +210,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatFieldMetadataType: FieldMetadataType.RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
             workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',
@@ -225,7 +247,7 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
             targetFlatFieldMetadataType: FieldMetadataType.MORPH_RELATION,
             sourceFlatObjectMetadataJoinColumnName: 'targetPetId',
             workspaceId: mockWorkspaceId,
-            workspaceCustomApplicationId: mockWorkspaceCustomApplicationId,
+            flatApplication: MOCK_FLAT_APPLICATION,
             morphId: '20202020-9a2b-4c3d-a4e5-f6a7b8c9d0e1',
             createFieldInput: {
               name: 'targetPet',

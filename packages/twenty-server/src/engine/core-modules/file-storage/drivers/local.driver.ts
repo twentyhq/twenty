@@ -3,9 +3,6 @@ import * as fs from 'fs/promises';
 import path, { dirname, join } from 'path';
 import { type Readable } from 'stream';
 
-import { isObject } from '@sniptt/guards';
-import { type Sources } from 'twenty-shared/types';
-
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import {
   FileStorageException,
@@ -23,51 +20,11 @@ export class LocalDriver implements StorageDriver {
     this.options = options;
   }
 
-  async createFolder(path: string) {
+  private async createFolder(path: string) {
     return fs.mkdir(path, { recursive: true });
   }
 
-  async write(params: {
-    filePath: string;
-    sourceFile: Buffer | Uint8Array | string;
-    mimeType: string | undefined;
-  }): Promise<void> {
-    const filePath = `${this.options.storagePath}/${params.filePath}`;
-    const folderPath = dirname(filePath);
-
-    await this.createFolder(folderPath);
-
-    await fs.writeFile(filePath, params.sourceFile);
-  }
-
-  async writeFolder(sources: Sources, folderPath: string) {
-    for (const key of Object.keys(sources)) {
-      if (isObject(sources[key])) {
-        await this.writeFolder(sources[key], join(folderPath, key));
-        continue;
-      }
-      await this.write({
-        filePath: join(folderPath, key),
-        sourceFile: sources[key],
-        mimeType: undefined,
-      });
-    }
-  }
-
-  async delete(params: {
-    folderPath: string;
-    filename?: string;
-  }): Promise<void> {
-    const filePath = join(
-      `${this.options.storagePath}/`,
-      params.folderPath,
-      params.filename || '',
-    );
-
-    await fs.rm(filePath, { recursive: true });
-  }
-
-  async read(params: { filePath: string }): Promise<Readable> {
+  async readFile(params: { filePath: string }): Promise<Readable> {
     const joinedPath = join(`${this.options.storagePath}/`, params.filePath);
     let filePath: string;
 
@@ -82,7 +39,6 @@ export class LocalDriver implements StorageDriver {
     const storageRoot = realpathSync(path.resolve(this.options.storagePath));
 
     if (!filePath.startsWith(storageRoot + path.sep)) {
-      // Prevent directory traversal
       throw new FileStorageException(
         'Access denied',
         FileStorageExceptionCode.FILE_NOT_FOUND,
@@ -103,28 +59,100 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  async readFolder(folderPath: string): Promise<Sources> {
-    const sources: Sources = {};
+  async writeFile(params: {
+    filePath: string;
+    sourceFile: Buffer | Uint8Array | string;
+    mimeType: string | undefined;
+  }): Promise<void> {
+    const filePath = `${this.options.storagePath}/${params.filePath}`;
+    const folderPath = dirname(filePath);
 
-    const rootFolderPath = join(`${this.options.storagePath}/`, folderPath);
+    await this.createFolder(folderPath);
+
+    await fs.writeFile(filePath, params.sourceFile);
+  }
+
+  async downloadFile(params: {
+    onStoragePath: string;
+    localPath: string;
+  }): Promise<void> {
+    await this.createFolder(dirname(params.localPath));
+
+    const filePath = join(`${this.options.storagePath}/`, params.onStoragePath);
+
+    const content = await fs.readFile(filePath);
+
+    await fs.writeFile(params.localPath, content);
+  }
+
+  async downloadFolder(params: {
+    onStoragePath: string;
+    localPath: string;
+  }): Promise<void> {
+    const rootFolderPath = join(
+      `${this.options.storagePath}/`,
+      params.onStoragePath,
+    );
+
+    await this.createFolder(params.localPath);
 
     const resources = await fs.readdir(rootFolderPath);
 
     for (const resource of resources) {
       const resourcePath = path.join(rootFolderPath, resource);
-
       const stats = await fs.stat(resourcePath);
 
       if (stats.isFile()) {
-        sources[resource] = await fs.readFile(resourcePath, 'utf8');
+        const content = await fs.readFile(resourcePath);
+
+        await fs.writeFile(path.join(params.localPath, resource), content);
       } else {
-        sources[resource] = await this.readFolder(
-          path.join(folderPath, resource),
-        );
+        await this.downloadFolder({
+          onStoragePath: path.join(params.onStoragePath, resource),
+          localPath: path.join(params.localPath, resource),
+        });
       }
     }
+  }
 
-    return sources;
+  async uploadFolder(params: {
+    localPath: string;
+    onStoragePath: string;
+  }): Promise<void> {
+    const resources = await fs.readdir(params.localPath);
+
+    for (const resource of resources) {
+      const resourcePath = path.join(params.localPath, resource);
+      const stats = await fs.stat(resourcePath);
+
+      if (stats.isFile()) {
+        const content = await fs.readFile(resourcePath);
+
+        await this.writeFile({
+          filePath: path.join(params.onStoragePath, resource),
+          sourceFile: content,
+          mimeType: undefined,
+        });
+      } else {
+        await this.uploadFolder({
+          localPath: resourcePath,
+          onStoragePath: path.join(params.onStoragePath, resource),
+        });
+      }
+    }
+  }
+
+  async delete(params: {
+    folderPath: string;
+    filename?: string;
+  }): Promise<void> {
+    const filePath = join(
+      `${this.options.storagePath}/`,
+      params.folderPath,
+      params.filename || '',
+    );
+
+    await fs.rm(filePath, { recursive: true });
   }
 
   async move(params: {
@@ -159,13 +187,10 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  async copy(
-    params: {
-      from: { folderPath: string; filename?: string };
-      to: { folderPath: string; filename?: string };
-    },
-    toInMemory = false,
-  ): Promise<void> {
+  async copy(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
     if (!params.from.filename && params.to.filename) {
       throw new Error('Cannot copy folder to file');
     }
@@ -176,7 +201,7 @@ export class LocalDriver implements StorageDriver {
     );
 
     const toPath = join(
-      toInMemory ? '' : this.options.storagePath,
+      this.options.storagePath,
       params.to.folderPath,
       params.to.filename || '',
     );
@@ -197,28 +222,14 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  async download(params: {
-    from: { folderPath: string; filename?: string };
-    to: { folderPath: string; filename?: string };
-  }): Promise<void> {
-    await this.copy(params, true);
+  async checkFileExists(params: { filePath: string }): Promise<boolean> {
+    const fullPath = join(this.options.storagePath, params.filePath);
+
+    return existsSync(fullPath);
   }
 
-  async checkFileExists(params: {
-    folderPath: string;
-    filename: string;
-  }): Promise<boolean> {
-    const filePath = join(
-      this.options.storagePath,
-      params.folderPath,
-      params.filename,
-    );
-
-    return existsSync(filePath);
-  }
-
-  async checkFolderExists(folderPath: string): Promise<boolean> {
-    const folderFullPath = join(this.options.storagePath, folderPath);
+  async checkFolderExists(params: { folderPath: string }): Promise<boolean> {
+    const folderFullPath = join(this.options.storagePath, params.folderPath);
 
     return existsSync(folderFullPath);
   }

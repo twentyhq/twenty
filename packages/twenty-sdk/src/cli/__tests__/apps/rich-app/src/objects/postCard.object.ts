@@ -1,5 +1,4 @@
-import { defineObject } from '@/application/objects/define-object';
-import { FieldType } from '@/application/fields/field-type';
+import { defineObject, FieldType } from '@/sdk';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -8,8 +7,13 @@ enum PostCardStatus {
   RETURNED = 'RETURNED',
 }
 
+export const POST_CARD_UNIVERSAL_IDENTIFIER =
+  '54b589ca-eeed-4950-a176-358418b85c05';
+
+export const CONTENT_FIELD_UNIVERSAL_IDENTIFIER =
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b';
 export default defineObject({
-  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  universalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
   nameSingular: 'postCard',
   namePlural: 'postCards',
   labelSingular: 'Post card',
@@ -18,7 +22,7 @@ export default defineObject({
   icon: 'IconMail',
   fields: [
     {
-      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      universalIdentifier: CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       label: 'Content',
       description: "Postcard's content",

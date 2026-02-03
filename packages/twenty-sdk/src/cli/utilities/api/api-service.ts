@@ -9,7 +9,10 @@ import {
   printSchema,
 } from 'graphql/index';
 import * as path from 'path';
-import { type ApplicationManifest } from 'twenty-shared/application';
+import {
+  type ApplicationManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { type FileFolder } from 'twenty-shared/types';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import { pascalCase } from 'twenty-shared/utils';
@@ -64,7 +67,7 @@ export class ApiService {
     );
   }
 
-  async validateAuth(): Promise<boolean> {
+  async validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {
     try {
       const query = `
         query CurrentWorkspace {
@@ -87,24 +90,81 @@ export class ApiService {
         },
       );
 
-      return response.status === 200 && !response.data.errors;
+      return {
+        authValid: response.status === 200 && !response.data.errors,
+        serverUp: response.status === 200,
+      };
     } catch {
-      return false;
+      return {
+        authValid: false,
+        serverUp: false,
+      };
     }
   }
 
-  async syncApplication(manifest: ApplicationManifest): Promise<ApiResponse> {
+  async checkApplicationExist(
+    universalIdentifier: string,
+  ): Promise<ApiResponse<boolean>> {
+    try {
+      const query = `
+        query CheckApplicationExist($universalIdentifier: UUID!) {
+          checkApplicationExist(universalIdentifier: $universalIdentifier)
+        }
+      `;
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query,
+          variables: { universalIdentifier },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.checkApplicationExist,
+        message: `Successfully find application`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async createApplication(
+    manifest: Manifest,
+  ): Promise<ApiResponse<ApplicationManifest>> {
     try {
       const mutation = `
-        mutation SyncApplication($manifest: JSON!, $packageJson: JSON!, $yarnLock: String!) {
-          syncApplication(manifest: $manifest, packageJson: $packageJson, yarnLock: $yarnLock)
+        mutation CreateOneApplication($input: CreateApplicationInput!) {
+          createOneApplication(input: $input) {
+            id
+            universalIdentifier
+          }
         }
       `;
 
       const variables = {
-        manifest,
-        packageJson: manifest.packageJson,
-        yarnLock: manifest.yarnLock,
+        input: {
+          universalIdentifier: manifest.application.universalIdentifier,
+          name: manifest.application.displayName,
+          version: '0.0.1',
+          sourcePath: 'cli-sync',
+        },
       };
 
       const response: AxiosResponse = await this.client.post(
@@ -130,8 +190,52 @@ export class ApiService {
 
       return {
         success: true,
+        data: response.data.data.createOneApplication,
+        message: `Successfully create application: ${manifest.application.displayName}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async syncApplication(manifest: Manifest): Promise<ApiResponse> {
+    try {
+      const mutation = `
+        mutation SyncApplication($manifest: JSON!) {
+          syncApplication(manifest: $manifest)
+        }
+      `;
+
+      const variables = { manifest };
+
+      const response: AxiosResponse = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
         data: response.data.data.syncApplication,
-        message: `Successfully synced application: ${manifest.packageJson.name}`,
+        message: `Successfully synced application: ${manifest.application.displayName}`,
       };
     } catch (error) {
       return {
@@ -291,11 +395,9 @@ export class ApiService {
   async executeLogicFunction({
     functionId,
     payload,
-    version = 'latest',
   }: {
     functionId: string;
     payload: Record<string, unknown>;
-    version?: string;
   }): Promise<
     ApiResponse<{
       data: unknown;
@@ -326,7 +428,6 @@ export class ApiService {
         input: {
           id: functionId,
           payload,
-          version,
         },
       };
 

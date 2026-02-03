@@ -19,7 +19,7 @@ export const defineManifestTests = (appPath: string): void => {
         normalizeManifestForComparison(EXPECTED_MANIFEST),
       );
 
-      for (const fn of manifest.functions) {
+      for (const fn of manifest.logicFunctions) {
         expect(fn.builtHandlerChecksum).toBeDefined();
         expect(fn.builtHandlerChecksum).not.toBeNull();
         expect(typeof fn.builtHandlerChecksum).toBe('string');
@@ -44,11 +44,11 @@ export const defineManifestTests = (appPath: string): void => {
     it('should load all entity types', async () => {
       const manifest = await fs.readJson(manifestOutputPath);
 
-      expect(manifest?.objects).toHaveLength(2);
-      expect(manifest?.functions).toHaveLength(4);
-      expect(manifest?.frontComponents).toHaveLength(4);
-      expect(manifest?.roles).toHaveLength(2);
-      expect(manifest?.objectExtensions).toHaveLength(1);
+      expect(manifest.objects).toHaveLength(2);
+      expect(manifest.logicFunctions).toHaveLength(4);
+      expect(manifest.frontComponents).toHaveLength(4);
+      expect(manifest.roles).toHaveLength(2);
+      expect(manifest.fields).toHaveLength(2);
     });
   });
 };

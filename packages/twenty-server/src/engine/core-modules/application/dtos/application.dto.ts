@@ -7,12 +7,13 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/applicationVariable/dtos/application-variable.dto';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 @ObjectType('Application')
@@ -40,6 +41,29 @@ export class ApplicationDTO {
   @Field()
   universalIdentifier: string;
 
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  packageJsonChecksum?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  packageJsonFileId?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  yarnLockChecksum?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  yarnLockFileId?: string;
+
+  @Field(() => GraphQLJSON)
+  availablePackages: Record<string, string>;
+
   @Field(() => Boolean)
   @IsBoolean()
   canBeUninstalled: boolean;
@@ -47,7 +71,7 @@ export class ApplicationDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  defaultLogicFunctionRoleId?: string;
+  defaultRoleId?: string;
 
   @IsOptional()
   @Field(() => RoleDTO, { nullable: true })

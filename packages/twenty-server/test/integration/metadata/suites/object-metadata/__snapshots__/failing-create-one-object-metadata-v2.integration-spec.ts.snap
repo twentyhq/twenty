@@ -6804,12 +6804,6 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "errors": [
             {
               "code": "INVALID_OBJECT_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
-            },
-            {
-              "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "Not_Camel_Case",
@@ -7401,12 +7395,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetA a",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetA a",
@@ -7429,12 +7417,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         },
         {
           "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "a a",
-            },
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -7461,12 +7443,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetA a",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetA a",
@@ -7491,12 +7467,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetA a",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetA a",
@@ -7519,12 +7489,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         },
         {
           "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetA a",
-            },
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -7575,12 +7539,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
       "objectMetadata": [
         {
           "errors": [
-            {
-              "code": "INVALID_OBJECT_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "a a",
-            },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -8899,12 +8857,6 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetΜ",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetΜ",
@@ -8951,12 +8903,6 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
         },
         {
           "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetΜ",
-            },
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -10384,12 +10330,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetNot_Camel_Case",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetNot_Camel_Case",
@@ -10412,12 +10352,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
         },
         {
           "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
-            },
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -10444,12 +10378,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetNot_Camel_Case",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetNot_Camel_Case",
@@ -10474,12 +10402,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetNot_Camel_Case",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetNot_Camel_Case",
@@ -10502,12 +10424,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
         },
         {
           "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetNot_Camel_Case",
-            },
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -10558,12 +10474,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
       "objectMetadata": [
         {
           "errors": [
-            {
-              "code": "INVALID_OBJECT_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
-            },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",

@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { AgentExceptionCode } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
@@ -37,9 +37,9 @@ export class FlatAgentValidatorService {
       type: 'create',
     });
 
-    const existingAgents = Object.values(optimisticFlatAgentMaps.byId).filter(
-      isDefined,
-    );
+    const existingAgents = Object.values(
+      optimisticFlatAgentMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     validationResult.errors.push(
       ...validateAgentRequiredProperties({
@@ -99,7 +99,16 @@ export class FlatAgentValidatorService {
       return validationResult;
     }
 
-    if (!buildOptions.isSystemBuild && isStandardMetadata(existingAgent)) {
+    if (
+      !buildOptions.isSystemBuild &&
+      // TODO refactor once agent has been migrated to universal pattern
+      isDefined(existingAgent.__universal) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: existingAgent.universalIdentifier,
+        applicationUniversalIdentifier:
+          existingAgent.__universal.applicationUniversalIdentifier,
+      })
+    ) {
       validationResult.errors.push({
         code: AgentExceptionCode.AGENT_IS_STANDARD,
         message: t`Cannot delete standard agent`,
@@ -144,7 +153,16 @@ export class FlatAgentValidatorService {
       return validationResult;
     }
 
-    if (!buildOptions.isSystemBuild && isStandardMetadata(fromFlatAgent)) {
+    if (
+      !buildOptions.isSystemBuild &&
+      // TODO refactor once agent has been migrated to universal pattern
+      isDefined(fromFlatAgent.__universal) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: fromFlatAgent.universalIdentifier,
+        applicationUniversalIdentifier:
+          fromFlatAgent.__universal.applicationUniversalIdentifier,
+      })
+    ) {
       validationResult.errors.push({
         code: AgentExceptionCode.AGENT_IS_STANDARD,
         message: t`Cannot update standard agent`,
@@ -162,7 +180,9 @@ export class FlatAgentValidatorService {
       ...partialFlatAgent,
     };
 
-    const existingAgents = Object.values(optimisticFlatAgentMaps.byId)
+    const existingAgents = Object.values(
+      optimisticFlatAgentMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((agent) => agent.id !== flatEntityId);
 

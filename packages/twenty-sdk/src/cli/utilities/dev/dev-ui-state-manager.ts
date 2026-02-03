@@ -6,9 +6,16 @@ import {
   type UiEvent,
   type DevUiState,
 } from '@/cli/utilities/dev/dev-ui-state';
-import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-build';
+import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
 const MAX_EVENT_NUMBER = 200;
+
+const FILE_STATUS_TRANSITION_MATRIX: Record<FileStatus, FileStatus[]> = {
+  pending: ['building', 'uploading', 'success'],
+  building: ['pending', 'uploading', 'success'],
+  uploading: ['pending', 'success'],
+  success: ['pending', 'building', 'uploading'],
+};
 
 export class DevUiStateManager {
   private state: DevUiState;
@@ -60,7 +67,7 @@ export class DevUiStateManager {
     const event: UiEvent = {
       id: ++this.eventIdCounter,
       timestamp: new Date(),
-      message,
+      message: message.slice(0, 5_000),
       status,
     };
 
@@ -75,14 +82,17 @@ export class DevUiStateManager {
   updateManifestState({
     manifestStatus,
     appName,
+    error,
   }: {
     manifestStatus?: ManifestStatus;
     appName?: string;
+    error?: string;
   }): void {
     this.state = {
       ...this.state,
       ...(manifestStatus ? { manifestStatus } : {}),
       ...(appName ? { appName } : {}),
+      ...(error ? { error: error.slice(0, 5_000) } : { error: undefined }),
     };
 
     this.notify();
@@ -94,10 +104,10 @@ export class DevUiStateManager {
     switch (entityType) {
       case 'objects':
         return SyncableEntity.Object;
-      case 'objectExtensions':
-        return SyncableEntity.ObjectExtension;
-      case 'functions':
-        return SyncableEntity.Function;
+      case 'fields':
+        return SyncableEntity.Field;
+      case 'logicFunctions':
+        return SyncableEntity.LogicFunction;
       case 'frontComponents':
         return SyncableEntity.FrontComponent;
       case 'roles':
@@ -164,11 +174,27 @@ export class DevUiStateManager {
   updateFileStatus(filePath: string, status: FileStatus): void {
     const entities = new Map(this.state.entities);
 
-    entities.set(filePath, {
-      name: filePath,
-      path: filePath,
-      status: status,
-    });
+    const entity = entities.get(filePath);
+
+    if (
+      entity?.status &&
+      !FILE_STATUS_TRANSITION_MATRIX[entity.status].find(
+        (nextStatus) => nextStatus === status,
+      )
+    ) {
+      return;
+    }
+
+    entities.set(
+      filePath,
+      entity
+        ? { ...entity, status }
+        : {
+            name: filePath,
+            path: filePath,
+            status,
+          },
+    );
 
     this.state = { ...this.state, entities };
 

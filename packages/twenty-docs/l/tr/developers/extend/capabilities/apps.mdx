@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Genel varlıklar klasörü (görseller, yazı tipleri vb.)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Gerekli - ana uygulama yapılandırması
+    default-function.role.ts       # Sunucusuz işlevler için varsayılan rol
+    hello-world.function.ts        # Örnek sunucusuz işlev
+    hello-world.front-component.tsx # Örnek ön uç bileşeni
+    // varlıklarınız (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Sözleşme-öncelikli yapılandırma
@@ -162,6 +163,7 @@ Genel hatlarıyla:
 * **.nvmrc**: Projenin beklediği Node.js sürümünü sabitler.
 * **eslint.config.mjs** ve **tsconfig.json**: Uygulamanızın TypeScript kaynakları için linting ve TypeScript yapılandırması sağlar.
 * **README.md**: Uygulama kökünde temel talimatların yer aldığı kısa bir README.
+* **public/**: Uygulamanızla birlikte sunulacak genel varlıkları (görseller, yazı tipleri, statik dosyalar) depolamak için bir klasör. Buraya yerleştirilen dosyalar senkronizasyon sırasında yüklenir ve çalışma zamanında erişilebilir olur.
 * **src/**: Uygulamanızı kod olarak tanımladığınız ana yer:
   * `application.config.ts`: Uygulamanız için genel yapılandırma (meta veriler ve çalışma zamanı bağlantıları). Aşağıda "Uygulama yapılandırması"na bakın.
   * `*.role.ts`: Mantık fonksiyonlarınız tarafından kullanılan rol tanımları. Aşağıda "Varsayılan fonksiyon rolü"ne bakın.
@@ -215,12 +217,12 @@ twenty-sdk, uygulamanız içinde kullandığınız türlendirilmiş yapı taşla
 
 SDK, uygulama varlıklarınızı tanımlamak için yerleşik doğrulamaya sahip dört yardımcı fonksiyon sunar:
 
-| Fonksiyon          | Amaç                                           |
-| ------------------ | ---------------------------------------------- |
-| `defineApp()`      | Uygulama meta verilerini yapılandırın          |
-| `defineObject()`   | Alanlara sahip özel nesneler tanımlayın        |
-| `defineFunction()` | İşleyicilerle mantık fonksiyonları tanımlayın  |
-| `defineRole()`     | Rol izinlerini ve nesne erişimini yapılandırın |
+| Fonksiyon             | Amaç                                           |
+| --------------------- | ---------------------------------------------- |
+| `defineApplication()` | Uygulama meta verilerini yapılandırın          |
+| `defineObject()`      | Alanlara sahip özel nesneler tanımlayın        |
+| `defineFunction()`    | İşleyicilerle mantık fonksiyonları tanımlayın  |
+| `defineRole()`        | Rol izinlerini ve nesne erişimini yapılandırın |
 
 Bu fonksiyonlar, yapılandırmanızı çalışma anında doğrular ve daha iyi IDE otomatik tamamlama ve tür güvenliği sağlar.
 
@@ -317,14 +319,14 @@ Her uygulamanın aşağıdakileri açıklayan tek bir `application.config.ts` do
 * **Fonksiyonlarının nasıl çalıştığı**: izinler için hangi rolü kullandıkları.
 * **(İsteğe bağlı) değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
 
-Uygulama yapılandırmanızı tanımlamak için `defineApp()` kullanın:
+Uygulama yapılandırmanızı tanımlamak için `defineApplication()` kullanın:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ Notlar:
 
 * `universalIdentifier` alanları size ait belirleyici kimliklerdir; bunları bir kez oluşturun ve eşitlemeler boyunca kararlı tutun.
 * `applicationVariables`, fonksiyonlarınız için ortam değişkenlerine dönüşür (örneğin, `DEFAULT_RECIPIENT_NAME` değeri `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
-* `functionRoleUniversalIdentifier`, `*.role.ts` dosyanızda tanımladığınız rolle eşleşmelidir (aşağıya bakın).
+* `roleUniversalIdentifier`, `*.role.ts` dosyanızda tanımladığınız rolle eşleşmelidir (aşağıya bakın).
 
 #### Roller ve izinler
 
-Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application.config.ts` içindeki `functionRoleUniversalIdentifier` alanı, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan rolü belirtir.
+Uygulamalar, çalışma alanınızdaki nesneler ve eylemler üzerindeki izinleri kapsülleyen roller tanımlayabilir. `application.config.ts` içindeki `roleUniversalIdentifier` alanı, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan rolü belirtir.
 
 * `TWENTY_API_KEY` olarak enjekte edilen çalışma zamanı API anahtarı bu varsayılan fonksiyon rolünden türetilir.
 * Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
@@ -363,11 +365,11 @@ Yeni bir uygulama oluşturduğunuzda CLI ayrıca varsayılan bir rol dosyası da
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-Bu rolün `universalIdentifier` değeri, `application.config.ts` içinde `functionRoleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
+Bu rolün `universalIdentifier` değeri, `application.config.ts` içinde `roleUniversalIdentifier` olarak referans verilir. Başka bir deyişle:
 
 * **\*.role.ts**, varsayılan fonksiyon rolünün neler yapabileceğini tanımlar.
 * **application.config.ts** bu role işaret eder, böylece fonksiyonlarınız onun izinlerini devralır.
@@ -604,8 +606,8 @@ Fonksiyonunuz Twenty üzerinde çalıştığında, platform kodunuz yürütülme
 Notlar:
 
 * Oluşturulan istemciye URL veya API anahtarı geçirmeniz gerekmez. Çalışma zamanında `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini process.env üzerinden okur.
-* API anahtarının izinleri, `application.config.ts` içinde `functionRoleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
-* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `functionRoleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
+* API anahtarının izinleri, `application.config.ts` içinde `roleUniversalIdentifier` aracılığıyla referans verilen role göre belirlenir. Bu, uygulamanızın mantık fonksiyonları tarafından kullanılan varsayılan roldür.
+* Uygulamalar, en az ayrıcalık ilkesini izlemek için roller tanımlayabilir. Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinleri verin ve ardından `roleUniversalIdentifier` değerini o rolün evrensel tanımlayıcısına yönlendirin.
 
 ### Hello World örneği
 

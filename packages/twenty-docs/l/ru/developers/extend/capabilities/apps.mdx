@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Папка общедоступных ресурсов (изображения, шрифты и т. п.)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # Обязательный — основная конфигурация приложения
+    default-function.role.ts       # Роль по умолчанию для бессерверных функций
+    hello-world.function.ts        # Пример бессерверной функции
+    hello-world.front-component.tsx # Пример фронтенд-компонента
+    // ваши сущности (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### Соглашения важнее конфигурации
@@ -162,6 +163,7 @@ src/
 * **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
 * **eslint.config.mjs** и **tsconfig.json**: Обеспечивают линтинг и конфигурацию TypeScript для исходников вашего приложения на TypeScript.
 * **README.md**: Короткий README в корне приложения с базовыми инструкциями.
+* **public/**: Папка для хранения общедоступных ресурсов (изображений, шрифтов, статических файлов), которые будут отдаваться вашим приложением. Файлы, размещённые здесь, загружаются во время синхронизации и доступны во время выполнения.
 * **src/**: Основное место, где вы определяете приложение как код:
   * `application.config.ts`: Глобальная конфигурация вашего приложения (метаданные и параметры выполнения). См. раздел «Конфигурация приложения» ниже.
   * `*.role.ts`: Определения ролей, используемых вашими логическими функциями. См. раздел «Роль функции по умолчанию» ниже.
@@ -215,12 +217,12 @@ yarn auth:status
 
 SDK предоставляет четыре вспомогательных функции с встроенной валидацией для определения сущностей вашего приложения:
 
-| Функция            | Назначение                                     |
-| ------------------ | ---------------------------------------------- |
-| `defineApp()`      | Настраивает метаданные приложения              |
-| `defineObject()`   | Определяет пользовательские объекты с полями   |
-| `defineFunction()` | Определение логических функций с обработчиками |
-| `defineRole()`     | Настраивает права роли и доступ к объектам     |
+| Функция               | Назначение                                     |
+| --------------------- | ---------------------------------------------- |
+| `defineApplication()` | Настраивает метаданные приложения              |
+| `defineObject()`      | Определяет пользовательские объекты с полями   |
+| `defineFunction()`    | Определение логических функций с обработчиками |
+| `defineRole()`        | Настраивает права роли и доступ к объектам     |
 
 Эти функции проверяют вашу конфигурацию во время выполнения и обеспечивают лучшую автодополняемость в IDE и безопасность типов.
 
@@ -317,14 +319,14 @@ export default defineObject({
 * **Как запускаются его функции**: какую роль они используют для прав доступа.
 * **(Необязательно) переменные**: пары ключ-значение, предоставляемые вашим функциям как переменные окружения.
 
-Используйте `defineApp()` для определения конфигурации вашего приложения:
+Используйте `defineApplication()` для определения конфигурации вашего приложения:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ export default defineApp({
 
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` должен соответствовать роли, которую вы определяете в файле `*.role.ts` (см. ниже).
+* `roleUniversalIdentifier` должен соответствовать роли, которую вы определяете в файле `*.role.ts` (см. ниже).
 
 #### Роли и разрешения
 
-Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `functionRoleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `roleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
@@ -363,11 +365,11 @@ export default defineApp({
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-`universalIdentifier` этой роли затем указывается в `application.config.ts` как `functionRoleUniversalIdentifier`. Иными словами:
+`universalIdentifier` этой роли затем указывается в `application.config.ts` как `roleUniversalIdentifier`. Иными словами:
 
 * **\*.role.ts** определяет, что может делать роль функции по умолчанию.
 * **application.config.ts** указывает на эту роль, чтобы ваши функции наследовали её права.
@@ -604,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 Заметки:
 
 * Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
-* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `functionRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
-* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `functionRoleUniversalIdentifier` универсальный идентификатор этой роли.
+* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `roleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
+* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `roleUniversalIdentifier` универсальный идентификатор этой роли.
 
 ### Пример Hello World
 

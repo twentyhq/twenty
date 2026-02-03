@@ -8,15 +8,14 @@ export const fromFlatLogicFunctionToLogicFunctionDto = ({
 }): LogicFunctionDTO => {
   return {
     id: flatLogicFunction.id,
+    universalIdentifier: flatLogicFunction.universalIdentifier,
     name: flatLogicFunction.name,
     description: flatLogicFunction.description ?? undefined,
     runtime: flatLogicFunction.runtime,
     timeoutSeconds: flatLogicFunction.timeoutSeconds,
-    latestVersion: flatLogicFunction.latestVersion ?? undefined,
     sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
     builtHandlerPath: flatLogicFunction.builtHandlerPath,
     handlerName: flatLogicFunction.handlerName,
-    publishedVersions: flatLogicFunction.publishedVersions,
     toolInputSchema: flatLogicFunction.toolInputSchema ?? undefined,
     isTool: flatLogicFunction.isTool,
     applicationId: flatLogicFunction.applicationId ?? undefined,

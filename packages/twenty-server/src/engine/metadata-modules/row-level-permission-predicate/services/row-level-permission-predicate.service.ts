@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -60,7 +60,9 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    return Object.values(flatRowLevelPermissionPredicateMaps.byId)
+    return Object.values(
+      flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((predicate) => predicate.deletedAt === null)
       .sort(
@@ -91,7 +93,9 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    return Object.values(flatRowLevelPermissionPredicateMaps.byId)
+    return Object.values(
+      flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter(
         (predicate) =>
@@ -173,7 +177,7 @@ export class RowLevelPermissionPredicateService {
       );
 
     const existingPredicates = Object.values(
-      flatRowLevelPermissionPredicateMaps.byId,
+      flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
       .filter(
@@ -184,7 +188,7 @@ export class RowLevelPermissionPredicateService {
       );
 
     const existingGroups = Object.values(
-      flatRowLevelPermissionPredicateGroupMaps.byId,
+      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
       .filter(
@@ -239,7 +243,9 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    const resultPredicates = Object.values(updatedPredicateMaps.byId)
+    const resultPredicates = Object.values(
+      updatedPredicateMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter(
         (predicate) =>
@@ -249,7 +255,7 @@ export class RowLevelPermissionPredicateService {
       )
       .map(fromFlatRowLevelPermissionPredicateToDto);
 
-    const resultGroups = Object.values(updatedGroupMaps.byId)
+    const resultGroups = Object.values(updatedGroupMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (group) =>
@@ -295,8 +301,10 @@ export class RowLevelPermissionPredicateService {
 
       inputGroupIds.add(groupId);
 
-      const existingGroup =
-        flatRowLevelPermissionPredicateGroupMaps.byId[groupId];
+      const existingGroup = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: groupId,
+        flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+      });
 
       if (isDefined(existingGroup) && existingGroup.deletedAt === null) {
         groupsToUpdate.push({
@@ -377,8 +385,10 @@ export class RowLevelPermissionPredicateService {
 
       inputPredicateIds.add(predicateId);
 
-      const existingPredicate =
-        flatRowLevelPermissionPredicateMaps.byId[predicateId];
+      const existingPredicate = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: predicateId,
+        flatEntityMaps: flatRowLevelPermissionPredicateMaps,
+      });
 
       if (
         isDefined(existingPredicate) &&
@@ -459,6 +469,11 @@ export class RowLevelPermissionPredicateService {
     groupsToUpdate: FlatRowLevelPermissionPredicateGroup[];
     groupsToDelete: FlatRowLevelPermissionPredicateGroup[];
   }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -479,6 +494,8 @@ export class RowLevelPermissionPredicateService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

@@ -2,6 +2,7 @@ import { forceRegisteredActionsByKeyState } from '@/action-menu/actions/states/f
 import { type ShouldBeRegisteredFunctionParams } from '@/action-menu/actions/types/ShouldBeRegisteredFunctionParams';
 import { getActionViewType } from '@/action-menu/actions/utils/getActionViewType';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -135,6 +136,16 @@ export const useShouldActionBeRegisteredParams = ({
     forceRegisteredActionsByKeyState,
   );
 
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const isFeatureFlagEnabled = (featureFlagKey: FeatureFlagKey) => {
+    const featureFlag = currentWorkspace?.featureFlags?.find(
+      (flag) => flag.key === featureFlagKey,
+    );
+
+    return featureFlag?.value === true;
+  };
+
   return {
     objectMetadataItem,
     isFavorite,
@@ -150,5 +161,6 @@ export const useShouldActionBeRegisteredParams = ({
     getTargetObjectReadPermission: getObjectReadPermission,
     getTargetObjectWritePermission: getObjectWritePermission,
     forceRegisteredActionsByKey,
+    isFeatureFlagEnabled,
   };
 };

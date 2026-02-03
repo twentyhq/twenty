@@ -6,17 +6,20 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'application', schema: 'core' })
@@ -53,14 +56,37 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'text' })
   sourcePath: string;
 
+  @Column({ nullable: true, type: 'text' })
+  packageJsonChecksum: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  packageJsonFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'packageJsonFileId' })
+  packageJsonFile: Relation<FileEntity> | null;
+
+  @Column({ nullable: true, type: 'text' })
+  yarnLockChecksum: string | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  yarnLockFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'yarnLockFileId' })
+  yarnLockFile: Relation<FileEntity> | null;
+
+  @Column({ type: 'jsonb', nullable: false, default: {} })
+  availablePackages: Record<string, string>;
+
   @Column({ nullable: true, type: 'uuid' })
   logicFunctionLayerId: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
-  defaultLogicFunctionRoleId: string | null;
+  defaultRoleId: string | null;
 
   @Field(() => RoleDTO, { nullable: true })
-  defaultLogicFunctionRole: RoleDTO | null;
+  defaultRole: RoleDTO | null;
 
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;

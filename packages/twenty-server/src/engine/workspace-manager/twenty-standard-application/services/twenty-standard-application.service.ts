@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -13,7 +15,6 @@ import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -25,6 +26,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 export class TwentyStandardApplicationService {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
@@ -79,7 +81,7 @@ export class TwentyStandardApplicationService {
       );
 
     const existingWorkspaceItems = Object.values(
-      existingFlatNavigationMenuItemMaps.byId,
+      existingFlatNavigationMenuItemMaps.byUniversalIdentifier,
     ).filter(
       (item) =>
         isDefined(item) &&
@@ -121,6 +123,8 @@ export class TwentyStandardApplicationService {
           },
           workspaceId,
           isSystemBuild: true,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -148,11 +152,16 @@ export class TwentyStandardApplicationService {
         ...TWENTY_STANDARD_ALL_METADATA_NAME.map(getMetadataFlatEntityMapsKey),
         'featureFlagsMap',
       ]);
+    const shouldIncludeRecordPageLayouts = this.twentyConfigService.get(
+      'SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS',
+    );
+
     const toTwentyStandardAllFlatEntityMaps =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
+        shouldIncludeRecordPageLayouts,
       });
 
     const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
@@ -187,6 +196,8 @@ export class TwentyStandardApplicationService {
           additionalCacheDataMaps: {
             featureFlagsMap,
           },
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
         },
       );
 

@@ -11,11 +11,10 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
-
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -123,7 +122,6 @@ export class NavigationMenuItemResolver {
   async targetRecordIdentifier(
     @Parent() navigationMenuItem: NavigationMenuItemDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Context() context: { req: WorkspaceAuthContext },
   ): Promise<RecordIdentifierDTO | null> {
     if (
       !isDefined(navigationMenuItem.targetRecordId) ||
@@ -132,11 +130,13 @@ export class NavigationMenuItemResolver {
       return null;
     }
 
+    const authContext = getWorkspaceAuthContext();
+
     return await this.navigationMenuItemService.findTargetRecord({
       targetRecordId: navigationMenuItem.targetRecordId,
       targetObjectMetadataId: navigationMenuItem.targetObjectMetadataId,
       workspaceId: workspace.id,
-      authContext: context.req,
+      authContext,
     });
   }
 }

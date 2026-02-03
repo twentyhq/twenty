@@ -3,7 +3,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceAuthContext } from 'src/engine/api/common/interfaces/workspace-auth-context.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
 import { DataArgProcessor } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg.processor';
@@ -24,14 +23,17 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonQueryResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
-import { isWorkspaceAuthContext } from 'src/engine/api/common/utils/is-workspace-auth-context.util';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { isWorkspaceAuthContext } from 'src/engine/core-modules/auth/guards/is-workspace-auth-context.guard';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -287,10 +289,14 @@ export abstract class CommonBaseQueryRunnerService<
 
       const userHasPermission =
         await this.permissionsService.userHasWorkspaceSettingPermission({
-          userWorkspaceId: authContext.userWorkspaceId,
+          userWorkspaceId: isUserAuthContext(authContext)
+            ? authContext.userWorkspaceId
+            : undefined,
           setting: permissionRequired,
           workspaceId: workspace.id,
-          apiKeyId: authContext.apiKey?.id,
+          apiKeyId: isApiKeyAuthContext(authContext)
+            ? authContext.apiKey.id
+            : undefined,
         });
 
       if (!userHasPermission) {
@@ -313,8 +319,8 @@ export abstract class CommonBaseQueryRunnerService<
       );
     }
 
-    if (isDefined(authContext.application?.defaultLogicFunctionRoleId)) {
-      return authContext.application?.defaultLogicFunctionRoleId;
+    if (isDefined(authContext.application?.defaultRoleId)) {
+      return authContext.application?.defaultRoleId;
     }
 
     if (!isDefined(authContext.userWorkspaceId)) {
@@ -363,7 +369,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
     try {
-      if (!isDefined(authContext.apiKey)) return;
+      if (!isApiKeyAuthContext(authContext)) return;
 
       const workspaceId = authContext.workspace.id;
 

@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconAppWindow,
   IconFrame,
+  IconList,
   IconPlus,
   type IconComponent,
 } from 'twenty-ui/display';
@@ -129,7 +130,7 @@ export const usePageLayoutHeaderInfo = ({
 
       const headerType =
         commandMenuPage === CommandMenuPages.PageLayoutGraphFilter
-          ? t`${graphTypeLabel} Chart`
+          ? graphTypeLabel
           : t`Chart`;
 
       const title = isDefined(editedTitle)
@@ -144,6 +145,37 @@ export const usePageLayoutHeaderInfo = ({
         headerType,
         title,
         isReadonly: commandMenuPage === CommandMenuPages.PageLayoutGraphFilter,
+        tab: undefined,
+        widgetInEditMode,
+      };
+    }
+
+    case CommandMenuPages.PageLayoutFieldsSettings:
+    case CommandMenuPages.PageLayoutFieldsLayout: {
+      if (!isDefined(pageLayoutEditingWidgetId)) {
+        return null;
+      }
+
+      const widgetInEditMode = draftPageLayout.tabs
+        .flatMap((tab) => tab.widgets)
+        .find((widget) => widget.id === pageLayoutEditingWidgetId);
+
+      if (!isDefined(widgetInEditMode)) {
+        return null;
+      }
+
+      const title = isDefined(editedTitle)
+        ? editedTitle
+        : isDefined(widgetInEditMode.title) && widgetInEditMode.title !== ''
+          ? widgetInEditMode.title
+          : '';
+
+      return {
+        headerIcon: IconList,
+        headerIconColor: iconColor,
+        headerType: t`Fields Widget`,
+        title,
+        isReadonly: false,
         tab: undefined,
         widgetInEditMode,
       };

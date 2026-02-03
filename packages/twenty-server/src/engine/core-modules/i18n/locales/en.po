@@ -347,6 +347,9 @@ msgid "API key role not found."
 msgstr "API key role not found."
 
 #. js-lingui-id: ltvmAF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
+#: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
+#: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -481,7 +484,7 @@ msgid "Calendar sync error."
 msgstr "Calendar sync error."
 
 #. js-lingui-id: eSaCR/
-#: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
+#: src/engine/twenty-orm/field-operations/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
 msgstr "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
 
@@ -940,6 +943,11 @@ msgstr "Duplicate root resolver found. Each root resolver can only be called onc
 msgid "Duplicated option {field}"
 msgstr "Duplicated option {field}"
 
+#. js-lingui-id: n6jNyT
+#: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
+msgid "Either workflow version or front component is required."
+msgstr "Either workflow version or front component is required."
+
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "Email already in use"
@@ -1037,6 +1045,16 @@ msgstr "Environment variable CLOUDFLARE_API_KEY must be defined to use this feat
 msgid "Error"
 msgstr "Error"
 
+#. js-lingui-id: ksMwKk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Exactly one of workflow version or front component is required"
+msgstr "Exactly one of workflow version or front component is required"
+
+#. js-lingui-id: I8MWHr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
+msgid "Exactly one of workflowVersionId or frontComponentId is required"
+msgstr "Exactly one of workflowVersionId or frontComponentId is required"
+
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
@@ -1056,6 +1074,11 @@ msgstr "Failed to create function."
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to create record."
 msgstr "Failed to create record."
+
+#. js-lingui-id: mWj8el
+#: src/engine/core-modules/file/files-field/files-field.service.ts
+msgid "Failed to delete file {fileId}"
+msgstr "Failed to delete file {fileId}"
 
 #. js-lingui-id: pUligB
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -1293,6 +1316,16 @@ msgstr "FieldMetadataId is required to create a view group."
 msgid "FieldMetadataId is required to create a view sort."
 msgstr "FieldMetadataId is required to create a view sort."
 
+#. js-lingui-id: ycn/wp
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "File {fileId} is already associated with a permanent files field. Please re-upload the file."
+msgstr "File {fileId} is already associated with a permanent files field. Please re-upload the file."
+
+#. js-lingui-id: pFq+yh
+#: src/engine/core-modules/file/files-field/files-field.service.ts
+msgid "File {fileId} is not associated with a files field. It can't be downloaded."
+msgstr "File {fileId} is not associated with a files field. It can't be downloaded."
+
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
@@ -1395,11 +1428,6 @@ msgstr "Function is not ready."
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Function not found."
 msgstr "Function not found."
-
-#. js-lingui-id: zKksGw
-#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
-msgid "Function version not found."
-msgstr "Function version not found."
 
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -2265,7 +2293,7 @@ msgid "Logic function already exists"
 msgstr "Logic function already exists"
 
 #. js-lingui-id: mZvaAV
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Logic function execution failed."
 msgstr "Logic function execution failed."
 
@@ -2283,7 +2311,7 @@ msgid "Logic function not found"
 msgstr "Logic function not found"
 
 #. js-lingui-id: 6Rq45N
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Logic function not found."
 msgstr "Logic function not found."
@@ -2298,10 +2326,15 @@ msgstr "Logic function with same id already exists"
 msgid "March"
 msgstr "March"
 
-#. js-lingui-id: N/Fjss
+#. js-lingui-id: Dq8Em0
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "Max number of files is {filesFieldMaxNumberOfValues}"
+msgstr "Max number of files is {filesFieldMaxNumberOfValues}"
+
+#. js-lingui-id: J9favo
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
-msgid "Max number of files is {maxNumberOfValues}"
-msgstr "Max number of files is {maxNumberOfValues}"
+msgid "Max number of files is {maxNumberOfValues} for field \"{fieldName}\""
+msgstr "Max number of files is {maxNumberOfValues} for field \"{fieldName}\""
 
 #. js-lingui-id: hw7Mwk
 #: src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service.ts
@@ -2444,13 +2477,6 @@ msgstr "Name is too short"
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Name must be in camelCase format."
 msgstr "Name must be in camelCase format."
-
-#. js-lingui-id: P+jdmX
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
-msgid "Name should be in camelCase"
-msgstr "Name should be in camelCase"
 
 #. js-lingui-id: Dr0xtb
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
@@ -3236,17 +3262,17 @@ msgid "Roles and permissions configuration not found."
 msgstr "Roles and permissions configuration not found."
 
 #. js-lingui-id: AcyaP/
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Route already exists."
 msgstr "Route already exists."
 
 #. js-lingui-id: F35apa
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Route not found."
 msgstr "Route not found."
 
 #. js-lingui-id: mF5BSU
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Route path already exists."
 msgstr "Route path already exists."
 
@@ -3847,7 +3873,7 @@ msgid "Transformation failed."
 msgstr "Transformation failed."
 
 #. js-lingui-id: VD8J6l
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Trigger not found."
 msgstr "Trigger not found."
 
@@ -4530,10 +4556,10 @@ msgstr "Workspace not found for subscription event."
 #. js-lingui-id: EhVOPs
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/workspace/workspace.exception.ts
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Workspace not found."
 msgstr "Workspace not found."
@@ -4597,6 +4623,11 @@ msgstr "You are not authorized to perform this action."
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
 msgstr "You can merge up to {MUTATION_MAX_MERGE_RECORDS} records at once."
+
+#. js-lingui-id: 5r5YRW
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "You can only update one record with files field at once."
+msgstr "You can only update one record with files field at once."
 
 #. js-lingui-id: 4ysDL0
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
@@ -4665,8 +4696,8 @@ msgid "You do not have permission to impersonate users. Please contact your work
 msgstr "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 
 #. js-lingui-id: q5OVn+
-#: src/engine/metadata-modules/route-trigger/exceptions/route-trigger.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
 msgid "You do not have permission to perform this action."

@@ -21,4 +21,7 @@ export enum CommandMenuPages {
   PageLayoutGraphFilter = 'page-layout-graph-filter',
   PageLayoutIframeSettings = 'page-layout-iframe-settings',
   PageLayoutTabSettings = 'page-layout-tab-settings',
+  PageLayoutFieldsSettings = 'page-layout-fields-settings',
+  PageLayoutFieldsLayout = 'page-layout-fields-layout',
+  ViewFrontComponent = 'view-front-component',
 }

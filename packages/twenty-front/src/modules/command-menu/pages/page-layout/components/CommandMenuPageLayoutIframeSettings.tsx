@@ -93,7 +93,7 @@ export const CommandMenuPageLayoutIframeSettings = () => {
           error={urlError}
         />
       </StyledContainer>
-      <WidgetSettingsFooter />
+      <WidgetSettingsFooter pageLayoutId={pageLayoutId} />
     </StyledOuterContainer>
   );
 };

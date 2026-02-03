@@ -13,9 +13,9 @@ export const findFlatRoleTargetFromForeignKey = ({
   targetMetadataForeignKey,
   targetId,
 }: FindAllFlatRoleTargetOfArgs): FlatRoleTarget | undefined => {
-  const allRoleTargets = Object.values(flatRoleTargetMaps.byId).filter(
-    isDefined,
-  );
+  const allRoleTargets = Object.values(
+    flatRoleTargetMaps.byUniversalIdentifier,
+  ).filter(isDefined);
 
   return allRoleTargets.find(
     (roleTarget) => roleTarget[targetMetadataForeignKey] === targetId,

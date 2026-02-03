@@ -1,7 +1,7 @@
 export enum SyncableEntity {
   Object = 'object',
-  ObjectExtension = 'objectExtension',
-  Function = 'function',
+  Field = 'field',
+  LogicFunction = 'logicFunction',
   FrontComponent = 'frontComponent',
   Role = 'role',
 }

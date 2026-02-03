@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/logic-function.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -138,7 +139,10 @@ export class WorkflowCommonWorkspaceService {
       );
     }
 
-    const flatObjectMetadata = flatObjectMetadataMaps.byId[objectId];
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
 
     if (!isDefined(flatObjectMetadata)) {
       throw new WorkflowCommonException(
@@ -303,6 +307,11 @@ export class WorkflowCommonWorkspaceService {
     workspaceId: string;
     operation: 'restore' | 'delete' | 'destroy';
   }) {
+    // Only handle destroy operation - soft delete/restore is no longer supported
+    if (operation !== 'destroy') {
+      return;
+    }
+
     const workflowVersions = await workflowVersionRepository.find({
       where: {
         workflowId,
@@ -310,33 +319,15 @@ export class WorkflowCommonWorkspaceService {
       withDeleted: true,
     });
 
-    workflowVersions.forEach((workflowVersion) => {
-      workflowVersion.steps?.forEach(async (step) => {
+    for (const workflowVersion of workflowVersions) {
+      for (const step of workflowVersion.steps ?? []) {
         if (step.type === WorkflowActionType.CODE) {
-          switch (operation) {
-            case 'delete':
-              await this.logicFunctionService.deleteOneLogicFunction({
-                id: step.settings.input.logicFunctionId,
-                workspaceId,
-                softDelete: true,
-              });
-              break;
-            case 'restore':
-              await this.logicFunctionService.restoreOneLogicFunction(
-                step.settings.input.logicFunctionId,
-                workspaceId,
-              );
-              break;
-            case 'destroy':
-              await this.logicFunctionService.deleteOneLogicFunction({
-                id: step.settings.input.logicFunctionId,
-                workspaceId,
-                softDelete: false,
-              });
-              break;
-          }
+          await this.logicFunctionService.destroyOne({
+            id: step.settings.input.logicFunctionId,
+            workspaceId,
+          });
         }
-      });
-    });
+      }
+    }
   }
 }

@@ -87,12 +87,23 @@ const StyledWidgetCard = styled.div<{
       `;
     }
 
+    if (variant === 'record-page' && !isEditable) {
+      return css`
+        background: ${theme.background.primary};
+        border: 1px solid transparent;
+        border-radius: ${theme.border.radius.md};
+        padding: ${theme.spacing(2)};
+      `;
+    }
+
     if (
       (variant === 'side-column' && isEditable) ||
       (variant === 'record-page' && isEditable)
     ) {
       return css`
-        background: ${theme.background.primary};
+        background: ${variant === 'side-column'
+          ? theme.background.secondary
+          : theme.background.primary};
         border: 1px solid transparent;
         border-radius: ${theme.border.radius.md};
         padding: ${theme.spacing(2)};
@@ -123,15 +134,6 @@ const StyledWidgetCard = styled.div<{
             ${theme.background.secondary};
           border: 1px solid ${theme.color.blue} !important;
         `}
-      `;
-    }
-
-    if (variant === 'record-page' && !isEditable) {
-      return css`
-        background: ${theme.background.primary};
-        border: 1px solid transparent;
-        border-radius: ${theme.border.radius.md};
-        padding: ${theme.spacing(2)};
       `;
     }
   }}

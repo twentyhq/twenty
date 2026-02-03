@@ -93,6 +93,7 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # Pasta de recursos públicos (imagens, fontes, etc.)
   src/
     application.config.ts          # Obrigatório - configuração principal da aplicação
     default-function.role.ts       # Papel padrão para funções serverless
@@ -162,6 +163,7 @@ Em alto nível:
 * **.nvmrc**: Fixa a versão do Node.js esperada pelo projeto.
 * **eslint.config.mjs** e **tsconfig.json**: Fornecem lint e configuração do TypeScript para os fontes TypeScript do seu aplicativo.
 * **README.md**: Um README curto na raiz do aplicativo com instruções básicas.
+* **public/**: Uma pasta para armazenar recursos públicos (imagens, fontes, arquivos estáticos) que serão servidos com sua aplicação. Os arquivos colocados aqui são enviados durante a sincronização e ficam acessíveis em tempo de execução.
 * **src/**: O local principal onde você define seu aplicativo como código:
   * `application.config.ts`: Configuração global do seu aplicativo (metadados e conexões de execução). Veja "Configuração do aplicativo" abaixo.
   * `*.role.ts`: Definições de papéis usadas pelas suas funções de lógica. Veja "Papel de função padrão" abaixo.
@@ -215,12 +217,12 @@ O twenty-sdk fornece blocos de construção tipados e funções utilitárias que
 
 O SDK fornece quatro funções utilitárias com validação integrada para definir as entidades do seu aplicativo:
 
-| Função             | Finalidade                                        |
-| ------------------ | ------------------------------------------------- |
-| `defineApp()`      | Configura os metadados do aplicativo              |
-| `defineObject()`   | Define objetos personalizados com campos          |
-| `defineFunction()` | Defina funções de lógica com handlers             |
-| `defineRole()`     | Configura permissões de papéis e acesso a objetos |
+| Função                | Finalidade                                        |
+| --------------------- | ------------------------------------------------- |
+| `defineApplication()` | Configura os metadados do aplicativo              |
+| `defineObject()`      | Define objetos personalizados com campos          |
+| `defineFunction()`    | Defina funções de lógica com handlers             |
+| `defineRole()`        | Configura permissões de papéis e acesso a objetos |
 
 Essas funções validam sua configuração em tempo de execução e oferecem melhor autocompletar na IDE e segurança de tipos.
 
@@ -317,14 +319,14 @@ Todo aplicativo tem um único arquivo `application.config.ts` que descreve:
 * **Como suas funções são executadas**: qual papel usam para permissões.
 * **Variáveis (opcional)**: pares chave–valor expostos às suas funções como variáveis de ambiente.
 
-Use `defineApp()` para definir a configuração do seu aplicativo:
+Use `defineApplication()` to define your application configuration:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ Notas:
 
 * `universalIdentifier` são IDs determinísticos que você controla; gere-os uma vez e mantenha-os estáveis entre sincronizações.
 * `applicationVariables` tornam-se variáveis de ambiente para suas funções (por exemplo, `DEFAULT_RECIPIENT_NAME` fica disponível como `process.env.DEFAULT_RECIPIENT_NAME`).
-* `functionRoleUniversalIdentifier` deve corresponder ao papel que você define no seu arquivo `*.role.ts` (veja abaixo).
+* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
 
 #### Papéis e permissões
 
-Os aplicativos podem definir papéis que encapsulam permissões sobre os objetos e ações do seu espaço de trabalho. O campo `functionRoleUniversalIdentifier` em `application.config.ts` designa o papel padrão usado pelas funções de lógica do seu app.
+Os aplicativos podem definir papéis que encapsulam permissões sobre os objetos e ações do seu espaço de trabalho. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * A chave de API em tempo de execução, injetada como `TWENTY_API_KEY`, é derivada desse papel padrão de função.
 * O cliente tipado ficará restrito às permissões concedidas a esse papel.
@@ -363,11 +365,11 @@ Ao criar um novo aplicativo com o scaffold, a CLI também cria um arquivo de pap
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-O `universalIdentifier` desse papel é então referenciado em `application.config.ts` como `functionRoleUniversalIdentifier`. Em outras palavras:
+O `universalIdentifier` desse papel é então referenciado em `application.config.ts` como `roleUniversalIdentifier`. Em outras palavras:
 
 * **\*.role.ts** define o que o papel de função padrão pode fazer.
 * **application.config.ts** aponta para esse papel para que suas funções herdem suas permissões.
@@ -604,8 +606,8 @@ Quando sua função é executada no Twenty, a plataforma injeta credenciais como
 Notas:
 
 * Você não precisa passar a URL ou a chave de API para o cliente gerado. Ele lê `TWENTY_API_URL` e `TWENTY_API_KEY` de process.env em tempo de execução.
-* As permissões da chave de API são determinadas pelo papel referenciado no seu `application.config.ts` via `functionRoleUniversalIdentifier`. Este é o papel padrão usado pelas funções de lógica do seu app.
-* Os aplicativos podem definir papéis para seguir o princípio do menor privilégio. Conceda apenas as permissões de que suas funções precisam e, em seguida, aponte `functionRoleUniversalIdentifier` para o identificador universal desse papel.
+* As permissões da chave de API são determinadas pelo papel referenciado no seu `application.config.ts` via `roleUniversalIdentifier`. Este é o papel padrão usado pelas funções de lógica do seu app.
+* Os aplicativos podem definir papéis para seguir o princípio do menor privilégio. Conceda apenas as permissões de que suas funções precisam e, em seguida, aponte `roleUniversalIdentifier` para o identificador universal desse papel.
 
 ### Exemplo Hello World
 

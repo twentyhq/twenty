@@ -1,4 +1,4 @@
-import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import type { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import type { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import type { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import type { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';

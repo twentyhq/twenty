@@ -1,75 +1,60 @@
+import { type Manifest } from 'twenty-shared/application';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { applicationEntityBuilder } from './entities/application';
-import {
-  type EntityIdWithLocation,
-  type ManifestWithoutSources,
-} from '@/cli/utilities/build/manifest/entities/entity-interface';
-import { frontComponentEntityBuilder } from './entities/front-component';
-import { functionEntityBuilder } from './entities/function';
-import { objectEntityBuilder } from './entities/object';
-import { objectExtensionEntityBuilder } from './entities/object-extension';
-import { roleEntityBuilder } from './entities/role';
-import {
-  type ValidationError,
-  type ValidationResult,
-  type ValidationWarning,
-} from '@/cli/utilities/build/manifest/manifest-types';
 
-const collectAllDuplicates = (
-  manifest: ManifestWithoutSources,
-): EntityIdWithLocation[] => {
-  return [
-    ...applicationEntityBuilder.findDuplicates(manifest),
-    ...objectEntityBuilder.findDuplicates(manifest),
-    ...objectExtensionEntityBuilder.findDuplicates(manifest),
-    ...functionEntityBuilder.findDuplicates(manifest),
-    ...roleEntityBuilder.findDuplicates(manifest),
-    ...frontComponentEntityBuilder.findDuplicates(manifest),
-  ];
+const extractDuplicates = (values: string[]): string[] => {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+
+  for (const value of values) {
+    if (seen.has(value)) {
+      duplicates.add(value);
+    } else {
+      seen.add(value);
+    }
+  }
+
+  return Array.from(duplicates);
 };
 
-export const validateManifest = (
-  manifest: ManifestWithoutSources,
-): ValidationResult => {
-  const errors: ValidationError[] = [];
-  const warnings: ValidationWarning[] = [];
+const findUniversalIdentifiers = (obj: object): string[] => {
+  const universalIdentifiers: string[] = [];
 
-  applicationEntityBuilder.validate(
-    manifest.application ? [manifest.application] : [],
-    errors,
-  );
-  objectEntityBuilder.validate(manifest.objects ?? [], errors);
-  objectExtensionEntityBuilder.validate(
-    manifest.objectExtensions ?? [],
-    errors,
-  );
-  functionEntityBuilder.validate(manifest.functions ?? [], errors);
-  roleEntityBuilder.validate(manifest.roles ?? [], errors);
-  frontComponentEntityBuilder.validate(manifest.frontComponents ?? [], errors);
+  if (!obj) {
+    return [];
+  }
 
-  const duplicates = collectAllDuplicates(manifest);
-  for (const dup of duplicates) {
-    errors.push({
-      path: dup.locations.join(', '),
-      message: `Duplicate universalIdentifier: ${dup.id}`,
-    });
+  for (const [key, val] of Object.entries(obj)) {
+    if (key === 'universalIdentifier' && typeof val === 'string') {
+      universalIdentifiers.push(val);
+    }
+    if (typeof val === 'object') {
+      universalIdentifiers.push(...findUniversalIdentifiers(val));
+    }
+  }
+
+  return universalIdentifiers;
+};
+export const manifestValidate = (manifest: Manifest) => {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  const duplicates = extractDuplicates(findUniversalIdentifiers(manifest));
+
+  if (duplicates.length > 0) {
+    errors.push(`Duplicate universal identifiers: ${duplicates.join(', ')}`);
   }
 
   if (!isNonEmptyArray(manifest.objects)) {
-    warnings.push({
-      message: 'No objects defined',
-    });
+    warnings.push('No object defined');
   }
 
-  if (!isNonEmptyArray(manifest.functions)) {
-    warnings.push({
-      message: 'No functions defined',
-    });
+  if (!isNonEmptyArray(manifest.logicFunctions)) {
+    warnings.push('No logic function defined');
   }
 
-  return {
-    isValid: errors.length === 0,
-    errors,
-    warnings,
-  };
+  if (!isNonEmptyArray(manifest.frontComponents)) {
+    warnings.push('No front component defined');
+  }
+
+  return { errors, warnings, isValid: errors.length === 0 };
 };

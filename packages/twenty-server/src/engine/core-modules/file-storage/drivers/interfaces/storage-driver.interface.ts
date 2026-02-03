@@ -1,17 +1,28 @@
 import { type Readable } from 'stream';
 
-import { type Sources } from 'twenty-shared/types';
-
 export interface StorageDriver {
-  delete(params: { folderPath: string; filename?: string }): Promise<void>;
-  read(params: { filePath: string }): Promise<Readable>;
-  readFolder(folderPath: string): Promise<Sources>;
-  write(params: {
+  readFile(params: { filePath: string }): Promise<Readable>;
+  writeFile(params: {
     filePath: string;
     sourceFile: Buffer | Uint8Array | string;
     mimeType: string | undefined;
   }): Promise<void>;
-  writeFolder(sources: Sources, folderPath: string): Promise<void>;
+
+  downloadFolder(params: {
+    onStoragePath: string;
+    localPath: string;
+  }): Promise<void>;
+  uploadFolder(params: {
+    localPath: string;
+    onStoragePath: string;
+  }): Promise<void>;
+
+  downloadFile(params: {
+    onStoragePath: string;
+    localPath: string;
+  }): Promise<void>;
+
+  delete(params: { folderPath: string; filename?: string }): Promise<void>;
   move(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
@@ -20,14 +31,7 @@ export interface StorageDriver {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void>;
-  download(params: {
-    from: { folderPath: string; filename?: string };
-    to: { folderPath: string; filename?: string };
-  }): Promise<void>;
 
-  checkFileExists(params: {
-    folderPath: string;
-    filename: string;
-  }): Promise<boolean>;
-  checkFolderExists(folderPath: string): Promise<boolean>;
+  checkFileExists(params: { filePath: string }): Promise<boolean>;
+  checkFolderExists(params: { folderPath: string }): Promise<boolean>;
 }

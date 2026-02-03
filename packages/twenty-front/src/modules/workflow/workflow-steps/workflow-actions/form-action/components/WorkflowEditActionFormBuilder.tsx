@@ -8,8 +8,8 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { WorkflowMessage } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowMessage';
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
-import { WorkflowFormEmptyMessage } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { css, useTheme } from '@emotion/react';
@@ -214,7 +214,10 @@ export const WorkflowEditActionFormBuilder = ({
     <>
       <StyledWorkflowStepBody>
         {formData.length === 0 && (
-          <WorkflowFormEmptyMessage data-testid="empty-form-message" />
+          <WorkflowMessage
+            title={t`Add inputs to your form`}
+            description={t`Click on "Add Field" below to add the first input to your form. The form will pop up on the user's screen when the workflow is launched from a manual trigger. For other types of triggers, it will be displayed in the Workflow run record page.`}
+          />
         )}
         <DraggableList
           onDragEnd={handleDragEnd}

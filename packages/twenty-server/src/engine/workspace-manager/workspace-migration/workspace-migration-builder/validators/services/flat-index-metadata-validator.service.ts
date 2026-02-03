@@ -97,7 +97,7 @@ export class FlatIndexValidatorService {
     }
 
     const allExistingFlatIndex = Object.values(
-      optimisticFlatIndexMaps.byId,
+      optimisticFlatIndexMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
     const existingFlatIndexOnName = allExistingFlatIndex.find(

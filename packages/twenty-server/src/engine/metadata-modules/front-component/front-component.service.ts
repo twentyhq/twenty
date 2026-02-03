@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -11,7 +11,6 @@ import { fromDeleteFrontComponentInputToFlatFrontComponentOrThrow } from 'src/en
 import { fromFlatFrontComponentToFrontComponentDto } from 'src/engine/metadata-modules/flat-front-component/utils/from-flat-front-component-to-front-component-dto.util';
 import { fromUpdateFrontComponentInputToFlatFrontComponentToUpdateOrThrow } from 'src/engine/metadata-modules/flat-front-component/utils/from-update-front-component-input-to-flat-front-component-to-update-or-throw.util';
 import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
-import { type FrontComponentCodeDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component-code.dto';
 import { type FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
 import { type UpdateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/update-front-component.input';
 import {
@@ -38,7 +37,7 @@ export class FrontComponentService {
         },
       );
 
-    return Object.values(flatFrontComponentMaps.byId)
+    return Object.values(flatFrontComponentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(fromFlatFrontComponentToFrontComponentDto);
@@ -96,6 +95,8 @@ export class FrontComponentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -126,6 +127,11 @@ export class FrontComponentService {
     input: UpdateFrontComponentInput,
     workspaceId: string,
   ): Promise<FrontComponentDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatFrontComponentMaps: existingFlatFrontComponentMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -152,6 +158,8 @@ export class FrontComponentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -179,6 +187,11 @@ export class FrontComponentService {
   }
 
   async delete(id: string, workspaceId: string): Promise<FrontComponentDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatFrontComponentMaps: existingFlatFrontComponentMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -205,6 +218,8 @@ export class FrontComponentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -234,15 +249,5 @@ export class FrontComponentService {
     }
 
     return frontComponent;
-  }
-
-  async getFrontComponentCode(
-    _id: string,
-    _workspaceId: string,
-  ): Promise<FrontComponentCodeDTO> {
-    // TODO: get the source code from the front component here, we will implement a mock version for now
-    const sourceCode = '';
-
-    return { sourceCode };
   }
 }

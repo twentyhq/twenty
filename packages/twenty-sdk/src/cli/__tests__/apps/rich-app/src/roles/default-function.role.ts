@@ -1,11 +1,14 @@
-import { PermissionFlag } from '@/application/permission-flag-type';
-import { defineRole } from '@/application/roles/define-role';
+import { PermissionFlag, defineRole } from '@/sdk';
+import {
+  CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
+  POST_CARD_UNIVERSAL_IDENTIFIER,
+} from '@/cli/__tests__/apps/rich-app/src/objects/postCard.object';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -18,7 +21,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -27,8 +30,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },

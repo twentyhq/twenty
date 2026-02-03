@@ -18,10 +18,12 @@ export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
   createdFlatEntityMaps: MetadataFlatEntityMaps<T>;
   deletedFlatEntityMaps: MetadataFlatEntityMaps<T>;
   updatedFlatEntityMaps: {
-    byId: Record<
+    byUniversalIdentifier: Record<
       string,
       {
         updates: FlatEntityPropertiesUpdates<T>;
+        // TMP remove when maps is universal based
+        id: string;
       }
     >;
   };
@@ -49,7 +51,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
   const initialDispatcher: DeletedCreatedUpdatedMatrix<T> = {
     createdFlatEntityMaps: createEmptyFlatEntityMaps(),
     deletedFlatEntityMaps: createEmptyFlatEntityMaps(),
-    updatedFlatEntityMaps: { byId: {} },
+    updatedFlatEntityMaps: { byUniversalIdentifier: {} },
   };
 
   const fromMap = new Map(from.map((obj) => [obj.universalIdentifier, obj]));
@@ -103,7 +105,10 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
       continue;
     }
 
-    initialDispatcher.updatedFlatEntityMaps.byId[toFlatEntity.id] = {
+    initialDispatcher.updatedFlatEntityMaps.byUniversalIdentifier[
+      fromFlatEntity.universalIdentifier
+    ] = {
+      id: toFlatEntity.id,
       updates,
     };
   }

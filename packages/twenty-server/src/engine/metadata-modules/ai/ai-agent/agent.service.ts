@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { ILike, IsNull, Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
@@ -37,7 +37,7 @@ export class AgentService {
         'flatRoleTargetByAgentIdMaps',
       ]);
 
-    return Object.values(flatAgentMaps.byId)
+    return Object.values(flatAgentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .map((flatAgent) => {
         const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
@@ -142,6 +142,8 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -175,6 +177,13 @@ export class AgentService {
     input: UpdateAgentInput;
     workspaceId: string;
   }): Promise<FlatAgentWithRoleId> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatRoleTargetByAgentIdMaps, flatAgentMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatRoleTargetByAgentIdMaps',
@@ -215,6 +224,8 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -281,6 +292,13 @@ export class AgentService {
       return [];
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatAgentMaps',
@@ -321,6 +339,8 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

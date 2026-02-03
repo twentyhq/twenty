@@ -1,9 +1,9 @@
 import { type ChartValueRange } from '@/page-layout/widgets/graph/types/ChartValueRange';
 import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
-import { type BarDatum } from '@nivo/bar';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 
 export const calculateStackedBarChartValueRange = (
-  data: BarDatum[],
+  data: BarChartDatum[],
   keys: string[],
 ): ChartValueRange => {
   const stackedValues: number[] = [];

@@ -3,7 +3,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const mockObjectMetadata = {
+const mockObjectMetadata: FlatObjectMetadata = {
   id: '1',
   icon: 'Icon123',
   nameSingular: 'Object',
@@ -30,15 +30,20 @@ const mockObjectMetadata = {
   description: null,
   standardOverrides: null,
   isUIReadOnly: false,
-  standardId: null,
   labelIdentifierFieldMetadataId: null,
   imageIdentifierFieldMetadataId: null,
   duplicateCriteria: null,
-} as FlatObjectMetadata;
+  applicationUniversalIdentifier: 'test-application-id',
+  fieldUniversalIdentifiers: [],
+  viewUniversalIdentifiers: [],
+  indexMetadataUniversalIdentifiers: [],
+  labelIdentifierFieldMetadataUniversalIdentifier: null,
+  imageIdentifierFieldMetadataUniversalIdentifier: null,
+};
 
 const mockFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
-  byId: {},
-  idByUniversalIdentifier: {},
+  byUniversalIdentifier: {},
+  universalIdentifierById: {},
   universalIdentifiersByApplicationId: {},
 };
 

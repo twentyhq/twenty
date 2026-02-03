@@ -19,6 +19,7 @@ import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engi
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
 import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
 import { WorkspaceMigrationIndexActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/workspace-migration-index-actions-builder.service';
+import { WorkspaceMigrationLogicFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/workspace-migration-logic-function-actions-builder.service';
 import { WorkspaceMigrationNavigationMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/workspace-migration-navigation-menu-item-actions-builder.service';
 import { WorkspaceMigrationObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/workspace-migration-object-actions-builder.service';
 import { WorkspaceMigrationPageLayoutTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/workspace-migration-page-layout-tab-actions-builder.service';
@@ -28,7 +29,6 @@ import { WorkspaceMigrationRoleTargetActionsBuilderService } from 'src/engine/wo
 import { WorkspaceMigrationRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-role-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-row-level-permission-predicate-group-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-row-level-permission-predicate-actions-builder.service';
-import { WorkspaceMigrationLogicFunctionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/workspace-migration-logic-function-actions-builder.service';
 import { WorkspaceMigrationSkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-skill-actions-builder.service';
 import { WorkspaceMigrationViewFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/workspace-migration-view-field-actions-builder.service';
 import { WorkspaceMigrationViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/workspace-migration-view-filter-group-actions-builder.service';
@@ -124,6 +124,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     fromToAllFlatEntityMaps,
     dependencyAllFlatEntityMaps,
     additionalCacheDataMaps,
+    applicationUniversalIdentifier,
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -176,16 +177,17 @@ export class WorkspaceMigrationBuildOrchestratorService {
             // Note: That's a hacky way to allow validating object against field metadatas, not optimal
             dependencyOptimisticFlatEntityMaps: {
               flatFieldMetadataMaps: {
-                byId: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byId,
-                  ...flatFieldMetadataMaps?.from.byId,
-                  ...flatFieldMetadataMaps?.to.byId,
-                },
-                idByUniversalIdentifier: {
+                byUniversalIdentifier: {
                   ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                    ?.idByUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
+                    ?.byUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.from.byUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.to.byUniversalIdentifier,
+                },
+                universalIdentifierById: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
+                    ?.universalIdentifierById,
+                  ...flatFieldMetadataMaps?.from.universalIdentifierById,
+                  ...flatFieldMetadataMaps?.to.universalIdentifierById,
                 },
                 universalIdentifiersByApplicationId: {
                   ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
@@ -721,6 +723,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             dependencyOptimisticFlatEntityMaps: {
               flatObjectMetadataMaps:
                 optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+              flatFrontComponentMaps:
+                optimisticAllFlatEntityMaps.flatFrontComponentMaps,
             },
             workspaceId,
           },
@@ -798,6 +802,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             dependencyOptimisticFlatEntityMaps: {
               flatObjectMetadataMaps:
                 optimisticAllFlatEntityMaps.flatObjectMetadataMaps,
+              flatPageLayoutTabMaps:
+                optimisticAllFlatEntityMaps.flatPageLayoutTabMaps,
             },
             workspaceId,
           },
@@ -981,6 +987,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     return {
       status: 'success',
       workspaceMigration: {
+        applicationUniversalIdentifier,
         actions: [
           // Object and fields and indexes
           ...aggregatedOrchestratorActionsReport.index.delete,

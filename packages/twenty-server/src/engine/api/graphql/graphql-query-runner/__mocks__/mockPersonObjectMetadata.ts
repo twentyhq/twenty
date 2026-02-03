@@ -95,17 +95,17 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
 
 export const mockPersonFlatFieldMetadataMaps =
   (): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: mockFieldMetadatas.reduce(
+    byUniversalIdentifier: mockFieldMetadatas.reduce(
       (acc, field) => {
-        acc[field.id] = field;
+        acc[field.universalIdentifier] = field;
 
         return acc;
       },
       {} as Record<string, FlatFieldMetadata>,
     ),
-    idByUniversalIdentifier: mockFieldMetadatas.reduce(
+    universalIdentifierById: mockFieldMetadatas.reduce(
       (acc, field) => {
-        acc[field.universalIdentifier] = field.id;
+        acc[field.id] = field.universalIdentifier;
 
         return acc;
       },
@@ -120,11 +120,11 @@ export const mockPersonFlatObjectMetadataMaps = (
   const flatObjectMetadata = mockPersonFlatObjectMetadata(duplicateCriteria);
 
   return {
-    byId: {
-      [flatObjectMetadata.id]: flatObjectMetadata,
+    byUniversalIdentifier: {
+      [flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata,
     },
-    idByUniversalIdentifier: {
-      [flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata.id,
+    universalIdentifierById: {
+      [flatObjectMetadata.id]: flatObjectMetadata.universalIdentifier as string,
     },
     universalIdentifiersByApplicationId: {},
   };
@@ -132,36 +132,42 @@ export const mockPersonFlatObjectMetadataMaps = (
 
 export const mockPersonFlatObjectMetadata = (
   duplicateCriteria: WorkspaceEntityDuplicateCriteria[],
-): FlatObjectMetadata =>
-  ({
-    id: objectMetadataId,
-    icon: 'Icon123',
-    standardId: '',
-    nameSingular: 'person',
-    namePlural: 'people',
-    labelSingular: 'Person',
-    labelPlural: 'People',
-    targetTableName: 'person',
-    isCustom: false,
-    isRemote: false,
-    isActive: true,
-    isSystem: false,
-    isAuditLogged: true,
-    isSearchable: true,
-    duplicateCriteria: duplicateCriteria,
-    labelIdentifierFieldMetadataId: '',
-    imageIdentifierFieldMetadataId: '',
-    workspaceId,
-    universalIdentifier: objectMetadataId,
-    indexMetadataIds: [],
-    fieldIds: mockFieldMetadatas.map((field) => field.id),
-    viewIds: [],
-    applicationId: 'test-application-id',
-    isLabelSyncedWithName: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    shortcut: null,
-    description: null,
-    standardOverrides: null,
-    isUIReadOnly: false,
-  }) as FlatObjectMetadata;
+): FlatObjectMetadata => ({
+  id: objectMetadataId,
+  icon: 'Icon123',
+  nameSingular: 'person',
+  namePlural: 'people',
+  labelSingular: 'Person',
+  labelPlural: 'People',
+  targetTableName: 'person',
+  isCustom: false,
+  isRemote: false,
+  isActive: true,
+  isSystem: false,
+  isAuditLogged: true,
+  isSearchable: true,
+  duplicateCriteria: duplicateCriteria,
+  labelIdentifierFieldMetadataId: '',
+  imageIdentifierFieldMetadataId: '',
+  workspaceId,
+  universalIdentifier: objectMetadataId,
+  indexMetadataIds: [],
+  fieldIds: mockFieldMetadatas.map((field) => field.id),
+  viewIds: [],
+  applicationId: 'test-application-id',
+  isLabelSyncedWithName: false,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  shortcut: null,
+  description: null,
+  standardOverrides: null,
+  isUIReadOnly: false,
+  applicationUniversalIdentifier: 'test-application-id',
+  fieldUniversalIdentifiers: mockFieldMetadatas.map(
+    (field) => field.universalIdentifier,
+  ),
+  viewUniversalIdentifiers: [],
+  indexMetadataUniversalIdentifiers: [],
+  labelIdentifierFieldMetadataUniversalIdentifier: null,
+  imageIdentifierFieldMetadataUniversalIdentifier: null,
+});

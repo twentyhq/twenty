@@ -2,6 +2,7 @@ import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   TwentyORMException,
@@ -35,8 +36,10 @@ export const getObjectMetadataFromEntityTarget = <T extends ObjectLiteral>(
     );
   }
 
-  const objectMetadata =
-    internalContext.flatObjectMetadataMaps.byId[objectMetadataId];
+  const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: objectMetadataId,
+    flatEntityMaps: internalContext.flatObjectMetadataMaps,
+  });
 
   if (!objectMetadata) {
     throw new TwentyORMException(

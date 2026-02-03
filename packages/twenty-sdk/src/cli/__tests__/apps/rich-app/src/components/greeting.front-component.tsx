@@ -1,4 +1,4 @@
-import { defineFrontComponent } from '@/application/front-components/define-front-component';
+import { defineFrontComponent } from '@/sdk';
 import { DEFAULT_NAME, formatGreeting } from '../utils/greeting.util';
 
 const GreetingComponent = () => {

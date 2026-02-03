@@ -1,17 +1,19 @@
 import {
   createFrontComponentsWatcher,
-  createFunctionsWatcher,
+  createLogicFunctionsWatcher,
   type EsbuildWatcher,
 } from '@/cli/utilities/build/common/esbuild-watcher';
-import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-build';
+import { type ManifestBuildResult } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { ManifestWatcher } from '@/cli/utilities/build/manifest/manifest-watcher';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { DevModeOrchestrator } from '@/cli/utilities/dev/dev-mode-orchestrator';
 import path from 'path';
-import { OUTPUT_DIR } from '@/cli/utilities/build/common/constants';
 import * as fs from 'fs-extra';
 import { DevUiStateManager } from '@/cli/utilities/dev/dev-ui-state-manager';
 import { renderDevUI } from '@/cli/utilities/dev/dev-ui';
+import { ASSETS_DIR, OUTPUT_DIR } from 'twenty-shared/application';
+import { FileUploadWatcher } from '@/cli/utilities/build/common/file-upload-watcher';
+import { FileFolder } from 'twenty-shared/types';
 
 export type AppDevOptions = {
   appPath?: string;
@@ -21,8 +23,10 @@ export class AppDevCommand {
   private appPath = '';
   private orchestrator: DevModeOrchestrator | null = null;
   private manifestWatcher: ManifestWatcher | null = null;
-  private functionsWatcher: EsbuildWatcher | null = null;
+  private logicFunctionsWatcher: EsbuildWatcher | null = null;
   private frontComponentsWatcher: EsbuildWatcher | null = null;
+  private assetWatcher: FileUploadWatcher | null = null;
+  private dependencyWatcher: FileUploadWatcher | null = null;
   private watchersStarted = false;
   private uiStateManager: DevUiStateManager | null = null;
   private unmountUI: (() => void) | null = null;
@@ -69,16 +73,16 @@ export class AppDevCommand {
   }
 
   private async handleWatcherRestarts(result: ManifestBuildResult) {
-    const { functions, frontComponents } = result.filePaths;
+    const { logicFunctions, frontComponents } = result.filePaths;
 
     if (!this.watchersStarted) {
       this.watchersStarted = true;
-      await this.startFileWatchers(functions, frontComponents);
+      await this.startFileWatchers(logicFunctions, frontComponents);
       return;
     }
 
-    if (this.functionsWatcher?.shouldRestart(functions)) {
-      await this.functionsWatcher.restart(functions);
+    if (this.logicFunctionsWatcher?.shouldRestart(logicFunctions)) {
+      await this.logicFunctionsWatcher.restart(logicFunctions);
     }
 
     if (this.frontComponentsWatcher?.shouldRestart(frontComponents)) {
@@ -87,17 +91,21 @@ export class AppDevCommand {
   }
 
   private async startFileWatchers(
-    functions: string[],
+    logicFunctions: string[],
     frontComponents: string[],
   ): Promise<void> {
     await Promise.all([
-      this.startFunctionsWatcher(functions),
+      this.startLogicFunctionsWatcher(logicFunctions),
       this.startFrontComponentsWatcher(frontComponents),
+      this.startAssetWatcher(),
+      this.startDependencyWatcher(),
     ]);
   }
 
-  private async startFunctionsWatcher(sourcePaths: string[]): Promise<void> {
-    this.functionsWatcher = createFunctionsWatcher({
+  private async startLogicFunctionsWatcher(
+    sourcePaths: string[],
+  ): Promise<void> {
+    this.logicFunctionsWatcher = createLogicFunctionsWatcher({
       appPath: this.appPath,
       sourcePaths,
       handleBuildError: this.orchestrator!.handleFileBuildError.bind(
@@ -108,7 +116,7 @@ export class AppDevCommand {
       ),
     });
 
-    await this.functionsWatcher.start();
+    await this.logicFunctionsWatcher.start();
   }
 
   private async startFrontComponentsWatcher(
@@ -128,14 +136,42 @@ export class AppDevCommand {
     await this.frontComponentsWatcher.start();
   }
 
+  private async startAssetWatcher(): Promise<void> {
+    this.assetWatcher = new FileUploadWatcher({
+      appPath: this.appPath,
+      fileFolder: FileFolder.PublicAsset,
+      watchPaths: [ASSETS_DIR],
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
+    });
+
+    await this.assetWatcher.start();
+  }
+
+  private async startDependencyWatcher(): Promise<void> {
+    this.dependencyWatcher = new FileUploadWatcher({
+      appPath: this.appPath,
+      fileFolder: FileFolder.Source,
+      watchPaths: ['package.json', 'yarn.lock'],
+      handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
+        this.orchestrator,
+      ),
+    });
+
+    this.dependencyWatcher.start();
+  }
+
   private setupGracefulShutdown(): void {
     const shutdown = async () => {
       this.unmountUI?.();
 
       await Promise.all([
         this.manifestWatcher?.close(),
-        this.functionsWatcher?.close(),
+        this.logicFunctionsWatcher?.close(),
         this.frontComponentsWatcher?.close(),
+        this.assetWatcher?.close(),
+        this.dependencyWatcher?.close(),
       ]);
 
       process.exit(0);

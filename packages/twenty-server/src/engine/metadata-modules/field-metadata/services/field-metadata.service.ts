@@ -5,7 +5,8 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOneOptions, type Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -22,6 +23,7 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -34,6 +36,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -41,20 +44,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   async createOneField({
     createFieldInput,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
   }: {
     createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
     workspaceId: string;
-    /**
-     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
-     * when interacting with another application than workspace custom one
-     * */
-    applicationId?: string;
+    ownerFlatApplication?: FlatApplication;
   }): Promise<FlatFieldMetadata> {
     const [createdFieldMetadata] = await this.createManyFields({
       workspaceId,
       createFieldInputs: [createFieldInput],
-      applicationId,
+      ownerFlatApplication,
     });
 
     if (!isDefined(createdFieldMetadata)) {
@@ -71,11 +70,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     deleteOneFieldInput,
     workspaceId,
     isSystemBuild = false,
+    ownerFlatApplication,
   }: {
     deleteOneFieldInput: DeleteOneFieldInput;
     workspaceId: string;
     isSystemBuild?: boolean;
+    ownerFlatApplication?: FlatApplication;
   }): Promise<FlatFieldMetadata> {
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ??
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication;
+
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -119,6 +128,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           },
           workspaceId,
           isSystemBuild,
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
         },
       );
 
@@ -136,11 +147,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     updateFieldInput,
     workspaceId,
     isSystemBuild = false,
+    ownerFlatApplication,
   }: {
     updateFieldInput: Omit<UpdateFieldInput, 'workspaceId'>;
     workspaceId: string;
     isSystemBuild?: boolean;
+    ownerFlatApplication?: FlatApplication;
   }): Promise<FlatFieldMetadata> {
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ??
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication;
+
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -164,13 +185,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       },
     );
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
     const inputTranspilationResult = fromUpdateFieldInputToFlatFieldMetadata({
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatIndexMaps: existingFlatIndexMaps,
@@ -180,7 +194,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      flatApplication: resolvedOwnerFlatApplication,
       isSystemBuild,
     });
 
@@ -259,6 +273,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           },
           workspaceId,
           isSystemBuild,
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
         },
       );
 
@@ -286,36 +302,33 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   async createManyFields({
     createFieldInputs,
     workspaceId,
-    applicationId,
+    ownerFlatApplication,
     isSystemBuild = false,
   }: {
     createFieldInputs: Omit<CreateFieldInput, 'workspaceId'>[];
     workspaceId: string;
-    /**
-     * @deprecated do not use call validateBuildAndRunWorkspaceMigration contextually
-     * when interacting with another application than workspace custom one
-     * */
-    applicationId?: string;
+    ownerFlatApplication?: FlatApplication;
     isSystemBuild?: boolean;
   }): Promise<FlatFieldMetadata[]> {
     if (createFieldInputs.length === 0) {
       return [];
     }
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
+    const resolvedOwnerFlatApplication =
+      ownerFlatApplication ??
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication;
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
 
     const allTranspiledTranspilationInputs: Awaited<
       ReturnType<typeof fromCreateFieldInputToFlatFieldMetadatasToCreate>
@@ -325,10 +338,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       allTranspiledTranspilationInputs.push(
         await fromCreateFieldInputToFlatFieldMetadatasToCreate({
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
           createFieldInput,
           workspaceId,
-          workspaceCustomApplicationId:
-            applicationId ?? workspaceCustomFlatApplication.id,
+          flatApplication: resolvedOwnerFlatApplication,
         }),
       );
     }
@@ -369,6 +382,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           },
           workspaceId,
           isSystemBuild,
+          applicationUniversalIdentifier:
+            resolvedOwnerFlatApplication.universalIdentifier,
         },
       );
 

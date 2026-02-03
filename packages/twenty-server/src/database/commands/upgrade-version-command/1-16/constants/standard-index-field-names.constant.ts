@@ -1,4 +1,4 @@
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 // Maps indexName to its related field universal identifiers for each standard object
 export const STANDARD_INDEX_FIELD_UNIVERSAL_IDENTIFIERS: Record<

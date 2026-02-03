@@ -1,14 +1,14 @@
 import {
-  type FieldMetadataDefaultValue,
-  type FieldMetadataSettings,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
+  type FieldMetadataDefaultValue,
+  type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
@@ -70,7 +70,6 @@ export const createStandardFieldFlatMetadata = <
   return {
     id: fieldIds[fieldName].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
-    standardId: fieldDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
     workspaceId,
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
@@ -100,5 +99,16 @@ export const createStandardFieldFlatMetadata = <
     mainGroupByFieldMetadataViewIds: [],
     createdAt: now,
     updatedAt: now,
+    applicationUniversalIdentifier: twentyStandardApplicationId,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS[objectName].universalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
+    viewFilterUniversalIdentifiers: [],
+    viewFieldUniversalIdentifiers: [],
+    kanbanAggregateOperationViewUniversalIdentifiers: [],
+    calendarViewUniversalIdentifiers: [],
+    mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+    universalSettings: settings ?? null,
   };
 };

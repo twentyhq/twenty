@@ -93,12 +93,13 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
+  public/                           # 공개 자산 폴더(이미지, 폰트 등)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
+    application.config.ts          # 필수 - 기본 애플리케이션 구성
+    default-function.role.ts       # 서버리스 함수의 기본 역할
+    hello-world.function.ts        # 서버리스 함수 예제
+    hello-world.front-component.tsx # 프런트 컴포넌트 예제
+    // 사용자 엔터티 (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
 ```
 
 ### 설정보다 관례
@@ -162,6 +163,7 @@ src/
 * **.nvmrc**: 프로젝트에서 예상하는 Node.js 버전을 고정합니다.
 * **eslint.config.mjs** 및 **tsconfig.json**: 앱의 TypeScript 소스에 대한 린팅 및 TypeScript 구성을 제공합니다.
 * **README.md**: 앱 루트에 기본 안내를 담은 간단한 README입니다.
+* **public/**: 애플리케이션과 함께 제공되는 공개 자산(이미지, 폰트, 정적 파일)을 저장하는 폴더입니다. 여기에 배치된 파일은 동기화 시 업로드되며 런타임에 액세스할 수 있습니다.
 * **src/**: 애플리케이션을 코드로 정의하는 주요 위치:
   * `application.config.ts`: 앱의 전역 구성(메타데이터 및 런타임 연결)입니다. 아래의 "Application config"를 참조하세요.
   * `*.role.ts`: 로직 함수에서 사용하는 역할 정의. 아래의 "Default function role"을 참조하세요.
@@ -215,12 +217,12 @@ twenty-sdk는 앱 내부에서 사용하는 타입드 빌딩 블록과 헬퍼 �
 
 SDK는 앱 엔티티를 정의할 때 사용할 수 있는, 내장 검증이 포함된 네 가지 헬퍼 함수를 제공합니다:
 
-| 함수                 | 목적                  |
-| ------------------ | ------------------- |
-| `defineApp()`      | 애플리케이션 메타데이터 구성     |
-| `defineObject()`   | 필드가 있는 사용자 정의 객체 정의 |
-| `defineFunction()` | 핸들러가 있는 로직 함수 정의    |
-| `defineRole()`     | 역할 권한과 객체 접근 구성     |
+| 함수                    | 목적                  |
+| --------------------- | ------------------- |
+| `defineApplication()` | 애플리케이션 메타데이터 구성     |
+| `defineObject()`      | 필드가 있는 사용자 정의 객체 정의 |
+| `defineFunction()`    | 핸들러가 있는 로직 함수 정의    |
+| `defineRole()`        | 역할 권한과 객체 접근 구성     |
 
 이 함수들은 런타임에 구성을 검증하고, 더 나은 IDE 자동 완성과 타입 안정성을 제공합니다.
 
@@ -317,14 +319,14 @@ export default defineObject({
 * **함수가 실행되는 방식**: 권한을 위해 사용하는 역할.
 * **(선택 사항) 변수**: 함수에 환경 변수로 노출되는 키–값 쌍.
 
-`defineApp()`을 사용해 애플리케이션 구성을 정의하세요:
+Use `defineApplication()` to define your application configuration:
 
 ```typescript
 // src/app/application.config.ts
-import { defineApp } from 'twenty-sdk';
-import { DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { defineApplication } from 'twenty-sdk';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
 
-export default defineApp({
+export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
   displayName: 'My Twenty App',
   description: 'My first Twenty app',
@@ -337,7 +339,7 @@ export default defineApp({
       isSecret: false,
     },
   },
-  functionRoleUniversalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -345,11 +347,11 @@ export default defineApp({
 
 * `universalIdentifier` 필드는 고유하고 결정적인 ID입니다. 한 번 생성한 후 동기화 전반에 걸쳐 안정적으로 유지하세요.
 * `applicationVariables`는 함수의 환경 변수가 됩니다(예: `DEFAULT_RECIPIENT_NAME`는 `process.env.DEFAULT_RECIPIENT_NAME`로 사용 가능).
-* `functionRoleUniversalIdentifier`는 `*.role.ts` 파일에서 정의한 역할과 일치해야 합니다(아래 참조).
+* `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
 
 #### 역할 및 권한
 
-애플리케이션은 워크스페이스의 객체와 작업에 대한 권한을 캡슐화하는 역할을 정의할 수 있습니다. `application.config.ts`의 `functionRoleUniversalIdentifier` 필드는 앱의 로직 함수가 사용하는 기본 역할을 지정합니다.
+애플리케이션은 워크스페이스의 객체와 작업에 대한 권한을 캡슐화하는 역할을 정의할 수 있습니다. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
 
 * `TWENTY_API_KEY`로 주입되는 런타임 API 키는 이 기본 함수 역할에서 파생됩니다.
 * 타입드 클라이언트는 해당 역할에 부여된 권한으로 제한됩니다.
@@ -363,11 +365,11 @@ export default defineApp({
 // src/app/default-function.role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
-export const DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER =
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
 export default defineRole({
-  universalIdentifier: DEFAULT_FUNCTION_ROLE_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
   canReadAllObjectRecords: false,
@@ -380,7 +382,7 @@ export default defineRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [
     {
-      objectNameSingular: 'postCard',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
@@ -389,8 +391,8 @@ export default defineRole({
   ],
   fieldPermissions: [
     {
-      objectNameSingular: 'postCard',
-      fieldName: 'content',
+      objectUniversalIdentifier: '9f9882af-170c-4879-b013-f9628b77c050',
+      fieldUniversalIdentifier: 'b2c37dc0-8ae7-470e-96cd-1476b47dfaff',
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -399,7 +401,7 @@ export default defineRole({
 });
 ```
 
-이 역할의 `universalIdentifier`는 `application.config.ts`에서 `functionRoleUniversalIdentifier`로 참조됩니다. 다시 말해:
+The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. 다시 말해:
 
 * **\*.role.ts**는 기본 함수 역할이 수행할 수 있는 작업을 정의합니다.
 * **application.config.ts**는 해당 역할을 가리키므로, 함수는 그 권한을 상속받습니다.
@@ -604,8 +606,8 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 노트:
 
 * 생성된 클라이언트에 URL이나 API 키를 전달할 필요가 없습니다. 런타임에 process.env에서 `TWENTY_API_URL`과 `TWENTY_API_KEY`를 읽습니다.
-* API 키의 권한은 `application.config.ts`에서 `functionRoleUniversalIdentifier`를 통해 참조된 역할에 의해 결정됩니다. 이는 애플리케이션의 로직 함수에서 사용하는 기본 역할입니다.
-* 애플리케이션은 최소 권한 원칙을 따르도록 역할을 정의할 수 있습니다. 함수에 필요한 권한만 부여하고, `functionRoleUniversalIdentifier`를 해당 역할의 universal identifier로 지정하세요.
+* The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. 이는 애플리케이션의 로직 함수에서 사용하는 기본 역할입니다.
+* 애플리케이션은 최소 권한 원칙을 따르도록 역할을 정의할 수 있습니다. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
 
 ### Hello World 예제
 

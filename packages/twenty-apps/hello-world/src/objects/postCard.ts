@@ -95,7 +95,7 @@ export class PostCard {
     label: 'Notes',
     icon: 'IconComment',
     inverseSideTargetUniversalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note.universalIdentifier,
     onDelete: OnDeleteAction.CASCADE,
   })
   notes: Note[];

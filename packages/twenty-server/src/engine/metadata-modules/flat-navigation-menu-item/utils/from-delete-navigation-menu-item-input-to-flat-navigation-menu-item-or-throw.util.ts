@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import {
   NavigationMenuItemException,
@@ -13,7 +13,7 @@ export const fromDeleteNavigationMenuItemInputToFlatNavigationMenuItemOrThrow =
     flatNavigationMenuItemMaps,
     navigationMenuItemId,
   }: {
-    flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
+    flatNavigationMenuItemMaps: MetadataFlatEntityMaps<'navigationMenuItem'>;
     navigationMenuItemId: string;
   }): FlatNavigationMenuItem => {
     const existingFlatNavigationMenuItem = findFlatEntityByIdInFlatEntityMaps({

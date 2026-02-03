@@ -11,6 +11,7 @@ export const getActionIconColorOrThrow = ({
 }) => {
   switch (actionType) {
     case 'CODE':
+    case 'LOGIC_FUNCTION':
     case 'HTTP_REQUEST':
     case 'SEND_EMAIL':
       return theme.color.red;

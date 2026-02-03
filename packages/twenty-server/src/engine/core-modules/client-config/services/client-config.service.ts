@@ -195,6 +195,9 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
+      allowRequestsToTwentyIcons: this.twentyConfigService.get(
+        'ALLOW_REQUESTS_TO_TWENTY_ICONS',
+      ),
       calendarBookingPageId: isNonEmptyString(calendarBookingPageId)
         ? calendarBookingPageId
         : undefined,

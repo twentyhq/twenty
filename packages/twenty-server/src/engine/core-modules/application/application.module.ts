@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { MarketplaceService } from 'src/engine/core-modules/application/services/marketplace.service';
 import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/services/workspace-flat-application-map-cache.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -15,7 +16,15 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,
   ],
-  exports: [ApplicationService, WorkspaceFlatApplicationMapCacheService],
-  providers: [ApplicationService, WorkspaceFlatApplicationMapCacheService],
+  exports: [
+    ApplicationService,
+    WorkspaceFlatApplicationMapCacheService,
+    MarketplaceService,
+  ],
+  providers: [
+    ApplicationService,
+    WorkspaceFlatApplicationMapCacheService,
+    MarketplaceService,
+  ],
 })
 export class ApplicationModule {}

@@ -47,7 +47,6 @@
     "@lingui/detect-locale": "^5.2.0",
     "@lingui/react": "^5.1.2",
     "@monaco-editor/react": "^4.7.0",
-    "@nivo/bar": "^0.99.0",
     "@nivo/core": "^0.99.0",
     "@nivo/line": "^0.99.0",
     "@nivo/pie": "^0.99.0",
@@ -113,6 +112,7 @@
     "recoil": "^0.7.7",
     "remark-gfm": "^4.0.1",
     "transliteration": "^2.3.5",
+    "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
     "use-debounce": "^10.0.0"
