@@ -36,6 +36,12 @@ type ClickHouseEventRecord = {
 const ALLOWED_TABLES = Object.values(EventLogTable);
 const MAX_LIMIT = 10000;
 
+const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
+  [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
+  [EventLogTable.PAGEVIEW]: 'pageview',
+  [EventLogTable.OBJECT_EVENT]: 'objectEvent',
+};
+
 @Injectable()
 export class EventLogsService {
   constructor(
@@ -62,8 +68,10 @@ export class EventLogsService {
     const filter = this.buildFilter(resolvedFilters, input.table, cursorFilter);
     const orderBy = this.buildOrderBy(input.orderBy);
 
+    const clickHouseTableName = CLICKHOUSE_TABLE_NAMES[input.table];
+
     const { query, params } = buildClickHouseSelectQuery({
-      tableName: input.table,
+      tableName: clickHouseTableName,
       filter,
       orderBy,
       limit: limit + 1,
@@ -77,7 +85,7 @@ export class EventLogsService {
 
     const { query: countQuery, params: countParams } =
       buildClickHouseCountQuery({
-        tableName: input.table,
+        tableName: clickHouseTableName,
         filter: this.buildFilter(resolvedFilters, input.table),
         workspaceId,
       });
