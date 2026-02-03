@@ -1,5 +1,6 @@
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
+import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -116,34 +117,32 @@ export const useOpenFilesFieldInput = () => {
               return;
             }
 
-            const uploadedFiles: FieldFilesValue[] = [];
-
-            for (const file of selectedFiles) {
-              const uploadedFile = await uploadFile(file);
-              if (isDefined(uploadedFile)) {
-                uploadedFiles.push(uploadedFile);
-              }
-            }
-
-            if (uploadedFiles.length > 0) {
-              updateRecord({
-                [fieldName]: uploadedFiles,
-              });
-            }
-
-            if (isTableContext && isDefined(recordTableId)) {
-              set(
-                recordTableCellEditModePositionComponentState.atomFamily({
-                  instanceId: recordTableId,
-                }),
-                null,
+            try {
+              const uploadedFiles = await uploadMultipleFiles(
+                selectedFiles,
+                uploadFile,
               );
-              goBackToPreviousDropdownFocusId();
-              removeLastFocusItemFromFocusStackByComponentType({
-                componentType: FocusComponentType.OPENED_FIELD_INPUT,
-              });
-            } else {
-              onClose?.();
+
+              if (uploadedFiles.length > 0) {
+                updateRecord({
+                  [fieldName]: uploadedFiles,
+                });
+              }
+            } finally {
+              if (isTableContext && isDefined(recordTableId)) {
+                set(
+                  recordTableCellEditModePositionComponentState.atomFamily({
+                    instanceId: recordTableId,
+                  }),
+                  null,
+                );
+                goBackToPreviousDropdownFocusId();
+                removeLastFocusItemFromFocusStackByComponentType({
+                  componentType: FocusComponentType.OPENED_FIELD_INPUT,
+                });
+              } else {
+                onClose?.();
+              }
             }
           },
           onCancel: () => {

@@ -168,7 +168,7 @@ export const DocumentViewer = ({
   const [csvPreview, setCsvPreview] = useState<string | undefined>(undefined);
 
   const { extension } = getFileNameAndExtension(documentName);
-  const fileExtension = isDefined(documentExtension?.trim())
+  const fileExtension = isDefined(documentExtension)
     ? documentExtension.toLowerCase().replace('.', '')
     : (extension?.toLowerCase().replace('.', '') ?? '');
   const fileCategory = getFileType(documentName);

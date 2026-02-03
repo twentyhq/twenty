@@ -6,6 +6,7 @@ import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-ty
 import { FilesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/FilesFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
+import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { filesSchema } from '@/object-record/record-field/ui/types/guards/isFieldFilesValue';
@@ -85,22 +86,20 @@ export const FilesFieldInput = () => {
 
         setIsUploading(true);
 
-        const uploadedFiles: FieldFilesValue[] = [];
+        try {
+          const uploadedFiles = await uploadMultipleFiles(
+            selectedFiles,
+            uploadFile,
+          );
 
-        for (const file of selectedFiles) {
-          const uploadedFile = await uploadFile(file);
-          if (isDefined(uploadedFile)) {
-            uploadedFiles.push(uploadedFile);
+          if (uploadedFiles.length > 0) {
+            const newFiles = [...files, ...uploadedFiles];
+            handleChange(newFiles);
+            onEnter?.({ newValue: parseFilesArrayToFilesValue(newFiles) });
           }
+        } finally {
+          setIsUploading(false);
         }
-
-        if (uploadedFiles.length > 0) {
-          const newFiles = [...files, ...uploadedFiles];
-          handleChange(newFiles);
-          onEnter?.({ newValue: parseFilesArrayToFilesValue(newFiles) });
-        }
-
-        setIsUploading(false);
       },
     });
   }, [

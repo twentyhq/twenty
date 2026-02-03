@@ -299,8 +299,9 @@ export const DeletePrimaryLink: Story = {
     ).findByText('Delete');
     await userEvent.click(deleteOption);
 
-    const addButton = await canvas.findByText('Add URL');
-    expect(addButton).toBeVisible();
+    const input = await canvas.findByPlaceholderText('URL');
+    expect(input).toBeVisible();
+    expect(input).toHaveValue('');
   },
 };
 

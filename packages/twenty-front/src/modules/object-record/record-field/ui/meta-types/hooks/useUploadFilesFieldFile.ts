@@ -24,7 +24,7 @@ export const useUploadFilesFieldFile = () => {
       const uploadedFile = result?.data?.uploadFilesFieldFile;
 
       if (!isDefined(uploadedFile)) {
-        throw new Error('File upload failed');
+        throw new Error(t`File upload failed`);
       }
 
       const fileName = file.name;
@@ -40,11 +40,14 @@ export const useUploadFilesFieldFile = () => {
       };
     } catch (error) {
       const fileNameForError = file.name;
+      const errorMessage = String(error);
       enqueueErrorSnackBar({
         message: t`Failed to upload "${fileNameForError}"`,
       });
 
-      throw new Error(`Failed to upload file "${file.name}": ${error}`);
+      throw new Error(
+        t`Failed to upload file "${fileNameForError}": ${errorMessage}`,
+      );
     }
   };
 

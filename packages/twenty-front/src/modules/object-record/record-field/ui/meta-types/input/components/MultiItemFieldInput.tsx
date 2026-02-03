@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { useDebounce } from 'use-debounce';
 
 import {
   MultiItemBaseInput,
@@ -155,19 +156,20 @@ export const MultiItemFieldInput = <T,>({
   });
 
   const [searchFilter, setSearchFilter] = useState('');
+  const [debouncedSearchFilter] = useDebounce(searchFilter, 150);
 
   const shouldShowSearch = items.length > 3;
 
   const filteredItems = useMemo(() => {
-    if (!shouldShowSearch || !searchFilter) {
+    if (!shouldShowSearch || !debouncedSearchFilter) {
       return items;
     }
-    const searchTerm = normalizeSearchText(searchFilter);
+    const searchTerm = normalizeSearchText(debouncedSearchFilter);
     return items.filter((_item, index) => {
       const itemText = getItemValueAsString(index);
       return normalizeSearchText(itemText).includes(searchTerm);
     });
-  }, [items, searchFilter, shouldShowSearch, getItemValueAsString]);
+  }, [items, debouncedSearchFilter, shouldShowSearch, getItemValueAsString]);
 
   const isLimitReached =
     typeof maxItemCount === 'number' && items.length >= maxItemCount;
