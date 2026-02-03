@@ -123,12 +123,43 @@ export class ApplicationService {
     });
   }
 
-  async findOneApplication(
-    applicationId: string,
-    workspaceId: string,
-  ): Promise<ApplicationEntity> {
-    const application = await this.applicationRepository.findOne({
-      where: { workspaceId, id: applicationId },
+  async checkApplicationExist({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }) {
+    return isDefined(
+      await this.findOneApplication({ id, universalIdentifier, workspaceId }),
+    );
+  }
+
+  async findOneApplication({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
+    if (!isDefined(id) && !isDefined(universalIdentifier)) {
+      throw new ApplicationException(
+        `Either id or universalIdentifier must be provided to find application.`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const where = {
+      workspaceId,
+      ...(isDefined(id) ? { id } : { universalIdentifier }),
+    };
+
+    return await this.applicationRepository.findOne({
+      where,
       relations: [
         'logicFunctions',
         'agents',
@@ -136,10 +167,26 @@ export class ApplicationService {
         'applicationVariables',
       ],
     });
+  }
+
+  async findOneApplicationOrThrow({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity> {
+    const application = await this.findOneApplication({
+      id,
+      universalIdentifier,
+      workspaceId,
+    });
 
     if (!isDefined(application)) {
       throw new ApplicationException(
-        `Application with id ${applicationId} not found`,
+        `Application with id ${id} or universalIdentifier ${universalIdentifier} not found`,
         ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
@@ -166,6 +213,12 @@ export class ApplicationService {
         workspaceId,
       },
     });
+  }
+
+  async createOneApplication(
+    data: Partial<ApplicationEntity> & { workspaceId: string },
+  ): Promise<ApplicationEntity> {
+    return this.create(data);
   }
 
   async findTwentyStandardApplicationOrThrow(workspaceId: string): Promise<{
