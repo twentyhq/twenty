@@ -1,4 +1,4 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -87,7 +87,7 @@ export const STANDARD_OPPORTUNITY_PAGE_LAYOUT_CONFIG = {
   layoutName: 'opportunityRecordPage',
   name: 'Default Opportunity Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECT_IDS.opportunity,
+  objectUniversalIdentifier: STANDARD_OBJECTS.opportunity.universalIdentifier,
   universalIdentifier: '20202020-a103-4003-8003-0aa0b1ca1003',
   defaultTabUniversalIdentifier: OPPORTUNITY_PAGE_TABS.home.universalIdentifier,
   tabs: OPPORTUNITY_PAGE_TABS,

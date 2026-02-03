@@ -8,9 +8,9 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { ADMIN_ROLE } from 'src/engine/metadata-modules/role/constants/admin-role';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -103,7 +103,7 @@ export class WorkflowExecutionContextService {
     if (!isDefined(roleId)) {
       // Fallback: Look up admin role for existing workspaces without defaultRoleId
       const adminRole = await this.roleService.getRoleByUniversalIdentifier({
-        universalIdentifier: ADMIN_ROLE.standardId,
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
         workspaceId,
       });
 

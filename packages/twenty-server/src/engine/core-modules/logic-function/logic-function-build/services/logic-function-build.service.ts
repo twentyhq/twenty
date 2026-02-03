@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import fs from 'fs/promises';
 import { dirname, join } from 'path';
+import crypto from 'crypto';
 
 import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';
@@ -13,6 +14,7 @@ import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import { FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
 
 export type FunctionBuildParams = {
   flatLogicFunction: FlatLogicFunction;
@@ -22,6 +24,64 @@ export type FunctionBuildParams = {
 @Injectable()
 export class LogicFunctionBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
+
+  async hasLayerDependencies({
+    flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    applicationUniversalIdentifier: string;
+  }): Promise<boolean> {
+    const packageJsonExists = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatLogicFunctionLayer.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: 'package.json',
+    });
+
+    const yarnLockExists = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatLogicFunctionLayer.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: 'yarn.lock',
+    });
+
+    return packageJsonExists && yarnLockExists;
+  }
+
+  async uploadDependencies({
+    flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    applicationUniversalIdentifier: string;
+  }) {
+    await this.fileStorageService.writeFile_v2({
+      workspaceId: flatLogicFunctionLayer.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: 'package.json',
+      sourceFile: JSON.stringify(flatLogicFunctionLayer.packageJson, null, 2),
+      mimeType: undefined,
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
+    });
+
+    await this.fileStorageService.writeFile_v2({
+      workspaceId: flatLogicFunctionLayer.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: 'yarn.lock',
+      sourceFile: flatLogicFunctionLayer.yarnLock,
+      mimeType: undefined,
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
+    });
+  }
 
   async isBuilt({
     flatLogicFunction,
@@ -38,7 +98,7 @@ export class LogicFunctionBuildService {
   async buildAndUpload({
     flatLogicFunction,
     applicationUniversalIdentifier,
-  }: FunctionBuildParams): Promise<void> {
+  }: FunctionBuildParams): Promise<{ checksum: string }> {
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     try {
@@ -85,6 +145,10 @@ export class LogicFunctionBuildService {
           toDelete: false,
         },
       });
+
+      return {
+        checksum: crypto.createHash('md5').update(builtFile).digest('hex'),
+      };
     } finally {
       await lambdaBuildDirectoryManager.clean();
     }

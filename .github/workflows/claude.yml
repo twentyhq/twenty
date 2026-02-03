@@ -56,18 +56,43 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Run Claude Code
+        id: claude-code
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           additional_permissions: |
             actions: read
-          claude_args: '--max-turns 50 --model opus --allowedTools "Edit,Write,WebFetch,Bash(bash packages/twenty-utils/setup-dev-env.sh),Bash(npx nx *),Bash(npx jest *),Bash(yarn *),Bash(git *),Bash(gh *),Bash(sed *),Bash(python3 *)"'
+          claude_args: '--max-turns 200 --model opus --allowedTools "Edit,Write,WebFetch,Bash(bash packages/twenty-utils/setup-dev-env.sh),Bash(npx nx *),Bash(npx jest *),Bash(yarn *),Bash(git *),Bash(gh *),Bash(sed *),Bash(python3 *),Bash(rm *),Bash(find *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),Bash(mkdir *),Bash(cp *),Bash(mv *),Bash(touch *),Bash(chmod *),Bash(echo *),Bash(curl *),Bash(cd *),Bash(pwd *),Bash(diff *),Bash(xargs *),Bash(awk *),Bash(cut *),Bash(tee *),Bash(tr *)"'
           settings: |
             {
               "env": {
                 "PG_DATABASE_URL": "postgres://postgres:postgres@localhost:5432/default"
               }
             }
+      - name: Post Create-PR link if Claude ran out of turns
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH=$(git branch --show-current)
+          if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "" ]; then
+            exit 0
+          fi
+          AHEAD=$(git rev-list --count main.."$BRANCH" 2>/dev/null || echo "0")
+          if [ "$AHEAD" = "0" ]; then
+            exit 0
+          fi
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number' 2>/dev/null || echo "")
+          if [ -n "$EXISTING_PR" ]; then
+            exit 0
+          fi
+          ISSUE_NUMBER="${{ github.event.issue.number || github.event.pull_request.number }}"
+          ENCODED_BRANCH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$BRANCH', safe=''))")
+          PR_URL="https://github.com/${{ github.repository }}/compare/main...${ENCODED_BRANCH}?quick_pull=1"
+          BODY="⚠️ Claude ran out of turns before creating a PR. Work has been pushed to [\`$BRANCH\`](https://github.com/${{ github.repository }}/tree/$ENCODED_BRANCH).\n\n[**Create PR →**]($PR_URL)"
+          if [ -n "$ISSUE_NUMBER" ]; then
+            gh issue comment "$ISSUE_NUMBER" --body "$(echo -e "$BODY")"
+          fi
 
   claude-cross-repo:
     if: github.event_name == 'repository_dispatch'
@@ -125,7 +150,7 @@ jobs:
           prompt: ${{ steps.prompt.outputs.prompt }}
           additional_permissions: |
             actions: read
-          claude_args: '--max-turns 50 --model opus --allowedTools "Edit,Write,WebFetch,Bash(bash packages/twenty-utils/setup-dev-env.sh),Bash(npx nx *),Bash(npx jest *),Bash(yarn *),Bash(git *),Bash(gh *),Bash(sed *),Bash(python3 *)"'
+          claude_args: '--max-turns 200 --model opus --allowedTools "Edit,Write,WebFetch,Bash(bash packages/twenty-utils/setup-dev-env.sh),Bash(npx nx *),Bash(npx jest *),Bash(yarn *),Bash(git *),Bash(gh *),Bash(sed *),Bash(python3 *),Bash(rm *),Bash(find *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(head *),Bash(tail *),Bash(wc *),Bash(sort *),Bash(uniq *),Bash(mkdir *),Bash(cp *),Bash(mv *),Bash(touch *),Bash(chmod *),Bash(echo *),Bash(curl *),Bash(cd *),Bash(pwd *),Bash(diff *),Bash(xargs *),Bash(awk *),Bash(cut *),Bash(tee *),Bash(tr *)"'
           settings: |
             {
               "env": {

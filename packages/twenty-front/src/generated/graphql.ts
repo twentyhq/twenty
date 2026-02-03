@@ -70,7 +70,6 @@ export type Agent = {
   prompt: Scalars['String'];
   responseFormat?: Maybe<Scalars['JSON']>;
   roleId?: Maybe<Scalars['UUID']>;
-  standardId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -911,6 +910,14 @@ export type CreateApiKeyInput = {
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
   roleId: Scalars['UUID'];
+};
+
+export type CreateApplicationInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  sourcePath: Scalars['String'];
+  universalIdentifier: Scalars['String'];
+  version: Scalars['String'];
 };
 
 export type CreateApprovedAccessDomainInput = {
@@ -2017,6 +2024,7 @@ export type Mutation = {
   createObjectEvent: Analytics;
   createOneAgent: Agent;
   createOneAppToken: AppToken;
+  createOneApplication: Application;
   createOneField: Field;
   createOneLogicFunction: LogicFunction;
   createOneLogicFunctionLayer: LogicFunctionLayer;
@@ -2317,6 +2325,11 @@ export type MutationCreateOneAgentArgs = {
 };
 
 
+export type MutationCreateOneApplicationArgs = {
+  input: CreateApplicationInput;
+};
+
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -2328,8 +2341,9 @@ export type MutationCreateOneLogicFunctionArgs = {
 
 
 export type MutationCreateOneLogicFunctionLayerArgs = {
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
+  applicationUniversalIdentifier: Scalars['String'];
+  packageJsonChecksum: Scalars['JSON'];
+  yarnLockChecksum: Scalars['String'];
 };
 
 
@@ -2759,8 +2773,6 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationSyncApplicationArgs = {
   manifest: Scalars['JSON'];
-  packageJson: Scalars['JSON'];
-  yarnLock: Scalars['String'];
 };
 
 
@@ -3448,6 +3460,7 @@ export type Query = {
   apiKeys: Array<ApiKey>;
   barChartData: BarChartDataOutput;
   billingPortalSession: BillingSessionOutput;
+  checkApplicationExist: Scalars['Boolean'];
   checkUserExists: CheckUserExistOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
   commandMenuItem?: Maybe<CommandMenuItem>;
@@ -3541,6 +3554,12 @@ export type QueryBillingPortalSessionArgs = {
 };
 
 
+export type QueryCheckApplicationExistArgs = {
+  id?: InputMaybe<Scalars['UUID']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
+};
+
+
 export type QueryCheckUserExistsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -3563,7 +3582,8 @@ export type QueryFindOneAgentArgs = {
 
 
 export type QueryFindOneApplicationArgs = {
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -3940,7 +3960,6 @@ export type Role = {
   permissionFlags?: Maybe<Array<PermissionFlag>>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
-  standardId?: Maybe<Scalars['UUID']>;
   universalIdentifier?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
@@ -4145,7 +4164,6 @@ export type Skill = {
   isCustom: Scalars['Boolean'];
   label: Scalars['String'];
   name: Scalars['String'];
-  standardId?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
 };
 
