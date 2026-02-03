@@ -10,7 +10,6 @@ import {
   Droppable,
   type OnDragEndResponder,
 } from '@hello-pangea/dnd';
-import { t } from '@lingui/core/macro';
 
 const handleDragEnd: OnDragEndResponder = (result, configuration, onChange) => {
   if (!result.destination) {
