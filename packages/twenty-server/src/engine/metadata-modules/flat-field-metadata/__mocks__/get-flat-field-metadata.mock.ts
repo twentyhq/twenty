@@ -39,7 +39,6 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     isUIReadOnly: false,
     isLabelSyncedWithName: false,
     isSystem: false,
-    standardId: null,
     standardOverrides: null,
     workspaceId: faker.string.uuid(),
     applicationId: faker.string.uuid(),
@@ -63,7 +62,6 @@ export const getStandardFlatFieldMetadataMock = (
   overrides: Omit<FlatFieldMetadataOverrides, 'isCustom' | 'isSystem'>,
 ) => {
   return getFlatFieldMetadataMock({
-    standardId: faker.string.uuid(),
     standardOverrides: {},
     isCustom: false,
     isSystem: true,

@@ -57,11 +57,20 @@ export class LogicFunctionService {
 
     let logicFunctionToCreateLayerId = input.logicFunctionLayerId;
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     if (!isDefined(logicFunctionToCreateLayerId)) {
       const { id: commonLogicFunctionLayerId } =
-        await this.logicFunctionLayerService.createCommonLayerIfNotExist(
+        await this.logicFunctionLayerService.createCommonLayer({
           workspaceId,
-        );
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+        });
 
       logicFunctionToCreateLayerId = commonLogicFunctionLayerId;
     }

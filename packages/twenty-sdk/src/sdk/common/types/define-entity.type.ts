@@ -1,11 +1,11 @@
 import {
-  type ApplicationManifest,
   type FieldManifest,
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
 import { type FrontComponentConfig } from '@/sdk/front-components/front-component-config';
 import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
+import { type ApplicationConfig } from '@/sdk/application/application-config';
 
 export type ValidationResult<T> = {
   success: boolean;
@@ -14,7 +14,7 @@ export type ValidationResult<T> = {
 };
 
 export type DefinableEntity =
-  | ApplicationManifest
+  | ApplicationConfig
   | ObjectManifest
   | FieldManifest
   | FrontComponentConfig

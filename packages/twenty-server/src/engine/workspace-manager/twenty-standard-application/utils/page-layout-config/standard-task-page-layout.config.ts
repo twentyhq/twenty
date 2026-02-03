@@ -1,4 +1,4 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -64,7 +64,7 @@ export const STANDARD_TASK_PAGE_LAYOUT_CONFIG = {
   layoutName: 'taskRecordPage',
   name: 'Default Task Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECT_IDS.task,
+  objectUniversalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
   universalIdentifier: '20202020-a105-4005-8005-ba5ca11a1005',
   defaultTabUniversalIdentifier: TASK_PAGE_TABS.home.universalIdentifier,
   tabs: TASK_PAGE_TABS,

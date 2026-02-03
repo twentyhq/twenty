@@ -135,7 +135,8 @@ type Story = StoryObj<typeof DateFieldInputWithContext>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const div = await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    const div = await canvas.findByText('January', {}, { timeout: 10000 });
 
     await expect(div.innerText).toContain('January');
   },
@@ -147,7 +148,8 @@ export const ClickOutside: Story = {
 
     await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
 
-    await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    await canvas.findByText('January', {}, { timeout: 10000 });
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await userEvent.click(emptyDiv);
 
@@ -160,7 +162,8 @@ export const Escape: Story = {
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
 
-    await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    await canvas.findByText('January', {}, { timeout: 10000 });
     await userEvent.keyboard('{escape}');
 
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
@@ -172,7 +175,8 @@ export const Enter: Story = {
     await expect(handleEnterMocked).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
 
-    await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    await canvas.findByText('January', {}, { timeout: 10000 });
     await userEvent.keyboard('{enter}');
 
     await expect(handleEnterMocked).toHaveBeenCalledTimes(1);

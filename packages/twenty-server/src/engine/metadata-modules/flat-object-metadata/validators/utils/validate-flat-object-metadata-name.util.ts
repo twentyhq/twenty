@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import camelCase from 'lodash.camelcase';
 import { RESERVED_METADATA_NAME_KEYWORDS } from 'twenty-shared/metadata';
 
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
@@ -37,16 +36,6 @@ export const validateFlatObjectMetadataNames = ({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: `Name is too short`,
         userFriendlyMessage: msg`Name is too short`,
-        value: name,
-      });
-    }
-
-    // CamelCase check
-    if (name !== camelCase(name)) {
-      errors.push({
-        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-        message: `Name should be in camelCase`,
-        userFriendlyMessage: msg`Name should be in camelCase`,
         value: name,
       });
     }
