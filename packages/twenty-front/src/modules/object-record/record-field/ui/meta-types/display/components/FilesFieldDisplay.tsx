@@ -8,5 +8,7 @@ export const FilesFieldDisplay = () => {
     return <></>;
   }
 
-  return <FilesDisplay value={fieldValue} forceDisableClick={disableChipClick} />;
+  return (
+    <FilesDisplay value={fieldValue} forceDisableClick={disableChipClick} />
+  );
 };
