@@ -4,7 +4,7 @@ import { CALENDAR_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/calendar/calen
 
 export const isSyncStale = (syncStageStartedAt?: string | null): boolean => {
   if (!isDefined(syncStageStartedAt)) {
-    return false;
+    return true;
   }
 
   const syncStageStartedTime = new Date(syncStageStartedAt).getTime();
