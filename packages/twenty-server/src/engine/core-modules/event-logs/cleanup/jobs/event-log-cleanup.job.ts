@@ -2,10 +2,10 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { EventLogCleanupService } from 'src/engine/core-modules/event-logs/cleanup/services/event-log-cleanup.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { EventLogCleanupService } from 'src/engine/core-modules/event-logs/cleanup/services/event-log-cleanup.service';
 
 export type EventLogCleanupJobData = {
   workspaceId: string;
@@ -39,4 +39,3 @@ export class EventLogCleanupJob {
     }
   }
 }
-

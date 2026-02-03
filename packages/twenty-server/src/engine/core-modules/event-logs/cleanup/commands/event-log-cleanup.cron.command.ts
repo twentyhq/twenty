@@ -10,7 +10,8 @@ import { EventLogCleanupCronJob } from 'src/engine/core-modules/event-logs/clean
 
 @Command({
   name: 'cron:event-log-cleanup',
-  description: 'Starts a cron job to clean up old event logs based on workspace retention settings',
+  description:
+    'Starts a cron job to clean up old event logs based on workspace retention settings',
 })
 export class EventLogCleanupCronCommand extends CommandRunner {
   constructor(
@@ -32,4 +33,3 @@ export class EventLogCleanupCronCommand extends CommandRunner {
     });
   }
 }
-

@@ -21,4 +21,3 @@ import { EventLogCleanupService } from 'src/engine/core-modules/event-logs/clean
   exports: [EventLogCleanupCronCommand],
 })
 export class EventLogCleanupModule {}
-

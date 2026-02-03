@@ -31,7 +31,6 @@ import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-cred
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import {
   DEFAULT_FAST_MODEL,
@@ -51,6 +50,7 @@ import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sor
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -105,7 +105,7 @@ export class WorkspaceEntity {
   trashRetentionDays: number;
 
   @Field()
-  @Column({ type: 'integer', default: 730 })
+  @Column({ type: 'integer', default: 90 })
   eventLogRetentionDays: number;
 
   // Relations

@@ -4,23 +4,15 @@
 -- Step 1: Create new table with optimized structure
 CREATE TABLE IF NOT EXISTS pageview_v2
 (
-    -- Use efficient codecs for better compression
     `name`        LowCardinality(String) NOT NULL,
-    `timestamp`   DateTime64(3) NOT NULL CODEC(Delta, ZSTD(1)),
-    `userId`      String DEFAULT '' CODEC(ZSTD(1)),
-    `workspaceId` String DEFAULT '' CODEC(ZSTD(1)),
-    `properties`  JSON CODEC(ZSTD(3)),
-
-    -- Skip index for text search on page names
-    INDEX name_idx name TYPE tokenbf_v1(10240, 3, 0) GRANULARITY 4,
-    -- Bloom filter for userId lookups
-    INDEX userId_idx userId TYPE bloom_filter(0.01) GRANULARITY 4
+    `timestamp`   DateTime64(3) NOT NULL,
+    `userId`      String DEFAULT '',
+    `workspaceId` String DEFAULT '',
+    `properties`  JSON
 )
     ENGINE = MergeTree
-    PARTITION BY toYYYYMM(timestamp)
     ORDER BY (workspaceId, timestamp, name, userId)
-    -- Default TTL: 2 years (can be overridden per-workspace via scheduled cleanup)
-    TTL timestamp + INTERVAL 2 YEAR DELETE
+    TTL timestamp + INTERVAL 3 YEAR DELETE
     SETTINGS
         index_granularity = 8192,
         ttl_only_drop_parts = 1;

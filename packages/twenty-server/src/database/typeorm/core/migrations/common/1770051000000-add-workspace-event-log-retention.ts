@@ -6,9 +6,9 @@ export class AddWorkspaceEventLogRetention1770051000000
   name = 'AddWorkspaceEventLogRetention1770051000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Default 730 days = 2 years retention for event logs
+    // Default 90 days retention for event logs
     await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "eventLogRetentionDays" integer NOT NULL DEFAULT '730'`,
+      `ALTER TABLE "core"."workspace" ADD "eventLogRetentionDays" integer NOT NULL DEFAULT '90'`,
     );
   }
 
@@ -18,4 +18,3 @@ export class AddWorkspaceEventLogRetention1770051000000
     );
   }
 }
-
