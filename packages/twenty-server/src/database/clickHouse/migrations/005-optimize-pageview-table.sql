@@ -12,10 +12,7 @@ CREATE TABLE IF NOT EXISTS pageview_v2
 )
     ENGINE = MergeTree
     ORDER BY (workspaceId, timestamp, name, userId)
-    TTL timestamp + INTERVAL 3 YEAR DELETE
-    SETTINGS
-        index_granularity = 8192,
-        ttl_only_drop_parts = 1;
+    TTL timestamp + INTERVAL 3 YEAR DELETE;
 
 -- Step 2: Migrate existing data
 INSERT INTO pageview_v2

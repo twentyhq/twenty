@@ -15,10 +15,7 @@ CREATE TABLE IF NOT EXISTS objectEvent_v2
 )
     ENGINE = MergeTree
     ORDER BY (workspaceId, timestamp, objectMetadataId, recordId, event, userId)
-    TTL timestamp + INTERVAL 3 YEAR DELETE
-    SETTINGS
-        index_granularity = 8192,
-        ttl_only_drop_parts = 1;
+    TTL timestamp + INTERVAL 3 YEAR DELETE;
 
 -- Step 2: Migrate existing data
 INSERT INTO objectEvent_v2

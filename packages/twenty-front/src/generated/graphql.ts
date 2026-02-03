@@ -4731,6 +4731,7 @@ export type UpdateWorkspaceInput = {
   defaultRoleId?: InputMaybe<Scalars['UUID']>;
   displayName?: InputMaybe<Scalars['String']>;
   editableProfileFields?: InputMaybe<Array<Scalars['String']>>;
+  eventLogRetentionDays?: InputMaybe<Scalars['Float']>;
   fastModel?: InputMaybe<Scalars['String']>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -5124,6 +5125,7 @@ export type Workspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   editableProfileFields?: Maybe<Array<Scalars['String']>>;
+  eventLogRetentionDays: Scalars['Float'];
   fastModel: Scalars['String'];
   featureFlags?: Maybe<Array<FeatureFlagDto>>;
   hasValidEnterpriseKey: Scalars['Boolean'];
