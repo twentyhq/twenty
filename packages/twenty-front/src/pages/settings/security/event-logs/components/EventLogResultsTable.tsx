@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
@@ -10,6 +10,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 import {
@@ -67,9 +69,8 @@ const OBJECT_EVENT_COLUMNS: ColumnConfig[] = [
   },
 ];
 
-const StyledScrollContainer = styled.div`
+const StyledScrollWrapper = styled(ScrollWrapper)`
   height: 100%;
-  overflow: auto;
 `;
 
 const StyledTable = styled(Table)`
@@ -141,6 +142,7 @@ const StyledIntersectionObserver = styled.div`
 `;
 
 const SKELETON_ROW_COUNT = 8;
+const EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID = 'event-log-results-table';
 
 const buildGridTemplateColumns = (
   columns: ColumnConfig[],
@@ -210,19 +212,37 @@ export const EventLogResultsTable = ({
     columnWidths,
   );
 
-  const { ref: fetchMoreRef } = useInView({
-    onChange: (inView) => {
-      if (inView && hasNextPage && !loading) {
-        onLoadMore();
-      }
-    },
+  const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
+    EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID,
+  );
+
+  const [shouldFetchMore, setShouldFetchMore] = useState(false);
+
+  const { ref: fetchMoreRef, inView } = useInView({
+    root: scrollWrapperHTMLElement,
+    rootMargin: '400px',
   });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !loading && !shouldFetchMore) {
+      setShouldFetchMore(true);
+      onLoadMore();
+    }
+  }, [inView, hasNextPage, loading, shouldFetchMore, onLoadMore]);
+
+  useEffect(() => {
+    if (!loading) {
+      setShouldFetchMore(false);
+    }
+  }, [loading]);
 
   const isInitialLoading = loading && records.length === 0;
 
   if (isInitialLoading) {
     return (
-      <StyledScrollContainer>
+      <StyledScrollWrapper
+        componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
+      >
         <StyledTable>
           <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
             {baseColumns.map((column) => (
@@ -241,7 +261,7 @@ export const EventLogResultsTable = ({
             ))}
           </StyledSkeletonContainer>
         </SkeletonTheme>
-      </StyledScrollContainer>
+      </StyledScrollWrapper>
     );
   }
 
@@ -254,7 +274,9 @@ export const EventLogResultsTable = ({
   }
 
   return (
-    <StyledScrollContainer>
+    <StyledScrollWrapper
+      componentInstanceId={EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID}
+    >
       <StyledTable>
         <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
           {baseColumns.map((column) => (
@@ -300,6 +322,6 @@ export const EventLogResultsTable = ({
           <Trans>Loading more...</Trans>
         </StyledLoadingMore>
       )}
-    </StyledScrollContainer>
+    </StyledScrollWrapper>
   );
 };

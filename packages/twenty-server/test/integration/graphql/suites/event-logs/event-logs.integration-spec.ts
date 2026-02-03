@@ -15,6 +15,9 @@ describe('Event Logs (integration)', () => {
 
     clickHouseClient = createClient({
       url: process.env.CLICKHOUSE_URL,
+      clickhouse_settings: {
+        allow_experimental_json_type: 1,
+      },
     });
 
     await seedTestData();
@@ -31,12 +34,16 @@ describe('Event Logs (integration)', () => {
   const seedTestData = async () => {
     const now = new Date();
 
+    // pageview table uses 'name' field, not 'event'
     const pageviewRecords = Array.from({ length: 25 }, (_, i) => ({
       workspaceId: testWorkspaceId,
       userId: testUserId,
       name: i % 2 === 0 ? 'settings/profile' : 'objects/companies',
-      timestamp: new Date(now.getTime() - i * 60000).toISOString(),
-      properties: JSON.stringify({ path: `/settings/${i}` }),
+      timestamp: new Date(now.getTime() - i * 60000)
+        .toISOString()
+        .replace('T', ' ')
+        .replace('Z', ''),
+      properties: { path: `/settings/${i}` },
     }));
 
     const workspaceEventRecords = Array.from({ length: 15 }, (_, i) => ({
@@ -48,16 +55,22 @@ describe('Event Logs (integration)', () => {
           : i % 3 === 1
             ? 'user.logout'
             : 'settings.updated',
-      timestamp: new Date(now.getTime() - i * 120000).toISOString(),
-      properties: JSON.stringify({ action: `action_${i}` }),
+      timestamp: new Date(now.getTime() - i * 120000)
+        .toISOString()
+        .replace('T', ' ')
+        .replace('Z', ''),
+      properties: { action: `action_${i}` },
     }));
 
     const objectEventRecords = Array.from({ length: 20 }, (_, i) => ({
       workspaceId: testWorkspaceId,
       userId: testUserId,
       event: i % 2 === 0 ? 'company.created' : 'company.updated',
-      timestamp: new Date(now.getTime() - i * 90000).toISOString(),
-      properties: JSON.stringify({ field: `field_${i}` }),
+      timestamp: new Date(now.getTime() - i * 90000)
+        .toISOString()
+        .replace('T', ' ')
+        .replace('Z', ''),
+      properties: { field: `field_${i}` },
       recordId: `record-${i}`,
       objectMetadataId: i % 2 === 0 ? 'object-meta-1' : 'object-meta-2',
       isCustom: i % 4 === 0,
@@ -81,19 +94,24 @@ describe('Event Logs (integration)', () => {
       format: 'JSONEachRow',
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Wait for ClickHouse async inserts to complete
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   };
 
   const cleanupTestData = async () => {
-    await clickHouseClient.query({
-      query: `ALTER TABLE pageview DELETE WHERE workspaceId = '${testWorkspaceId}'`,
-    });
-    await clickHouseClient.query({
-      query: `ALTER TABLE workspaceEvent DELETE WHERE workspaceId = '${testWorkspaceId}'`,
-    });
-    await clickHouseClient.query({
-      query: `ALTER TABLE objectEvent DELETE WHERE workspaceId = '${testWorkspaceId}'`,
-    });
+    try {
+      await clickHouseClient.command({
+        query: `ALTER TABLE pageview DELETE WHERE workspaceId = '${testWorkspaceId}'`,
+      });
+      await clickHouseClient.command({
+        query: `ALTER TABLE workspaceEvent DELETE WHERE workspaceId = '${testWorkspaceId}'`,
+      });
+      await clickHouseClient.command({
+        query: `ALTER TABLE objectEvent DELETE WHERE workspaceId = '${testWorkspaceId}'`,
+      });
+    } catch {
+      // Ignore cleanup errors
+    }
   };
 
   const makeEventLogsQuery = (

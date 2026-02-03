@@ -24,7 +24,13 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
-import { H2Title, IconHistory, IconLock, IconTrash } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconClockHour8,
+  IconHistory,
+  IconLock,
+  IconTrash,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
@@ -64,16 +70,28 @@ export const SettingsSecurity = () => {
   );
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const saveWorkspace = useDebouncedCallback(async (value: number) => {
+  const saveTrashRetention = useDebouncedCallback(async (value: number) => {
     try {
-      if (!currentWorkspace?.id) {
-        throw new Error('User is not logged in');
-      }
-
       await updateWorkspace({
         variables: {
           input: {
             trashRetentionDays: value,
+          },
+        },
+      });
+    } catch (err) {
+      enqueueErrorSnackBar({
+        apolloError: err instanceof ApolloError ? err : undefined,
+      });
+    }
+  }, 500);
+
+  const saveEventLogRetention = useDebouncedCallback(async (value: number) => {
+    try {
+      await updateWorkspace({
+        variables: {
+          input: {
+            eventLogRetentionDays: value,
           },
         },
       });
@@ -98,7 +116,24 @@ export const SettingsSecurity = () => {
       trashRetentionDays: value,
     });
 
-    saveWorkspace(value);
+    saveTrashRetention(value);
+  };
+
+  const handleEventLogRetentionDaysChange = (value: number) => {
+    if (!currentWorkspace) {
+      return;
+    }
+
+    if (value === currentWorkspace.eventLogRetentionDays) {
+      return;
+    }
+
+    setCurrentWorkspace({
+      ...currentWorkspace,
+      eventLogRetentionDays: value,
+    });
+
+    saveEventLogRetention(value);
   };
 
   const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
@@ -223,6 +258,18 @@ export const SettingsSecurity = () => {
                   </StyledLink>
                 }
               />
+              {isEventLogsEnabled && (
+                <SettingsOptionCardContentCounter
+                  Icon={IconClockHour8}
+                  title={t`Log retention`}
+                  description={t`Number of days to retain audit logs (30-1095 days)`}
+                  value={currentWorkspace?.eventLogRetentionDays ?? 90}
+                  onChange={handleEventLogRetentionDaysChange}
+                  minValue={30}
+                  maxValue={1095}
+                  showButtons={false}
+                />
+              )}
             </Card>
           </Section>
           <Section>
