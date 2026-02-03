@@ -60,7 +60,7 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    return Object.values(flatRowLevelPermissionPredicateMaps.byId)
+    return Object.values(flatRowLevelPermissionPredicateMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((predicate) => predicate.deletedAt === null)
       .sort(
@@ -91,7 +91,7 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    return Object.values(flatRowLevelPermissionPredicateMaps.byId)
+    return Object.values(flatRowLevelPermissionPredicateMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (predicate) =>
@@ -173,7 +173,7 @@ export class RowLevelPermissionPredicateService {
       );
 
     const existingPredicates = Object.values(
-      flatRowLevelPermissionPredicateMaps.byId,
+      flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
       .filter(
@@ -184,7 +184,7 @@ export class RowLevelPermissionPredicateService {
       );
 
     const existingGroups = Object.values(
-      flatRowLevelPermissionPredicateGroupMaps.byId,
+      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
       .filter(
@@ -239,7 +239,7 @@ export class RowLevelPermissionPredicateService {
         },
       );
 
-    const resultPredicates = Object.values(updatedPredicateMaps.byId)
+    const resultPredicates = Object.values(updatedPredicateMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (predicate) =>
@@ -249,7 +249,7 @@ export class RowLevelPermissionPredicateService {
       )
       .map(fromFlatRowLevelPermissionPredicateToDto);
 
-    const resultGroups = Object.values(updatedGroupMaps.byId)
+    const resultGroups = Object.values(updatedGroupMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (group) =>

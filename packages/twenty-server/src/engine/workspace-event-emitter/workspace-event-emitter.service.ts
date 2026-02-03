@@ -13,6 +13,7 @@ import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
@@ -265,7 +266,10 @@ export class WorkspaceEventEmitterService {
       Object.entries(restrictedFields)
         .filter(([, permissions]) => permissions.canRead === false)
         .map(([fieldMetadataId]) => {
-          const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId];
+          const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          });
 
           return fieldMetadata?.name;
         })
