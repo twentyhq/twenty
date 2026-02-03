@@ -467,6 +467,7 @@ export type BillingEntitlement = {
 };
 
 export enum BillingEntitlementKey {
+  AUDIT_LOGS = 'AUDIT_LOGS',
   CUSTOM_DOMAIN = 'CUSTOM_DOMAIN',
   RLS = 'RLS',
   SSO = 'SSO'
@@ -1381,34 +1382,25 @@ export type EventLogFiltersInput = {
   objectMetadataId?: InputMaybe<Scalars['String']>;
   recordId?: InputMaybe<Scalars['String']>;
   userId?: InputMaybe<Scalars['String']>;
+  workspaceMemberId?: InputMaybe<Scalars['String']>;
 };
 
-export enum EventLogOrderByDirection {
-  ASC = 'ASC',
-  DESC = 'DESC'
-}
-
-export enum EventLogOrderByField {
-  EVENT = 'EVENT',
-  TIMESTAMP = 'TIMESTAMP'
-}
-
-export type EventLogOrderByInput = {
-  direction?: EventLogOrderByDirection;
-  field?: EventLogOrderByField;
+export type EventLogPageInfo = {
+  __typename?: 'EventLogPageInfo';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
 };
 
 export type EventLogQueryInput = {
+  after?: InputMaybe<Scalars['String']>;
   filters?: InputMaybe<EventLogFiltersInput>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<EventLogOrderByInput>;
+  first?: InputMaybe<Scalars['Int']>;
   table: EventLogTable;
 };
 
 export type EventLogQueryResult = {
   __typename?: 'EventLogQueryResult';
-  hasNextPage: Scalars['Boolean'];
+  pageInfo: EventLogPageInfo;
   records: Array<EventLogRecord>;
   totalCount: Scalars['Int'];
 };
@@ -3612,6 +3604,7 @@ export type Query = {
   commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
   currentWorkspace: Workspace;
+  eventLogs: EventLogQueryResult;
   field: Field;
   fields: FieldConnection;
   findManyAgents: Array<Agent>;
@@ -3646,7 +3639,6 @@ export type Query = {
   getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
-  getEventLogTables: Array<EventLogTable>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -3679,7 +3671,6 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   pieChartData: PieChartDataOutput;
-  queryEventLogs: EventLogQueryResult;
   search: SearchResultConnection;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
@@ -3733,6 +3724,11 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 
 export type QueryCommandMenuItemArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryEventLogsArgs = {
+  input: EventLogQueryInput;
 };
 
 
@@ -3996,11 +3992,6 @@ export type QueryObjectsArgs = {
 
 export type QueryPieChartDataArgs = {
   input: PieChartDataInput;
-};
-
-
-export type QueryQueryEventLogsArgs = {
-  input: EventLogQueryInput;
 };
 
 
