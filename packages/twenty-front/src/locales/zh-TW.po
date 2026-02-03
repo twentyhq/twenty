@@ -4468,11 +4468,6 @@ msgstr "編輯您的子域名或設置自定義域名。"
 msgid "Editable Profile Fields"
 msgstr ""
 
-#. js-lingui-id: uBAxNB
-#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-msgid "Editor"
-msgstr "編輯器"
-
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Eighth"

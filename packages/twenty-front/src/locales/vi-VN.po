@@ -4468,11 +4468,6 @@ msgstr "Chỉnh sửa tên miền phụ của bạn hoặc thiết lập một t
 msgid "Editable Profile Fields"
 msgstr ""
 
-#. js-lingui-id: uBAxNB
-#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-msgid "Editor"
-msgstr "Trình soạn thảo"
-
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Eighth"
