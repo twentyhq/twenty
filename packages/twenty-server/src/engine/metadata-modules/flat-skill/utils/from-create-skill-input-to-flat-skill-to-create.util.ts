@@ -28,7 +28,6 @@ export const fromCreateSkillInputToFlatSkillToCreate = ({
 
   return {
     id,
-    standardId: null,
     name,
     label,
     icon: icon ?? null,

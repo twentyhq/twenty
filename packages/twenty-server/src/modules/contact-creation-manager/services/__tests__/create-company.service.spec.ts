@@ -6,10 +6,10 @@ import {
   ConnectedAccountProvider,
   FieldActorSource,
 } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
 import {
   type CompanyToCreate,
   CreateCompanyService,
