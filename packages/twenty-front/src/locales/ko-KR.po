@@ -4468,11 +4468,6 @@ msgstr "하위 도메인 이름을 편집하거나 사용자 지정 도메인을
 msgid "Editable Profile Fields"
 msgstr ""
 
-#. js-lingui-id: uBAxNB
-#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-msgid "Editor"
-msgstr "편집기"
-
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Eighth"

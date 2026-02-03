@@ -4468,11 +4468,6 @@ msgstr "Edite el nombre de su subdominio o establezca un dominio personalizado."
 msgid "Editable Profile Fields"
 msgstr "Campos de Perfil Editables"
 
-#. js-lingui-id: uBAxNB
-#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-msgid "Editor"
-msgstr "Editor"
-
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Eighth"
