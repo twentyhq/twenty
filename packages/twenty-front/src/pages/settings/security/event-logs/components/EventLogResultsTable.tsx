@@ -180,16 +180,23 @@ export const EventLogResultsTable = ({
 
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
 
+  // Reset column widths when switching tables to avoid undefined widths for new columns
+  useEffect(() => {
+    setColumnWidths(
+      Object.fromEntries(baseColumns.map((col) => [col.id, col.defaultWidth])),
+    );
+  }, [selectedTable]);
+
   const handleResizeStart = useCallback(
     (columnId: string, event: React.PointerEvent) => {
       event.preventDefault();
       setResizingColumn(columnId);
       const startX = event.clientX;
-      const startWidth = columnWidths[columnId];
+      const column = baseColumns.find((col) => col.id === columnId);
+      const startWidth = columnWidths[columnId] ?? column?.defaultWidth ?? 100;
 
       const handlePointerMove = (moveEvent: PointerEvent) => {
         const delta = moveEvent.clientX - startX;
-        const column = baseColumns.find((col) => col.id === columnId);
         const newWidth = Math.max(column?.minWidth ?? 50, startWidth + delta);
 
         setColumnWidths((prev) => ({ ...prev, [columnId]: newWidth }));
