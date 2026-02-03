@@ -19,6 +19,7 @@ import {
 } from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
+import { type ViewSort } from '@/views/types/ViewSort';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
@@ -41,7 +42,8 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
     throw new Error('Missing mock field metadata item with type TEXT');
   }
 
-  const mockViewSort: CoreViewSortEssential = {
+  const mockViewSort: ViewSort = {
+    __typename: 'ViewSort',
     id: 'sort-1',
     fieldMetadataId: mockFieldMetadataItem.id,
     direction: ViewSortDirection.ASC,

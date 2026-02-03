@@ -7,4 +7,5 @@ export type ViewSort = {
   createdAt?: string;
   updatedAt?: string;
   direction: ViewSortDirection;
+  viewId: string;
 };

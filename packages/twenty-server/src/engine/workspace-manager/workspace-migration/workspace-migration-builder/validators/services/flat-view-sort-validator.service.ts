@@ -98,7 +98,7 @@ export class FlatViewSortValidatorService {
     }
 
     if (
-      !isDefined(flatViewSortToValidate.direction) &&
+      !isDefined(flatViewSortToValidate.direction) ||
       !Object.values(ViewSortDirection).includes(
         flatViewSortToValidate.direction,
       )
@@ -152,10 +152,10 @@ export class FlatViewSortValidatorService {
     };
 
     if (
-      !isDefined(updatedFlatViewSort?.direction) &&
+      !isDefined(updatedFlatViewSort?.direction) ||
       !(
-        updatedFlatViewSort?.direction ===
-        (ViewSortDirection.ASC || ViewSortDirection.DESC)
+        updatedFlatViewSort.direction === ViewSortDirection.DESC ||
+        updatedFlatViewSort.direction === ViewSortDirection.ASC
       )
     ) {
       validationResult.errors.push({
