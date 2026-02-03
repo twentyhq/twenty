@@ -21,4 +21,4 @@ export {
   CORE_OBJECT_NAMES,
   RESERVED_METADATA_NAME_KEYWORDS,
 } from './reserved-metadata-name-keywords.constant';
-export { STANDARD_OBJECT_IDS } from './standard-object-ids';
+export { STANDARD_OBJECTS } from './standard-object.constant';

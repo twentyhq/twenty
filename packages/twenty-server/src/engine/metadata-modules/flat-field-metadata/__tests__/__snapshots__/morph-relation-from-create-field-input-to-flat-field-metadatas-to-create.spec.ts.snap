@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload has different relation types 1`] = `
 {
@@ -149,7 +149,6 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "settings": {
           "relationType": "ONE_TO_MANY",
         },
-        "standardId": null,
         "standardOverrides": null,
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
@@ -199,7 +198,6 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "onDelete": "SET_NULL",
           "relationType": "MANY_TO_ONE",
         },
-        "standardId": null,
         "standardOverrides": null,
         "type": "RELATION",
         "universalIdentifier": Any<String>,
@@ -249,7 +247,6 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "settings": {
           "relationType": "ONE_TO_MANY",
         },
-        "standardId": null,
         "standardOverrides": null,
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
@@ -299,7 +296,6 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
           "onDelete": "SET_NULL",
           "relationType": "MANY_TO_ONE",
         },
-        "standardId": null,
         "standardOverrides": null,
         "type": "RELATION",
         "universalIdentifier": Any<String>,
