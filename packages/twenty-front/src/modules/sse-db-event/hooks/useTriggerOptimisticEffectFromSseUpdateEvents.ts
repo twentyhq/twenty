@@ -6,7 +6,7 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -34,12 +34,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       objectRecordEvents: ObjectRecordEvent[];
       objectMetadataItem: ObjectMetadataItem;
     }) => {
-      const recordGqlFields = generateDepthRecordGqlFieldsFromObject({
-        objectMetadataItem,
-        objectMetadataItems,
-        depth: 1,
-      });
-
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
@@ -52,6 +46,26 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         }
 
         upsertRecordsInStore({ partialRecords: [updatedRecord] });
+
+        const computedOptimisticRecord = {
+          ...computeOptimisticRecordFromInput({
+            cache: apolloCoreClient.cache,
+            objectMetadataItem,
+            objectMetadataItems,
+            recordInput: updatedRecord,
+            objectPermissionsByObjectMetadataId,
+            currentWorkspaceMember: null,
+          }),
+          id: updatedRecord.id,
+          __typename: getObjectTypename(objectMetadataItem.nameSingular),
+        };
+
+        const recordGqlFields = generateDepthRecordGqlFieldsFromRecord({
+          objectMetadataItem,
+          objectMetadataItems,
+          record: computedOptimisticRecord,
+          depth: 0,
+        });
 
         const cachedRecord = getRecordFromCache({
           cache: apolloCoreClient.cache,
@@ -76,19 +90,6 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         ) {
           continue;
         }
-
-        const computedOptimisticRecord = {
-          ...computeOptimisticRecordFromInput({
-            cache: apolloCoreClient.cache,
-            objectMetadataItem,
-            objectMetadataItems,
-            recordInput: updatedRecord,
-            objectPermissionsByObjectMetadataId,
-            currentWorkspaceMember: null,
-          }),
-          id: updatedRecord.id,
-          __typename: getObjectTypename(objectMetadataItem.nameSingular),
-        };
 
         updateRecordFromCache({
           objectMetadataItems,
