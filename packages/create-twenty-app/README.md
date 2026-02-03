@@ -61,15 +61,19 @@ yarn app:uninstall
 ```
 
 ## What gets scaffolded
-- A minimal app structure ready for Twenty
+- A minimal app structure ready for Twenty with example files:
+  - `application-config.ts` - Application metadata configuration
+  - `roles/default-role.ts` - Default role for logic functions
+  - `logic-functions/hello-world.ts` - Example logic function with HTTP trigger
+  - `front-components/hello-world.tsx` - Example front component
 - TypeScript configuration
 - Prewired scripts that wrap the `twenty` CLI from twenty-sdk
-- Example placeholders to help you add entities, actions, and sync logic
 
 ## Next steps
-- Explore the generated project and add your first entity with `yarn entity:add` (functions, front components, objects, roles).
-- Keep your types up‑to‑date using `yarn app:generate`.
+- Use `yarn auth:login` to authenticate with your Twenty workspace.
+- Explore the generated project and add your first entity with `yarn entity:add` (logic functions, front components, objects, roles).
 - Use `yarn app:dev` while you iterate — it watches, builds, and syncs changes to your workspace in real time.
+- Keep your types up‑to‑date using `yarn app:generate`.
 
 
 ## Publish your application
