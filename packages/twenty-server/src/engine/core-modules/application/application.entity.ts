@@ -11,11 +11,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   type Relation,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-
 import { ApplicationVariableEntity } from 'src/engine/core-modules/applicationVariable/application-variable.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
