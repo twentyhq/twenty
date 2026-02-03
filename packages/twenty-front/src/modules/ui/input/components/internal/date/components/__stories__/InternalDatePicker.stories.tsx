@@ -39,7 +39,11 @@ export const WithOpenMonthSelect: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
-    const monthSelect = await canvas.findByText('January', {}, { timeout: 10000 });
+    const monthSelect = await canvas.findByText(
+      'January',
+      {},
+      { timeout: 10000 },
+    );
 
     await userEvent.click(monthSelect);
 
