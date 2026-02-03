@@ -410,7 +410,7 @@ export class AuthService {
 
     const analytics = this.auditService.createContext({
       workspaceId,
-      userId: impersonatorUserId,
+      userWorkspaceId: impersonatorUserWorkspaceId,
     });
 
     analytics.insertWorkspaceEvent('Monitoring', {

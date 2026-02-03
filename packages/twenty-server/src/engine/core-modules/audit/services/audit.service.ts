@@ -25,12 +25,10 @@ export class AuditService {
 
   createContext(context?: {
     workspaceId?: string | null | undefined;
-    userId?: string | null | undefined;
     userWorkspaceId?: string | null | undefined;
   }) {
     const contextFields = context
       ? {
-          ...(context.userId ? { userId: context.userId } : {}),
           ...(context.workspaceId ? { workspaceId: context.workspaceId } : {}),
           ...(context.userWorkspaceId
             ? { userWorkspaceId: context.userWorkspaceId }
