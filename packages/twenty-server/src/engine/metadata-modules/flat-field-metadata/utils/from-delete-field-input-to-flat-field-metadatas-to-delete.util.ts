@@ -77,7 +77,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   ];
 
   const flatIndexMap = new Map<string, FlatIndexMetadata>();
-  const allFlatIndexes = Object.values(existingFlatIndexMaps.byId).filter(
+  const allFlatIndexes = Object.values(existingFlatIndexMaps.byUniversalIdentifier).filter(
     isDefined,
   );
 

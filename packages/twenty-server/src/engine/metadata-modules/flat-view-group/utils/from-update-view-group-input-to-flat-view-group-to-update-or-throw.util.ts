@@ -7,6 +7,7 @@ import {
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FLAT_VIEW_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-group/constants/flat-view-group-editable-properties.constant';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import {
@@ -28,8 +29,10 @@ export const fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow = ({
       ['id'],
     );
 
-  const existingFlatViewGroupToUpdate =
-    flatViewGroupMaps.byId[viewGroupToUpdateId];
+  const existingFlatViewGroupToUpdate = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewGroupToUpdateId,
+    flatEntityMaps: flatViewGroupMaps,
+  });
 
   if (!isDefined(existingFlatViewGroupToUpdate)) {
     throw new ViewGroupException(

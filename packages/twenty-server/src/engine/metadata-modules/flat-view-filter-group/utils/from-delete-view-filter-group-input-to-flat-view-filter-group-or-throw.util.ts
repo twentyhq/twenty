@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type DeleteViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/delete-view-filter-group.input';
 import {
@@ -23,8 +24,10 @@ export const fromDeleteViewFilterGroupInputToFlatViewFilterGroupOrThrow = ({
     ['id'],
   );
 
-  const existingFlatViewFilterGroupToDelete =
-    flatViewFilterGroupMaps.byId[viewFilterGroupId];
+  const existingFlatViewFilterGroupToDelete = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewFilterGroupId,
+    flatEntityMaps: flatViewFilterGroupMaps,
+  });
 
   if (!isDefined(existingFlatViewFilterGroupToDelete)) {
     throw new ViewFilterGroupException(
