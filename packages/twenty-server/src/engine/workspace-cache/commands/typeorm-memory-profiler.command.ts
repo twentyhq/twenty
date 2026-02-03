@@ -15,10 +15,11 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type ProfilerCommandOptions = ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
-  simulateInvalidations?: number;
-  forceGcBetweenWorkspaces?: boolean;
-};
+type ProfilerCommandOptions =
+  ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
+    simulateInvalidations?: number;
+    forceGcBetweenWorkspaces?: boolean;
+  };
 
 type HeapSnapshot = {
   timestamp: number;
@@ -65,7 +66,8 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
 
   @Option({
     flags: '--simulate-invalidations <count>',
-    description: 'Number of invalidateAndRecompute calls per workspace (default: 1)',
+    description:
+      'Number of invalidateAndRecompute calls per workspace (default: 1)',
     required: false,
   })
   parseSimulateInvalidations(val: string): number {
@@ -82,7 +84,8 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
 
   @Option({
     flags: '--force-gc',
-    description: 'Force garbage collection between workspaces (requires --expose-gc flag)',
+    description:
+      'Force garbage collection between workspaces (requires --expose-gc flag)',
     required: false,
   })
   parseForceGc(): boolean {
@@ -99,7 +102,8 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
       heapUsedMB: Math.round((memUsage.heapUsed / 1024 / 1024) * 100) / 100,
       heapTotalMB: Math.round((memUsage.heapTotal / 1024 / 1024) * 100) / 100,
       externalMB: Math.round((memUsage.external / 1024 / 1024) * 100) / 100,
-      arrayBuffersMB: Math.round((memUsage.arrayBuffers / 1024 / 1024) * 100) / 100,
+      arrayBuffersMB:
+        Math.round((memUsage.arrayBuffers / 1024 / 1024) * 100) / 100,
       rssMB: Math.round((memUsage.rss / 1024 / 1024) * 100) / 100,
     };
   }
@@ -129,9 +133,15 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
     this.logger.log(chalk.cyan('='.repeat(80)));
     this.logger.log('');
     this.logger.log(chalk.yellow('Configuration:'));
-    this.logger.log(`  Invalidations per workspace: ${this.simulateInvalidations}`);
-    this.logger.log(`  Force GC between workspaces: ${this.forceGcBetweenWorkspaces}`);
-    this.logger.log(`  GC available: ${this.gcAvailable ? 'YES' : 'NO (run with --expose-gc for accurate measurements)'}`);
+    this.logger.log(
+      `  Invalidations per workspace: ${this.simulateInvalidations}`,
+    );
+    this.logger.log(
+      `  Force GC between workspaces: ${this.forceGcBetweenWorkspaces}`,
+    );
+    this.logger.log(
+      `  GC available: ${this.gcAvailable ? 'YES' : 'NO (run with --expose-gc for accurate measurements)'}`,
+    );
     this.logger.log('');
 
     // Force GC before starting to get clean baseline
@@ -159,7 +169,9 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
     const beforeHeap = this.getHeapSnapshot();
 
     this.logger.log(
-      chalk.blue(`\n[${index + 1}/${total}] Processing workspace: ${workspaceId}`),
+      chalk.blue(
+        `\n[${index + 1}/${total}] Processing workspace: ${workspaceId}`,
+      ),
     );
     this.logger.log(`  Before: ${this.formatHeapSnapshot(beforeHeap)}`);
 
@@ -262,23 +274,31 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
 
     if (this.workspaceMetrics.length > 0) {
       const avgGrowthPerWorkspace =
-        (finalHeap.heapUsedMB - this.initialHeap.heapUsedMB) / this.workspaceMetrics.length;
+        (finalHeap.heapUsedMB - this.initialHeap.heapUsedMB) /
+        this.workspaceMetrics.length;
 
-      this.logger.log(`  Avg growth per workspace: ${avgGrowthPerWorkspace.toFixed(2)}MB`);
+      this.logger.log(
+        `  Avg growth per workspace: ${avgGrowthPerWorkspace.toFixed(2)}MB`,
+      );
 
       // Calculate growth from getOrRecompute vs invalidations
       const totalGetGrowth = this.workspaceMetrics.reduce(
-        (sum, m) => sum + (m.afterInitialGet.heapUsedMB - m.beforeHeap.heapUsedMB),
+        (sum, m) =>
+          sum + (m.afterInitialGet.heapUsedMB - m.beforeHeap.heapUsedMB),
         0,
       );
       const totalInvalidationGrowth = this.workspaceMetrics.reduce(
-        (sum, m) => sum + (m.afterInvalidations.heapUsedMB - m.afterInitialGet.heapUsedMB),
+        (sum, m) =>
+          sum +
+          (m.afterInvalidations.heapUsedMB - m.afterInitialGet.heapUsedMB),
         0,
       );
 
       this.logger.log('');
       this.logger.log(chalk.yellow('Growth Breakdown:'));
-      this.logger.log(`  From getOrRecompute: ${totalGetGrowth.toFixed(2)}MB total`);
+      this.logger.log(
+        `  From getOrRecompute: ${totalGetGrowth.toFixed(2)}MB total`,
+      );
       this.logger.log(
         `  From invalidations: ${totalInvalidationGrowth.toFixed(2)}MB total`,
       );
@@ -294,7 +314,9 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
 
       // If GC data is available
       if (this.forceGcBetweenWorkspaces && this.gcAvailable) {
-        const retainedMetrics = this.workspaceMetrics.filter((m) => m.retainedAfterGcMB !== null);
+        const retainedMetrics = this.workspaceMetrics.filter(
+          (m) => m.retainedAfterGcMB !== null,
+        );
 
         if (retainedMetrics.length > 0) {
           const totalRetained = retainedMetrics.reduce(
@@ -306,13 +328,17 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
           this.logger.log('');
           this.logger.log(chalk.yellow('Retained Memory (after GC):'));
           this.logger.log(`  Total retained: ${totalRetained.toFixed(2)}MB`);
-          this.logger.log(`  Avg retained per workspace: ${avgRetained.toFixed(2)}MB`);
+          this.logger.log(
+            `  Avg retained per workspace: ${avgRetained.toFixed(2)}MB`,
+          );
         }
       }
 
       // Top memory consumers
       this.logger.log('');
-      this.logger.log(chalk.yellow('Per-Workspace Memory Growth (sorted by growth):'));
+      this.logger.log(
+        chalk.yellow('Per-Workspace Memory Growth (sorted by growth):'),
+      );
 
       const sorted = [...this.workspaceMetrics].sort(
         (a, b) => b.heapGrowthMB - a.heapGrowthMB,
@@ -350,7 +376,8 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
     // Estimate for 100 workspaces
     if (this.workspaceMetrics.length > 0) {
       const avgGrowthPerWorkspace =
-        (finalHeap.heapUsedMB - this.initialHeap.heapUsedMB) / this.workspaceMetrics.length;
+        (finalHeap.heapUsedMB - this.initialHeap.heapUsedMB) /
+        this.workspaceMetrics.length;
 
       this.logger.log('');
       this.logger.log(chalk.yellow('Projections:'));
@@ -380,46 +407,67 @@ export class TypeORMMemoryProfilerCommand extends ActiveOrSuspendedWorkspacesMig
       // Determine severity
       if (avgGrowth > 10) {
         this.logger.log(
-          chalk.red(`⚠️  HIGH MEMORY GROWTH: ${avgGrowth.toFixed(2)}MB per workspace`),
+          chalk.red(
+            `⚠️  HIGH MEMORY GROWTH: ${avgGrowth.toFixed(2)}MB per workspace`,
+          ),
         );
         this.logger.log(
           chalk.red('   This will likely cause OOM for large workspace counts'),
         );
       } else if (avgGrowth > 2) {
         this.logger.log(
-          chalk.yellow(`⚠️  MODERATE MEMORY GROWTH: ${avgGrowth.toFixed(2)}MB per workspace`),
+          chalk.yellow(
+            `⚠️  MODERATE MEMORY GROWTH: ${avgGrowth.toFixed(2)}MB per workspace`,
+          ),
         );
-        this.logger.log(chalk.yellow('   May cause issues at scale (hundreds of workspaces)'));
+        this.logger.log(
+          chalk.yellow('   May cause issues at scale (hundreds of workspaces)'),
+        );
       } else {
         this.logger.log(
-          chalk.green(`✓ LOW MEMORY GROWTH: ${avgGrowth.toFixed(2)}MB per workspace`),
+          chalk.green(
+            `✓ LOW MEMORY GROWTH: ${avgGrowth.toFixed(2)}MB per workspace`,
+          ),
         );
         this.logger.log(chalk.green('   Memory usage appears acceptable'));
       }
 
       // Specific findings
       const totalGetGrowth = this.workspaceMetrics.reduce(
-        (sum, m) => sum + (m.afterInitialGet.heapUsedMB - m.beforeHeap.heapUsedMB),
+        (sum, m) =>
+          sum + (m.afterInitialGet.heapUsedMB - m.beforeHeap.heapUsedMB),
         0,
       );
       const totalInvalidationGrowth = this.workspaceMetrics.reduce(
-        (sum, m) => sum + (m.afterInvalidations.heapUsedMB - m.afterInitialGet.heapUsedMB),
+        (sum, m) =>
+          sum +
+          (m.afterInvalidations.heapUsedMB - m.afterInitialGet.heapUsedMB),
         0,
       );
 
       this.logger.log('');
       if (totalGetGrowth > totalInvalidationGrowth * 2) {
         this.logger.log(
-          chalk.yellow('→ Most growth comes from getOrRecompute, not invalidations'),
+          chalk.yellow(
+            '→ Most growth comes from getOrRecompute, not invalidations',
+          ),
         );
         this.logger.log(
-          chalk.yellow('   TypeORM EntityMetadata creation is likely the main contributor'),
+          chalk.yellow(
+            '   TypeORM EntityMetadata creation is likely the main contributor',
+          ),
         );
       } else if (totalInvalidationGrowth > totalGetGrowth) {
         this.logger.log(
-          chalk.yellow('→ Invalidations are causing more growth than initial fetch'),
+          chalk.yellow(
+            '→ Invalidations are causing more growth than initial fetch',
+          ),
         );
-        this.logger.log(chalk.yellow('   This suggests cache cleanup may not be releasing memory'));
+        this.logger.log(
+          chalk.yellow(
+            '   This suggests cache cleanup may not be releasing memory',
+          ),
+        );
       }
     }
   }
