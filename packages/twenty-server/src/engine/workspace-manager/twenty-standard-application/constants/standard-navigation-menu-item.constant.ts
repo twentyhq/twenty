@@ -1,4 +1,4 @@
-import { STANDARD_OBJECTS } from './standard-object.constant';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
   allCompanies: {

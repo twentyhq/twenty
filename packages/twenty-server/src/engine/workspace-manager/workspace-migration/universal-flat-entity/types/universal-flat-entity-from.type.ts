@@ -45,7 +45,6 @@ export type UniversalFlatEntityFrom<
   TEntity,
   | 'applicationId'
   | 'workspaceId'
-  | 'standardId'
   | 'id'
   | ExtractEntityRelatedEntityProperties<TEntity>
   | Extract<MetadataManyToOneJoinColumn<TMetadataName>, keyof TEntity>
