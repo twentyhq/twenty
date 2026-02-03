@@ -424,7 +424,10 @@ export class NavigationMenuItemService {
         },
       );
 
-    const objectMetadata = flatObjectMetadataMaps.byId[targetObjectMetadataId];
+    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: targetObjectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
 
     if (!isDefined(objectMetadata)) {
       return null;

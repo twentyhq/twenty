@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -166,7 +167,10 @@ export class PageLayoutDuplicationService {
     pageLayoutId: string,
     flatPageLayoutMaps: FlatPageLayoutMaps,
   ): FlatPageLayout {
-    const flatLayout = flatPageLayoutMaps.byId[pageLayoutId];
+    const flatLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: pageLayoutId,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     if (!isDefined(flatLayout) || isDefined(flatLayout.deletedAt)) {
       throw new PageLayoutException(

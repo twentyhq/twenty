@@ -295,8 +295,10 @@ export class RowLevelPermissionPredicateService {
 
       inputGroupIds.add(groupId);
 
-      const existingGroup =
-        flatRowLevelPermissionPredicateGroupMaps.byId[groupId];
+      const existingGroup = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: groupId,
+        flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+      });
 
       if (isDefined(existingGroup) && existingGroup.deletedAt === null) {
         groupsToUpdate.push({
@@ -377,8 +379,10 @@ export class RowLevelPermissionPredicateService {
 
       inputPredicateIds.add(predicateId);
 
-      const existingPredicate =
-        flatRowLevelPermissionPredicateMaps.byId[predicateId];
+      const existingPredicate = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: predicateId,
+        flatEntityMaps: flatRowLevelPermissionPredicateMaps,
+      });
 
       if (
         isDefined(existingPredicate) &&

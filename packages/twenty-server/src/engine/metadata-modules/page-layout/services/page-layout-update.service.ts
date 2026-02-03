@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
@@ -66,7 +67,10 @@ export class PageLayoutUpdateService {
         },
       );
 
-    const existingPageLayout = flatPageLayoutMaps.byId[id];
+    const existingPageLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     // TODO move in validator
     if (
@@ -279,7 +283,10 @@ export class PageLayoutUpdateService {
 
     const tabsToDelete: FlatPageLayoutTab[] = idsToDelete
       .map((tabId) => {
-        const existingTab = flatPageLayoutTabMaps.byId[tabId];
+        const existingTab = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: tabId,
+          flatEntityMaps: flatPageLayoutTabMaps,
+        });
 
         if (!isDefined(existingTab)) {
           return null;
@@ -444,7 +451,10 @@ export class PageLayoutUpdateService {
 
     const widgetsToDelete: FlatPageLayoutWidget[] = idsToDelete
       .map((widgetId) => {
-        const existingWidget = flatPageLayoutWidgetMaps.byId[widgetId];
+        const existingWidget = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: widgetId,
+          flatEntityMaps: flatPageLayoutWidgetMaps,
+        });
 
         if (!isDefined(existingWidget)) {
           return null;
