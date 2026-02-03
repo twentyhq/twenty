@@ -207,7 +207,9 @@ export class PageLayoutUpdateService {
     tabsToUpdate: FlatPageLayoutTab[];
     tabsToDelete: FlatPageLayoutTab[];
   } {
-    const existingTabs = Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
+    const existingTabs = Object.values(
+      flatPageLayoutTabMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((tab) => tab.pageLayoutId === existingPageLayout.id);
 
@@ -366,7 +368,9 @@ export class PageLayoutUpdateService {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
   } {
-    const existingWidgets = Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier)
+    const existingWidgets = Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((widget) => widget.pageLayoutTabId === tabId);
 

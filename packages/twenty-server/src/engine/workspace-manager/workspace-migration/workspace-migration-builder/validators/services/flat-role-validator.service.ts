@@ -4,8 +4,8 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -37,9 +37,9 @@ export class FlatRoleValidatorService {
       type: 'create',
     });
 
-    const existingRoles = Object.values(optimisticFlatRoleMaps.byId).filter(
-      isDefined,
-    );
+    const existingRoles = Object.values(
+      optimisticFlatRoleMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     validationResult.errors.push(
       ...validateRoleRequiredPropertiesAreDefined({
@@ -167,9 +167,9 @@ export class FlatRoleValidatorService {
     });
 
     if (isDefined(flatRoleLabelUpdate)) {
-      const existingRoles = Object.values(optimisticFlatRoleMaps.byId).filter(
-        isDefined,
-      );
+      const existingRoles = Object.values(
+        optimisticFlatRoleMaps.byUniversalIdentifier,
+      ).filter(isDefined);
 
       validationResult.errors.push(
         ...validateRoleLabelUniqueness({

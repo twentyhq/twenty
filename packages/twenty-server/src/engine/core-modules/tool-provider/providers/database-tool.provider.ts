@@ -123,7 +123,9 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const allFlatObjects = Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+    const allFlatObjects = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((obj) => obj.isActive && !obj.isSystem);
 

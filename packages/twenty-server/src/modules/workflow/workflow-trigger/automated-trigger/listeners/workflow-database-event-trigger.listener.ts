@@ -277,12 +277,11 @@ export class WorkflowDatabaseEventTriggerListener {
           continue;
         }
 
-        const relatedObjectMetadataNameSingular = findFlatEntityByIdInFlatEntityMaps(
-          {
+        const relatedObjectMetadataNameSingular =
+          findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: relatedObjectMetadataId,
             flatEntityMaps: flatObjectMetadataMaps,
-          },
-        )?.nameSingular;
+          })?.nameSingular;
 
         if (!isDefined(relatedObjectMetadataNameSingular)) {
           continue;

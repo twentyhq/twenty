@@ -223,14 +223,12 @@ const checkUniqueConstraintFullyPopulated = (
     flatEntityIds: flatObjectMetadata.indexMetadataIds,
     flatEntityMaps: flatIndexMaps,
   }).map((index) => ({
-      id: index.id,
-      isUnique: index.isUnique,
-      indexFieldMetadatas: index.flatIndexFieldMetadatas.map(
-        (fieldMetadata) => ({
-          fieldMetadataId: fieldMetadata.fieldMetadataId,
-        }),
-      ),
-    }));
+    id: index.id,
+    isUnique: index.isUnique,
+    indexFieldMetadatas: index.flatIndexFieldMetadatas.map((fieldMetadata) => ({
+      fieldMetadataId: fieldMetadata.fieldMetadataId,
+    })),
+  }));
 
   const uniqueConstraintsFields = getUniqueConstraintsFields<
     FlatFieldMetadata,

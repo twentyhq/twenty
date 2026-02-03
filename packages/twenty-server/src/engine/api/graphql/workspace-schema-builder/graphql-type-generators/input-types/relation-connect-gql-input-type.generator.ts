@@ -9,11 +9,7 @@ import {
 } from 'graphql';
 import { RELATION_NESTED_QUERY_KEYWORDS } from 'twenty-shared/constants';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import {
-  getUniqueConstraintsFields,
-  isDefined,
-  pascalCase,
-} from 'twenty-shared/utils';
+import { getUniqueConstraintsFields, pascalCase } from 'twenty-shared/utils';
 
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
