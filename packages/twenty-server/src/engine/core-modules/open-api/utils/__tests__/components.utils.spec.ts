@@ -47,8 +47,10 @@ describe('computeSchemaComponents', () => {
           relationTargetObjectMetadata,
       },
       universalIdentifierById: {
-        [flatObjectMetadata.id]: flatObjectMetadata.universalIdentifier as string,
-        [relationTargetObjectMetadata.id]: relationTargetObjectMetadata.universalIdentifier as string,
+        [flatObjectMetadata.id]:
+          flatObjectMetadata.universalIdentifier as string,
+        [relationTargetObjectMetadata.id]:
+          relationTargetObjectMetadata.universalIdentifier as string,
       },
       universalIdentifiersByApplicationId: {},
     };
@@ -891,7 +893,8 @@ describe('computeSchemaComponents', () => {
         [flatObjectMetadata.universalIdentifier as string]: flatObjectMetadata,
       },
       universalIdentifierById: {
-        [flatObjectMetadata.id]: flatObjectMetadata.universalIdentifier as string,
+        [flatObjectMetadata.id]:
+          flatObjectMetadata.universalIdentifier as string,
       },
       universalIdentifiersByApplicationId: {},
     };
