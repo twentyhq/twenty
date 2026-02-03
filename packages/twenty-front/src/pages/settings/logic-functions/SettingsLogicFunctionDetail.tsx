@@ -83,9 +83,9 @@ export const SettingsLogicFunctionDetail = () => {
   };
 
   const tabs = [
+    { id: 'settings', title: t`Settings`, Icon: IconSettings },
     { id: 'triggers', title: t`Triggers`, Icon: IconBolt },
     { id: 'test', title: t`Test`, Icon: IconTestPipe },
-    { id: 'settings', title: t`Settings`, Icon: IconSettings },
   ];
 
   const isTriggersTab = activeTabId === 'triggers';
