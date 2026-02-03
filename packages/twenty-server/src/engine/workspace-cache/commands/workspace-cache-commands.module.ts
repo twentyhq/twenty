@@ -8,6 +8,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { EntityMetadataMemoryAnalyzerCommand } from 'src/engine/workspace-cache/commands/entity-metadata-memory-analyzer.command';
 import { EntityMetadataRetentionAnalyzerCommand } from 'src/engine/workspace-cache/commands/entity-metadata-retention-analyzer.command';
 import { TypeORMMemoryProfilerCommand } from 'src/engine/workspace-cache/commands/typeorm-memory-profiler.command';
+import { TypeORMIsolationProfilerCommand } from 'src/engine/workspace-cache/commands/typeorm-isolation-profiler.command';
 import { WorkspaceCacheMemoryLeakValidatorCommand } from 'src/engine/workspace-cache/commands/workspace-cache-memory-leak-validator.command';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -26,6 +27,7 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
   providers: [
     WorkspaceCacheMemoryLeakValidatorCommand,
     TypeORMMemoryProfilerCommand,
+    TypeORMIsolationProfilerCommand,
     EntityMetadataMemoryAnalyzerCommand,
     EntityMetadataRetentionAnalyzerCommand,
   ],

@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import * as v8 from 'v8';
+
 import chalk from 'chalk';
 import { Command, Option } from 'nest-commander';
 import { Repository, EntitySchema, EntityMetadata, DataSource } from 'typeorm';
 import { EntitySchemaTransformer } from 'typeorm/entity-schema/EntitySchemaTransformer';
 import { EntityMetadataBuilder } from 'typeorm/metadata-builder/EntityMetadataBuilder';
-import * as v8 from 'v8';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -20,12 +22,12 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildEntitySchemaMetadataMaps } from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
-import { isDefined } from 'twenty-shared/utils';
 
-type AnalyzerCommandOptions = ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
-  repeatWorkspace?: number;
-  holdReferences?: boolean;
-};
+type AnalyzerCommandOptions =
+  ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
+    repeatWorkspace?: number;
+    holdReferences?: boolean;
+  };
 
 // Simulates what happens when we store EntityMetadata in the cache
 type StoredMetadata = {
@@ -71,7 +73,8 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
 
   @Option({
     flags: '--repeat-workspace <count>',
-    description: 'Number of times to repeat the same workspace (simulates many workspaces)',
+    description:
+      'Number of times to repeat the same workspace (simulates many workspaces)',
     required: false,
   })
   parseRepeatWorkspace(val: string): number {
@@ -98,7 +101,9 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
   }
 
   private getHeapUsed(): number {
-    return Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100;
+    return (
+      Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100
+    );
   }
 
   private forceGc(): boolean {
@@ -129,7 +134,11 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
     this.logger.log(chalk.cyan('EntityMetadata RETENTION ANALYZER'));
     this.logger.log(chalk.cyan('='.repeat(80)));
     this.logger.log('');
-    this.logger.log(chalk.yellow('Purpose: Simulate cache behavior and measure memory retention'));
+    this.logger.log(
+      chalk.yellow(
+        'Purpose: Simulate cache behavior and measure memory retention',
+      ),
+    );
     this.logger.log('');
     this.logger.log(chalk.yellow('Configuration:'));
     this.logger.log(`  Repeat workspace: ${this.repeatWorkspace} times`);
@@ -138,7 +147,8 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
     this.logger.log('');
 
     // Get the DataSource once
-    this.dataSource = await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+    this.dataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
     if (this.gcAvailable) {
       this.forceGc();
@@ -157,7 +167,6 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
   override async runOnWorkspace({
     workspaceId,
     index,
-    total,
   }: RunOnWorkspaceArgs): Promise<void> {
     // Only use first workspace but repeat it many times
     if (index > 0) {
@@ -179,7 +188,9 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
       }),
     ]);
 
-    this.logger.log(`  Objects: ${objectMetadatas.length}, Fields: ${fieldMetadatas.length}`);
+    this.logger.log(
+      `  Objects: ${objectMetadatas.length}, Fields: ${fieldMetadatas.length}`,
+    );
 
     if (objectMetadatas.length === 0) {
       this.logger.log(`  Skipping - no objects`);
@@ -272,15 +283,20 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
     // Calculate growth
     const initial = this.memoryTimeline[0]?.heapUsed ?? 0;
     const afterIterations =
-      this.memoryTimeline.find((e) => e.step === 'after-all-iterations')?.heapUsed ?? 0;
+      this.memoryTimeline.find((e) => e.step === 'after-all-iterations')
+        ?.heapUsed ?? 0;
 
     const growthDuringIterations = afterIterations - initial;
     const perIterationGrowth = growthDuringIterations / this.repeatWorkspace;
 
     this.logger.log('');
     this.logger.log(chalk.yellow('Growth Analysis (with references held):'));
-    this.logger.log(`  Total growth during iterations: ${growthDuringIterations.toFixed(2)}MB`);
-    this.logger.log(`  Per-iteration growth: ${perIterationGrowth.toFixed(2)}MB`);
+    this.logger.log(
+      `  Total growth during iterations: ${growthDuringIterations.toFixed(2)}MB`,
+    );
+    this.logger.log(
+      `  Per-iteration growth: ${perIterationGrowth.toFixed(2)}MB`,
+    );
     this.logger.log(`  Iterations: ${this.repeatWorkspace}`);
 
     // Test cleanup
@@ -315,7 +331,9 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
     const afterCleanup = this.getHeapUsed();
     const released = beforeCleanup - afterCleanup;
 
-    this.logger.log(`  After clearing ${storedCount} references & GC: ${afterCleanup}MB`);
+    this.logger.log(
+      `  After clearing ${storedCount} references & GC: ${afterCleanup}MB`,
+    );
     this.logger.log(`  Memory released: ${released.toFixed(2)}MB`);
 
     // Final V8 heap
@@ -323,9 +341,15 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
 
     this.logger.log('');
     this.logger.log(chalk.yellow('Final V8 Heap:'));
-    this.logger.log(`  Used: ${Math.round(heapStats.used_heap_size / 1024 / 1024)}MB`);
-    this.logger.log(`  Total: ${Math.round(heapStats.total_heap_size / 1024 / 1024)}MB`);
-    this.logger.log(`  Limit: ${Math.round(heapStats.heap_size_limit / 1024 / 1024)}MB`);
+    this.logger.log(
+      `  Used: ${Math.round(heapStats.used_heap_size / 1024 / 1024)}MB`,
+    );
+    this.logger.log(
+      `  Total: ${Math.round(heapStats.total_heap_size / 1024 / 1024)}MB`,
+    );
+    this.logger.log(
+      `  Limit: ${Math.round(heapStats.heap_size_limit / 1024 / 1024)}MB`,
+    );
 
     // Conclusions
     this.logger.log('');
@@ -334,23 +358,61 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
     this.logger.log(chalk.cyan('='.repeat(80)));
 
     if (perIterationGrowth > 2) {
-      this.logger.log(chalk.red(`\n⚠️  SIGNIFICANT MEMORY GROWTH: ${perIterationGrowth.toFixed(2)}MB per iteration`));
-      this.logger.log(chalk.red(`    ${this.repeatWorkspace} iterations consumed ${growthDuringIterations.toFixed(2)}MB`));
-      this.logger.log(chalk.red(`    100 workspaces would consume: ~${(perIterationGrowth * 100).toFixed(0)}MB`));
+      this.logger.log(
+        chalk.red(
+          `\n⚠️  SIGNIFICANT MEMORY GROWTH: ${perIterationGrowth.toFixed(2)}MB per iteration`,
+        ),
+      );
+      this.logger.log(
+        chalk.red(
+          `    ${this.repeatWorkspace} iterations consumed ${growthDuringIterations.toFixed(2)}MB`,
+        ),
+      );
+      this.logger.log(
+        chalk.red(
+          `    100 workspaces would consume: ~${(perIterationGrowth * 100).toFixed(0)}MB`,
+        ),
+      );
     } else if (perIterationGrowth > 0.5) {
-      this.logger.log(chalk.yellow(`\n⚠️  MODERATE MEMORY GROWTH: ${perIterationGrowth.toFixed(2)}MB per iteration`));
+      this.logger.log(
+        chalk.yellow(
+          `\n⚠️  MODERATE MEMORY GROWTH: ${perIterationGrowth.toFixed(2)}MB per iteration`,
+        ),
+      );
     } else {
-      this.logger.log(chalk.green(`\n✓ LOW MEMORY GROWTH: ${perIterationGrowth.toFixed(2)}MB per iteration`));
+      this.logger.log(
+        chalk.green(
+          `\n✓ LOW MEMORY GROWTH: ${perIterationGrowth.toFixed(2)}MB per iteration`,
+        ),
+      );
     }
 
     if (released > growthDuringIterations * 0.8) {
-      this.logger.log(chalk.green(`✓ Memory properly released after clearing references (${released.toFixed(2)}MB freed)`));
+      this.logger.log(
+        chalk.green(
+          `✓ Memory properly released after clearing references (${released.toFixed(2)}MB freed)`,
+        ),
+      );
     } else if (released > 0) {
-      this.logger.log(chalk.yellow(`⚠️ Partial memory release: ${released.toFixed(2)}MB freed of ${growthDuringIterations.toFixed(2)}MB growth`));
-      this.logger.log(chalk.yellow(`   This suggests some memory is retained by other references`));
+      this.logger.log(
+        chalk.yellow(
+          `⚠️ Partial memory release: ${released.toFixed(2)}MB freed of ${growthDuringIterations.toFixed(2)}MB growth`,
+        ),
+      );
+      this.logger.log(
+        chalk.yellow(
+          `   This suggests some memory is retained by other references`,
+        ),
+      );
     } else {
-      this.logger.log(chalk.red(`❌ Memory NOT released after clearing references!`));
-      this.logger.log(chalk.red(`   This indicates a memory leak - objects are retained by other refs`));
+      this.logger.log(
+        chalk.red(`❌ Memory NOT released after clearing references!`),
+      );
+      this.logger.log(
+        chalk.red(
+          `   This indicates a memory leak - objects are retained by other refs`,
+        ),
+      );
     }
 
     // Specific findings about TypeORM
@@ -381,7 +443,9 @@ export class EntityMetadataRetentionAnalyzerCommand extends ActiveOrSuspendedWor
     this.logger.log('     - Add --max-old-space-size=4096 to Node options');
     this.logger.log('');
     this.logger.log('  2. MEDIUM-TERM (cache optimization):');
-    this.logger.log('     - Clear old EntityMetadata before storing new (already fixed in this PR!)');
+    this.logger.log(
+      '     - Clear old EntityMetadata before storing new (already fixed in this PR!)',
+    );
     this.logger.log('     - Consider LRU eviction for EntityMetadata cache');
     this.logger.log('');
     this.logger.log('  3. LONG-TERM (architecture):');
