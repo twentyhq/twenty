@@ -14,9 +14,11 @@ export type ApplicationMarketplaceData = {
 
 export type ApplicationManifest = SyncableEntityOptions & {
   defaultRoleUniversalIdentifier: string;
-  displayName?: string;
+  displayName: string;
   description?: string;
   icon?: string;
   applicationVariables?: ApplicationVariables;
   marketplaceData?: ApplicationMarketplaceData;
+  packageJsonChecksum: string | null;
+  yarnLockChecksum: string | null;
 };
