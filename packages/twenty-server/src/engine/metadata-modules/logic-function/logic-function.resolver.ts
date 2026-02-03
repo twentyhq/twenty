@@ -87,7 +87,7 @@ export class LogicFunctionResolver {
           },
         );
 
-      return Object.values(flatLogicFunctionMaps.byId)
+      return Object.values(flatLogicFunctionMaps.byUniversalIdentifier)
         .filter(
           (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
             isDefined(flatLogicFunction) &&

@@ -64,7 +64,7 @@ export class NavigationMenuItemService {
         },
       );
 
-    return Object.values(flatNavigationMenuItemMaps.byId)
+    return Object.values(flatNavigationMenuItemMaps.byUniversalIdentifier)
       .filter(
         (item): item is NonNullable<typeof item> =>
           isDefined(item) &&

@@ -36,7 +36,7 @@ export class NavigationMenuItemDeletionService {
     const deletedRecordIdsSet = new Set(deletedRecordIds);
 
     const navigationMenuItemsToDelete = Object.values(
-      flatNavigationMenuItemMaps.byId,
+      flatNavigationMenuItemMaps.byUniversalIdentifier,
     ).filter(
       (item): item is NonNullable<typeof item> =>
         isDefined(item) &&
