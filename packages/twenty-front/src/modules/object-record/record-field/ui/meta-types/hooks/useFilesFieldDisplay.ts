@@ -9,7 +9,8 @@ import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecor
 import { useContext } from 'react';
 
 export const useFilesFieldDisplay = () => {
-  const { recordId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition, disableChipClick } =
+    useContext(FieldContext);
 
   const { fieldName } = fieldDefinition.metadata;
 
@@ -22,5 +23,6 @@ export const useFilesFieldDisplay = () => {
   return {
     fieldDefinition: fieldDefinition as FieldDefinition<FieldFilesMetadata>,
     fieldValue,
+    disableChipClick,
   };
 };

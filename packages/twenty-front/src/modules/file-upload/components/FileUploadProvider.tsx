@@ -37,17 +37,19 @@ export const FileUploadProvider = ({
         return;
       }
 
-      if (!isDefined(files) || files.length === 0) {
-        currentOptions.onCancel?.();
-      } else {
-        const filesArray = Array.from(files);
-        await currentOptions.onUpload(filesArray);
+      try {
+        if (!isDefined(files) || files.length === 0) {
+          currentOptions.onCancel?.();
+        } else {
+          const filesArray = Array.from(files);
+          await currentOptions.onUpload(filesArray);
+        }
+      } finally {
+        if (isDefined(fileInputRef.current)) {
+          fileInputRef.current.value = '';
+        }
+        setUploadOptions(null);
       }
-
-      if (isDefined(fileInputRef.current)) {
-        fileInputRef.current.value = '';
-      }
-      setUploadOptions(null);
     },
     [uploadOptions],
   );
@@ -59,12 +61,14 @@ export const FileUploadProvider = ({
       return;
     }
 
-    currentOptions.onCancel?.();
-
-    if (isDefined(fileInputRef.current)) {
-      fileInputRef.current.value = '';
+    try {
+      currentOptions.onCancel?.();
+    } finally {
+      if (isDefined(fileInputRef.current)) {
+        fileInputRef.current.value = '';
+      }
+      setUploadOptions(null);
     }
-    setUploadOptions(null);
   }, [uploadOptions]);
 
   useEffect(() => {

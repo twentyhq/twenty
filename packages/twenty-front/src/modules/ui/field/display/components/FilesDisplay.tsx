@@ -9,9 +9,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 type FilesDisplayProps = {
   value?: FieldFilesValue[];
+  forceDisableClick?: boolean;
 };
 
-export const FilesDisplay = ({ value }: FilesDisplayProps) => {
+export const FilesDisplay = ({
+  value,
+  forceDisableClick,
+}: FilesDisplayProps) => {
   const setFilePreview = useSetRecoilState(filePreviewState);
   const isAttachmentPreviewEnabled = useRecoilValue(
     isAttachmentPreviewEnabledState,
@@ -33,8 +37,13 @@ export const FilesDisplay = ({ value }: FilesDisplayProps) => {
 
   return (
     <ExpandableList>
-      {value.map((file, index) => (
-        <FileChip key={index} file={file} onClick={handlePreview} />
+      {value.map((file) => (
+        <FileChip
+          key={file.fileId}
+          file={file}
+          onClick={handlePreview}
+          forceDisableClick={forceDisableClick}
+        />
       ))}
     </ExpandableList>
   );

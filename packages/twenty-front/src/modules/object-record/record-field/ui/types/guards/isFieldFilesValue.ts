@@ -23,4 +23,4 @@ const fileSchema = z.object({
 export const filesSchema = z.array(fileSchema);
 export const isFieldFilesValue = (
   fieldValue: unknown,
-): fieldValue is FieldFilesValue => filesSchema.safeParse(fieldValue).success;
+): fieldValue is FieldFilesValue[] => filesSchema.safeParse(fieldValue).success;

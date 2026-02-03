@@ -5,11 +5,15 @@ export const isMatchingFilesFilter = ({
   value,
 }: {
   filesFilter: FilesFilter;
-  value: FieldFileValue[] | null;
+  value: Record<string, any> | null;
 }) => {
   switch (true) {
     case filesFilter.like !== undefined: {
-      const regexPattern = filesFilter.like.replace(/%/g, '.*');
+      const escapedPattern = filesFilter.like.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        '\\$&',
+      );
+      const regexPattern = escapedPattern.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'is');
 
       const stringValue = JSON.stringify(value, null, 1);

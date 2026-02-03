@@ -4,6 +4,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { lazy, Suspense } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -88,6 +89,8 @@ export const FilePreviewModal = ({
     return null;
   }
 
+  const hasValidUrl = isNonEmptyString(file.url);
+
   return (
     <>
       {createPortal(
@@ -115,21 +118,29 @@ export const FilePreviewModal = ({
             componentInstanceId={`preview-modal-${file.fileId ?? 'file'}`}
           >
             <StyledModalContent>
-              <Suspense
-                fallback={
-                  <StyledLoadingContainer>
-                    <StyledLoadingText>
-                      {t`Loading document viewer...`}
-                    </StyledLoadingText>
-                  </StyledLoadingContainer>
-                }
-              >
-                <DocumentViewer
-                  documentName={file.label ?? t`Untitled`}
-                  documentUrl={file.url ?? ''}
-                  documentExtension={file.extension ?? ''}
-                />
-              </Suspense>
+              {hasValidUrl ? (
+                <Suspense
+                  fallback={
+                    <StyledLoadingContainer>
+                      <StyledLoadingText>
+                        {t`Loading document viewer...`}
+                      </StyledLoadingText>
+                    </StyledLoadingContainer>
+                  }
+                >
+                  <DocumentViewer
+                    documentName={file.label ?? t`Untitled`}
+                    documentUrl={file.url as string}
+                    documentExtension={file.extension ?? ''}
+                  />
+                </Suspense>
+              ) : (
+                <StyledLoadingContainer>
+                  <StyledLoadingText>
+                    {t`No preview available`}
+                  </StyledLoadingText>
+                </StyledLoadingContainer>
+              )}
             </StyledModalContent>
           </ScrollWrapper>
         </Modal>,
