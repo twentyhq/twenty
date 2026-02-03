@@ -514,10 +514,7 @@ describe('Event Logs (integration)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeDefined();
-      // Unauthenticated requests may return INTERNAL_SERVER_ERROR or UNAUTHENTICATED
-      expect(['UNAUTHENTICATED', 'INTERNAL_SERVER_ERROR']).toContain(
-        response.body.errors[0].extensions.code,
-      );
+      expect(response.body.errors[0].extensions.code).toBe('UNAUTHENTICATED');
     });
   });
 

@@ -8,6 +8,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { EventLogsGraphqlApiExceptionFilter } from 'src/engine/core-modules/event-logs/filters/event-logs-graphql-api-exception.filter';
+import { ForbiddenExceptionGraphqlFilter } from 'src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -23,6 +24,7 @@ import { EventLogQueryResult } from './dtos/event-log-result.output';
 
 @Resolver()
 @UseFilters(
+  ForbiddenExceptionGraphqlFilter,
   AuthGraphqlApiExceptionFilter,
   EventLogsGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
