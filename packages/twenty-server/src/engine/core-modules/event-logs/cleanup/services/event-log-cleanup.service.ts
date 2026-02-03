@@ -5,6 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventLogTable } from 'twenty-shared/types';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 
 const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
   [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
@@ -49,7 +50,7 @@ export class EventLogCleanupService {
           `ALTER TABLE ${tableName} DELETE WHERE "workspaceId" = {workspaceId:String} AND "timestamp" < {cutoffDate:DateTime64(3)}`,
           {
             workspaceId,
-            cutoffDate: cutoffDate.toISOString(),
+            cutoffDate: formatDateForClickHouse(cutoffDate),
           },
         );
 

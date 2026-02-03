@@ -6,6 +6,7 @@ import { EventLogTable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -187,12 +188,12 @@ export class EventLogsService {
 
     if (isDefined(filters.dateRange?.start)) {
       whereClauses.push('"timestamp" >= {startDate:DateTime64(3)}');
-      params.startDate = this.formatDateForClickHouse(filters.dateRange.start);
+      params.startDate = formatDateForClickHouse(filters.dateRange.start);
     }
 
     if (isDefined(filters.dateRange?.end)) {
       whereClauses.push('"timestamp" <= {endDate:DateTime64(3)}');
-      params.endDate = this.formatDateForClickHouse(filters.dateRange.end);
+      params.endDate = formatDateForClickHouse(filters.dateRange.end);
     }
 
     if (table === EventLogTable.OBJECT_EVENT) {
@@ -206,11 +207,6 @@ export class EventLogsService {
         params.objectMetadataId = filters.objectMetadataId;
       }
     }
-  }
-
-  private formatDateForClickHouse(date: Date): string {
-    // ClickHouse DateTime64(3) expects format: YYYY-MM-DD HH:mm:ss.SSS (no 'Z' suffix)
-    return date.toISOString().replace('T', ' ').replace('Z', '');
   }
 
   private encodeCursor(timestamp: Date): string {
