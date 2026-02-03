@@ -1,5 +1,6 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,10 +10,13 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { LogicFunctionLayerEntity } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.entity';
+import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -71,39 +75,67 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
     ) as FlatApplication[];
 
     for (const application of flatApplications) {
-      const needsDefaultBackfill =
-        (application.id === twentyStandardFlatApplication.id ||
-          application.id === workspaceCustomFlatApplication.id) &&
-        (application.packageJsonFileId === null ||
-          application.packageJsonFileId === undefined);
+      const isStandardOrCustomApplication =
+        application.id === twentyStandardFlatApplication.id ||
+        application.id === workspaceCustomFlatApplication.id;
 
-      if (needsDefaultBackfill) {
-        this.logger.log(
-          `Backfilling standard/custom application ${application.id} with default package files`,
-        );
+      if (isStandardOrCustomApplication) {
+        const needsBackfill =
+          !isNonEmptyString(application.packageJsonFileId) ||
+          !isNonEmptyString(application.yarnLockFileId) ||
+          !isNonEmptyString(application.packageJsonChecksum) ||
+          !isNonEmptyString(application.yarnLockChecksum) ||
+          !isNonEmptyString(application.availablePackages);
 
-        if (!dryRun) {
-          await this.applicationService.uploadDefaultPackageFilesAndSetFileIds(
-            application,
+        if (needsBackfill) {
+          this.logger.log(
+            `Backfilling standard/custom application ${application.id} with default package files`,
+          );
+
+          if (!dryRun) {
+            await this.applicationService.uploadDefaultPackageFilesAndSetFileIds(
+              application,
+            );
+          }
+        } else {
+          this.logger.log(
+            `Skipping standard/custom application ${application.id} - already has package files`,
           );
         }
 
         continue;
       }
 
-      const needsLayerBackfill =
-        isDefined(application.logicFunctionLayerId) &&
-        (application.packageJsonFileId === null ||
-          application.packageJsonFileId === undefined);
+      const hasLogicFunctionLayer = isDefined(application.logicFunctionLayerId);
+      const needsBackfill =
+        !isNonEmptyString(application.packageJsonFileId) ||
+        !isNonEmptyString(application.yarnLockFileId) ||
+        !isNonEmptyString(application.packageJsonChecksum) ||
+        !isNonEmptyString(application.yarnLockChecksum) ||
+        !isNonEmptyString(application.availablePackages);
 
-      if (needsLayerBackfill) {
+      if (!hasLogicFunctionLayer) {
         this.logger.log(
-          `Backfilling application ${application.id} from logic function layer ${application.logicFunctionLayerId}`,
+          `Skipping application ${application.id} - no logic function layer`,
         );
 
-        if (!dryRun) {
-          await this.backfillApplicationFromLogicFunctionLayer(application);
-        }
+        continue;
+      }
+
+      if (!needsBackfill) {
+        this.logger.log(
+          `Skipping application ${application.id} - already has package files`,
+        );
+
+        continue;
+      }
+
+      this.logger.log(
+        `Backfilling application ${application.id} from logic function layer ${application.logicFunctionLayerId}`,
+      );
+
+      if (!dryRun) {
+        await this.backfillApplicationFromLogicFunctionLayer(application);
       }
     }
   }
@@ -122,14 +154,7 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
         id: application.logicFunctionLayerId as string,
         workspaceId: application.workspaceId,
       },
-      select: [
-        'id',
-        'packageJson',
-        'yarnLock',
-        'packageJsonChecksum',
-        'yarnLockChecksum',
-        'availablePackages',
-      ],
+      select: ['id', 'packageJson', 'yarnLock'],
     });
 
     if (!isDefined(layer)) {
@@ -141,6 +166,19 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
     }
 
     const packageJsonContent = JSON.stringify(layer.packageJson, null, 2);
+    const packageJsonChecksum = logicFunctionCreateHash(
+      JSON.stringify(layer.packageJson),
+    );
+    const yarnLockChecksum = logicFunctionCreateHash(layer.yarnLock);
+    const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
+      packageJsonContent,
+      layer.yarnLock,
+    );
+
+    const dependencyFileSettings: FileSettings = {
+      isTemporaryFile: false,
+      toDelete: false,
+    };
 
     const packageJsonFile = await this.fileStorageService.writeFile_v2({
       sourceFile: packageJsonContent,
@@ -149,7 +187,7 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,
       resourcePath: 'package.json',
-      settings: { isTemporaryFile: false, toDelete: false },
+      settings: dependencyFileSettings,
     });
 
     const yarnLockFile = await this.fileStorageService.writeFile_v2({
@@ -159,15 +197,15 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,
       resourcePath: 'yarn.lock',
-      settings: { isTemporaryFile: false, toDelete: false },
+      settings: dependencyFileSettings,
     });
 
     await this.applicationService.update(application.id, {
       packageJsonFileId: packageJsonFile.id,
       yarnLockFileId: yarnLockFile.id,
-      packageJsonChecksum: layer.packageJsonChecksum ?? null,
-      yarnLockChecksum: layer.yarnLockChecksum,
-      availablePackages: layer.availablePackages ?? {},
+      packageJsonChecksum,
+      yarnLockChecksum,
+      availablePackages,
       workspaceId: application.workspaceId,
     });
   }

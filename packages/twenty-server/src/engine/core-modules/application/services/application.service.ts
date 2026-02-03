@@ -11,9 +11,11 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/constants/default-application-package-fields.constant';
+import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
+import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -281,9 +283,8 @@ export class ApplicationService {
       queryRunner,
     );
 
-    await this.uploadDefaultPackageFilesAndUpdateApplication(
+    await this.uploadDefaultPackageFilesAndSetFileIds(
       twentyStandardApplication,
-      defaultPackageFields,
       queryRunner,
     );
 
@@ -330,9 +331,8 @@ export class ApplicationService {
       queryRunner,
     );
 
-    await this.uploadDefaultPackageFilesAndUpdateApplication(
+    await this.uploadDefaultPackageFilesAndSetFileIds(
       workspaceCustomApplication,
-      defaultPackageFields,
       queryRunner,
     );
 
@@ -348,23 +348,17 @@ export class ApplicationService {
   ): Promise<void> {
     const defaultPackageFields = await getDefaultApplicationPackageFields();
 
-    return this.uploadDefaultPackageFilesAndUpdateApplication(
-      application,
-      defaultPackageFields,
-      queryRunner,
+    const packageJsonChecksum = logicFunctionCreateHash(
+      JSON.stringify(JSON.parse(defaultPackageFields.packageJsonContent)),
     );
-  }
+    const yarnLockChecksum = logicFunctionCreateHash(
+      defaultPackageFields.yarnLockContent,
+    );
+    const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
+      defaultPackageFields.packageJsonContent,
+      defaultPackageFields.yarnLockContent,
+    );
 
-  private async uploadDefaultPackageFilesAndUpdateApplication(
-    application: Pick<
-      ApplicationEntity,
-      'id' | 'universalIdentifier' | 'workspaceId'
-    >,
-    defaultPackageFields: Awaited<
-      ReturnType<typeof getDefaultApplicationPackageFields>
-    >,
-    queryRunner?: QueryRunner,
-  ): Promise<void> {
     const packageJsonFile = await this.fileStorageService.writeFile_v2({
       sourceFile: defaultPackageFields.packageJsonContent,
       mimeType: undefined,
@@ -394,12 +388,18 @@ export class ApplicationService {
         {
           packageJsonFileId: packageJsonFile.id,
           yarnLockFileId: yarnLockFile.id,
+          packageJsonChecksum,
+          yarnLockChecksum,
+          availablePackages,
         },
       );
     } else {
       await this.update(application.id, {
         packageJsonFileId: packageJsonFile.id,
         yarnLockFileId: yarnLockFile.id,
+        packageJsonChecksum,
+        yarnLockChecksum,
+        availablePackages,
         workspaceId: application.workspaceId,
       });
     }

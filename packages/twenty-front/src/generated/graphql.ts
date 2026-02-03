@@ -1538,6 +1538,7 @@ export enum FileFolder {
   Attachment = 'Attachment',
   BuiltFrontComponent = 'BuiltFrontComponent',
   BuiltLogicFunction = 'BuiltLogicFunction',
+  Dependencies = 'Dependencies',
   File = 'File',
   FilesField = 'FilesField',
   PersonPicture = 'PersonPicture',
