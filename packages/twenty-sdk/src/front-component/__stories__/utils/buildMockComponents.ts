@@ -43,15 +43,12 @@ export const buildMockComponents = async (): Promise<void> => {
     plugins: [reactGlobalsPlugin, jsxTransformToRemoteDomWorkerFormatPlugin],
   });
 
-  // eslint-disable-next-line no-console
   console.log(
     `Built ${STORY_COMPONENTS.length} story components to ${outputDir}`,
   );
 };
 
-// Run if called directly
 buildMockComponents().catch((error) => {
-  // eslint-disable-next-line no-console
   console.error('Failed to build mock components:', error);
   process.exit(1);
 });
