@@ -164,7 +164,7 @@ export const EventLogResultsTable = ({
   onLoadMore,
   selectedTable,
 }: EventLogResultsTableProps) => {
-  const { _: translate } = useLingui();
+  const { t } = useLingui();
   const theme = useTheme();
 
   const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
@@ -227,7 +227,7 @@ export const EventLogResultsTable = ({
           <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
             {baseColumns.map((column) => (
               <TableHeader key={column.id}>
-                {translate(column.label)}
+                {t(column.label)}
               </TableHeader>
             ))}
           </StyledHeaderRow>
@@ -264,7 +264,7 @@ export const EventLogResultsTable = ({
               key={column.id}
               isResizing={resizingColumn === column.id}
             >
-              {translate(column.label)}
+              {t(column.label)}
               <StyledResizeHandle
                 isResizing={resizingColumn === column.id}
                 onPointerDown={(event) => handleResizeStart(column.id, event)}
