@@ -17,6 +17,7 @@ import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
 import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
+import { UpdateFileTableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-update-file-table-migration.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -45,6 +46,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly identifyWebhookMetadataCommand: IdentifyWebhookMetadataCommand,
     protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly migrateWorkflowCodeStepsCommand: MigrateWorkflowCodeStepsCommand,
+    protected readonly updateFileTableMigrationCommand: UpdateFileTableMigrationCommand,
   ) {
     super(
       workspaceRepository,
@@ -66,6 +68,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.migrateWorkflowCodeStepsCommand,
       this.deleteFileRecordsCommand,
       this.backfillApplicationPackageFilesCommand,
+      this.updateFileTableMigrationCommand,
     ];
 
     this.allCommands = {
