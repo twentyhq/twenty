@@ -179,20 +179,20 @@ describe('WorkspaceEntityManager', () => {
     };
 
     const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
-      byId: {
+      byUniversalIdentifier: {
         'test-entity-id': mockFlatObjectMetadata,
       },
-      idByUniversalIdentifier: {
+      universalIdentifierById: {
         'test-entity-id': 'test-entity-id',
       },
       universalIdentifiersByApplicationId: {},
     };
 
     const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
-      byId: {
+      byUniversalIdentifier: {
         'field-id': mockFlatFieldMetadata,
       },
-      idByUniversalIdentifier: {
+      universalIdentifierById: {
         'field-id': 'field-id',
       },
       universalIdentifiersByApplicationId: {},
@@ -203,18 +203,18 @@ describe('WorkspaceEntityManager', () => {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       flatRowLevelPermissionPredicateMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       flatRowLevelPermissionPredicateGroupMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       objectIdByNameSingular: {

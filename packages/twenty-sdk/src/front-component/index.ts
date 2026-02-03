@@ -54,6 +54,7 @@ export {
   HtmlTd,
   HtmlBr,
   HtmlHr,
+  TwentyUiButton,
 } from './remote/generated/remote-components';
 export type {
   HtmlCommonProperties,
@@ -69,6 +70,7 @@ export type {
   HtmlButtonProperties,
   HtmlThProperties,
   HtmlTdProperties,
+  TwentyUiButtonProperties,
 } from './remote/generated/remote-elements';
 export {
   HtmlDivElement,
@@ -114,6 +116,7 @@ export {
   HtmlTdElement,
   HtmlBrElement,
   HtmlHrElement,
+  TwentyUiButtonElement,
   RemoteRootElement,
   RemoteFragmentElement,
 } from './remote/generated/remote-elements';

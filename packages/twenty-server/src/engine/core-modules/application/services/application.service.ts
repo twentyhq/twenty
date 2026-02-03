@@ -119,6 +119,8 @@ export class ApplicationService {
         'agents',
         'objects',
         'applicationVariables',
+        'packageJsonFile',
+        'yarnLockFile',
       ],
     });
   }
@@ -165,6 +167,8 @@ export class ApplicationService {
         'agents',
         'objects',
         'applicationVariables',
+        'packageJsonFile',
+        'yarnLockFile',
       ],
     });
   }

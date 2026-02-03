@@ -18,9 +18,11 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
@@ -131,7 +133,10 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
 
       const attachmentTargetRelationFields = attachmentFieldMetadatas
         .filter(isMorphOrRelationFlatFieldMetadata)
-        .filter((field) => field.type === FieldMetadataType.RELATION)
+        .filter(
+          (field): field is FlatFieldMetadata<FieldMetadataType.RELATION> =>
+            field.type === FieldMetadataType.RELATION,
+        )
         .filter((field) => {
           const isStandardAppField = this.isTwentyStandardApplicationField({
             field,
@@ -143,9 +148,11 @@ export class MigrateAttachmentToMorphRelationsCommand extends ActiveOrSuspendedW
             attachmentTargetFieldUniversalIdentifiers.has(
               field.universalIdentifier,
             );
-          const targetObjectMetadata = field.relationTargetObjectMetadataId
-            ? flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId]
-            : undefined;
+          const targetObjectMetadata =
+            findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityId: field.relationTargetObjectMetadataId,
+              flatEntityMaps: flatObjectMetadataMaps,
+            });
           const isCustomTarget =
             !isStandardAppField && targetObjectMetadata?.isCustom === true;
 

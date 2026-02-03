@@ -7,6 +7,7 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -69,7 +70,10 @@ export class QueryRunnerArgsFactory {
   ) {
     const fieldMetadataId = fieldIdByName[key];
     const fieldMetadata = fieldMetadataId
-      ? flatFieldMetadataMaps.byId[fieldMetadataId]
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
       : undefined;
 
     if (!fieldMetadata) {
@@ -103,7 +107,10 @@ export class QueryRunnerArgsFactory {
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ) {
-    const fieldMetadata = flatFieldMetadataMaps.byId[fieldIdByName[key]];
+    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldIdByName[key],
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     if (!fieldMetadata) {
       return value;

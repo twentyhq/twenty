@@ -57680,6 +57680,7 @@ __metadata:
     storybook: "npm:^10.1.11"
     ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"
+    twenty-ui: "workspace:*"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"

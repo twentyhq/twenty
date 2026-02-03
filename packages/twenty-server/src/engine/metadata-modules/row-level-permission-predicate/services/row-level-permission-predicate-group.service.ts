@@ -45,7 +45,9 @@ export class RowLevelPermissionPredicateGroupService {
         },
       );
 
-    return Object.values(flatRowLevelPermissionPredicateGroupMaps.byId)
+    return Object.values(
+      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((group) => group.deletedAt === null)
       .sort(
@@ -75,7 +77,9 @@ export class RowLevelPermissionPredicateGroupService {
         },
       );
 
-    return Object.values(flatRowLevelPermissionPredicateGroupMaps.byId)
+    return Object.values(
+      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((group) => group.deletedAt === null && group.roleId === roleId)
       .sort(

@@ -7,6 +7,7 @@ import { IsNull, Repository } from 'typeorm';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
 import { fromDeleteViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util';
@@ -86,9 +87,10 @@ export class ViewGroupService {
 
     const flatViewGroupsToCreate = createViewGroupInputs.map(
       (createViewGroupInput) => {
-        const mainGroupByFieldMetadataId =
-          flatViewMaps.byId[createViewGroupInput.viewId]
-            ?.mainGroupByFieldMetadataId;
+        const mainGroupByFieldMetadataId = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: createViewGroupInput.viewId,
+          flatEntityMaps: flatViewMaps,
+        })?.mainGroupByFieldMetadataId;
 
         if (!isDefined(mainGroupByFieldMetadataId)) {
           throw new ViewGroupException(

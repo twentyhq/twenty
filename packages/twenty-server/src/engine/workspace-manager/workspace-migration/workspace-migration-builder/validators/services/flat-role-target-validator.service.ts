@@ -121,7 +121,10 @@ export class FlatRoleTargetValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
   >): FailedFlatEntityValidation<'roleTarget', 'update'> {
-    const existingRoleTarget = optimisticFlatRoleTargetMaps.byId[flatEntityId];
+    const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatRoleTargetMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {

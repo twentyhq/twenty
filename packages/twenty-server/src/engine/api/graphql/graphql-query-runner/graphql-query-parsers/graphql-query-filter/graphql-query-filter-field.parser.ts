@@ -11,6 +11,7 @@ import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -18,7 +19,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
 export class GraphqlQueryFilterFieldParser {
-  private flatObjectMetadata: FlatObjectMetadata;
   private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   private fieldIdByName: Record<string, string>;
   private fieldIdByJoinColumnName: Record<string, string>;
@@ -27,7 +27,6 @@ export class GraphqlQueryFilterFieldParser {
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   ) {
-    this.flatObjectMetadata = flatObjectMetadata;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
 
     const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
@@ -51,7 +50,10 @@ export class GraphqlQueryFilterFieldParser {
     const fieldMetadataId =
       this.fieldIdByName[`${key}`] || this.fieldIdByJoinColumnName[`${key}`];
 
-    const fieldMetadata = this.flatFieldMetadataMaps.byId[fieldMetadataId];
+    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldMetadataId,
+      flatEntityMaps: this.flatFieldMetadataMaps,
+    });
 
     if (!isDefined(fieldMetadata)) {
       throw new Error(`Field metadata not found for field: ${key}`);
