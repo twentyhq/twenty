@@ -17,15 +17,19 @@ const STORY_COMPONENTS = [
 ];
 
 export const buildMockComponents = async (): Promise<void> => {
-  // Ensure output directory exists
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
+  fs.mkdirSync(outputDir, { recursive: true });
 
   const entryPoints: Record<string, string> = {};
 
   for (const name of STORY_COMPONENTS) {
-    entryPoints[name] = path.join(mocksDir, `${name}.tsx`);
+    const filePath = path.join(mocksDir, `${name}.tsx`);
+    if (!fs.existsSync(filePath)) {
+      throw new Error(
+        `Story component source file not found: ${filePath}\n` +
+          `Ensure the file exists in ${mocksDir} and the name in STORY_COMPONENTS is correct.`,
+      );
+    }
+    entryPoints[name] = filePath;
   }
 
   await esbuild.build({

@@ -66,7 +66,7 @@ const LifecycleComponent = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'test-lifecycle-000-0000-0000-0000-000000000004',
+  universalIdentifier: 'test-lif0-00000000-0000-0000-0000-000000000003',
   name: 'lifecycle-component',
   description: 'Component with useEffect lifecycle',
   component: LifecycleComponent,

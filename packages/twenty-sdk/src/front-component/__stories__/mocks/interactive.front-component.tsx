@@ -55,7 +55,7 @@ const InteractiveComponent = () => {
 };
 
 export default defineFrontComponent({
-  universalIdentifier: 'test-interactive-0000-0000-0000-000000000002',
+  universalIdentifier: 'test-int0-00000000-0000-0000-0000-000000000002',
   name: 'interactive-component',
   description: 'Component with click interactions',
   component: InteractiveComponent,

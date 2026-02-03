@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '../host/components/FrontComponentRenderer';
 
@@ -15,6 +15,9 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   },
   args: {
     onError: errorHandler,
+  },
+  beforeEach: () => {
+    errorHandler.mockClear();
   },
 };
 
@@ -80,9 +83,13 @@ export const Lifecycle: Story = {
 
     expect(await canvas.findByText('Mounted')).toBeVisible();
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    const tickElement = await canvas.findByTestId('tick-count');
-    expect(tickElement.textContent).toMatch(/Ticks: [1-9]/);
+    await waitFor(
+      () => {
+        const tickElement = canvas.getByTestId('tick-count');
+        expect(tickElement.textContent).toMatch(/Ticks: [1-9]\d*/);
+      },
+      { timeout: 5000 },
+    );
   },
 };
 
@@ -91,8 +98,11 @@ export const ErrorHandling: Story = {
     componentUrl: '/built/nonexistent.front-component.mjs',
   },
   play: async () => {
-    errorHandler.mockClear();
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    expect(errorHandler).toHaveBeenCalled();
+    await waitFor(
+      () => {
+        expect(errorHandler).toHaveBeenCalled();
+      },
+      { timeout: 5000 },
+    );
   },
 };
