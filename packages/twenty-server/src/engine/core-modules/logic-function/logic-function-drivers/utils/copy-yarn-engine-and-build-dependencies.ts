@@ -4,29 +4,15 @@ import { join } from 'path';
 import { promisify } from 'util';
 
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/get-layer-dependencies-dir-name';
-import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
 
 const execFilePromise = promisify(execFile);
 
-export const copyAndBuildDependencies = async (
+export const copyYarnEngineAndBuildDependencies = async (
   buildDirectory: string,
-  flatLogicFunctionLayer: FlatLogicFunctionLayer,
 ) => {
   await fs.mkdir(buildDirectory, {
     recursive: true,
   });
-
-  const packageJson = flatLogicFunctionLayer.packageJson;
-
-  const yarnLock = flatLogicFunctionLayer.yarnLock;
-
-  await fs.writeFile(
-    join(buildDirectory, 'package.json'),
-    JSON.stringify(packageJson, null, 2),
-    'utf8',
-  );
-
-  await fs.writeFile(join(buildDirectory, 'yarn.lock'), yarnLock, 'utf8');
 
   await fs.cp(getLayerDependenciesDirName('engine'), buildDirectory, {
     recursive: true,

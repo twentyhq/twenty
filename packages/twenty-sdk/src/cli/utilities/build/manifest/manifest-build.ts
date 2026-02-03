@@ -5,11 +5,12 @@ import {
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
-import { findPathFile } from '@/cli/utilities/file/file-find';
-import { parseJsoncFile } from '@/cli/utilities/file/file-jsonc';
-import { type FrontComponentConfig, type LogicFunctionConfig } from '@/sdk';
+import {
+  type FrontComponentConfig,
+  type LogicFunctionConfig,
+  type ApplicationConfig,
+} from '@/sdk';
 import { glob } from 'fast-glob';
-import * as fs from 'fs-extra';
 import { readFile } from 'fs-extra';
 import { basename, extname, relative, sep } from 'path';
 import {
@@ -23,8 +24,9 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { type Sources } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { type Sources } from 'twenty-shared/types';
+import * as fs from 'fs-extra';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -108,11 +110,16 @@ export const buildManifest = async (
 
     switch (entity) {
       case ManifestEntityKey.Application: {
-        const extract = await extractManifestFromFile<ApplicationManifest>({
+        const extract = await extractManifestFromFile<ApplicationConfig>({
           appPath,
           filePath,
         });
-        application = extract.config;
+
+        application = {
+          ...extract.config,
+          yarnLockChecksum: null,
+          packageJsonChecksum: null,
+        };
         errors.push(...extract.errors);
         applicationFilePaths.push(relativePath);
         break;
@@ -157,11 +164,13 @@ export const buildManifest = async (
 
         const { handler: _, ...rest } = extract.config;
 
+        const relativeFilePath = relative(appPath, filePath);
+
         const config: LogicFunctionManifest = {
           ...rest,
           handlerName: 'default.handler',
-          sourceHandlerPath: filePath,
-          builtHandlerPath: filePath.replace(/\.tsx?$/, '.mjs'),
+          sourceHandlerPath: relativeFilePath,
+          builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtHandlerChecksum: null,
         };
 
@@ -179,11 +188,13 @@ export const buildManifest = async (
 
         const { component, ...rest } = extract.config;
 
+        const relativeFilePath = relative(appPath, filePath);
+
         const config: FrontComponentManifest = {
           ...rest,
           componentName: component.name,
-          sourceComponentPath: filePath,
-          builtComponentPath: filePath.replace(/\.tsx?$/, '.mjs'),
+          sourceComponentPath: relativeFilePath,
+          builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: null,
         };
 
@@ -219,15 +230,6 @@ export const buildManifest = async (
     );
   }
 
-  const packageJson = await parseJsoncFile(
-    await findPathFile(appPath, 'package.json'),
-  );
-
-  const yarnLock = await readFile(
-    await findPathFile(appPath, 'yarn.lock'),
-    'utf8',
-  );
-
   const manifest = !application
     ? null
     : {
@@ -239,8 +241,6 @@ export const buildManifest = async (
         frontComponents,
         publicAssets,
         sources: await computeSources(appPath, filePaths),
-        packageJson,
-        yarnLock,
       };
 
   const entityFilePaths: EntityFilePaths = {

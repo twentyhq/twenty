@@ -5,14 +5,14 @@ import { join } from 'path';
 import { FileFolder } from 'twenty-shared/types';
 
 import {
-  type LogicFunctionExecutorDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
+  type LogicFunctionExecutorDriver,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
-import { copyAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-and-build-dependencies';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
@@ -38,13 +38,44 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
   ) => {
     return join(
       LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
-      flatLogicFunctionLayer.checksum,
+      flatLogicFunctionLayer.yarnLockChecksum,
     );
   };
 
-  private async createLayerIfNotExists(
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ) {
+  private async copyDependenciesInMemory({
+    applicationUniversalIdentifier,
+    workspaceId,
+    inMemoryLayerFolderPath,
+  }: {
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+    inMemoryLayerFolderPath: string;
+  }) {
+    await Promise.all([
+      this.fileStorageService.downloadFile_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: 'package.json',
+        localPath: join(inMemoryLayerFolderPath, 'package.json'),
+      }),
+      this.fileStorageService.downloadFile_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: 'yarn.lock',
+        localPath: join(inMemoryLayerFolderPath, 'yarn.lock'),
+      }),
+    ]);
+  }
+
+  private async createLayerIfNotExists({
+    flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    applicationUniversalIdentifier: string;
+  }) {
     const inMemoryLayerFolderPath = this.getInMemoryLayerFolderPath(
       flatLogicFunctionLayer,
     );
@@ -52,17 +83,28 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     try {
       await fs.access(inMemoryLayerFolderPath);
     } catch {
-      await copyAndBuildDependencies(
+      await this.copyDependenciesInMemory({
+        applicationUniversalIdentifier,
+        workspaceId: flatLogicFunctionLayer.workspaceId,
         inMemoryLayerFolderPath,
-        flatLogicFunctionLayer,
-      );
+      });
+      await copyYarnEngineAndBuildDependencies(inMemoryLayerFolderPath);
     }
   }
 
   async delete() {}
 
-  private async build(flatLogicFunctionLayer: FlatLogicFunctionLayer) {
-    await this.createLayerIfNotExists(flatLogicFunctionLayer);
+  private async build({
+    flatLogicFunctionLayer,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    applicationUniversalIdentifier: string;
+  }) {
+    await this.createLayerIfNotExists({
+      flatLogicFunctionLayer,
+      applicationUniversalIdentifier,
+    });
   }
 
   async execute({
@@ -72,7 +114,10 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     payload,
     env,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    await this.build(flatLogicFunctionLayer);
+    await this.build({
+      flatLogicFunctionLayer,
+      applicationUniversalIdentifier,
+    });
 
     const startTime = Date.now();
 
