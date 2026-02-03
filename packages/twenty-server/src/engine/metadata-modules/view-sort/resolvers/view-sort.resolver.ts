@@ -16,9 +16,7 @@ import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
-import {
-  fromFlatViewSortToViewSortDto
-} from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
+import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 
 @Resolver(() => ViewSortDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -59,6 +57,7 @@ export class ViewSortResolver {
       createViewSortInput,
       workspaceId: workspaceId,
     });
+
     return fromFlatViewSortToViewSortDto(createdViewSort);
   }
 

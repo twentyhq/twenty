@@ -5,27 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import {
-  WorkspaceManyOrAllFlatEntityMapsCacheService,
-} from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import {
-  findFlatEntityByIdInFlatEntityMapsOrThrow,
-} from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import {
-  findManyFlatEntityByIdInFlatEntityMapsOrThrow,
-} from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import {
-  fromCreateViewSortInputToFlatViewSortToCreate,
-} from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
-import {
-  fromDeleteViewSortInputToFlatViewSortOrThrow,
-} from 'src/engine/metadata-modules/flat-view-sort/utils/from-delete-view-sort-input-to-flat-view-sort-or-throw.util';
-import {
-  fromDestroyViewSortInputToFlatViewSortOrThrow,
-} from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
-import {
-  fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow,
-} from 'src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { fromCreateViewSortInputToFlatViewSortToCreate } from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
+import { fromDeleteViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-delete-view-sort-input-to-flat-view-sort-or-throw.util';
+import { fromDestroyViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
+import { fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
@@ -35,12 +21,8 @@ import {
   ViewSortException,
   ViewSortExceptionCode,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
-import {
-  WorkspaceMigrationBuilderException,
-} from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import {
-  WorkspaceMigrationValidateBuildAndRunService,
-} from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 
 @Injectable()
@@ -51,13 +33,12 @@ export class ViewSortService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-  ) {
-  }
+  ) {}
 
   async createOne({
-                    createViewSortInput,
-                    workspaceId,
-                  }: {
+    createViewSortInput,
+    workspaceId,
+  }: {
     createViewSortInput: CreateViewSortInput;
     workspaceId: string;
   }): Promise<FlatViewSort> {
@@ -77,9 +58,9 @@ export class ViewSortService {
   }
 
   async createMany({
-                     createViewSortInputs,
-                     workspaceId,
-                   }: {
+    createViewSortInputs,
+    workspaceId,
+  }: {
     createViewSortInputs: CreateViewSortInput[];
     workspaceId: string;
   }): Promise<FlatViewSort[]> {
@@ -140,9 +121,9 @@ export class ViewSortService {
   }
 
   async updateOne({
-                    updateViewSortInput,
-                    workspaceId,
-                  }: {
+    updateViewSortInput,
+    workspaceId,
+  }: {
     workspaceId: string;
     updateViewSortInput: UpdateViewSortInput;
   }): Promise<FlatViewSort> {
@@ -197,9 +178,9 @@ export class ViewSortService {
   }
 
   async deleteOne({
-                    deleteViewSortInput,
-                    workspaceId,
-                  }: {
+    deleteViewSortInput,
+    workspaceId,
+  }: {
     deleteViewSortInput: DeleteViewSortInput;
     workspaceId: string;
   }): Promise<FlatViewSort> {
@@ -256,9 +237,9 @@ export class ViewSortService {
   }
 
   async destroyOne({
-                     destroyViewSortInput,
-                     workspaceId,
-                   }: {
+    destroyViewSortInput,
+    workspaceId,
+  }: {
     destroyViewSortInput: DestroyViewSortInput;
     workspaceId: string;
   }): Promise<FlatViewSort> {

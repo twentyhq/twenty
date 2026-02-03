@@ -1,14 +1,17 @@
-import { type CoreViewSortEssential } from '@/views/types/CoreViewSortEssential';
+import { type ViewSort } from '@/views/types/ViewSort';
+import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 export const getViewSortsToDelete = (
-  currentViewSorts: CoreViewSortEssential[],
-  newViewSorts: Pick<CoreViewSortEssential, 'fieldMetadataId'>[],
+  currentViewSorts: ViewSort[],
+  newViewSorts: ViewSort[],
 ) => {
   return currentViewSorts.filter(
     (currentViewSort) =>
-      !newViewSorts.some(
-        (newViewSort) =>
-          newViewSort.fieldMetadataId === currentViewSort.fieldMetadataId,
+      !newViewSorts.some((newViewSort) =>
+        compareStrictlyExceptForNullAndUndefined(
+          currentViewSort.id,
+          newViewSort.id,
+        ),
       ),
   );
 };

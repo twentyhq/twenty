@@ -7,7 +7,6 @@ import {
 import { v4 } from 'uuid';
 
 import { type UpdateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/update-view-sort.input';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 
 type TestContext = {
   input: UpdateViewSortInput;
@@ -20,7 +19,7 @@ const failingViewSortUpdateTestCases: EachTestingContext<TestContext>[] = [
       input: {
         id: v4(),
         update: {
-          direction: ViewSortDirection.DESC,
+          direction: undefined,
         },
       },
     },

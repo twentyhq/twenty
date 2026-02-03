@@ -32,6 +32,7 @@ import {
 import { ViewSortRestApiExceptionFilter } from 'src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 
 @Controller('rest/metadata/viewSorts')
 @UseGuards(WorkspaceAuthGuard)
@@ -84,10 +85,12 @@ export class ViewSortController {
     @Body() input: CreateViewSortInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return this.viewSortService.createOne({
+    const createdViewSort = await this.viewSortService.createOne({
       createViewSortInput: input,
       workspaceId: workspaceId,
     });
+
+    return fromFlatViewSortToViewSortDto(createdViewSort);
   }
 
   @Patch(':id')
@@ -97,10 +100,12 @@ export class ViewSortController {
     @Body() input: { direction?: ViewSortDirection },
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewSortDTO> {
-    return await this.viewSortService.updateOne({
+    const updatedViewSort = await this.viewSortService.updateOne({
       updateViewSortInput: { id, update: input },
       workspaceId: workspaceId,
     });
+
+    return fromFlatViewSortToViewSortDto(updatedViewSort);
   }
 
   @Delete(':id')

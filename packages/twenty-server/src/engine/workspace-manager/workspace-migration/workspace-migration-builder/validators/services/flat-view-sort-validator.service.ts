@@ -12,106 +12,12 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 
 @Injectable()
 export class FlatViewSortValidatorService {
   constructor() {}
-
-  public validateFlatViewSortUpdate({
-    flatEntityId,
-    flatEntityUpdates,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatViewSortMaps: optimisticFlatViewSortMaps,
-      flatViewMaps,
-    },
-  }: FlatEntityUpdateValidationArgs<
-    typeof ALL_METADATA_NAME.viewSort
-  >): FailedFlatEntityValidation<'viewSort', 'update'> {
-    const existingFlatViewSort = optimisticFlatViewSortMaps.byId[flatEntityId];
-
-    const validationResult = getEmptyFlatEntityValidationError({
-      flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: existingFlatViewSort?.universalIdentifier,
-      },
-      metadataName: 'viewSort',
-      type: 'update',
-    });
-
-    if (!isDefined(existingFlatViewSort)) {
-      validationResult.errors.push({
-        code: ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
-        message: t`View sort to update not found`,
-        userFriendlyMessage: msg`View sort to update not found`,
-      });
-
-      return validationResult;
-    }
-
-    const updatedFlatViewSort = {
-      ...existingFlatViewSort,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
-    };
-
-    validationResult.flatEntityMinimalInformation = {
-      ...validationResult.flatEntityMinimalInformation,
-      id: updatedFlatViewSort.id,
-      viewId: updatedFlatViewSort.viewId,
-      fieldMetadataId: updatedFlatViewSort.fieldMetadataId,
-    };
-
-    const flatView = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: updatedFlatViewSort.viewId,
-      flatEntityMaps: flatViewMaps,
-    });
-
-    if (!isDefined(flatView)) {
-      validationResult.errors.push({
-        code: ViewSortExceptionCode.VIEW_NOT_FOUND,
-        message: t`View sort to update parent view not found`,
-        userFriendlyMessage: msg`View sort to update parent view not found`,
-      });
-
-      return validationResult;
-    }
-
-    return validationResult;
-  }
-
-  public validateFlatViewSortDeletion({
-    flatEntityToValidate: { id: viewSortIdToDelete, universalIdentifier },
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatViewSortMaps: optimisticFlatViewSortMaps,
-    },
-  }: FlatEntityValidationArgs<
-    typeof ALL_METADATA_NAME.viewSort
-  >): FailedFlatEntityValidation<'viewSort', 'delete'> {
-    const validationResult = getEmptyFlatEntityValidationError({
-      flatEntityMinimalInformation: {
-        id: viewSortIdToDelete,
-        universalIdentifier,
-      },
-      metadataName: 'viewSort',
-      type: 'delete',
-    });
-
-    const existingFlatViewSort =
-      optimisticFlatViewSortMaps.byId[viewSortIdToDelete];
-
-    if (!isDefined(existingFlatViewSort)) {
-      validationResult.errors.push({
-        code: ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
-        message: t`View sort to delete not found`,
-        userFriendlyMessage: msg`View sort to delete not found`,
-      });
-
-      return validationResult;
-    }
-
-    return validationResult;
-  }
 
   public validateFlatViewSortCreation({
     flatEntityToValidate: flatViewSortToValidate,
@@ -189,6 +95,129 @@ export class FlatViewSortValidatorService {
         message: t`View sort with same fieldMetadataId and viewId already exists`,
         userFriendlyMessage: msg`View sort already exists`,
       });
+    }
+
+    if (
+      !isDefined(flatViewSortToValidate.direction) &&
+      !Object.values(ViewSortDirection).includes(
+        flatViewSortToValidate.direction,
+      )
+    ) {
+      validationResult.errors.push({
+        code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
+        message: t`View sort with invalid direction`,
+        userFriendlyMessage: msg`View sort with invalid direction, should be ASC or DESC`,
+      });
+    }
+
+    return validationResult;
+  }
+
+  public validateFlatViewSortUpdate({
+    flatEntityId,
+    flatEntityUpdates,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatViewSortMaps: optimisticFlatViewSortMaps,
+      flatViewMaps,
+    },
+  }: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.viewSort
+  >): FailedFlatEntityValidation<'viewSort', 'update'> {
+    const existingFlatViewSort = optimisticFlatViewSortMaps.byId[flatEntityId];
+
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: flatEntityId,
+        universalIdentifier: existingFlatViewSort?.universalIdentifier,
+      },
+      metadataName: 'viewSort',
+      type: 'update',
+    });
+
+    if (!isDefined(existingFlatViewSort)) {
+      validationResult.errors.push({
+        code: ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+        message: t`View sort to update not found`,
+        userFriendlyMessage: msg`View sort to update not found`,
+      });
+
+      return validationResult;
+    }
+
+    const updatedFlatViewSort = {
+      ...existingFlatViewSort,
+      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
+        updates: flatEntityUpdates,
+      }),
+    };
+
+    if (
+      !isDefined(updatedFlatViewSort?.direction) &&
+      !(
+        updatedFlatViewSort?.direction ===
+        (ViewSortDirection.ASC || ViewSortDirection.DESC)
+      )
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Correct direction is required`,
+        userFriendlyMessage: msg`Correct direction is required`,
+      });
+    }
+
+    validationResult.flatEntityMinimalInformation = {
+      ...validationResult.flatEntityMinimalInformation,
+      id: updatedFlatViewSort.id,
+      viewId: updatedFlatViewSort.viewId,
+      fieldMetadataId: updatedFlatViewSort.fieldMetadataId,
+    };
+
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: updatedFlatViewSort.viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    if (!isDefined(flatView)) {
+      validationResult.errors.push({
+        code: ViewSortExceptionCode.VIEW_NOT_FOUND,
+        message: t`View sort to update parent view not found`,
+        userFriendlyMessage: msg`View sort to update parent view not found`,
+      });
+
+      return validationResult;
+    }
+
+    return validationResult;
+  }
+
+  public validateFlatViewSortDeletion({
+    flatEntityToValidate: { id: viewSortIdToDelete, universalIdentifier },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatViewSortMaps: optimisticFlatViewSortMaps,
+    },
+  }: FlatEntityValidationArgs<
+    typeof ALL_METADATA_NAME.viewSort
+  >): FailedFlatEntityValidation<'viewSort', 'delete'> {
+    const validationResult = getEmptyFlatEntityValidationError({
+      flatEntityMinimalInformation: {
+        id: viewSortIdToDelete,
+        universalIdentifier,
+      },
+      metadataName: 'viewSort',
+      type: 'delete',
+    });
+
+    const existingFlatViewSort =
+      optimisticFlatViewSortMaps.byId[viewSortIdToDelete];
+
+    if (!isDefined(existingFlatViewSort)) {
+      validationResult.errors.push({
+        code: ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+        message: t`View sort to delete not found`,
+        userFriendlyMessage: msg`View sort to delete not found`,
+      });
+
+      return validationResult;
     }
 
     return validationResult;

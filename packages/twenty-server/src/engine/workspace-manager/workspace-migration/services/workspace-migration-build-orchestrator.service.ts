@@ -1051,6 +1051,9 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.viewGroup.delete,
           ...aggregatedOrchestratorActionsReport.viewGroup.create,
           ...aggregatedOrchestratorActionsReport.viewGroup.update,
+          ...aggregatedOrchestratorActionsReport.viewSort.create,
+          ...aggregatedOrchestratorActionsReport.viewSort.update,
+          ...aggregatedOrchestratorActionsReport.viewSort.delete,
           ///
 
           // Logic functions
