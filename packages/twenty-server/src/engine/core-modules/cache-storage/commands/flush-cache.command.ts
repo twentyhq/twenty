@@ -1,32 +1,24 @@
-import { Logger } from '@nestjs/common';
+import { CACHE_MANAGER, type Cache } from '@nestjs/cache-manager';
+import { Inject, Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import {
-    type CacheFlushTarget,
-    CACHE_FLUSH_TARGET_DEFAULT,
-    CACHE_FLUSH_TARGET_VALUES,
-} from 'src/engine/core-modules/cache-storage/types/cache-flush-target.type';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const NAMESPACE_VALUES = Object.values(
+  CacheStorageNamespace,
+) as CacheStorageNamespace[];
 
 @Command({
   name: 'cache:flush',
   description:
-    'Flush cache for specific keys matching the pattern. By default flushes the cache Redis (eviction, REDIS_URL). Use --cache=queue for the queue Redis (REDIS_QUEUE_URL, or REDIS_URL when not set).',
+    'Flush cache Redis (REDIS_URL) for a namespace and pattern. Omit --namespace to flush all namespaces. Run: npx nx run twenty-server:command cache:flush',
 })
 export class FlushCacheCommand extends CommandRunner {
   private readonly logger = new Logger(FlushCacheCommand.name);
 
-  constructor(
-    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
-    private readonly cacheStorage: CacheStorageService,
-    private readonly redisClientService: RedisClientService,
-    private readonly twentyConfigService: TwentyConfigService,
-  ) {
+  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {
     super();
   }
 
@@ -35,85 +27,59 @@ export class FlushCacheCommand extends CommandRunner {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     options?: Record<string, any>,
   ): Promise<void> {
-    const cacheTarget = this.parseCacheTarget(options?.cache);
+    const namespaceArg = options?.namespace;
+    const namespace = this.parseNamespace(namespaceArg);
     const pattern = options?.pattern ?? '*';
 
-    if (cacheTarget === 'queue' && !this.twentyConfigService.get('REDIS_QUEUE_URL')) {
-      this.logger.log(
-        'REDIS_QUEUE_URL is not set; queue uses the same Redis as cache (REDIS_URL).',
+    if (
+      namespaceArg !== undefined &&
+      namespaceArg !== null &&
+      namespaceArg !== '' &&
+      !namespace
+    ) {
+      throw new Error(
+        `Invalid --namespace. Valid values: ${NAMESPACE_VALUES.join(', ')}`,
       );
     }
 
+    const namespacesToFlush = namespace ? [namespace] : NAMESPACE_VALUES;
+
     this.logger.log(
-      `Flushing ${cacheTarget} cache for pattern: ${pattern}...`,
+      namespace
+        ? `Flushing namespace ${namespace} for pattern: ${pattern}...`
+        : `Flushing all namespaces for pattern: ${pattern}...`,
     );
 
-    if (cacheTarget === 'cache') {
-      await this.flushCacheRedis(pattern);
-    } else {
-      await this.flushQueueRedis(pattern);
+    for (const ns of namespacesToFlush) {
+      const cacheStorage = new CacheStorageService(this.cacheManager, ns);
+      await cacheStorage.flushByPattern(pattern);
     }
 
     this.logger.log('Cache flushed');
   }
 
-  private async flushCacheRedis(pattern: string): Promise<void> {
-    if (pattern === '*') {
-      await this.cacheStorage.flush();
-    } else {
-      await this.cacheStorage.flushByPattern(pattern);
-    }
-  }
-
-  private async flushQueueRedis(pattern: string): Promise<void> {
-    const redisClient = this.redisClientService.getQueueClient();
-
-    if (pattern === '*') {
-      await redisClient.flushdb();
-    } else {
-      let cursor = '0';
-
-      do {
-        const [nextCursor, keys] = await redisClient.scan(
-          cursor,
-          'MATCH',
-          pattern,
-          'COUNT',
-          '100',
-        );
-
-        cursor = nextCursor;
-
-        if (keys.length > 0) {
-          await redisClient.del(...keys);
-        }
-      } while (cursor !== '0');
-    }
-  }
-
-  private parseCacheTarget(value: unknown): CacheFlushTarget {
+  private parseNamespace(value: unknown): CacheStorageNamespace | null {
     if (
       typeof value === 'string' &&
-      CACHE_FLUSH_TARGET_VALUES.includes(value as CacheFlushTarget)
+      NAMESPACE_VALUES.includes(value as CacheStorageNamespace)
     ) {
-      return value as CacheFlushTarget;
+      return value as CacheStorageNamespace;
     }
-
-    return CACHE_FLUSH_TARGET_DEFAULT;
+    return null;
   }
 
   @Option({
-    flags: '-c, --cache <cache>',
-    description: `Redis to flush: "cache" (eviction, REDIS_URL) or "queue" (no eviction, REDIS_QUEUE_URL). Default: cache`,
+    flags: '-n, --namespace <namespace>',
+    description: `Cache namespace to flush. Omit to flush all. One of: ${NAMESPACE_VALUES.join(', ')}`,
   })
-  parseCache(val: string): string {
+  parseNamespaceOption(val: string): string {
     return val;
   }
 
   @Option({
     flags: '-p, --pattern <pattern>',
     description:
-      'Pattern to flush specific cache keys (e.g., engine:*, bull:*). Use * to flush all. For cache Redis keys are prefixed with namespace.',
+      'Pattern within the namespace (default *). Keys matched are <namespace>:<pattern>.',
   })
   parsePattern(val: string): string {
     return val;

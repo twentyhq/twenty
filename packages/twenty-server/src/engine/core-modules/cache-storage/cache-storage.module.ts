@@ -28,7 +28,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
     })),
     FlushCacheCommand,
   ],
-  exports: [...Object.values(CacheStorageNamespace), FlushCacheCommand],
+  exports: [
+    ...Object.values(CacheStorageNamespace),
+    FlushCacheCommand,
+  ],
 })
 export class CacheStorageModule implements OnModuleDestroy {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
