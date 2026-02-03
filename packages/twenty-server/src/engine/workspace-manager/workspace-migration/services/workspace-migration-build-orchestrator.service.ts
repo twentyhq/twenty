@@ -178,7 +178,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
             dependencyOptimisticFlatEntityMaps: {
               flatFieldMetadataMaps: {
                 byUniversalIdentifier: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byUniversalIdentifier,
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
+                    ?.byUniversalIdentifier,
                   ...flatFieldMetadataMaps?.from.byUniversalIdentifier,
                   ...flatFieldMetadataMaps?.to.byUniversalIdentifier,
                 },

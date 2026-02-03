@@ -25,12 +25,11 @@ export const fromDestroyPageLayoutWidgetInputToFlatPageLayoutWidgetOrThrow = ({
     ['id'],
   );
 
-  const existingFlatPageLayoutWidgetToDestroy = findFlatEntityByIdInFlatEntityMaps(
-    {
+  const existingFlatPageLayoutWidgetToDestroy =
+    findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: pageLayoutWidgetId,
       flatEntityMaps: flatPageLayoutWidgetMaps,
-    },
-  );
+    });
 
   if (!isDefined(existingFlatPageLayoutWidgetToDestroy)) {
     throw new PageLayoutWidgetException(

@@ -82,8 +82,7 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
     expect(
       findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: objectMetadataId,
-        flatEntityMaps:
-          flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps,
+        flatEntityMaps: flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps,
       }),
     ).toMatchObject<Partial<FlatObjectMetadata>>({
       viewIds: [mockView.id],

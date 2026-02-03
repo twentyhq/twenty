@@ -92,8 +92,7 @@ describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThr
     expect(
       findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: objectMetadataId,
-        flatEntityMaps:
-          flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps,
+        flatEntityMaps: flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps,
       }),
     ).toMatchObject<Partial<FlatObjectMetadata>>({
       viewIds: ['something-else'],

@@ -24,12 +24,11 @@ export const fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow = ({
     ['id'],
   );
 
-  const existingFlatViewFilterGroupToDestroy = findFlatEntityByIdInFlatEntityMaps(
-    {
+  const existingFlatViewFilterGroupToDestroy =
+    findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: viewFilterGroupId,
       flatEntityMaps: flatViewFilterGroupMaps,
-    },
-  );
+    });
 
   if (!isDefined(existingFlatViewFilterGroupToDestroy)) {
     throw new ViewFilterGroupException(

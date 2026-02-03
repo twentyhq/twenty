@@ -28,10 +28,12 @@ export const fromDestroyPageLayoutTabInputToFlatPageLayoutTabOrThrow = ({
     ['id'],
   );
 
-  const existingFlatPageLayoutTabToDestroy = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: pageLayoutTabId,
-    flatEntityMaps: flatPageLayoutTabMaps,
-  });
+  const existingFlatPageLayoutTabToDestroy = findFlatEntityByIdInFlatEntityMaps(
+    {
+      flatEntityId: pageLayoutTabId,
+      flatEntityMaps: flatPageLayoutTabMaps,
+    },
+  );
 
   if (!isDefined(existingFlatPageLayoutTabToDestroy)) {
     throw new PageLayoutTabException(
