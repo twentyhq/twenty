@@ -5,7 +5,7 @@ import { Loader } from '@ui/feedback/loader/components/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
 import { type editor } from 'monaco-editor';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type CodeEditorVariant = 'default' | 'with-header' | 'borderless';
@@ -113,6 +113,7 @@ export const CodeEditor = ({
   const [editor, setEditor] = useState<
     editor.IStandaloneCodeEditor | undefined
   >(undefined);
+  const [isEditorFocused, setIsEditorFocused] = useState(false);
 
   const setModelMarkers = (
     editor: editor.IStandaloneCodeEditor | undefined,
@@ -128,12 +129,18 @@ export const CodeEditor = ({
     }
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isEditorFocused) {
+      event.stopPropagation();
+    }
+  };
+
   return isLoading ? (
     <StyledEditorLoader height={height} variant={variant}>
       <Loader />
     </StyledEditorLoader>
   ) : (
-    <>
+    <div onKeyDown={handleKeyDown}>
       <input
         type="hidden"
         data-testid="code-editor-value"
@@ -158,6 +165,13 @@ export const CodeEditor = ({
             }),
           );
           monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
+
+          editor.onDidFocusEditorWidget(() => {
+            setIsEditorFocused(true);
+          });
+          editor.onDidBlurEditorWidget(() => {
+            setIsEditorFocused(false);
+          });
 
           onMount?.(editor, monaco);
           setModelMarkers(editor, monaco);
@@ -185,6 +199,6 @@ export const CodeEditor = ({
           ...options,
         }}
       />
-    </>
+    </div>
   );
 };

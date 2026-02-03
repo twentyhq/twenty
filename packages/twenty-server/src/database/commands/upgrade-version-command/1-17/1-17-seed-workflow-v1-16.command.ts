@@ -416,15 +416,17 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
     workspaceId: string,
     name: string = 'Seed code step (v1.16)',
   ): Promise<string> {
-    const { id: logicFunctionLayerId } =
-      await this.logicFunctionLayerService.createCommonLayerIfNotExist(
-        workspaceId,
-      );
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
     const applicationId = workspaceCustomFlatApplication.id;
+    const { id: logicFunctionLayerId } =
+      await this.logicFunctionLayerService.createCommonLayer({
+        workspaceId,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      });
     const id = uuidv4();
     const universalIdentifier = uuidv4();
     const now = new Date();

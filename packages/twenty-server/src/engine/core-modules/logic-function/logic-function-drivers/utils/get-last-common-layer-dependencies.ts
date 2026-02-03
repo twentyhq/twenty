@@ -1,13 +1,11 @@
 import fs from 'fs/promises';
 import { join } from 'path';
 
-import { type PackageJson } from 'twenty-shared/application';
-
 import { getLayerDependenciesDirName } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/get-layer-dependencies-dir-name';
 import { LAST_LAYER_VERSION } from 'src/engine/core-modules/logic-function/logic-function-drivers/layers/last-layer-version';
 
 export type LayerDependencies = {
-  packageJson: PackageJson;
+  packageJson: string;
   yarnLock: string;
 };
 
@@ -20,5 +18,5 @@ export const getLastCommonLayerDependencies = async (
     fs.readFile(join(lastVersionLayerDirName, 'yarn.lock'), 'utf8'),
   ]);
 
-  return { packageJson: JSON.parse(packageJson), yarnLock };
+  return { packageJson, yarnLock };
 };
