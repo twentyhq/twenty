@@ -11,6 +11,7 @@ import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabl
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConfigVariablesInDbEnabledState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailingDomainsEnabledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
@@ -120,6 +121,10 @@ export const useClientConfig = (): UseClientConfigResult => {
     isCloudflareIntegrationEnabledState,
   );
 
+  const setIsClickHouseConfigured = useSetRecoilState(
+    isClickHouseConfiguredState,
+  );
+
   const setAppVersion = useSetRecoilState(appVersionState);
 
   const fetchClientConfig = useCallback(async () => {
@@ -198,6 +203,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsCloudflareIntegrationEnabled(
         clientConfig?.isCloudflareIntegrationEnabled,
       );
+      setIsClickHouseConfigured(clientConfig?.isClickHouseConfigured ?? false);
     } catch (err) {
       const error =
         err instanceof Error ? err : new Error('Failed to fetch client config');
@@ -231,6 +237,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsImapSmtpCaldavEnabled,
     setIsMultiWorkspaceEnabled,
     setIsEmailingDomainsEnabled,
+    setIsClickHouseConfigured,
     setIsCloudflareIntegrationEnabled,
     setLabPublicFeatureFlags,
     setMicrosoftCalendarEnabled,

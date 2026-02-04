@@ -477,6 +477,7 @@ export const generateFieldFilterZodSchema = (
       return null;
 
     case FieldMetadataType.RAW_JSON:
+    case FieldMetadataType.FILES:
       return z
         .object({
           eq: z.string().optional().describe('Raw JSON equals'),

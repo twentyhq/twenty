@@ -91,6 +91,7 @@ msgid "(selected: {selectedIconKey})"
 msgstr ""
 
 #. js-lingui-id: ZBGbuw
+#: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
 #: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -327,6 +328,11 @@ msgstr ""
 #. js-lingui-id: HpUf/k
 #: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
 msgid "{positionLabel} record holds priority"
+msgstr ""
+
+#. js-lingui-id: Sxx5Hr
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "{recordCount} of {totalCount} records"
 msgstr ""
 
 #. js-lingui-id: 5d0hY6
@@ -1278,7 +1284,13 @@ msgstr ""
 msgid "All lines"
 msgstr ""
 
+#. js-lingui-id: c3lkKf
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "All Members"
+msgstr ""
+
 #. js-lingui-id: aFE/OW
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 msgid "All Objects"
@@ -1467,6 +1479,11 @@ msgstr ""
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 #: src/modules/ai/utils/extractErrorMessage.ts
 msgid "An unexpected error occurred"
+msgstr ""
+
+#. js-lingui-id: byKna+
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "An unexpected error occurred. Please try again."
 msgstr ""
 
 #. js-lingui-id: HZFm5R
@@ -1868,6 +1885,23 @@ msgstr ""
 #. js-lingui-id: w/Sphq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Attachments"
+msgstr ""
+
+#. js-lingui-id: EPEFrH
+#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "Audit Logs"
+msgstr ""
+
+#. js-lingui-id: X0+U3u
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "Audit logs are available with an Enterprise subscription. Please upgrade to access this feature."
+msgstr ""
+
+#. js-lingui-id: rNQ4RB
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "Audit logs require ClickHouse to be configured. Please contact your administrator to set up ClickHouse."
 msgstr ""
 
 #. js-lingui-id: kIuOL4
@@ -2321,6 +2355,12 @@ msgstr ""
 msgid "Cannot impersonate selected user"
 msgstr ""
 
+#. js-lingui-id: H1Ddy9
+#: src/modules/object-record/record-field/ui/meta-types/input/hooks/useOpenFilesFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "Cannot upload more than {maxNumberOfValues} files"
+msgstr ""
+
 #. js-lingui-id: Po5MgW
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -2551,6 +2591,16 @@ msgstr ""
 msgid "Click to select icon {iconAriaLabel}"
 msgstr ""
 
+#. js-lingui-id: ZwIUeU
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "ClickHouse is required for audit logs. Contact your administrator."
+msgstr ""
+
+#. js-lingui-id: CTdw8/
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "ClickHouse Not Configured"
+msgstr ""
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
@@ -2598,6 +2648,7 @@ msgid "Code your function"
 msgstr ""
 
 #. js-lingui-id: H86f9p
+#: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
 #: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -4634,6 +4685,7 @@ msgid "Empty"
 msgstr ""
 
 #. js-lingui-id: OMbipf
+#: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
 #: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -4654,6 +4706,7 @@ msgid "Empty Inbox"
 msgstr ""
 
 #. js-lingui-id: 3hSGoJ
+#: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJsonDataIndicatorHealthStatus.tsx
@@ -4675,6 +4728,11 @@ msgstr ""
 #. js-lingui-id: gZo0V9
 #: src/pages/settings/ai/components/SettingsAgentModelCapabilities.tsx
 msgid "Enable model-specific features"
+msgstr ""
+
+#. js-lingui-id: VFv2ZC
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "End Date"
 msgstr ""
 
 #. js-lingui-id: k1i50B
@@ -4777,6 +4835,11 @@ msgstr ""
 #. js-lingui-id: TRQdC1
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Enter emails, comma-separated"
+msgstr ""
+
+#. js-lingui-id: Gghv1D
+#: src/modules/object-record/record-field/ui/form-types/components/FormFilesFieldInput.tsx
+msgid "Enter files as JSON array"
 msgstr ""
 
 #. js-lingui-id: 8Ao1Tl
@@ -4901,7 +4964,13 @@ msgstr ""
 
 #. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Enterprise"
+msgstr ""
+
+#. js-lingui-id: Kjjkt3
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "Enterprise Feature"
 msgstr ""
 
 #. js-lingui-id: SLuq/l
@@ -4972,6 +5041,11 @@ msgstr ""
 #. js-lingui-id: GdBN5t
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Error illustration"
+msgstr ""
+
+#. js-lingui-id: UJr0dl
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "Error Loading Audit Logs"
 msgstr ""
 
 #. js-lingui-id: 9e/9KK
@@ -5081,8 +5155,15 @@ msgid "Evaluations"
 msgstr ""
 
 #. js-lingui-id: 0pC/y6
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/modules/activities/calendar/components/CalendarEventDetails.tsx
 msgid "Event"
+msgstr ""
+
+#. js-lingui-id: ailPEn
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "Event Type"
 msgstr ""
 
 #. js-lingui-id: poC90w
@@ -5220,6 +5301,7 @@ msgid "Exit Settings"
 msgstr ""
 
 #. js-lingui-id: 1A3EXy
+#: src/pages/settings/security/event-logs/components/EventLogJsonCell.tsx
 #: src/pages/settings/ai/components/SettingsSystemToolTableRow.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
@@ -5554,8 +5636,14 @@ msgid "Failed to update variable"
 msgstr ""
 
 #. js-lingui-id: jU/HbX
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "Failed to upload \"{fileNameForError}\""
+msgstr ""
+
+#. js-lingui-id: tQ0765
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgstr ""
 
 #. js-lingui-id: cQPyHI
@@ -5714,8 +5802,19 @@ msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr ""
 
 #. js-lingui-id: 0bK1RI
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
+msgstr ""
+
+#. js-lingui-id: N793lP
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "File label"
+msgstr ""
+
+#. js-lingui-id: ncBVqE
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+msgid "File upload failed"
 msgstr ""
 
 #. js-lingui-id: o7J4JM
@@ -5731,6 +5830,16 @@ msgstr ""
 #: src/modules/command-menu/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/command-menu/pages/page-layout/components/ChartFiltersSettings.tsx
 msgid "Filter"
+msgstr ""
+
+#. js-lingui-id: LjNPDA
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "Filter by event"
+msgstr ""
+
+#. js-lingui-id: gVEHcL
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "Filter by record ID"
 msgstr ""
 
 #. js-lingui-id: /VmB4B
@@ -5965,6 +6074,11 @@ msgstr ""
 #. js-lingui-id: 2GT3Hf
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Global"
+msgstr ""
+
+#. js-lingui-id: sr0UJD
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "Go Back"
 msgstr ""
 
 #. js-lingui-id: mUbv8L
@@ -7281,6 +7395,7 @@ msgid "Loading csv ... "
 msgstr ""
 
 #. js-lingui-id: Zzca95
+#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 #: src/modules/activities/files/components/AttachmentList.tsx
 msgid "Loading document viewer..."
 msgstr ""
@@ -7301,6 +7416,7 @@ msgid "Loading metrics data..."
 msgstr ""
 
 #. js-lingui-id: tVSmFT
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/modules/ui/input/components/IconPicker.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerFetchMoreLoader.tsx
 #: src/modules/activities/components/CustomResolverFetchMoreLoader.tsx
@@ -7331,6 +7447,11 @@ msgstr ""
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
 msgid "Log out"
+msgstr ""
+
+#. js-lingui-id: qakNlV
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Log retention"
 msgstr ""
 
 #. js-lingui-id: hykMbH
@@ -8261,6 +8382,11 @@ msgstr ""
 msgid "No evaluations yet for this turn"
 msgstr ""
 
+#. js-lingui-id: SIR5Ix
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+msgid "No event logs found"
+msgstr ""
+
 #. js-lingui-id: l7y8S8
 #: src/modules/activities/calendar/components/CalendarEventsCard.tsx
 msgid "No Events"
@@ -8606,6 +8732,11 @@ msgstr ""
 msgid "Number format"
 msgstr ""
 
+#. js-lingui-id: +cbzNC
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Number of days to retain audit logs (30-1095 days)"
+msgstr ""
+
 #. js-lingui-id: 0fRFSb
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -8658,6 +8789,21 @@ msgstr ""
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm.tsx
 msgid "Object destination"
+msgstr ""
+
+#. js-lingui-id: /clmEa
+#: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+msgid "Object Events"
+msgstr ""
+
+#. js-lingui-id: 79D4Az
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+msgid "Object ID"
+msgstr ""
+
+#. js-lingui-id: UGhVPl
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "Object Type"
 msgstr ""
 
 #. js-lingui-id: rDycBw
@@ -9026,9 +9172,19 @@ msgstr ""
 msgid "page layout widget"
 msgstr ""
 
+#. js-lingui-id: IVBjIH
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "Page Name"
+msgstr ""
+
 #. js-lingui-id: NRvxzv
 #: src/pages/not-found/NotFound.tsx
 msgid "Page Not Found | Twenty"
+msgstr ""
+
+#. js-lingui-id: sF+Xp9
+#: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+msgid "Page Views"
 msgstr ""
 
 #. js-lingui-id: ijBN4V
@@ -9483,6 +9639,12 @@ msgstr ""
 msgid "Prompt"
 msgstr ""
 
+#. js-lingui-id: l/UFPv
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+msgid "Properties"
+msgstr ""
+
 #. js-lingui-id: 56xUL1
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
@@ -9665,6 +9827,12 @@ msgstr ""
 msgid "Record filter rule options"
 msgstr ""
 
+#. js-lingui-id: xSAYIn
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "Record ID"
+msgstr ""
+
 #. js-lingui-id: mj1fkT
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record image"
@@ -9717,6 +9885,11 @@ msgstr ""
 #. js-lingui-id: RZjynQ
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Redirection URI"
+msgstr ""
+
+#. js-lingui-id: lCF0wC
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+msgid "Refresh"
 msgstr ""
 
 #. js-lingui-id: vpZcGd
@@ -10478,6 +10651,7 @@ msgstr ""
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
@@ -10649,6 +10823,11 @@ msgstr ""
 #. js-lingui-id: 21YIUv
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/TemplateColumn.tsx
 msgid "Select column..."
+msgstr ""
+
+#. js-lingui-id: U+WOF9
+#: src/pages/settings/security/event-logs/components/EventLogDatePickerInput.tsx
+msgid "Select date & time"
 msgstr ""
 
 #. js-lingui-id: PSqlgu
@@ -11255,6 +11434,11 @@ msgstr ""
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr ""
 
+#. js-lingui-id: D3iCkb
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "Start Date"
+msgstr ""
+
 #. js-lingui-id: s+K73L
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
@@ -11626,6 +11810,7 @@ msgid "Tab Settings"
 msgstr ""
 
 #. js-lingui-id: 4hJhzz
+#: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
@@ -12060,6 +12245,8 @@ msgid "Timeline"
 msgstr ""
 
 #. js-lingui-id: 8TMaZI
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Timestamp"
 msgstr ""
@@ -12497,7 +12684,7 @@ msgid "Unordered list with bullets"
 msgstr ""
 
 #. js-lingui-id: wja8aL
-#: src/modules/ui/field/display/components/FilesDisplay.tsx
+#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12614,6 +12801,11 @@ msgstr ""
 msgid "Upgrade to access"
 msgstr ""
 
+#. js-lingui-id: jmVW3I
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "Upgrade to Enterprise to access audit logs"
+msgstr ""
+
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
 msgid "Upload"
@@ -12626,6 +12818,7 @@ msgstr ""
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
 msgid "Upload file"
 msgstr ""
@@ -12649,6 +12842,11 @@ msgstr ""
 #. js-lingui-id: akDOEO
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
+msgstr ""
+
+#. js-lingui-id: GxkJXS
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "Uploading..."
 msgstr ""
 
 #. js-lingui-id: IagCbF
@@ -12716,6 +12914,12 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "User is not logged in"
+msgstr ""
+
+#. js-lingui-id: X0w+FW
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+#: src/pages/settings/security/event-logs/components/EventLogResultsTable.tsx
+msgid "User Workspace"
 msgstr ""
 
 #. js-lingui-id: Sxm8rQ
@@ -12840,6 +13044,11 @@ msgstr ""
 msgid "View all evaluations"
 msgstr ""
 
+#. js-lingui-id: XVf/G7
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "View and filter events, page views, object changes"
+msgstr ""
+
 #. js-lingui-id: KANz0G
 #: src/modules/billing/components/SettingsBillingContent.tsx
 msgid "View billing details"
@@ -12880,6 +13089,11 @@ msgstr ""
 msgid "View Jobs"
 msgstr ""
 
+#. js-lingui-id: 923YyC
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "View Logs"
+msgstr ""
+
 #. js-lingui-id: ecVcAx
 #: src/modules/ai/components/AIChatTab.tsx
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
@@ -12900,6 +13114,11 @@ msgstr ""
 #. js-lingui-id: bJAIqT
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "View type"
+msgstr ""
+
+#. js-lingui-id: rWiqJF
+#: src/pages/settings/security/SettingsSecurity.tsx
+msgid "View workspace activity logs"
 msgstr ""
 
 #. js-lingui-id: eedtPL
@@ -13160,6 +13379,7 @@ msgstr ""
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -13224,6 +13444,11 @@ msgstr ""
 msgid "Workspace Domain"
 msgstr ""
 
+#. js-lingui-id: J2q6WC
+#: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+msgid "Workspace Events"
+msgstr ""
+
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
@@ -13232,6 +13457,11 @@ msgstr ""
 #. js-lingui-id: Y0Fj4S
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace logo"
+msgstr ""
+
+#. js-lingui-id: qc38qR
+#: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
+msgid "Workspace Member"
 msgstr ""
 
 #. js-lingui-id: CozWO1

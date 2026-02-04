@@ -58,4 +58,5 @@ export const mockedClientConfig: ClientConfig = {
   isEmailingDomainsEnabled: false,
   allowRequestsToTwentyIcons: true,
   isCloudflareIntegrationEnabled: false,
+  isClickHouseConfigured: false,
 };
