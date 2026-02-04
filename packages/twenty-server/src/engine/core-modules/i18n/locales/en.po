@@ -392,6 +392,16 @@ msgstr "April"
 msgid "At least one relation is require"
 msgstr "At least one relation is require"
 
+#. js-lingui-id: aepsXP
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "Audit logs require an Enterprise subscription."
+msgstr "Audit logs require an Enterprise subscription."
+
+#. js-lingui-id: PKMDuT
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "Audit logs require ClickHouse to be configured."
+msgstr "Audit logs require ClickHouse to be configured."
+
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
@@ -412,6 +422,11 @@ msgstr "Authentication is required to access this feature. Please sign in and tr
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Authentication is required."
 msgstr "Authentication is required."
+
+#. js-lingui-id: bWAwB6
+#: src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter.ts
+msgid "Authentication required."
+msgstr "Authentication required."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts

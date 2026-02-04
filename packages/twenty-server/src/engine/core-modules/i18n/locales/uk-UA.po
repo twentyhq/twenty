@@ -397,6 +397,16 @@ msgstr "Квітень"
 msgid "At least one relation is require"
 msgstr "Потрібно щонайменше одне відношення"
 
+#. js-lingui-id: aepsXP
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "Audit logs require an Enterprise subscription."
+msgstr ""
+
+#. js-lingui-id: PKMDuT
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "Audit logs require ClickHouse to be configured."
+msgstr ""
+
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
@@ -417,6 +427,11 @@ msgstr "Для доступу до цієї функції потрібна ав
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Authentication is required."
 msgstr "Потрібна автентифікація."
+
+#. js-lingui-id: bWAwB6
+#: src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter.ts
+msgid "Authentication required."
+msgstr ""
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
