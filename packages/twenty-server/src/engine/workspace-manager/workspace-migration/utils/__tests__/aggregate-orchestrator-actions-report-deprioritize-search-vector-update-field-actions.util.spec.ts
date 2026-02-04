@@ -21,34 +21,25 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
             type: 'update',
             metadataName: 'fieldMetadata',
             universalIdentifier: 'search-vector-field-1',
-            updates: [
-              {
-                property: 'label',
-                to: 'Updated Search Vector',
-              },
-            ],
+            update: {
+              label: 'Updated Search Vector',
+            },
           } satisfies UniversalUpdateFieldAction,
           {
             type: 'update',
             metadataName: 'fieldMetadata',
             universalIdentifier: 'regular-field-1',
-            updates: [
-              {
-                property: 'label',
-                to: 'Updated First Name',
-              },
-            ],
+            update: {
+              label: 'Updated First Name',
+            },
           } satisfies UniversalUpdateFieldAction,
           {
             type: 'update',
             metadataName: 'fieldMetadata',
             universalIdentifier: 'regular-field-2',
-            updates: [
-              {
-                property: 'label',
-                to: 'Updated Last Name',
-              },
-            ],
+            update: {
+              label: 'Updated Last Name',
+            },
           } satisfies UniversalUpdateFieldAction,
         ],
         delete: [],

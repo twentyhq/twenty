@@ -21,7 +21,7 @@ export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
     byUniversalIdentifier: Record<
       string,
       {
-        updates: FlatEntityUpdate<T>;
+        update: FlatEntityUpdate<T>;
         // TMP remove when maps is universal based
         id: string;
       }
@@ -88,7 +88,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     if (!isDefined(toFlatEntity)) {
       continue;
     }
-    const updates = compareTwoFlatEntity({
+    const update = compareTwoFlatEntity({
       fromFlatEntity,
       toFlatEntity,
       propertiesToCompare: propertiesToCompare as unknown as Extract<
@@ -101,7 +101,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
       >[],
     });
 
-    if (!isDefined(updates)) {
+    if (!isDefined(update)) {
       continue;
     }
 
@@ -109,7 +109,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
       fromFlatEntity.universalIdentifier
     ] = {
       id: toFlatEntity.id,
-      updates,
+      update,
     };
   }
 
