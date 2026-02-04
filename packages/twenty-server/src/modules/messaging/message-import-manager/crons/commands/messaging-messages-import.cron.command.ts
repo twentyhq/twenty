@@ -3,10 +3,7 @@ import { Command, CommandRunner } from 'nest-commander';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
-  MessagingMessagesImportCronJob,
-} from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job';
+import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job';
 
 @Command({
   name: 'cron:messaging:messages-import',
@@ -25,9 +22,7 @@ export class MessagingMessagesImportCronCommand extends CommandRunner {
       jobName: MessagingMessagesImportCronJob.name,
       data: undefined,
       options: {
-        repeat: {
-          pattern: MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
-        },
+        repeat: { every: 30000 },
       },
     });
   }

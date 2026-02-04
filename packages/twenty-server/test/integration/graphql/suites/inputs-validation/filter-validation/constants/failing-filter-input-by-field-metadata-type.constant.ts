@@ -25,8 +25,7 @@ export const failingFilterInputByFieldMetadataType: {
       gqlErrorMessage: 'is not defined by type',
       restFilterInput:
         'manyToOneRelationField[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"',
-      restErrorMessage:
-        'column apiInputValidationTestObject.manyToOneRelationField does not exist',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: {
@@ -36,7 +35,7 @@ export const failingFilterInputByFieldMetadataType: {
       },
       gqlErrorMessage: 'Invalid UUID',
       restFilterInput: 'manyToOneRelationFieldId[eq]:"invalid-uuid"',
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: {
@@ -68,7 +67,7 @@ export const failingFilterInputByFieldMetadataType: {
       },
       gqlErrorMessage: 'Invalid UUID',
       restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[eq]:"invalid-uuid"`,
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: {
@@ -78,7 +77,7 @@ export const failingFilterInputByFieldMetadataType: {
       },
       gqlErrorMessage: 'is not defined by type',
       restFilterInput: `${[joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')]}[eq]:"6dd71a46-68fe-4420-82b3-0d5b00ad2642"`,
-      restErrorMessage: `column apiInputValidationTestObject.${joinColumnNameForManyToOneMorphRelationField1.replace('Id', '')} does not exist`,
+      restErrorMessage: `Data validation error`,
     },
   ],
   [FieldMetadataType.UUID]: [
@@ -86,44 +85,44 @@ export const failingFilterInputByFieldMetadataType: {
       gqlFilterInput: { uuidField: { eq: 'invalid-uuid' } },
       gqlErrorMessage: 'Invalid UUID',
       restFilterInput: 'uuidField[eq]:"invalid-uuid"',
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: { uuidField: { eq: undefined } },
       gqlErrorMessage:
         'undefined is not iterable (cannot read property Symbol(Symbol.iterator))',
       restFilterInput: 'uuidField[eq]:"undefined"',
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: { uuidField: { eq: 2 } },
       gqlErrorMessage: 'UUID must be a string',
       restFilterInput: 'uuidField[eq]:2',
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: { uuidField: { eq: {} } },
       gqlErrorMessage: 'UUID must be a string',
       restFilterInput: 'uuidField[eq]:"{}"',
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: { uuidField: { eq: [] } },
       gqlErrorMessage: 'UUID must be a string',
       restFilterInput: 'uuidField[eq]:"[]"',
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: { uuidField: { eq: true } },
       gqlErrorMessage: 'UUID must be a string',
       restFilterInput: 'uuidField[eq]:"true"',
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: { uuidField: { eq: '2025-01-01' } },
       gqlErrorMessage: 'Invalid UUID',
       restFilterInput: 'uuidField[eq]:"2025-01-01"',
-      restErrorMessage: 'invalid input syntax for type uuid',
+      restErrorMessage: 'Data validation error',
     },
   ],
   [FieldMetadataType.TEXT]: [
