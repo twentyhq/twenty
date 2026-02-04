@@ -10,6 +10,7 @@ import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -23,8 +24,8 @@ import {
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 import { type WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
@@ -53,6 +54,7 @@ export class WorkflowTriggerWorkspaceService {
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly codeStepBuildService: CodeStepBuildService,
+    private readonly logicFunctionService: LogicFunctionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -241,9 +243,16 @@ export class WorkflowTriggerWorkspaceService {
         continue;
       }
 
-      await this.codeStepBuildService.buildFromSourceToBuilt({
-        flatLogicFunction,
-        applicationUniversalIdentifier,
+      const { checksum } =
+        await this.codeStepBuildService.buildFromSourceToBuilt({
+          flatLogicFunction,
+          applicationUniversalIdentifier,
+        });
+
+      await this.logicFunctionService.updateChecksum({
+        id: flatLogicFunction.id,
+        checksum,
+        workspaceId,
       });
     }
   }
