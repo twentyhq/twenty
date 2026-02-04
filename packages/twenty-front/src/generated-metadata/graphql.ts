@@ -1389,8 +1389,7 @@ export type EventLogFiltersInput = {
   eventType?: InputMaybe<Scalars['String']>;
   objectMetadataId?: InputMaybe<Scalars['String']>;
   recordId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
-  workspaceMemberId?: InputMaybe<Scalars['String']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
 };
 
 export type EventLogPageInfo = {
@@ -1421,7 +1420,7 @@ export type EventLogRecord = {
   properties?: Maybe<Scalars['JSON']>;
   recordId?: Maybe<Scalars['String']>;
   timestamp: Scalars['DateTime'];
-  userId?: Maybe<Scalars['String']>;
+  userWorkspaceId?: Maybe<Scalars['String']>;
 };
 
 export enum EventLogTable {

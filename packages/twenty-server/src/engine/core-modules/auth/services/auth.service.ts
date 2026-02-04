@@ -397,7 +397,7 @@ export class AuthService {
     workspaceId,
     impersonatorUserWorkspaceId,
     impersonatedUserWorkspaceId,
-    impersonatorUserId,
+    _impersonatorUserId,
     impersonatedUserId,
   }: {
     workspaceId: string;
