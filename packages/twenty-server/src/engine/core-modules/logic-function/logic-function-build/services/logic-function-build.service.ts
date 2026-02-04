@@ -32,13 +32,12 @@ export class LogicFunctionBuildService {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<boolean> {
-    const packageJsonExists =
-      await this.fileStorageService.checkFileExists_v2({
-        workspaceId: flatApplication.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Dependencies,
-        resourcePath: 'package.json',
-      });
+    const packageJsonExists = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'package.json',
+    });
     const yarnLockExists = await this.fileStorageService.checkFileExists_v2({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
@@ -50,8 +49,8 @@ export class LogicFunctionBuildService {
   }
 
   async uploadDependencies({
-    flatApplication,
-    applicationUniversalIdentifier,
+    flatApplication: _flatApplication,
+    applicationUniversalIdentifier: _applicationUniversalIdentifier,
   }: {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
