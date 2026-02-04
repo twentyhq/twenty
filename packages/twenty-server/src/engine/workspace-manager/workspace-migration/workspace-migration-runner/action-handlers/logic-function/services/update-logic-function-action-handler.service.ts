@@ -4,32 +4,31 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
 
+import { isObject } from '@sniptt/guards';
+import { FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import { FileFolder, Sources } from 'twenty-shared/types';
-import { isObject } from '@sniptt/guards';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import {
-  WorkspaceMigrationActionRunnerArgs,
-  WorkspaceMigrationActionRunnerContext,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -55,36 +54,31 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner } = context;
-    const { entityId, code } = flatAction;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, code, update } = flatAction;
 
     const logicFunctionRepository =
       queryRunner.manager.getRepository<LogicFunctionEntity>(
         LogicFunctionEntity,
       );
 
-    await logicFunctionRepository.update(
-      entityId,
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
-    );
+    await logicFunctionRepository.update({ id: entityId, workspaceId }, update);
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: entityId,
       flatEntityMaps: context.allFlatEntityMaps.flatLogicFunctionMaps,
     });
 
-    for (const update of flatAction.updates) {
-      if (update.property === 'checksum' && isDefined(code)) {
-        await this.handleChecksumUpdate({
-          flatLogicFunction,
-          code,
-        });
-      }
-      if (update.property === 'deletedAt' && isDefined(update.to)) {
-        await this.handleDeletedAtUpdate({
-          flatLogicFunction,
-        });
-      }
+    if (isDefined(update.checksum) && isDefined(code)) {
+      await this.handleChecksumUpdate({
+        flatLogicFunction,
+        code,
+      });
+    }
+    if (update.deletedAt !== undefined) {
+      await this.handleDeletedAtUpdate({
+        flatLogicFunction,
+      });
     }
   }
 

@@ -7,13 +7,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntityMigrationBuilderService<
@@ -78,7 +78,7 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
   protected validateFlatEntityUpdate({
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     buildOptions,
     workspaceId,
     additionalCacheDataMaps,
@@ -128,11 +128,9 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const updatedFlatIndex = {
+    const updatedFlatIndex: FlatIndexMetadata = {
       ...flatEntity,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     const tempOptimisticFlatIndexMaps = structuredClone(
@@ -174,7 +172,10 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
         type: 'update',
         metadataName: 'index',
         entityId: flatEntity.id,
+        // Note: Index update action ignores the native update field
+        // As under the hood it result as a drop and create
         updatedFlatEntity: updatedFlatIndex,
+        update: {},
       },
     };
   }

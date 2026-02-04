@@ -11,6 +11,7 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { MetadataFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataValidationRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
@@ -29,7 +30,6 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
 import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/successful-flat-entity-validate-and-build.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
@@ -237,7 +237,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       }
 
       const validationResult = await this.validateFlatEntityUpdate({
-        flatEntityUpdates: flatEntityToUpdate.updates,
+        flatEntityUpdate: flatEntityToUpdate.update,
         flatEntityId: flatEntityToUpdate.id,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         workspaceId,
@@ -265,11 +265,9 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         );
       }
 
-      const updatedFlatEntity = {
+      const updatedFlatEntity: MetadataFlatEntity<T> = {
         ...existingFlatEntity,
-        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-          updates: flatEntityToUpdate.updates,
-        }),
+        ...flatEntityToUpdate.update,
       };
 
       replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({

@@ -100,13 +100,13 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateNavigationMenuItemAction: FlatUpdateNavigationMenuItemAction = {
       type: 'update',
       metadataName: 'navigationMenuItem',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

@@ -68,8 +68,9 @@ describe('ClickHouse Event Registration (integration)', () => {
     expect(rows.length).toEqual(1);
     expect(rows[0].properties).toEqual(variables.properties);
     expect(rows[0].event).toEqual(variables.event);
-    expect(rows[0].workspaceId).toEqual('');
-    expect(rows[0].userId).toEqual('');
+    // workspaceId and userWorkspaceId are empty/undefined for unauthenticated requests
+    expect(rows[0].workspaceId ?? '').toEqual('');
+    expect(rows[0].userWorkspaceId ?? '').toEqual('');
     expect(rows[0].timestamp).toHaveLength(23);
   });
 });

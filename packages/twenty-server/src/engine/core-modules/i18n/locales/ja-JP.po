@@ -397,6 +397,16 @@ msgstr "4月"
 msgid "At least one relation is require"
 msgstr "少なくとも1つの関連が必要です"
 
+#. js-lingui-id: aepsXP
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "Audit logs require an Enterprise subscription."
+msgstr ""
+
+#. js-lingui-id: PKMDuT
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "Audit logs require ClickHouse to be configured."
+msgstr ""
+
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
@@ -417,6 +427,11 @@ msgstr "この機能にアクセスするには認証が必要です。サイン
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Authentication is required."
 msgstr "認証が必要です。"
+
+#. js-lingui-id: bWAwB6
+#: src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter.ts
+msgid "Authentication required."
+msgstr ""
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -839,6 +854,11 @@ msgstr "インデックス関連オブジェクトメタデータが見つかり
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "Could not find relation field parent flat object"
 msgstr "リレーションフィールドの親フラットオブジェクトが見つかりません"
+
+#. js-lingui-id: KwGZ0m
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Could not found updated field metadata"
+msgstr ""
 
 #. js-lingui-id: 2ZhYYy
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
@@ -1342,11 +1362,6 @@ msgstr "ファイルが見つかりません。"
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
-msgstr ""
-
-#. js-lingui-id: AMd8Po
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
-msgid "Files field type is not supported"
 msgstr ""
 
 #. js-lingui-id: 9110hD
@@ -3913,6 +3928,11 @@ msgstr "二要素認証の設定が必要です。"
 msgid "Two-factor authentication verification is required."
 msgstr "二要素認証の確認が必要です。"
 
+#. js-lingui-id: Qx95XY
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Udpated field is not a morph relation or a relation"
+msgstr ""
+
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -4544,6 +4564,7 @@ msgid "Workspace {workspaceId} is not found."
 msgstr ""
 
 #. js-lingui-id: XsSVrR
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
 msgstr "ワークスペースの作成は管理者に限定されています"

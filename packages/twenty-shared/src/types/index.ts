@@ -52,6 +52,7 @@ export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { CrudOperationType } from './CrudOperationType';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
+export { EventLogTable } from './EventLogTable';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
@@ -168,6 +169,7 @@ export type {
   MultiSelectFilter,
   ArrayFilter,
   RawJsonFilter,
+  FilesFilter,
   RichTextV2LeafFilter,
   RichTextV2Filter,
   TSVectorFilter,

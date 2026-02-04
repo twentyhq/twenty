@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { HTML_TAG_TO_REMOTE_COMPONENT } from '@/front-component-constants';
+import { HTML_TAG_TO_REMOTE_COMPONENT } from '../../../../../../front-component-constants';
 
 const REMOTE_COMPONENTS_GLOBAL_NAMESPACE = 'RemoteComponents';
 

@@ -35,6 +35,21 @@ const EXCLUDED_DIRECTORIES = [
 ] as const;
 const ROOT_DIRECTORIES = ['sdk'];
 
+// Modules that re-export from external packages instead of local files
+const EXTERNAL_REEXPORT_MODULES: Record<string, string> = {
+  ui: `export * from 'twenty-ui';
+export * from 'twenty-ui/accessibility';
+export * from 'twenty-ui/components';
+export * from 'twenty-ui/display';
+export * from 'twenty-ui/feedback';
+export * from 'twenty-ui/input';
+export * from 'twenty-ui/json-visualizer';
+export * from 'twenty-ui/layout';
+export * from 'twenty-ui/navigation';
+export * from 'twenty-ui/theme';
+export * from 'twenty-ui/utilities';`,
+};
+
 const prettierConfigFile = prettier.resolveConfigFile();
 if (prettierConfigFile == null) {
   throw new Error('Prettier config file not found');
@@ -223,8 +238,8 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
       ...acc,
       [`./${moduleName}`]: {
         types: `./dist/${moduleName}/index.d.ts`,
-        import: `./dist/${moduleName}.mjs`,
-        require: `./dist/${moduleName}.cjs`,
+        import: `./dist/${moduleName}/index.mjs`,
+        require: `./dist/${moduleName}/index.cjs`,
       },
     };
   }, {});
@@ -490,11 +505,17 @@ const main = () => {
     ROOT_DIRECTORIES.includes(getLastPathFolder(dir)),
   );
 
+  // Separate modules that re-export from external packages
+  const externalReexportModuleNames = Object.keys(EXTERNAL_REEXPORT_MODULES);
+  const localModuleDirectories = moduleDirectories.filter(
+    (dir) => !externalReexportModuleNames.includes(getLastPathFolder(dir)),
+  );
+
   const otherBarrelDirectories = moduleDirectories.filter(
     (dir) => !ROOT_DIRECTORIES.includes(getLastPathFolder(dir)),
   );
 
-  const exportsByBarrel = retrieveExportsByBarrel(moduleDirectories);
+  const exportsByBarrel = retrieveExportsByBarrel(localModuleDirectories);
   const moduleIndexFiles = generateModuleIndexFiles(exportsByBarrel);
 
   const packageJsonConfig = computePackageJsonFilesAndExportsConfig(
@@ -507,6 +528,21 @@ const main = () => {
   updateNxProjectConfigurationBuildOutputs(nxBuildOutputsPath);
   writeInPackageJson(packageJsonConfig);
   moduleIndexFiles.forEach(createTypeScriptFile);
+
+  // Generate index files for modules that re-export from external packages
+  for (const [moduleName, content] of Object.entries(
+    EXTERNAL_REEXPORT_MODULES,
+  )) {
+    const moduleDirectory = path.join(SRC_PATH, moduleName);
+    if (!fs.existsSync(moduleDirectory)) {
+      fs.mkdirSync(moduleDirectory, { recursive: true });
+    }
+    createTypeScriptFile({
+      path: moduleDirectory,
+      filename: INDEX_FILENAME,
+      content,
+    });
+  }
 
   // Ensure top-level src/index.ts re-exports the root directories barrel so consumers can `import * from "twenty-sdk"`
   // We intentionally keep this file minimal: it delegates to the generated src/<rootDirectory>/index.ts

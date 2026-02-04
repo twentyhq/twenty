@@ -11,7 +11,7 @@ const moduleEntries = Object.keys((packageJson as any).exports || {})
 
 const entries = ['src/index.ts', 'src/cli/cli.ts', ...moduleEntries];
 
-const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
+export const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
@@ -31,7 +31,7 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (moduleDirectory === 'src') {
     return `${chunk.name}.${extension}`;
   }
-  return `${moduleDirectory}.${extension}`;
+  return `${moduleDirectory}/index.${extension}`;
 };
 
 const copyTwentyPackagesInVendor = (packages: string[]) => {
@@ -115,8 +115,20 @@ export default defineConfig(() => {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-sdk' },
       rollupOptions: {
+        onwarn: (warning, warn) => {
+          // Suppress "use client" directive warnings from framer-motion
+          if (
+            warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+            warning.message.includes('"use client"')
+          ) {
+            return;
+          }
+          warn(warning);
+        },
         external: [
-          ...Object.keys((packageJson as any).dependencies || {}),
+          ...Object.keys((packageJson as any).dependencies || {}).filter(
+            (dep) => dep !== 'twenty-ui',
+          ),
           'path',
           'fs',
           'fs/promises',
@@ -144,5 +156,16 @@ export default defineConfig(() => {
       },
     },
     logLevel: 'warn',
+    optimizeDeps: {
+      include: [
+        '@remote-dom/core/polyfill',
+        '@remote-dom/react/polyfill',
+        '@remote-dom/core/elements',
+        '@remote-dom/react',
+        '@remote-dom/react/host',
+        'react-dom/client',
+        'react/jsx-runtime',
+      ],
+    },
   };
 });

@@ -8,7 +8,6 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -28,16 +27,13 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateViewFieldAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner } = context;
-    const { entityId } = flatAction;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, update } = flatAction;
 
     const viewFieldRepository =
       queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
-    const update =
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
-
-    await viewFieldRepository.update(entityId, update);
+    await viewFieldRepository.update({ id: entityId, workspaceId }, update);
   }
 
   async executeForWorkspaceSchema(
