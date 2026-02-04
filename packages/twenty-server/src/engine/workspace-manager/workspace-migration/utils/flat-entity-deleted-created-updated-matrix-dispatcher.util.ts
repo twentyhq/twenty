@@ -6,7 +6,7 @@ import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { type FlatEntityPropertiesToStringify } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-stringify.type';
-import { type FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
+import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
@@ -21,7 +21,7 @@ export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
     byUniversalIdentifier: Record<
       string,
       {
-        updates: FlatEntityPropertiesUpdates<T>;
+        update: FlatEntityUpdate<T>;
         // TMP remove when maps is universal based
         id: string;
       }
@@ -88,7 +88,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     if (!isDefined(toFlatEntity)) {
       continue;
     }
-    const updates = compareTwoFlatEntity({
+    const update = compareTwoFlatEntity({
       fromFlatEntity,
       toFlatEntity,
       propertiesToCompare: propertiesToCompare as unknown as Extract<
@@ -101,7 +101,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
       >[],
     });
 
-    if (updates.length === 0) {
+    if (!isDefined(update)) {
       continue;
     }
 
@@ -109,7 +109,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
       fromFlatEntity.universalIdentifier
     ] = {
       id: toFlatEntity.id,
-      updates,
+      update,
     };
   }
 

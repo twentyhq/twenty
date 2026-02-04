@@ -8,7 +8,6 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateFrontComponentActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -25,7 +24,7 @@ export class UpdateFrontComponentActionHandlerService extends WorkspaceMigration
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateFrontComponentAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
-    const { entityId, updates } = flatAction;
+    const { entityId, update } = flatAction;
 
     const frontComponentRepository =
       queryRunner.manager.getRepository<FrontComponentEntity>(
@@ -34,9 +33,7 @@ export class UpdateFrontComponentActionHandlerService extends WorkspaceMigration
 
     await frontComponentRepository.update(
       { id: entityId, workspaceId },
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates,
-      }),
+      update,
     );
   }
 

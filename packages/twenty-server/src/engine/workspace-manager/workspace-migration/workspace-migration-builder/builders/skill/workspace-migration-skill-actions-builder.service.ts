@@ -82,13 +82,13 @@ export class WorkspaceMigrationSkillActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateSkillAction: FlatUpdateSkillAction = {
       type: 'update',
       metadataName: 'skill',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

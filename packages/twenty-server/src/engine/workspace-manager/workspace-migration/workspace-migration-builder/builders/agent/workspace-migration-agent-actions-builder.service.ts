@@ -82,13 +82,13 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateAgentAction: FlatUpdateAgentAction = {
       type: 'update',
       metadataName: 'agent',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

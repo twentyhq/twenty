@@ -8,7 +8,6 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateWebhookActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -25,17 +24,12 @@ export class UpdateWebhookActionHandlerService extends WorkspaceMigrationRunnerA
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateWebhookAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
-    const { entityId, updates } = flatAction;
+    const { entityId, update } = flatAction;
 
     const webhookRepository =
       queryRunner.manager.getRepository<WebhookEntity>(WebhookEntity);
 
-    await webhookRepository.update(
-      { id: entityId, workspaceId },
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates,
-      }),
-    );
+    await webhookRepository.update({ id: entityId, workspaceId }, update);
   }
 
   async executeForWorkspaceSchema(

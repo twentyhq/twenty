@@ -99,13 +99,13 @@ export class WorkspaceMigrationCommandMenuItemActionsBuilderService extends Work
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateCommandMenuItemAction: FlatUpdateCommandMenuItemAction = {
       type: 'update',
       metadataName: 'commandMenuItem',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {
