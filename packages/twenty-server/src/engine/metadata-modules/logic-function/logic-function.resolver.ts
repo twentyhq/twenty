@@ -214,9 +214,16 @@ export class LogicFunctionResolver {
           : undefined;
 
         if (isDefined(applicationUniversalIdentifier)) {
-          await this.codeStepBuildService.buildFromSourceToBuilt({
-            flatLogicFunction,
-            applicationUniversalIdentifier,
+          const { checksum } =
+            await this.codeStepBuildService.buildFromSourceToBuilt({
+              flatLogicFunction,
+              applicationUniversalIdentifier,
+            });
+
+          await this.logicFunctionService.updateChecksum({
+            id,
+            checksum,
+            workspaceId,
           });
         }
       }

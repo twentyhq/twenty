@@ -14,10 +14,10 @@ import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step-input.dto';
 import { GetCodeStepSourceCodeInput } from 'src/engine/core-modules/workflow/dtos/get-code-step-source-code-input.dto';
-import { UpdateCodeStepSourceInput } from 'src/engine/core-modules/workflow/dtos/update-code-step-source-input.dto';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step-input.dto';
 import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request-input.dto';
 import { TestHttpRequestOutput } from 'src/engine/core-modules/workflow/dtos/test-http-request-output.dto';
+import { UpdateCodeStepSourceInput } from 'src/engine/core-modules/workflow/dtos/update-code-step-source-input.dto';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step-input.dto';
 import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step-input.dto';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-action.dto';
@@ -28,7 +28,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -37,6 +36,7 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { isDefined } from 'twenty-shared/utils';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
