@@ -3,12 +3,12 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { jsxTransformToRemoteDomWorkerFormatPlugin } from '../../../cli/utilities/build/common/front-component-build/jsx-transform-to-remote-dom-worker-format-plugin';
-import { reactGlobalsPlugin } from '../../../cli/utilities/build/common/front-component-build/react-globals-plugin';
+import { createFrontComponentBuildOptions } from '../../../cli/utilities/build/common/front-component-build/utils/create-front-component-build-options';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const mocksDir = path.resolve(dirname, '../mocks');
 const outputDir = path.resolve(dirname, '../built');
+const sdkRoot = path.resolve(dirname, '../../../..');
 
 const STORY_COMPONENTS = [
   'static.front-component',
@@ -32,20 +32,13 @@ export const buildMockComponents = async (): Promise<void> => {
     entryPoints[name] = filePath;
   }
 
-  await esbuild.build({
+  const buildOptions = createFrontComponentBuildOptions({
     entryPoints,
-    bundle: true,
-    format: 'esm',
     outdir: outputDir,
-    outExtension: { '.js': '.mjs' },
-    external: ['react', 'react-dom', 'twenty-sdk', 'twenty-sdk/*'],
-    jsx: 'automatic',
-    sourcemap: true,
-    alias: {
-      '@/sdk': path.resolve(dirname, '../../../sdk'),
-    },
-    plugins: [reactGlobalsPlugin, jsxTransformToRemoteDomWorkerFormatPlugin],
+    tsconfigPath: path.join(sdkRoot, 'tsconfig.json'),
   });
+
+  await esbuild.build(buildOptions);
 
   console.log(
     `Built ${STORY_COMPONENTS.length} story components to ${outputDir}`,
