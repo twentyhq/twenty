@@ -17,10 +17,6 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 * 构建带有自定义触发器的逻辑函数
 * 将同一个应用部署到多个工作空间
 
-**即将推出:**
-
-* 自定义 UI 布局和组件
-
 ## 先决条件
 
 * Node.js 24+ 和 Yarn 4
@@ -95,81 +91,54 @@ my-twenty-app/
   README.md
   public/                           # 公共资源文件夹（图像、字体等）
   src/
-    application.config.ts          # 必需 - 主应用程序配置
-    default-function.role.ts       # 用于无服务器函数的默认角色
-    hello-world.function.ts        # 示例无服务器函数
-    hello-world.front-component.tsx # 示例前端组件
-    // 你的实体 (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
-```
-
-### 约定优于配置
-
-应用采用**约定优于配置**的方式，根据文件后缀检测实体。 这使得可以在 `src/app/` 文件夹内灵活组织：
-
-| 文件后缀                    | 实体类型     |
-| ----------------------- | -------- |
-| `*.object.ts`           | 自定义对象定义  |
-| `*.function.ts`         | 无服务器函数定义 |
-| `*.front-component.tsx` | 前端组件定义   |
-| `*.role.ts`             | 角色定义     |
-
-### 支持的文件夹组织方式
-
-你可以按以下任一模式组织实体：
-
-**传统（按类型）：**
-
-```text
-src/
-├── application.config.ts
-├── objects/
-│   └── postCard.object.ts
-├── functions/
-│   └── createPostCard.function.ts
-├── components/
-│   └── card.front-component.tsx
-└── roles/
-    └── admin.role.ts
-```
-
-**基于特性：**
-
-```text
-src/
-├── application.config.ts
-└── post-card/
-    ├── postCard.object.ts
-    ├── createPostCard.function.ts
-    ├── card.front-component.tsx
-    └── postCardAdmin.role.ts
-```
-
-**扁平：**
-
-```text
-src/
-├── application.config.ts
-├── postCard.object.ts
-├── createPostCard.function.ts
-├── card.front-component.tsx
-└── admin.role.ts
+  ├── application-config.ts           # 必需 - 主应用程序配置
+  ├── roles/
+  │   └── default-role.ts               # 用于逻辑函数的默认角色
+  ├── logic-functions/
+  │   └── hello-world.ts                # 示例逻辑函数
+  └── front-components/
+      └── hello-world.tsx               # 示例前端组件
 ```
 
 总体来说：
 
-* **package.json**：声明应用名称、版本、运行时（Node 24+、Yarn 4），并添加 `twenty-sdk`，以及诸如 `app:dev`、`app:generate`、`entity:add`、`function:logs`、`function:execute`、`app:uninstall` 和 `auth:login` 等脚本，这些脚本会委托给本地的 `twenty` CLI。
+* **package.json**：声明应用名称、版本、运行时（Node 24+、Yarn 4），并添加 `twenty-sdk`，以及诸如 `app:dev`、`app:generate`、`entity:add`、`function:logs`、`function:execute`、`app:uninstall` 等脚本和认证命令，它们都会委托给本地的 `twenty` CLI。
 * **.gitignore**：忽略常见产物，如 `node_modules`、`.yarn`、`generated/`（类型化客户端）、`dist/`、`build/`、覆盖率文件夹、日志文件以及 `.env*` 文件。
 * **yarn.lock**、**.yarnrc.yml**、**.yarn/**：锁定并配置项目使用的 Yarn 4 工具链。
 * **.nvmrc**：固定项目期望的 Node.js 版本。
 * **eslint.config.mjs** 和 **tsconfig.json**：为应用的 TypeScript 源码提供 Lint 与 TypeScript 配置。
 * **README.md**：应用根目录中的简短 README，包含基本说明。
 * **public/**: 一个用于存储公共资源（图像、字体、静态文件）的文件夹，这些资源将随你的应用程序一起提供。 放置在此处的文件会在同步期间上传，并可在运行时访问。
-* **src/**：你以代码形式定义应用的主要位置：
-  * `application.config.ts`：应用的全局配置（元数据和运行时关联）。 参见下方“应用配置”。
-  * `*.role.ts`：你的逻辑函数所使用的角色定义。 参见下方“默认函数角色”。
-  * `*.object.ts`：自定义对象定义。
-  * `*.function.ts`：逻辑函数定义。
-  * `*.front-component.tsx`：前端组件定义。
+* **src/**：你以代码形式定义应用的主要位置
+
+### 实体检测
+
+该 SDK 通过在你的 TypeScript 文件中解析 **`export default define<Entity>({...})`** 调用来检测实体。 每种实体类型都有一个从 `twenty-sdk` 导出的对应辅助函数：
+
+| 辅助函数                     | 实体类型      |
+| ------------------------ | --------- |
+| `defineObject()`         | 自定义对象定义   |
+| `defineLogicFunction()`  | 逻辑函数定义    |
+| `defineFrontComponent()` | 前端组件定义    |
+| `defineRole()`           | 角色定义      |
+| `defineField()`          | 现有对象的字段扩展 |
+
+<Note>
+  **文件命名是灵活的。** 实体检测基于 AST — SDK 会扫描你的源文件以查找 `export default define<Entity>({...})` 模式。 你可以按照自己的喜好组织文件和文件夹。 按实体类型分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
+</Note>
+
+已检测实体的示例：
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
 
 后续命令将添加更多文件和文件夹：
 
@@ -215,16 +184,18 @@ twenty-sdk 提供你在应用中使用的类型化构件和辅助函数。 以�
 
 ### 辅助函数
 
-该 SDK 提供四个带内置校验的辅助函数，用于定义你的应用实体：
+该 SDK 提供辅助函数用于定义你的应用实体。 如 [实体检测](#entity-detection) 中所述，你必须使用 `export default define<Entity>({...})` 才能让你的实体被检测到：
 
-| 函数                    | 目的           |
-| --------------------- | ------------ |
-| `defineApplication()` | 配置应用元数据      |
-| `defineObject()`      | 定义带字段的自定义对象  |
-| `defineFunction()`    | 定义带处理程序的逻辑函数 |
-| `defineRole()`        | 配置角色权限和对象访问  |
+| 函数                       | 目的                 |
+| ------------------------ | ------------------ |
+| `defineApplication()`    | 配置应用元数据（必需，每个应用一个） |
+| `defineObject()`         | 定义带字段的自定义对象        |
+| `defineLogicFunction()`  | 定义带处理程序的逻辑函数       |
+| `defineFrontComponent()` | 为自定义 UI 定义前端组件     |
+| `defineRole()`           | 配置角色权限和对象访问        |
+| `defineField()`          | 为现有对象扩展额外字段        |
 
-这些函数会在运行时校验你的配置，并提供更好的 IDE 自动补全和类型安全。
+这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
 
 ### 定义对象
 
@@ -311,9 +282,9 @@ export default defineObject({
   **基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加 `name`、`createdAt`、`updatedAt`、`createdBy`、`position`、`deletedAt` 等标准字段。 你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
 </Note>
 
-### 应用配置（application.config.ts）
+### 应用配置（application-config.ts）
 
-每个应用都有一个 `application.config.ts` 文件，用于描述：
+每个应用都有一个 `application-config.ts` 文件，用于描述：
 
 * **应用的身份**：标识符、显示名称和描述。
 * **函数如何运行**：它们用于权限的角色。
@@ -322,9 +293,9 @@ export default defineObject({
 使用 `defineApplication()` 定义你的应用配置：
 
 ```typescript
-// src/app/application.config.ts
+// src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -339,7 +310,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +318,11 @@ export default defineApplication({
 
 * `universalIdentifier` 字段是你拥有的确定性 ID；生成一次并在多次同步中保持稳定。
 * `applicationVariables` 会变成函数可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
-* `roleUniversalIdentifier` 必须与在 `*.role.ts` 文件中定义的角色一致（见下文）。
+* `defaultRoleUniversalIdentifier` 必须与角色文件一致（见下文）。
 
 #### 角色和权限
 
-应用可以定义角色，以封装对工作空间对象与操作的权限。 `application.config.ts` 中的 `roleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
+应用可以定义角色，以封装对工作空间对象与操作的权限。 `application-config.ts` 中的 `defaultRoleUniversalIdentifier` 字段指定你的应用逻辑函数所使用的默认角色。
 
 * 作为 `TWENTY_API_KEY` 注入的运行时 API 密钥源自该默认函数角色。
 * 类型化客户端将受限于该角色授予的权限。
@@ -362,7 +333,7 @@ export default defineApplication({
 当你脚手架生成新应用时，CLI 也会创建一个默认角色文件。 使用 `defineRole()` 定义带内置校验的角色：
 
 ```typescript
-// src/app/default-function.role.ts
+// src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -401,10 +372,10 @@ export default defineRole({
 });
 ```
 
-随后，该角色的 `universalIdentifier` 会在 `application.config.ts` 中被引用为 `roleUniversalIdentifier`。 换句话说：
+随后，该角色的 `universalIdentifier` 会在 `application-config.ts` 中被引用为 `defaultRoleUniversalIdentifier`。 换句话说：
 
 * **\*.role.ts** 定义默认函数角色可以执行的操作。
-* **application.config.ts** 指向该角色，使你的函数继承其权限。
+* **application-config.ts** 指向该角色，使你的函数继承其权限。
 
 备注:
 
@@ -415,11 +386,11 @@ export default defineRole({
 
 ### 逻辑函数的配置与入口点
 
-每个函数文件都使用 `defineFunction()` 导出包含处理程序和可选触发器的配置。 使用 `*.function.ts` 文件后缀以便自动检测。
+每个函数文件都使用 `defineLogicFunction()` 导出包含处理程序和可选触发器的配置。
 
 ```typescript
-// src/app/createPostCard.function.ts
-import { defineFunction } from 'twenty-sdk';
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '~/generated';
 
@@ -439,7 +410,7 @@ const handler = async (params: RoutePayload) => {
   return result;
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
@@ -515,7 +486,7 @@ export default defineFunction({
 当路由触发器调用你的逻辑函数时，它会接收一个遵循 AWS HTTP API v2 格式的 `RoutePayload` 对象。 从 `twenty-sdk` 导入该类型：
 
 ```typescript
-import { defineFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 
 const handler = async (event: RoutePayload) => {
   // Access request data
@@ -545,7 +516,7 @@ const handler = async (event: RoutePayload) => {
 出于安全原因，默认**不会**将传入请求的 HTTP 请求头传递给你的逻辑函数。 如需访问特定请求头，请在 `forwardedRequestHeaders` 数组中显式列出：
 
 ```typescript
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
@@ -580,8 +551,45 @@ const handler = async (event: RoutePayload) => {
 
 你可以通过两种方式创建新函数：
 
-* **脚手架生成**：运行 `yarn entity:add` 并选择添加新函数的选项。 这将生成一个包含处理程序和配置的入门文件。
-* **手动**：创建一个新的 `*.function.ts` 文件，并使用 `defineFunction()`，遵循相同的模式。
+* **脚手架生成**：运行 `yarn entity:add` 并选择添加新逻辑函数的选项。 这将生成一个包含处理程序和配置的入门文件。
+* **手动**：创建一个新的 `*.logic-function.ts` 文件，并使用 `defineLogicFunction()`，遵循相同的模式。
+
+### 前端组件
+
+前端组件使你可以构建在 Twenty 的 UI 中渲染的自定义 React 组件。 使用 `defineFrontComponent()` 以内置校验定义组件：
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+关键点：
+
+* 前端组件是在 Twenty 中的隔离上下文中渲染的 React 组件。
+* 使用 `*.front-component.tsx` 文件后缀以便自动检测。
+* `component` 字段引用你的 React 组件。
+* 组件会在 `yarn app:dev` 期间自动构建并同步。
+
+你可以通过两种方式创建新的前端组件：
+
+* **脚手架生成**：运行 `yarn entity:add` 并选择添加新前端组件的选项。
+* **手动**：创建一个新的 `*.front-component.tsx` 文件，并使用 `defineFrontComponent()`。
 
 ### 生成的类型化客户端
 
@@ -606,12 +614,12 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 备注:
 
 * 你无需向生成的客户端传递 URL 或 API 密钥。 它会在运行时从 process.env 读取 `TWENTY_API_URL` 和 `TWENTY_API_KEY`。
-* API 密钥的权限由 `application.config.ts` 中通过 `roleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
-* 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `roleUniversalIdentifier` 指向该角色的通用标识符。
+* API 密钥的权限由 `application-config.ts` 中通过 `defaultRoleUniversalIdentifier` 引用的角色决定。 这是你的应用逻辑函数使用的默认角色。
+* 应用可以定义角色以遵循最小权限原则。 仅授予函数所需的权限，然后将 `defaultRoleUniversalIdentifier` 指向该角色的通用标识符。
 
 ### Hello World 示例
 
-在[此处](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world)查看一个最小的端到端示例，展示对象、函数和多种触发器：
+在[此处](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world)查看一个最小的端到端示例，展示对象、逻辑函数、前端组件和多种触发器：
 
 ## 手动设置（不使用脚手架）
 

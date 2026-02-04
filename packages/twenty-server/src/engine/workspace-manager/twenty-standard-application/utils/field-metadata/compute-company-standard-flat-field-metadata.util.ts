@@ -393,7 +393,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'taskTarget',
-      targetFieldName: 'company',
+      targetFieldName: 'targetCompany',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
@@ -416,7 +416,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'noteTarget',
-      targetFieldName: 'company',
+      targetFieldName: 'targetCompany',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

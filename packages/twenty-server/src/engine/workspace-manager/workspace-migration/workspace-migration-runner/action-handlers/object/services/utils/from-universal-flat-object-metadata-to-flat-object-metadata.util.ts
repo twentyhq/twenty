@@ -36,10 +36,10 @@ const findFieldMetadataIdInCreateObjectContext = ({
     return generatedId;
   }
 
-  const existingFieldId =
-    flatFieldMetadataMaps.idByUniversalIdentifier[universalIdentifier];
+  const existingField =
+    flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier];
 
-  return existingFieldId ?? null;
+  return existingField?.id ?? null;
 };
 
 export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
@@ -104,7 +104,6 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     id: generatedId,
     workspaceId,
     applicationId,
-    standardId: null,
     universalIdentifier,
     applicationUniversalIdentifier,
     labelIdentifierFieldMetadataId,

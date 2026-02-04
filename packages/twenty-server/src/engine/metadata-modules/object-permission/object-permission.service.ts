@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   type ObjectPermissionInput,
@@ -63,7 +64,10 @@ export class ObjectPermissionService {
 
       input.objectPermissions.forEach((objectPermission) => {
         const objectMetadataForObjectPermission =
-          flatObjectMetadataMaps.byId[objectPermission.objectMetadataId];
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: objectPermission.objectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          });
 
         if (!isDefined(objectMetadataForObjectPermission)) {
           throw new PermissionsException(

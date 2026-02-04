@@ -390,6 +390,11 @@ msgstr "{totalCost} credits"
 msgid "{totalCount} selected"
 msgstr "{totalCount} selected"
 
+#. js-lingui-id: WwbakM
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+msgid "{totalFieldsCount} fields"
+msgstr "{totalFieldsCount} fields"
+
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -2316,6 +2321,12 @@ msgstr "Cannot display message"
 msgid "Cannot impersonate selected user"
 msgstr "Cannot impersonate selected user"
 
+#. js-lingui-id: H1Ddy9
+#: src/modules/object-record/record-field/ui/meta-types/input/hooks/useOpenFilesFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "Cannot upload more than {maxNumberOfValues} files"
+msgstr "Cannot upload more than {maxNumberOfValues} files"
+
 #. js-lingui-id: Po5MgW
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -3453,6 +3464,11 @@ msgstr "Customise the fields available in the {objectLabelSingular} views and th
 msgid "Customization"
 msgstr "Customization"
 
+#. js-lingui-id: srRMnJ
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+msgid "Customize"
+msgstr "Customize"
+
 #. js-lingui-id: CMhr4u
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
@@ -4393,6 +4409,7 @@ msgstr "Edit field values"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
 msgstr "Edit Fields"
@@ -4451,11 +4468,6 @@ msgstr "Edit your subdomain name or set a custom domain."
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Editable Profile Fields"
 msgstr "Editable Profile Fields"
-
-#. js-lingui-id: uBAxNB
-#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-msgid "Editor"
-msgstr "Editor"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -4772,6 +4784,11 @@ msgstr "Enter email subject"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Enter emails, comma-separated"
 msgstr "Enter emails, comma-separated"
+
+#. js-lingui-id: Gghv1D
+#: src/modules/object-record/record-field/ui/form-types/components/FormFilesFieldInput.tsx
+msgid "Enter files as JSON array"
+msgstr "Enter files as JSON array"
 
 #. js-lingui-id: 8Ao1Tl
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterValueInputDropdownButtonClickableSelect.tsx
@@ -5548,9 +5565,15 @@ msgid "Failed to update variable"
 msgstr "Failed to update variable"
 
 #. js-lingui-id: jU/HbX
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "Failed to upload \"{fileNameForError}\""
 msgstr "Failed to upload \"{fileNameForError}\""
+
+#. js-lingui-id: tQ0765
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
+msgstr "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 
 #. js-lingui-id: cQPyHI
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
@@ -5677,10 +5700,20 @@ msgstr "Fields Count"
 msgid "Fields Permissions"
 msgstr "Fields Permissions"
 
+#. js-lingui-id: n7J1Rh
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Fields Settings"
+msgstr "Fields Settings"
+
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 msgid "Fields to update"
 msgstr "Fields to update"
+
+#. js-lingui-id: YlwXq3
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Fields Widget"
+msgstr "Fields Widget"
 
 #. js-lingui-id: hT0Flb
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -5698,9 +5731,20 @@ msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "File \"{fileName}\" exceeds {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "File \"{fileName}\" uploaded successfully"
+
+#. js-lingui-id: N793lP
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "File label"
+msgstr "File label"
+
+#. js-lingui-id: ncBVqE
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+msgid "File upload failed"
+msgstr "File upload failed"
 
 #. js-lingui-id: o7J4JM
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -5868,6 +5912,11 @@ msgstr "front component"
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "front components"
 msgstr "front components"
+
+#. js-lingui-id: xf0TNb
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "Front Components"
+msgstr "Front Components"
 
 #. js-lingui-id: scmRyR
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -7112,6 +7161,9 @@ msgstr "Launch manually"
 #. js-lingui-id: rdU729
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsLayout.tsx
 msgid "Layout"
 msgstr "Layout"
 
@@ -7257,6 +7309,7 @@ msgid "Loading csv ... "
 msgstr "Loading csv ... "
 
 #. js-lingui-id: Zzca95
+#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 #: src/modules/activities/files/components/AttachmentList.tsx
 msgid "Loading document viewer..."
 msgstr "Loading document viewer..."
@@ -12475,7 +12528,7 @@ msgid "Unordered list with bullets"
 msgstr "Unordered list with bullets"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ui/field/display/components/FilesDisplay.tsx
+#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12604,6 +12657,7 @@ msgstr "Upload .xlsx, .xls or .csv file"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
 msgid "Upload file"
 msgstr "Upload file"
@@ -12628,6 +12682,11 @@ msgstr "Upload Files"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Upload the XML file with your connection infos"
+
+#. js-lingui-id: GxkJXS
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "Uploading..."
+msgstr "Uploading..."
 
 #. js-lingui-id: IagCbF
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx

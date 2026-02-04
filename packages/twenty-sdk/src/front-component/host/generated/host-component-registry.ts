@@ -12,6 +12,7 @@ import {
   RemoteFragmentRenderer,
   createRemoteComponentRenderer,
 } from '@remote-dom/react/host';
+import { Button } from 'twenty-ui/input';
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
 const EVENT_NAME_MAP: Record<string, string> = {
@@ -345,6 +346,12 @@ const HtmlHrWrapper = ({
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('hr', filterProps(props), children);
 };
+const TwentyUiButtonWrapper = ({
+  children,
+  ...props
+}: { children?: React.ReactNode } & Record<string, unknown>) => {
+  return React.createElement(Button, filterProps(props), children);
+};
 type ComponentRegistryValue =
   | ReturnType<typeof createRemoteComponentRenderer>
   | typeof RemoteFragmentRenderer;
@@ -393,5 +400,6 @@ export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
   ['html-td', createRemoteComponentRenderer(HtmlTdWrapper)],
   ['html-br', createRemoteComponentRenderer(HtmlBrWrapper)],
   ['html-hr', createRemoteComponentRenderer(HtmlHrWrapper)],
+  ['twenty-ui-button', createRemoteComponentRenderer(TwentyUiButtonWrapper)],
   ['remote-fragment', RemoteFragmentRenderer],
 ]);

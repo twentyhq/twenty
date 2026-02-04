@@ -1,5 +1,5 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -27,8 +27,8 @@ export type CreateStandardPageLayoutArgs = {
 export const findObjectNameByUniversalIdentifier = (
   objectUniversalIdentifier: string,
 ): string => {
-  for (const [objectName, objectId] of Object.entries(STANDARD_OBJECT_IDS)) {
-    if (objectId === objectUniversalIdentifier) {
+  for (const [objectName, objectConfig] of Object.entries(STANDARD_OBJECTS)) {
+    if (objectConfig.universalIdentifier === objectUniversalIdentifier) {
       return objectName;
     }
   }

@@ -37,9 +37,9 @@ export class FlatAgentValidatorService {
       type: 'create',
     });
 
-    const existingAgents = Object.values(optimisticFlatAgentMaps.byId).filter(
-      isDefined,
-    );
+    const existingAgents = Object.values(
+      optimisticFlatAgentMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     validationResult.errors.push(
       ...validateAgentRequiredProperties({
@@ -180,7 +180,9 @@ export class FlatAgentValidatorService {
       ...partialFlatAgent,
     };
 
-    const existingAgents = Object.values(optimisticFlatAgentMaps.byId)
+    const existingAgents = Object.values(
+      optimisticFlatAgentMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((agent) => agent.id !== flatEntityId);
 

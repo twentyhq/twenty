@@ -420,7 +420,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         },
       );
 
-    const fields = Object.values(flatFieldMetadataMaps.byId).filter(isDefined);
+    const fields = Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     if (fields.length === 0) {
       return 0;

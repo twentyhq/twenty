@@ -11,8 +11,9 @@ import {
   RelationFieldManifest,
   RoleManifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType, Sources } from 'twenty-shared/types';
+import { FieldMetadataType, FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { PackageJson } from 'type-fest';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -22,14 +23,18 @@ import {
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
-import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -39,6 +44,7 @@ import { PermissionFlagService } from 'src/engine/metadata-modules/permission-fl
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -47,7 +53,6 @@ export class ApplicationSyncService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
-    private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly logicFunctionService: LogicFunctionService,
@@ -58,21 +63,18 @@ export class ApplicationSyncService {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly permissionService: PermissionFlagService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   public async synchronizeFromManifest({
     workspaceId,
     manifest,
-    packageJson,
-    yarnLock,
   }: ApplicationInput & {
     workspaceId: string;
   }) {
     const application = await this.syncApplication({
       workspaceId,
       manifest,
-      packageJson,
-      yarnLock,
     });
 
     const ownerFlatApplication: FlatApplication = application;
@@ -98,19 +100,11 @@ export class ApplicationSyncService {
     }
 
     if (manifest.logicFunctions.length > 0) {
-      if (!isDefined(application.logicFunctionLayerId)) {
-        throw new ApplicationException(
-          `Failed to sync logic function, could not find a logic function layer.`,
-          ApplicationExceptionCode.FIELD_NOT_FOUND,
-        );
-      }
-
       await this.syncLogicFunctions({
         logicFunctionsToSync: manifest.logicFunctions,
         code: manifest.sources,
         workspaceId,
         ownerFlatApplication,
-        logicFunctionLayerId: application.logicFunctionLayerId,
       });
     }
 
@@ -126,50 +120,75 @@ export class ApplicationSyncService {
   private async syncApplication({
     workspaceId,
     manifest,
-    packageJson,
-    yarnLock,
   }: ApplicationInput & {
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const name = manifest.application.displayName ?? packageJson.name;
-    const application =
-      (await this.applicationService.findByUniversalIdentifier({
-        universalIdentifier: manifest.application.universalIdentifier,
-        workspaceId,
-      })) ??
-      (await this.applicationService.create({
+    const name = manifest.application.displayName;
+    const packageJson = JSON.parse(
+      (
+        await streamToBuffer(
+          await this.fileStorageService.readFile_v2({
+            applicationUniversalIdentifier:
+              manifest.application.universalIdentifier,
+            fileFolder: FileFolder.Source,
+            resourcePath: 'package.json',
+            workspaceId,
+          }),
+        )
+      ).toString('utf-8'),
+    ) as PackageJson;
+
+    const defaultPackageFields = await getDefaultApplicationPackageFields();
+
+    let application = await this.applicationService.findByUniversalIdentifier({
+      universalIdentifier: manifest.application.universalIdentifier,
+      workspaceId,
+    });
+
+    if (!application) {
+      const created = await this.applicationService.create({
         universalIdentifier: manifest.application.universalIdentifier,
         name,
         description: manifest.application.description,
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-        logicFunctionLayerId: null,
         defaultRoleId: null,
         workspaceId,
-      }));
+        packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
+        packageJsonFileId: null,
+        yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
+        yarnLockFileId: null,
+        availablePackages: defaultPackageFields.availablePackages,
+      });
 
-    let logicFunctionLayerId = application.logicFunctionLayerId;
+      await this.applicationService.uploadDefaultPackageFilesAndSetFileIds(
+        created,
+      );
 
-    if (manifest.logicFunctions.length > 0) {
-      if (!isDefined(logicFunctionLayerId)) {
-        logicFunctionLayerId = (
-          await this.logicFunctionLayerService.create(
-            {
-              packageJson,
-              yarnLock,
-            },
+      application = created;
+    }
+
+    if (
+      manifest.logicFunctions.length > 0 &&
+      isDefined(manifest.application.packageJsonChecksum) &&
+      isDefined(manifest.application.yarnLockChecksum)
+    ) {
+      const yarnLockContent = (
+        await streamToBuffer(
+          await this.fileStorageService.readFile_v2({
+            applicationUniversalIdentifier:
+              manifest.application.universalIdentifier,
+            fileFolder: FileFolder.Source,
+            resourcePath: 'yarn.lock',
             workspaceId,
-          )
-        ).id;
-      }
+          }),
+        )
+      ).toString('utf-8');
 
-      await this.logicFunctionLayerService.update(
-        logicFunctionLayerId,
-        {
-          packageJson,
-          yarnLock,
-        },
-        workspaceId,
+      await this.applicationService.uploadPackageFilesFromContent(
+        application,
+        JSON.stringify(packageJson, null, 2),
+        yarnLockContent,
       );
     }
 
@@ -185,7 +204,6 @@ export class ApplicationSyncService {
       name,
       description: manifest.application.description,
       version: packageJson.version,
-      logicFunctionLayerId,
       defaultRoleId: null,
     });
   }
@@ -267,13 +285,24 @@ export class ApplicationSyncService {
         );
 
       const formattedObjectPermissions = role.objectPermissions
-        ?.map((perm) => ({
-          ...perm,
-          objectMetadataId:
-            flatObjectMetadataMaps.idByUniversalIdentifier[
-              perm.objectUniversalIdentifier
-            ],
-        }))
+        ?.map((perm) => {
+          const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatObjectMetadataMaps,
+            universalIdentifier: perm.objectUniversalIdentifier,
+          });
+
+          if (!isDefined(flatObjectMetadata)) {
+            throw new ApplicationException(
+              `Failed to find object with universalIdentifier ${perm.objectUniversalIdentifier}`,
+              ApplicationExceptionCode.OBJECT_NOT_FOUND,
+            );
+          }
+
+          return {
+            ...perm,
+            objectMetadataId: flatObjectMetadata.id,
+          };
+        })
         .filter((perm): perm is typeof perm & { objectMetadataId: string } =>
           isDefined(perm.objectMetadataId),
         );
@@ -290,20 +319,34 @@ export class ApplicationSyncService {
 
       const formattedFieldPermissions = role?.fieldPermissions
         ?.map((perm) => {
-          const objectMetadataId =
-            flatObjectMetadataMaps.idByUniversalIdentifier[
-              perm.objectUniversalIdentifier
-            ];
+          const flatObjectMetadata = findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatObjectMetadataMaps,
+            universalIdentifier: perm.objectUniversalIdentifier,
+          });
 
-          const fieldMetadataId =
-            flatFieldMetadataMaps.idByUniversalIdentifier[
-              perm.fieldUniversalIdentifier
-            ];
+          if (!isDefined(flatObjectMetadata)) {
+            throw new ApplicationException(
+              `Failed to find object with universalIdentifier ${perm.objectUniversalIdentifier}`,
+              ApplicationExceptionCode.OBJECT_NOT_FOUND,
+            );
+          }
+
+          const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatFieldMetadataMaps,
+            universalIdentifier: perm.fieldUniversalIdentifier,
+          });
+
+          if (!isDefined(flatFieldMetadata)) {
+            throw new ApplicationException(
+              `Failed to find field with universalIdentifier ${perm.fieldUniversalIdentifier}`,
+              ApplicationExceptionCode.FIELD_NOT_FOUND,
+            );
+          }
 
           return {
             ...perm,
-            objectMetadataId,
-            fieldMetadataId,
+            objectMetadataId: flatObjectMetadata.id,
+            fieldMetadataId: flatFieldMetadata.id,
           };
         })
         .filter(
@@ -376,7 +419,7 @@ export class ApplicationSyncService {
       );
 
     const existingFields = Object.values(
-      existingFlatFieldMetadataMaps.byId,
+      existingFlatFieldMetadataMaps.byUniversalIdentifier,
     ).filter(
       (field) =>
         isDefined(field) &&
@@ -471,7 +514,6 @@ export class ApplicationSyncService {
         isNullable: fieldToCreate.isNullable ?? true,
         objectMetadataId: objectId,
         universalIdentifier: fieldToCreate.universalIdentifier,
-        standardId: fieldToCreate.universalIdentifier,
         applicationId: ownerFlatApplication.id,
         isCustom: true,
         workspaceId,
@@ -496,9 +538,7 @@ export class ApplicationSyncService {
     fieldsToSync: ObjectFieldManifest[];
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
-    flatObjectMetadataMaps: {
-      idByUniversalIdentifier: Partial<Record<string, string>>;
-    };
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }) {
     const relationFields = fieldsToSync.filter((field) =>
       this.isRelationFieldManifest(field),
@@ -514,7 +554,7 @@ export class ApplicationSyncService {
 
     for (const relation of relationFields) {
       const existingRelationField = Object.values(
-        flatFieldMetadataMaps.byId,
+        flatFieldMetadataMaps.byUniversalIdentifier,
       ).find(
         (field) =>
           isDefined(field) &&
@@ -525,12 +565,12 @@ export class ApplicationSyncService {
         continue;
       }
 
-      const targetObjectId =
-        flatObjectMetadataMaps.idByUniversalIdentifier[
-          relation.targetObjectUniversalIdentifier
-        ];
+      const targetObjectMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: relation.targetObjectUniversalIdentifier,
+      });
 
-      if (!isDefined(targetObjectId)) {
+      if (!isDefined(targetObjectMetadata)) {
         throw new ApplicationException(
           `Failed to find target object with universalIdentifier ${relation.targetObjectUniversalIdentifier}`,
           ApplicationExceptionCode.OBJECT_NOT_FOUND,
@@ -545,13 +585,12 @@ export class ApplicationSyncService {
         icon: relation.icon ?? undefined,
         objectMetadataId: objectId,
         universalIdentifier: relation.universalIdentifier,
-        standardId: relation.universalIdentifier,
         applicationId: ownerFlatApplication.id,
         isCustom: true,
         workspaceId,
         relationCreationPayload: {
           type: relation.relationType,
-          targetObjectMetadataId: targetObjectId,
+          targetObjectMetadataId: targetObjectMetadata.id,
           targetFieldLabel: relation.targetFieldLabel,
           targetFieldIcon: relation.targetFieldIcon ?? 'IconRelationOneToMany',
         },
@@ -583,7 +622,7 @@ export class ApplicationSyncService {
       );
 
     const applicationObjects = Object.values(
-      existingFlatObjectMetadataMaps.byId,
+      existingFlatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(
       (obj) => isDefined(obj) && obj.applicationId === ownerFlatApplication.id,
       // TODO handle when migrating to trinite usage
@@ -677,7 +716,6 @@ export class ApplicationSyncService {
         labelPlural: objectToCreate.labelPlural,
         icon: objectToCreate.icon || undefined,
         description: objectToCreate.description || undefined,
-        standardId: objectToCreate.universalIdentifier,
         dataSourceId: dataSourceMetadata.id,
         universalIdentifier: objectToCreate.universalIdentifier,
         applicationId: ownerFlatApplication.id,
@@ -716,12 +754,12 @@ export class ApplicationSyncService {
       );
 
     for (const objectToSync of objectsToSync) {
-      const sourceObjectId =
-        flatObjectMetadataMaps.idByUniversalIdentifier[
-          objectToSync.universalIdentifier
-        ];
+      const sourceObjectMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: objectToSync.universalIdentifier,
+      });
 
-      if (!isDefined(sourceObjectId)) {
+      if (!isDefined(sourceObjectMetadata)) {
         throw new ApplicationException(
           `Failed to find source object with universalIdentifier ${objectToSync.universalIdentifier}`,
           ApplicationExceptionCode.OBJECT_NOT_FOUND,
@@ -729,7 +767,7 @@ export class ApplicationSyncService {
       }
 
       await this.syncObjectFieldsRelationOnly({
-        objectId: sourceObjectId,
+        objectId: sourceObjectMetadata.id,
         fieldsToSync: objectToSync.fields,
         workspaceId,
         ownerFlatApplication,
@@ -756,12 +794,12 @@ export class ApplicationSyncService {
       );
 
     for (const fieldToSync of fieldsToSync) {
-      const targetObjectId =
-        flatObjectMetadataMaps.idByUniversalIdentifier[
-          fieldToSync.objectUniversalIdentifier
-        ];
+      const targetObjectMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: fieldToSync.objectUniversalIdentifier,
+      });
 
-      if (!isDefined(targetObjectId)) {
+      if (!isDefined(targetObjectMetadata)) {
         throw new ApplicationException(
           'Object extension must specify either nameSingular or universalIdentifier in targetObject',
           ApplicationExceptionCode.INVALID_INPUT,
@@ -769,14 +807,14 @@ export class ApplicationSyncService {
       }
 
       await this.syncObjectFieldsWithoutRelations({
-        objectId: targetObjectId,
+        objectId: targetObjectMetadata.id,
         fieldsToSync: [fieldToSync],
         workspaceId,
         ownerFlatApplication,
       });
 
       await this.syncObjectFieldsRelationOnly({
-        objectId: targetObjectId,
+        objectId: targetObjectMetadata.id,
         fieldsToSync: [fieldToSync],
         workspaceId,
         ownerFlatApplication,
@@ -790,13 +828,11 @@ export class ApplicationSyncService {
     code,
     workspaceId,
     ownerFlatApplication,
-    logicFunctionLayerId,
   }: {
     logicFunctionsToSync: LogicFunctionManifest[];
     workspaceId: string;
     code: Sources;
     ownerFlatApplication: FlatApplication;
-    logicFunctionLayerId: string;
   }) {
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -807,7 +843,7 @@ export class ApplicationSyncService {
       );
 
     const applicationLogicFunctions = Object.values(
-      flatLogicFunctionMaps.byId,
+      flatLogicFunctionMaps.byUniversalIdentifier,
     ).filter(
       (logicFunction) =>
         isDefined(logicFunction) &&
@@ -906,7 +942,6 @@ export class ApplicationSyncService {
           sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
           handlerName: logicFunctionToCreate.handlerName,
           builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
-          logicFunctionLayerId,
           toolInputSchema: logicFunctionToCreate.toolInputSchema,
           isTool: logicFunctionToCreate.isTool,
         },

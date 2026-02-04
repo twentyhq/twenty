@@ -7,7 +7,7 @@ import { type Readable } from 'stream';
 
 import { isObject } from '@sniptt/guards';
 import { FileFolder, Sources } from 'twenty-shared/types';
-import { Like, Repository } from 'typeorm';
+import { Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -69,15 +69,24 @@ export class FileStorageService {
     resourcePath,
     fileId,
     settings,
+    queryRunner,
   }: ResourceIdentifier & {
     sourceFile: string | Buffer | Uint8Array;
     mimeType: string | undefined;
     fileId?: string;
     settings: FileSettings;
+    queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const application = await this.applicationRepository.findOneOrFail({
+    const applicationRepository = queryRunner
+      ? queryRunner.manager.getRepository(ApplicationEntity)
+      : this.applicationRepository;
+    const fileRepository = queryRunner
+      ? queryRunner.manager.getRepository(FileEntity)
+      : this.fileRepository;
+
+    const application = await applicationRepository.findOneOrFail({
       where: {
         universalIdentifier: applicationUniversalIdentifier,
         workspaceId,
@@ -97,19 +106,28 @@ export class FileStorageService {
       sourceFile,
     });
 
-    const fileEntity = await this.fileRepository.save({
-      path: `${fileFolder}/${resourcePath}`,
-      workspaceId,
-      applicationId: application.id,
-      id: fileId,
-      size:
-        typeof sourceFile === 'string'
-          ? Buffer.byteLength(sourceFile)
-          : sourceFile.length,
-      settings,
-    });
+    await fileRepository.upsert(
+      {
+        path: `${fileFolder}/${resourcePath}`,
+        workspaceId,
+        applicationId: application.id,
+        id: fileId,
+        size:
+          typeof sourceFile === 'string'
+            ? Buffer.byteLength(sourceFile)
+            : sourceFile.length,
+        settings,
+      },
+      ['path', 'workspaceId', 'applicationId'],
+    );
 
-    return fileEntity;
+    return await fileRepository.findOneOrFail({
+      where: {
+        path: `${fileFolder}/${resourcePath}`,
+        applicationId: application.id,
+        workspaceId,
+      },
+    });
   }
 
   /**
@@ -219,6 +237,18 @@ export class FileStorageService {
     const onStoragePath = this.buildOnStoragePath(params);
 
     return driver.downloadFolder({
+      onStoragePath,
+      localPath: params.localPath,
+    });
+  }
+
+  downloadFile_v2(
+    params: ResourceIdentifier & { localPath: string },
+  ): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.downloadFile({
       onStoragePath,
       localPath: params.localPath,
     });

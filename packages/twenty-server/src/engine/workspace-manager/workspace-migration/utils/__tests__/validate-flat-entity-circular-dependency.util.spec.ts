@@ -14,9 +14,11 @@ type TestFlatEntity = SyncableFlatEntity & {
 const createFlatEntityMaps = (
   entities: TestFlatEntity[],
 ): FlatEntityMaps<TestFlatEntity> => ({
-  byId: Object.fromEntries(entities.map((entity) => [entity.id, entity])),
-  idByUniversalIdentifier: Object.fromEntries(
-    entities.map((entity) => [entity.universalIdentifier, entity.id]),
+  byUniversalIdentifier: Object.fromEntries(
+    entities.map((entity) => [entity.universalIdentifier, entity]),
+  ),
+  universalIdentifierById: Object.fromEntries(
+    entities.map((entity) => [entity.id, entity.universalIdentifier]),
   ),
   universalIdentifiersByApplicationId: {},
 });

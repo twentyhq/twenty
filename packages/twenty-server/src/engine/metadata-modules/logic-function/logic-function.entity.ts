@@ -6,16 +6,12 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-import { LogicFunctionLayerEntity } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 export type CronTriggerSettings = {
   pattern: string;
@@ -46,7 +42,6 @@ export const DEFAULT_HANDLER_NAME = 'main';
 
 @Entity('logicFunction')
 @Index('IDX_LOGIC_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
-@Index('IDX_LOGIC_FUNCTION_LAYER_ID', ['logicFunctionLayerId'])
 export class LogicFunctionEntity
   extends SyncableEntity
   implements Required<LogicFunctionEntity>
@@ -84,17 +79,6 @@ export class LogicFunctionEntity
 
   @Column({ nullable: false, default: false })
   isTool: boolean;
-
-  @Column({ nullable: false, type: 'uuid' })
-  logicFunctionLayerId: string;
-
-  @ManyToOne(
-    () => LogicFunctionLayerEntity,
-    (logicFunctionLayer) => logicFunctionLayer.logicFunctions,
-    { nullable: false },
-  )
-  @JoinColumn({ name: 'logicFunctionLayerId' })
-  logicFunctionLayer: Relation<LogicFunctionLayerEntity>;
 
   @Column({ nullable: true, type: 'jsonb' })
   cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;

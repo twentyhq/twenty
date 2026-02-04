@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
+import crypto from 'crypto';
 import fs from 'fs/promises';
 import { dirname, join } from 'path';
 
 import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 export type FunctionBuildParams = {
   flatLogicFunction: FlatLogicFunction;
@@ -22,6 +24,40 @@ export type FunctionBuildParams = {
 @Injectable()
 export class LogicFunctionBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
+
+  async hasLayerDependencies({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<boolean> {
+    const packageJsonExists = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'package.json',
+    });
+    const yarnLockExists = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'yarn.lock',
+    });
+
+    return packageJsonExists && yarnLockExists;
+  }
+
+  async uploadDependencies({
+    flatApplication: _flatApplication,
+    applicationUniversalIdentifier: _applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
+    // Package files live in Dependencies; no copy needed – drivers read from
+    // Dependencies when building the layer.
+  }
 
   async isBuilt({
     flatLogicFunction,
@@ -38,7 +74,7 @@ export class LogicFunctionBuildService {
   async buildAndUpload({
     flatLogicFunction,
     applicationUniversalIdentifier,
-  }: FunctionBuildParams): Promise<void> {
+  }: FunctionBuildParams): Promise<{ checksum: string }> {
     const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
 
     try {
@@ -85,6 +121,10 @@ export class LogicFunctionBuildService {
           toDelete: false,
         },
       });
+
+      return {
+        checksum: crypto.createHash('md5').update(builtFile).digest('hex'),
+      };
     } finally {
       await lambdaBuildDirectoryManager.clean();
     }

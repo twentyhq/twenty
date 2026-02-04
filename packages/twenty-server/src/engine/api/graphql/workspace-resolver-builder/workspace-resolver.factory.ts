@@ -85,7 +85,7 @@ export class WorkspaceResolverFactory {
     };
 
     for (const flatObjectMetadata of Object.values(
-      flatObjectMetadataMaps.byId,
+      flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined)) {
       // Generate query resolvers
       for (const methodName of workspaceResolverBuilderMethods.queries) {

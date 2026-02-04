@@ -39,6 +39,7 @@ export const getFilterFilterableFieldMetadataItems = ({
       FieldMetadataType.PHONES,
       FieldMetadataType.ARRAY,
       FieldMetadataType.UUID,
+      FieldMetadataType.FILES,
       ...(isJsonFilterEnabled ? [FieldMetadataType.RAW_JSON] : []),
     ].includes(field.type);
 

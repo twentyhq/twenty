@@ -28,7 +28,6 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
 
   return {
     id,
-    standardId: null,
     label,
     description: description ?? null,
     icon: icon ?? null,

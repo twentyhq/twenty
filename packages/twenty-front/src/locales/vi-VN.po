@@ -395,6 +395,11 @@ msgstr "{totalCost} tín dụng"
 msgid "{totalCount} selected"
 msgstr ""
 
+#. js-lingui-id: WwbakM
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+msgid "{totalFieldsCount} fields"
+msgstr ""
+
 #. js-lingui-id: ITVweg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -2321,6 +2326,12 @@ msgstr ""
 msgid "Cannot impersonate selected user"
 msgstr "Không thể đóng vai người dùng đã chọn"
 
+#. js-lingui-id: H1Ddy9
+#: src/modules/object-record/record-field/ui/meta-types/input/hooks/useOpenFilesFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "Cannot upload more than {maxNumberOfValues} files"
+msgstr ""
+
 #. js-lingui-id: Po5MgW
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
@@ -3458,6 +3469,11 @@ msgstr ""
 msgid "Customization"
 msgstr "Tùy chỉnh"
 
+#. js-lingui-id: srRMnJ
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+msgid "Customize"
+msgstr ""
+
 #. js-lingui-id: CMhr4u
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
@@ -4398,6 +4414,7 @@ msgstr "Chỉnh sửa giá trị trường"
 
 #. js-lingui-id: oKQ7ls
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+#: src/modules/page-layout/hooks/useEditPageLayoutWidget.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
 msgid "Edit Fields"
 msgstr "Chỉnh sửa trường"
@@ -4456,11 +4473,6 @@ msgstr "Chỉnh sửa tên miền phụ của bạn hoặc thiết lập một t
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Editable Profile Fields"
 msgstr ""
-
-#. js-lingui-id: uBAxNB
-#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-msgid "Editor"
-msgstr "Trình soạn thảo"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -4776,6 +4788,11 @@ msgstr "Nhập chủ đề email"
 #. js-lingui-id: TRQdC1
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail.tsx
 msgid "Enter emails, comma-separated"
+msgstr ""
+
+#. js-lingui-id: Gghv1D
+#: src/modules/object-record/record-field/ui/form-types/components/FormFilesFieldInput.tsx
+msgid "Enter files as JSON array"
 msgstr ""
 
 #. js-lingui-id: 8Ao1Tl
@@ -5553,9 +5570,15 @@ msgid "Failed to update variable"
 msgstr "Cập nhật biến thất bại"
 
 #. js-lingui-id: jU/HbX
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "Failed to upload \"{fileNameForError}\""
 msgstr "Không thể tải lên \\\"{fileNameForError}\\\""
+
+#. js-lingui-id: tQ0765
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
+msgstr ""
 
 #. js-lingui-id: cQPyHI
 #: src/modules/ai/hooks/useAIChatFileUpload.ts
@@ -5682,10 +5705,20 @@ msgstr "\"Số lượng trường\""
 msgid "Fields Permissions"
 msgstr "Quyền truy cập trường"
 
+#. js-lingui-id: n7J1Rh
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+msgid "Fields Settings"
+msgstr ""
+
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 msgid "Fields to update"
 msgstr "Các trường cần cập nhật"
+
+#. js-lingui-id: YlwXq3
+#: src/modules/command-menu/components/hooks/usePageLayoutHeaderInfo.ts
+msgid "Fields Widget"
+msgstr ""
 
 #. js-lingui-id: hT0Flb
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -5703,9 +5736,20 @@ msgid "File \"{fileName}\" exceeds {maxUploadSize}"
 msgstr "Tệp tin \"{fileName}\" vượt quá {maxUploadSize}"
 
 #. js-lingui-id: 0bK1RI
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 #: src/modules/advanced-text-editor/hooks/useUploadWorkflowFile.ts
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "Tải lên tệp \\\"{fileName}\\\" thành công"
+
+#. js-lingui-id: N793lP
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "File label"
+msgstr ""
+
+#. js-lingui-id: ncBVqE
+#: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
+msgid "File upload failed"
+msgstr ""
 
 #. js-lingui-id: o7J4JM
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -5872,6 +5916,11 @@ msgstr ""
 #. js-lingui-id: +M+QLN
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "front components"
+msgstr ""
+
+#. js-lingui-id: xf0TNb
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutWidgetTypeSelect.tsx
+msgid "Front Components"
 msgstr ""
 
 #. js-lingui-id: scmRyR
@@ -7117,6 +7166,9 @@ msgstr "Khởi chạy thủ công"
 #. js-lingui-id: rdU729
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/command-menu/pages/page-layout/utils/getPageLayoutPageTitle.ts
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsSettings.tsx
+#: src/modules/command-menu/pages/page-layout/components/CommandMenuPageLayoutFieldsLayout.tsx
 msgid "Layout"
 msgstr "Bố cục"
 
@@ -7262,6 +7314,7 @@ msgid "Loading csv ... "
 msgstr "Đang tải csv ... "
 
 #. js-lingui-id: Zzca95
+#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 #: src/modules/activities/files/components/AttachmentList.tsx
 msgid "Loading document viewer..."
 msgstr "Đang tải trình xem tài liệu..."
@@ -12478,7 +12531,7 @@ msgid "Unordered list with bullets"
 msgstr ""
 
 #. js-lingui-id: wja8aL
-#: src/modules/ui/field/display/components/FilesDisplay.tsx
+#: src/modules/ui/field/display/components/GlobalFilePreviewModal.tsx
 #: src/modules/ui/field/display/components/ArrayDisplay.tsx
 #: src/modules/ui/field/display/components/ActorDisplay.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12607,6 +12660,7 @@ msgstr "Tải lên tệp .xlsx, .xls hoặc .csv"
 
 #. js-lingui-id: 2IXDgU
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
 msgid "Upload file"
 msgstr "Tải tập tin lên"
@@ -12631,6 +12685,11 @@ msgstr "Tải lên tệp"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Tải lên tập tin XML với thông tin kết nối của bạn"
+
+#. js-lingui-id: GxkJXS
+#: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
+msgid "Uploading..."
+msgstr ""
 
 #. js-lingui-id: IagCbF
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx

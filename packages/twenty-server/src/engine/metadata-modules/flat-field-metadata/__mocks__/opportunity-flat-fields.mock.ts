@@ -12,7 +12,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   name: getFlatFieldMetadataMock({
     id: '5f510348-58e9-4ded-8dbe-144ae3644bd4',
-    standardId: '20202020-8609-4f65-a2d9-44009eb422b5',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.TEXT,
     name: 'name',
@@ -36,7 +35,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   amount: getFlatFieldMetadataMock({
     id: '2713c658-cfad-4bc2-a6a0-adc4815185a1',
-    standardId: '20202020-583e-4642-8533-db761d5fa82f',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.CURRENCY,
     name: 'amount',
@@ -60,7 +58,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   closeDate: getFlatFieldMetadataMock({
     id: '1d15aa71-38ea-473f-aac9-e4519882213f',
-    standardId: '20202020-527e-44d6-b1ac-c4158d307b97',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.DATE_TIME,
     name: 'closeDate',
@@ -84,7 +81,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   stage: getFlatFieldMetadataMock({
     id: '4642f809-f302-4525-8af1-3f3ad79998fb',
-    standardId: '20202020-6f76-477d-8551-28cd65b2b4b9',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.SELECT,
     name: 'stage',
@@ -144,7 +140,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   position: getFlatFieldMetadataMock({
     id: 'd4ca6cb7-fbdb-4e27-b5be-ac9f3a17cf0a',
-    standardId: '20202020-806d-493a-bbc6-6313e62958e2',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.POSITION,
     name: 'position',
@@ -168,7 +163,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   createdBy: getFlatFieldMetadataMock({
     id: '29222276-99f1-4443-b5d6-6ea6aa16f28a',
-    standardId: '20202020-a63e-4a62-8e63-42a51828f831',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.ACTOR,
     name: 'createdBy',
@@ -196,7 +190,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   searchVector: getFlatFieldMetadataMock({
     id: '0ba0c3f0-41f1-4c49-b28b-0a04adddbc7c',
-    standardId: '428a0da5-4b2e-4ce3-b695-89a8b384e6e3',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.TS_VECTOR,
     name: 'searchVector',
@@ -220,7 +213,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   id: getFlatFieldMetadataMock({
     id: '06f91646-dd7c-481d-b2d9-6dc02b9b6ca8',
-    standardId: '20202020-eda0-4cee-9577-3eb357e3c22b',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.UUID,
     name: 'id',
@@ -244,7 +236,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   createdAt: getFlatFieldMetadataMock({
     id: '9cc5c7c6-d9eb-46aa-b4a9-e5a922749b14',
-    standardId: '20202020-66ac-4502-9975-e4d959c50311',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.DATE_TIME,
     name: 'createdAt',
@@ -268,7 +259,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: '04629f30-4fdc-4084-bf3f-7f254acc6cf8',
-    standardId: '20202020-d767-4622-bdcf-d8a084834d86',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.DATE_TIME,
     name: 'updatedAt',
@@ -292,7 +282,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: '07435758-30b2-4d10-a2c3-947b8db7797f',
-    standardId: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.DATE_TIME,
     name: 'deletedAt',
@@ -316,7 +305,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   pointOfContact: getFlatFieldMetadataMock({
     id: '0e55bf63-1ffb-4f74-89f2-edd5a6a6686c',
-    standardId: '20202020-8dfb-42fc-92b6-01afb759ed16',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.RELATION,
     name: 'pointOfContact',
@@ -344,7 +332,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   company: getFlatFieldMetadataMock({
     id: '512890f1-4da0-4b96-bb71-5ccabefb82e7',
-    standardId: '20202020-cbac-457e-b565-adece5fc815f',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.RELATION,
     name: 'company',
@@ -372,7 +359,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   favorites: getFlatFieldMetadataMock({
     id: '87bb9924-a1cc-4357-9c8a-52141dabf266',
-    standardId: '20202020-a1c2-4500-aaae-83ba8a0e827a',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.RELATION,
     name: 'favorites',
@@ -396,7 +382,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   taskTargets: getFlatFieldMetadataMock({
     id: 'c0c9f9ac-0d40-4206-90e5-0d1e14f8a09f',
-    standardId: '20202020-59c0-4179-a208-4a255f04a5be',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.RELATION,
     name: 'taskTargets',
@@ -420,7 +405,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   noteTargets: getFlatFieldMetadataMock({
     id: '36210a54-a72e-4530-a1eb-a0420c53e551',
-    standardId: '20202020-dd3f-42d5-a382-db58aabf43d3',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.RELATION,
     name: 'noteTargets',
@@ -444,7 +428,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   attachments: getFlatFieldMetadataMock({
     id: '16515578-a6ce-48af-a303-2005bb8492f0',
-    standardId: '20202020-87c7-4118-83d6-2f4031005209',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.RELATION,
     name: 'attachments',
@@ -468,7 +451,6 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
   }),
   timelineActivities: getFlatFieldMetadataMock({
     id: '7826944b-3b21-4448-892e-5a2a68161313',
-    standardId: '20202020-30e2-421f-96c7-19c69d1cf631',
     objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     type: FieldMetadataType.RELATION,
     name: 'timelineActivities',

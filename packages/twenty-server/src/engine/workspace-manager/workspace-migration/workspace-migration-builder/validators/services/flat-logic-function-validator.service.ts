@@ -5,6 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
@@ -22,8 +23,10 @@ export class FlatLogicFunctionValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.logicFunction
   >): FailedFlatEntityValidation<'logicFunction', 'update'> {
-    const existingFlatLogicFunction =
-      optimisticFlatLogicFunctionMaps.byId[flatEntityId];
+    const existingFlatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatLogicFunctionMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -62,8 +65,10 @@ export class FlatLogicFunctionValidatorService {
       type: 'delete',
     });
 
-    const existingFlatLogicFunction =
-      optimisticFlatLogicFunctionMaps.byId[logicFunctionIdToDelete];
+    const existingFlatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: logicFunctionIdToDelete,
+      flatEntityMaps: optimisticFlatLogicFunctionMaps,
+    });
 
     if (!isDefined(existingFlatLogicFunction)) {
       validationResult.errors.push({
@@ -95,7 +100,10 @@ export class FlatLogicFunctionValidatorService {
 
     if (
       isDefined(
-        optimisticFlatLogicFunctionMaps.byId[flatLogicFunctionToValidate.id],
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatLogicFunctionToValidate.id,
+          flatEntityMaps: optimisticFlatLogicFunctionMaps,
+        }),
       )
     ) {
       validationResult.errors.push({

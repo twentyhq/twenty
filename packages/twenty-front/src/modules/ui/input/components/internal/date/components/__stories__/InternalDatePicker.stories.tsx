@@ -38,7 +38,12 @@ export const WithOpenMonthSelect: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    const monthSelect = await canvas.findByText('January');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    const monthSelect = await canvas.findByText(
+      'January',
+      {},
+      { timeout: 10000 },
+    );
 
     await userEvent.click(monthSelect);
 
@@ -69,7 +74,8 @@ export const WithOpenYearSelect: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
 
-    const yearSelect = await canvas.findByText('2023');
+    // Increased timeout to account for lazy-loaded react-datepicker on slower CI runners
+    const yearSelect = await canvas.findByText('2023', {}, { timeout: 10000 });
 
     await userEvent.click(yearSelect);
 

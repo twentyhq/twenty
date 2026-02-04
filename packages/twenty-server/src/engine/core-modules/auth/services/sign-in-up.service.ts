@@ -403,8 +403,8 @@ export class SignInUpService {
     );
   }
 
-  private async isFirstWorkspaceForUser(userId: string): Promise<boolean> {
-    const count = await this.userWorkspaceService.countUserWorkspaces(userId);
+  private async isFirstWorkspaceInSystem(): Promise<boolean> {
+    const count = await this.workspaceRepository.count();
 
     return count === 0;
   }
@@ -414,7 +414,8 @@ export class SignInUpService {
   ): Promise<void> {
     if (!this.isWorkspaceCreationLimitedToServerAdmins()) return;
 
-    if (await this.isFirstWorkspaceForUser(currentUser.id)) return;
+    // Only allow bypass during initial system bootstrap (no workspaces exist yet)
+    if (await this.isFirstWorkspaceInSystem()) return;
 
     if (!currentUser.canAccessFullAdminPanel) {
       throw new AuthException(
@@ -445,6 +446,25 @@ export class SignInUpService {
       );
     }
 
+    if (
+      this.isWorkspaceCreationLimitedToServerAdmins() &&
+      !(await this.isFirstWorkspaceInSystem())
+    ) {
+      const isExistingAdmin =
+        userData.type === 'existingUser' &&
+        userData.existingUser.canAccessFullAdminPanel;
+
+      if (!isExistingAdmin) {
+        throw new AuthException(
+          'Workspace creation is restricted to admins',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`Workspace creation is restricted to admins`,
+          },
+        );
+      }
+    }
+
     const { canImpersonate, canAccessFullAdminPanel } =
       await this.setDefaultImpersonateAndAccessFullAdminPanel();
 
@@ -465,26 +485,19 @@ export class SignInUpService {
       isWorkEmailFound && (await isLogoUrlValid()) ? logoUrl : undefined;
 
     const workspaceId = v4();
+    const workspaceCustomApplicationId = v4();
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const workspaceCustomApplication =
-        await this.applicationService.createWorkspaceCustomApplication(
-          {
-            workspaceId,
-          },
-          queryRunner,
-        );
-
       const workspaceToCreate = this.workspaceRepository.create({
         id: workspaceId,
         subdomain: await this.subdomainManagerService.generateSubdomain(
           isWorkEmailFound ? { userEmail: email } : {},
         ),
-        workspaceCustomApplicationId: workspaceCustomApplication.id,
+        workspaceCustomApplicationId,
         displayName: '',
         inviteHash: v4(),
         activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
@@ -494,6 +507,14 @@ export class SignInUpService {
       const workspace = await queryRunner.manager.save(
         WorkspaceEntity,
         workspaceToCreate,
+      );
+
+      await this.applicationService.createWorkspaceCustomApplication(
+        {
+          workspaceId,
+          applicationId: workspaceCustomApplicationId,
+        },
+        queryRunner,
       );
 
       const isExistingUser = userData.type === 'existingUser';

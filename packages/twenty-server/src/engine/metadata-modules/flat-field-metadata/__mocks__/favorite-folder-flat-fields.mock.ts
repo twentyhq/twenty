@@ -8,7 +8,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
   position: getFlatFieldMetadataMock({
     id: '5894ab56-99b7-49e8-98be-dd6524250df5',
-    standardId: '20202020-5278-4bde-8909-2cec74d43744',
     objectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
     type: FieldMetadataType.NUMBER,
     name: 'position',
@@ -32,7 +31,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
   }),
   name: getFlatFieldMetadataMock({
     id: '1502abe0-b2f8-43a7-ae55-91c826b34ffe',
-    standardId: '20202020-82a3-4537-8ff0-dbce7eec35d6',
     objectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
     type: FieldMetadataType.TEXT,
     name: 'name',
@@ -56,7 +54,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
   }),
   id: getFlatFieldMetadataMock({
     id: '85ab1864-0a92-4682-8583-82e8b696410b',
-    standardId: '20202020-eda0-4cee-9577-3eb357e3c22b',
     objectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
     type: FieldMetadataType.UUID,
     name: 'id',
@@ -80,7 +77,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
   }),
   createdAt: getFlatFieldMetadataMock({
     id: 'a92b4b66-c2de-483e-8973-6f12bf36ac1a',
-    standardId: '20202020-66ac-4502-9975-e4d959c50311',
     objectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
     type: FieldMetadataType.DATE_TIME,
     name: 'createdAt',
@@ -104,7 +100,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
   }),
   updatedAt: getFlatFieldMetadataMock({
     id: '3907fc24-3bf0-4f0b-88be-f9635e473145',
-    standardId: '20202020-d767-4622-bdcf-d8a084834d86',
     objectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
     type: FieldMetadataType.DATE_TIME,
     name: 'updatedAt',
@@ -128,7 +123,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
   }),
   deletedAt: getFlatFieldMetadataMock({
     id: '52dcb335-5ce1-4165-a30b-4a61e84af21f',
-    standardId: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     objectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
     type: FieldMetadataType.DATE_TIME,
     name: 'deletedAt',
@@ -152,7 +146,6 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
   }),
   favorites: getFlatFieldMetadataMock({
     id: '71b95076-6b8d-45c9-9a7c-ab981b81bd1b',
-    standardId: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
     objectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
     type: FieldMetadataType.RELATION,
     name: 'favorites',

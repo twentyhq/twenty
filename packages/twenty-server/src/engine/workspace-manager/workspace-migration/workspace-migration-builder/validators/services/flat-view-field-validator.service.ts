@@ -30,8 +30,10 @@ export class FlatViewFieldValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<'viewField', 'update'> {
-    const existingFlatViewField =
-      optimisticFlatViewFieldMaps.byId[flatEntityId];
+    const existingFlatViewField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatViewFieldMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -139,8 +141,10 @@ export class FlatViewFieldValidatorService {
       type: 'delete',
     });
 
-    const existingFlatViewField =
-      optimisticFlatViewFieldMaps.byId[viewFieldIdToDelete];
+    const existingFlatViewField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewFieldIdToDelete,
+      flatEntityMaps: optimisticFlatViewFieldMaps,
+    });
 
     if (!isDefined(existingFlatViewField)) {
       validationResult.errors.push({
@@ -206,8 +210,10 @@ export class FlatViewFieldValidatorService {
       type: 'create',
     });
 
-    const existingFlatViewField =
-      optimisticFlatViewFieldMaps.byId[flatViewFieldToValidate.id];
+    const existingFlatViewField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewFieldToValidate.id,
+      flatEntityMaps: optimisticFlatViewFieldMaps,
+    });
 
     if (isDefined(existingFlatViewField)) {
       const flatViewFieldId = flatViewFieldToValidate.id;
@@ -232,7 +238,10 @@ export class FlatViewFieldValidatorService {
       });
     }
 
-    const flatView = flatViewMaps.byId[flatViewFieldToValidate.viewId];
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewFieldToValidate.viewId,
+      flatEntityMaps: flatViewMaps,
+    });
 
     if (!isDefined(flatView)) {
       validationResult.errors.push({

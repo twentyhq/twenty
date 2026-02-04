@@ -347,6 +347,7 @@ msgid "API key role not found."
 msgstr "API key role not found."
 
 #. js-lingui-id: ltvmAF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception.ts
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -814,6 +815,7 @@ msgid "Contradicting field permissions have been detected on a relation field ({
 msgstr "Contradicting field permissions have been detected on a relation field ({fieldName})."
 
 #. js-lingui-id: LZf/L8
+#: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 msgid "Could not find flat entity in maps"
 msgstr "Could not find flat entity in maps"
@@ -1336,11 +1338,6 @@ msgstr "File not found."
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
 msgstr "Files field is not supported for unique fields"
-
-#. js-lingui-id: AMd8Po
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
-msgid "Files field type is not supported"
-msgstr "Files field type is not supported"
 
 #. js-lingui-id: 9110hD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -2477,13 +2474,6 @@ msgstr "Name is too short"
 msgid "Name must be in camelCase format."
 msgstr "Name must be in camelCase format."
 
-#. js-lingui-id: P+jdmX
-#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util.ts
-msgid "Name should be in camelCase"
-msgstr "Name should be in camelCase"
-
 #. js-lingui-id: Dr0xtb
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
@@ -3001,6 +2991,11 @@ msgstr "Please use Settings to remove a workspace member."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Please use single sign-on to authenticate."
 msgstr "Please use single sign-on to authenticate."
+
+#. js-lingui-id: c7uZDh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
+msgstr "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
 
 #. js-lingui-id: KTTUV3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -4364,22 +4359,41 @@ msgstr "Welcome to Twenty: Please Confirm Your Email"
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget extends beyond grid height"
 msgstr "Widget extends beyond grid height"
 
 #. js-lingui-id: PFI4iS
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget extends beyond grid width"
 msgstr "Widget extends beyond grid width"
+
+#. js-lingui-id: +9R1ka
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
+msgid "Widget index must be a non-negative integer"
+msgstr "Widget index must be a non-negative integer"
+
+#. js-lingui-id: znCTbL
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
+msgid "Widget index must be an integer"
+msgstr "Widget index must be an integer"
 
 #. js-lingui-id: 09IBNJ
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Widget not found."
 msgstr "Widget not found."
 
+#. js-lingui-id: MPdWmx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Widget position type must match the tab layout mode"
+msgstr "Widget position type must match the tab layout mode"
+
 #. js-lingui-id: D5gHL1
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget row exceeds grid height"
 msgstr "Widget row exceeds grid height"
 
@@ -4520,6 +4534,7 @@ msgid "Workspace {workspaceId} is not found."
 msgstr "Workspace {workspaceId} is not found."
 
 #. js-lingui-id: XsSVrR
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
 msgstr "Workspace creation is restricted to admins"

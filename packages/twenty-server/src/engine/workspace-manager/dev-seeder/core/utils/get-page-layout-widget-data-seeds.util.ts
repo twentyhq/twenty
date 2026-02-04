@@ -1,6 +1,6 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -29,16 +29,21 @@ export const getPageLayoutWidgetDataSeeds = (
   isDashboardV2Enabled: boolean,
 ): SeederFlatPageLayoutWidget[] => {
   const opportunityObject = objectMetadataItems.find(
-    (obj) => obj.standardId === STANDARD_OBJECT_IDS.opportunity,
+    (obj) =>
+      obj.universalIdentifier ===
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
   );
   const companyObject = objectMetadataItems.find(
-    (obj) => obj.standardId === STANDARD_OBJECT_IDS.company,
+    (obj) =>
+      obj.universalIdentifier === STANDARD_OBJECTS.company.universalIdentifier,
   );
   const personObject = objectMetadataItems.find(
-    (obj) => obj.standardId === STANDARD_OBJECT_IDS.person,
+    (obj) =>
+      obj.universalIdentifier === STANDARD_OBJECTS.person.universalIdentifier,
   );
   const taskObject = objectMetadataItems.find(
-    (obj) => obj.standardId === STANDARD_OBJECT_IDS.task,
+    (obj) =>
+      obj.universalIdentifier === STANDARD_OBJECTS.task.universalIdentifier,
   );
   const rocketObject = objectMetadataItems.find(
     (obj) => obj.nameSingular === 'rocket',

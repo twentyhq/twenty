@@ -1,4 +1,4 @@
-import { STANDARD_OBJECTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-object.constant';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 // Maps indexName to its related field universal identifiers for each standard object
 export const STANDARD_INDEX_FIELD_UNIVERSAL_IDENTIFIERS: Record<
@@ -167,13 +167,13 @@ export const STANDARD_INDEX_FIELD_UNIVERSAL_IDENTIFIERS: Record<
   noteTarget: {
     noteIdIndex: [STANDARD_OBJECTS.noteTarget.fields.note.universalIdentifier],
     personIdIndex: [
-      STANDARD_OBJECTS.noteTarget.fields.person.universalIdentifier,
+      STANDARD_OBJECTS.noteTarget.fields.targetPerson.universalIdentifier,
     ],
     companyIdIndex: [
-      STANDARD_OBJECTS.noteTarget.fields.company.universalIdentifier,
+      STANDARD_OBJECTS.noteTarget.fields.targetCompany.universalIdentifier,
     ],
     opportunityIdIndex: [
-      STANDARD_OBJECTS.noteTarget.fields.opportunity.universalIdentifier,
+      STANDARD_OBJECTS.noteTarget.fields.targetOpportunity.universalIdentifier,
     ],
   },
   opportunity: {
@@ -210,13 +210,13 @@ export const STANDARD_INDEX_FIELD_UNIVERSAL_IDENTIFIERS: Record<
   taskTarget: {
     taskIdIndex: [STANDARD_OBJECTS.taskTarget.fields.task.universalIdentifier],
     personIdIndex: [
-      STANDARD_OBJECTS.taskTarget.fields.person.universalIdentifier,
+      STANDARD_OBJECTS.taskTarget.fields.targetPerson.universalIdentifier,
     ],
     companyIdIndex: [
-      STANDARD_OBJECTS.taskTarget.fields.company.universalIdentifier,
+      STANDARD_OBJECTS.taskTarget.fields.targetCompany.universalIdentifier,
     ],
     opportunityIdIndex: [
-      STANDARD_OBJECTS.taskTarget.fields.opportunity.universalIdentifier,
+      STANDARD_OBJECTS.taskTarget.fields.targetOpportunity.universalIdentifier,
     ],
   },
   timelineActivity: {
