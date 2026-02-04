@@ -91,7 +91,7 @@ export class WorkspaceMigrationRoleTargetActionsBuilderService extends Workspace
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
 
     const updateRoleTargetAction: FlatUpdateRoleTargetAction = {
       type: 'update',

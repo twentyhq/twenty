@@ -95,7 +95,7 @@ export class FlatWebhookValidatorService {
 
   public validateFlatWebhookUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatWebhookMaps: optimisticFlatWebhookMaps,
     },

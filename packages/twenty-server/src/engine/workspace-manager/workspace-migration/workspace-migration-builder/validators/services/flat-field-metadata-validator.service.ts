@@ -30,7 +30,7 @@ export class FlatFieldMetadataValidatorService {
 
   validateFlatFieldMetadataUpdate({
     flatEntityId,
-    flatEntityUpdates: updates,
+    flatEntityUpdate: updates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps,

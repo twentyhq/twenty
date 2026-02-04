@@ -141,7 +141,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
 
   validateFlatRowLevelPermissionPredicateGroupUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup

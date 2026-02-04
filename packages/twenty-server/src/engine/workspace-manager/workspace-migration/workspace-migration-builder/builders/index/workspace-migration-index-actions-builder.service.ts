@@ -78,7 +78,7 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
   protected validateFlatEntityUpdate({
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     buildOptions,
     workspaceId,
     additionalCacheDataMaps,

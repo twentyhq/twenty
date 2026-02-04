@@ -109,7 +109,7 @@ export class FlatRoleValidatorService {
 
   public validateFlatRoleUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },

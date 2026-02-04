@@ -19,7 +19,7 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 export class FlatObjectMetadataValidatorService {
   public validateFlatObjectMetadataUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     buildOptions,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,

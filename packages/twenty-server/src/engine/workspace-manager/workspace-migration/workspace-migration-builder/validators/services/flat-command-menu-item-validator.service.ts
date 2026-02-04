@@ -88,7 +88,7 @@ export class FlatCommandMenuItemValidatorService {
 
   public validateFlatCommandMenuItemUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
     },

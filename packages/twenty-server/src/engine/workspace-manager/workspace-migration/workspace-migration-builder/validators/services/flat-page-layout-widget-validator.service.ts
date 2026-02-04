@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
-  PageLayoutTabLayoutMode,
-  PageLayoutWidgetPosition,
+    PageLayoutTabLayoutMode,
+    PageLayoutWidgetPosition,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,8 +22,8 @@ import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-module
 import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import {
-  FailedFlatEntityValidation,
-  FlatEntityValidationError,
+    FailedFlatEntityValidation,
+    FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
@@ -38,7 +38,7 @@ export class FlatPageLayoutWidgetValidatorService {
 
   public async validateFlatPageLayoutWidgetUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     additionalCacheDataMaps: { featureFlagsMap },
     workspaceId,

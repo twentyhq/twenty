@@ -16,7 +16,7 @@ import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/w
 export class FlatViewGroupValidatorService {
   public validateFlatViewGroupUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewGroupMaps: optimisticFlatViewGroupMaps,
       flatViewMaps,

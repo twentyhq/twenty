@@ -19,7 +19,7 @@ export class FlatViewValidatorService {
 
   public validateFlatViewUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,

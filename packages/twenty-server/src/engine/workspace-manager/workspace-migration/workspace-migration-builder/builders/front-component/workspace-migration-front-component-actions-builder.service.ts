@@ -99,7 +99,7 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
 
     const updateFrontComponentAction: FlatUpdateFrontComponentAction = {
       type: 'update',

@@ -130,7 +130,7 @@ export class FlatViewFilterValidatorService {
 
   validateFlatViewFilterUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewFilterMaps: optimisticFlatViewFilterMaps,
       flatFieldMetadataMaps,

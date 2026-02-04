@@ -99,7 +99,7 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
 
     const updateViewFilterGroupAction: FlatUpdateViewFilterGroupAction = {
       type: 'update',

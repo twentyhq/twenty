@@ -99,7 +99,7 @@ export class WorkspaceMigrationPageLayoutTabActionsBuilderService extends Worksp
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
 
     const updatePageLayoutTabAction: FlatUpdatePageLayoutTabAction = {
       type: 'update',

@@ -101,7 +101,7 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
 
     const updatePageLayoutWidgetAction: FlatUpdatePageLayoutWidgetAction = {
       type: 'update',

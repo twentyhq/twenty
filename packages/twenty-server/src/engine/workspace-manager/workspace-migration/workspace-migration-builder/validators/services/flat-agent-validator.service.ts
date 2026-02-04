@@ -121,7 +121,7 @@ export class FlatAgentValidatorService {
 
   public validateFlatAgentUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate: flatEntityUpdates,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatAgentMaps: optimisticFlatAgentMaps,
     },

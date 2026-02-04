@@ -99,7 +99,7 @@ export class WorkspaceMigrationCommandMenuItemActionsBuilderService extends Work
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
 
     const updateCommandMenuItemAction: FlatUpdateCommandMenuItemAction = {
       type: 'update',
