@@ -252,9 +252,11 @@ describe('reactGlobalsPlugin', () => {
       expect(outputA).toBeDefined();
       expect(outputB).toBeDefined();
 
-      // Both files should have access to all React exports used across the build
+      // Each file should only include the React exports it needs
       expect(outputA).toContain('globalThis.React.useState');
       expect(outputB).toContain('globalThis.React.useEffect');
+      expect(outputA).not.toContain('globalThis.React.useEffect');
+      expect(outputB).not.toContain('globalThis.React.useState');
 
       // No raw react imports should remain
       expect(outputA).not.toContain('from "react"');

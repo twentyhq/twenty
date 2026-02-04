@@ -66,52 +66,63 @@ const generateReactExports = (reactImports: Set<string>): string => {
 export const reactGlobalsPlugin: esbuild.Plugin = {
   name: 'react-globals',
   setup: async (build) => {
-    const allReactImports = new Set<string>();
-    const scannedFiles = new Set<string>();
+    const reactImportsByFilePath = new Map<string, Set<string>>();
 
     build.onStart(() => {
-      allReactImports.clear();
-      scannedFiles.clear();
+      reactImportsByFilePath.clear();
     });
 
     build.onResolve(
       { filter: REACT_MODULE_FILTER_PATTERN },
       async ({ importer, path }) => {
-        if (importer && !scannedFiles.has(importer)) {
-          scannedFiles.add(importer);
+        if (importer && !reactImportsByFilePath.has(importer)) {
           try {
             const sourceFileContent = await fs.readFile(importer, 'utf-8');
-            for (const imp of collectReactImports(sourceFileContent)) {
-              allReactImports.add(imp);
-            }
+            reactImportsByFilePath.set(
+              importer,
+              collectReactImports(sourceFileContent),
+            );
           } catch {
-            // Ignore read errors
+            reactImportsByFilePath.set(importer, new Set<string>());
           }
         }
 
         return {
-          path,
+          path:
+            path === 'react' && importer
+              ? `react?importer=${encodeURIComponent(importer)}`
+              : path,
           namespace: 'react-globals',
+          pluginData: { importer },
         };
       },
     );
 
-    build.onLoad({ filter: /.*/, namespace: 'react-globals' }, ({ path }) => {
-      if (path === 'react/jsx-runtime') {
-        return {
-          contents: JSX_RUNTIME_EXPORTS,
-          loader: 'js',
-        };
-      }
+    build.onLoad(
+      { filter: /.*/, namespace: 'react-globals' },
+      ({ path, pluginData }) => {
+        if (path === 'react/jsx-runtime') {
+          return {
+            contents: JSX_RUNTIME_EXPORTS,
+            loader: 'js',
+          };
+        }
 
-      if (path === 'react') {
-        return {
-          contents: generateReactExports(allReactImports),
-          loader: 'js',
-        };
-      }
+        if (path === 'react' || path.startsWith('react?importer=')) {
+          const importerFilePath =
+            pluginData?.importer ||
+            decodeURIComponent(path.split('react?importer=')[1] || '');
+          const collectedReactImports =
+            reactImportsByFilePath.get(importerFilePath) || new Set<string>();
 
-      return null;
-    });
+          return {
+            contents: generateReactExports(collectedReactImports),
+            loader: 'js',
+          };
+        }
+
+        return null;
+      },
+    );
   },
 };
