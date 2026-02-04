@@ -23,7 +23,6 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useTestWorkflowCodeStep } from '@/workflow/hooks/useTestWorkflowCodeStep';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
@@ -42,6 +41,7 @@ import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName
 import { computeNewSources } from '@/logic-functions/utils/computeNewSources';
 import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import { useTestWorkflowCodeStep } from '@/workflow/workflow-steps/workflow-actions/code-action/hooks/useTestWorkflowCodeStep';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
