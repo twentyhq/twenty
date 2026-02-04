@@ -57704,6 +57704,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"
+    twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
