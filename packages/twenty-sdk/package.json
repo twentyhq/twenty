@@ -96,7 +96,6 @@
     "storybook": "^10.1.11",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
-    "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
     "wait-on": "^7.2.0"
   },
