@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -10,6 +11,8 @@ import {
   type DashboardToolContext,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+import { buildFieldsByObjectIdMap } from 'src/modules/dashboard/tools/utils/build-fields-by-object-id-map.util';
+import { resolveGroupBy } from 'src/modules/dashboard/tools/utils/resolve-group-by.util';
 
 const buildDashboardWidgetConfigSchema = z
   .object({
@@ -37,11 +40,21 @@ const buildDashboardWidgetConfigSchema = z
       .min(1)
       .optional()
       .describe('Field name or label to group by'),
+    groupBySubField: z
+      .string()
+      .min(1)
+      .optional()
+      .describe('Subfield name to group by (composite or relation)'),
     secondaryGroupByField: z
       .string()
       .min(1)
       .optional()
       .describe('Secondary group by field (BAR only)'),
+    secondaryGroupBySubField: z
+      .string()
+      .min(1)
+      .optional()
+      .describe('Secondary subfield name to group by (BAR only)'),
     layout: z
       .nativeEnum(BarChartLayout)
       .optional()
@@ -146,7 +159,9 @@ export const createBuildDashboardWidgetConfigTool = (
     aggregateOperation: AggregateOperations;
     aggregateField: string;
     groupByField?: string;
+    groupBySubField?: string;
     secondaryGroupByField?: string;
+    secondaryGroupBySubField?: string;
     layout?: BarChartLayout;
   }) => {
     try {
@@ -191,17 +206,19 @@ export const createBuildDashboardWidgetConfigTool = (
 
       const targetObject = objectMatches[0];
 
-      const objectFields = Object.values(
+      const allFields = Object.values(
         flatFieldMetadataMaps.byUniversalIdentifier,
       )
         .filter(isDefined)
-        .filter((field) => field.objectMetadataId === targetObject.id)
         .filter((field) => field.isActive);
 
-      const resolveField = (fieldQuery: string) => {
+      const fieldsByObjectId = buildFieldsByObjectIdMap(allFields);
+      const objectFields = fieldsByObjectId.get(targetObject.id) ?? [];
+
+      const resolveField = (fieldQuery: string, fields = objectFields) => {
         const normalized = normalize(fieldQuery);
 
-        return objectFields.filter(
+        return fields.filter(
           (field) =>
             matchesValue(field.name, normalized) ||
             matchesValue(field.label, normalized),
@@ -230,63 +247,63 @@ export const createBuildDashboardWidgetConfigTool = (
       }
 
       const aggregateField = aggregateFieldMatches[0];
-      let groupByField: CandidateField | null = null;
-      let secondaryGroupByField: CandidateField | null = null;
+      let groupByField: FlatFieldMetadata | null = null;
+      let secondaryGroupByField: FlatFieldMetadata | null = null;
+      let groupBySubFieldName: string | undefined;
+      let secondaryGroupBySubFieldName: string | undefined;
+      const warnings: string[] = [];
 
       if (
         parameters.configurationType !== WidgetConfigurationType.AGGREGATE_CHART
       ) {
-        const groupByMatches = resolveField(parameters.groupByField ?? '');
+        const resolvedGroupBy = resolveGroupBy({
+          fieldValue: parameters.groupByField ?? '',
+          subFieldValue: parameters.groupBySubField,
+          fieldLabel: 'groupByField',
+          subFieldLabel: 'groupBySubField',
+          targetObjectLabel: targetObject.labelSingular,
+          resolveField,
+          buildCandidateField,
+          buildCandidateObject,
+          allFields,
+          fieldsByObjectId,
+          flatObjectMetadataMaps,
+          warnings,
+        });
 
-        if (groupByMatches.length === 0) {
-          return {
-            success: false,
-            message: `No field found matching "${parameters.groupByField}" on ${targetObject.labelSingular}`,
-          };
+        if (resolvedGroupBy.error) {
+          return resolvedGroupBy.error;
         }
 
-        if (groupByMatches.length > 1) {
-          return {
-            success: false,
-            message: `Multiple fields match "${parameters.groupByField}". Please clarify.`,
-            candidates: {
-              fields: {
-                groupByField: groupByMatches.map(buildCandidateField),
-              },
-            },
-          };
-        }
-
-        groupByField = buildCandidateField(groupByMatches[0]);
+        groupByField = resolvedGroupBy.field ?? null;
+        groupBySubFieldName = resolvedGroupBy.subFieldName;
       }
 
       if (
         parameters.configurationType === WidgetConfigurationType.BAR_CHART &&
         parameters.secondaryGroupByField
       ) {
-        const secondaryMatches = resolveField(parameters.secondaryGroupByField);
+        const resolvedSecondary = resolveGroupBy({
+          fieldValue: parameters.secondaryGroupByField,
+          subFieldValue: parameters.secondaryGroupBySubField,
+          fieldLabel: 'secondaryGroupByField',
+          subFieldLabel: 'secondaryGroupBySubField',
+          targetObjectLabel: targetObject.labelSingular,
+          resolveField,
+          buildCandidateField,
+          buildCandidateObject,
+          allFields,
+          fieldsByObjectId,
+          flatObjectMetadataMaps,
+          warnings,
+        });
 
-        if (secondaryMatches.length === 0) {
-          return {
-            success: false,
-            message: `No field found matching "${parameters.secondaryGroupByField}" on ${targetObject.labelSingular}`,
-          };
+        if (resolvedSecondary.error) {
+          return resolvedSecondary.error;
         }
 
-        if (secondaryMatches.length > 1) {
-          return {
-            success: false,
-            message: `Multiple fields match "${parameters.secondaryGroupByField}". Please clarify.`,
-            candidates: {
-              fields: {
-                secondaryGroupByField:
-                  secondaryMatches.map(buildCandidateField),
-              },
-            },
-          };
-        }
-
-        secondaryGroupByField = buildCandidateField(secondaryMatches[0]);
+        secondaryGroupByField = resolvedSecondary.field ?? null;
+        secondaryGroupBySubFieldName = resolvedSecondary.subFieldName;
       }
 
       let configuration: Record<string, unknown>;
@@ -305,7 +322,9 @@ export const createBuildDashboardWidgetConfigTool = (
             aggregateFieldMetadataId: aggregateField.id,
             aggregateOperation: parameters.aggregateOperation,
             primaryAxisGroupByFieldMetadataId: groupByField?.id,
+            primaryAxisGroupBySubFieldName: groupBySubFieldName,
             secondaryAxisGroupByFieldMetadataId: secondaryGroupByField?.id,
+            secondaryAxisGroupBySubFieldName: secondaryGroupBySubFieldName,
             layout: parameters.layout ?? BarChartLayout.VERTICAL,
           };
           break;
@@ -315,6 +334,7 @@ export const createBuildDashboardWidgetConfigTool = (
             aggregateFieldMetadataId: aggregateField.id,
             aggregateOperation: parameters.aggregateOperation,
             primaryAxisGroupByFieldMetadataId: groupByField?.id,
+            primaryAxisGroupBySubFieldName: groupBySubFieldName,
           };
           break;
         case WidgetConfigurationType.PIE_CHART:
@@ -323,6 +343,7 @@ export const createBuildDashboardWidgetConfigTool = (
             aggregateFieldMetadataId: aggregateField.id,
             aggregateOperation: parameters.aggregateOperation,
             groupByFieldMetadataId: groupByField?.id,
+            groupBySubFieldName: groupBySubFieldName,
           };
           break;
         default:
@@ -345,6 +366,7 @@ export const createBuildDashboardWidgetConfigTool = (
       return {
         success: true,
         message: `Built ${parameters.configurationType} configuration for ${targetObject.labelSingular}`,
+        warnings: warnings.length > 0 ? warnings : undefined,
         result: {
           widgetType: WidgetType.GRAPH,
           objectMetadataId: targetObject.id,

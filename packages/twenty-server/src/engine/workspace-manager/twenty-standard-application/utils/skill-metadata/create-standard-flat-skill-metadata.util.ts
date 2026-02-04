@@ -160,14 +160,14 @@ Users describe charts using UI terminology. Here's how to translate:
 
 **X axis section (primary grouping - the bars/categories):**
 - "X axis" / "data on display" / "categories": primaryAxisGroupByFieldMetadataId
-- "X axis subfield" / "Address.city": primaryAxisGroupBySubFieldName
+- "X axis subfield" / "addressCity": primaryAxisGroupBySubFieldName
 - "Date granularity" (on X axis): primaryAxisDateGranularity
 - "Sort by" (on X axis): primaryAxisOrderBy
 
 **Y axis section (what's being measured + optional secondary grouping):**
 - "Y axis" / "data on display" / "measure" / "metric": aggregateFieldMetadataId + aggregateOperation
 - "Group by" / "stacking" / "colors" / "breakdown": secondaryAxisGroupByFieldMetadataId
-- "Group by subfield" / "Address.city": secondaryAxisGroupBySubFieldName
+- "Group by subfield" / "addressCity": secondaryAxisGroupBySubFieldName
 - "Date granularity" (on Group by): secondaryAxisGroupByDateGranularity
 - "Sort by" (on Group by): secondaryAxisOrderBy
 - "Cumulative" / "running total": isCumulative
@@ -179,6 +179,11 @@ Users describe charts using UI terminology. Here's how to translate:
 - "Data labels" / "show values": displayDataLabel
 - "Legend" / "show legend": displayLegend
 
+**Subfield syntax examples:**
+- Composite: \`address\` + \`addressCity\` → \`primaryAxisGroupBySubFieldName: "addressCity"\`
+- Relation: \`company.name\` → \`primaryAxisGroupBySubFieldName: "name"\`
+- Relation + composite: input \`company.address.addressCity\` → stored \`primaryAxisGroupBySubFieldName: "address.addressCity"\`
+
 ### CRITICAL: "Remove groupby" / "remove stacking" / "unstacked"
 When users say this for bar/line charts, they mean remove the SECONDARY grouping (the colors/stacking).
 - Set secondaryAxisGroupByFieldMetadataId to null
@@ -188,7 +193,7 @@ When users say this for bar/line charts, they mean remove the SECONDARY grouping
 
 ### Pie Chart Settings
 - "Each slice represents" / "slices": groupByFieldMetadataId
-- "Slice subfield" / "Address.city": groupBySubFieldName
+- "Slice subfield" / "addressCity": groupBySubFieldName
 - "Hide empty category": hideEmptyCategory
 - "Show value in center": showValueInCenter
 
