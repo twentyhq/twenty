@@ -51,14 +51,13 @@ export class WorkspaceInsertQueryBuilder<
   private _filesFieldSync?: FilesFieldSync;
 
   private get relationNestedQueries(): RelationNestedQueries {
-    return (
-      this._relationNestedQueries ??
-      new RelationNestedQueries(this.internalContext)
-    );
+    return (this._relationNestedQueries ??= new RelationNestedQueries(
+      this.internalContext,
+    ));
   }
 
   private get filesFieldSync(): FilesFieldSync {
-    return this._filesFieldSync ?? new FilesFieldSync(this.internalContext);
+    return (this._filesFieldSync ??= new FilesFieldSync(this.internalContext));
   }
 
   constructor(
