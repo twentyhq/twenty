@@ -1630,7 +1630,7 @@ export type GetAuthorizationUrlForSsoOutput = {
 
 export type GetCodeStepSourceCodeInput = {
   /** The id of the logic function (code step). */
-  id: Scalars['ID'];
+  logicFunctionId: Scalars['UUID'];
 };
 
 /** Order by options for graph widgets */
@@ -4463,7 +4463,7 @@ export type UpdateCodeStepSourceInput = {
   /** The source code (Sources) to write. Only updates source files. */
   code: Scalars['JSON'];
   /** The id of the logic function (code step). */
-  id: Scalars['UUID'];
+  logicFunctionId: Scalars['UUID'];
 };
 
 export type UpdateCommandMenuItemInput = {

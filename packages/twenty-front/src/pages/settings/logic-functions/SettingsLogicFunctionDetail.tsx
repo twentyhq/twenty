@@ -1,8 +1,6 @@
-import { useTestLogicFunction } from '@/logic-functions/hooks/useTestLogicFunction';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
-import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
 import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
 import {
@@ -14,10 +12,10 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconBolt, IconSettings, IconTestPipe } from 'twenty-ui/display';
+import { IconBolt, IconSettings } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 
@@ -25,8 +23,6 @@ const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 
 export const SettingsLogicFunctionDetail = () => {
   const { logicFunctionId = '', applicationId = '' } = useParams();
-
-  const navigate = useNavigate();
 
   const { data, loading: applicationLoading } = useFindOneApplicationQuery({
     variables: { id: applicationId },
@@ -46,10 +42,6 @@ export const SettingsLogicFunctionDetail = () => {
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({ logicFunctionId });
 
-  const { testLogicFunction, isTesting } = useTestLogicFunction({
-    logicFunctionId,
-  });
-
   const handleSave = useDebouncedCallback(
     async (toolInputSchema?: object | null) => {
       await updateLogicFunction({
@@ -58,7 +50,6 @@ export const SettingsLogicFunctionDetail = () => {
           update: {
             name: formValues.name,
             description: formValues.description,
-            code: formValues.code,
             ...(toolInputSchema !== undefined && { toolInputSchema }),
           },
         },
@@ -77,19 +68,12 @@ export const SettingsLogicFunctionDetail = () => {
     };
   };
 
-  const handleTestFunction = async () => {
-    navigate('#test');
-    await testLogicFunction();
-  };
-
   const tabs = [
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
     { id: 'triggers', title: t`Triggers`, Icon: IconBolt },
-    { id: 'test', title: t`Test`, Icon: IconTestPipe },
   ];
 
   const isTriggersTab = activeTabId === 'triggers';
-  const isTestTab = activeTabId === 'test';
   const isSettingsTab = activeTabId === 'settings';
 
   const breadcrumbLinks =
@@ -144,13 +128,6 @@ export const SettingsLogicFunctionDetail = () => {
           <TabList tabs={tabs} componentInstanceId={instanceId} />
           {isTriggersTab && logicFunction && (
             <SettingsLogicFunctionTriggersTab logicFunction={logicFunction} />
-          )}
-          {isTestTab && (
-            <SettingsLogicFunctionTestTab
-              logicFunctionId={logicFunctionId}
-              handleExecute={handleTestFunction}
-              isTesting={isTesting}
-            />
           )}
           {isSettingsTab && (
             <SettingsLogicFunctionSettingsTab

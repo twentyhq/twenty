@@ -6,13 +6,6 @@ jest.mock('@/settings/logic-functions/hooks/useGetOneLogicFunction', () => ({
   useGetOneLogicFunction: jest.fn(),
 }));
 
-jest.mock(
-  '@/settings/logic-functions/hooks/useGetOneLogicFunctionSourceCode',
-  () => ({
-    useGetOneLogicFunctionSourceCode: jest.fn(),
-  }),
-);
-
 describe('useLogicFunctionUpdateFormState', () => {
   test('should return a form', () => {
     const logicFunctionId = 'logicFunctionId';
@@ -21,15 +14,8 @@ describe('useLogicFunctionUpdateFormState', () => {
     );
     useGetOneLogicFunctionMock.useGetOneLogicFunction.mockReturnValue({
       logicFunction: { name: 'name' },
+      loading: false,
     });
-    const useGetOneLogicFunctionSourceCodeMock = jest.requireMock(
-      '@/settings/logic-functions/hooks/useGetOneLogicFunctionSourceCode',
-    );
-    useGetOneLogicFunctionSourceCodeMock.useGetOneLogicFunctionSourceCode.mockReturnValue(
-      {
-        code: { src: { 'index.ts': 'export const handler = () => {}' } },
-      },
-    );
     const { result } = renderHook(
       () => useLogicFunctionUpdateFormState({ logicFunctionId }),
       {

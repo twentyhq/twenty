@@ -8,7 +8,7 @@ import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/cont
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
 import { WorkflowTriggerResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-trigger.resolver';
 import { WorkflowVersionEdgeResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-edge.resolver';
-import { CodeActionResolver } from 'src/engine/core-modules/workflow/resolvers/steps/code-action.resolver';
+import { CodeActionResolver } from 'src/engine/core-modules/workflow/steps/resolvers/code-action.resolver';
 import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver';
 import { WorkflowVersionResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-version.resolver';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';

@@ -22,14 +22,13 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { CODE_STEP_DEFAULT_INPUT_SCHEMA } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/constants/code-step-default-input-schema';
+import { CODE_STEP_DEFAULT_INPUT_SCHEMA } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/constants/seed-project/code-step-default-input-schema';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import {
   WorkflowVersionStepException,

@@ -3,24 +3,20 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
-import { ExecuteCodeStepInput } from 'src/engine/core-modules/workflow/dtos/execute-code-step-input.dto';
-import { GetCodeStepSourceCodeInput } from 'src/engine/core-modules/workflow/dtos/get-code-step-source-code-input.dto';
-import { UpdateCodeStepSourceInput } from 'src/engine/core-modules/workflow/dtos/update-code-step-source-input.dto';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
+import { ExecuteCodeStepInput } from 'src/engine/core-modules/workflow/steps/dtos/execute-code-step-input.dto';
+import { GetCodeStepSourceCodeInput } from 'src/engine/core-modules/workflow/steps/dtos/get-code-step-source-code-input.dto';
+import { UpdateCodeStepSourceInput } from 'src/engine/core-modules/workflow/steps/dtos/update-code-step-source-input.dto';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
-import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 
@@ -40,8 +36,6 @@ export class CodeActionResolver {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly codeStepBuildService: CodeStepBuildService,
-    private readonly logicFunctionService: LogicFunctionService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Query(() => graphqlTypeJson, { nullable: true })
@@ -49,24 +43,13 @@ export class CodeActionResolver {
     @Args('input') input: GetCodeStepSourceCodeInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
+    const flatLogicFunction =
+      await this.codeStepBuildService.getFlatLogicFunctionForCodeStepOrNull({
+        logicFunctionId: input.logicFunctionId,
+        workspaceId,
+      });
 
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id: input.logicFunctionId,
-      flatLogicFunctionMaps,
-    });
-
-    if (
-      !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
-        flatLogicFunction,
-      )
-    ) {
+    if (!flatLogicFunction) {
       return null;
     }
 
@@ -81,45 +64,11 @@ export class CodeActionResolver {
     @Args('input') input: UpdateCodeStepSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id: input.logicFunctionId,
-      flatLogicFunctionMaps,
-    });
-
-    if (
-      !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
-        flatLogicFunction,
-      )
-    ) {
-      return false;
-    }
-
-    const applicationUniversalIdentifier = isDefined(
-      flatLogicFunction.applicationId,
-    )
-      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          ?.universalIdentifier
-      : undefined;
-
-    if (!isDefined(applicationUniversalIdentifier)) {
-      return false;
-    }
-
-    await this.codeStepBuildService.updateCodeStepSource({
-      flatLogicFunction,
+    return this.codeStepBuildService.updateCodeStepSourceByLogicFunctionId({
+      logicFunctionId: input.logicFunctionId,
+      workspaceId,
       code: input.code,
-      applicationUniversalIdentifier,
     });
-
-    return true;
   }
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
@@ -129,54 +78,12 @@ export class CodeActionResolver {
   ): Promise<LogicFunctionExecutionResultDTO> {
     const { logicFunctionId, payload } = input;
 
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id: logicFunctionId,
-      flatLogicFunctionMaps,
-    });
-
-    if (
-      !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
-        flatLogicFunction,
-      )
-    ) {
-      throw new Error(
-        'Logic function is not a workflow code step or does not exist',
-      );
-    }
-
-    const applicationUniversalIdentifier = isDefined(
-      flatLogicFunction.applicationId,
-    )
-      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          ?.universalIdentifier
-      : undefined;
-
-    if (!isDefined(applicationUniversalIdentifier)) {
-      throw new Error(
-        'Workflow code step application universal identifier not found',
-      );
-    }
-
-    const { checksum } = await this.codeStepBuildService.buildFromSourceToBuilt(
+    await this.codeStepBuildService.buildFromSourceAndUpdateChecksumForCodeStep(
       {
-        flatLogicFunction,
-        applicationUniversalIdentifier,
+        logicFunctionId,
+        workspaceId,
       },
     );
-
-    await this.logicFunctionService.updateChecksum({
-      id: logicFunctionId,
-      checksum,
-      workspaceId,
-    });
 
     const result =
       await this.logicFunctionExecutorService.executeOneLogicFunction({

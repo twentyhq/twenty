@@ -14,7 +14,6 @@ import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import { ExecuteLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -30,7 +29,6 @@ import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-mod
 import { logicFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/logic-function/utils/logic-function-graphql-api-exception-handler.utils';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -46,7 +44,6 @@ export class LogicFunctionResolver {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly subscriptionService: SubscriptionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly codeStepBuildService: CodeStepBuildService,
   ) {}
 
   @Query(() => LogicFunctionDTO)
@@ -185,48 +182,6 @@ export class LogicFunctionResolver {
   ) {
     try {
       const { id, payload } = input;
-
-      const { flatLogicFunctionMaps, flatApplicationMaps } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-          },
-        );
-
-      const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: id,
-        flatEntityMaps: flatLogicFunctionMaps,
-      });
-
-      if (
-        isDefined(flatLogicFunction) &&
-        !flatLogicFunction.deletedAt &&
-        this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
-          flatLogicFunction,
-        )
-      ) {
-        const applicationUniversalIdentifier = isDefined(
-          flatLogicFunction.applicationId,
-        )
-          ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-              ?.universalIdentifier
-          : undefined;
-
-        if (isDefined(applicationUniversalIdentifier)) {
-          const { checksum } =
-            await this.codeStepBuildService.buildFromSourceToBuilt({
-              flatLogicFunction,
-              applicationUniversalIdentifier,
-            });
-
-          await this.logicFunctionService.updateChecksum({
-            id,
-            checksum,
-            workspaceId,
-          });
-        }
-      }
 
       return await this.logicFunctionExecutorService.executeOneLogicFunction({
         id,

@@ -4,11 +4,11 @@ import crypto from 'crypto';
 import fs from 'fs/promises';
 import { dirname, join } from 'path';
 
-import { v4 } from 'uuid';
-import { isDefined } from 'twenty-shared/utils';
 import { isObject } from '@sniptt/guards';
 import { build } from 'esbuild';
 import { FileFolder, Sources } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -17,12 +17,12 @@ import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/utils/get-logic-function-base-folder-path.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
   DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_SOURCE_HANDLER_PATH,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
@@ -31,7 +31,7 @@ import {
   WorkflowActionType,
   type WorkflowAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { getCodeStepSeedProjectFiles } from '../utils/get-code-step-seed-project-files.util';
+import { getCodeStepSeedProjectFiles } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-seed-project-files.util';
 
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
@@ -131,7 +131,9 @@ export class CodeStepBuildService {
     });
 
     if (!isDefined(created)) {
-      throw new Error('Failed to create logic function when duplicating code step');
+      throw new Error(
+        'Failed to create logic function when duplicating code step',
+      );
     }
 
     return created;
@@ -196,11 +198,10 @@ export class CodeStepBuildService {
         continue;
       }
 
-      const { checksum } =
-        await this.buildFromSourceToBuilt({
-          flatLogicFunction,
-          applicationUniversalIdentifier,
-        });
+      const { checksum } = await this.buildFromSourceToBuilt({
+        flatLogicFunction,
+        applicationUniversalIdentifier,
+      });
 
       await this.logicFunctionService.updateChecksum({
         id: flatLogicFunction.id,
@@ -285,6 +286,134 @@ export class CodeStepBuildService {
         `${WORKFLOW_BASE_FOLDER_PREFIX}/`,
       )
     );
+  }
+
+  async getFlatLogicFunctionForCodeStepOrNull({
+    logicFunctionId,
+    workspaceId,
+  }: {
+    logicFunctionId: string;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction | null> {
+    const { flatLogicFunctionMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: logicFunctionId,
+      flatEntityMaps: flatLogicFunctionMaps,
+    });
+
+    if (
+      !isDefined(flatLogicFunction) ||
+      flatLogicFunction.deletedAt ||
+      !this.isWorkflowCodeStepLogicFunction(flatLogicFunction)
+    ) {
+      return null;
+    }
+
+    return flatLogicFunction;
+  }
+
+  async updateCodeStepSourceByLogicFunctionId({
+    logicFunctionId,
+    workspaceId,
+    code,
+  }: {
+    logicFunctionId: string;
+    workspaceId: string;
+    code: Sources;
+  }): Promise<boolean> {
+    const flatLogicFunction = await this.getFlatLogicFunctionForCodeStepOrNull({
+      logicFunctionId,
+      workspaceId,
+    });
+
+    if (!isDefined(flatLogicFunction)) {
+      return false;
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatApplicationMaps'],
+        },
+      );
+
+    const applicationUniversalIdentifier = isDefined(
+      flatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(applicationUniversalIdentifier)) {
+      return false;
+    }
+
+    await this.updateCodeStepSource({
+      flatLogicFunction,
+      code,
+      applicationUniversalIdentifier,
+    });
+
+    return true;
+  }
+
+  async buildFromSourceAndUpdateChecksumForCodeStep({
+    logicFunctionId,
+    workspaceId,
+  }: {
+    logicFunctionId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const flatLogicFunction = await this.getFlatLogicFunctionForCodeStepOrNull({
+      logicFunctionId,
+      workspaceId,
+    });
+
+    if (!isDefined(flatLogicFunction)) {
+      throw new Error(
+        'Logic function is not a workflow code step or does not exist',
+      );
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatApplicationMaps'],
+        },
+      );
+
+    const applicationUniversalIdentifier = isDefined(
+      flatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(applicationUniversalIdentifier)) {
+      throw new Error(
+        'Workflow code step application universal identifier not found',
+      );
+    }
+
+    const { checksum } = await this.buildFromSourceToBuilt({
+      flatLogicFunction,
+      applicationUniversalIdentifier,
+    });
+
+    await this.logicFunctionService.updateChecksum({
+      id: logicFunctionId,
+      checksum,
+      workspaceId,
+    });
   }
 
   async copySourceAndBuiltForNewCodeStep({

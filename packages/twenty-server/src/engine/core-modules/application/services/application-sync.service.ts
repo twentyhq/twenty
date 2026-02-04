@@ -44,7 +44,6 @@ import { PermissionFlagService } from 'src/engine/metadata-modules/permission-fl
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { computeMetadataNameFromLabelOrThrow } from 'src/engine/metadata-modules/utils/compute-metadata-name-from-label-or-throw.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
@@ -65,7 +64,6 @@ export class ApplicationSyncService {
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly permissionService: PermissionFlagService,
     private readonly fileStorageService: FileStorageService,
-    private readonly codeStepBuildService: CodeStepBuildService,
   ) {}
 
   public async synchronizeFromManifest({
