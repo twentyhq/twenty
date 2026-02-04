@@ -30,11 +30,6 @@ export { FieldType } from './fields/field-type';
 export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { validateFields } from './fields/validate-fields';
-export { defineFrontComponent } from './front-components/define-front-component';
-export type {
-  FrontComponentType,
-  FrontComponentConfig,
-} from './front-components/front-component-config';
 export { defineLogicFunction } from './logic-functions/define-logic-function';
 export type {
   LogicFunctionHandler,

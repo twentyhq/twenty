@@ -7,6 +7,11 @@
  *                              |___/
  */
 
+export { defineFrontComponent } from './define-front-component';
+export type {
+  FrontComponentType,
+  FrontComponentConfig,
+} from './front-component-config';
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
 export { componentRegistry } from './host/generated/host-component-registry';
 export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
