@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 
@@ -76,7 +77,10 @@ export const validateFlatEntityCircularDependency = <
 
     visited.add(currentParentId);
 
-    const parentEntity: T | undefined = flatEntityMaps.byId[currentParentId];
+    const parentEntity: T | undefined = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: currentParentId,
+      flatEntityMaps,
+    });
 
     if (!isDefined(parentEntity)) {
       break;

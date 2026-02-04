@@ -1,3 +1,4 @@
+import { type PageLayoutWidgetPosition } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -19,6 +20,7 @@ export type CreateStandardPageLayoutWidgetContext = {
   title: string;
   type: WidgetType;
   gridPosition: GridPosition;
+  position: PageLayoutWidgetPosition | null;
   configuration: AllPageLayoutWidgetConfiguration;
   objectMetadataId: string | null;
 };
@@ -40,6 +42,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     title,
     type,
     gridPosition,
+    position,
     configuration,
     objectMetadataId,
   },
@@ -73,6 +76,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     title,
     type,
     gridPosition,
+    position,
     configuration,
     objectMetadataId,
     createdAt: now,

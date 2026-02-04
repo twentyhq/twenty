@@ -4,6 +4,7 @@ import { fastDeepEqual } from 'twenty-shared/utils';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -42,7 +43,12 @@ export const objectRecordChangedValues = (
   return Object.keys(newRecord).reduce(
     (acc, key) => {
       const fieldId = fieldIdByName[key];
-      const field = fieldId ? flatFieldMetadataMaps.byId[fieldId] : undefined;
+      const field = fieldId
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          })
+        : undefined;
 
       const oldRecordValue = oldRecord[key];
       const newRecordValue = newRecord[key];

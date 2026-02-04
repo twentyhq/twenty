@@ -24897,6 +24897,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-dom@npm:18.2.22":
+  version: 18.2.22
+  resolution: "@types/react-dom@npm:18.2.22"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10c0/cd85b5f402126e44b8c7b573e74737389816abcc931b2b14d8f946ba81cce8637ea490419488fcae842efb1e2f69853bc30522e43fd8359e1007d4d14b8d8146
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:^18.2.15":
   version: 18.3.0
   resolution: "@types/react-dom@npm:18.3.0"
@@ -24933,7 +24942,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18, @types/react@npm:^18.0.0":
+"@types/react@npm:18.2.66":
+  version: 18.2.66
+  resolution: "@types/react@npm:18.2.66"
+  dependencies:
+    "@types/prop-types": "npm:*"
+    "@types/scheduler": "npm:*"
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/56e4b841f2daf03a0b3268d4f2bcf5841167fe56742b9f1c076fad66587fb59191bdaba4d5727dbfbcff750d5e8797fdd4e57d8d9704b0bfc6ad31ee1e268a70
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.0.0":
   version: 18.3.27
   resolution: "@types/react@npm:18.3.27"
   dependencies:
@@ -24982,6 +25002,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/a58ba341cb9e7d74f71810a88862da7b2a6fa42e2a1fc0ce40498f6ea1d44382f0640117057da779f74c47039f7166bf48fad02dc876f94e005c7afa50f5e129
+  languageName: node
+  linkType: hard
+
+"@types/scheduler@npm:*":
+  version: 0.26.0
+  resolution: "@types/scheduler@npm:0.26.0"
+  checksum: 10c0/84626b06551ab7e1247412a2588430da5cd75263a353f1fd70593ca7331d43797937b89fe587089c6b3613d0658986087c5f0b2debef5bae831cdc1104a432ef
   languageName: node
   linkType: hard
 
@@ -52002,7 +52029,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18, react@npm:^18.0.0, react@npm:^18.2.0":
+"react@npm:18.3.1, react@npm:^18, react@npm:^18.2.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -57660,7 +57687,8 @@ __metadata:
     "@types/inquirer": "npm:^9.0.0"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/node": "npm:^24.0.0"
-    "@types/react": "npm:^18"
+    "@types/react": "npm:18.2.66"
+    "@types/react-dom": "npm:18.2.22"
     archiver: "npm:^7.0.1"
     axios: "npm:^1.6.0"
     chalk: "npm:^5.3.0"
@@ -57676,9 +57704,11 @@ __metadata:
     inquirer: "npm:^10.0.0"
     jsonc-parser: "npm:^3.2.0"
     lodash.camelcase: "npm:^4.3.0"
-    react: "npm:^18.0.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
     ts-morph: "npm:^25.0.0"
     tsx: "npm:^4.7.0"
+    twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"

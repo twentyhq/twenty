@@ -7,7 +7,7 @@ import { type Readable } from 'stream';
 
 import { isObject } from '@sniptt/guards';
 import { FileFolder, Sources } from 'twenty-shared/types';
-import { Like, Repository } from 'typeorm';
+import { Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -69,15 +69,24 @@ export class FileStorageService {
     resourcePath,
     fileId,
     settings,
+    queryRunner,
   }: ResourceIdentifier & {
     sourceFile: string | Buffer | Uint8Array;
     mimeType: string | undefined;
     fileId?: string;
     settings: FileSettings;
+    queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const application = await this.applicationRepository.findOneOrFail({
+    const applicationRepository = queryRunner
+      ? queryRunner.manager.getRepository(ApplicationEntity)
+      : this.applicationRepository;
+    const fileRepository = queryRunner
+      ? queryRunner.manager.getRepository(FileEntity)
+      : this.fileRepository;
+
+    const application = await applicationRepository.findOneOrFail({
       where: {
         universalIdentifier: applicationUniversalIdentifier,
         workspaceId,
@@ -97,7 +106,7 @@ export class FileStorageService {
       sourceFile,
     });
 
-    await this.fileRepository.upsert(
+    await fileRepository.upsert(
       {
         path: `${fileFolder}/${resourcePath}`,
         workspaceId,
@@ -112,7 +121,7 @@ export class FileStorageService {
       ['path', 'workspaceId', 'applicationId'],
     );
 
-    return await this.fileRepository.findOneOrFail({
+    return await fileRepository.findOneOrFail({
       where: {
         path: `${fileFolder}/${resourcePath}`,
         applicationId: application.id,

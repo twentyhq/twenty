@@ -115,7 +115,12 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   });
 
   const targetFlatFieldMetadata =
-    remainingFlatEntityMapsToValidate?.byId[relationTargetFieldMetadataId] ??
+    (remainingFlatEntityMapsToValidate
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: relationTargetFieldMetadataId,
+          flatEntityMaps: remainingFlatEntityMapsToValidate,
+        })
+      : undefined) ??
     findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: relationTargetFieldMetadataId,
       flatEntityMaps: flatFieldMetadataMaps,

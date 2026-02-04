@@ -42,8 +42,8 @@ const mockObjectMetadata: FlatObjectMetadata = {
 };
 
 const mockFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
-  byId: {},
-  idByUniversalIdentifier: {},
+  byUniversalIdentifier: {},
+  universalIdentifierById: {},
   universalIdentifiersByApplicationId: {},
 };
 

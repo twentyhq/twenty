@@ -7,13 +7,15 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
 export const usePrepareFindManyActivitiesQuery = ({
@@ -33,6 +35,12 @@ export const usePrepareFindManyActivitiesQuery = ({
   const cache = useApolloCoreClient().cache;
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const isNoteTargetMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NOTE_TARGET_MIGRATED,
+  );
+  const isTaskTargetMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_TASK_TARGET_MIGRATED,
+  );
 
   const { upsertFindManyRecordsQueryInCache: upsertFindManyActivitiesInCache } =
     useUpsertFindManyRecordsQueryInCache({
@@ -116,6 +124,10 @@ export const usePrepareFindManyActivitiesQuery = ({
       findActivitiesOperationSignatureFactory({
         objectNameSingular: activityObjectNameSingular,
         objectMetadataItems,
+        isMorphRelation:
+          activityObjectNameSingular === CoreObjectNameSingular.Task
+            ? isTaskTargetMigrated
+            : isNoteTargetMigrated,
       });
 
     upsertFindManyActivitiesInCache({

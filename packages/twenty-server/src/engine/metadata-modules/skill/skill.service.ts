@@ -38,7 +38,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.label.localeCompare(b.label))
       .map(fromFlatSkillToSkillDto);
@@ -237,7 +237,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatSkill) => flatSkill.isActive)
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -259,7 +259,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (flatSkill) => names.includes(flatSkill.name) && flatSkill.isActive,

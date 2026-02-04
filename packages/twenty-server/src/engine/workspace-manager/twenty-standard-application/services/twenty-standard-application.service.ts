@@ -81,7 +81,7 @@ export class TwentyStandardApplicationService {
       );
 
     const existingWorkspaceItems = Object.values(
-      existingFlatNavigationMenuItemMaps.byId,
+      existingFlatNavigationMenuItemMaps.byUniversalIdentifier,
     ).filter(
       (item) =>
         isDefined(item) &&

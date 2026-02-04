@@ -4,7 +4,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 
-export const getSubFlatEntityMapsOrThrow = <T extends SyncableFlatEntity>({
+export const getSubFlatEntityByIdsMapsOrThrow = <T extends SyncableFlatEntity>({
   flatEntityIds,
   flatEntityMaps,
 }: {

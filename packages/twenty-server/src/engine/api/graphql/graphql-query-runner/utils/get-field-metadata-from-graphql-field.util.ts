@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -29,7 +30,10 @@ export function getFieldMetadataFromGraphQLField({
 
   const sourceFieldMetadataId = fieldIdByName[graphQLField];
   let sourceFieldMetadata = sourceFieldMetadataId
-    ? flatFieldMetadataMaps.byId[sourceFieldMetadataId]
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: sourceFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
     : undefined;
 
   // If empty, it could be a morph relation

@@ -75,17 +75,17 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
   ): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: fields.reduce(
+    byUniversalIdentifier: fields.reduce(
       (accumulator, field) => {
-        accumulator[field.id] = field;
+        accumulator[field.universalIdentifier] = field;
 
         return accumulator;
       },
       {} as Record<string, FlatFieldMetadata>,
     ),
-    idByUniversalIdentifier: fields.reduce(
+    universalIdentifierById: fields.reduce(
       (accumulator, field) => {
-        accumulator[field.universalIdentifier] = field.id;
+        accumulator[field.id] = field.universalIdentifier;
 
         return accumulator;
       },

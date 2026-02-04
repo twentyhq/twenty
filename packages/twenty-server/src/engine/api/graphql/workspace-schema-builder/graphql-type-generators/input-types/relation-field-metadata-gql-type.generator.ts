@@ -18,6 +18,7 @@ import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-s
 import { computeObjectMetadataInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-object-metadata-input-type.util';
 import { computeRelationConnectInputTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-relation-connect-input-type-key.util';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 @Injectable()
@@ -162,10 +163,10 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
       isDefined(context)
     ) {
-      const targetObjectMetadata =
-        context.flatObjectMetadataMaps.byId[
-          fieldMetadata.relationTargetObjectMetadataId
-        ];
+      const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+        flatEntityMaps: context.flatObjectMetadataMaps,
+      });
 
       if (isDefined(targetObjectMetadata)) {
         const targetOrderByInputTypeKey = computeObjectMetadataInputTypeKey(
@@ -212,10 +213,10 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
       isDefined(fieldMetadata.relationTargetObjectMetadataId) &&
       isDefined(context)
     ) {
-      const targetObjectMetadata =
-        context.flatObjectMetadataMaps.byId[
-          fieldMetadata.relationTargetObjectMetadataId
-        ];
+      const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+        flatEntityMaps: context.flatObjectMetadataMaps,
+      });
 
       if (isDefined(targetObjectMetadata)) {
         const targetGroupByInputTypeKey = computeObjectMetadataInputTypeKey(

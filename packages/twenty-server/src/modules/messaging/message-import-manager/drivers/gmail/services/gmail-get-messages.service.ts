@@ -1,23 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
-import { type AxiosResponse } from 'axios';
-import { type gmail_v1 as gmailV1 } from 'googleapis';
+import { batchFetchImplementation } from '@jrmdayn/googleapis-batcher';
+import { type gmail_v1 as gmailV1, google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageImportDriverException,
-  MessageImportDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
+const GMAIL_BATCH_REQUEST_MAX_SIZE = 50;
+
 @Injectable()
 export class GmailGetMessagesService {
   constructor(
-    private readonly fetchByBatchesService: GmailFetchByBatchService,
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
     private readonly gmailMessagesImportErrorHandler: GmailMessagesImportErrorHandler,
   ) {}
 
@@ -25,62 +23,56 @@ export class GmailGetMessagesService {
     messageIds: string[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'accessToken' | 'id' | 'handle' | 'handleAliases'
+      | 'provider'
+      | 'accessToken'
+      | 'refreshToken'
+      | 'id'
+      | 'handle'
+      | 'handleAliases'
     >,
   ): Promise<MessageWithParticipants[]> {
-    if (!isDefined(connectedAccount.accessToken)) {
-      throw new MessageImportDriverException(
-        'Access token is required',
-        MessageImportDriverExceptionCode.ACCESS_TOKEN_MISSING,
-      );
-    }
-    const { messageIdsByBatch, batchResponses } =
-      await this.fetchByBatchesService.fetchAllByBatches(
-        messageIds,
-        connectedAccount.accessToken,
-        'batch_gmail_messages',
-      );
-
-    const messages = batchResponses.flatMap((response, index) => {
-      return this.formatBatchResponseAsMessage(
-        messageIdsByBatch[index],
-        response,
+    const oAuth2Client =
+      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
         connectedAccount,
       );
+
+    const batchedFetchImplementation = batchFetchImplementation({
+      maxBatchSize: GMAIL_BATCH_REQUEST_MAX_SIZE,
     });
+
+    const batchedGmailClient = google.gmail({
+      version: 'v1',
+      auth: oAuth2Client,
+      fetchImplementation: batchedFetchImplementation,
+    });
+
+    const messagePromises = messageIds.map((messageId) =>
+      batchedGmailClient.users.messages
+        .get({
+          userId: 'me',
+          id: messageId,
+        })
+        .then((response) => ({ messageId, data: response.data, error: null }))
+        .catch((error) => ({ messageId, data: null, error })),
+    );
+
+    const results = await Promise.all(messagePromises);
+
+    const messages = results
+      .map(({ messageId, data, error }) => {
+        if (error) {
+          this.gmailMessagesImportErrorHandler.handleError(error, messageId);
+
+          return undefined;
+        }
+
+        return parseAndFormatGmailMessage(
+          data as gmailV1.Schema$Message,
+          connectedAccount,
+        );
+      })
+      .filter(isDefined);
 
     return messages;
-  }
-
-  private formatBatchResponseAsMessage(
-    messageIds: string[],
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    responseCollection: AxiosResponse<any, any>,
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'handle' | 'handleAliases'
-    >,
-  ): MessageWithParticipants[] {
-    const parsedResponses =
-      this.fetchByBatchesService.parseBatch(responseCollection);
-
-    const messages = parsedResponses.map((response, index) => {
-      if ('error' in response) {
-        this.gmailMessagesImportErrorHandler.handleError(
-          response.error,
-          messageIds[index],
-        );
-
-        return undefined;
-      }
-
-      return parseAndFormatGmailMessage(
-        response as gmailV1.Schema$Message,
-        connectedAccount,
-      );
-    });
-
-    return messages.filter(isDefined);
   }
 }

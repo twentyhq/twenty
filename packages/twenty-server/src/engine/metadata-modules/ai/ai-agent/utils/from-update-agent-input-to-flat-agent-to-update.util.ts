@@ -13,6 +13,7 @@ import {
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
 import { FLAT_AGENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-agent/constants/flat-agent-editable-properties.constant';
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
@@ -95,7 +96,10 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       ['id'],
     );
 
-  const existingFlatAgent = flatAgentMaps.byId[agentIdToUpdate];
+  const existingFlatAgent = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: agentIdToUpdate,
+    flatEntityMaps: flatAgentMaps,
+  });
 
   if (!isDefined(existingFlatAgent)) {
     throw new AgentException(

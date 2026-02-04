@@ -20,8 +20,8 @@ export const findFieldMetadataIdInCreateFieldContext = ({
     return generatedId;
   }
 
-  const existingFieldId =
-    flatFieldMetadataMaps.idByUniversalIdentifier[universalIdentifier];
+  const existingField =
+    flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier];
 
-  return existingFieldId ?? null;
+  return existingField?.id ?? null;
 };

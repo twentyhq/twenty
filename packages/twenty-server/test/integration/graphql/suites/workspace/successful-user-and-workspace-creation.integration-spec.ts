@@ -7,8 +7,8 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-one-logic-function.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -218,7 +218,6 @@ describe('Successful user and workspace creation', () => {
       'fieldPermission',
       'permissionFlag',
       'logicFunction',
-      'logicFunctionLayer',
       'agent',
       'view',
       'viewField',
