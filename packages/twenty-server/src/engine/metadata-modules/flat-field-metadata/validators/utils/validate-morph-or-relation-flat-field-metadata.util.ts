@@ -3,7 +3,6 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
-import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
@@ -12,12 +11,13 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { validateJunctionTargetSettings } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util';
 import { validateMorphOrRelationFlatFieldJoinColumName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util';
 import { validateMorphOrRelationFlatFieldOnDelete } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util';
+import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
 type ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs = Omit<
   FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>,
   'updates'
 > & {
-  update: FlatEntityUpdate<'fieldMetadata'>;
+  update: UniversalFlatEntityUpdate<'fieldMetadata'>;
 };
 
 export const validateMorphOrRelationFlatFieldMetadataUpdates = ({

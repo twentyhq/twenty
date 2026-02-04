@@ -12,7 +12,6 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
-import { FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -24,6 +23,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
+import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import {
   FlatUpdateFieldAction,
@@ -54,7 +54,7 @@ type UpdateFieldPropertyHandlerArgs<
   schemaName: string;
   tableName: string;
   flatFieldMetadata: FlatFieldMetadata<T>;
-  update: FlatEntityUpdate<'fieldMetadata'>;
+  update: UniversalFlatEntityUpdate<'fieldMetadata'>;
 };
 
 type NameUpdateHandlerArgs<T extends FieldMetadataType = FieldMetadataType> =

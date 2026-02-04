@@ -1,4 +1,4 @@
-import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 
 export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
   custom: [

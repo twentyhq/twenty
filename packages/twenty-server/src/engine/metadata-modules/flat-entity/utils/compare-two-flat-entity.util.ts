@@ -4,9 +4,9 @@ import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 
 import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
-import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
+import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { transformFlatEntityForComparison } from 'src/engine/metadata-modules/flat-entity/utils/transform-flat-entity-for-comparison.util';
+import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
 export const compareTwoFlatEntity = <
   T extends AllMetadataName,
@@ -23,7 +23,7 @@ export const compareTwoFlatEntity = <
 }: FromTo<MetadataUniversalFlatEntity<T>, 'flatEntity'> & {
   propertiesToCompare: readonly PToCompare[];
   propertiesToStringify: readonly PJsonB[];
-}): FlatEntityUpdate<T> | undefined => {
+}): UniversalFlatEntityUpdate<T> | undefined => {
   const [transformedFromFlatEntity, transformedToFlatEntity] = [
     fromFlatEntity,
     toFlatEntity,
@@ -44,7 +44,7 @@ export const compareTwoFlatEntity = <
     return undefined;
   }
 
-  const initialAccumulator: FlatEntityUpdate<T> = {};
+  const initialAccumulator: UniversalFlatEntityUpdate<T> = {};
 
   return flatEntityDifferences.reduce((accumulator, difference) => {
     switch (difference.type) {
