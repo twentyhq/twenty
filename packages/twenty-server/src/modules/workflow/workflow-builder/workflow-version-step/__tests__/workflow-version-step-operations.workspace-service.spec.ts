@@ -37,6 +37,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let workflowCommonWorkspaceService: jest.Mocked<WorkflowCommonWorkspaceService>;
   let aiAgentRoleService: jest.Mocked<AiAgentRoleService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
+  let flatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
   beforeEach(async () => {
     applicationService = {
@@ -55,12 +56,12 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         builtHandlerPath: 'workflow/logic-fn-id/src/index.mjs',
         checksum: 'seed-checksum',
       }),
+      copySourceAndBuiltForNewCodeStep: jest.fn().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<CodeStepBuildService>;
 
     logicFunctionService = {
       createOne: jest.fn(),
       destroyOne: jest.fn(),
-      duplicateLogicFunction: jest.fn(),
     } as unknown as jest.Mocked<LogicFunctionService>;
 
     agentRepository = {
@@ -146,12 +147,12 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         },
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
-          useValue: {
+          useValue: (flatEntityMapsCacheService = {
             flushFlatEntityMaps: jest.fn(),
             getOrRecomputeManyOrAllFlatEntityMaps: jest
               .fn()
               .mockResolvedValue(createEmptyAllFlatEntityMaps()),
-          },
+          } as unknown as jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>),
         },
       ],
     }).compile();
@@ -340,6 +341,29 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         nextStepIds: ['next-step'],
       } as unknown as WorkflowAction;
 
+      const mockExistingFlatLogicFunction: FlatLogicFunction = {
+        id: 'function-id',
+        name: 'Existing Function',
+        description: 'Existing Description',
+        workspaceId: mockWorkspaceId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        deletedAt: null,
+        runtime: LogicFunctionRuntime.NODE22,
+        timeoutSeconds: 30,
+        sourceHandlerPath: 'workflow/function-id/src/index.ts',
+        builtHandlerPath: 'workflow/function-id/src/index.mjs',
+        handlerName: 'main',
+        checksum: 'existing-checksum',
+        toolInputSchema: null,
+        isTool: false,
+        universalIdentifier: 'existing-universal-id',
+        applicationId: 'application-id',
+        cronTriggerSettings: null,
+        databaseEventTriggerSettings: null,
+        httpRouteTriggerSettings: null,
+      };
+
       const mockNewFlatLogicFunction: FlatLogicFunction = {
         id: 'new-function-id',
         name: 'Test Function',
@@ -363,7 +387,24 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         httpRouteTriggerSettings: null,
       };
 
-      logicFunctionService.duplicateLogicFunction.mockResolvedValue(
+      const emptyMaps = createEmptyAllFlatEntityMaps();
+      const flatLogicFunctionMapsKey = 'flatLogicFunctionMaps' as const;
+      flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValueOnce(
+        {
+          ...emptyMaps,
+          [flatLogicFunctionMapsKey]: {
+            byUniversalIdentifier: {
+              'existing-universal-id': mockExistingFlatLogicFunction,
+            },
+            universalIdentifierById: {
+              'function-id': 'existing-universal-id',
+            },
+            universalIdentifiersByApplicationId: {},
+          },
+        },
+      );
+
+      logicFunctionService.createOne.mockResolvedValue(
         mockNewFlatLogicFunction,
       );
 
@@ -388,6 +429,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       expect(codeResult.settings.input.logicFunctionId).toBe('new-function-id');
 
       expect(duplicateStep.nextStepIds).toEqual([]);
+      expect(codeStepBuildService.copySourceAndBuiltForNewCodeStep).toHaveBeenCalled();
+      expect(logicFunctionService.createOne).toHaveBeenCalled();
     });
 
     it('should duplicate non-code step', async () => {

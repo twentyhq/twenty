@@ -22,7 +22,9 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
+import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -678,8 +680,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.CODE: {
         const newLogicFunction =
-          await this.logicFunctionService.duplicateLogicFunction({
-            id: step.settings.input.logicFunctionId,
+          await this.duplicateCodeStepLogicFunction({
+            existingLogicFunctionId: step.settings.input.logicFunctionId,
             workspaceId,
           });
 
@@ -941,6 +943,72 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     );
   }
 
+  private async duplicateCodeStepLogicFunction({
+    existingLogicFunctionId,
+    workspaceId,
+  }: {
+    existingLogicFunctionId: string;
+    workspaceId: string;
+  }): Promise<FlatLogicFunction> {
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const existingLogicFunction = findFlatLogicFunctionOrThrow({
+      id: existingLogicFunctionId,
+      flatLogicFunctionMaps,
+    });
+
+    const resolvedOwnerFlatApplication =
+      (
+        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+          { workspaceId },
+        )
+      ).workspaceCustomFlatApplication;
+
+    const applicationUniversalIdentifier =
+      resolvedOwnerFlatApplication.universalIdentifier;
+
+    const newId = v4();
+    const newFlatLogicFunction = fromCreateLogicFunctionInputToFlatLogicFunction(
+      {
+        createLogicFunctionInput: {
+          name: existingLogicFunction.name,
+          description: existingLogicFunction.description ?? undefined,
+          timeoutSeconds: existingLogicFunction.timeoutSeconds,
+          id: newId,
+        },
+        workspaceId,
+        ownerFlatApplication: resolvedOwnerFlatApplication,
+      },
+    );
+
+    await this.codeStepBuildService.copySourceAndBuiltForNewCodeStep({
+      existingFlatLogicFunction: existingLogicFunction,
+      newFlatLogicFunction,
+      applicationUniversalIdentifier,
+      workspaceId,
+    });
+
+    return this.logicFunctionService.createOne({
+      input: {
+        name: existingLogicFunction.name,
+        description: existingLogicFunction.description ?? undefined,
+        timeoutSeconds: existingLogicFunction.timeoutSeconds,
+        id: newFlatLogicFunction.id,
+        sourceHandlerPath: newFlatLogicFunction.sourceHandlerPath,
+        builtHandlerPath: newFlatLogicFunction.builtHandlerPath,
+        checksum: existingLogicFunction.checksum ?? undefined,
+      },
+      workspaceId,
+      ownerFlatApplication: resolvedOwnerFlatApplication,
+    });
+  }
+
   async createDraftStep({
     step,
     workspaceId,
@@ -951,12 +1019,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     switch (step.type) {
       case WorkflowActionType.CODE: {
         const newLogicFunction =
-          await this.logicFunctionService.createLogicFunctionFromExistingLogicFunctionById(
-            {
-              id: step.settings.input.logicFunctionId,
-              workspaceId,
-            },
-          );
+          await this.duplicateCodeStepLogicFunction({
+            existingLogicFunctionId: step.settings.input.logicFunctionId,
+            workspaceId,
+          });
 
         return {
           ...step,

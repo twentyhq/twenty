@@ -127,6 +127,61 @@ export class CodeStepBuildService {
     );
   }
 
+  async copySourceAndBuiltForNewCodeStep({
+    existingFlatLogicFunction,
+    newFlatLogicFunction,
+    applicationUniversalIdentifier,
+    workspaceId,
+  }: {
+    existingFlatLogicFunction: FlatLogicFunction;
+    newFlatLogicFunction: FlatLogicFunction;
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const fromSourceBaseFolderPath = getLogicFunctionBaseFolderPath(
+      existingFlatLogicFunction.sourceHandlerPath,
+    );
+    const toSourceBaseFolderPath = getLogicFunctionBaseFolderPath(
+      newFlatLogicFunction.sourceHandlerPath,
+    );
+    const fromBuiltBaseFolderPath = getLogicFunctionBaseFolderPath(
+      existingFlatLogicFunction.builtHandlerPath,
+    );
+    const toBuiltBaseFolderPath = getLogicFunctionBaseFolderPath(
+      newFlatLogicFunction.builtHandlerPath,
+    );
+
+    await this.fileStorageService.copy_v2({
+      from: {
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: fromSourceBaseFolderPath,
+      },
+      to: {
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: toSourceBaseFolderPath,
+      },
+    });
+
+    await this.fileStorageService.copy_v2({
+      from: {
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.BuiltLogicFunction,
+        resourcePath: fromBuiltBaseFolderPath,
+      },
+      to: {
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.BuiltLogicFunction,
+        resourcePath: toBuiltBaseFolderPath,
+      },
+    });
+  }
+
   async updateCodeStepSource({
     flatLogicFunction,
     code,
