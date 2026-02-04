@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import {
@@ -317,6 +318,61 @@ export class CodeStepBuildService {
     }
 
     return flatLogicFunction;
+  }
+
+  async getCodeStepSourceCode(
+    workspaceId: string,
+    logicFunctionId: string,
+  ): Promise<Sources | null> {
+    const flatLogicFunction = await this.getFlatLogicFunctionForCodeStepOrNull(
+      { logicFunctionId, workspaceId },
+    );
+
+    if (!isDefined(flatLogicFunction)) {
+      return null;
+    }
+
+    const { flatApplicationMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatApplicationMaps'],
+        },
+      );
+
+    const applicationUniversalIdentifier = isDefined(
+      flatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(applicationUniversalIdentifier)) {
+      return null;
+    }
+
+    const baseFolderPath = getLogicFunctionBaseFolderPath(
+      flatLogicFunction.sourceHandlerPath,
+    );
+
+    try {
+      return await this.fileStorageService.readFolder_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: baseFolderPath,
+      });
+    } catch (error) {
+      if (
+        isDefined(error) &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return null;
+      }
+      throw error;
+    }
   }
 
   async updateCodeStepSourceByLogicFunctionId({

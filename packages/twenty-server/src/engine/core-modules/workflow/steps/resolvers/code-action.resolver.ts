@@ -43,17 +43,7 @@ export class CodeActionResolver {
     @Args('input') input: GetCodeStepSourceCodeInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    const flatLogicFunction =
-      await this.codeStepBuildService.getFlatLogicFunctionForCodeStepOrNull({
-        logicFunctionId: input.logicFunctionId,
-        workspaceId,
-      });
-
-    if (!flatLogicFunction) {
-      return null;
-    }
-
-    return await this.logicFunctionExecutorService.getLogicFunctionSourceCode(
+    return this.codeStepBuildService.getCodeStepSourceCode(
       workspaceId,
       input.logicFunctionId,
     );
