@@ -1,6 +1,6 @@
 import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { useGetCodeStepCode } from '@/workflow/workflow-steps/workflow-actions/code-action/hooks/useGetCodeStepCode';
+import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 
 import { INDEX_FILE_NAME } from '@/logic-functions/constants/IndexFileName';
 import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
@@ -31,7 +31,7 @@ export const WorkflowReadonlyActionCode = ({
     id: logicFunctionId,
   });
 
-  const { code, loading } = useGetCodeStepCode({
+  const { code, loading } = useGetLogicFunctionSourceCode({
     logicFunctionId,
   });
 

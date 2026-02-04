@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/queries/findOneCodeStepSourceCode';
+import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { useQuery } from '@apollo/client';
 import { type Sources } from 'twenty-shared/types';
 import {
@@ -7,7 +7,7 @@ import {
   type GetLogicFunctionSourceCodeQueryVariables,
 } from '~/generated-metadata/graphql';
 
-export const useGetCodeStepCode = ({
+export const useGetLogicFunctionSourceCode = ({
   logicFunctionId,
 }: {
   logicFunctionId: string;
@@ -16,7 +16,7 @@ export const useGetCodeStepCode = ({
   const { data, loading } = useQuery<
     GetLogicFunctionSourceCodeQuery,
     GetLogicFunctionSourceCodeQueryVariables
-  >(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE, {
+  >(GET_LOGIC_FUNCTION_SOURCE_CODE, {
     client: apolloMetadataClient ?? undefined,
     variables: {
       input: { id: logicFunctionId },

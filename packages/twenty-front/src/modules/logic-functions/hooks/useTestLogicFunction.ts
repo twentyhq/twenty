@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { TEST_LOGIC_FUNCTION } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/mutations/executeCodeStep';
+import { TEST_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/testLogicFunction';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ type TestLogicFunctionResult = {
   } | null;
 };
 
-export const useTestWorkflowCodeStep = ({
+export const useTestLogicFunction = ({
   logicFunctionId,
   callback,
 }: {
@@ -45,7 +45,7 @@ export const useTestWorkflowCodeStep = ({
     logicFunctionTestDataFamilyState(logicFunctionId),
   );
 
-  const testWorkflowCodeStep = async () => {
+  const testLogicFunction = async () => {
     try {
       setIsTesting(true);
       await sleep(200); // Delay artificially to avoid flashing the UI
@@ -89,5 +89,5 @@ export const useTestWorkflowCodeStep = ({
     }
   };
 
-  return { testLogicFunction: testWorkflowCodeStep, isTesting };
+  return { testLogicFunction, isTesting };
 };

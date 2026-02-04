@@ -284,9 +284,8 @@ export class LogicFunctionSourceBuilderService {
     );
     const toSourceBaseFolderPath =
       getLogicFunctionBaseFolderPath(toSourceHandlerPath);
-    const fromBuiltBaseFolderPath = getLogicFunctionBaseFolderPath(
-      fromBuiltHandlerPath,
-    );
+    const fromBuiltBaseFolderPath =
+      getLogicFunctionBaseFolderPath(fromBuiltHandlerPath);
     const toBuiltBaseFolderPath =
       getLogicFunctionBaseFolderPath(toBuiltHandlerPath);
 

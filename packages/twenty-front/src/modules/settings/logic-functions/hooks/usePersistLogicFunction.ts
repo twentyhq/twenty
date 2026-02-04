@@ -7,9 +7,9 @@ import { CREATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mu
 import { DELETE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/deleteOneLogicFunction';
 import { UPDATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/updateOneLogicFunction';
 import { FIND_MANY_LOGIC_FUNCTIONS } from '@/settings/logic-functions/graphql/queries/findManyLogicFunctions';
-import { FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/queries/findOneCodeStepSourceCode';
+import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { UPDATE_LOGIC_FUNCTION_SOURCE } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/mutations/updateCodeStepSource';
+import { UPDATE_LOGIC_FUNCTION_SOURCE } from '@/logic-functions/graphql/mutations/updateLogicFunctionSource';
 import { ApolloError, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
@@ -110,7 +110,7 @@ export const usePersistLogicFunction = () => {
         const result = await updateLogicFunctionMutation({
           variables,
           refetchQueries: [
-            getOperationName(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
+            getOperationName(GET_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
           ],
         });
 
@@ -149,7 +149,7 @@ export const usePersistLogicFunction = () => {
         const result = await updateLogicFunctionSourceMutation({
           variables,
           refetchQueries: [
-            getOperationName(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
+            getOperationName(GET_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
           ],
         });
 
@@ -193,7 +193,7 @@ export const usePersistLogicFunction = () => {
           variables,
           awaitRefetchQueries: true,
           refetchQueries: [
-            getOperationName(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
+            getOperationName(GET_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
           ],
         });
 

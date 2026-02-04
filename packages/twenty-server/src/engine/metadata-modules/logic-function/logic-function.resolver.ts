@@ -208,10 +208,12 @@ export class LogicFunctionResolver {
     try {
       const [{ flatLogicFunctionMaps }, { workspaceCustomFlatApplication }] =
         await Promise.all([
-          this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
-          }),
+          this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatLogicFunctionMaps'],
+            },
+          ),
           this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
             { workspaceId },
           ),
@@ -242,10 +244,12 @@ export class LogicFunctionResolver {
     try {
       const [{ flatLogicFunctionMaps }, { workspaceCustomFlatApplication }] =
         await Promise.all([
-          this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
-          }),
+          this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatLogicFunctionMaps'],
+            },
+          ),
           this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
             { workspaceId },
           ),
@@ -281,10 +285,12 @@ export class LogicFunctionResolver {
 
       const [{ flatLogicFunctionMaps }, { workspaceCustomFlatApplication }] =
         await Promise.all([
-          this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
-          }),
+          this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatLogicFunctionMaps'],
+            },
+          ),
           this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
             { workspaceId },
           ),

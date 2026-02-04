@@ -6,7 +6,7 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { useGetCodeStepCode } from '@/workflow/workflow-steps/workflow-actions/code-action/hooks/useGetCodeStepCode';
+import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
@@ -39,7 +39,7 @@ import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName
 import { computeNewSources } from '@/logic-functions/utils/computeNewSources';
 import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { useTestWorkflowCodeStep } from '@/workflow/workflow-steps/workflow-actions/code-action/hooks/useTestWorkflowCodeStep';
+import { useTestLogicFunction } from '@/logic-functions/hooks/useTestLogicFunction';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
@@ -126,7 +126,7 @@ export const WorkflowEditActionCode = ({
       action.settings.input.logicFunctionInput,
     );
 
-  const { code: codeFromApi, loading } = useGetCodeStepCode({
+  const { code: codeFromApi, loading } = useGetLogicFunctionSourceCode({
     logicFunctionId,
   });
 
@@ -153,7 +153,7 @@ export const WorkflowEditActionCode = ({
     });
   };
 
-  const { testLogicFunction, isTesting } = useTestWorkflowCodeStep({
+  const { testLogicFunction, isTesting } = useTestLogicFunction({
     logicFunctionId,
     callback: updateOutputSchemaFromTestResult,
   });

@@ -17,7 +17,8 @@ export class UpdateLogicFunctionSourceInput {
   id!: string;
 
   @Field(() => graphqlTypeJson, {
-    description: 'The source code (Sources) to write. Only updates source files.',
+    description:
+      'The source code (Sources) to write. Only updates source files.',
   })
   @IsObject()
   code!: Sources;
