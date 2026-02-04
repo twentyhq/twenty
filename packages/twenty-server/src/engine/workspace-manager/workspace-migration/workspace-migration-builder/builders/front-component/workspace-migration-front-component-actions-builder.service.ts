@@ -105,7 +105,7 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
       type: 'update',
       metadataName: 'frontComponent',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

@@ -145,7 +145,7 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
       type: 'update',
       metadataName: 'logicFunction',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

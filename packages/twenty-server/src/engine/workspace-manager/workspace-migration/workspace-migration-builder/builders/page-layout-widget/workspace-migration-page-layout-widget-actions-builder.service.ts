@@ -107,7 +107,7 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
       type: 'update',
       metadataName: 'pageLayoutWidget',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

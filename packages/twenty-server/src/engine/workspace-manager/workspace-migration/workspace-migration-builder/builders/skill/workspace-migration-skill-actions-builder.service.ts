@@ -88,7 +88,7 @@ export class WorkspaceMigrationSkillActionsBuilderService extends WorkspaceEntit
       type: 'update',
       metadataName: 'skill',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

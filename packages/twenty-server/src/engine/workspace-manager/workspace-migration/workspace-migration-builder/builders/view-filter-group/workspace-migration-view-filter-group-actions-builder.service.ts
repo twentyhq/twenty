@@ -105,7 +105,7 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
       type: 'update',
       metadataName: 'viewFilterGroup',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

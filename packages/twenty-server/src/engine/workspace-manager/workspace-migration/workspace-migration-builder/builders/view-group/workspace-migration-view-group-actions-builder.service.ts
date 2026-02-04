@@ -97,7 +97,7 @@ export class WorkspaceMigrationViewGroupActionsBuilderService extends WorkspaceE
       type: 'update',
       metadataName: 'viewGroup',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

@@ -115,7 +115,7 @@ export class WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService 
       type: 'update',
       metadataName: 'rowLevelPermissionPredicate',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

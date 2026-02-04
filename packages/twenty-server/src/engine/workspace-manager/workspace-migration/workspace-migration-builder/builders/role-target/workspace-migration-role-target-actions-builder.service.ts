@@ -97,7 +97,7 @@ export class WorkspaceMigrationRoleTargetActionsBuilderService extends Workspace
       type: 'update',
       metadataName: 'roleTarget',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

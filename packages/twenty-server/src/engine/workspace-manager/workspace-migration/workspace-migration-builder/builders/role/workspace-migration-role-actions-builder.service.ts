@@ -88,7 +88,7 @@ export class WorkspaceMigrationRoleActionsBuilderService extends WorkspaceEntity
       type: 'update',
       metadataName: 'role',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

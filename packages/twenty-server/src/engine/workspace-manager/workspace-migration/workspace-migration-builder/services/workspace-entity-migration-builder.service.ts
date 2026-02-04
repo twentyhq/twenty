@@ -268,7 +268,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       const updatedFlatEntity = {
         ...existingFlatEntity,
         ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-          updates: flatEntityToUpdate.updates,
+          update: flatEntityToUpdate.updates,
         }),
       };
 

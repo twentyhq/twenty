@@ -131,7 +131,7 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
     const updatedFlatIndex = {
       ...flatEntity,
       ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
+        update: flatEntityUpdates,
       }),
     };
 

@@ -97,7 +97,7 @@ export class WorkspaceMigrationWebhookActionsBuilderService extends WorkspaceEnt
       type: 'update',
       metadataName: 'webhook',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

@@ -105,7 +105,7 @@ export class WorkspaceMigrationPageLayoutTabActionsBuilderService extends Worksp
       type: 'update',
       metadataName: 'pageLayoutTab',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

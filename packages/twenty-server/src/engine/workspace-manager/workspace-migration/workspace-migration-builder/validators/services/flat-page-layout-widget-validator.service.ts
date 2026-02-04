@@ -119,7 +119,7 @@ export class FlatPageLayoutWidgetValidatorService {
         {
           flatEntityToValidate: updatedFlatPageLayoutWidget,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-          updates: flatEntityUpdate,
+          update: flatEntityUpdate,
           additionalCacheDataMaps: { featureFlagsMap },
           workspaceId,
           buildOptions,

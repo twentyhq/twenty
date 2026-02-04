@@ -101,7 +101,7 @@ export class WorkspaceMigrationObjectActionsBuilderService extends WorkspaceEnti
       type: 'update',
       metadataName: 'objectMetadata',
       universalIdentifier,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

@@ -88,7 +88,7 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
       type: 'update',
       metadataName: 'agent',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

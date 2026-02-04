@@ -106,7 +106,7 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
       type: 'update',
       metadataName: 'navigationMenuItem',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

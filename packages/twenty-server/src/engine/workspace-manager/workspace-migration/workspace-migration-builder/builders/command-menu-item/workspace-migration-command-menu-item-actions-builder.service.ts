@@ -105,7 +105,7 @@ export class WorkspaceMigrationCommandMenuItemActionsBuilderService extends Work
       type: 'update',
       metadataName: 'commandMenuItem',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

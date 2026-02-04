@@ -95,7 +95,7 @@ export class WorkspaceMigrationViewFieldActionsBuilderService extends WorkspaceE
       type: 'update',
       metadataName: 'viewField',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {
