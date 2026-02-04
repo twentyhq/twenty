@@ -18,6 +18,7 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
@@ -102,7 +103,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       type: 'update',
       metadataName: 'fieldMetadata',
       entityId: flatFieldMetadata.id,
-      updates: action.updates,
+      update: action.update,
     };
   }
 
@@ -233,98 +234,116 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         }
       }
 
-      // Handle asExpression/generatedType change
+      // Handle asExpression/generatedType change (for TS_VECTOR fields)
       if (
-        isDefined(toSettings?.asExpression) &&
-        isDefined(fromSettings?.asExpression) &&
-        (toSettings.asExpression !== fromSettings.asExpression ||
-          toSettings.generatedType !== fromSettings.generatedType)
+        isFlatFieldMetadataOfType(
+          optimisticFlatFieldMetadata,
+          FieldMetadataType.TS_VECTOR,
+        )
       ) {
-        await this.workspaceSchemaManagerService.columnManager.dropColumns({
-          queryRunner,
-          schemaName,
-          tableName,
-          columnNames: [optimisticFlatFieldMetadata.name],
-        });
-        await this.workspaceSchemaManagerService.columnManager.addColumns({
-          queryRunner,
-          schemaName,
-          tableName,
-          columnDefinitions: [
-            {
-              name: optimisticFlatFieldMetadata.name,
-              type: 'tsvector',
-              ...toSettings,
-            },
-          ],
-        });
+        const fromSettings =
+          optimisticFlatFieldMetadata.settings as FieldMetadataSettingsMapping['TS_VECTOR'];
+        const toSettings =
+          update.settings as FieldMetadataSettingsMapping['TS_VECTOR'];
 
-        optimisticFlatFieldMetadata = {
-          ...optimisticFlatFieldMetadata,
-          settings: toSettings,
-        };
+        if (
+          isDefined(toSettings?.asExpression) &&
+          isDefined(fromSettings?.asExpression) &&
+          (toSettings.asExpression !== fromSettings.asExpression ||
+            toSettings.generatedType !== fromSettings.generatedType)
+        ) {
+          await this.workspaceSchemaManagerService.columnManager.dropColumns({
+            queryRunner,
+            schemaName,
+            tableName,
+            columnNames: [optimisticFlatFieldMetadata.name],
+          });
+          await this.workspaceSchemaManagerService.columnManager.addColumns({
+            queryRunner,
+            schemaName,
+            tableName,
+            columnDefinitions: [
+              {
+                name: optimisticFlatFieldMetadata.name,
+                type: 'tsvector',
+                ...toSettings,
+              },
+            ],
+          });
+
+          optimisticFlatFieldMetadata = {
+            ...optimisticFlatFieldMetadata,
+            settings: toSettings,
+          };
+        }
       }
 
-      // Handle onDelete change
-      if (
-        isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata) &&
-        isDefined(optimisticFlatFieldMetadata.settings.joinColumnName) &&
-        isDefined(fromSettings?.onDelete) &&
-        isDefined(toSettings?.onDelete) &&
-        toSettings.onDelete !== fromSettings.onDelete
-      ) {
-        const foreignKeyName =
-          await this.workspaceSchemaManagerService.foreignKeyManager.getForeignKeyName(
+      // Handle onDelete change (for morph/relation fields) order matters
+      if (isMorphOrRelationFlatFieldMetadata(optimisticFlatFieldMetadata)) {
+        const fromSettings = optimisticFlatFieldMetadata.settings;
+        const toSettings = update.settings as
+          | FieldMetadataSettingsMapping['MORPH_RELATION']
+          | FieldMetadataSettingsMapping['RELATION'];
+
+        if (
+          isDefined(optimisticFlatFieldMetadata.settings.joinColumnName) &&
+          isDefined(fromSettings?.onDelete) &&
+          isDefined(toSettings?.onDelete) &&
+          toSettings.onDelete !== fromSettings.onDelete
+        ) {
+          const foreignKeyName =
+            await this.workspaceSchemaManagerService.foreignKeyManager.getForeignKeyName(
+              {
+                queryRunner,
+                schemaName,
+                tableName,
+                columnName: optimisticFlatFieldMetadata.settings.joinColumnName,
+              },
+            );
+
+          if (!isDefined(foreignKeyName)) {
+            throw new WorkspaceMigrationActionExecutionException({
+              message: 'Foreign key not found',
+              code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
+            });
+          }
+
+          await this.workspaceSchemaManagerService.foreignKeyManager.dropForeignKey(
             {
               queryRunner,
               schemaName,
               tableName,
-              columnName: optimisticFlatFieldMetadata.settings.joinColumnName,
+              foreignKeyName,
             },
           );
 
-        if (!isDefined(foreignKeyName)) {
-          throw new WorkspaceMigrationActionExecutionException({
-            message: 'Foreign key not found',
-            code: WorkspaceMigrationActionExecutionExceptionCode.NOT_SUPPORTED,
-          });
-        }
+          const targetFlatObjectMetadata =
+            findFlatEntityByIdInFlatEntityMapsOrThrow({
+              flatEntityId:
+                optimisticFlatFieldMetadata.relationTargetObjectMetadataId,
+              flatEntityMaps: flatObjectMetadataMaps,
+            });
 
-        await this.workspaceSchemaManagerService.foreignKeyManager.dropForeignKey(
-          {
-            queryRunner,
-            schemaName,
-            tableName,
-            foreignKeyName,
-          },
-        );
+          const referencedTableName = computeObjectTargetTable(
+            targetFlatObjectMetadata,
+          );
 
-        const targetFlatObjectMetadata =
-          findFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityId:
-              optimisticFlatFieldMetadata.relationTargetObjectMetadataId,
-            flatEntityMaps: flatObjectMetadataMaps,
-          });
-
-        const referencedTableName = computeObjectTargetTable(
-          targetFlatObjectMetadata,
-        );
-
-        await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
-          {
-            queryRunner,
-            schemaName,
-            foreignKey: {
-              tableName,
-              columnName: toSettings.joinColumnName,
-              referencedTableName,
-              referencedColumnName: 'id',
-              onDelete:
-                convertOnDeleteActionToOnDelete(toSettings.onDelete) ??
-                'CASCADE',
+          await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
+            {
+              queryRunner,
+              schemaName,
+              foreignKey: {
+                tableName,
+                columnName: optimisticFlatFieldMetadata.settings.joinColumnName,
+                referencedTableName,
+                referencedColumnName: 'id',
+                onDelete:
+                  convertOnDeleteActionToOnDelete(toSettings.onDelete) ??
+                  'CASCADE',
+              },
             },
-          },
-        );
+          );
+        }
       }
     }
   }
