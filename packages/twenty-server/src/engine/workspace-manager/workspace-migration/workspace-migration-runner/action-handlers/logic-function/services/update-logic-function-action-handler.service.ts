@@ -75,7 +75,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         code,
       });
     }
-    if (isDefined(update.deletedAt)) {
+    if (update.deletedAt !== undefined) {
       await this.handleDeletedAtUpdate({
         flatLogicFunction,
       });
