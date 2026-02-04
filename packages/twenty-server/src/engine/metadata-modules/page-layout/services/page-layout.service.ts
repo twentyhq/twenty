@@ -66,12 +66,15 @@ export class PageLayoutService {
     );
   }
 
-  async findByObjectMetadataId({
+  async findBy({
     workspaceId,
-    objectMetadataId,
+    filter: { objectMetadataId, pageLayoutType },
   }: {
     workspaceId: string;
-    objectMetadataId: string;
+    filter: {
+      objectMetadataId?: string;
+      pageLayoutType?: PageLayoutType;
+    };
   }): Promise<PageLayoutDTO[]> {
     const {
       flatPageLayoutMaps,
@@ -81,11 +84,17 @@ export class PageLayoutService {
 
     const activeLayouts = Object.values(flatPageLayoutMaps.byId)
       .filter(isDefined)
-      .filter(
-        (layout) =>
-          layout.objectMetadataId === objectMetadataId &&
-          !isDefined(layout.deletedAt),
-      );
+      .filter((layout) => {
+        const isNotDeleted = !isDefined(layout.deletedAt);
+        const matchesObjectMetadataId = isNonEmptyString(objectMetadataId)
+          ? layout.objectMetadataId === objectMetadataId
+          : true;
+        const matchesPageLayoutType = isDefined(pageLayoutType)
+          ? layout.type === pageLayoutType
+          : true;
+
+        return isNotDeleted && matchesObjectMetadataId && matchesPageLayoutType;
+      });
 
     return activeLayouts.map((layout) =>
       fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(
