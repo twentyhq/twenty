@@ -85,16 +85,16 @@ export class LogicFunctionEntity
   @Column({ nullable: false, default: false })
   isTool: boolean;
 
-  @Column({ nullable: false, type: 'uuid' })
-  logicFunctionLayerId: string;
+  @Column({ nullable: true, type: 'uuid' })
+  logicFunctionLayerId: string | null;
 
   @ManyToOne(
     () => LogicFunctionLayerEntity,
     (logicFunctionLayer) => logicFunctionLayer.logicFunctions,
-    { nullable: false },
+    { nullable: true },
   )
   @JoinColumn({ name: 'logicFunctionLayerId' })
-  logicFunctionLayer: Relation<LogicFunctionLayerEntity>;
+  logicFunctionLayer: Relation<LogicFunctionLayerEntity> | null;
 
   @Column({ nullable: true, type: 'jsonb' })
   cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;

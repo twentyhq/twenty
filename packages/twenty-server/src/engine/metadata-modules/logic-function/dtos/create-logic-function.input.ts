@@ -39,7 +39,7 @@ export class CreateLogicFunctionInput {
   universalIdentifier?: string;
 
   @HideField()
-  logicFunctionLayerId?: string;
+  logicFunctionLayerId?: string | null;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()

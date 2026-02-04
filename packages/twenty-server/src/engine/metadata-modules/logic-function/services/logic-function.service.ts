@@ -7,7 +7,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
-import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -31,7 +30,6 @@ export class LogicFunctionService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
-    private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
   ) {}
@@ -42,7 +40,7 @@ export class LogicFunctionService {
     ownerFlatApplication,
   }: {
     input: Omit<CreateLogicFunctionInput, 'applicationId'> & {
-      logicFunctionLayerId?: string;
+      logicFunctionLayerId?: string | null;
     };
     ownerFlatApplication?: FlatApplication;
     workspaceId: string;
@@ -56,25 +54,7 @@ export class LogicFunctionService {
         )
       ).workspaceCustomFlatApplication;
 
-    let logicFunctionToCreateLayerId = input.logicFunctionLayerId;
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    if (!isDefined(logicFunctionToCreateLayerId)) {
-      const { id: commonLogicFunctionLayerId } =
-        await this.logicFunctionLayerService.createCommonLayer({
-          workspaceId,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        });
-
-      logicFunctionToCreateLayerId = commonLogicFunctionLayerId;
-    }
+    const logicFunctionToCreateLayerId = input.logicFunctionLayerId ?? null;
 
     const flatLogicFunctionToCreate =
       fromCreateLogicFunctionInputToFlatLogicFunction({

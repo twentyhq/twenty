@@ -8,13 +8,14 @@ import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
-import { FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export type FunctionBuildParams = {
   flatLogicFunction: FlatLogicFunction;
@@ -26,42 +27,79 @@ export class LogicFunctionBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   async hasLayerDependencies({
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
   }: {
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<boolean> {
-    const packageJsonExists = await this.fileStorageService.checkFileExists_v2({
-      workspaceId: flatLogicFunctionLayer.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: 'package.json',
-    });
-
-    const yarnLockExists = await this.fileStorageService.checkFileExists_v2({
-      workspaceId: flatLogicFunctionLayer.workspaceId,
+    const packageJsonInSource =
+      await this.fileStorageService.checkFileExists_v2({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: 'package.json',
+      });
+    const yarnLockInSource = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: 'yarn.lock',
     });
 
-    return packageJsonExists && yarnLockExists;
+    if (packageJsonInSource && yarnLockInSource) {
+      return true;
+    }
+
+    const packageJsonInDeps = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'package.json',
+    });
+    const yarnLockInDeps = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'yarn.lock',
+    });
+
+    return packageJsonInDeps && yarnLockInDeps;
   }
 
   async uploadDependencies({
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
   }: {
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
+    const packageJsonStream = await this.fileStorageService.readFile_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'package.json',
+    });
+    const packageJsonContent = (
+      await streamToBuffer(packageJsonStream)
+    ).toString('utf-8');
+
+    const yarnLockStream = await this.fileStorageService.readFile_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'yarn.lock',
+    });
+    const yarnLockContent = (await streamToBuffer(yarnLockStream)).toString(
+      'utf-8',
+    );
+
     await this.fileStorageService.writeFile_v2({
-      workspaceId: flatLogicFunctionLayer.workspaceId,
+      workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: 'package.json',
-      sourceFile: JSON.stringify(flatLogicFunctionLayer.packageJson, null, 2),
+      sourceFile: packageJsonContent,
       mimeType: undefined,
       settings: {
         isTemporaryFile: false,
@@ -70,11 +108,11 @@ export class LogicFunctionBuildService {
     });
 
     await this.fileStorageService.writeFile_v2({
-      workspaceId: flatLogicFunctionLayer.workspaceId,
+      workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: 'yarn.lock',
-      sourceFile: flatLogicFunctionLayer.yarnLock,
+      sourceFile: yarnLockContent,
       mimeType: undefined,
       settings: {
         isTemporaryFile: false,

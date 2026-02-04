@@ -6,7 +6,7 @@ import {
   DEFAULT_API_URL_NAME,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined, isEmptyObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import {
@@ -35,7 +35,6 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
-import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 
 const MIN_TOKEN_EXPIRATION_IN_SECONDS = 5;
 
@@ -69,7 +68,6 @@ export class LogicFunctionExecutorService
     private readonly functionBuildService: LogicFunctionBuildService,
     private readonly subscriptionService: SubscriptionService,
     private readonly auditService: AuditService,
-    private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
@@ -100,12 +98,10 @@ export class LogicFunctionExecutorService
       flatLogicFunctionMaps,
       flatApplicationMaps,
       applicationVariableMaps,
-      logicFunctionLayerMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatLogicFunctionMaps',
       'flatApplicationMaps',
       'applicationVariableMaps',
-      'logicFunctionLayerMaps',
     ]);
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
@@ -123,12 +119,13 @@ export class LogicFunctionExecutorService
       );
     }
 
-    const flatLogicFunctionLayer =
-      logicFunctionLayerMaps.byId[flatLogicFunction.logicFunctionLayerId];
+    const flatApplication = isDefined(flatLogicFunction.applicationId)
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+      : undefined;
 
-    if (!isDefined(flatLogicFunctionLayer)) {
+    if (!isDefined(flatApplication)) {
       throw new LogicFunctionExecutionException(
-        `Logic function layer with id ${flatLogicFunction.logicFunctionLayerId} not found`,
+        `Application not found for logic function ${id}`,
         LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
@@ -180,15 +177,14 @@ export class LogicFunctionExecutorService
       );
     }
 
-    // TODO: remove when all logic functions are migrated
     if (
       !(await this.functionBuildService.hasLayerDependencies({
-        flatLogicFunctionLayer,
+        flatApplication,
         applicationUniversalIdentifier,
       }))
     ) {
       await this.functionBuildService.uploadDependencies({
-        flatLogicFunctionLayer,
+        flatApplication,
         applicationUniversalIdentifier,
       });
     }
@@ -210,7 +206,7 @@ export class LogicFunctionExecutorService
       callback: () =>
         this.execute({
           flatLogicFunction,
-          flatLogicFunctionLayer,
+          flatApplication,
           applicationUniversalIdentifier,
           payload,
           env: envVariables,
@@ -307,26 +303,10 @@ export class LogicFunctionExecutorService
   async getAvailablePackages(logicFunctionId: string) {
     const logicFunction = await this.logicFunctionRepository.findOneOrFail({
       where: { id: logicFunctionId },
-      relations: ['logicFunctionLayer', 'application'],
+      relations: ['application'],
     });
 
-    if (isEmptyObject(logicFunction.logicFunctionLayer.availablePackages)) {
-      await this.logicFunctionLayerService.update(
-        logicFunction.logicFunctionLayer.id,
-        {},
-        logicFunction.application.universalIdentifier,
-        logicFunction.workspaceId,
-      );
-
-      return (
-        await this.logicFunctionRepository.findOneOrFail({
-          where: { id: logicFunctionId },
-          relations: ['logicFunctionLayer'],
-        })
-      ).logicFunctionLayer.availablePackages;
-    }
-
-    return logicFunction.logicFunctionLayer.availablePackages;
+    return logicFunction.application.availablePackages ?? {};
   }
 
   private async throttleExecution(workspaceId: string) {

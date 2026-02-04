@@ -6,13 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { FileFolder } from 'twenty-shared/types';
 import { PackageJson } from 'type-fest';
 
-import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-
 import { LogicFunctionLayerEntity } from 'src/engine/metadata-modules/logic-function-layer/logic-function-layer.entity';
 import { CreateLogicFunctionLayerInput } from 'src/engine/metadata-modules/logic-function-layer/dtos/create-logic-function-layer.input';
 import { getLastCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/get-last-common-layer-dependencies';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -21,7 +18,6 @@ export class LogicFunctionLayerService {
   constructor(
     @InjectRepository(LogicFunctionLayerEntity)
     private readonly logicFunctionLayerRepository: Repository<LogicFunctionLayerEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
   ) {}
 
@@ -51,34 +47,7 @@ export class LogicFunctionLayerService {
       availablePackages,
     });
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'logicFunctionLayerMaps',
-    ]);
-
     return savedLayer;
-  }
-
-  async update(
-    id: string,
-    data: QueryDeepPartialEntity<Omit<LogicFunctionLayerEntity, 'workspace'>>,
-    applicationUniversalIdentifier: string,
-    workspaceId: string,
-  ) {
-    const availablePackages = await this.getAvailablePackages({
-      workspaceId,
-      applicationUniversalIdentifier,
-    });
-
-    const result = await this.logicFunctionLayerRepository.update(id, {
-      ...data,
-      availablePackages,
-    });
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'logicFunctionLayerMaps',
-    ]);
-
-    return result;
   }
 
   async createCommonLayer({
