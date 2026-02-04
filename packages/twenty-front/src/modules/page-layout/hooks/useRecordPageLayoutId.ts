@@ -11,6 +11,7 @@ export const useRecordPageLayoutId = ({
     {
       objectNameSingular: targetObjectNameSingular,
       objectRecordId: id,
+      withSoftDeleted: true,
     },
   );
 
