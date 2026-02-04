@@ -195,14 +195,14 @@ export class WorkflowVersionStepResolver {
     );
 
     await this.logicFunctionService.updateChecksum({
-      id,
+      id: logicFunctionId,
       checksum,
       workspaceId,
     });
 
     const result =
       await this.logicFunctionExecutorService.executeOneLogicFunction({
-        id,
+        id: logicFunctionId,
         workspaceId,
         payload,
       });
