@@ -1,5 +1,5 @@
-import { type FrontComponentConfig } from '@/front-component/front-component-config';
 import { type ApplicationConfig } from '@/sdk/application/application-config';
+import { type FrontComponentConfig } from '@/sdk/front-component-config';
 import { type LogicFunctionConfig } from '@/sdk/logic-functions/logic-function-config';
 import {
   type FieldManifest,

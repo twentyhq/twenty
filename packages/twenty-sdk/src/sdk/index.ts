@@ -16,6 +16,7 @@ export type {
 } from './common/types/define-entity.type';
 export type { SyncableEntityOptions } from './common/types/syncable-entity-options.type';
 export { createValidationResult } from './common/utils/create-validation-result';
+export { defineFrontComponent } from './define-front-component';
 export type {
   ActorField,
   AddressField,
@@ -31,6 +32,10 @@ export { FieldType } from './fields/field-type';
 export { OnDeleteAction } from './fields/on-delete-action';
 export { RelationType } from './fields/relation-type';
 export { validateFields } from './fields/validate-fields';
+export type {
+  FrontComponentType,
+  FrontComponentConfig,
+} from './front-component-config';
 export { defineLogicFunction } from './logic-functions/define-logic-function';
 export type {
   LogicFunctionHandler,
