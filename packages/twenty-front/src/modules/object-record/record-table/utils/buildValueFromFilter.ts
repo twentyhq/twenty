@@ -208,6 +208,7 @@ const computeValueFromFilterMultiSelect = (
 ) => {
   switch (operand) {
     case ViewFilterOperand.CONTAINS:
+    case ViewFilterOperand.IS:
     case ViewFilterOperand.IS_NOT_EMPTY:
       try {
         const parsedValue = parseJson<string[]>(value);

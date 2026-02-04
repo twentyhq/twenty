@@ -114,6 +114,7 @@ export const FILTER_OPERANDS_MAP = {
   MULTI_SELECT: [
     RecordFilterOperand.CONTAINS,
     RecordFilterOperand.DOES_NOT_CONTAIN,
+    RecordFilterOperand.IS,
     ...emptyOperands,
   ],
   SELECT: [

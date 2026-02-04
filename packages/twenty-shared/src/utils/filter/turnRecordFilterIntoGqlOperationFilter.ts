@@ -984,6 +984,27 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               },
             ],
           };
+        case RecordFilterOperand.IS: {
+          const conditions = [];
+
+          if (nonEmptyOptions.length > 0) {
+            conditions.push({
+              [correspondingFieldMetadataItem.name]: {
+                containsEvery: nonEmptyOptions,
+              } as MultiSelectFilter,
+            });
+          }
+
+          if (emptyOptions.length > 0) {
+            conditions.push({
+              [correspondingFieldMetadataItem.name]: {
+                isEmptyArray: true,
+              } as MultiSelectFilter,
+            });
+          }
+
+          return conditions.length === 1 ? conditions[0] : { or: conditions };
+        }
         default:
           throw new Error(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,

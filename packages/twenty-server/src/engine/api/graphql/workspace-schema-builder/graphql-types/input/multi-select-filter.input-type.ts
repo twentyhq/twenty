@@ -11,6 +11,7 @@ export const MultiSelectFilterType = new GraphQLInputObjectType({
   name: 'MultiSelectFilter',
   fields: {
     containsAny: { type: new GraphQLList(GraphQLString) },
+    containsEvery: { type: new GraphQLList(GraphQLString) },
     is: { type: FilterIs },
     isEmptyArray: { type: GraphQLBoolean },
   },

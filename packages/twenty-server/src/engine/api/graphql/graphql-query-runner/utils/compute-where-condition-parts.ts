@@ -147,6 +147,11 @@ export const computeWhereConditionParts = ({
         sql: `${fieldReference}::text[] && ARRAY[:...${key}${uuid}]::text[]`,
         params: { [`${key}${uuid}`]: value },
       };
+    case 'containsEvery':
+      return {
+        sql: `${fieldReference}::text[] @> ARRAY[:...${key}${uuid}]::text[]`,
+        params: { [`${key}${uuid}`]: value },
+      };
     case 'containsIlike':
       return {
         sql: `EXISTS (SELECT 1 FROM unnest(${fieldReference}) AS elem WHERE elem ILIKE :${key}${uuid})`,
