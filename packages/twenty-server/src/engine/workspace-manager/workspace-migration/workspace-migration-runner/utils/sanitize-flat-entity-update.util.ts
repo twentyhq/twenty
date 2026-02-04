@@ -1,26 +1,24 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
-import {
-  type FlatEntityUpdate,
-  type MetadataFlatEntityComparableProperties,
-} from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
+import { MetadataUniversalFlatEntityComparableProperties, UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+
 
 export const sanitizeFlatEntityUpdate = <T extends AllMetadataName>({
   flatEntityUpdate,
   metadataName,
 }: {
-  flatEntityUpdate: FlatEntityUpdate<T>;
+  flatEntityUpdate: UniversalFlatEntityUpdate<T>;
   metadataName: T;
-}): FlatEntityUpdate<T> => {
+}): UniversalFlatEntityUpdate<T> => {
   const { propertiesToCompare } =
     ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[metadataName];
 
-  const initialAccumulator: FlatEntityUpdate<T> = {};
+  const initialAccumulator: UniversalFlatEntityUpdate<T> = {};
 
   return propertiesToCompare.reduce((accumulator, property) => {
     const updatedValue =
-      flatEntityUpdate[property as MetadataFlatEntityComparableProperties<T>];
+      flatEntityUpdate[property as MetadataUniversalFlatEntityComparableProperties<T>];
 
     if (updatedValue === undefined) {
       return accumulator;

@@ -1,6 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
+import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 
 export type FlatEntityUpdateValidationArgs<T extends AllMetadataName> = Omit<
@@ -8,6 +8,6 @@ export type FlatEntityUpdateValidationArgs<T extends AllMetadataName> = Omit<
   'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
 > & {
   flatEntityId: string;
-  flatEntityUpdate: FlatEntityUpdate<T>;
+  flatEntityUpdate: UniversalFlatEntityUpdate<T>;
   universalIdentifier: string;
 };
