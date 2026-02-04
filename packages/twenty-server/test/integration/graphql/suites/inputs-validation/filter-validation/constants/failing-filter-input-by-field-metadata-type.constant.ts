@@ -35,7 +35,7 @@ export const failingFilterInputByFieldMetadataType: {
       },
       gqlErrorMessage: 'Invalid UUID',
       restFilterInput: 'manyToOneRelationFieldId[eq]:"invalid-uuid"',
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
     {
       gqlFilterInput: {
@@ -67,7 +67,7 @@ export const failingFilterInputByFieldMetadataType: {
       },
       gqlErrorMessage: 'Invalid UUID',
       restFilterInput: `${joinColumnNameForManyToOneMorphRelationField1}[eq]:"invalid-uuid"`,
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
     {
       gqlFilterInput: {
@@ -85,44 +85,44 @@ export const failingFilterInputByFieldMetadataType: {
       gqlFilterInput: { uuidField: { eq: 'invalid-uuid' } },
       gqlErrorMessage: 'Invalid UUID',
       restFilterInput: 'uuidField[eq]:"invalid-uuid"',
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
     {
       gqlFilterInput: { uuidField: { eq: undefined } },
       gqlErrorMessage:
         'undefined is not iterable (cannot read property Symbol(Symbol.iterator))',
       restFilterInput: 'uuidField[eq]:"undefined"',
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
     {
       gqlFilterInput: { uuidField: { eq: 2 } },
       gqlErrorMessage: 'UUID must be a string',
       restFilterInput: 'uuidField[eq]:2',
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
     {
       gqlFilterInput: { uuidField: { eq: {} } },
       gqlErrorMessage: 'UUID must be a string',
       restFilterInput: 'uuidField[eq]:"{}"',
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
     {
       gqlFilterInput: { uuidField: { eq: [] } },
       gqlErrorMessage: 'UUID must be a string',
       restFilterInput: 'uuidField[eq]:"[]"',
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
     {
       gqlFilterInput: { uuidField: { eq: true } },
       gqlErrorMessage: 'UUID must be a string',
       restFilterInput: 'uuidField[eq]:"true"',
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
     {
       gqlFilterInput: { uuidField: { eq: '2025-01-01' } },
       gqlErrorMessage: 'Invalid UUID',
       restFilterInput: 'uuidField[eq]:"2025-01-01"',
-      restErrorMessage: 'Data validation error',
+      restErrorMessage: 'invalid input syntax for type uuid',
     },
   ],
   [FieldMetadataType.TEXT]: [
@@ -146,27 +146,21 @@ export const failingFilterInputByFieldMetadataType: {
   [FieldMetadataType.DATE_TIME]: [
     {
       gqlFilterInput: { dateTimeField: { eq: 'not-a-date-time' } },
-      gqlErrorMessage:
-        'invalid input syntax for type timestamp with time zone: "not-a-date-time"',
+      gqlErrorMessage: 'Data validation error.',
       restFilterInput: 'dateTimeField[eq]:"not-a-date-time"',
-      restErrorMessage:
-        'invalid input syntax for type timestamp with time zone',
+      restErrorMessage: 'Data validation error.',
     },
     {
       gqlFilterInput: { dateTimeField: { eq: {} } },
-      gqlErrorMessage:
-        'invalid input syntax for type timestamp with time zone: "{}"',
+      gqlErrorMessage: 'Data validation error.',
       restFilterInput: 'dateTimeField[eq]:"{}"',
-      restErrorMessage:
-        'invalid input syntax for type timestamp with time zone',
+      restErrorMessage: 'Data validation error.',
     },
     {
       gqlFilterInput: { dateTimeField: { eq: [] } },
-      gqlErrorMessage:
-        'invalid input syntax for type timestamp with time zone: "{}"',
+      gqlErrorMessage: 'Data validation error.',
       restFilterInput: 'dateTimeField[eq]:"[]"',
-      restErrorMessage:
-        'invalid input syntax for type timestamp with time zone',
+      restErrorMessage: 'Data validation error.',
     },
     // TODO - fix this, should throw an error
     // {
@@ -178,21 +172,21 @@ export const failingFilterInputByFieldMetadataType: {
   [FieldMetadataType.DATE]: [
     {
       gqlFilterInput: { dateField: { eq: 'not-a-date' } },
-      gqlErrorMessage: 'invalid input syntax for type date: "not-a-date"',
+      gqlErrorMessage: 'Data validation error',
       restFilterInput: 'dateField[eq]:"{}"',
-      restErrorMessage: 'invalid input syntax for type date',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: { dateField: { eq: {} } },
-      gqlErrorMessage: 'invalid input syntax for type date: "{}"',
+      gqlErrorMessage: 'Data validation error',
       restFilterInput: 'dateField[eq]:"{}"',
-      restErrorMessage: 'invalid input syntax for type date',
+      restErrorMessage: 'Data validation error',
     },
     {
       gqlFilterInput: { dateField: { eq: [] } },
-      gqlErrorMessage: 'invalid input syntax for type date: "{}"',
+      gqlErrorMessage: 'Data validation error',
       restFilterInput: 'dateField[eq]:"[]"',
-      restErrorMessage: 'invalid input syntax for type date',
+      restErrorMessage: 'Data validation error',
     },
   ],
   [FieldMetadataType.BOOLEAN]: [
