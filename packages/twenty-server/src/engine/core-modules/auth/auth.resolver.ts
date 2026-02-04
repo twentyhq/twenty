@@ -590,7 +590,7 @@ export class AuthResolver {
           workspaceId,
           impersonatorUserWorkspaceId,
           impersonatedUserWorkspaceId,
-          impersonatorUserId,
+          _impersonatorUserId: impersonatorUserId,
           impersonatedUserId,
         },
       );

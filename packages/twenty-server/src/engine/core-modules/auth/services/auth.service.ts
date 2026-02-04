@@ -403,7 +403,7 @@ export class AuthService {
     workspaceId: string;
     impersonatorUserWorkspaceId: string;
     impersonatedUserWorkspaceId: string;
-    impersonatorUserId: string;
+    _impersonatorUserId: string;
     impersonatedUserId: string;
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
