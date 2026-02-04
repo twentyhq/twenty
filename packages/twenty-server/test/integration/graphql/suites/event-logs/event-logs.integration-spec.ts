@@ -462,7 +462,7 @@ describe('Event Logs (integration)', () => {
 
       expect(record).toHaveProperty('event');
       expect(record).toHaveProperty('timestamp');
-      expect(record).toHaveProperty('userId');
+      expect(record).toHaveProperty('userWorkspaceId');
       expect(record).toHaveProperty('properties');
       expect(typeof record.event).toBe('string');
       expect(typeof record.timestamp).toBe('string');
