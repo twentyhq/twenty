@@ -24,7 +24,7 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 
 export type GenericValidateFlatPageLayoutWidgetTypeSpecificitiesArgs =
   FlatEntityValidationArgs<'pageLayoutWidget'> & {
-    updates?: FlatEntityUpdate<'pageLayoutWidget'>;
+    update?: FlatEntityUpdate<'pageLayoutWidget'>;
   };
 
 export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs =
@@ -32,7 +32,7 @@ export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs =
 
 export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs =
   FlatEntityValidationArgs<'pageLayoutWidget'> & {
-    updates: FlatEntityUpdate<'pageLayoutWidget'>;
+    update: FlatEntityUpdate<'pageLayoutWidget'>;
   };
 
 @Injectable()
