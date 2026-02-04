@@ -15,6 +15,7 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { NOT_STARTED_RUNS_FIND_OPTIONS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/not-started-runs-find-options';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 
 @Injectable()
@@ -86,9 +87,7 @@ export class WorkflowRunEnqueueWorkspaceService {
             );
 
             const batchRuns = await workflowRunRepository.find({
-              where: {
-                status: WorkflowRunStatus.NOT_STARTED,
-              },
+              where: NOT_STARTED_RUNS_FIND_OPTIONS,
               select: {
                 id: true,
               },
