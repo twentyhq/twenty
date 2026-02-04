@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { FLAT_VIEW_FILTER_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter-group/constants/flat-view-filter-group-editable-properties.constant';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
@@ -29,7 +30,10 @@ export const fromUpdateViewFilterGroupInputToFlatViewFilterGroupToUpdateOrThrow 
       );
 
     const existingFlatViewFilterGroupToUpdate =
-      flatViewFilterGroupMaps.byId[viewFilterGroupToUpdateId];
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: viewFilterGroupToUpdateId,
+        flatEntityMaps: flatViewFilterGroupMaps,
+      });
 
     if (!isDefined(existingFlatViewFilterGroupToUpdate)) {
       throw new ViewFilterGroupException(

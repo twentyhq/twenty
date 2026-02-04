@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
-
 import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { useEffect } from 'react';
 
 type StandaloneRichTextWidgetAutoFocusEffectProps = {
   shouldFocus: boolean;

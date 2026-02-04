@@ -5,6 +5,7 @@ import { resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   WorkflowStepExecutorException,
@@ -57,8 +58,10 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
           },
         );
 
-      const logicFunction =
-        flatLogicFunctionMaps.byId[workflowActionInput.logicFunctionId];
+      const logicFunction = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: workflowActionInput.logicFunctionId,
+        flatEntityMaps: flatLogicFunctionMaps,
+      });
 
       if (!logicFunction) {
         throw new WorkflowStepExecutorException(

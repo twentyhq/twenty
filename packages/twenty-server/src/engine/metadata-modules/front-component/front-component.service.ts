@@ -37,7 +37,7 @@ export class FrontComponentService {
         },
       );
 
-    return Object.values(flatFrontComponentMaps.byId)
+    return Object.values(flatFrontComponentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(fromFlatFrontComponentToFrontComponentDto);

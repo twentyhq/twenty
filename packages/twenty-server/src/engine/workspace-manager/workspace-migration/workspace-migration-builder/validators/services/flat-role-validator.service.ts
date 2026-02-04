@@ -4,6 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -36,9 +37,9 @@ export class FlatRoleValidatorService {
       type: 'create',
     });
 
-    const existingRoles = Object.values(optimisticFlatRoleMaps.byId).filter(
-      isDefined,
-    );
+    const existingRoles = Object.values(
+      optimisticFlatRoleMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     validationResult.errors.push(
       ...validateRoleRequiredPropertiesAreDefined({
@@ -81,7 +82,10 @@ export class FlatRoleValidatorService {
       type: 'delete',
     });
 
-    const existingRole = optimisticFlatRoleMaps.byId[flatEntityToValidate.id];
+    const existingRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatEntityToValidate.id,
+      flatEntityMaps: optimisticFlatRoleMaps,
+    });
 
     if (!isDefined(existingRole)) {
       validationResult.errors.push({
@@ -113,7 +117,10 @@ export class FlatRoleValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'update'> {
-    const fromFlatRole = optimisticFlatRoleMaps.byId[flatEntityId];
+    const fromFlatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatRoleMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -160,9 +167,9 @@ export class FlatRoleValidatorService {
     });
 
     if (isDefined(flatRoleLabelUpdate)) {
-      const existingRoles = Object.values(optimisticFlatRoleMaps.byId).filter(
-        isDefined,
-      );
+      const existingRoles = Object.values(
+        optimisticFlatRoleMaps.byUniversalIdentifier,
+      ).filter(isDefined);
 
       validationResult.errors.push(
         ...validateRoleLabelUniqueness({

@@ -98,7 +98,6 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       namePlural: createObjectInput.namePlural,
       nameSingular: createObjectInput.nameSingular,
       shortcut: createObjectInput.shortcut ?? null,
-      standardId: createObjectInput.standardId ?? null,
       standardOverrides: null,
       applicationId: flatApplication.id,
       universalIdentifier,

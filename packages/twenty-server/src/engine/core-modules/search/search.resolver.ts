@@ -57,7 +57,7 @@ export class SearchResolver {
       );
 
     const flatObjectMetadatas = Object.values(
-      flatObjectMetadataMaps.byId,
+      flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
     const filteredObjectMetadataItems =

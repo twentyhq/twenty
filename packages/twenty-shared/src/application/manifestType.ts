@@ -5,7 +5,6 @@ import { type FieldManifest } from './fieldManifestType';
 import { type FrontComponentManifest } from './frontComponentManifestType';
 import { type LogicFunctionManifest } from './logicFunctionManifestType';
 import { type ObjectManifest } from './objectManifestType';
-import { type PackageJson } from './packageJsonType';
 import { type RoleManifest } from './roleManifestType';
 
 export type Manifest = {
@@ -17,6 +16,4 @@ export type Manifest = {
   roles: RoleManifest[];
   publicAssets: AssetManifest[];
   sources: Sources;
-  packageJson: PackageJson;
-  yarnLock: string;
 };

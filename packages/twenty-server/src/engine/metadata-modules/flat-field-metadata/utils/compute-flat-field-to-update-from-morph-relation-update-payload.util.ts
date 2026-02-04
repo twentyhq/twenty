@@ -7,6 +7,7 @@ import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
@@ -74,7 +75,10 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
     fieldMetadataToUpdate.settings,
   );
   const junctionTargetFlatFieldMetadata = isDefined(junctionTargetFieldId)
-    ? flatFieldMetadataMaps.byId[junctionTargetFieldId]
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: junctionTargetFieldId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
     : undefined;
 
   morphRelationsUpdatePayload.forEach((morphRelationUpdatePayload) => {

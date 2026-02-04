@@ -5,22 +5,22 @@ import { join } from 'path';
 import { FileFolder } from 'twenty-shared/types';
 
 import {
-  type LogicFunctionExecutorDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
+  type LogicFunctionExecutorDriver,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
-import { copyAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-and-build-dependencies';
-import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
-import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
+import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -33,46 +33,87 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     this.fileStorageService = options.fileStorageService;
   }
 
-  private getInMemoryLayerFolderPath = (
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ) => {
-    return join(
-      LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
-      flatLogicFunctionLayer.checksum,
-    );
+  private getInMemoryLayerFolderPath = (flatApplication: FlatApplication) => {
+    const checksum = flatApplication.yarnLockChecksum ?? 'default';
+
+    return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, checksum);
   };
 
-  private async createLayerIfNotExists(
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ) {
-    const inMemoryLayerFolderPath = this.getInMemoryLayerFolderPath(
-      flatLogicFunctionLayer,
-    );
+  private async copyDependenciesInMemory({
+    applicationUniversalIdentifier,
+    workspaceId,
+    inMemoryLayerFolderPath,
+  }: {
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+    inMemoryLayerFolderPath: string;
+  }) {
+    await Promise.all([
+      this.fileStorageService.downloadFile_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Dependencies,
+        resourcePath: 'package.json',
+        localPath: join(inMemoryLayerFolderPath, 'package.json'),
+      }),
+      this.fileStorageService.downloadFile_v2({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Dependencies,
+        resourcePath: 'yarn.lock',
+        localPath: join(inMemoryLayerFolderPath, 'yarn.lock'),
+      }),
+    ]);
+  }
+
+  private async createLayerIfNotExists({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
+    const inMemoryLayerFolderPath =
+      this.getInMemoryLayerFolderPath(flatApplication);
 
     try {
       await fs.access(inMemoryLayerFolderPath);
     } catch {
-      await copyAndBuildDependencies(
+      await this.copyDependenciesInMemory({
+        applicationUniversalIdentifier,
+        workspaceId: flatApplication.workspaceId,
         inMemoryLayerFolderPath,
-        flatLogicFunctionLayer,
-      );
+      });
+      await copyYarnEngineAndBuildDependencies(inMemoryLayerFolderPath);
     }
   }
 
   async delete() {}
 
-  private async build(flatLogicFunctionLayer: FlatLogicFunctionLayer) {
-    await this.createLayerIfNotExists(flatLogicFunctionLayer);
+  private async build({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
+    await this.createLayerIfNotExists({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
   }
 
   async execute({
     flatLogicFunction,
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
     payload,
     env,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    await this.build(flatLogicFunctionLayer);
+    await this.build({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
 
     const startTime = Date.now();
 
@@ -96,7 +137,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
       try {
         await fs.symlink(
           join(
-            this.getInMemoryLayerFolderPath(flatLogicFunctionLayer),
+            this.getInMemoryLayerFolderPath(flatApplication),
             'node_modules',
           ),
           join(sourceTemporaryDir, 'node_modules'),

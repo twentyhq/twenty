@@ -30,11 +30,13 @@ import {
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { formatColumnNamesFromCompositeFieldAndSubfields } from 'src/engine/twenty-orm/utils/format-column-names-from-composite-field-and-subfield.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 
 import { type OrderByClause } from './types/order-by-condition.type';
 
@@ -70,9 +72,10 @@ export class GraphqlQueryOrderGroupByParser {
   }): Record<string, OrderByClause>[] {
     const parsedOrderBy: Record<string, OrderByClause>[] = [];
 
-    const fields = this.flatObjectMetadata.fieldIds
-      .map((id) => this.flatFieldMetadataMaps.byId[id])
-      .filter(isDefined);
+    const fields = findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityIds: this.flatObjectMetadata.fieldIds,
+      flatEntityMaps: this.flatFieldMetadataMaps,
+    });
 
     const availableAggregations: Record<string, AggregationField> =
       getAvailableAggregationsFromObjectFields(fields);
@@ -97,7 +100,10 @@ export class GraphqlQueryOrderGroupByParser {
 
       const fieldName = Object.keys(orderByArg)[0];
       const fieldMetadataId = this.fieldIdByName[fieldName];
-      const fieldMetadata = this.flatFieldMetadataMaps.byId[fieldMetadataId];
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadataId,
+        flatEntityMaps: this.flatFieldMetadataMaps,
+      });
 
       if (!isDefined(fieldMetadata)) {
         throw new UserInputError(`Cannot orderBy unknown field: ${fieldName}.`);

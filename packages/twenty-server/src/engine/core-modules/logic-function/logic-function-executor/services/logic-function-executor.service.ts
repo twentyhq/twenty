@@ -98,12 +98,10 @@ export class LogicFunctionExecutorService
       flatLogicFunctionMaps,
       flatApplicationMaps,
       applicationVariableMaps,
-      logicFunctionLayerMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatLogicFunctionMaps',
       'flatApplicationMaps',
       'applicationVariableMaps',
-      'logicFunctionLayerMaps',
     ]);
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
@@ -121,12 +119,13 @@ export class LogicFunctionExecutorService
       );
     }
 
-    const flatLogicFunctionLayer =
-      logicFunctionLayerMaps.byId[flatLogicFunction.logicFunctionLayerId];
+    const flatApplication = isDefined(flatLogicFunction.applicationId)
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+      : undefined;
 
-    if (!isDefined(flatLogicFunctionLayer)) {
+    if (!isDefined(flatApplication)) {
       throw new LogicFunctionExecutionException(
-        `Logic function layer with id ${flatLogicFunction.logicFunctionLayerId} not found`,
+        `Application not found for logic function ${id}`,
         LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
       );
     }
@@ -179,6 +178,18 @@ export class LogicFunctionExecutorService
     }
 
     if (
+      !(await this.functionBuildService.hasLayerDependencies({
+        flatApplication,
+        applicationUniversalIdentifier,
+      }))
+    ) {
+      await this.functionBuildService.uploadDependencies({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    }
+
+    if (
       !(await this.functionBuildService.isBuilt({
         flatLogicFunction,
         applicationUniversalIdentifier,
@@ -189,12 +200,13 @@ export class LogicFunctionExecutorService
         applicationUniversalIdentifier,
       });
     }
+    // END TODO
 
     const resultLogicFunction = await this.callWithTimeout({
       callback: () =>
         this.execute({
           flatLogicFunction,
-          flatLogicFunctionLayer,
+          flatApplication,
           applicationUniversalIdentifier,
           payload,
           env: envVariables,
@@ -291,30 +303,10 @@ export class LogicFunctionExecutorService
   async getAvailablePackages(logicFunctionId: string) {
     const logicFunction = await this.logicFunctionRepository.findOneOrFail({
       where: { id: logicFunctionId },
-      relations: ['logicFunctionLayer'],
+      relations: ['application'],
     });
 
-    const packageJson = logicFunction.logicFunctionLayer.packageJson;
-
-    const yarnLock = logicFunction.logicFunctionLayer.yarnLock;
-
-    const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
-
-    const versions: Record<string, string> = {};
-
-    let match: RegExpExecArray | null;
-
-    while ((match = packageVersionRegex.exec(yarnLock)) !== null) {
-      const packageName = match[1].split('@', 1)[0];
-      const version = match[2];
-
-      // @ts-expect-error legacy noImplicitAny
-      if (packageJson.dependencies?.[packageName]) {
-        versions[packageName] = version;
-      }
-    }
-
-    return versions;
+    return logicFunction.application.availablePackages ?? {};
   }
 
   private async throttleExecution(workspaceId: string) {

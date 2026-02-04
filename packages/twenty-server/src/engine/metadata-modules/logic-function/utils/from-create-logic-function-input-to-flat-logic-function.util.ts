@@ -16,9 +16,7 @@ import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-funct
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
 export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
-  createLogicFunctionInput: CreateLogicFunctionInput & {
-    logicFunctionLayerId: string;
-  };
+  createLogicFunctionInput: CreateLogicFunctionInput;
   workspaceId: string;
   ownerFlatApplication: FlatApplication;
 };
@@ -61,7 +59,6 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     applicationId: ownerFlatApplication.id,
     runtime: LogicFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,
-    logicFunctionLayerId: rawCreateLogicFunctionInput.logicFunctionLayerId,
     workspaceId,
     code: rawCreateLogicFunctionInput?.code,
     checksum: rawCreateLogicFunctionInput?.code

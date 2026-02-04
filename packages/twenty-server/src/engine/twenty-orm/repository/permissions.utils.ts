@@ -10,6 +10,7 @@ import { type QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMa
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -96,7 +97,10 @@ export const validateOperationIsPermittedOrThrow = ({
     );
   }
 
-  const objectMetadata = flatObjectMetadataMaps.byId[objectMetadataIdForEntity];
+  const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: objectMetadataIdForEntity,
+    flatEntityMaps: flatObjectMetadataMaps,
+  });
 
   if (!isDefined(objectMetadata)) {
     throw new PermissionsException(

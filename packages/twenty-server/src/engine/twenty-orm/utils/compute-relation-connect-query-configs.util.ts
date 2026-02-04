@@ -8,6 +8,8 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
@@ -147,8 +149,10 @@ const computeRecordToConnectCondition = (
   uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
-  const field =
-    flatFieldMetadataMaps.byId[fieldMaps.fieldIdByName[connectFieldName]];
+  const field = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: fieldMaps.fieldIdByName[connectFieldName],
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   if (
     !isDefined(field) ||
@@ -168,8 +172,12 @@ const computeRecordToConnectCondition = (
   }
   checkNoRelationFieldConflictOrThrow(entity, connectFieldName);
 
-  const targetObjectMetadata =
-    flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId || ''];
+  const targetObjectMetadata = field.relationTargetObjectMetadataId
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: field.relationTargetObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      })
+    : undefined;
 
   if (!isDefined(targetObjectMetadata)) {
     throw new TwentyORMException(
@@ -211,18 +219,16 @@ const checkUniqueConstraintFullyPopulated = (
     flatFieldMetadataMaps,
   );
 
-  const indexMetadatas = flatObjectMetadata.indexMetadataIds
-    .map((indexId) => flatIndexMaps.byId[indexId])
-    .filter(isDefined)
-    .map((index) => ({
-      id: index.id,
-      isUnique: index.isUnique,
-      indexFieldMetadatas: index.flatIndexFieldMetadatas.map(
-        (fieldMetadata) => ({
-          fieldMetadataId: fieldMetadata.fieldMetadataId,
-        }),
-      ),
-    }));
+  const indexMetadatas = findManyFlatEntityByIdInFlatEntityMaps({
+    flatEntityIds: flatObjectMetadata.indexMetadataIds,
+    flatEntityMaps: flatIndexMaps,
+  }).map((index) => ({
+    id: index.id,
+    isUnique: index.isUnique,
+    indexFieldMetadatas: index.flatIndexFieldMetadatas.map((fieldMetadata) => ({
+      fieldMetadataId: fieldMetadata.fieldMetadataId,
+    })),
+  }));
 
   const uniqueConstraintsFields = getUniqueConstraintsFields<
     FlatFieldMetadata,
