@@ -242,11 +242,11 @@ describe('reactGlobalsPlugin', () => {
         plugins: [reactGlobalsPlugin],
       });
 
-      const outputA = result.outputFiles.find((f) =>
-        f.path.includes('component-a'),
+      const outputA = result.outputFiles.find(
+        (f) => path.basename(f.path) === 'component-a.js',
       )?.text;
-      const outputB = result.outputFiles.find((f) =>
-        f.path.includes('component-b'),
+      const outputB = result.outputFiles.find(
+        (f) => path.basename(f.path) === 'component-b.js',
       )?.text;
 
       expect(outputA).toBeDefined();
