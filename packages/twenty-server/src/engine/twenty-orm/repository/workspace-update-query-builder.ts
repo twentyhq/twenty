@@ -173,7 +173,6 @@ export class WorkspaceUpdateQueryBuilder<
 
       let filesFieldDiffByEntityIndex = null;
       let filesFieldFileIds = null;
-      let fileIdToApplicationId = new Map<string, string>();
 
       const updatePayload = Array.isArray(this.expressionMap.valuesSet)
         ? (this.expressionMap.valuesSet[0] ?? {})
@@ -197,7 +196,6 @@ export class WorkspaceUpdateQueryBuilder<
         });
 
         filesFieldFileIds = result.fileIds;
-        fileIdToApplicationId = result.fileIdToApplicationId;
 
         this.expressionMap.valuesSet = result.entities[0];
       }
@@ -236,10 +234,7 @@ export class WorkspaceUpdateQueryBuilder<
       const result = await super.execute();
 
       if (isDefined(filesFieldFileIds)) {
-        await this.filesFieldSync.updateFileEntityRecords(
-          filesFieldFileIds,
-          fileIdToApplicationId,
-        );
+        await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
       const after = await eventSelectQueryBuilder.getMany();
@@ -374,7 +369,6 @@ export class WorkspaceUpdateQueryBuilder<
 
       let filesFieldDiffByEntityIndex = null;
       let filesFieldFileIds = null;
-      let fileIdToApplicationId = null;
 
       const entities = this.manyInputs.map((input) => input.partialEntity);
 
@@ -394,7 +388,6 @@ export class WorkspaceUpdateQueryBuilder<
         });
 
         filesFieldFileIds = result.fileIds;
-        fileIdToApplicationId = result.fileIdToApplicationId;
 
         this.manyInputs = result.entities.map((updatedEntity, index) => ({
           criteria: this.manyInputs[index].criteria,
@@ -451,11 +444,8 @@ export class WorkspaceUpdateQueryBuilder<
         results.push(result);
       }
 
-      if (isDefined(filesFieldFileIds) && isDefined(fileIdToApplicationId)) {
-        await this.filesFieldSync.updateFileEntityRecords(
-          filesFieldFileIds,
-          fileIdToApplicationId,
-        );
+      if (isDefined(filesFieldFileIds)) {
+        await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
       const afterRecords = await eventSelectQueryBuilder.getMany();

@@ -1,6 +1,6 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 
-export const UPLOAD_FILES_FIELD_FILE = gql`
+export const uploadFilesFieldFileMutation = gql`
   mutation UploadFilesFieldFile($file: Upload!, $fieldMetadataId: String!) {
     uploadFilesFieldFile(file: $file, fieldMetadataId: $fieldMetadataId) {
       id

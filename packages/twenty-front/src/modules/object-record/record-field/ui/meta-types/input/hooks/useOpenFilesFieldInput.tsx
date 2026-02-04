@@ -36,6 +36,7 @@ export const useOpenFilesFieldInput = () => {
     ({ snapshot, set }) =>
       async ({
         fieldName,
+        fieldMetadataId,
         recordId,
         prefix,
         updateRecord,
@@ -43,6 +44,7 @@ export const useOpenFilesFieldInput = () => {
         fieldDefinition,
       }: {
         fieldName: string;
+        fieldMetadataId: string;
         recordId: string;
         prefix?: string;
         updateRecord: (updateInput: Record<string, unknown>) => void;
@@ -120,6 +122,7 @@ export const useOpenFilesFieldInput = () => {
             try {
               const uploadedFiles = await uploadMultipleFiles(
                 selectedFiles,
+                fieldMetadataId,
                 uploadFile,
               );
 

@@ -89,6 +89,7 @@ export const FilesFieldInput = () => {
         try {
           const uploadedFiles = await uploadMultipleFiles(
             selectedFiles,
+            fieldDefinition.fieldMetadataId,
             uploadFile,
           );
 
@@ -113,6 +114,7 @@ export const FilesFieldInput = () => {
     handleChange,
     onEnter,
     parseFilesArrayToFilesValue,
+    fieldDefinition,
   ]);
 
   const setIsFieldInError = useSetRecoilComponentState(

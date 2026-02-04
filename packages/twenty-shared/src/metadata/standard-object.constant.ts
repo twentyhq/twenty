@@ -19,7 +19,10 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-a01d-4004-9d04-4f8fb16eae5d',
       },
       name: { universalIdentifier: '20202020-87a5-48f8-bbf7-ade388825a57' },
+      file: { universalIdentifier: '20202020-15db-460e-8166-c7b5d87ad4be' },
+      //deprecated
       fullPath: { universalIdentifier: '20202020-0d19-453d-8e8d-fbcda8ca3747' },
+      //deprecated
       fileCategory: {
         universalIdentifier: '20202020-8c3f-4d9e-9a1b-2e5f7a8c9d0e',
       },
