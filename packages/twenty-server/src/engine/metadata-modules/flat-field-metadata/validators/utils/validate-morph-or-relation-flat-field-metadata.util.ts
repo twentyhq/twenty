@@ -31,19 +31,39 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
 }: ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
+  const fromFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: flatFieldMetadataToValidate.id,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
+
+  if (!isDefined(fromFlatFieldMetadata)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        message: 'Could not found updated field metadata',
+        userFriendlyMessage: msg`Could not found updated field metadata`,
+      },
+    ];
+  }
+
+  if (!isMorphOrRelationFlatFieldMetadata(fromFlatFieldMetadata)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        message: 'Udpated field is not a morph relation or a relation',
+        userFriendlyMessage: msg`Udpated field is not a morph relation or a relation`,
+      },
+    ];
+  }
+
   const toSettings = update.settings as
     | FlatFieldMetadata<MorphOrRelationFieldMetadataType>['settings']
     | undefined;
-  const fromSettings = isMorphOrRelationFlatFieldMetadata(
-    flatFieldMetadataToValidate,
-  )
-    ? flatFieldMetadataToValidate.settings
-    : undefined;
+  const fromSettings = fromFlatFieldMetadata.settings;
 
   const isJoinColumnNameUpdated =
-    isDefined(toSettings) &&
-    isDefined(toSettings.joinColumnName) &&
-    isDefined(fromSettings?.joinColumnName) &&
+    isDefined(toSettings?.joinColumnName) &&
+    isDefined(fromSettings.joinColumnName) &&
     toSettings.joinColumnName !== fromSettings.joinColumnName;
 
   if (isJoinColumnNameUpdated) {
