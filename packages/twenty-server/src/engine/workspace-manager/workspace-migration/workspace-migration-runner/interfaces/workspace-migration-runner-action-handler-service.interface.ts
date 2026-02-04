@@ -6,6 +6,7 @@ import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
@@ -30,6 +31,7 @@ import {
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyUpdateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-update-action-on-all-flat-entity-maps.util';
+import { sanitizeFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/sanitize-flat-entity-update.util';
 
 type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
   TFlatAction extends AllFlatWorkspaceMigrationAction,
@@ -131,11 +133,38 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     return Promise.resolve();
   }
 
+  private sanitizeUniversalAction(
+    universalAction: TUniversalAction,
+  ): TUniversalAction {
+    if (universalAction.type === 'update') {
+      const sanitizedFlatEntityUpdate = sanitizeFlatEntityUpdate({
+        metadataName: universalAction.metadataName,
+        flatEntityUpdate: universalAction.update as FlatEntityUpdate<
+          typeof universalAction.metadataName
+        >,
+      });
+
+      return {
+        ...universalAction,
+        update: sanitizedFlatEntityUpdate,
+      };
+    }
+
+    return universalAction;
+  }
+
   private async transpileUniversalActionToFlatActionOrThrow(
     context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
   ): Promise<TFlatAction> {
     try {
-      return await this.transpileUniversalActionToFlatAction(context);
+      const sanitizedUniversalAction = this.sanitizeUniversalAction(
+        context.action,
+      );
+
+      return await this.transpileUniversalActionToFlatAction({
+        ...context,
+        action: sanitizedUniversalAction,
+      });
     } catch (error) {
       throw new WorkspaceMigrationRunnerException({
         action: context.action,
