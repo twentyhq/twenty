@@ -10,8 +10,8 @@ import { FileFolder } from 'twenty-shared/types';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
-    getLogicFunctionBaseFolderPath,
-    getRelativePathFromBase,
+  getLogicFunctionBaseFolderPath,
+  getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
