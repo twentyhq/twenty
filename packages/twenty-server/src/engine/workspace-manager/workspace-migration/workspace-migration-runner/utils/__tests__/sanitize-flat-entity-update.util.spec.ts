@@ -1,7 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import {
-    eachTestingContextFilter,
-    type EachTestingContext,
+  eachTestingContextFilter,
+  type EachTestingContext,
 } from 'twenty-shared/testing';
 
 import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
@@ -38,7 +38,8 @@ describe('sanitizeFlatEntityUpdate', () => {
       },
     },
     {
-      title: 'should return empty object when update is empty for fieldMetadata',
+      title:
+        'should return empty object when update is empty for fieldMetadata',
       context: {
         flatEntityUpdate: {} as FlatEntityUpdate<'fieldMetadata'>,
         metadataName: 'fieldMetadata',
@@ -130,7 +131,9 @@ describe('sanitizeFlatEntityUpdate', () => {
     '$title',
     ({ context: { flatEntityUpdate, metadataName } }) => {
       const result = sanitizeFlatEntityUpdate({
-        flatEntityUpdate: flatEntityUpdate as FlatEntityUpdate<typeof metadataName>,
+        flatEntityUpdate: flatEntityUpdate as FlatEntityUpdate<
+          typeof metadataName
+        >,
         metadataName,
       });
 

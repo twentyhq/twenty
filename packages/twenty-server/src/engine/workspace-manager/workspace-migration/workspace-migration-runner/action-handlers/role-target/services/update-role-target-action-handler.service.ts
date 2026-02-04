@@ -33,7 +33,7 @@ export class UpdateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
     const roleTargetRepository =
       queryRunner.manager.getRepository<RoleTargetEntity>(RoleTargetEntity);
 
-    await roleTargetRepository.update({id: entityId, workspaceId}, update);
+    await roleTargetRepository.update({ id: entityId, workspaceId }, update);
   }
 
   async executeForWorkspaceSchema(
