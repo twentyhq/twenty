@@ -9,9 +9,8 @@
   },
   "files": [
     "dist",
-    "front-component",
-    "front-component-constants",
-    "ui"
+    "ui",
+    "front-component"
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build"
@@ -30,20 +29,20 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./front-component": {
-      "types": "./dist/front-component/index.d.ts",
-      "import": "./dist/front-component/index.mjs",
-      "require": "./dist/front-component/index.cjs"
-    },
-    "./front-component-constants": {
-      "types": "./dist/front-component-constants/index.d.ts",
-      "import": "./dist/front-component-constants/index.mjs",
-      "require": "./dist/front-component-constants/index.cjs"
-    },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
       "import": "./dist/ui/index.mjs",
       "require": "./dist/ui/index.cjs"
+    },
+    "./front-component/renderer": {
+      "types": "./dist/front-component/renderer/index.d.ts",
+      "import": "./dist/front-component/renderer/index.mjs",
+      "require": "./dist/front-component/renderer/index.cjs"
+    },
+    "./front-component/api": {
+      "types": "./dist/front-component/api/index.d.ts",
+      "import": "./dist/front-component/api/index.mjs",
+      "require": "./dist/front-component/api/index.cjs"
     }
   },
   "license": "AGPL-3.0",
@@ -99,14 +98,14 @@
   },
   "typesVersions": {
     "*": {
-      "front-component": [
-        "dist/front-component/index.d.ts"
-      ],
-      "front-component-constants": [
-        "dist/front-component-constants/index.d.ts"
-      ],
       "ui": [
         "dist/ui/index.d.ts"
+      ],
+      "front-component/renderer": [
+        "dist/front-component/renderer/index.d.ts"
+      ],
+      "front-component/api": [
+        "dist/front-component/api/index.d.ts"
       ]
     }
   }

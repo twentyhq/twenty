@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
-import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
-import { type FrontComponentExecutionContextStore } from '../context/FrontComponentExecutionContextStore';
+import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
+import { type FrontComponentExecutionContextStore } from '../types/FrontComponentExecutionContextStore';
 
 const getStore = (): FrontComponentExecutionContextStore => {
   const store = (globalThis as Record<string, unknown>)

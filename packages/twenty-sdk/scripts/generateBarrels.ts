@@ -34,6 +34,12 @@ const EXCLUDED_DIRECTORIES = [
   '**/cli/**',
 ] as const;
 const ROOT_DIRECTORIES = ['sdk'];
+const SKIP_BARREL_DIRECTORIES = ['front-component'];
+
+const NESTED_MODULE_ENTRIES = [
+  'front-component/renderer',
+  'front-component/api',
+];
 
 // Modules that re-export from external packages instead of local files
 const EXTERNAL_REEXPORT_MODULES: Record<string, string> = {
@@ -245,10 +251,28 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
   }, {});
 };
 
+const generateNestedModuleExports = () => {
+  return NESTED_MODULE_ENTRIES.reduce<ExportsConfig>((acc, modulePath) => {
+    return {
+      ...acc,
+      [`./${modulePath}`]: {
+        types: `./dist/${modulePath}/index.d.ts`,
+        import: `./dist/${modulePath}/index.mjs`,
+        require: `./dist/${modulePath}/index.cjs`,
+      },
+    };
+  }, {});
+};
+
 const computePackageJsonFilesAndExportsConfig = (
   moduleDirectories: string[],
 ) => {
   const entrypoints = moduleDirectories.map(getLastPathFolder);
+  // Get parent folders of nested modules for the files array
+  const nestedModuleParents = [
+    ...new Set(NESTED_MODULE_ENTRIES.map((entry) => entry.split('/')[0])),
+  ];
+
   const exports = {
     '.': {
       types: './dist/index.d.ts',
@@ -256,6 +280,7 @@ const computePackageJsonFilesAndExportsConfig = (
       require: './dist/index.cjs',
     },
     ...generateModulePackageExports(moduleDirectories),
+    ...generateNestedModuleExports(),
   } satisfies ExportsConfig;
 
   const typesVersionsEntries = entrypoints.reduce<Record<string, string[]>>(
@@ -266,10 +291,20 @@ const computePackageJsonFilesAndExportsConfig = (
     {},
   );
 
+  const nestedTypesVersionsEntries = NESTED_MODULE_ENTRIES.reduce<
+    Record<string, string[]>
+  >(
+    (acc, modulePath) => ({
+      ...acc,
+      [modulePath]: [`dist/${modulePath}/index.d.ts`],
+    }),
+    {},
+  );
+
   return {
     exports,
-    typesVersions: { '*': typesVersionsEntries },
-    files: ['dist', ...entrypoints],
+    typesVersions: { '*': { ...typesVersionsEntries, ...nestedTypesVersionsEntries } },
+    files: ['dist', ...entrypoints, ...nestedModuleParents],
   };
 };
 
@@ -508,11 +543,15 @@ const main = () => {
   // Separate modules that re-export from external packages
   const externalReexportModuleNames = Object.keys(EXTERNAL_REEXPORT_MODULES);
   const localModuleDirectories = moduleDirectories.filter(
-    (dir) => !externalReexportModuleNames.includes(getLastPathFolder(dir)),
+    (dir) =>
+      !externalReexportModuleNames.includes(getLastPathFolder(dir)) &&
+      !SKIP_BARREL_DIRECTORIES.includes(getLastPathFolder(dir)),
   );
 
   const otherBarrelDirectories = moduleDirectories.filter(
-    (dir) => !ROOT_DIRECTORIES.includes(getLastPathFolder(dir)),
+    (dir) =>
+      !ROOT_DIRECTORIES.includes(getLastPathFolder(dir)) &&
+      !SKIP_BARREL_DIRECTORIES.includes(getLastPathFolder(dir)),
   );
 
   const exportsByBarrel = retrieveExportsByBarrel(localModuleDirectories);
