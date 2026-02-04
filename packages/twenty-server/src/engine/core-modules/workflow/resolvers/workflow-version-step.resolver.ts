@@ -14,6 +14,7 @@ import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step-input.dto';
 import { GetCodeStepSourceCodeInput } from 'src/engine/core-modules/workflow/dtos/get-code-step-source-code-input.dto';
+import { UpdateCodeStepSourceInput } from 'src/engine/core-modules/workflow/dtos/update-code-step-source-input.dto';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step-input.dto';
 import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request-input.dto';
 import { TestHttpRequestOutput } from 'src/engine/core-modules/workflow/dtos/test-http-request-output.dto';
@@ -27,6 +28,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
@@ -90,6 +92,52 @@ export class WorkflowVersionStepResolver {
       workspaceId,
       input.id,
     );
+  }
+
+  @Mutation(() => Boolean)
+  async updateCodeStepSource(
+    @Args('input') input: UpdateCodeStepSourceInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        },
+      );
+
+    const flatLogicFunction = findFlatLogicFunctionOrThrow({
+      id: input.id,
+      flatLogicFunctionMaps,
+    });
+
+    if (
+      !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
+        flatLogicFunction,
+      )
+    ) {
+      return false;
+    }
+
+    const applicationUniversalIdentifier = isDefined(
+      flatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(applicationUniversalIdentifier)) {
+      return false;
+    }
+
+    await this.codeStepBuildService.updateCodeStepSource({
+      flatLogicFunction,
+      code: input.code,
+      applicationUniversalIdentifier,
+    });
+
+    return true;
   }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)

@@ -19,9 +19,9 @@ import {
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/build-env-var';
 import { LOGIC_FUNCTION_EXECUTOR_DRIVER } from 'src/engine/core-modules/logic-function/logic-function-executor/constants/logic-function-executor.constants';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -65,7 +65,6 @@ export class LogicFunctionExecutorService
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
-    private readonly functionBuildService: LogicFunctionBuildService,
     private readonly subscriptionService: SubscriptionService,
     private readonly auditService: AuditService,
     private readonly fileStorageService: FileStorageService,
@@ -178,7 +177,7 @@ export class LogicFunctionExecutorService
     }
 
     if (
-      !(await this.functionBuildService.hasLayerDependencies({
+      !(await this.hasLayerDependencies({
         flatApplication,
         applicationUniversalIdentifier,
       }))
@@ -325,5 +324,28 @@ export class LogicFunctionExecutorService
         setTimeout(() => reject(new Error('Execution timed out')), timeoutMs),
       ),
     ]);
+  }
+
+  private async hasLayerDependencies({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<boolean> {
+    const packageJsonExists = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'package.json',
+    });
+    const yarnLockExists = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Dependencies,
+      resourcePath: 'yarn.lock',
+    });
+
+    return packageJsonExists && yarnLockExists;
   }
 }

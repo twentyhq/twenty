@@ -15,7 +15,7 @@ import { type FileStorageService } from 'src/engine/core-modules/file-storage/fi
 import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
-} from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+} from 'src/engine/core-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';

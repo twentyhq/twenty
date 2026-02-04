@@ -4,14 +4,15 @@ import crypto from 'crypto';
 import fs from 'fs/promises';
 import { dirname, join } from 'path';
 
+import { isObject } from '@sniptt/guards';
 import { build } from 'esbuild';
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, Sources } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
-} from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
+} from 'src/engine/core-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import {
   DEFAULT_BUILT_HANDLER_PATH,
@@ -37,6 +38,12 @@ export type SeedCodeStepFilesResult = {
   sourceHandlerPath: string;
   builtHandlerPath: string;
   checksum: string;
+};
+
+export type UpdateCodeStepSourceParams = {
+  flatLogicFunction: FlatLogicFunction;
+  code: Sources;
+  applicationUniversalIdentifier: string;
 };
 
 @Injectable()
@@ -118,6 +125,51 @@ export class CodeStepBuildService {
         `${WORKFLOW_BASE_FOLDER_PREFIX}/`,
       )
     );
+  }
+
+  async updateCodeStepSource({
+    flatLogicFunction,
+    code,
+    applicationUniversalIdentifier,
+  }: UpdateCodeStepSourceParams): Promise<void> {
+    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+
+    try {
+      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
+
+      await this.writeSourcesToLocalFolder(code, sourceTemporaryDir);
+
+      const baseFolderPath = getLogicFunctionBaseFolderPath(
+        flatLogicFunction.sourceHandlerPath,
+      );
+
+      await this.fileStorageService.uploadFolder_v2({
+        workspaceId: flatLogicFunction.workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: baseFolderPath,
+        localPath: sourceTemporaryDir,
+      });
+    } finally {
+      await lambdaBuildDirectoryManager.clean();
+    }
+  }
+
+  private async writeSourcesToLocalFolder(
+    sources: Sources,
+    localPath: string,
+  ): Promise<void> {
+    for (const key of Object.keys(sources)) {
+      const filePath = join(localPath, key);
+      const value = sources[key];
+
+      if (isObject(value)) {
+        await this.writeSourcesToLocalFolder(value as Sources, filePath);
+        continue;
+      }
+      await fs.mkdir(dirname(filePath), { recursive: true });
+      await fs.writeFile(filePath, value);
+    }
   }
 
   async buildFromSourceToBuilt({

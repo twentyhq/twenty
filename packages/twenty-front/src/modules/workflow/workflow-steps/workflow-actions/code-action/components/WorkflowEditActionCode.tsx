@@ -106,7 +106,7 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { updateLogicFunction } = usePersistLogicFunction();
+  const { updateCodeStepSource } = usePersistLogicFunction();
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
@@ -150,14 +150,10 @@ export const WorkflowEditActionCode = ({
   });
 
   const handleSave = useDebouncedCallback(async () => {
-    await updateLogicFunction({
+    await updateCodeStepSource({
       input: {
         id: logicFunctionId,
-        update: {
-          name: formValues.name,
-          description: formValues.description,
-          code: formValues.code,
-        },
+        code: formValues.code,
       },
     });
   }, 500);

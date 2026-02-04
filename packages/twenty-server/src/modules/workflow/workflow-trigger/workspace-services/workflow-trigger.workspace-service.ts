@@ -188,13 +188,16 @@ export class WorkflowTriggerWorkspaceService {
   ): Promise<void> {
     const steps = workflowVersion.steps ?? [];
     const codeSteps = steps.filter(
-      (step): step is WorkflowAction & {
+      (
+        step,
+      ): step is WorkflowAction & {
         type: typeof WorkflowActionType.CODE;
         settings: { input: { logicFunctionId: string } };
       } =>
         step.type === WorkflowActionType.CODE &&
         isDefined(
-          (step.settings?.input as { logicFunctionId?: string })?.logicFunctionId,
+          (step.settings?.input as { logicFunctionId?: string })
+            ?.logicFunctionId,
         ),
     );
 

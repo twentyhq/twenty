@@ -24,7 +24,8 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   }): Promise<Pick<WorkspaceCacheDataMap, T[number]>> {
     return await this.workspaceCacheService.getOrRecompute(
       workspaceId,
-      (flatMapsKeys ?? ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
+      (flatMapsKeys ??
+        ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
     );
   }
 
@@ -39,7 +40,8 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   }): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
-      (flatMapsKeys ?? ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
+      (flatMapsKeys ??
+        ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
     );
   }
 
@@ -54,7 +56,8 @@ export class WorkspaceManyOrAllFlatEntityMapsCacheService {
   }): Promise<void> {
     await this.workspaceCacheService.flush(
       workspaceId,
-      (flatMapsKeys ?? ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
+      (flatMapsKeys ??
+        ALL_FLAT_ENTITY_MAPS_PROPERTIES) as (keyof WorkspaceCacheDataMap)[],
     );
   }
 }
