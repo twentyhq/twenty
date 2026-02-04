@@ -101,13 +101,13 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const { universalIdentifier, flatEntityUpdate: flatEntityUpdates } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
     const updateFieldAction: UniversalUpdateFieldAction = {
       type: 'update',
       metadataName: 'fieldMetadata',
       universalIdentifier,
-      update: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

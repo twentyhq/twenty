@@ -91,13 +91,13 @@ export class WorkspaceMigrationWebhookActionsBuilderService extends WorkspaceEnt
       };
     }
 
-    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateWebhookAction: FlatUpdateWebhookAction = {
       type: 'update',
       metadataName: 'webhook',
       entityId: flatEntityId,
-      update: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

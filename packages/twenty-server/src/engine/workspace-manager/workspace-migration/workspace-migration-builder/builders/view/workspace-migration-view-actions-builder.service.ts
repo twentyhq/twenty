@@ -82,13 +82,13 @@ export class WorkspaceMigrationViewActionsBuilderService extends WorkspaceEntity
       };
     }
 
-    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateViewAction: FlatUpdateViewAction = {
       type: 'update',
       metadataName: 'view',
       entityId: flatEntityId,
-      update: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

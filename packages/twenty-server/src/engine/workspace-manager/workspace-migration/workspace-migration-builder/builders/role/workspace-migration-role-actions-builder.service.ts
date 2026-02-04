@@ -82,13 +82,13 @@ export class WorkspaceMigrationRoleActionsBuilderService extends WorkspaceEntity
       };
     }
 
-    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateRoleAction: FlatUpdateRoleAction = {
       type: 'update',
       metadataName: 'role',
       entityId: flatEntityId,
-      update: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

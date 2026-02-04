@@ -109,13 +109,13 @@ export class WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderSer
       };
     }
 
-    const { flatEntityId, flatEntityUpdate: flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateAction: FlatUpdateRowLevelPermissionPredicateGroupAction = {
       type: 'update',
       metadataName: 'rowLevelPermissionPredicateGroup',
       entityId: flatEntityId,
-      update: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {
