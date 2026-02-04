@@ -13,6 +13,7 @@ import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step-input.dto';
+import { ExecuteCodeStepInput } from 'src/engine/core-modules/workflow/dtos/execute-code-step-input.dto';
 import { GetCodeStepSourceCodeInput } from 'src/engine/core-modules/workflow/dtos/get-code-step-source-code-input.dto';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step-input.dto';
 import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request-input.dto';
@@ -29,6 +30,8 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
@@ -59,6 +62,7 @@ export class WorkflowVersionStepResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly codeStepBuildService: CodeStepBuildService,
+    private readonly logicFunctionService: LogicFunctionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -138,6 +142,85 @@ export class WorkflowVersionStepResolver {
     });
 
     return true;
+  }
+
+  @Mutation(() => LogicFunctionExecutionResultDTO)
+  async executeCodeStep(
+    @Args('input') input: ExecuteCodeStepInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<LogicFunctionExecutionResultDTO> {
+    const { id, payload } = input;
+
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        },
+      );
+
+    const flatLogicFunction = findFlatLogicFunctionOrThrow({
+      id,
+      flatLogicFunctionMaps,
+    });
+
+    if (
+      !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
+        flatLogicFunction,
+      )
+    ) {
+      throw new Error(
+        'Logic function is not a workflow code step or does not exist',
+      );
+    }
+
+    const applicationUniversalIdentifier = isDefined(
+      flatLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
+
+    if (!isDefined(applicationUniversalIdentifier)) {
+      throw new Error(
+        'Workflow code step application universal identifier not found',
+      );
+    }
+
+    const { checksum } =
+      await this.codeStepBuildService.buildFromSourceToBuilt({
+        flatLogicFunction,
+        applicationUniversalIdentifier,
+      });
+
+    await this.logicFunctionService.updateChecksum({
+      id,
+      checksum,
+      workspaceId,
+    });
+
+    const result =
+      await this.logicFunctionExecutorService.executeOneLogicFunction({
+        id,
+        workspaceId,
+        payload,
+      });
+
+    return {
+      data: result.data as LogicFunctionExecutionResultDTO['data'],
+      logs: result.logs,
+      duration: result.duration,
+      status: result.status,
+      error: result.error
+        ? {
+            errorType: result.error.errorType,
+            errorMessage: result.error.errorMessage,
+            stackTrace: Array.isArray(result.error.stackTrace)
+              ? result.error.stackTrace.join('\n')
+              : result.error.stackTrace,
+          }
+        : undefined,
+    };
   }
 
   @Mutation(() => WorkflowVersionStepChangesDTO)

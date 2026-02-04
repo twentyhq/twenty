@@ -14,7 +14,6 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { INDEX_FILE_NAME } from '@/logic-functions/constants/IndexFileName';
-import { useTestLogicFunction } from '@/logic-functions/hooks/useTestLogicFunction';
 import { getFunctionInputFromSourceCode } from '@/logic-functions/utils/getFunctionInputFromSourceCode';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -24,6 +23,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useTestWorkflowCodeStep } from '@/workflow/hooks/useTestWorkflowCodeStep';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
@@ -144,7 +144,7 @@ export const WorkflowEditActionCode = ({
     });
   };
 
-  const { testLogicFunction, isTesting } = useTestLogicFunction({
+  const { testLogicFunction, isTesting } = useTestWorkflowCodeStep({
     logicFunctionId,
     callback: updateOutputSchemaFromTestResult,
   });
