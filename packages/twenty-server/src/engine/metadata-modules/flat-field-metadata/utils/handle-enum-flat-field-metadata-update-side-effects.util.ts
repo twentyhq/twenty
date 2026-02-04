@@ -53,7 +53,6 @@ export const handleEnumFlatFieldMetadataUpdateSideEffects = ({
       FlatFieldMetadata<EnumFieldMetadataType>,
       'options'
     > = {
-      from: fromFlatFieldMetadata.options,
       property: 'options',
       to: toFlatFieldMetadata.options,
     };

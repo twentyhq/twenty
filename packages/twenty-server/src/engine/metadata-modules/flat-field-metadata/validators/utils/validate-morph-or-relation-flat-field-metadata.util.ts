@@ -44,7 +44,11 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
     | undefined;
 
   const toSettings = settingsUpdate?.to;
-  const fromSettings = settingsUpdate?.from;
+  const fromSettings = isMorphOrRelationFlatFieldMetadata(
+    flatFieldMetadataToValidate,
+  )
+    ? flatFieldMetadataToValidate.settings
+    : undefined;
 
   const isJoinColumnNameUpdated =
     isDefined(settingsUpdate) &&

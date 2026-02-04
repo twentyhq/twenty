@@ -8,3 +8,10 @@ export type FlatEntityPropertiesUpdates<
   T extends AllMetadataName,
   K extends FlatEntityPropertiesToCompare<T> = FlatEntityPropertiesToCompare<T>,
 > = Array<FlatEntityPropertyUpdate<T, Extract<K, keyof MetadataFlatEntity<T>>>>;
+
+export type FlatEntityUpdate<T extends AllMetadataName> = Partial<
+  Pick<
+    MetadataFlatEntity<T>,
+    Extract<FlatEntityPropertiesToCompare<T>, keyof MetadataFlatEntity<T>>
+  >
+>;

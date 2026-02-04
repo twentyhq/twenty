@@ -24,7 +24,6 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
             updates: [
               {
                 property: 'label',
-                from: 'Search Vector',
                 to: 'Updated Search Vector',
               },
             ],
@@ -36,7 +35,6 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
             updates: [
               {
                 property: 'label',
-                from: 'First Name',
                 to: 'Updated First Name',
               },
             ],
@@ -48,7 +46,6 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
             updates: [
               {
                 property: 'label',
-                from: 'Last Name',
                 to: 'Updated Last Name',
               },
             ],
