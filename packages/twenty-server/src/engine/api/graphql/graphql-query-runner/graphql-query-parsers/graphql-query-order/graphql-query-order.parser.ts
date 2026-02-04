@@ -18,6 +18,7 @@ import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -71,7 +72,10 @@ export class GraphqlQueryOrderFieldParser {
         const fieldMetadataId =
           this.fieldIdByName[fieldName] ||
           this.fieldIdByJoinColumnName[fieldName];
-        const fieldMetadata = this.flatFieldMetadataMaps.byId[fieldMetadataId];
+        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: this.flatFieldMetadataMaps,
+        });
 
         if (!fieldMetadata || orderByDirection === undefined) {
           throw new GraphqlQueryRunnerException(
@@ -173,10 +177,10 @@ export class GraphqlQueryOrderFieldParser {
       return null;
     }
 
-    const targetObjectMetadata =
-      this.flatObjectMetadataMaps.byId[
-        fieldMetadata.relationTargetObjectMetadataId
-      ];
+    const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+      flatEntityMaps: this.flatObjectMetadataMaps,
+    });
 
     if (!isDefined(targetObjectMetadata)) {
       return null;
@@ -205,8 +209,10 @@ export class GraphqlQueryOrderFieldParser {
       );
     }
 
-    const nestedFieldMetadata =
-      this.flatFieldMetadataMaps.byId[nestedFieldMetadataId];
+    const nestedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: nestedFieldMetadataId,
+      flatEntityMaps: this.flatFieldMetadataMaps,
+    });
 
     if (!isDefined(nestedFieldMetadata)) {
       return null;

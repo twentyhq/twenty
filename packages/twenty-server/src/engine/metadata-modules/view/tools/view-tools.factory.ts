@@ -88,9 +88,9 @@ export class ViewToolsFactory {
         },
       );
 
-    const objectMetadata = Object.values(flatObjectMetadataMaps.byId).find(
-      (obj) => obj?.nameSingular === objectNameSingular,
-    );
+    const objectMetadata = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    ).find((obj) => obj?.nameSingular === objectNameSingular);
 
     if (!objectMetadata) {
       throw new Error(

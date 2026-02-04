@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export type { ApplicationConfig } from './application/application-config';
 export { defineApplication } from './application/define-application';
 export type {
   ValidationResult,

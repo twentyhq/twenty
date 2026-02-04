@@ -816,6 +816,7 @@ msgstr "Contradicting field permissions have been detected on a relation field (
 
 #. js-lingui-id: LZf/L8
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
+#: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 msgid "Could not find flat entity in maps"
 msgstr "Could not find flat entity in maps"
 
@@ -2996,6 +2997,11 @@ msgstr "Please use Settings to remove a workspace member."
 msgid "Please use single sign-on to authenticate."
 msgstr "Please use single sign-on to authenticate."
 
+#. js-lingui-id: c7uZDh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
+msgstr "Position layoutMode \"{layoutMode}\" does not match tab layoutMode \"{tabLayoutMode}\""
+
 #. js-lingui-id: KTTUV3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -4358,22 +4364,41 @@ msgstr "Welcome to Twenty: Please Confirm Your Email"
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget extends beyond grid height"
 msgstr "Widget extends beyond grid height"
 
 #. js-lingui-id: PFI4iS
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget extends beyond grid width"
 msgstr "Widget extends beyond grid width"
+
+#. js-lingui-id: +9R1ka
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
+msgid "Widget index must be a non-negative integer"
+msgstr "Widget index must be a non-negative integer"
+
+#. js-lingui-id: znCTbL
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util.ts
+msgid "Widget index must be an integer"
+msgstr "Widget index must be an integer"
 
 #. js-lingui-id: 09IBNJ
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Widget not found."
 msgstr "Widget not found."
 
+#. js-lingui-id: MPdWmx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+msgid "Widget position type must match the tab layout mode"
+msgstr "Widget position type must match the tab layout mode"
+
 #. js-lingui-id: D5gHL1
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util.ts
+#: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
 msgid "Widget row exceeds grid height"
 msgstr "Widget row exceeds grid height"
 

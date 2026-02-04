@@ -12,6 +12,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -156,8 +157,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       );
 
-    const updatedFlatObjectMetadata =
-      recomputedFlatObjectMetadataMaps.byId[flatObjectMetadataToUpdate.id];
+    const updatedFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatObjectMetadataToUpdate.id,
+      flatEntityMaps: recomputedFlatObjectMetadataMaps,
+    });
 
     if (!isDefined(updatedFlatObjectMetadata)) {
       throw new ObjectMetadataException(
@@ -461,8 +464,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       );
 
-    const createdFlatObjectMetadata =
-      recomputedFlatObjectMetadataMaps.byId[flatObjectMetadataToCreate.id];
+    const createdFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatObjectMetadataToCreate.id,
+      flatEntityMaps: recomputedFlatObjectMetadataMaps,
+    });
 
     if (!isDefined(createdFlatObjectMetadata)) {
       throw new ObjectMetadataException(
@@ -584,10 +589,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       );
 
-    const deleteObjectInputs = Object.values(flatObjectMetadataMaps.byId)
+    const deleteObjectInputs = Object.keys(
+      flatObjectMetadataMaps.universalIdentifierById,
+    )
       .filter(isDefined)
-      .map<DeleteOneObjectInput>((flatObjectMetadata) => ({
-        id: flatObjectMetadata.id,
+      .map<DeleteOneObjectInput>((id) => ({
+        id,
       }));
 
     await this.deleteManyObjectMetadatas({

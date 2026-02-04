@@ -179,20 +179,20 @@ describe('WorkspaceEntityManager', () => {
     };
 
     const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
-      byId: {
+      byUniversalIdentifier: {
         'test-entity-id': mockFlatObjectMetadata,
       },
-      idByUniversalIdentifier: {
+      universalIdentifierById: {
         'test-entity-id': 'test-entity-id',
       },
       universalIdentifiersByApplicationId: {},
     };
 
     const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
-      byId: {
+      byUniversalIdentifier: {
         'field-id': mockFlatFieldMetadata,
       },
-      idByUniversalIdentifier: {
+      universalIdentifierById: {
         'field-id': 'field-id',
       },
       universalIdentifiersByApplicationId: {},
@@ -203,18 +203,18 @@ describe('WorkspaceEntityManager', () => {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       flatRowLevelPermissionPredicateMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       flatRowLevelPermissionPredicateGroupMaps: {
-        byId: {},
-        idByUniversalIdentifier: {},
+        byUniversalIdentifier: {},
+        universalIdentifierById: {},
         universalIdentifiersByApplicationId: {},
       },
       objectIdByNameSingular: {
@@ -231,6 +231,8 @@ describe('WorkspaceEntityManager', () => {
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_ATTACHMENT_MIGRATED: false,
+        IS_NOTE_TARGET_MIGRATED: false,
+        IS_TASK_TARGET_MIGRATED: false,
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
         IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED: false,

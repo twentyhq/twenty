@@ -37,7 +37,9 @@ export class TrashCleanupService {
         },
       );
 
-    const objectNames = Object.values(flatObjectMetadataMaps.byId ?? {})
+    const objectNames = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier ?? {},
+    )
       .map((metadata) => metadata?.nameSingular)
       .filter(isDefined);
 

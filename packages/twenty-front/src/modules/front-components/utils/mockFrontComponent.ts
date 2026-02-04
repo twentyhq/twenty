@@ -1,6 +1,6 @@
+/* eslint-disable */
 import { isDefined } from 'twenty-shared/utils';
 
-// eslint-disable-next-line
 const mockFrontComponentCode = `
 // react-globals:react
 var useState = globalThis.React.useState;

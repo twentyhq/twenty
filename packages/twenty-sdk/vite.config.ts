@@ -11,6 +11,8 @@ const moduleEntries = Object.keys((packageJson as any).exports || {})
 
 const entries = ['src/index.ts', 'src/cli/cli.ts', ...moduleEntries];
 
+const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
+
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
     throw new Error(
@@ -32,18 +34,18 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   return `${moduleDirectory}.${extension}`;
 };
 
-const copySharedDist = () => {
-  return {
-    name: 'copy-twenty-shared-dist',
+const copyTwentyPackagesInVendor = (packages: string[]) => {
+  return packages.map((packageName) => ({
+    name: `copy-${packageName}-dist`,
     closeBundle: async () => {
-      const sharedDist = path.resolve(__dirname, '../twenty-shared/dist');
-      const vendorDist = path.resolve(__dirname, 'dist/vendor/twenty-shared');
+      const sharedDist = path.resolve(__dirname, `../${packageName}/dist`);
+      const vendorDist = path.resolve(__dirname, `dist/vendor/${packageName}`);
 
       await fs.remove(vendorDist);
       await fs.ensureDir(path.dirname(vendorDist));
       await fs.copy(sharedDist, vendorDist);
     },
-  };
+  }));
 };
 
 export default defineConfig(() => {
@@ -61,7 +63,7 @@ export default defineConfig(() => {
       tsconfigPaths({
         root: __dirname,
       }),
-      copySharedDist(),
+      ...copyTwentyPackagesInVendor(PACKAGES_TO_VENDOR),
       dts({
         entryRoot: './src',
         tsconfigPath: tsConfigPath,
@@ -76,12 +78,18 @@ export default defineConfig(() => {
             .join(path.posix.sep);
           if (!rel.startsWith('.')) rel = `./${rel}`;
 
+          const formattedContent = PACKAGES_TO_VENDOR.reduce((acc, pkg) => {
+            const regex = new RegExp(
+              `(from\\s+["'])${pkg}(\\/[^"']*)?(["'])`,
+              'g',
+            );
+
+            return acc.replace(regex, `$1${rel}/${pkg}$2$3`);
+          }, content);
+
           return {
             filePath,
-            content: content.replace(
-              /(from\s+["'])twenty-shared(\/[^"']*)?(["'])/g,
-              `$1${rel}/twenty-shared$2$3`,
-            ),
+            content: formattedContent,
           };
         },
       }),

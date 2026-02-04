@@ -23,7 +23,7 @@ export const doesOtherObjectWithSameNameExists = ({
   objectMetadataNameSingular,
   existingObjectMetadataId,
 }: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams) =>
-  Object.values(objectMetadataMaps.byId)
+  Object.values(objectMetadataMaps.byUniversalIdentifier)
     .filter(isDefined)
     .some(
       (objectMetadata) =>

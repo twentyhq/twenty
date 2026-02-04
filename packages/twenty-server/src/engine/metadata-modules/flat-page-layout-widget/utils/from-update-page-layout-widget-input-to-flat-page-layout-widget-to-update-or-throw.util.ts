@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
@@ -34,7 +35,10 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
       ]);
 
     const existingFlatPageLayoutWidgetToUpdate =
-      flatPageLayoutWidgetMaps.byId[pageLayoutWidgetToUpdateId];
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: pageLayoutWidgetToUpdateId,
+        flatEntityMaps: flatPageLayoutWidgetMaps,
+      });
 
     if (!isDefined(existingFlatPageLayoutWidgetToUpdate)) {
       throw new PageLayoutWidgetException(

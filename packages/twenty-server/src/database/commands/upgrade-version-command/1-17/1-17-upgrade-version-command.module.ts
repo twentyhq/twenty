@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
 import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files.command';
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
+import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-send-email-recipients.command';
+import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
 import { MigrateWorkflowCodeStepsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-workflow-code-steps.command';
 import { SeedWorkflowV1_16Command } from 'src/database/commands/upgrade-version-command/1-17/1-17-seed-workflow-v1-16.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -29,6 +32,8 @@ import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-wo
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 
 @Module({
   imports: [
@@ -39,6 +44,8 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
       FeatureFlagEntity,
       AttachmentWorkspaceEntity,
       WebhookEntity,
+      NoteTargetWorkspaceEntity,
+      TaskTargetWorkspaceEntity,
       FileEntity,
       LogicFunctionEntity,
     ]),
@@ -58,21 +65,27 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
   ],
   providers: [
     MigrateAttachmentToMorphRelationsCommand,
+    MigrateNoteTargetToMorphRelationsCommand,
+    MigrateTaskTargetToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
     MigrateWorkflowCodeStepsCommand,
     SeedWorkflowV1_16Command,
+    BackfillApplicationPackageFilesCommand,
   ],
   exports: [
     MigrateAttachmentToMorphRelationsCommand,
+    MigrateNoteTargetToMorphRelationsCommand,
+    MigrateTaskTargetToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
     MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     DeleteFileRecordsCommand,
     MigrateSendEmailRecipientsCommand,
     MigrateWorkflowCodeStepsCommand,
     SeedWorkflowV1_16Command,
+    BackfillApplicationPackageFilesCommand,
   ],
 })
 export class V1_17_UpgradeVersionCommandModule {}
