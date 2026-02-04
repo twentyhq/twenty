@@ -61,9 +61,13 @@ export const FilesFieldInput = () => {
       const nextValue = parseFilesArrayToFilesValue(updatedFiles);
       if (isDefined(nextValue)) {
         setDraftValue(nextValue);
+
+        if (nextValue.length === 0) {
+          onEnter?.({ newValue: nextValue });
+        }
       }
     },
-    [parseFilesArrayToFilesValue, setDraftValue],
+    [parseFilesArrayToFilesValue, setDraftValue, onEnter],
   );
 
   const handleUploadClick = useCallback(() => {
