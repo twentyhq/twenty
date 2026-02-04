@@ -42,7 +42,7 @@ type AllFlatEntityPropertiesConfiguration = {
   [P in AllMetadataName]: FlatEntityPropertyConfiguration<P>;
 };
 
-export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
+export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME = {
   fieldMetadata: {
     defaultValue: { toStringify: true },
     description: {},
