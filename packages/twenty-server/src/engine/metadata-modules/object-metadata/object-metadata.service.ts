@@ -594,9 +594,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       ]);
 
     const workspaceLevelItems = Object.values(
-      flatNavigationMenuItemMaps.byId,
+      flatNavigationMenuItemMaps.byUniversalIdentifier,
     ).filter(
-      (item): item is NonNullable<typeof item> =>
+      (item): item is FlatNavigationMenuItem =>
         isDefined(item) && !isDefined(item.userWorkspaceId),
     );
     const nextPosition =

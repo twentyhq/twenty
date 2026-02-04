@@ -17,6 +17,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
@@ -224,8 +225,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     const flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[] = [];
 
     for (const favoriteFolder of favoriteFolders) {
-      const existingFolder =
-        existingFlatNavigationMenuItemMaps.byId[favoriteFolder.id];
+      const existingFolder = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: existingFlatNavigationMenuItemMaps,
+        flatEntityId: favoriteFolder.id,
+      });
 
       if (isDefined(existingFolder)) {
         this.logger.log(
@@ -334,8 +337,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         field.name !== 'favoriteFolder' &&
         isDefined(field.relationTargetObjectMetadataId)
       ) {
-        const targetObjectMetadata =
-          flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId];
+        const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatObjectMetadataMaps,
+          flatEntityId: field.relationTargetObjectMetadataId,
+        });
 
         if (isDefined(targetObjectMetadata)) {
           favoriteRelationFieldMap.set(field.name, {
@@ -376,9 +381,9 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
 
       if (isDefined(favorite.viewId)) {
         const existingItem = Object.values(
-          existingFlatNavigationMenuItemMaps.byId,
+          existingFlatNavigationMenuItemMaps.byUniversalIdentifier,
         ).find(
-          (item) =>
+          (item): item is FlatNavigationMenuItem =>
             isDefined(item) &&
             item.workspaceId === workspaceId &&
             item.userWorkspaceId === userWorkspaceId &&
@@ -445,7 +450,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         continue;
       }
 
-      const existingItem = existingFlatNavigationMenuItemMaps.byId[favorite.id];
+      const existingItem = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: existingFlatNavigationMenuItemMaps,
+        flatEntityId: favorite.id,
+      });
 
       if (isDefined(existingItem)) {
         this.logger.log(
@@ -501,7 +509,10 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     workspaceId: string;
     userWorkspaceId: string | null;
   }): { applicationId: string; universalIdentifier: string } {
-    const flatView = flatViewMaps.byId[viewId];
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatViewMaps,
+      flatEntityId: viewId,
+    });
 
     if (!isDefined(flatView)) {
       return {
@@ -524,9 +535,9 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     }
 
     const standardUniversalIdentifierInExisting = Object.values(
-      existingFlatNavigationMenuItemMaps.byId,
+      existingFlatNavigationMenuItemMaps.byUniversalIdentifier,
     ).some(
-      (item) =>
+      (item): item is FlatNavigationMenuItem =>
         isDefined(item) &&
         item.workspaceId === workspaceId &&
         item.universalIdentifier === matchingStandardItem.universalIdentifier,
