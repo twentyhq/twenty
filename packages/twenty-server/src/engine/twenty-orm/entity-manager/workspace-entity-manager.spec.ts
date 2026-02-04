@@ -231,6 +231,8 @@ describe('WorkspaceEntityManager', () => {
         IS_EMAILING_DOMAIN_ENABLED: false,
         IS_DASHBOARD_V2_ENABLED: false,
         IS_ATTACHMENT_MIGRATED: false,
+        IS_NOTE_TARGET_MIGRATED: false,
+        IS_TASK_TARGET_MIGRATED: false,
         IS_TIMELINE_ACTIVITY_MIGRATED: false,
         IS_GLOBAL_WORKSPACE_DATASOURCE_ENABLED: false,
         IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED: false,

@@ -3,7 +3,12 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "watchOptions": {
-    "ignored": ["**/node_modules/**", "**/dist/**", "**/.git/**", "**/.nx/**"]
+    "ignored": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/.git/**",
+      "**/.nx/**"
+    ]
   },
   "compilerOptions": {
     "builder": "swc",
@@ -36,6 +41,10 @@
       },
       {
         "include": "engine/workspace-manager/dev-seeder/data/sample-files/**",
+        "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/core-modules/application/constants/default-package-files/**",
         "outDir": "dist/assets"
       }
     ]

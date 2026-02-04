@@ -1,17 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, type Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
+import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
+import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -21,6 +25,7 @@ export class ApplicationService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -261,13 +266,25 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
+    const defaultPackageFields = await getDefaultApplicationPackageFields();
+
     const twentyStandardApplication = await this.create(
       {
         ...TWENTY_STANDARD_APPLICATION,
         logicFunctionLayerId: null,
         workspaceId,
         canBeUninstalled: false,
+        packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
+        packageJsonFileId: null,
+        yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
+        yarnLockFileId: null,
+        availablePackages: defaultPackageFields.availablePackages,
       },
+      queryRunner,
+    );
+
+    await this.uploadDefaultPackageFilesAndSetFileIds(
+      twentyStandardApplication,
       queryRunner,
     );
 
@@ -283,14 +300,17 @@ export class ApplicationService {
   async createWorkspaceCustomApplication(
     {
       workspaceId,
+      applicationId,
       workspaceDisplayName,
     }: {
       workspaceId: string;
+      applicationId: string;
       workspaceDisplayName?: string;
     },
     queryRunner?: QueryRunner,
   ) {
-    const applicationId = v4();
+    const defaultPackageFields = await getDefaultApplicationPackageFields();
+
     const workspaceCustomApplication = await this.create(
       {
         description: 'Workspace custom application',
@@ -298,15 +318,91 @@ export class ApplicationService {
         sourcePath: 'workspace-custom',
         version: '1.0.0',
         universalIdentifier: applicationId,
-        workspaceId: workspaceId,
+        workspaceId,
         id: applicationId,
         logicFunctionLayerId: null,
         canBeUninstalled: false,
+        packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
+        packageJsonFileId: null,
+        yarnLockChecksum: defaultPackageFields.yarnLockChecksum,
+        yarnLockFileId: null,
+        availablePackages: defaultPackageFields.availablePackages,
       },
       queryRunner,
     );
 
+    await this.uploadDefaultPackageFilesAndSetFileIds(
+      workspaceCustomApplication,
+      queryRunner,
+    );
+
     return workspaceCustomApplication;
+  }
+
+  async uploadDefaultPackageFilesAndSetFileIds(
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >,
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
+    const defaultPackageFields = await getDefaultApplicationPackageFields();
+
+    const packageJsonChecksum = logicFunctionCreateHash(
+      JSON.stringify(JSON.parse(defaultPackageFields.packageJsonContent)),
+    );
+    const yarnLockChecksum = logicFunctionCreateHash(
+      defaultPackageFields.yarnLockContent,
+    );
+    const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
+      defaultPackageFields.packageJsonContent,
+      defaultPackageFields.yarnLockContent,
+    );
+
+    const packageJsonFile = await this.fileStorageService.writeFile_v2({
+      sourceFile: defaultPackageFields.packageJsonContent,
+      mimeType: undefined,
+      fileFolder: FileFolder.Dependencies,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId: application.workspaceId,
+      resourcePath: 'package.json',
+      settings: { isTemporaryFile: false, toDelete: false },
+      queryRunner,
+    });
+
+    const yarnLockFile = await this.fileStorageService.writeFile_v2({
+      sourceFile: defaultPackageFields.yarnLockContent,
+      mimeType: undefined,
+      fileFolder: FileFolder.Dependencies,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId: application.workspaceId,
+      resourcePath: 'yarn.lock',
+      settings: { isTemporaryFile: false, toDelete: false },
+      queryRunner,
+    });
+
+    if (queryRunner) {
+      await queryRunner.manager.update(
+        ApplicationEntity,
+        { id: application.id },
+        {
+          packageJsonFileId: packageJsonFile.id,
+          yarnLockFileId: yarnLockFile.id,
+          packageJsonChecksum,
+          yarnLockChecksum,
+          availablePackages,
+        },
+      );
+    } else {
+      await this.update(application.id, {
+        packageJsonFileId: packageJsonFile.id,
+        yarnLockFileId: yarnLockFile.id,
+        packageJsonChecksum,
+        yarnLockChecksum,
+        availablePackages,
+        workspaceId: application.workspaceId,
+      });
+    }
   }
 
   async create(

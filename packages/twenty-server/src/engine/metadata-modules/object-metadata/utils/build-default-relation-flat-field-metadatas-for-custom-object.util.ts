@@ -32,8 +32,8 @@ const morphIdByRelationObjectNameSingular = {
     STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
   favorite: null,
   attachment: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
-  noteTarget: null,
-  taskTarget: null,
+  noteTarget: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
+  taskTarget: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
 } satisfies Record<
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
   string | null
@@ -97,6 +97,10 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             ]) ||
           (objectMetadataNameSingular === 'attachment' &&
             existingFeatureFlagsMap[FeatureFlagKey.IS_ATTACHMENT_MIGRATED]) ||
+          (objectMetadataNameSingular === 'noteTarget' &&
+            existingFeatureFlagsMap[FeatureFlagKey.IS_NOTE_TARGET_MIGRATED]) ||
+          (objectMetadataNameSingular === 'taskTarget' &&
+            existingFeatureFlagsMap[FeatureFlagKey.IS_TASK_TARGET_MIGRATED]) ||
           false;
         const isObjectMigratedToMorphRelations =
           isObjectMigratedFromOlderReleases || isFeatureFlagEnabled;
