@@ -20,6 +20,7 @@ import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/servi
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
+import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
@@ -134,6 +135,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     AuthResolver,
     GoogleAPIsService,
     GoogleAPIScopesService,
+    GoogleApisServiceAvailabilityService,
     MicrosoftAPIsService,
     AppTokenService,
     AccessTokenService,
