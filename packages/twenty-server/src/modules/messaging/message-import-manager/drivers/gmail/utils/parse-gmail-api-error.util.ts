@@ -116,7 +116,11 @@ export const parseGmailApiError = (
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
-      break;
+
+      return new MessageImportDriverException(
+        `${gmailApiError.code} - ${gmailApiError.message}`,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      );
 
     default:
       break;
