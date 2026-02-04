@@ -33,6 +33,7 @@ const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
 const MAX_LOCAL_STALE_VERSIONS = 5; // 5 stale versions
+const MAX_LOCAL_CACHE_ENTRIES = 500;
 
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 
@@ -393,6 +394,26 @@ export class WorkspaceCacheService implements OnModuleInit {
     entry.lastHashCheckedAt = Date.now();
 
     this.cleanupStaleVersions(entry);
+    this.evictLRUEntriesIfNeeded();
+  }
+
+  private evictLRUEntriesIfNeeded(): void {
+    if (this.localCache.size <= MAX_LOCAL_CACHE_ENTRIES) {
+      return;
+    }
+
+    const entries = [...this.localCache.entries()].sort(
+      (a, b) => a[1].lastHashCheckedAt - b[1].lastHashCheckedAt,
+    );
+
+    const toEvict = entries.slice(
+      0,
+      this.localCache.size - MAX_LOCAL_CACHE_ENTRIES,
+    );
+
+    for (const [key] of toEvict) {
+      this.localCache.delete(key);
+    }
   }
 
   private cleanupStaleVersions(
