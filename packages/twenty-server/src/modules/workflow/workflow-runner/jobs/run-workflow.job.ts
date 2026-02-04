@@ -9,9 +9,12 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
+import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
   WorkflowRunException,
@@ -20,6 +23,7 @@ import {
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class RunWorkflowJob {
@@ -29,6 +33,8 @@ export class RunWorkflowJob {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly metricsService: MetricsService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly codeStepBuildService: CodeStepBuildService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Process(RUN_WORKFLOW_JOB_NAME)
@@ -96,6 +102,11 @@ export class RunWorkflowJob {
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
       );
     }
+
+    await this.buildCodeStepsFromSource({
+      workspaceId,
+      steps: workflowVersion.steps,
+    });
 
     await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
@@ -170,6 +181,66 @@ export class RunWorkflowJob {
       workflowRunId,
       workspaceId,
     });
+  }
+
+  private async buildCodeStepsFromSource({
+    workspaceId,
+    steps,
+  }: {
+    workspaceId: string;
+    steps: Array<{ type: string; settings?: { input?: { logicFunctionId?: string } } }>;
+  }): Promise<void> {
+    const codeSteps = steps.filter(
+      (step) =>
+        step.type === WorkflowActionType.CODE &&
+        isDefined(step.settings?.input?.logicFunctionId),
+    );
+
+    if (codeSteps.length === 0) {
+      return;
+    }
+
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        },
+      );
+
+    for (const step of codeSteps) {
+      const logicFunctionId = step.settings!.input!.logicFunctionId!;
+      const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: logicFunctionId,
+        flatEntityMaps: flatLogicFunctionMaps,
+      });
+
+      if (
+        !isDefined(flatLogicFunction) ||
+        flatLogicFunction.deletedAt ||
+        !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
+          flatLogicFunction,
+        )
+      ) {
+        continue;
+      }
+
+      const applicationUniversalIdentifier = isDefined(
+        flatLogicFunction.applicationId,
+      )
+        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+            ?.universalIdentifier
+        : undefined;
+
+      if (!isDefined(applicationUniversalIdentifier)) {
+        continue;
+      }
+
+      await this.codeStepBuildService.buildFromSourceToBuilt({
+        flatLogicFunction,
+        applicationUniversalIdentifier,
+      });
+    }
   }
 
   private async incrementTriggerMetrics({

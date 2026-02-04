@@ -9,10 +9,12 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import { ExecuteLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
@@ -45,6 +47,7 @@ export class LogicFunctionResolver {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly subscriptionService: SubscriptionService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly codeStepBuildService: CodeStepBuildService,
   ) {}
 
   @Query(() => LogicFunctionDTO)
@@ -198,6 +201,41 @@ export class LogicFunctionResolver {
   ) {
     try {
       const { id, payload } = input;
+
+      const { flatLogicFunctionMaps, flatApplicationMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+          },
+        );
+
+      const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: id,
+        flatEntityMaps: flatLogicFunctionMaps,
+      });
+
+      if (
+        isDefined(flatLogicFunction) &&
+        !flatLogicFunction.deletedAt &&
+        this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
+          flatLogicFunction,
+        )
+      ) {
+        const applicationUniversalIdentifier = isDefined(
+          flatLogicFunction.applicationId,
+        )
+          ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
+              ?.universalIdentifier
+          : undefined;
+
+        if (isDefined(applicationUniversalIdentifier)) {
+          await this.codeStepBuildService.buildFromSourceToBuilt({
+            flatLogicFunction,
+            applicationUniversalIdentifier,
+          });
+        }
+      }
 
       return await this.logicFunctionExecutorService.executeOneLogicFunction({
         id,

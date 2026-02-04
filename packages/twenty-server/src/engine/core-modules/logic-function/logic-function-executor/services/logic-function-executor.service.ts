@@ -189,19 +189,6 @@ export class LogicFunctionExecutorService
       });
     }
 
-    if (
-      !(await this.functionBuildService.isBuilt({
-        flatLogicFunction,
-        applicationUniversalIdentifier,
-      }))
-    ) {
-      await this.functionBuildService.buildAndUpload({
-        flatLogicFunction,
-        applicationUniversalIdentifier,
-      });
-    }
-    // END TODO
-
     const resultLogicFunction = await this.callWithTimeout({
       callback: () =>
         this.execute({

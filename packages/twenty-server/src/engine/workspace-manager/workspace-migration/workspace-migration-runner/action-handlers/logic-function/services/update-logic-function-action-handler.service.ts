@@ -22,7 +22,6 @@ import {
 import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { LogicFunctionBuildService } from 'src/engine/core-modules/logic-function/logic-function-build/services/logic-function-build.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
@@ -38,7 +37,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 ) {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly functionBuildService: LogicFunctionBuildService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly fileStorageService: FileStorageService,
@@ -168,19 +166,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       );
     } finally {
       await lambdaBuildDirectoryManager.clean();
-    }
-
-    try {
-      await this.functionBuildService.buildAndUpload({
-        flatLogicFunction,
-        applicationUniversalIdentifier,
-      });
-    } catch (error) {
-      // TODO: logic should be improved
-      this.logger.log(
-        'workspace-migration-runner',
-        `Error building and uploading logic function ${flatLogicFunction.id}: ${error.message}`,
-      );
     }
   }
 }
