@@ -122,7 +122,12 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
             );
           }
 
-          if (!isDeeplyEqual(coreView.viewSorts, existingView.viewSorts)) {
+          if (!isDeeplyEqual(coreView.viewSorts.map((viewSort) =>
+            removePropertiesFromRecord(viewSort, [
+              'createdAt',
+              'updatedAt'
+            ])
+          ), existingView.viewSorts)) {
             const view = convertCoreViewToView(coreView);
             set(
               currentRecordSortsComponentState.atomFamily({
