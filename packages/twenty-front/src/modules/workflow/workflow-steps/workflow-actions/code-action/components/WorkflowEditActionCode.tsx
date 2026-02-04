@@ -1,14 +1,12 @@
 import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
-import {
-  type LogicFunctionFormValues,
-  useLogicFunctionUpdateFormState,
-} from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
+import { type LogicFunctionFormValues } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { useGetCodeStepCode } from '@/workflow/workflow-steps/workflow-actions/code-action/hooks/useGetCodeStepCode';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
@@ -128,10 +126,21 @@ export const WorkflowEditActionCode = ({
       action.settings.input.logicFunctionInput,
     );
 
-  const { formValues, setFormValues, loading } =
-    useLogicFunctionUpdateFormState({
-      logicFunctionId,
-    });
+  const { code: codeFromApi, loading } = useGetCodeStepCode({
+    logicFunctionId,
+  });
+
+  const [formValues, setFormValues] = useState<LogicFunctionFormValues>({
+    name: '',
+    description: '',
+    code: { src: { 'index.ts': '' } },
+  });
+
+  useEffect(() => {
+    if (codeFromApi) {
+      setFormValues((prev) => ({ ...prev, code: codeFromApi }));
+    }
+  }, [codeFromApi]);
 
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {

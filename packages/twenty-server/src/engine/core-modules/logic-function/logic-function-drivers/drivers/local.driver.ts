@@ -10,6 +10,7 @@ import {
   type LogicFunctionExecutorDriver,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
+import { dirname } from 'node:path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
@@ -122,7 +123,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: flatLogicFunction.builtHandlerPath,
+        resourcePath: dirname(flatLogicFunction.builtHandlerPath),
         localPath: sourceTemporaryDir,
       });
 
