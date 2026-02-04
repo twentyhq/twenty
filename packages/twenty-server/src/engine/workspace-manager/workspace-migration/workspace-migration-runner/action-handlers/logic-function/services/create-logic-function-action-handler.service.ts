@@ -73,7 +73,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }
 
   async rollbackForMetadata(
-    context: Omit<
+    _context: Omit<
       WorkspaceMigrationActionRunnerArgs<FlatCreateLogicFunctionAction>,
       'queryRunner'
     >,

@@ -1,9 +1,10 @@
-import { Test, type TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { TestingModule } from '@nestjs/testing';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
-import { CodeStepBuildService } from '../code-step-build.service';
+import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 
 describe('CodeStepBuildService', () => {
   let service: CodeStepBuildService;

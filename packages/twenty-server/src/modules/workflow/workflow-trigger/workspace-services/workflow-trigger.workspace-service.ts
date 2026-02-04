@@ -188,9 +188,14 @@ export class WorkflowTriggerWorkspaceService {
   ): Promise<void> {
     const steps = workflowVersion.steps ?? [];
     const codeSteps = steps.filter(
-      (step) =>
+      (step): step is WorkflowAction & {
+        type: typeof WorkflowActionType.CODE;
+        settings: { input: { logicFunctionId: string } };
+      } =>
         step.type === WorkflowActionType.CODE &&
-        isDefined(step.settings?.input?.logicFunctionId),
+        isDefined(
+          (step.settings?.input as { logicFunctionId?: string })?.logicFunctionId,
+        ),
     );
 
     if (codeSteps.length === 0) {
@@ -206,7 +211,7 @@ export class WorkflowTriggerWorkspaceService {
       );
 
     for (const step of codeSteps) {
-      const logicFunctionId = step.settings!.input!.logicFunctionId!;
+      const logicFunctionId = step.settings.input.logicFunctionId;
       const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: logicFunctionId,
         flatEntityMaps: flatLogicFunctionMaps,
