@@ -152,7 +152,7 @@ export const WorkflowEditActionCode = ({
   const handleSave = useDebouncedCallback(async () => {
     await updateCodeStepSource({
       input: {
-        id: logicFunctionId,
+        logicFunctionId,
         code: formValues.code,
       },
     });

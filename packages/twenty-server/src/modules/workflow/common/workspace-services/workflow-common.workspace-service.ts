@@ -2,17 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 import {
   WorkflowCommonException,
   WorkflowCommonExceptionCode,
@@ -29,7 +28,6 @@ import {
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowActionType,
-  type WorkflowAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTriggerException,
@@ -48,83 +46,7 @@ export class WorkflowCommonWorkspaceService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly logicFunctionService: LogicFunctionService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly codeStepBuildService: CodeStepBuildService,
   ) {}
-
-  async buildCodeStepsFromSourceForSteps({
-    workspaceId,
-    steps,
-  }: {
-    workspaceId: string;
-    steps: WorkflowAction[];
-  }): Promise<void> {
-    const codeSteps = steps.filter(
-      (
-        step,
-      ): step is WorkflowAction & {
-        type: typeof WorkflowActionType.CODE;
-        settings: { input: { logicFunctionId: string } };
-      } =>
-        step.type === WorkflowActionType.CODE &&
-        isDefined(
-          (step.settings?.input as { logicFunctionId?: string })
-            ?.logicFunctionId,
-        ),
-    );
-
-    if (codeSteps.length === 0) {
-      return;
-    }
-
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-        },
-      );
-
-    for (const step of codeSteps) {
-      const logicFunctionId = step.settings.input.logicFunctionId;
-      const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: logicFunctionId,
-        flatEntityMaps: flatLogicFunctionMaps,
-      });
-
-      if (
-        !isDefined(flatLogicFunction) ||
-        flatLogicFunction.deletedAt ||
-        !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
-          flatLogicFunction,
-        )
-      ) {
-        continue;
-      }
-
-      const applicationUniversalIdentifier = isDefined(
-        flatLogicFunction.applicationId,
-      )
-        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-            ?.universalIdentifier
-        : undefined;
-
-      if (!isDefined(applicationUniversalIdentifier)) {
-        continue;
-      }
-
-      const { checksum } =
-        await this.codeStepBuildService.buildFromSourceToBuilt({
-          flatLogicFunction,
-          applicationUniversalIdentifier,
-        });
-
-      await this.logicFunctionService.updateChecksum({
-        id: flatLogicFunction.id,
-        checksum,
-        workspaceId,
-      });
-    }
-  }
 
   async getWorkflowVersionOrFail({
     workspaceId,

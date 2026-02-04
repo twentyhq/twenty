@@ -32,7 +32,7 @@ const getAllFiles = async (
 export const getCodeStepSeedProjectFiles = async (): Promise<File[]> => {
   const seedProjectPath = path.join(
     ASSET_PATH,
-    'modules/workflow/code-step-build/constants/seed-project',
+    'modules/workflow/workflow-builder/workflow-version-step/code-step/constants/seed-project',
   );
 
   return getAllFiles(seedProjectPath);

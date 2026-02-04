@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { EXECUTE_CODE_STEP } from '@/workflow/graphql/mutations/executeCodeStep';
+import { EXECUTE_CODE_STEP } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/mutations/executeCodeStep';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
@@ -18,7 +18,11 @@ type ExecuteCodeStepResult = {
   logs: string;
   duration: number;
   status: LogicFunctionExecutionStatus;
-  error?: { errorType: string; errorMessage: string; stackTrace: string } | null;
+  error?: {
+    errorType: string;
+    errorMessage: string;
+    stackTrace: string;
+  } | null;
 };
 
 export const useTestWorkflowCodeStep = ({

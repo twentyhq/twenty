@@ -17,7 +17,7 @@
     "watchAssets": true,
     "assets": [
       {
-        "include": "modules/workflow/code-step-build/constants/seed-project/**",
+        "include": "modules/workflow/workflow-builder/workflow-version-step/code-step/constants/seed-project/**",
         "outDir": "dist/assets"
       },
       {

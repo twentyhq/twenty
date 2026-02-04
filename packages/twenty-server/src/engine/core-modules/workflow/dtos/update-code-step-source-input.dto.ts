@@ -11,7 +11,7 @@ export class UpdateCodeStepSourceInput {
   @Field(() => UUIDScalarType, {
     description: 'The id of the logic function (code step).',
   })
-  id!: string;
+  logicFunctionId!: string;
 
   @Field(() => graphqlTypeJson, {
     description:

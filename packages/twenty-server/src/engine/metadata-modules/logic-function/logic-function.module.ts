@@ -24,7 +24,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-import { CodeStepBuildModule } from 'src/modules/workflow/code-step-build/code-step-build.module';
+import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
 
 @Module({
   imports: [

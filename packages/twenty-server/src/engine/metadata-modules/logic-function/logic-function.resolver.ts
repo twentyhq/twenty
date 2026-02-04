@@ -30,7 +30,7 @@ import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-mod
 import { logicFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/logic-function/utils/logic-function-graphql-api-exception-handler.utils';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
+import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 
 @UseGuards(
   WorkspaceAuthGuard,

@@ -7,14 +7,13 @@ import { CREATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mu
 import { DELETE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/deleteOneLogicFunction';
 import { UPDATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/updateOneLogicFunction';
 import { FIND_MANY_LOGIC_FUNCTIONS } from '@/settings/logic-functions/graphql/queries/findManyLogicFunctions';
-import { FIND_ONE_CODE_STEP_SOURCE_CODE } from '@/settings/logic-functions/graphql/queries/findOneLogicFunctionSourceCode';
+import { FIND_ONE_CODE_STEP_SOURCE_CODE } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/queries/findOneCodeStepSourceCode';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { UPDATE_CODE_STEP_SOURCE } from '@/workflow/graphql/mutations/updateCodeStepSource';
+import { UPDATE_CODE_STEP_SOURCE } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/mutations/updateCodeStepSource';
 import { ApolloError, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
-import type { Sources } from 'twenty-shared/types';
-import { CrudOperationType } from 'twenty-shared/types';
+import { type Sources, CrudOperationType } from 'twenty-shared/types';
 import {
   type CreateOneLogicFunctionItemMutation,
   type CreateOneLogicFunctionItemMutationVariables,
@@ -25,7 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 type UpdateCodeStepSourceMutationVariables = {
-  input: { id: string; code: Sources };
+  input: { logicFunctionId: string; code: Sources };
 };
 
 export const usePersistLogicFunction = () => {
@@ -174,11 +173,7 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [
-      updateCodeStepSourceMutation,
-      handleMetadataError,
-      enqueueErrorSnackBar,
-    ],
+    [updateCodeStepSourceMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
   const deleteLogicFunction = useCallback(

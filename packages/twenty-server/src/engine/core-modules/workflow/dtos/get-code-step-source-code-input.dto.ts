@@ -1,11 +1,15 @@
-import { ID, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { IsNotEmpty, IsUUID } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class GetCodeStepSourceCodeInput {
-  @IDField(() => ID, {
+  @Field(() => UUIDScalarType, {
     description: 'The id of the logic function (code step).',
   })
-  id!: string;
+  @IsNotEmpty()
+  @IsUUID()
+  logicFunctionId!: string;
 }
