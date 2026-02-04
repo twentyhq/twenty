@@ -1968,14 +1968,6 @@ export type LogicFunctionIdInput = {
   id: Scalars['ID'];
 };
 
-export type LogicFunctionLayer = {
-  __typename?: 'LogicFunctionLayer';
-  applicationId?: Maybe<Scalars['UUID']>;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  updatedAt: Scalars['DateTime'];
-};
-
 export type LogicFunctionLogs = {
   __typename?: 'LogicFunctionLogs';
   /** Execution Logs */
@@ -2067,7 +2059,6 @@ export type Mutation = {
   createOneApplication: Application;
   createOneField: Field;
   createOneLogicFunction: LogicFunction;
-  createOneLogicFunctionLayer: LogicFunctionLayer;
   createOneObject: Object;
   createOneRole: Role;
   createPageLayout: PageLayout;
@@ -2400,13 +2391,6 @@ export type MutationCreateOneFieldArgs = {
 
 export type MutationCreateOneLogicFunctionArgs = {
   input: CreateLogicFunctionInput;
-};
-
-
-export type MutationCreateOneLogicFunctionLayerArgs = {
-  applicationUniversalIdentifier: Scalars['String'];
-  packageJsonChecksum: Scalars['JSON'];
-  yarnLockChecksum: Scalars['String'];
 };
 
 

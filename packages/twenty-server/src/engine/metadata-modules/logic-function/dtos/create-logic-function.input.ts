@@ -1,14 +1,14 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
+    IsBoolean,
+    IsNotEmpty,
+    IsNumber,
+    IsObject,
+    IsOptional,
+    IsString,
+    Max,
+    Min,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 import { Sources } from 'twenty-shared/types';
@@ -37,9 +37,6 @@ export class CreateLogicFunctionInput {
 
   @HideField()
   universalIdentifier?: string;
-
-  @HideField()
-  logicFunctionLayerId?: string | null;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()

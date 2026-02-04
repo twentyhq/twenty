@@ -3,13 +3,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import {
-  FieldManifest,
-  LogicFunctionManifest,
-  Manifest,
-  ObjectFieldManifest,
-  ObjectManifest,
-  RelationFieldManifest,
-  RoleManifest,
+    FieldManifest,
+    LogicFunctionManifest,
+    Manifest,
+    ObjectFieldManifest,
+    ObjectManifest,
+    RelationFieldManifest,
+    RoleManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType, FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,8 +17,8 @@ import { PackageJson } from 'type-fest';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  ApplicationException,
-  ApplicationExceptionCode,
+    ApplicationException,
+    ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
@@ -152,7 +152,6 @@ export class ApplicationSyncService {
         description: manifest.application.description,
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-        logicFunctionLayerId: null,
         defaultRoleId: null,
         workspaceId,
         packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
@@ -943,7 +942,6 @@ export class ApplicationSyncService {
           sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
           handlerName: logicFunctionToCreate.handlerName,
           builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
-          logicFunctionLayerId: null,
           toolInputSchema: logicFunctionToCreate.toolInputSchema,
           isTool: logicFunctionToCreate.isTool,
         },

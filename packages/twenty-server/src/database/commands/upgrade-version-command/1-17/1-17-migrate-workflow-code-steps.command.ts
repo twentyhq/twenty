@@ -13,10 +13,10 @@ import { In, Repository } from 'typeorm';
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import {
-  collectCodeStepMigrationTargets,
-  migrateWorkflowCodeStepsWithMapping,
-  type CodeStepMigrationTarget,
-  type ServerlessToLogicFunctionMapping,
+    collectCodeStepMigrationTargets,
+    migrateWorkflowCodeStepsWithMapping,
+    type CodeStepMigrationTarget,
+    type ServerlessToLogicFunctionMapping,
 } from 'src/database/commands/upgrade-version-command/1-17/utils/migrate-workflow-code-step.util';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -194,7 +194,6 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
         name: oldLogicFunction.name,
         description: oldLogicFunction.description ?? undefined,
         timeoutSeconds: oldLogicFunction.timeoutSeconds ?? 300,
-        logicFunctionLayerId: oldLogicFunction.logicFunctionLayerId,
         toolInputSchema: oldLogicFunction.toolInputSchema ?? undefined,
         isTool: oldLogicFunction.isTool ?? false,
       },

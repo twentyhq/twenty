@@ -5,10 +5,10 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/logic-function/constants/default-tool-input-schema.constant';
 import { type CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import {
-  DEFAULT_BUILT_HANDLER_PATH,
-  DEFAULT_HANDLER_NAME,
-  DEFAULT_SOURCE_HANDLER_PATH,
-  LogicFunctionRuntime,
+    DEFAULT_BUILT_HANDLER_PATH,
+    DEFAULT_HANDLER_NAME,
+    DEFAULT_SOURCE_HANDLER_PATH,
+    LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
@@ -16,9 +16,7 @@ import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-funct
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
 export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
-  createLogicFunctionInput: CreateLogicFunctionInput & {
-    logicFunctionLayerId: string | null;
-  };
+  createLogicFunctionInput: CreateLogicFunctionInput;
   workspaceId: string;
   ownerFlatApplication: FlatApplication;
 };
@@ -61,8 +59,6 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     applicationId: ownerFlatApplication.id,
     runtime: LogicFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,
-    logicFunctionLayerId:
-      rawCreateLogicFunctionInput.logicFunctionLayerId ?? null,
     workspaceId,
     code: rawCreateLogicFunctionInput?.code,
     checksum: rawCreateLogicFunctionInput?.code
