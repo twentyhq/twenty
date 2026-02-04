@@ -12,7 +12,7 @@ import {
   type UITools,
 } from 'ai';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
@@ -237,6 +237,8 @@ export class ChatExecutionService {
         workspace,
         browsingContext.objectNameSingular,
         browsingContext.recordId,
+        browsingContext.pageLayoutId,
+        browsingContext.activeTabId,
       );
     }
 
@@ -251,6 +253,8 @@ export class ChatExecutionService {
     workspace: WorkspaceEntity,
     objectNameSingular: string,
     recordId: string,
+    pageLayoutId?: string,
+    activeTabId?: string | null,
   ): string {
     const resourceUrl = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
@@ -260,7 +264,21 @@ export class ChatExecutionService {
       }),
     });
 
-    return `The user is viewing a ${objectNameSingular} record (ID: ${recordId}, URL: ${resourceUrl}). Use tools to fetch record details if needed.`;
+    let context = `The user is viewing a ${objectNameSingular} record (ID: ${recordId}, URL: ${resourceUrl}). Use tools to fetch record details if needed.`;
+
+    if (objectNameSingular === 'dashboard') {
+      context += `\nLoad \`dashboard-building\` skill before making dashboard edits.`;
+
+      if (isDefined(pageLayoutId)) {
+        context += `\nDashboard pageLayoutId: ${pageLayoutId}.`;
+      }
+
+      if (isDefined(activeTabId)) {
+        context += `\nActive dashboard tab ID: ${activeTabId}. Use this tab for widget additions unless the user specifies otherwise.`;
+      }
+    }
+
+    return context;
   }
 
   private buildListViewContext(browsingContext: {

@@ -146,6 +146,9 @@ Before creating any GRAPH widget, you MUST:
 
 GRAPH widgets require real UUIDs from the workspace metadata, NOT made-up values.
 
+You can use \`build_dashboard_widget_config\` to resolve object/field IDs and generate valid GRAPH widget configuration.
+KPI/aggregate charts are \`AGGREGATE_CHART\` (still GRAPH widgets).
+
 ## Understanding User Language
 
 Users describe charts using UI terminology. Here's how to translate:
@@ -260,9 +263,11 @@ Text content widget:
 
 1. Ask user what data they want to visualize
 2. Load list_object_metadata_items to discover available objects and fields
-3. Create dashboard with appropriate widgets using real field IDs
-4. Use get_dashboard to verify creation and see current configuration
-5. When modifying, first understand current config before making changes
+3. Always use get_dashboard before modifying widgets
+4. Use build_dashboard_widget_config to resolve field IDs and generate config
+5. Add/update widgets with add_dashboard_widget/update_dashboard_widget (use activeTabId from context if available)
+6. Use get_dashboard to verify creation and see current configuration
+7. When modifying, first understand current config before making changes
 
 ## Best Practices
 
