@@ -172,7 +172,10 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
         type: 'update',
         metadataName: 'index',
         entityId: flatEntity.id,
+        // Note: Index update action ignores the native update field
+        // As under the hood it result as a drop and create
         updatedFlatEntity: updatedFlatIndex,
+        update: {},
       },
     };
   }
