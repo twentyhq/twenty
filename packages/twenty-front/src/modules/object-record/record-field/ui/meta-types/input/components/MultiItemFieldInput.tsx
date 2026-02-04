@@ -289,8 +289,14 @@ export const MultiItemFieldInput = <T,>({
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
-    setIsInputDisplayed(false);
+
+    const shouldShowInputAfterDeletion =
+      updatedItems.length === 0 && !isDefined(onAddClick);
+    setIsInputDisplayed(shouldShowInputAfterDeletion);
     setIsAddingNewItem(false);
+    if (shouldShowInputAfterDeletion) {
+      setInputValue('');
+    }
   };
 
   const handleEscape = () => {
