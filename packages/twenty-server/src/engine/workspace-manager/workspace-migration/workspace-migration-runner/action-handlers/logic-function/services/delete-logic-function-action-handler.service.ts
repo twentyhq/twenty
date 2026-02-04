@@ -5,16 +5,16 @@ import { FileFolder } from 'twenty-shared/types';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import {
-  FlatDeleteLogicFunctionAction,
-  UniversalDeleteLogicFunctionAction,
+    FlatDeleteLogicFunctionAction,
+    UniversalDeleteLogicFunctionAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
-  WorkspaceMigrationActionRunnerArgs,
-  WorkspaceMigrationActionRunnerContext,
+    WorkspaceMigrationActionRunnerArgs,
+    WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -35,7 +35,8 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatDeleteLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, workspaceId, allFlatEntityMaps } = context;
+    const { flatAction, queryRunner, workspaceId, allFlatEntityMaps, flatApplication } =
+      context;
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
@@ -52,6 +53,8 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       workspaceId,
     });
 
+    const applicationUniversalIdentifier =
+      flatApplication.universalIdentifier;
     const sourceBaseFolderPath = getLogicFunctionBaseFolderPath(
       flatLogicFunction.sourceHandlerPath,
     );
@@ -59,11 +62,18 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       flatLogicFunction.builtHandlerPath,
     );
 
-    const sourceFolderPath = `workspace-${workspaceId}/${FileFolder.Source}/${sourceBaseFolderPath}`;
-    const builtFolderPath = `workspace-${workspaceId}/${FileFolder.BuiltLogicFunction}/${builtBaseFolderPath}`;
-
-    await this.fileStorageService.delete({ folderPath: sourceFolderPath });
-    await this.fileStorageService.delete({ folderPath: builtFolderPath });
+    await this.fileStorageService.delete_v2({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: sourceBaseFolderPath,
+    });
+    await this.fileStorageService.delete_v2({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: builtBaseFolderPath,
+    });
   }
 
   async rollbackForMetadata(): Promise<void> {}

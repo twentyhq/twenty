@@ -3,13 +3,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import {
-    FieldManifest,
-    LogicFunctionManifest,
-    Manifest,
-    ObjectFieldManifest,
-    ObjectManifest,
-    RelationFieldManifest,
-    RoleManifest,
+  FieldManifest,
+  LogicFunctionManifest,
+  Manifest,
+  ObjectFieldManifest,
+  ObjectManifest,
+  RelationFieldManifest,
+  RoleManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType, FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,8 +17,8 @@ import { PackageJson } from 'type-fest';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-    ApplicationException,
-    ApplicationExceptionCode,
+  ApplicationException,
+  ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
@@ -32,7 +32,6 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -926,42 +925,6 @@ export class ApplicationSyncService {
         workspaceId,
         ownerFlatApplication,
       });
-    }
-
-    if (logicFunctionsToUpdate.length > 0 && isDefined(code)) {
-      const { flatLogicFunctionMaps } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
-          },
-        );
-
-      for (const logicFunctionToUpdate of logicFunctionsToUpdate) {
-        const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: logicFunctionToUpdate.id,
-          flatEntityMaps: flatLogicFunctionMaps,
-        });
-
-        if (
-          !isDefined(flatLogicFunction) ||
-          isDefined(flatLogicFunction.deletedAt)
-        ) {
-          continue;
-        }
-
-        try {
-          await this.codeStepBuildService.buildFromSourceToBuilt({
-            flatLogicFunction,
-            applicationUniversalIdentifier:
-              ownerFlatApplication.universalIdentifier,
-          });
-        } catch (error) {
-          this.logger.warn(
-            `Failed to build logic function ${flatLogicFunction.id} after sync: ${error?.message}`,
-          );
-        }
-      }
     }
 
     for (const logicFunctionToCreate of logicFunctionsToCreate) {
