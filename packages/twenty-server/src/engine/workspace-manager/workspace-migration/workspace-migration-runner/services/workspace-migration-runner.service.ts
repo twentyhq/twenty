@@ -5,6 +5,8 @@ import { AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -155,26 +157,6 @@ export class WorkspaceMigrationRunnerService {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-
-    const applicationId =
-      flatApplicationMaps.idByUniversalIdentifier[
-        applicationUniversalIdentifier
-      ];
-    const flatApplication = isDefined(applicationId)
-      ? flatApplicationMaps.byId[applicationId]
-      : undefined;
-
-    if (!isDefined(applicationId) || !isDefined(flatApplication)) {
-      throw new WorkspaceMigrationRunnerException({
-        message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
-        code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
-      });
-    }
-
     const queryRunner = this.coreDataSource.createQueryRunner();
     const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
@@ -203,6 +185,23 @@ export class WorkspaceMigrationRunnerService {
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+
+      const flatApplication = (await queryRunner.manager
+        .getRepository(ApplicationEntity)
+        .findOne({
+          where: {
+            universalIdentifier: applicationUniversalIdentifier,
+            workspaceId,
+          },
+          select: ['id', 'universalIdentifier'],
+        })) as FlatApplication | undefined;
+
+      if (!isDefined(flatApplication)) {
+        throw new WorkspaceMigrationRunnerException({
+          message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
+          code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
+        });
+      }
       for (const action of actions) {
         const result =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
