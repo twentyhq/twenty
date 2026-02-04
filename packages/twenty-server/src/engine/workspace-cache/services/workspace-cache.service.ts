@@ -353,8 +353,11 @@ export class WorkspaceCacheService implements OnModuleInit {
   ): void {
     for (const keyName of cacheKeyNames) {
       const localKey = this.buildCacheKey(workspaceId, keyName);
+      const entry = this.localCache.get(localKey);
 
-      this.localCache.delete(localKey);
+      if (isDefined(entry)) {
+        entry.lastHashCheckedAt = 0;
+      }
     }
   }
 
@@ -388,6 +391,8 @@ export class WorkspaceCacheService implements OnModuleInit {
     entry.versions.set(hash, { data, lastReadAt: Date.now() });
     entry.latestHash = hash;
     entry.lastHashCheckedAt = Date.now();
+
+    this.cleanupStaleVersions(entry);
   }
 
   private cleanupStaleVersions(

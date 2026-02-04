@@ -17,7 +17,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.module';
-import { WorkspaceCacheCommandsModule } from 'src/engine/workspace-cache/commands/workspace-cache-commands.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceCleanerModule } from 'src/engine/workspace-manager/workspace-cleaner/workspace-cleaner.module';
@@ -53,8 +52,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkspaceMigrationModule,
     TrashCleanupModule,
     PublicDomainModule,
-    // Cache validation command
-    WorkspaceCacheCommandsModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
