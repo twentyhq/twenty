@@ -12,16 +12,6 @@ const dirname =
     : path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  optimizeDeps: {
-    include: [
-      '@remote-dom/core/polyfill',
-      '@remote-dom/react/polyfill',
-      '@remote-dom/core/elements',
-      'react-dom/client',
-      'react/jsx-runtime',
-      '@remote-dom/react',
-    ],
-  },
   test: {
     coverage: {
       provider: 'istanbul',
@@ -30,6 +20,7 @@ export default defineConfig({
     },
     projects: [
       {
+        extends: './vite.config.ts',
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),
