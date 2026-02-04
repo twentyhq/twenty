@@ -89,13 +89,13 @@ export class WorkspaceMigrationViewFieldActionsBuilderService extends WorkspaceE
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateViewFieldAction: FlatUpdateViewFieldAction = {
       type: 'update',
       metadataName: 'viewField',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

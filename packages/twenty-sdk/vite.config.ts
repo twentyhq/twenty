@@ -127,7 +127,7 @@ export default defineConfig(() => {
         },
         external: [
           ...Object.keys((packageJson as any).dependencies || {}).filter(
-            (dep) => dep !== 'twenty-ui',
+            (dep) => !PACKAGES_TO_VENDOR.includes(dep),
           ),
           'path',
           'fs',

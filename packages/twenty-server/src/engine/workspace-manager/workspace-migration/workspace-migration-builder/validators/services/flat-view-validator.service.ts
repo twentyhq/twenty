@@ -7,19 +7,17 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 export class FlatViewValidatorService {
   constructor() {}
 
   public validateFlatViewUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,
@@ -51,27 +49,20 @@ export class FlatViewValidatorService {
       return validationResult;
     }
 
-    const partialUpdates = fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-      updates: flatEntityUpdates,
-    });
-
     const updatedFlatView: FlatView = {
       ...existingFlatView,
-      ...partialUpdates,
+      ...flatEntityUpdate,
     };
 
     const kanbanAggregateOperationFieldMetadataIdUpdate =
-      findFlatEntityPropertyUpdate({
-        property: 'kanbanAggregateOperationFieldMetadataId',
-        flatEntityUpdates,
-      });
+      flatEntityUpdate.kanbanAggregateOperationFieldMetadataId;
 
     if (
       isDefined(kanbanAggregateOperationFieldMetadataIdUpdate) &&
-      kanbanAggregateOperationFieldMetadataIdUpdate.to !== null &&
+      kanbanAggregateOperationFieldMetadataIdUpdate !== null &&
       !isDefined(
         findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: kanbanAggregateOperationFieldMetadataIdUpdate.to,
+          flatEntityId: kanbanAggregateOperationFieldMetadataIdUpdate,
           flatEntityMaps: flatFieldMetadataMaps,
         }),
       )

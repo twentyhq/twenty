@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WebhookExceptionCode } from 'src/engine/metadata-modules/webhook/webhook.exception';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
@@ -95,7 +94,7 @@ export class FlatWebhookValidatorService {
 
   public validateFlatWebhookUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatWebhookMaps: optimisticFlatWebhookMaps,
     },
@@ -126,14 +125,11 @@ export class FlatWebhookValidatorService {
       return validationResult;
     }
 
-    const targetUrlUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'targetUrl',
-    });
+    const targetUrlUpdate = flatEntityUpdate.targetUrl;
 
     if (
       isDefined(targetUrlUpdate) &&
-      !this.validateTargetUrl(targetUrlUpdate.to)
+      !this.validateTargetUrl(targetUrlUpdate)
     ) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,

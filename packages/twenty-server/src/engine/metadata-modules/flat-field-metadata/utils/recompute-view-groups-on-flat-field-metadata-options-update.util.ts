@@ -13,11 +13,10 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata-enum-options.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { reduceFlatViewGroupsByViewId } from 'src/engine/metadata-modules/flat-view-group/utils/reduce-flat-view-groups-by-view-id.util';
-import { type PropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/types/property-update.type';
 
 type RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs = {
   fromFlatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>;
-  update: PropertyUpdate<FlatFieldMetadata<EnumFieldMetadataType>, 'options'>;
+  toOptions: FlatFieldMetadata<EnumFieldMetadataType>['options'];
 } & Pick<AllFlatEntityMaps, 'flatViewMaps' | 'flatViewGroupMaps'>;
 
 export type FlatViewGroupsToDeleteUpdateAndCreate = {
@@ -29,7 +28,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
   flatViewMaps,
   flatViewGroupMaps,
   fromFlatFieldMetadata,
-  update,
+  toOptions,
 }: RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs): FlatViewGroupsToDeleteUpdateAndCreate => {
   const {
     deleted: deletedFieldMetadataOptions,
@@ -38,7 +37,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
   } = compareTwoFlatFieldMetadataEnumOptions({
     compareLabel: false,
     fromOptions: fromFlatFieldMetadata.options,
-    toOptions: update.to,
+    toOptions,
   });
 
   const flatViewsAffected = findManyFlatEntityByIdInFlatEntityMapsOrThrow({

@@ -13,7 +13,6 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import {
   type FlatUpdateObjectAction,
   type UniversalUpdateObjectAction,
@@ -22,7 +21,6 @@ import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
   collectEnumOperationsForObject,
@@ -58,7 +56,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       type: 'update',
       metadataName: 'objectMetadata',
       entityId: flatObjectMetadata.id,
-      updates: action.updates,
+      update: action.update,
     };
   }
 
@@ -74,7 +72,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 
     await objectMetadataRepository.update(
       flatAction.entityId,
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
+      flatAction.update,
     );
   }
 
@@ -87,7 +85,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { entityId, updates } = flatAction;
+    const { entityId, update } = flatAction;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
@@ -100,15 +98,10 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         objectMetadata: flatObjectMetadata,
       });
 
-    const nameSingularUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates: updates,
-      property: 'nameSingular',
-    });
-
-    if (isDefined(nameSingularUpdate)) {
+    if (isDefined(update.nameSingular)) {
       const updatedFlatObjectMetadata: FlatObjectMetadata = {
         ...flatObjectMetadata,
-        nameSingular: nameSingularUpdate.to,
+        nameSingular: update.nameSingular,
       };
 
       const newTableName = computeObjectTargetTable(updatedFlatObjectMetadata);

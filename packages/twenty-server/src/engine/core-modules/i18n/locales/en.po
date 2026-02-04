@@ -850,6 +850,11 @@ msgstr "Could not find index related object metadata"
 msgid "Could not find relation field parent flat object"
 msgstr "Could not find relation field parent flat object"
 
+#. js-lingui-id: KwGZ0m
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Could not found updated field metadata"
+msgstr "Could not found updated field metadata"
+
 #. js-lingui-id: 2ZhYYy
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
 msgid "Created field metadata, parent object metadata not found"
@@ -3917,6 +3922,11 @@ msgstr "Two-factor authentication setup is required."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Two-factor authentication verification is required."
 msgstr "Two-factor authentication verification is required."
+
+#. js-lingui-id: Qx95XY
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Udpated field is not a morph relation or a relation"
+msgstr "Udpated field is not a morph relation or a relation"
 
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts

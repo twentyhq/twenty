@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a created entity 1`] = `
 {
@@ -152,13 +152,9 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an upd
     "byUniversalIdentifier": {
       "universal-identifier-1": {
         "id": "field-id-1",
-        "updates": [
-          {
-            "from": false,
-            "property": "isActive",
-            "to": true,
-          },
-        ],
+        "update": {
+          "isActive": true,
+        },
       },
     },
   },
@@ -281,13 +277,9 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
     "byUniversalIdentifier": {
       "universal-identifier-1": {
         "id": "field-id-1",
-        "updates": [
-          {
-            "from": true,
-            "property": "isActive",
-            "to": false,
-          },
-        ],
+        "update": {
+          "isActive": false,
+        },
       },
     },
   },

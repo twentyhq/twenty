@@ -99,13 +99,13 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateViewFilterGroupAction: FlatUpdateViewFilterGroupAction = {
       type: 'update',
       metadataName: 'viewFilterGroup',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

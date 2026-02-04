@@ -13,13 +13,12 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
   public validateFlatObjectMetadataUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     buildOptions,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
@@ -54,9 +53,7 @@ export class FlatObjectMetadataValidatorService {
 
     const updatedFlatObjectMetadata = {
       ...existingFlatObjectMetadata,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     validationResult.flatEntityMinimalInformation = {
@@ -73,14 +70,9 @@ export class FlatObjectMetadataValidatorService {
         buildOptions,
       }),
     );
-
-    const labelIdentifierFieldMetadataIdUpdate = flatEntityUpdates.find(
-      (update) => update.property === 'labelIdentifierFieldMetadataId',
-    );
-
     // TODO remove this once we migrated labelIdentifierFieldMetadataId as non nullable
-    if (isDefined(labelIdentifierFieldMetadataIdUpdate)) {
-      if (!isDefined(labelIdentifierFieldMetadataIdUpdate.to)) {
+    if (flatEntityUpdate.labelIdentifierFieldMetadataId !== undefined) {
+      if (flatEntityUpdate.labelIdentifierFieldMetadataId === null) {
         validationResult.errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: 'labelIdentifierFieldMetadataId cannot be null',

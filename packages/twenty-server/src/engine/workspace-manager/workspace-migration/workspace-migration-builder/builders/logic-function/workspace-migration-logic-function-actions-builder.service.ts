@@ -139,13 +139,13 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updateLogicFunctionAction: FlatUpdateLogicFunctionAction = {
       type: 'update',
       metadataName: 'logicFunction',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

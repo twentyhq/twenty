@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -14,8 +14,9 @@
     "ui"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build && tsx ./scripts/remove-nx-dependencies-from-dist-package-json.ts",
-    "prepack": "yarn build"
+    "build": "npx rimraf dist && npx vite build",
+    "prepack": "tsx ./scripts/prepack.ts",
+    "postpack": "tsx ./scripts/postpack.ts"
   },
   "keywords": [
     "twenty",
@@ -95,7 +96,6 @@
     "storybook": "^10.1.11",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
-    "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
     "wait-on": "^7.2.0"
   },
