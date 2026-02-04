@@ -267,7 +267,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
 
       const updatedFlatEntity: MetadataFlatEntity<T> = {
         ...existingFlatEntity,
-        ...flatEntityToUpdate.update
+        ...flatEntityToUpdate.update,
       };
 
       replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({

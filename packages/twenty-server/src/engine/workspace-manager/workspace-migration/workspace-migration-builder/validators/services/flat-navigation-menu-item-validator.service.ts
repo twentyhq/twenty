@@ -288,10 +288,12 @@ export class FlatNavigationMenuItemValidatorService {
         message: t`Navigation menu item not found`,
         userFriendlyMessage: msg`Navigation menu item not found`,
       });
+
       return validationResult;
     }
 
     const positionUpdate = flatEntityUpdate.position;
+
     if (
       isDefined(positionUpdate) &&
       (!Number.isInteger(positionUpdate) || positionUpdate < 0)
@@ -308,7 +310,7 @@ export class FlatNavigationMenuItemValidatorService {
       ...flatEntityUpdate,
     };
 
-    const nameUpdate = flatEntityUpdate.name
+    const nameUpdate = flatEntityUpdate.name;
 
     const typeValidationErrors = this.validateNavigationMenuItemType({
       hasTargetRecordId: isDefined(toFlatNavigationMenuItem.targetRecordId),
@@ -316,15 +318,13 @@ export class FlatNavigationMenuItemValidatorService {
         toFlatNavigationMenuItem.targetObjectMetadataId,
       ),
       hasViewId: isDefined(toFlatNavigationMenuItem.viewId),
-      name: isDefined(nameUpdate)
-        ? nameUpdate
-        : toFlatNavigationMenuItem.name,
+      name: isDefined(nameUpdate) ? nameUpdate : toFlatNavigationMenuItem.name,
       isUpdate: true,
     });
 
     validationResult.errors.push(...typeValidationErrors);
 
-    const folderIdUpdate = flatEntityUpdate.folderId
+    const folderIdUpdate = flatEntityUpdate.folderId;
 
     if (!isDefined(folderIdUpdate)) {
       return validationResult;
