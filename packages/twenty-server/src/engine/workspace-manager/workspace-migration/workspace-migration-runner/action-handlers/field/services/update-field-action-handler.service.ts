@@ -356,6 +356,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     toName,
   }: NameUpdateHandlerArgs) {
     const fromName = flatFieldMetadata.name;
+
     if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 

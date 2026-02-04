@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -29,7 +31,12 @@ export class UpdateAgentActionHandlerService extends WorkspaceMigrationRunnerAct
     const agentRepository =
       queryRunner.manager.getRepository<AgentEntity>(AgentEntity);
 
-    await agentRepository.update({ id: entityId, workspaceId }, update);
+    // Cast needed because TypeORM's QueryDeepPartialEntity doesn't handle
+    // JsonbProperty branded types with nested Record<string, unknown> well
+    await agentRepository.update(
+      { id: entityId, workspaceId },
+      update as QueryDeepPartialEntity<AgentEntity>,
+    );
   }
 
   async executeForWorkspaceSchema(

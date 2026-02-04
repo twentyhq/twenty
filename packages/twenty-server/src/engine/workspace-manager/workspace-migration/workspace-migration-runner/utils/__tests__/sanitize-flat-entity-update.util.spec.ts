@@ -1,143 +1,132 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import {
-  eachTestingContextFilter,
-  type EachTestingContext,
-} from 'twenty-shared/testing';
 
-import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { sanitizeFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/sanitize-flat-entity-update.util';
 
-type TestContext<T extends AllMetadataName = AllMetadataName> = {
-  flatEntityUpdate: FlatEntityUpdate<T>;
-  metadataName: T;
-};
-
 describe('sanitizeFlatEntityUpdate', () => {
-  const testCases = [
-    {
-      title:
-        'should return only valid properties for fieldMetadata when update contains valid and invalid properties',
-      context: {
-        flatEntityUpdate: {
-          isActive: true,
-          label: 'New Label',
-          invalidProperty: 'should be removed',
-        } as FlatEntityUpdate<'fieldMetadata'>,
-        metadataName: 'fieldMetadata',
-      },
-    },
-    {
-      title:
-        'should return empty object when all properties are undefined for fieldMetadata',
-      context: {
-        flatEntityUpdate: {
-          isActive: undefined,
-          label: undefined,
-        } as FlatEntityUpdate<'fieldMetadata'>,
-        metadataName: 'fieldMetadata',
-      },
-    },
-    {
-      title:
-        'should return empty object when update is empty for fieldMetadata',
-      context: {
-        flatEntityUpdate: {} as FlatEntityUpdate<'fieldMetadata'>,
-        metadataName: 'fieldMetadata',
-      },
-    },
-    {
-      title:
-        'should preserve null values as they are valid updates for fieldMetadata',
-      context: {
-        flatEntityUpdate: {
-          isActive: false,
-          label: null,
-          description: 'Updated description',
-        } as FlatEntityUpdate<'fieldMetadata'>,
-        metadataName: 'fieldMetadata',
-      },
-    },
-    {
-      title: 'should return only valid properties for view metadata',
-      context: {
-        flatEntityUpdate: {
-          name: 'My View',
-          icon: 'IconUser',
-          invalidProperty: 'should be removed',
-        } as FlatEntityUpdate<'view'>,
-        metadataName: 'view',
-      },
-    },
-    {
-      title: 'should return only valid properties for objectMetadata',
-      context: {
-        flatEntityUpdate: {
-          isActive: true,
-          labelSingular: 'Person',
-          labelPlural: 'People',
-          invalidProperty: 'should be removed',
-        } as FlatEntityUpdate<'objectMetadata'>,
-        metadataName: 'objectMetadata',
-      },
-    },
-    {
-      title: 'should handle viewField metadata updates',
-      context: {
-        flatEntityUpdate: {
-          position: 1,
-          size: 100,
-          isVisible: true,
-          invalidProperty: 'should be removed',
-        } as FlatEntityUpdate<'viewField'>,
-        metadataName: 'viewField',
-      },
-    },
-    {
-      title: 'should handle role metadata updates',
-      context: {
-        flatEntityUpdate: {
-          label: 'Admin Role',
-          description: 'Administrator role',
-          invalidProperty: 'should be removed',
-        } as FlatEntityUpdate<'role'>,
-        metadataName: 'role',
-      },
-    },
-    {
-      title: 'should handle agent metadata updates',
-      context: {
-        flatEntityUpdate: {
-          name: 'My Agent',
-          description: 'Agent description',
-          invalidProperty: 'should be removed',
-        } as FlatEntityUpdate<'agent'>,
-        metadataName: 'agent',
-      },
-    },
-    {
-      title: 'should handle webhook metadata updates',
-      context: {
-        flatEntityUpdate: {
-          targetUrl: 'https://example.com/webhook',
-          description: 'My webhook',
-          invalidProperty: 'should be removed',
-        } as FlatEntityUpdate<'webhook'>,
-        metadataName: 'webhook',
-      },
-    },
-  ] as const satisfies EachTestingContext<TestContext>[];
+  it('should return only valid properties for fieldMetadata when update contains valid and invalid properties', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        isActive: true,
+        label: 'New Label',
+        invalidProperty: 'should be removed',
+      } as any,
+      metadataName: 'fieldMetadata' as AllMetadataName,
+    });
 
-  test.each(eachTestingContextFilter(testCases))(
-    '$title',
-    ({ context: { flatEntityUpdate, metadataName } }) => {
-      const result = sanitizeFlatEntityUpdate({
-        flatEntityUpdate: flatEntityUpdate as FlatEntityUpdate<
-          typeof metadataName
-        >,
-        metadataName,
-      });
+    expect(result).toMatchSnapshot();
+  });
 
-      expect(result).toMatchSnapshot();
-    },
-  );
+  it('should return empty object when all properties are undefined for fieldMetadata', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        isActive: undefined,
+        label: undefined,
+      } as any,
+      metadataName: 'fieldMetadata' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should return empty object when update is empty for fieldMetadata', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {} as any,
+      metadataName: 'fieldMetadata' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should preserve null values as they are valid updates for fieldMetadata', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        isActive: false,
+        label: null,
+        description: 'Updated description',
+      } as any,
+      metadataName: 'fieldMetadata' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should return only valid properties for view metadata', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        name: 'My View',
+        icon: 'IconUser',
+        invalidProperty: 'should be removed',
+      } as any,
+      metadataName: 'view' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should return only valid properties for objectMetadata', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        isActive: true,
+        labelSingular: 'Person',
+        labelPlural: 'People',
+        invalidProperty: 'should be removed',
+      } as any,
+      metadataName: 'objectMetadata' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should handle viewField metadata updates', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        position: 1,
+        size: 100,
+        isVisible: true,
+        invalidProperty: 'should be removed',
+      } as any,
+      metadataName: 'viewField' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should handle role metadata updates', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        label: 'Admin Role',
+        description: 'Administrator role',
+        invalidProperty: 'should be removed',
+      } as any,
+      metadataName: 'role' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should handle agent metadata updates', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        name: 'My Agent',
+        description: 'Agent description',
+        invalidProperty: 'should be removed',
+      } as any,
+      metadataName: 'agent' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should handle webhook metadata updates', () => {
+    const result = sanitizeFlatEntityUpdate({
+      flatEntityUpdate: {
+        targetUrl: 'https://example.com/webhook',
+        description: 'My webhook',
+        invalidProperty: 'should be removed',
+      } as any,
+      metadataName: 'webhook' as AllMetadataName,
+    });
+
+    expect(result).toMatchSnapshot();
+  });
 });
