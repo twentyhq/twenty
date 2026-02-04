@@ -57718,7 +57718,7 @@ __metadata:
     wait-on: "npm:^7.2.0"
     zod: "npm:^4.1.11"
   bin:
-    twenty: dist/cli.cjs
+    twenty: dist/cli/index.cjs
   languageName: unknown
   linkType: soft
 
