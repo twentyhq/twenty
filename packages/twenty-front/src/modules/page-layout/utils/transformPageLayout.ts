@@ -1,6 +1,5 @@
-import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { type PageLayout as PageLayoutGenerated } from '~/generated/graphql';
+import { type PageLayout, type PageLayout as PageLayoutGenerated } from '~/generated/graphql';
 
 export const transformPageLayout = (
   pageLayout: PageLayoutGenerated,
@@ -10,12 +9,10 @@ export const transformPageLayout = (
     tabs: (pageLayout.tabs ?? [])
       .toSorted((a, b) => a.position - b.position)
       .map((tab): PageLayoutTab => {
-        // TODO: remove this once the frontend consumes the new type
-        const { layoutMode: _layoutMode, ...tabWithoutLayoutMode } = tab;
-
         return {
-          ...tabWithoutLayoutMode,
+          ...tab,
           widgets: tab.widgets ?? [],
+          layoutMode: tab.layoutMode ?? undefined,
         };
       }),
   };

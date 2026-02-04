@@ -3837,6 +3837,7 @@ export type QueryGetPageLayoutWidgetsArgs = {
 
 export type QueryGetPageLayoutsArgs = {
   objectMetadataId?: InputMaybe<Scalars['String']>;
+  pageLayoutType?: InputMaybe<PageLayoutType>;
 };
 
 
