@@ -11,7 +11,7 @@ const moduleEntries = Object.keys((packageJson as any).exports || {})
 
 const entries = ['src/index.ts', 'src/cli/cli.ts', ...moduleEntries];
 
-const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
+export const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {

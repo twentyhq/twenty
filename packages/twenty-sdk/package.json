@@ -13,7 +13,7 @@
     "front-component-constants"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build"
+    "build": "npx rimraf dist && npx vite build && tsx ./scripts/remove-nx-dependencies-from-dist-package-json.ts"
   },
   "keywords": [
     "twenty",
@@ -64,6 +64,8 @@
     "lodash.camelcase": "^4.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
@@ -81,8 +83,6 @@
     "@types/react-dom": "18.2.22",
     "ts-morph": "^25.0.0",
     "tsx": "^4.7.0",
-    "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
     "wait-on": "^7.2.0"
   },
