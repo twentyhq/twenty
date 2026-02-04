@@ -38,7 +38,7 @@ export const computeTwentyORMException = async (
     const errorCode = (error as QueryFailedErrorWithCode).code;
 
     if (
-      errorCode === '23505' &&
+      errorCode === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION &&
       isDefined(objectMetadata) &&
       isDefined(entityManager) &&
       isDefined(internalContext)
@@ -51,15 +51,17 @@ export const computeTwentyORMException = async (
       );
     }
 
-    // invalid input syntax or value
-    if (errorCode === '22P02') {
+    if (errorCode === POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION) {
       return new TwentyORMException(
         error.message, // safe and useful
         TwentyORMExceptionCode.INVALID_INPUT,
       );
     }
 
-    if (isDefined(errorCode) && POSTGRESQL_ERROR_CODES.includes(errorCode)) {
+    if (
+      isDefined(errorCode) &&
+      Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
+    ) {
       throw new PostgresException('Data validation error.', errorCode);
     }
     throw error;
