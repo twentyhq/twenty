@@ -14,6 +14,7 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
@@ -188,12 +189,17 @@ export class RunWorkflowJob {
     steps,
   }: {
     workspaceId: string;
-    steps: Array<{ type: string; settings?: { input?: { logicFunctionId?: string } } }>;
+    steps: WorkflowAction[];
   }): Promise<void> {
     const codeSteps = steps.filter(
-      (step) =>
+      (step): step is WorkflowAction & {
+        type: typeof WorkflowActionType.CODE;
+        settings: { input: { logicFunctionId: string } };
+      } =>
         step.type === WorkflowActionType.CODE &&
-        isDefined(step.settings?.input?.logicFunctionId),
+        isDefined(
+          (step.settings?.input as { logicFunctionId?: string })?.logicFunctionId,
+        ),
     );
 
     if (codeSteps.length === 0) {
@@ -209,7 +215,7 @@ export class RunWorkflowJob {
       );
 
     for (const step of codeSteps) {
-      const logicFunctionId = step.settings!.input!.logicFunctionId!;
+      const logicFunctionId = step.settings.input.logicFunctionId;
       const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: logicFunctionId,
         flatEntityMaps: flatLogicFunctionMaps,

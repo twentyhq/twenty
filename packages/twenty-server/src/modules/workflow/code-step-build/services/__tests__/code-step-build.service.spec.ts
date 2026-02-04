@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -33,9 +33,9 @@ describe('CodeStepBuildService', () => {
         builtHandlerPath: 'workflow/abc-123/index.mjs',
       } as FlatLogicFunction;
 
-      expect(
-        service.isWorkflowCodeStepLogicFunction(flatLogicFunction),
-      ).toBe(true);
+      expect(service.isWorkflowCodeStepLogicFunction(flatLogicFunction)).toBe(
+        true,
+      );
     });
 
     it('should return true when builtHandlerPath starts with workflow/', () => {
@@ -44,9 +44,9 @@ describe('CodeStepBuildService', () => {
         builtHandlerPath: 'workflow/abc-123/index.mjs',
       } as FlatLogicFunction;
 
-      expect(
-        service.isWorkflowCodeStepLogicFunction(flatLogicFunction),
-      ).toBe(true);
+      expect(service.isWorkflowCodeStepLogicFunction(flatLogicFunction)).toBe(
+        true,
+      );
     });
 
     it('should return false when neither path starts with workflow/', () => {
@@ -55,9 +55,9 @@ describe('CodeStepBuildService', () => {
         builtHandlerPath: 'app/handlers/index.mjs',
       } as FlatLogicFunction;
 
-      expect(
-        service.isWorkflowCodeStepLogicFunction(flatLogicFunction),
-      ).toBe(false);
+      expect(service.isWorkflowCodeStepLogicFunction(flatLogicFunction)).toBe(
+        false,
+      );
     });
   });
 });

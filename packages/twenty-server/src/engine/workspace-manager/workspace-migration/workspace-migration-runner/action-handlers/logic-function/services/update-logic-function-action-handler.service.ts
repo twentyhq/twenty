@@ -60,8 +60,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       flatEntityMaps: context.allFlatEntityMaps.flatLogicFunctionMaps,
     });
 
-    const applicationUniversalIdentifier =
-      flatApplication.universalIdentifier;
+    const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
     for (const update of flatAction.updates) {
       if (update.property === 'checksum' && isDefined(code)) {
