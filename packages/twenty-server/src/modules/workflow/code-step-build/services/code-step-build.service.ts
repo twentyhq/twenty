@@ -9,11 +9,11 @@ import { build } from 'esbuild';
 import { FileFolder, Sources } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/utils/get-logic-function-base-folder-path.util';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import {
   DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_SOURCE_HANDLER_PATH,
@@ -23,24 +23,24 @@ import { getCodeStepSeedProjectFiles } from 'src/modules/workflow/code-step-buil
 
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
-export type BuildFromSourceToBuiltParams = {
+type BuildFromSourceToBuiltParams = {
   flatLogicFunction: FlatLogicFunction;
   applicationUniversalIdentifier: string;
 };
 
-export type SeedCodeStepFilesParams = {
+type SeedCodeStepFilesParams = {
   logicFunctionId: string;
   workspaceId: string;
   applicationUniversalIdentifier: string;
 };
 
-export type SeedCodeStepFilesResult = {
+type SeedCodeStepFilesResult = {
   sourceHandlerPath: string;
   builtHandlerPath: string;
   checksum: string;
 };
 
-export type UpdateCodeStepSourceParams = {
+type UpdateCodeStepSourceParams = {
   flatLogicFunction: FlatLogicFunction;
   code: Sources;
   applicationUniversalIdentifier: string;

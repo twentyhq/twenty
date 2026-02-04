@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';

@@ -5,8 +5,6 @@ import { AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -180,30 +178,33 @@ export class WorkspaceMigrationRunnerService {
       });
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
-    this.logger.time('Runner', 'Transaction execution');
 
-    let flatApplication: FlatApplication | undefined;
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const applicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
+    const flatApplication = isDefined(applicationId)
+      ? flatApplicationMaps.byId[applicationId]
+      : undefined;
+
+    if (!isDefined(applicationId) || !isDefined(flatApplication)) {
+      throw new WorkspaceMigrationRunnerException({
+        message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
+        code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
+      });
+    }
+
+    this.logger.time('Runner', 'Transaction execution');
 
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      flatApplication = (await queryRunner.manager
-        .getRepository(ApplicationEntity)
-        .findOne({
-          where: {
-            universalIdentifier: applicationUniversalIdentifier,
-            workspaceId,
-          },
-          select: ['id', 'universalIdentifier'],
-        })) as FlatApplication | undefined;
-
-      if (!isDefined(flatApplication)) {
-        throw new WorkspaceMigrationRunnerException({
-          message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
-          code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
-        });
-      }
       for (const action of actions) {
         const result =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
@@ -247,20 +248,18 @@ export class WorkspaceMigrationRunnerService {
 
       const invertedActions = [...actions].reverse();
 
-      if (isDefined(flatApplication)) {
-        for (const invertedAction of invertedActions) {
-          await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
-            {
+      for (const invertedAction of invertedActions) {
+        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
+          {
+            action: invertedAction,
+            context: {
+              flatApplication,
               action: invertedAction,
-              context: {
-                flatApplication,
-                action: invertedAction,
-                allFlatEntityMaps,
-                workspaceId,
-              },
+              allFlatEntityMaps,
+              workspaceId,
             },
-          );
-        }
+          },
+        );
       }
 
       if (error instanceof WorkspaceMigrationRunnerException) {

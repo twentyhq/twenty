@@ -389,6 +389,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
 
       const emptyMaps = createEmptyAllFlatEntityMaps();
       const flatLogicFunctionMapsKey = 'flatLogicFunctionMaps' as const;
+
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValueOnce(
         {
           ...emptyMaps,
@@ -429,7 +430,9 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       expect(codeResult.settings.input.logicFunctionId).toBe('new-function-id');
 
       expect(duplicateStep.nextStepIds).toEqual([]);
-      expect(codeStepBuildService.copySourceAndBuiltForNewCodeStep).toHaveBeenCalled();
+      expect(
+        codeStepBuildService.copySourceAndBuiltForNewCodeStep,
+      ).toHaveBeenCalled();
       expect(logicFunctionService.createOne).toHaveBeenCalled();
     });
 

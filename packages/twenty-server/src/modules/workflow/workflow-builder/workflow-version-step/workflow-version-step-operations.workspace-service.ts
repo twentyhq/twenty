@@ -679,11 +679,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        const newLogicFunction =
-          await this.duplicateCodeStepLogicFunction({
-            existingLogicFunctionId: step.settings.input.logicFunctionId,
-            workspaceId,
-          });
+        const newLogicFunction = await this.duplicateCodeStepLogicFunction({
+          existingLogicFunctionId: step.settings.input.logicFunctionId,
+          workspaceId,
+        });
 
         return {
           ...step,
@@ -963,19 +962,18 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       flatLogicFunctionMaps,
     });
 
-    const resolvedOwnerFlatApplication =
-      (
-        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-          { workspaceId },
-        )
-      ).workspaceCustomFlatApplication;
+    const resolvedOwnerFlatApplication = (
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      )
+    ).workspaceCustomFlatApplication;
 
     const applicationUniversalIdentifier =
       resolvedOwnerFlatApplication.universalIdentifier;
 
     const newId = v4();
-    const newFlatLogicFunction = fromCreateLogicFunctionInputToFlatLogicFunction(
-      {
+    const newFlatLogicFunction =
+      fromCreateLogicFunctionInputToFlatLogicFunction({
         createLogicFunctionInput: {
           name: existingLogicFunction.name,
           description: existingLogicFunction.description ?? undefined,
@@ -984,8 +982,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         },
         workspaceId,
         ownerFlatApplication: resolvedOwnerFlatApplication,
-      },
-    );
+      });
 
     await this.codeStepBuildService.copySourceAndBuiltForNewCodeStep({
       existingFlatLogicFunction: existingLogicFunction,
@@ -1018,11 +1015,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }): Promise<WorkflowAction> {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        const newLogicFunction =
-          await this.duplicateCodeStepLogicFunction({
-            existingLogicFunctionId: step.settings.input.logicFunctionId,
-            workspaceId,
-          });
+        const newLogicFunction = await this.duplicateCodeStepLogicFunction({
+          existingLogicFunctionId: step.settings.input.logicFunctionId,
+          workspaceId,
+        });
 
         return {
           ...step,

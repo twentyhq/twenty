@@ -14,23 +14,26 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 import {
-    WorkflowCommonException,
-    WorkflowCommonExceptionCode,
+  WorkflowCommonException,
+  WorkflowCommonExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-common.exception';
 import { type WorkflowAutomatedTriggerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
-    WorkflowVersionStatus,
-    type WorkflowVersionWorkspaceEntity,
+  WorkflowVersionStatus,
+  type WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
-    WorkflowStatus,
-    type WorkflowWorkspaceEntity,
+  WorkflowStatus,
+  type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowActionType, type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-    WorkflowTriggerException,
-    WorkflowTriggerExceptionCode,
+  WorkflowActionType,
+  type WorkflowAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 export type ObjectMetadataInfo = {

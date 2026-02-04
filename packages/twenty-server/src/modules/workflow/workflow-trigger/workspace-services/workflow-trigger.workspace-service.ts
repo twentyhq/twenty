@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
-
 import { isNonEmptyString } from '@sniptt/guards';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -384,7 +384,9 @@ export class WorkflowTriggerWorkspaceService {
         await this.commandMenuItemService.create(
           {
             workflowVersionId: workflowVersion.id,
-            label: isNonEmptyString(workflow.name) ? workflow.name : 'Manual Trigger',
+            label: isNonEmptyString(workflow.name)
+              ? workflow.name
+              : 'Manual Trigger',
             icon: trigger.settings.icon,
             availabilityType,
             availabilityObjectMetadataId,
