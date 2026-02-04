@@ -1,13 +1,19 @@
-import { FIND_PAGE_LAYOUTS } from '@/page-layout/graphql/queries/findPageLayouts';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { FIND_PAGE_LAYOUTS } from '@/page-layout/graphql/queries/findPageLayouts';
 import { getRecordPageLayoutId } from '@/page-layout/utils/getRecordPageLayoutId';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client';
 import { useMemo } from 'react';
-import { FeatureFlagKey, PageLayoutType } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  FeatureFlagKey,
+  type GetPageLayoutsQuery,
+  type GetPageLayoutsQueryVariables,
+  PageLayoutType,
+} from '~/generated/graphql';
 
 export const useRecordPageLayoutId = ({
   id,
@@ -28,18 +34,18 @@ export const useRecordPageLayoutId = ({
     objectNameSingular: targetObjectNameSingular,
   });
 
-  const { data: pageLayoutsData, loading: pageLayoutsLoading } = useQuery(
-    FIND_PAGE_LAYOUTS,
-    {
-      variables: {
-        objectMetadataId: objectMetadataItem?.id,
-      },
-      skip:
-        !isRecordPageLayoutEditingEnabled ||
-        !objectMetadataItem ||
-        !objectMetadataItem.id,
+  const { data: pageLayoutsData, loading: pageLayoutsLoading } = useQuery<
+    GetPageLayoutsQuery,
+    GetPageLayoutsQueryVariables
+  >(FIND_PAGE_LAYOUTS, {
+    variables: {
+      objectMetadataId: objectMetadataItem?.id,
     },
-  );
+    skip:
+      !isRecordPageLayoutEditingEnabled ||
+      !objectMetadataItem ||
+      !objectMetadataItem.id,
+  });
 
   const pageLayoutId = useMemo(() => {
     if (isRecordPageLayoutEditingEnabled) {
@@ -51,7 +57,7 @@ export const useRecordPageLayoutId = ({
         (layout) => layout.type === PageLayoutType.RECORD_PAGE,
       );
 
-      if (recordPageLayout) {
+      if (isDefined(recordPageLayout)) {
         return recordPageLayout.id;
       }
     }

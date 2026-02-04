@@ -1,4 +1,5 @@
 import { type RulesLogic } from 'json-logic-js';
+import { type WidgetConfigurationType } from '~/generated/graphql';
 
 export type FieldsConfigurationFieldItem = {
   fieldMetadataId: string;
@@ -15,6 +16,6 @@ export type FieldsConfigurationSection = {
 
 export type FieldsConfiguration = {
   __typename: 'FieldsConfiguration';
-  configurationType: 'FIELDS';
+  configurationType: WidgetConfigurationType.FIELDS;
   sections: FieldsConfigurationSection[];
 };

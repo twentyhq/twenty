@@ -96,7 +96,7 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIGURATION: StandaloneRichTextConfigur
 
 export const TEST_FIELDS_CONFIGURATION = {
   __typename: 'FieldsConfiguration' as const,
-  configurationType: 'FIELDS' as const,
+  configurationType: WidgetConfigurationType.FIELDS,
   sections: [],
 };
 

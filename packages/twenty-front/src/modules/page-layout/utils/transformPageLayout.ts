@@ -1,5 +1,6 @@
+import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { type PageLayout, type PageLayout as PageLayoutGenerated } from '~/generated/graphql';
+import { type PageLayout as PageLayoutGenerated } from '~/generated/graphql';
 
 export const transformPageLayout = (
   pageLayout: PageLayoutGenerated,
@@ -12,7 +13,6 @@ export const transformPageLayout = (
         return {
           ...tab,
           widgets: tab.widgets ?? [],
-          layoutMode: tab.layoutMode ?? undefined,
         };
       }),
   };

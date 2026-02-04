@@ -27,6 +27,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   WidgetConfigurationType,
   WidgetType,
@@ -387,7 +388,7 @@ export const TextFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -479,7 +480,7 @@ export const AddressFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -574,7 +575,7 @@ export const NumberFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -666,7 +667,7 @@ export const LinkFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -768,7 +769,7 @@ export const ManyToOneRelationFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -865,7 +866,7 @@ export const OneToManyRelationFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -957,7 +958,7 @@ export const BooleanFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1048,7 +1049,7 @@ export const CurrencyFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1142,7 +1143,7 @@ export const EmailsFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1237,7 +1238,7 @@ export const PhonesFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1332,7 +1333,7 @@ export const SelectFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1425,7 +1426,7 @@ export const MultiSelectFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1529,7 +1530,7 @@ export const TimelineActivityRelationFieldWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1630,7 +1631,7 @@ export const ManyToOneRelationCardWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1735,7 +1736,7 @@ export const OneToManyRelationCardWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1834,7 +1835,7 @@ export const TimelineActivityRelationCardWidget: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >
@@ -1996,7 +1997,7 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
               >
                 <PageLayoutContentProvider
                   value={{
-                    layoutMode: 'vertical-list',
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
                     tabId: 'fields',
                   }}
                 >

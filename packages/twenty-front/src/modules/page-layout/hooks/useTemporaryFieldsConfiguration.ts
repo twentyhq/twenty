@@ -3,6 +3,7 @@ import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguratio
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { WidgetConfigurationType } from '~/generated/graphql';
 
 export const useTemporaryFieldsConfiguration = (
   objectNameSingular: string,
@@ -71,7 +72,7 @@ export const useTemporaryFieldsConfiguration = (
 
     return {
       __typename: 'FieldsConfiguration',
-      configurationType: 'FIELDS',
+      configurationType: WidgetConfigurationType.FIELDS,
       sections,
     };
   }, [objectMetadataItem, objectNameSingular, t]);
