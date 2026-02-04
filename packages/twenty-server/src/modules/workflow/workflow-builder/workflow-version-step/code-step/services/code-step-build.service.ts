@@ -10,14 +10,12 @@ import { FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import {
-  getLogicFunctionBaseFolderPath,
-  getRelativePathFromBase,
-} from 'src/engine/core-modules/logic-function/utils/get-logic-function-base-folder-path.util';
+import { getRelativePathFromBase } from 'src/engine/core-modules/logic-function/utils/get-logic-function-base-folder-path.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import {
@@ -28,11 +26,15 @@ import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
+import { getLogicFunctionBaseFolderPath } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-handler-path.util';
+import {
+  getCodeStepSeedProjectFiles,
+  type CodeStepSeedProjectFile,
+} from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-seed-project-files.util';
 import {
   WorkflowActionType,
   type WorkflowAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { getCodeStepSeedProjectFiles } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-seed-project-files.util';
 
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
@@ -222,11 +224,11 @@ export class CodeStepBuildService {
 
     const seedProjectFiles = await getCodeStepSeedProjectFiles();
 
-    const sourceFiles = seedProjectFiles.filter((file) =>
-      file.name.endsWith('index.ts'),
+    const sourceFiles = seedProjectFiles.filter(
+      (file: CodeStepSeedProjectFile) => file.name.endsWith('index.ts'),
     );
-    const builtFiles = seedProjectFiles.filter((file) =>
-      file.name.endsWith('.mjs'),
+    const builtFiles = seedProjectFiles.filter(
+      (file: CodeStepSeedProjectFile) => file.name.endsWith('.mjs'),
     );
 
     if (sourceFiles.length !== 1 || builtFiles.length !== 1) {
@@ -324,9 +326,10 @@ export class CodeStepBuildService {
     workspaceId: string,
     logicFunctionId: string,
   ): Promise<Sources | null> {
-    const flatLogicFunction = await this.getFlatLogicFunctionForCodeStepOrNull(
-      { logicFunctionId, workspaceId },
-    );
+    const flatLogicFunction = await this.getFlatLogicFunctionForCodeStepOrNull({
+      logicFunctionId,
+      workspaceId,
+    });
 
     if (!isDefined(flatLogicFunction)) {
       return null;
