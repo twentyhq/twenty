@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { LogicFunctionSourceBuilderService } from 'src/engine/core-modules/logic-function/logic-function-source-builder/logic-function-source-builder.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -30,6 +31,7 @@ export class LogicFunctionService {
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
+    private readonly logicFunctionSourceBuilderService: LogicFunctionSourceBuilderService,
   ) {}
 
   async createOne({
@@ -50,12 +52,28 @@ export class LogicFunctionService {
         )
       ).workspaceCustomFlatApplication;
 
+    // Generate flat logic function to get the ID
     const flatLogicFunctionToCreate =
       fromCreateLogicFunctionInputToFlatLogicFunction({
         createLogicFunctionInput: input,
         workspaceId,
         ownerFlatApplication: resolvedOwnerFlatApplication,
       });
+
+    // Seed the source files (uses provided code or default seed project)
+    const { sourceHandlerPath, builtHandlerPath, checksum } =
+      await this.logicFunctionSourceBuilderService.seedSourceFiles({
+        logicFunctionId: flatLogicFunctionToCreate.id,
+        workspaceId,
+        applicationUniversalIdentifier:
+          resolvedOwnerFlatApplication.universalIdentifier,
+        code: input.code,
+      });
+
+    // Update paths and checksum with actual values from seeding
+    flatLogicFunctionToCreate.sourceHandlerPath = sourceHandlerPath;
+    flatLogicFunctionToCreate.builtHandlerPath = builtHandlerPath;
+    flatLogicFunctionToCreate.checksum = checksum;
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(

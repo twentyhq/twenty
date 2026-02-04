@@ -1,10 +1,10 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { FIND_ONE_CODE_STEP_SOURCE_CODE } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/queries/findOneCodeStepSourceCode';
+import { FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/queries/findOneCodeStepSourceCode';
 import { useQuery } from '@apollo/client';
 import { type Sources } from 'twenty-shared/types';
 import {
-  type FindOneCodeStepSourceCodeQuery,
-  type FindOneCodeStepSourceCodeQueryVariables,
+  type GetLogicFunctionSourceCodeQuery,
+  type GetLogicFunctionSourceCodeQueryVariables,
 } from '~/generated-metadata/graphql';
 
 export const useGetCodeStepCode = ({
@@ -14,17 +14,17 @@ export const useGetCodeStepCode = ({
 }): { code: Sources | null; loading: boolean } => {
   const apolloMetadataClient = useApolloCoreClient();
   const { data, loading } = useQuery<
-    FindOneCodeStepSourceCodeQuery,
-    FindOneCodeStepSourceCodeQueryVariables
-  >(FIND_ONE_CODE_STEP_SOURCE_CODE, {
+    GetLogicFunctionSourceCodeQuery,
+    GetLogicFunctionSourceCodeQueryVariables
+  >(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE, {
     client: apolloMetadataClient ?? undefined,
     variables: {
-      input: { logicFunctionId },
+      input: { id: logicFunctionId },
     },
     skip: !logicFunctionId,
   });
 
-  const raw = data?.getCodeStepSourceCode;
+  const raw = data?.getLogicFunctionSourceCode;
   const code =
     raw != null && typeof raw === 'object' && !Array.isArray(raw)
       ? (raw as Sources)

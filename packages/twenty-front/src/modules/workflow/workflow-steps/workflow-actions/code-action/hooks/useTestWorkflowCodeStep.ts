@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { EXECUTE_CODE_STEP } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/mutations/executeCodeStep';
+import { TEST_LOGIC_FUNCTION } from '@/workflow/workflow-steps/workflow-actions/code-action/graphql/mutations/executeCodeStep';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
@@ -8,12 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import { sleep } from '~/utils/sleep';
 
-type ExecuteCodeStepInput = {
-  logicFunctionId: string;
+type TestLogicFunctionInput = {
+  id: string;
   payload: object;
 };
 
-type ExecuteCodeStepResult = {
+type TestLogicFunctionResult = {
   data?: object | null;
   logs: string;
   duration: number;
@@ -34,10 +34,10 @@ export const useTestWorkflowCodeStep = ({
 }) => {
   const [isTesting, setIsTesting] = useState(false);
   const apolloMetadataClient = useApolloCoreClient();
-  const [executeCodeStepMutation] = useMutation<
-    { executeCodeStep: ExecuteCodeStepResult },
-    { input: ExecuteCodeStepInput }
-  >(EXECUTE_CODE_STEP, {
+  const [testLogicFunctionMutation] = useMutation<
+    { testLogicFunction: TestLogicFunctionResult },
+    { input: TestLogicFunctionInput }
+  >(TEST_LOGIC_FUNCTION, {
     client: apolloMetadataClient,
   });
 
@@ -48,11 +48,11 @@ export const useTestWorkflowCodeStep = ({
   const testWorkflowCodeStep = async () => {
     try {
       setIsTesting(true);
-      await sleep(200);
-      const result = await executeCodeStepMutation({
+      await sleep(200); // Delay artificially to avoid flashing the UI
+      const result = await testLogicFunctionMutation({
         variables: {
           input: {
-            logicFunctionId,
+            id: logicFunctionId,
             payload: logicFunctionTestData.input,
           },
         },
@@ -60,10 +60,10 @@ export const useTestWorkflowCodeStep = ({
 
       setIsTesting(false);
 
-      const executeCodeStep = result?.data?.executeCodeStep;
+      const testLogicFunctionResult = result?.data?.testLogicFunction;
 
-      if (isDefined(executeCodeStep?.data)) {
-        callback?.(executeCodeStep.data);
+      if (isDefined(testLogicFunctionResult?.data)) {
+        callback?.(testLogicFunctionResult.data);
       }
 
       setLogicFunctionTestData((prev) => ({
@@ -71,15 +71,15 @@ export const useTestWorkflowCodeStep = ({
         language: 'json',
         height: 300,
         output: {
-          data: executeCodeStep?.data
-            ? JSON.stringify(executeCodeStep.data, null, 4)
+          data: testLogicFunctionResult?.data
+            ? JSON.stringify(testLogicFunctionResult.data, null, 4)
             : undefined,
-          logs: executeCodeStep?.logs || '',
-          duration: executeCodeStep?.duration,
-          status: (executeCodeStep?.status ??
+          logs: testLogicFunctionResult?.logs || '',
+          duration: testLogicFunctionResult?.duration,
+          status: (testLogicFunctionResult?.status ??
             LogicFunctionExecutionStatus.IDLE) as LogicFunctionExecutionStatus,
-          error: executeCodeStep?.error
-            ? JSON.stringify(executeCodeStep.error, null, 4)
+          error: testLogicFunctionResult?.error
+            ? JSON.stringify(testLogicFunctionResult.error, null, 4)
             : undefined,
         },
       }));

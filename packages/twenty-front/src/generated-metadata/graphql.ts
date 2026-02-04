@@ -1447,13 +1447,6 @@ export type EventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
-export type ExecuteCodeStepInput = {
-  /** Id of the logic function (workflow code step) to execute */
-  logicFunctionId: Scalars['UUID'];
-  /** Payload in JSON format */
-  payload: Scalars['JSON'];
-};
-
 export type ExecuteLogicFunctionInput = {
   /** Id of the logic function to execute */
   id: Scalars['UUID'];
@@ -1706,9 +1699,9 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetCodeStepSourceCodeInput = {
-  /** The id of the logic function (code step). */
-  logicFunctionId: Scalars['UUID'];
+export type GetLogicFunctionSourceCodeInput = {
+  /** The id of the function. */
+  id: Scalars['ID'];
 };
 
 /** Order by options for graph widgets */
@@ -2178,7 +2171,6 @@ export type Mutation = {
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
   evaluateAgentTurn: AgentTurnEvaluation;
-  executeCodeStep: LogicFunctionExecutionResult;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientTokenOutput;
@@ -2216,10 +2208,10 @@ export type Mutation = {
   switchSubscriptionInterval: BillingUpdateOutput;
   syncApplication: Scalars['Boolean'];
   testHttpRequest: TestHttpRequestOutput;
+  testLogicFunction: LogicFunctionExecutionResult;
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
-  updateCodeStepSource: Scalars['Boolean'];
   updateCommandMenuItem: CommandMenuItem;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
@@ -2230,6 +2222,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateLogicFunctionSource: Scalars['Boolean'];
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
@@ -2740,11 +2733,6 @@ export type MutationEvaluateAgentTurnArgs = {
 };
 
 
-export type MutationExecuteCodeStepArgs = {
-  input: ExecuteCodeStepInput;
-};
-
-
 export type MutationExecuteOneLogicFunctionArgs = {
   input: ExecuteLogicFunctionInput;
 };
@@ -2923,6 +2911,11 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationTestLogicFunctionArgs = {
+  input: TestLogicFunctionInput;
+};
+
+
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -2938,11 +2931,6 @@ export type MutationUninstallApplicationArgs = {
 
 export type MutationUpdateApiKeyArgs = {
   input: UpdateApiKeyInput;
-};
-
-
-export type MutationUpdateCodeStepSourceArgs = {
-  input: UpdateCodeStepSourceInput;
 };
 
 
@@ -2997,6 +2985,11 @@ export type MutationUpdateFrontComponentArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateLogicFunctionSourceArgs = {
+  input: UpdateLogicFunctionSourceInput;
 };
 
 
@@ -3670,7 +3663,6 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
-  getCodeStepSourceCode?: Maybe<Scalars['JSON']>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
@@ -3688,6 +3680,7 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -3841,11 +3834,6 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
-export type QueryGetCodeStepSourceCodeArgs = {
-  input: GetCodeStepSourceCodeInput;
-};
-
-
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
   id: Scalars['UUID'];
 };
@@ -3918,6 +3906,11 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
+};
+
+
+export type QueryGetLogicFunctionSourceCodeArgs = {
+  input: GetLogicFunctionSourceCodeInput;
 };
 
 
@@ -4537,6 +4530,13 @@ export type TestHttpRequestOutput = {
   success: Scalars['Boolean'];
 };
 
+export type TestLogicFunctionInput = {
+  /** Id of the logic function to test (build and execute) */
+  id: Scalars['UUID'];
+  /** Payload in JSON format */
+  payload: Scalars['JSON'];
+};
+
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   conferenceLink: LinksMetadata;
@@ -4676,13 +4676,6 @@ export type UpdateApiKeyInput = {
   revokedAt?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateCodeStepSourceInput = {
-  /** The source code (Sources) to write. Only updates source files. */
-  code: Scalars['JSON'];
-  /** The id of the logic function (code step). */
-  logicFunctionId: Scalars['UUID'];
-};
-
 export type UpdateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
@@ -4742,6 +4735,13 @@ export type UpdateLogicFunctionInputUpdates = {
   sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateLogicFunctionSourceInput = {
+  /** The source code (Sources) to write. Only updates source files. */
+  code: Scalars['JSON'];
+  /** The id of the logic function. */
+  id: Scalars['UUID'];
 };
 
 export type UpdateNavigationMenuItemInput = {
@@ -7027,26 +7027,26 @@ export type UpdateWorkflowVersionStepMutationVariables = Exact<{
 
 export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: string, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<string> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
 
-export type ExecuteCodeStepMutationVariables = Exact<{
-  input: ExecuteCodeStepInput;
+export type TestLogicFunctionMutationVariables = Exact<{
+  input: TestLogicFunctionInput;
 }>;
 
 
-export type ExecuteCodeStepMutation = { __typename?: 'Mutation', executeCodeStep: { __typename?: 'LogicFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: LogicFunctionExecutionStatus, error?: any | null } };
+export type TestLogicFunctionMutation = { __typename?: 'Mutation', testLogicFunction: { __typename?: 'LogicFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: LogicFunctionExecutionStatus, error?: any | null } };
 
-export type UpdateCodeStepSourceMutationVariables = Exact<{
-  input: UpdateCodeStepSourceInput;
+export type UpdateLogicFunctionSourceMutationVariables = Exact<{
+  input: UpdateLogicFunctionSourceInput;
 }>;
 
 
-export type UpdateCodeStepSourceMutation = { __typename?: 'Mutation', updateCodeStepSource: boolean };
+export type UpdateLogicFunctionSourceMutation = { __typename?: 'Mutation', updateLogicFunctionSource: boolean };
 
-export type FindOneCodeStepSourceCodeQueryVariables = Exact<{
-  input: GetCodeStepSourceCodeInput;
+export type GetLogicFunctionSourceCodeQueryVariables = Exact<{
+  input: GetLogicFunctionSourceCodeInput;
 }>;
 
 
-export type FindOneCodeStepSourceCodeQuery = { __typename?: 'Query', getCodeStepSourceCode?: any | null };
+export type GetLogicFunctionSourceCodeQuery = { __typename?: 'Query', getLogicFunctionSourceCode?: any | null };
 
 export type SubmitFormStepMutationVariables = Exact<{
   input: SubmitFormStepInput;
@@ -15490,9 +15490,9 @@ export function useUpdateWorkflowVersionStepMutation(baseOptions?: Apollo.Mutati
 export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationResult = Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
 export type UpdateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
-export const ExecuteCodeStepDocument = gql`
-    mutation ExecuteCodeStep($input: ExecuteCodeStepInput!) {
-  executeCodeStep(input: $input) {
+export const TestLogicFunctionDocument = gql`
+    mutation TestLogicFunction($input: TestLogicFunctionInput!) {
+  testLogicFunction(input: $input) {
     data
     logs
     duration
@@ -15501,96 +15501,96 @@ export const ExecuteCodeStepDocument = gql`
   }
 }
     `;
-export type ExecuteCodeStepMutationFn = Apollo.MutationFunction<ExecuteCodeStepMutation, ExecuteCodeStepMutationVariables>;
+export type TestLogicFunctionMutationFn = Apollo.MutationFunction<TestLogicFunctionMutation, TestLogicFunctionMutationVariables>;
 
 /**
- * __useExecuteCodeStepMutation__
+ * __useTestLogicFunctionMutation__
  *
- * To run a mutation, you first call `useExecuteCodeStepMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useExecuteCodeStepMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useTestLogicFunctionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTestLogicFunctionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [executeCodeStepMutation, { data, loading, error }] = useExecuteCodeStepMutation({
+ * const [testLogicFunctionMutation, { data, loading, error }] = useTestLogicFunctionMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useExecuteCodeStepMutation(baseOptions?: Apollo.MutationHookOptions<ExecuteCodeStepMutation, ExecuteCodeStepMutationVariables>) {
+export function useTestLogicFunctionMutation(baseOptions?: Apollo.MutationHookOptions<TestLogicFunctionMutation, TestLogicFunctionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<ExecuteCodeStepMutation, ExecuteCodeStepMutationVariables>(ExecuteCodeStepDocument, options);
+        return Apollo.useMutation<TestLogicFunctionMutation, TestLogicFunctionMutationVariables>(TestLogicFunctionDocument, options);
       }
-export type ExecuteCodeStepMutationHookResult = ReturnType<typeof useExecuteCodeStepMutation>;
-export type ExecuteCodeStepMutationResult = Apollo.MutationResult<ExecuteCodeStepMutation>;
-export type ExecuteCodeStepMutationOptions = Apollo.BaseMutationOptions<ExecuteCodeStepMutation, ExecuteCodeStepMutationVariables>;
-export const UpdateCodeStepSourceDocument = gql`
-    mutation UpdateCodeStepSource($input: UpdateCodeStepSourceInput!) {
-  updateCodeStepSource(input: $input)
+export type TestLogicFunctionMutationHookResult = ReturnType<typeof useTestLogicFunctionMutation>;
+export type TestLogicFunctionMutationResult = Apollo.MutationResult<TestLogicFunctionMutation>;
+export type TestLogicFunctionMutationOptions = Apollo.BaseMutationOptions<TestLogicFunctionMutation, TestLogicFunctionMutationVariables>;
+export const UpdateLogicFunctionSourceDocument = gql`
+    mutation UpdateLogicFunctionSource($input: UpdateLogicFunctionSourceInput!) {
+  updateLogicFunctionSource(input: $input)
 }
     `;
-export type UpdateCodeStepSourceMutationFn = Apollo.MutationFunction<UpdateCodeStepSourceMutation, UpdateCodeStepSourceMutationVariables>;
+export type UpdateLogicFunctionSourceMutationFn = Apollo.MutationFunction<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>;
 
 /**
- * __useUpdateCodeStepSourceMutation__
+ * __useUpdateLogicFunctionSourceMutation__
  *
- * To run a mutation, you first call `useUpdateCodeStepSourceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCodeStepSourceMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateLogicFunctionSourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLogicFunctionSourceMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateCodeStepSourceMutation, { data, loading, error }] = useUpdateCodeStepSourceMutation({
+ * const [updateLogicFunctionSourceMutation, { data, loading, error }] = useUpdateLogicFunctionSourceMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useUpdateCodeStepSourceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCodeStepSourceMutation, UpdateCodeStepSourceMutationVariables>) {
+export function useUpdateLogicFunctionSourceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCodeStepSourceMutation, UpdateCodeStepSourceMutationVariables>(UpdateCodeStepSourceDocument, options);
+        return Apollo.useMutation<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>(UpdateLogicFunctionSourceDocument, options);
       }
-export type UpdateCodeStepSourceMutationHookResult = ReturnType<typeof useUpdateCodeStepSourceMutation>;
-export type UpdateCodeStepSourceMutationResult = Apollo.MutationResult<UpdateCodeStepSourceMutation>;
-export type UpdateCodeStepSourceMutationOptions = Apollo.BaseMutationOptions<UpdateCodeStepSourceMutation, UpdateCodeStepSourceMutationVariables>;
-export const FindOneCodeStepSourceCodeDocument = gql`
-    query FindOneCodeStepSourceCode($input: GetCodeStepSourceCodeInput!) {
-  getCodeStepSourceCode(input: $input)
+export type UpdateLogicFunctionSourceMutationHookResult = ReturnType<typeof useUpdateLogicFunctionSourceMutation>;
+export type UpdateLogicFunctionSourceMutationResult = Apollo.MutationResult<UpdateLogicFunctionSourceMutation>;
+export type UpdateLogicFunctionSourceMutationOptions = Apollo.BaseMutationOptions<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>;
+export const GetLogicFunctionSourceCodeDocument = gql`
+    query GetLogicFunctionSourceCode($input: GetLogicFunctionSourceCodeInput!) {
+  getLogicFunctionSourceCode(input: $input)
 }
     `;
 
 /**
- * __useFindOneCodeStepSourceCodeQuery__
+ * __useGetLogicFunctionSourceCodeQuery__
  *
- * To run a query within a React component, call `useFindOneCodeStepSourceCodeQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneCodeStepSourceCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetLogicFunctionSourceCodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLogicFunctionSourceCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useFindOneCodeStepSourceCodeQuery({
+ * const { data, loading, error } = useGetLogicFunctionSourceCodeQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useFindOneCodeStepSourceCodeQuery(baseOptions: Apollo.QueryHookOptions<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>) {
+export function useGetLogicFunctionSourceCodeQuery(baseOptions: Apollo.QueryHookOptions<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>(FindOneCodeStepSourceCodeDocument, options);
+        return Apollo.useQuery<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>(GetLogicFunctionSourceCodeDocument, options);
       }
-export function useFindOneCodeStepSourceCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>) {
+export function useGetLogicFunctionSourceCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>(FindOneCodeStepSourceCodeDocument, options);
+          return Apollo.useLazyQuery<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>(GetLogicFunctionSourceCodeDocument, options);
         }
-export type FindOneCodeStepSourceCodeQueryHookResult = ReturnType<typeof useFindOneCodeStepSourceCodeQuery>;
-export type FindOneCodeStepSourceCodeLazyQueryHookResult = ReturnType<typeof useFindOneCodeStepSourceCodeLazyQuery>;
-export type FindOneCodeStepSourceCodeQueryResult = Apollo.QueryResult<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>;
+export type GetLogicFunctionSourceCodeQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeQuery>;
+export type GetLogicFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeLazyQuery>;
+export type GetLogicFunctionSourceCodeQueryResult = Apollo.QueryResult<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>;
 export const SubmitFormStepDocument = gql`
     mutation SubmitFormStep($input: SubmitFormStepInput!) {
   submitFormStep(input: $input)

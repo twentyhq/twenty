@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const EXECUTE_CODE_STEP = gql`
-  mutation ExecuteCodeStep($input: ExecuteCodeStepInput!) {
-    executeCodeStep(input: $input) {
+export const TEST_LOGIC_FUNCTION = gql`
+  mutation TestLogicFunction($input: TestLogicFunctionInput!) {
+    testLogicFunction(input: $input) {
       data
       logs
       duration

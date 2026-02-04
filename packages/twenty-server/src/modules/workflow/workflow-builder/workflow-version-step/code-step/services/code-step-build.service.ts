@@ -1,38 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import crypto from 'crypto';
-import fs from 'fs/promises';
-import { dirname, join } from 'path';
-
-import { isObject } from '@sniptt/guards';
-import { build } from 'esbuild';
-import { FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import { LogicFunctionSourceBuilderService } from 'src/engine/core-modules/logic-function/logic-function-source-builder/logic-function-source-builder.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import {
-  DEFAULT_BUILT_HANDLER_PATH,
-  DEFAULT_SOURCE_HANDLER_PATH,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
-import {
-  getLogicFunctionBaseFolderPath,
-  getRelativePathFromBase,
-} from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-handler-path.util';
-import {
-  getCodeStepSeedProjectFiles,
-  type CodeStepSeedProjectFile,
-} from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-seed-project-files.util';
 import {
   WorkflowActionType,
   type WorkflowAction,
@@ -40,36 +18,13 @@ import {
 
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
-type BuildFromSourceToBuiltParams = {
-  flatLogicFunction: FlatLogicFunction;
-  applicationUniversalIdentifier: string;
-};
-
-type SeedCodeStepFilesParams = {
-  logicFunctionId: string;
-  workspaceId: string;
-  applicationUniversalIdentifier: string;
-};
-
-type SeedCodeStepFilesResult = {
-  sourceHandlerPath: string;
-  builtHandlerPath: string;
-  checksum: string;
-};
-
-type UpdateCodeStepSourceParams = {
-  flatLogicFunction: FlatLogicFunction;
-  code: Sources;
-  applicationUniversalIdentifier: string;
-};
-
 @Injectable()
 export class CodeStepBuildService {
   constructor(
-    private readonly fileStorageService: FileStorageService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly logicFunctionService: LogicFunctionService,
     private readonly applicationService: ApplicationService,
+    private readonly logicFunctionSourceBuilderService: LogicFunctionSourceBuilderService,
   ) {}
 
   async duplicateCodeStepLogicFunction({
@@ -114,11 +69,13 @@ export class CodeStepBuildService {
         ownerFlatApplication: resolvedOwnerFlatApplication,
       });
 
-    await this.copySourceAndBuiltForNewCodeStep({
-      existingFlatLogicFunction: existingLogicFunction,
-      newFlatLogicFunction,
-      applicationUniversalIdentifier,
+    await this.logicFunctionSourceBuilderService.copySourceAndBuilt({
+      fromSourceHandlerPath: existingLogicFunction.sourceHandlerPath,
+      fromBuiltHandlerPath: existingLogicFunction.builtHandlerPath,
+      toSourceHandlerPath: newFlatLogicFunction.sourceHandlerPath,
+      toBuiltHandlerPath: newFlatLogicFunction.builtHandlerPath,
       workspaceId,
+      applicationUniversalIdentifier,
     });
 
     const created = await this.logicFunctionService.createOne({
@@ -203,10 +160,13 @@ export class CodeStepBuildService {
         continue;
       }
 
-      const { checksum } = await this.buildFromSourceToBuilt({
-        flatLogicFunction,
-        applicationUniversalIdentifier,
-      });
+      const { checksum } =
+        await this.logicFunctionSourceBuilderService.buildFromSource({
+          sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+          builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          workspaceId,
+          applicationUniversalIdentifier,
+        });
 
       await this.logicFunctionService.updateChecksum({
         id: flatLogicFunction.id,
@@ -214,70 +174,6 @@ export class CodeStepBuildService {
         workspaceId,
       });
     }
-  }
-
-  async seedCodeStepFiles({
-    logicFunctionId,
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: SeedCodeStepFilesParams): Promise<SeedCodeStepFilesResult> {
-    const sourceHandlerPath = `${WORKFLOW_BASE_FOLDER_PREFIX}/${logicFunctionId}/${DEFAULT_SOURCE_HANDLER_PATH}`;
-    const builtHandlerPath = `${WORKFLOW_BASE_FOLDER_PREFIX}/${logicFunctionId}/${DEFAULT_BUILT_HANDLER_PATH}`;
-
-    const seedProjectFiles = await getCodeStepSeedProjectFiles();
-
-    const sourceFiles = seedProjectFiles.filter(
-      (file: CodeStepSeedProjectFile) => file.name.endsWith('index.ts'),
-    );
-    const builtFiles = seedProjectFiles.filter(
-      (file: CodeStepSeedProjectFile) => file.name.endsWith('.mjs'),
-    );
-
-    if (sourceFiles.length !== 1 || builtFiles.length !== 1) {
-      throw new Error(
-        'Code step seed project should have one index.ts file and one index.mjs file',
-      );
-    }
-
-    const sourceFile = sourceFiles[0];
-    const builtFile = builtFiles[0];
-
-    await this.fileStorageService.writeFile_v2({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: sourceHandlerPath,
-      sourceFile: sourceFile.content,
-      mimeType: 'application/typescript',
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
-
-    await this.fileStorageService.writeFile_v2({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: builtHandlerPath,
-      sourceFile: builtFile.content,
-      mimeType: 'application/javascript',
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
-
-    const checksum = crypto
-      .createHash('md5')
-      .update(builtFile.content)
-      .digest('hex');
-
-    return {
-      sourceHandlerPath,
-      builtHandlerPath,
-      checksum,
-    };
   }
 
   isWorkflowCodeStepLogicFunction(
@@ -322,345 +218,5 @@ export class CodeStepBuildService {
     }
 
     return flatLogicFunction;
-  }
-
-  async getCodeStepSourceCode(
-    workspaceId: string,
-    logicFunctionId: string,
-  ): Promise<Sources | null> {
-    const flatLogicFunction = await this.getFlatLogicFunctionForCodeStepOrNull({
-      logicFunctionId,
-      workspaceId,
-    });
-
-    if (!isDefined(flatLogicFunction)) {
-      return null;
-    }
-
-    const { flatApplicationMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatApplicationMaps'],
-        },
-      );
-
-    const applicationUniversalIdentifier = isDefined(
-      flatLogicFunction.applicationId,
-    )
-      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          ?.universalIdentifier
-      : undefined;
-
-    if (!isDefined(applicationUniversalIdentifier)) {
-      return null;
-    }
-
-    const baseFolderPath = getLogicFunctionBaseFolderPath(
-      flatLogicFunction.sourceHandlerPath,
-    );
-
-    try {
-      return await this.fileStorageService.readFolder_v2({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-      });
-    } catch (error) {
-      if (
-        isDefined(error) &&
-        typeof error === 'object' &&
-        'code' in error &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        return null;
-      }
-      throw error;
-    }
-  }
-
-  async updateCodeStepSourceByLogicFunctionId({
-    logicFunctionId,
-    workspaceId,
-    code,
-  }: {
-    logicFunctionId: string;
-    workspaceId: string;
-    code: Sources;
-  }): Promise<boolean> {
-    const flatLogicFunction = await this.getFlatLogicFunctionForCodeStepOrNull({
-      logicFunctionId,
-      workspaceId,
-    });
-
-    if (!isDefined(flatLogicFunction)) {
-      return false;
-    }
-
-    const { flatApplicationMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatApplicationMaps'],
-        },
-      );
-
-    const applicationUniversalIdentifier = isDefined(
-      flatLogicFunction.applicationId,
-    )
-      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          ?.universalIdentifier
-      : undefined;
-
-    if (!isDefined(applicationUniversalIdentifier)) {
-      return false;
-    }
-
-    await this.updateCodeStepSource({
-      flatLogicFunction,
-      code,
-      applicationUniversalIdentifier,
-    });
-
-    return true;
-  }
-
-  async buildFromSourceAndUpdateChecksumForCodeStep({
-    logicFunctionId,
-    workspaceId,
-  }: {
-    logicFunctionId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const flatLogicFunction = await this.getFlatLogicFunctionForCodeStepOrNull({
-      logicFunctionId,
-      workspaceId,
-    });
-
-    if (!isDefined(flatLogicFunction)) {
-      throw new Error(
-        'Logic function is not a workflow code step or does not exist',
-      );
-    }
-
-    const { flatApplicationMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatApplicationMaps'],
-        },
-      );
-
-    const applicationUniversalIdentifier = isDefined(
-      flatLogicFunction.applicationId,
-    )
-      ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-          ?.universalIdentifier
-      : undefined;
-
-    if (!isDefined(applicationUniversalIdentifier)) {
-      throw new Error(
-        'Workflow code step application universal identifier not found',
-      );
-    }
-
-    const { checksum } = await this.buildFromSourceToBuilt({
-      flatLogicFunction,
-      applicationUniversalIdentifier,
-    });
-
-    await this.logicFunctionService.updateChecksum({
-      id: logicFunctionId,
-      checksum,
-      workspaceId,
-    });
-  }
-
-  async copySourceAndBuiltForNewCodeStep({
-    existingFlatLogicFunction,
-    newFlatLogicFunction,
-    applicationUniversalIdentifier,
-    workspaceId,
-  }: {
-    existingFlatLogicFunction: FlatLogicFunction;
-    newFlatLogicFunction: FlatLogicFunction;
-    applicationUniversalIdentifier: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const fromSourceBaseFolderPath = getLogicFunctionBaseFolderPath(
-      existingFlatLogicFunction.sourceHandlerPath,
-    );
-    const toSourceBaseFolderPath = getLogicFunctionBaseFolderPath(
-      newFlatLogicFunction.sourceHandlerPath,
-    );
-    const fromBuiltBaseFolderPath = getLogicFunctionBaseFolderPath(
-      existingFlatLogicFunction.builtHandlerPath,
-    );
-    const toBuiltBaseFolderPath = getLogicFunctionBaseFolderPath(
-      newFlatLogicFunction.builtHandlerPath,
-    );
-
-    await this.fileStorageService.copy_v2({
-      from: {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: fromSourceBaseFolderPath,
-      },
-      to: {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: toSourceBaseFolderPath,
-      },
-    });
-
-    await this.fileStorageService.copy_v2({
-      from: {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: fromBuiltBaseFolderPath,
-      },
-      to: {
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: toBuiltBaseFolderPath,
-      },
-    });
-  }
-
-  async updateCodeStepSource({
-    flatLogicFunction,
-    code,
-    applicationUniversalIdentifier,
-  }: UpdateCodeStepSourceParams): Promise<void> {
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
-
-    try {
-      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
-
-      await this.writeSourcesToLocalFolder(code, sourceTemporaryDir);
-
-      const baseFolderPath = getLogicFunctionBaseFolderPath(
-        flatLogicFunction.sourceHandlerPath,
-      );
-
-      await this.fileStorageService.uploadFolder_v2({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-        localPath: sourceTemporaryDir,
-      });
-    } finally {
-      await lambdaBuildDirectoryManager.clean();
-    }
-  }
-
-  private async writeSourcesToLocalFolder(
-    sources: Sources,
-    localPath: string,
-  ): Promise<void> {
-    for (const key of Object.keys(sources)) {
-      const filePath = join(localPath, key);
-      const value = sources[key];
-
-      if (isObject(value)) {
-        await this.writeSourcesToLocalFolder(value as Sources, filePath);
-        continue;
-      }
-      await fs.mkdir(dirname(filePath), { recursive: true });
-      await fs.writeFile(filePath, value);
-    }
-  }
-
-  async buildFromSourceToBuilt({
-    flatLogicFunction,
-    applicationUniversalIdentifier,
-  }: BuildFromSourceToBuiltParams): Promise<{ checksum: string }> {
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
-
-    try {
-      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
-
-      const baseFolderPath = getLogicFunctionBaseFolderPath(
-        flatLogicFunction.sourceHandlerPath,
-      );
-
-      await this.fileStorageService.downloadFolder_v2({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: baseFolderPath,
-        localPath: sourceTemporaryDir,
-      });
-
-      const relativeSourcePath = getRelativePathFromBase(
-        flatLogicFunction.sourceHandlerPath,
-        baseFolderPath,
-      );
-      const relativeBuiltPath = getRelativePathFromBase(
-        flatLogicFunction.builtHandlerPath,
-        baseFolderPath,
-      );
-
-      const builtBundleFilePath = await this.buildInMemory({
-        sourceTemporaryDir,
-        sourceHandlerPath: relativeSourcePath,
-        builtHandlerPath: relativeBuiltPath,
-      });
-
-      const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
-
-      await this.fileStorageService.writeFile_v2({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: flatLogicFunction.builtHandlerPath,
-        sourceFile: builtFile,
-        mimeType: 'application/javascript',
-        settings: {
-          isTemporaryFile: false,
-          toDelete: false,
-        },
-      });
-
-      return {
-        checksum: crypto.createHash('md5').update(builtFile).digest('hex'),
-      };
-    } finally {
-      await lambdaBuildDirectoryManager.clean();
-    }
-  }
-
-  private async buildInMemory({
-    sourceTemporaryDir,
-    sourceHandlerPath,
-    builtHandlerPath,
-  }: {
-    sourceTemporaryDir: string;
-    sourceHandlerPath: string;
-    builtHandlerPath: string;
-  }): Promise<string> {
-    const entryFilePath = join(sourceTemporaryDir, sourceHandlerPath);
-    const builtBundleFilePath = join(sourceTemporaryDir, builtHandlerPath);
-
-    await fs.mkdir(dirname(builtBundleFilePath), { recursive: true });
-
-    await build({
-      entryPoints: [entryFilePath],
-      outfile: builtBundleFilePath,
-      platform: 'node',
-      format: 'esm',
-      target: 'es2017',
-      bundle: true,
-      sourcemap: true,
-      packages: 'external',
-    });
-
-    return builtBundleFilePath;
   }
 }

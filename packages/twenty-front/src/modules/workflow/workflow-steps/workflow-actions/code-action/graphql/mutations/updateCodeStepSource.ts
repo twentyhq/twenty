@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-export const UPDATE_CODE_STEP_SOURCE = gql`
-  mutation UpdateCodeStepSource($input: UpdateCodeStepSourceInput!) {
-    updateCodeStepSource(input: $input)
+export const UPDATE_LOGIC_FUNCTION_SOURCE = gql`
+  mutation UpdateLogicFunctionSource($input: UpdateLogicFunctionSourceInput!) {
+    updateLogicFunctionSource(input: $input)
   }
 `;

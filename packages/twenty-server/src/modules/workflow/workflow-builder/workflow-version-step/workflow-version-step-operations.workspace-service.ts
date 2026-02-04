@@ -157,27 +157,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       case WorkflowActionType.CODE: {
         const logicFunctionId = id ?? v4();
 
-        const { workspaceCustomFlatApplication } =
-          await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-            { workspaceId },
-          );
-
-        const { sourceHandlerPath, builtHandlerPath, checksum } =
-          await this.codeStepBuildService.seedCodeStepFiles({
-            logicFunctionId,
-            workspaceId,
-            applicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
-          });
-
+        // createOne handles seeding source files with default seed project
         const newLogicFunction = await this.logicFunctionService.createOne({
           input: {
             id: logicFunctionId,
             name: 'A Logic Function Code Workflow Step',
             description: '',
-            sourceHandlerPath,
-            builtHandlerPath,
-            checksum,
           },
           workspaceId,
         });
