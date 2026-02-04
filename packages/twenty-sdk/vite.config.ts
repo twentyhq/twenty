@@ -156,5 +156,16 @@ export default defineConfig(() => {
       },
     },
     logLevel: 'warn',
+    optimizeDeps: {
+      include: [
+        '@remote-dom/core/polyfill',
+        '@remote-dom/react/polyfill',
+        '@remote-dom/core/elements',
+        '@remote-dom/react',
+        '@remote-dom/react/host',
+        'react-dom/client',
+        'react/jsx-runtime',
+      ],
+    },
   };
 });

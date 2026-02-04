@@ -1,7 +1,7 @@
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
-import { jsxTransformToRemoteDomWorkerFormatPlugin } from '@/cli/utilities/build/common/front-component-build/jsx-transform-to-remote-dom-worker-format-plugin';
-import { reactGlobalsPlugin } from '@/cli/utilities/build/common/front-component-build/react-globals-plugin';
+import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
+import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
@@ -32,14 +32,6 @@ export const LOGIC_FUNCTION_EXTERNAL_MODULES: string[] = [
   'tls',
   'child_process',
   'worker_threads',
-  'twenty-sdk',
-  'twenty-sdk/*',
-  'twenty-shared',
-  'twenty-shared/*',
-];
-
-export const FRONT_COMPONENT_EXTERNAL_MODULES: string[] = [
-  'react-dom',
   'twenty-sdk',
   'twenty-sdk/*',
   'twenty-shared',
@@ -226,9 +218,6 @@ export const createFrontComponentsWatcher = (
       externalModules: FRONT_COMPONENT_EXTERNAL_MODULES,
       fileFolder: FileFolder.BuiltFrontComponent,
       jsx: 'automatic',
-      extraPlugins: [
-        reactGlobalsPlugin,
-        jsxTransformToRemoteDomWorkerFormatPlugin,
-      ],
+      extraPlugins: getFrontComponentBuildPlugins(),
     },
   });
