@@ -1419,13 +1419,6 @@ export type EventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
-export type ExecuteCodeStepInput = {
-  /** Id of the logic function (workflow code step) to execute */
-  logicFunctionId: Scalars['UUID'];
-  /** Payload in JSON format */
-  payload: Scalars['JSON'];
-};
-
 export type ExecuteLogicFunctionInput = {
   /** Id of the logic function to execute */
   id: Scalars['UUID'];
@@ -1678,9 +1671,9 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetCodeStepSourceCodeInput = {
-  /** The id of the logic function (code step). */
-  logicFunctionId: Scalars['UUID'];
+export type GetLogicFunctionSourceCodeInput = {
+  /** The id of the function. */
+  id: Scalars['ID'];
 };
 
 /** Order by options for graph widgets */
@@ -2142,7 +2135,6 @@ export type Mutation = {
   emailPasswordResetLink: EmailPasswordResetLinkOutput;
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
-  executeCodeStep: LogicFunctionExecutionResult;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientTokenOutput;
@@ -2179,10 +2171,10 @@ export type Mutation = {
   switchSubscriptionInterval: BillingUpdateOutput;
   syncApplication: Scalars['Boolean'];
   testHttpRequest: TestHttpRequestOutput;
+  testLogicFunction: LogicFunctionExecutionResult;
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
-  updateCodeStepSource: Scalars['Boolean'];
   updateCommandMenuItem: CommandMenuItem;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
@@ -2193,6 +2185,7 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateLogicFunctionSource: Scalars['Boolean'];
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneField: Field;
@@ -2661,11 +2654,6 @@ export type MutationEmailPasswordResetLinkArgs = {
 };
 
 
-export type MutationExecuteCodeStepArgs = {
-  input: ExecuteCodeStepInput;
-};
-
-
 export type MutationExecuteOneLogicFunctionArgs = {
   input: ExecuteLogicFunctionInput;
 };
@@ -2838,6 +2826,11 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationTestLogicFunctionArgs = {
+  input: TestLogicFunctionInput;
+};
+
+
 export type MutationTrackAnalyticsArgs = {
   event?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -2853,11 +2846,6 @@ export type MutationUninstallApplicationArgs = {
 
 export type MutationUpdateApiKeyArgs = {
   input: UpdateApiKeyInput;
-};
-
-
-export type MutationUpdateCodeStepSourceArgs = {
-  input: UpdateCodeStepSourceInput;
 };
 
 
@@ -2912,6 +2900,11 @@ export type MutationUpdateFrontComponentArgs = {
 
 export type MutationUpdateLabPublicFeatureFlagArgs = {
   input: UpdateLabPublicFeatureFlagInput;
+};
+
+
+export type MutationUpdateLogicFunctionSourceArgs = {
+  input: UpdateLogicFunctionSourceInput;
 };
 
 
@@ -3571,7 +3564,6 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
-  getCodeStepSourceCode?: Maybe<Scalars['JSON']>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
@@ -3589,6 +3581,7 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
+  getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -3712,11 +3705,6 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
-export type QueryGetCodeStepSourceCodeArgs = {
-  input: GetCodeStepSourceCodeInput;
-};
-
-
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
   id: Scalars['UUID'];
 };
@@ -3789,6 +3777,11 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
+};
+
+
+export type QueryGetLogicFunctionSourceCodeArgs = {
+  input: GetLogicFunctionSourceCodeInput;
 };
 
 
@@ -4376,6 +4369,13 @@ export type TestHttpRequestOutput = {
   success: Scalars['Boolean'];
 };
 
+export type TestLogicFunctionInput = {
+  /** Id of the logic function to test (build and execute) */
+  id: Scalars['UUID'];
+  /** Payload in JSON format */
+  payload: Scalars['JSON'];
+};
+
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   conferenceLink: LinksMetadata;
@@ -4515,13 +4515,6 @@ export type UpdateApiKeyInput = {
   revokedAt?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateCodeStepSourceInput = {
-  /** The source code (Sources) to write. Only updates source files. */
-  code: Scalars['JSON'];
-  /** The id of the logic function (code step). */
-  logicFunctionId: Scalars['UUID'];
-};
-
 export type UpdateCommandMenuItemInput = {
   availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
@@ -4581,6 +4574,13 @@ export type UpdateLogicFunctionInputUpdates = {
   sourceHandlerPath?: InputMaybe<Scalars['String']>;
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
   toolInputSchema?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateLogicFunctionSourceInput = {
+  /** The source code (Sources) to write. Only updates source files. */
+  code: Scalars['JSON'];
+  /** The id of the logic function. */
+  id: Scalars['UUID'];
 };
 
 export type UpdateObjectPayload = {
