@@ -16,8 +16,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import {
-    type WorkflowAction,
-    WorkflowActionType,
+  type WorkflowAction,
+  WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const mockWorkspaceId = 'workspace-id';

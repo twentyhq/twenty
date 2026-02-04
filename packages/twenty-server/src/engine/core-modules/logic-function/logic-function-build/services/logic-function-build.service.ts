@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
+import crypto from 'crypto';
 import fs from 'fs/promises';
 import { dirname, join } from 'path';
-import crypto from 'crypto';
 
 import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import {
+    getLogicFunctionBaseFolderPath,
+    getRelativePathFromBase,
+} from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import {
-  getLogicFunctionBaseFolderPath,
-  getRelativePathFromBase,
-} from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export type FunctionBuildParams = {
   flatLogicFunction: FlatLogicFunction;
@@ -33,38 +32,21 @@ export class LogicFunctionBuildService {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<boolean> {
-    const packageJsonInSource =
+    const packageJsonExists =
       await this.fileStorageService.checkFileExists_v2({
         workspaceId: flatApplication.workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
+        fileFolder: FileFolder.Dependencies,
         resourcePath: 'package.json',
       });
-    const yarnLockInSource = await this.fileStorageService.checkFileExists_v2({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: 'yarn.lock',
-    });
-
-    if (packageJsonInSource && yarnLockInSource) {
-      return true;
-    }
-
-    const packageJsonInDeps = await this.fileStorageService.checkFileExists_v2({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Dependencies,
-      resourcePath: 'package.json',
-    });
-    const yarnLockInDeps = await this.fileStorageService.checkFileExists_v2({
+    const yarnLockExists = await this.fileStorageService.checkFileExists_v2({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Dependencies,
       resourcePath: 'yarn.lock',
     });
 
-    return packageJsonInDeps && yarnLockInDeps;
+    return packageJsonExists && yarnLockExists;
   }
 
   async uploadDependencies({
@@ -74,51 +56,8 @@ export class LogicFunctionBuildService {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
-    const packageJsonStream = await this.fileStorageService.readFile_v2({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Dependencies,
-      resourcePath: 'package.json',
-    });
-    const packageJsonContent = (
-      await streamToBuffer(packageJsonStream)
-    ).toString('utf-8');
-
-    const yarnLockStream = await this.fileStorageService.readFile_v2({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Dependencies,
-      resourcePath: 'yarn.lock',
-    });
-    const yarnLockContent = (await streamToBuffer(yarnLockStream)).toString(
-      'utf-8',
-    );
-
-    await this.fileStorageService.writeFile_v2({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: 'package.json',
-      sourceFile: packageJsonContent,
-      mimeType: undefined,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
-
-    await this.fileStorageService.writeFile_v2({
-      workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: 'yarn.lock',
-      sourceFile: yarnLockContent,
-      mimeType: undefined,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
+    // Package files live in Dependencies; no copy needed – drivers read from
+    // Dependencies when building the layer.
   }
 
   async isBuilt({

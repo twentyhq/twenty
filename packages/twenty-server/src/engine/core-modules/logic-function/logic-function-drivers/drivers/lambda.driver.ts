@@ -2,46 +2,46 @@ import * as fs from 'fs/promises';
 import { join } from 'path';
 
 import {
-  CreateFunctionCommand,
-  type CreateFunctionCommandInput,
-  DeleteFunctionCommand,
-  GetFunctionCommand,
-  InvokeCommand,
-  type InvokeCommandInput,
-  Lambda,
-  type LambdaClientConfig,
-  ListLayerVersionsCommand,
-  type ListLayerVersionsCommandInput,
-  LogType,
-  PublishLayerVersionCommand,
-  type PublishLayerVersionCommandInput,
-  ResourceNotFoundException,
-  waitUntilFunctionUpdatedV2,
+    CreateFunctionCommand,
+    type CreateFunctionCommandInput,
+    DeleteFunctionCommand,
+    GetFunctionCommand,
+    InvokeCommand,
+    type InvokeCommandInput,
+    Lambda,
+    type LambdaClientConfig,
+    ListLayerVersionsCommand,
+    type ListLayerVersionsCommandInput,
+    LogType,
+    PublishLayerVersionCommand,
+    type PublishLayerVersionCommandInput,
+    ResourceNotFoundException,
+    waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type LogicFunctionExecuteParams,
-  type LogicFunctionExecuteResult,
-  type LogicFunctionExecutorDriver,
+    type LogicFunctionExecuteParams,
+    type LogicFunctionExecuteResult,
+    type LogicFunctionExecutorDriver,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import {
-  LambdaBuildDirectoryManager,
-  NODE_LAYER_SUBFOLDER,
+    LambdaBuildDirectoryManager,
+    NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
-  LogicFunctionException,
-  LogicFunctionExceptionCode,
+    LogicFunctionException,
+    LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -155,14 +155,14 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       this.fileStorageService.downloadFile_v2({
         workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
+        fileFolder: FileFolder.Dependencies,
         resourcePath: 'package.json',
         localPath: join(inMemoryLayerFolderPath, 'package.json'),
       }),
       this.fileStorageService.downloadFile_v2({
         workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
+        fileFolder: FileFolder.Dependencies,
         resourcePath: 'yarn.lock',
         localPath: join(inMemoryLayerFolderPath, 'yarn.lock'),
       }),
