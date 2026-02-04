@@ -5,12 +5,10 @@ import {
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
-import {
-  type FrontComponentConfig,
-  type LogicFunctionConfig,
-  type ApplicationConfig,
-} from '@/sdk';
+import { type FrontComponentConfig } from '@/front-component/front-component-config';
+import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk';
 import { glob } from 'fast-glob';
+import * as fs from 'fs-extra';
 import { readFile } from 'fs-extra';
 import { basename, extname, relative, sep } from 'path';
 import {
@@ -24,9 +22,8 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { assertUnreachable } from 'twenty-shared/utils';
 import { type Sources } from 'twenty-shared/types';
-import * as fs from 'fs-extra';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
