@@ -5,10 +5,10 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/logic-function/constants/default-tool-input-schema.constant';
 import { type CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import {
-  DEFAULT_BUILT_HANDLER_PATH,
-  DEFAULT_HANDLER_NAME,
-  DEFAULT_SOURCE_HANDLER_PATH,
-  LogicFunctionRuntime,
+    DEFAULT_BUILT_HANDLER_PATH,
+    DEFAULT_HANDLER_NAME,
+    DEFAULT_SOURCE_HANDLER_PATH,
+    LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
@@ -26,7 +26,7 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   workspaceId,
   ownerFlatApplication,
 }: FromCreateLogicFunctionInputToFlatLogicFunctionArgs): FlatLogicFunction => {
-  const id = v4();
+  const id = rawCreateLogicFunctionInput.id ?? v4();
   const currentDate = new Date();
 
   // Build full paths including the base folder
@@ -40,6 +40,14 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
 
   const universalIdentifier =
     rawCreateLogicFunctionInput.universalIdentifier ?? v4();
+
+  const checksum = isDefined(rawCreateLogicFunctionInput.checksum)
+    ? rawCreateLogicFunctionInput.checksum
+    : rawCreateLogicFunctionInput?.code
+      ? logicFunctionCreateHash(
+          JSON.stringify(rawCreateLogicFunctionInput.code),
+        )
+      : null;
 
   return {
     id,
@@ -61,11 +69,7 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,
     workspaceId,
     code: rawCreateLogicFunctionInput?.code,
-    checksum: rawCreateLogicFunctionInput?.code
-      ? logicFunctionCreateHash(
-          JSON.stringify(rawCreateLogicFunctionInput.code),
-        )
-      : null,
+    checksum,
     // If no schema provided and no code provided, use default schema
     // (because the default template will be used)
     toolInputSchema: isDefined(rawCreateLogicFunctionInput?.toolInputSchema)

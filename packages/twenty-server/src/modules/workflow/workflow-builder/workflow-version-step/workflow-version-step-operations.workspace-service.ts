@@ -15,7 +15,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { SEED_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/seed-project-input-schema';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -28,6 +28,8 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { CODE_STEP_DEFAULT_INPUT_SCHEMA } from 'src/modules/workflow/code-step-build/constants/code-step-default-input-schema';
+import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -65,6 +67,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly logicFunctionService: LogicFunctionService,
+    private readonly applicationService: ApplicationService,
+    private readonly codeStepBuildService: CodeStepBuildService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(RoleTargetEntity)
@@ -151,10 +155,29 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (type) {
       case WorkflowActionType.CODE: {
+        const logicFunctionId = id ?? v4();
+
+        const { workspaceCustomFlatApplication } =
+          await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          );
+
+        const { sourceHandlerPath, builtHandlerPath, checksum } =
+          await this.codeStepBuildService.seedCodeStepFiles({
+            logicFunctionId,
+            workspaceId,
+            applicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
+          });
+
         const newLogicFunction = await this.logicFunctionService.createOne({
           input: {
+            id: logicFunctionId,
             name: 'A Logic Function Code Workflow Step',
             description: '',
+            sourceHandlerPath,
+            builtHandlerPath,
+            checksum,
           },
           workspaceId,
         });
@@ -184,7 +207,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               },
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionInput: SEED_PROJECT_INPUT_SCHEMA,
+                logicFunctionInput: CODE_STEP_DEFAULT_INPUT_SCHEMA,
               },
             },
           },

@@ -16,7 +16,7 @@
     "watchAssets": true,
     "assets": [
       {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/seed-project/**",
+        "include": "modules/workflow/code-step-build/constants/seed-project/**",
         "outDir": "dist/assets"
       },
       {

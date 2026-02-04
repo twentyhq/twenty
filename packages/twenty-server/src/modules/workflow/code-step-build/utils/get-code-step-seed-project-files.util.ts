@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import path, { join } from 'path';
+import path from 'path';
 
 import { ASSET_PATH } from 'src/constants/assets-path';
 
@@ -29,10 +29,10 @@ const getAllFiles = async (
   return files;
 };
 
-export const getSeedProjectFiles = (async () => {
-  const seedProjectPath = join(
+export const getCodeStepSeedProjectFiles = (async () => {
+  const seedProjectPath = path.join(
     ASSET_PATH,
-    `engine/core-modules/logic-function/logic-function-drivers/constants/seed-project`,
+    'modules/workflow/code-step-build/constants/seed-project',
   );
 
   return await getAllFiles(seedProjectPath);

@@ -13,7 +13,12 @@ import {
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import {
+  DEFAULT_BUILT_HANDLER_PATH,
+  DEFAULT_SOURCE_HANDLER_PATH,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { getCodeStepSeedProjectFiles } from 'src/modules/workflow/code-step-build/utils/get-code-step-seed-project-files.util';
 
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
@@ -22,9 +27,85 @@ export type BuildFromSourceToBuiltParams = {
   applicationUniversalIdentifier: string;
 };
 
+export type SeedCodeStepFilesParams = {
+  logicFunctionId: string;
+  workspaceId: string;
+  applicationUniversalIdentifier: string;
+};
+
+export type SeedCodeStepFilesResult = {
+  sourceHandlerPath: string;
+  builtHandlerPath: string;
+  checksum: string;
+};
+
 @Injectable()
 export class CodeStepBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
+
+  async seedCodeStepFiles({
+    logicFunctionId,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: SeedCodeStepFilesParams): Promise<SeedCodeStepFilesResult> {
+    const sourceHandlerPath = `${WORKFLOW_BASE_FOLDER_PREFIX}/${logicFunctionId}/${DEFAULT_SOURCE_HANDLER_PATH}`;
+    const builtHandlerPath = `${WORKFLOW_BASE_FOLDER_PREFIX}/${logicFunctionId}/${DEFAULT_BUILT_HANDLER_PATH}`;
+
+    const seedProjectFiles = await getCodeStepSeedProjectFiles;
+
+    const sourceFiles = seedProjectFiles.filter((file) =>
+      file.name.endsWith('index.ts'),
+    );
+    const builtFiles = seedProjectFiles.filter((file) =>
+      file.name.endsWith('.mjs'),
+    );
+
+    if (sourceFiles.length !== 1 || builtFiles.length !== 1) {
+      throw new Error(
+        'Code step seed project should have one index.ts file and one index.mjs file',
+      );
+    }
+
+    const sourceFile = sourceFiles[0];
+    const builtFile = builtFiles[0];
+
+    await this.fileStorageService.writeFile_v2({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: sourceHandlerPath,
+      sourceFile: sourceFile.content,
+      mimeType: 'application/typescript',
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
+    });
+
+    await this.fileStorageService.writeFile_v2({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: builtHandlerPath,
+      sourceFile: builtFile.content,
+      mimeType: 'application/javascript',
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
+    });
+
+    const checksum = crypto
+      .createHash('md5')
+      .update(builtFile.content)
+      .digest('hex');
+
+    return {
+      sourceHandlerPath,
+      builtHandlerPath,
+      checksum,
+    };
+  }
 
   isWorkflowCodeStepLogicFunction(
     flatLogicFunction: FlatLogicFunction,

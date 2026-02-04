@@ -38,6 +38,12 @@ export class CreateLogicFunctionInput {
   @HideField()
   universalIdentifier?: string;
 
+  @HideField()
+  id?: string;
+
+  @HideField()
+  checksum?: string;
+
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()
