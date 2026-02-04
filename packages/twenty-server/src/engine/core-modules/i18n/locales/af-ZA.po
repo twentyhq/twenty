@@ -1344,11 +1344,6 @@ msgstr "Lêer nie gevind nie."
 msgid "Files field is not supported for unique fields"
 msgstr ""
 
-#. js-lingui-id: AMd8Po
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
-msgid "Files field type is not supported"
-msgstr ""
-
 #. js-lingui-id: 9110hD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
