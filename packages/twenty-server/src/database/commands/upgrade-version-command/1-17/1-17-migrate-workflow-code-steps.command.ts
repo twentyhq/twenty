@@ -194,7 +194,6 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
         name: oldLogicFunction.name,
         description: oldLogicFunction.description ?? undefined,
         timeoutSeconds: oldLogicFunction.timeoutSeconds ?? 300,
-        logicFunctionLayerId: oldLogicFunction.logicFunctionLayerId,
         toolInputSchema: oldLogicFunction.toolInputSchema ?? undefined,
         isTool: oldLogicFunction.isTool ?? false,
       },

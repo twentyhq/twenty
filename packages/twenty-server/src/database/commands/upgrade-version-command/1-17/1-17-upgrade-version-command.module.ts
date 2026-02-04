@@ -16,7 +16,6 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { CoreLogicFunctionLayerModule } from 'src/engine/core-modules/logic-function/logic-function-layer/logic-function-layer.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -58,7 +57,6 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     FieldMetadataModule,
     ObjectMetadataModule,
     ApplicationModule,
-    CoreLogicFunctionLayerModule,
     LogicFunctionModule,
     RecordPositionModule,
     GlobalWorkspaceDataSourceModule,
