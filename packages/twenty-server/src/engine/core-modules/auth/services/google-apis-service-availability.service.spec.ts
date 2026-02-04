@@ -63,7 +63,7 @@ describe('GoogleApisServiceAvailabilityService', () => {
       };
 
       const mockCalendarClient = {
-        calendarList: {
+        events: {
           list: jest.fn().mockResolvedValue({ data: {} }),
         },
       };
@@ -90,7 +90,7 @@ describe('GoogleApisServiceAvailabilityService', () => {
       });
 
       const mockCalendarClient = {
-        calendarList: {
+        events: {
           list: jest.fn().mockResolvedValue({ data: {} }),
         },
       };
@@ -142,7 +142,7 @@ describe('GoogleApisServiceAvailabilityService', () => {
       };
 
       const mockCalendarClient = {
-        calendarList: {
+        events: {
           list: jest.fn().mockResolvedValue({ data: {} }),
         },
       };
@@ -195,7 +195,7 @@ describe('GoogleApisServiceAvailabilityService', () => {
       };
 
       const mockCalendarClient = {
-        calendarList: {
+        events: {
           list: jest.fn().mockRejectedValue(calendarServiceNotEnabledError),
         },
       };
@@ -247,7 +247,14 @@ describe('GoogleApisServiceAvailabilityService', () => {
         },
       };
 
+      const mockCalendarClient = {
+        events: {
+          list: jest.fn().mockResolvedValue({ data: {} }),
+        },
+      };
+
       (google.gmail as jest.Mock).mockReturnValue(mockGmailClient);
+      (google.calendar as jest.Mock).mockReturnValue(mockCalendarClient);
 
       await expect(
         service.checkServicesAvailability('access-token'),
