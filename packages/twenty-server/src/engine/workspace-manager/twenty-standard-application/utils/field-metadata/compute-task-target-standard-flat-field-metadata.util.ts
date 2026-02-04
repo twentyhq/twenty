@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -12,7 +13,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { TASK_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 export const buildTaskTargetStandardFlatFieldMetadatas = ({
   now,
@@ -139,7 +139,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TASK_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetPerson',
       label: 'Person',
       description: 'TaskTarget person',
@@ -164,7 +164,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TASK_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetCompany',
       label: 'Company',
       description: 'TaskTarget company',
@@ -189,7 +189,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: TASK_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetOpportunity',
       label: 'Opportunity',
       description: 'TaskTarget opportunity',

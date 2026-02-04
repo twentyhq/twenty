@@ -1,6 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
   type FieldMetadataSettings,
@@ -18,6 +19,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -28,9 +30,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { TASK_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 type RelationFieldMetadataSettings =
   FieldMetadataSettings<FieldMetadataType.RELATION>;
@@ -139,7 +139,10 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
             isStandardAppField &&
             taskTargetFieldUniversalIdentifiers.has(field.universalIdentifier);
           const targetObjectMetadata = field.relationTargetObjectMetadataId
-            ? flatObjectMetadataMaps.byId[field.relationTargetObjectMetadataId]
+            ? findFlatEntityByIdInFlatEntityMaps({
+                flatEntityMaps: flatObjectMetadataMaps,
+                flatEntityId: field.relationTargetObjectMetadataId,
+              })
             : undefined;
           const isCustomTarget =
             !isStandardAppField && targetObjectMetadata?.isCustom === true;
@@ -194,7 +197,8 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
 
       this.logger.log(`✅ Successfully migrated ${tableName} records`);
 
-      const morphId = TASK_TARGET_STANDARD_FIELD_IDS.targetMorphId;
+      const morphId =
+        STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId;
 
       // Update field metadata
       for (const {

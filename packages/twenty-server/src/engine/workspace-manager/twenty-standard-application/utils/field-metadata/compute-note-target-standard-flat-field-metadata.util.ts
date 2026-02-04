@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   DateDisplayFormat,
   FieldMetadataType,
@@ -12,7 +13,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { NOTE_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-field-ids';
 
 export const buildNoteTargetStandardFlatFieldMetadatas = ({
   now,
@@ -139,7 +139,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: NOTE_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetPerson',
       label: 'Person',
       description: 'NoteTarget person',
@@ -164,7 +164,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: NOTE_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetCompany',
       label: 'Company',
       description: 'NoteTarget company',
@@ -189,7 +189,7 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       type: FieldMetadataType.MORPH_RELATION,
-      morphId: NOTE_TARGET_STANDARD_FIELD_IDS.targetMorphId,
+      morphId: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
       fieldName: 'targetOpportunity',
       label: 'Opportunity',
       description: 'NoteTarget opportunity',
