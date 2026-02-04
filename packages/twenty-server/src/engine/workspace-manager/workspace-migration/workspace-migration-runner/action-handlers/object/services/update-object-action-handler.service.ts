@@ -56,7 +56,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       type: 'update',
       metadataName: 'objectMetadata',
       entityId: flatObjectMetadata.id,
-      updates: action.updates,
+      update: action.update,
     };
   }
 
@@ -98,15 +98,10 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         objectMetadata: flatObjectMetadata,
       });
 
-    const nameSingularUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates: updates,
-      property: 'nameSingular',
-    });
-
-    if (isDefined(nameSingularUpdate)) {
+    if (isDefined(update.nameSingular)) {
       const updatedFlatObjectMetadata: FlatObjectMetadata = {
         ...flatObjectMetadata,
-        nameSingular: nameSingularUpdate.to,
+        nameSingular: update.nameSingular,
       };
 
       const newTableName = computeObjectTargetTable(updatedFlatObjectMetadata);
