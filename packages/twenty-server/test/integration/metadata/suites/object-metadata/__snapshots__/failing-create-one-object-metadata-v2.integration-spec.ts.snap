@@ -8929,12 +8929,6 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetΜ",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetΜ",
@@ -8957,12 +8951,6 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
         },
         {
           "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetΜ",
-            },
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
