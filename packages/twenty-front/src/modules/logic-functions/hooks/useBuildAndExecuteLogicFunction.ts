@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { TEST_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/testLogicFunction';
+import { BUILD_AND_EXECUTE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/buildAndExecuteOneLogicFunction';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
@@ -8,12 +8,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import { sleep } from '~/utils/sleep';
 
-type TestLogicFunctionInput = {
+type BuildAndExecuteOneLogicFunctionInput = {
   id: string;
   payload: object;
 };
 
-type TestLogicFunctionResult = {
+type BuildAndExecuteOneLogicFunctionResult = {
   data?: object | null;
   logs: string;
   duration: number;
@@ -25,19 +25,19 @@ type TestLogicFunctionResult = {
   } | null;
 };
 
-export const useTestLogicFunction = ({
+export const useBuildAndExecuteLogicFunction = ({
   logicFunctionId,
   callback,
 }: {
   logicFunctionId: string;
   callback?: (testResult: object) => void;
 }) => {
-  const [isTesting, setIsTesting] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
   const apolloMetadataClient = useApolloCoreClient();
-  const [testLogicFunctionMutation] = useMutation<
-    { testLogicFunction: TestLogicFunctionResult },
-    { input: TestLogicFunctionInput }
-  >(TEST_LOGIC_FUNCTION, {
+  const [buildAndExecuteOneLogicFunctionMutation] = useMutation<
+    { buildAndExecuteOneLogicFunction: BuildAndExecuteOneLogicFunctionResult },
+    { input: BuildAndExecuteOneLogicFunctionInput }
+  >(BUILD_AND_EXECUTE_ONE_LOGIC_FUNCTION, {
     client: apolloMetadataClient,
   });
 
@@ -45,11 +45,11 @@ export const useTestLogicFunction = ({
     logicFunctionTestDataFamilyState(logicFunctionId),
   );
 
-  const testLogicFunction = async () => {
+  const buildAndExecuteLogicFunction = async () => {
     try {
-      setIsTesting(true);
+      setIsExecuting(true);
       await sleep(200); // Delay artificially to avoid flashing the UI
-      const result = await testLogicFunctionMutation({
+      const result = await buildAndExecuteOneLogicFunctionMutation({
         variables: {
           input: {
             id: logicFunctionId,
@@ -58,12 +58,13 @@ export const useTestLogicFunction = ({
         },
       });
 
-      setIsTesting(false);
+      setIsExecuting(false);
 
-      const testLogicFunctionResult = result?.data?.testLogicFunction;
+      const executionResult =
+        result?.data?.buildAndExecuteOneLogicFunction;
 
-      if (isDefined(testLogicFunctionResult?.data)) {
-        callback?.(testLogicFunctionResult.data);
+      if (isDefined(executionResult?.data)) {
+        callback?.(executionResult.data);
       }
 
       setLogicFunctionTestData((prev) => ({
@@ -71,23 +72,23 @@ export const useTestLogicFunction = ({
         language: 'json',
         height: 300,
         output: {
-          data: testLogicFunctionResult?.data
-            ? JSON.stringify(testLogicFunctionResult.data, null, 4)
+          data: executionResult?.data
+            ? JSON.stringify(executionResult.data, null, 4)
             : undefined,
-          logs: testLogicFunctionResult?.logs || '',
-          duration: testLogicFunctionResult?.duration,
-          status: (testLogicFunctionResult?.status ??
+          logs: executionResult?.logs || '',
+          duration: executionResult?.duration,
+          status: (executionResult?.status ??
             LogicFunctionExecutionStatus.IDLE) as LogicFunctionExecutionStatus,
-          error: testLogicFunctionResult?.error
-            ? JSON.stringify(testLogicFunctionResult.error, null, 4)
+          error: executionResult?.error
+            ? JSON.stringify(executionResult.error, null, 4)
             : undefined,
         },
       }));
     } catch (error) {
-      setIsTesting(false);
+      setIsExecuting(false);
       throw error;
     }
   };
 
-  return { testLogicFunction, isTesting };
+  return { buildAndExecuteLogicFunction, isExecuting };
 };

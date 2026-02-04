@@ -1,11 +1,11 @@
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
-import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
 import {
-  type LogicFunctionFormValues,
-  useLogicFunctionUpdateFormState,
+    type LogicFunctionFormValues,
+    useLogicFunctionUpdateFormState,
 } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';

@@ -6,9 +6,9 @@ import graphqlTypeJson from 'graphql-type-json';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
-export class TestLogicFunctionInput {
+export class BuildAndExecuteOneLogicFunctionInput {
   @Field(() => UUIDScalarType, {
-    description: 'Id of the logic function to test (build and execute)',
+    description: 'Id of the logic function to build and execute',
   })
   @IsNotEmpty()
   @IsUUID()

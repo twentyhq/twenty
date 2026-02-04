@@ -1,3 +1,4 @@
+import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
 import { type LogicFunctionFormValues } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
@@ -6,7 +7,6 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
@@ -36,10 +36,10 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
 import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
+import { useBuildAndExecuteLogicFunction } from '@/logic-functions/hooks/useBuildAndExecuteLogicFunction';
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { computeNewSources } from '@/logic-functions/utils/computeNewSources';
-import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { useTestLogicFunction } from '@/logic-functions/hooks/useTestLogicFunction';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
@@ -153,7 +153,7 @@ export const WorkflowEditActionCode = ({
     });
   };
 
-  const { testLogicFunction, isTesting } = useTestLogicFunction({
+  const { buildAndExecuteLogicFunction, isExecuting } = useBuildAndExecuteLogicFunction({
     logicFunctionId,
     callback: updateOutputSchemaFromTestResult,
   });
@@ -272,8 +272,8 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    if (!isTesting) {
-      await testLogicFunction();
+    if (!isExecuting) {
+      await buildAndExecuteLogicFunction();
     }
   };
 
@@ -466,7 +466,7 @@ export const WorkflowEditActionCode = ({
                 <InputLabel>{t`Result`}</InputLabel>
                 <LogicFunctionExecutionResult
                   logicFunctionTestData={logicFunctionTestData}
-                  isTesting={isTesting}
+                  isTesting={isExecuting}
                 />
               </StyledCodeEditorContainer>
               {logicFunctionTestData.output.logs.length > 0 && (
@@ -474,7 +474,7 @@ export const WorkflowEditActionCode = ({
                   <InputLabel>{t`Logs`}</InputLabel>
                   <TextArea
                     textAreaId={testLogsTextAreaId}
-                    value={isTesting ? '' : logicFunctionTestData.output.logs}
+                    value={isExecuting ? '' : logicFunctionTestData.output.logs}
                     maxRows={20}
                     disabled
                   />
@@ -492,7 +492,7 @@ export const WorkflowEditActionCode = ({
                     <CmdEnterActionButton
                       title={t`Test`}
                       onClick={handleRunFunction}
-                      disabled={isTesting}
+                      disabled={isExecuting}
                     />,
                   ]
                 : []

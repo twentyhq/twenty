@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 
+import { UPDATE_LOGIC_FUNCTION_SOURCE } from '@/logic-functions/graphql/mutations/updateLogicFunctionSource';
+import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
@@ -7,20 +9,18 @@ import { CREATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mu
 import { DELETE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/deleteOneLogicFunction';
 import { UPDATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/updateOneLogicFunction';
 import { FIND_MANY_LOGIC_FUNCTIONS } from '@/settings/logic-functions/graphql/queries/findManyLogicFunctions';
-import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { UPDATE_LOGIC_FUNCTION_SOURCE } from '@/logic-functions/graphql/mutations/updateLogicFunctionSource';
 import { ApolloError, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
 import { type Sources, CrudOperationType } from 'twenty-shared/types';
 import {
-  type CreateOneLogicFunctionItemMutation,
-  type CreateOneLogicFunctionItemMutationVariables,
-  type DeleteOneLogicFunctionMutation,
-  type DeleteOneLogicFunctionMutationVariables,
-  type UpdateOneLogicFunctionMutation,
-  type UpdateOneLogicFunctionMutationVariables,
+    type CreateOneLogicFunctionItemMutation,
+    type CreateOneLogicFunctionItemMutationVariables,
+    type DeleteOneLogicFunctionMutation,
+    type DeleteOneLogicFunctionMutationVariables,
+    type UpdateOneLogicFunctionMutation,
+    type UpdateOneLogicFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
 
 type UpdateLogicFunctionSourceMutationVariables = {
