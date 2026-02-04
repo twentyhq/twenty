@@ -164,10 +164,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     if (
-      isDefined(update.options) &&
+      update.options !== undefined &&
       isEnumFlatFieldMetadata(optimisticFlatFieldMetadata)
     ) {
-      if (isDefined(update.defaultValue)) {
+      if (update.defaultValue !== undefined) {
         optimisticFlatFieldMetadata = {
           ...optimisticFlatFieldMetadata,
           defaultValue: update.defaultValue,
@@ -188,7 +188,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       optimisticFlatFieldMetadata.options = update.options ?? [];
     }
 
-    if (isDefined(update.defaultValue)) {
+    if (update.defaultValue !== undefined) {
       if (wasDefaultValueHandledByEnumUpdate) {
         optimisticFlatFieldMetadata.defaultValue = update.defaultValue;
       } else {

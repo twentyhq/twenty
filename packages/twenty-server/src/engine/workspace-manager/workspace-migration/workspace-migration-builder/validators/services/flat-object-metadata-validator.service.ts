@@ -70,13 +70,9 @@ export class FlatObjectMetadataValidatorService {
         buildOptions,
       }),
     );
-
-    const labelIdentifierFieldMetadataIdUpdate =
-      flatEntityUpdate.labelIdentifierFieldMetadataId;
-
     // TODO remove this once we migrated labelIdentifierFieldMetadataId as non nullable
-    if (isDefined(labelIdentifierFieldMetadataIdUpdate)) {
-      if (labelIdentifierFieldMetadataIdUpdate === null) {
+    if (flatEntityUpdate.labelIdentifierFieldMetadataId !== undefined) {
+      if (flatEntityUpdate.labelIdentifierFieldMetadataId === null) {
         validationResult.errors.push({
           code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: 'labelIdentifierFieldMetadataId cannot be null',
