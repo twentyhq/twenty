@@ -81,18 +81,7 @@ export class LogicFunctionService {
       );
     }
 
-    const { flatLogicFunctionMaps: recomputedExistingFlatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    return findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityId: flatLogicFunctionToCreate.id,
-      flatEntityMaps: recomputedExistingFlatLogicFunctionMaps,
-    });
+    return flatLogicFunctionToCreate;
   }
 
   async updateOne({
