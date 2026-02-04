@@ -1370,7 +1370,7 @@ export type EventWithQueryIds = {
 
 export type ExecuteCodeStepInput = {
   /** Id of the logic function (workflow code step) to execute */
-  id: Scalars['UUID'];
+  logicFunctionId: Scalars['UUID'];
   /** Payload in JSON format */
   payload: Scalars['JSON'];
 };

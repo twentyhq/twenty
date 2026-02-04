@@ -9,7 +9,7 @@ import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import { sleep } from '~/utils/sleep';
 
 type ExecuteCodeStepInput = {
-  id: string;
+  logicFunctionId: string;
   payload: object;
 };
 
@@ -48,7 +48,7 @@ export const useTestWorkflowCodeStep = ({
       const result = await executeCodeStepMutation({
         variables: {
           input: {
-            id: logicFunctionId,
+            logicFunctionId,
             payload: logicFunctionTestData.input,
           },
         },

@@ -12,7 +12,7 @@ export class ExecuteCodeStepInput {
   })
   @IsNotEmpty()
   @IsUUID()
-  id!: string;
+  logicFunctionId!: string;
 
   @Field(() => graphqlTypeJson, {
     description: 'Payload in JSON format',

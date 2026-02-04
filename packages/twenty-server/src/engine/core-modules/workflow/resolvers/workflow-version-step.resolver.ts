@@ -149,7 +149,7 @@ export class WorkflowVersionStepResolver {
     @Args('input') input: ExecuteCodeStepInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionExecutionResultDTO> {
-    const { id, payload } = input;
+    const { logicFunctionId, payload } = input;
 
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -160,7 +160,7 @@ export class WorkflowVersionStepResolver {
       );
 
     const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id,
+      id: logicFunctionId,
       flatLogicFunctionMaps,
     });
 
