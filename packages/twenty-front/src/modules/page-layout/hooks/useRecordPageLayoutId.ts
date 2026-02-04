@@ -40,6 +40,7 @@ export const useRecordPageLayoutId = ({
   >(FIND_PAGE_LAYOUTS, {
     variables: {
       objectMetadataId: objectMetadataItem?.id,
+      pageLayoutType: PageLayoutType.RECORD_PAGE,
     },
     skip:
       !isRecordPageLayoutEditingEnabled ||
@@ -53,9 +54,7 @@ export const useRecordPageLayoutId = ({
         return null;
       }
 
-      const recordPageLayout = pageLayoutsData?.getPageLayouts?.find(
-        (layout) => layout.type === PageLayoutType.RECORD_PAGE,
-      );
+      const recordPageLayout = pageLayoutsData?.getPageLayouts?.[0];
 
       if (isDefined(recordPageLayout)) {
         return recordPageLayout.id;

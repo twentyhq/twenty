@@ -3,8 +3,14 @@ import { gql } from '@apollo/client';
 
 export const FIND_PAGE_LAYOUTS = gql`
   ${PAGE_LAYOUT_FRAGMENT}
-  query GetPageLayouts($objectMetadataId: String) {
-    getPageLayouts(objectMetadataId: $objectMetadataId) {
+  query GetPageLayouts(
+    $objectMetadataId: String
+    $pageLayoutType: PageLayoutType
+  ) {
+    getPageLayouts(
+      objectMetadataId: $objectMetadataId
+      pageLayoutType: $pageLayoutType
+    ) {
       ...PageLayoutFragment
     }
   }

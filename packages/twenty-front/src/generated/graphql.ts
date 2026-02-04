@@ -5266,6 +5266,7 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutatio
 
 export type GetPageLayoutsQueryVariables = Exact<{
   objectMetadataId?: InputMaybe<Scalars['String']>;
+  pageLayoutType?: InputMaybe<PageLayoutType>;
 }>;
 
 
@@ -6109,8 +6110,11 @@ export type UpdatePageLayoutWithTabsAndWidgetsMutationHookResult = ReturnType<ty
 export type UpdatePageLayoutWithTabsAndWidgetsMutationResult = Apollo.MutationResult<UpdatePageLayoutWithTabsAndWidgetsMutation>;
 export type UpdatePageLayoutWithTabsAndWidgetsMutationOptions = Apollo.BaseMutationOptions<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
 export const GetPageLayoutsDocument = gql`
-    query GetPageLayouts($objectMetadataId: String) {
-  getPageLayouts(objectMetadataId: $objectMetadataId) {
+    query GetPageLayouts($objectMetadataId: String, $pageLayoutType: PageLayoutType) {
+  getPageLayouts(
+    objectMetadataId: $objectMetadataId
+    pageLayoutType: $pageLayoutType
+  ) {
     ...PageLayoutFragment
   }
 }
@@ -6129,6 +6133,7 @@ export const GetPageLayoutsDocument = gql`
  * const { data, loading, error } = useGetPageLayoutsQuery({
  *   variables: {
  *      objectMetadataId: // value for 'objectMetadataId'
+ *      pageLayoutType: // value for 'pageLayoutType'
  *   },
  * });
  */
