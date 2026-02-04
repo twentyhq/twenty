@@ -11,7 +11,7 @@ import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateD
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
+import { getJoinColumnNameOrThrow } from '@/object-record/record-field/ui/utils/junction/getJoinColumnNameOrThrow';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -42,8 +42,9 @@ export const useRelationToOneFieldDisplay = () => {
     fieldDefinition,
   );
 
-  const joinColumnName =
-    getJoinColumnName(fieldDefinition.metadata.settings) ?? `${fieldName}Id`;
+  const joinColumnName = getJoinColumnNameOrThrow(
+    fieldDefinition.metadata.settings,
+  );
 
   const foreignKeyFieldValue = useRecordFieldValue<string | null | undefined>(
     recordId,
