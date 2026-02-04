@@ -1,5 +1,6 @@
 import type { Project, SourceFile } from 'ts-morph';
 
+import { isDefined } from 'twenty-shared/utils';
 import { CUSTOM_ELEMENT_NAMES } from './constants';
 import { type ComponentSchema } from './schemas';
 import { addFileHeader, addStatement } from './utils';
@@ -65,10 +66,23 @@ const filterProps = (props: Record<string, unknown>) => {
 };`;
 };
 
-const generateWrapperComponent = (component: ComponentSchema): string => {
+const generateHtmlWrapperComponent = (component: ComponentSchema): string => {
   return `const ${component.name}Wrapper = ({ children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('${component.htmlTag}', filterProps(props), children);
 };`;
+};
+
+const generateUiWrapperComponent = (component: ComponentSchema): string => {
+  return `const ${component.name}Wrapper = ({ children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
+  return React.createElement(${component.componentImport}, filterProps(props), children);
+};`;
+};
+
+const generateWrapperComponent = (component: ComponentSchema): string => {
+  if (component.isHtmlElement) {
+    return generateHtmlWrapperComponent(component);
+  }
+  return generateUiWrapperComponent(component);
 };
 
 const generateRegistryMap = (components: ComponentSchema[]): string => {
@@ -87,6 +101,28 @@ export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
 ${entries}
   ['${CUSTOM_ELEMENT_NAMES.FRAGMENT}', RemoteFragmentRenderer],
 ]);`;
+};
+
+const groupImportsByPath = (
+  components: ComponentSchema[],
+): Map<string, string[]> => {
+  const importsByPath = new Map<string, string[]>();
+
+  for (const component of components) {
+    if (
+      !component.isHtmlElement &&
+      isDefined(component.componentPath) &&
+      isDefined(component.componentImport)
+    ) {
+      const existing = importsByPath.get(component.componentPath) ?? [];
+      if (!existing.includes(component.componentImport)) {
+        existing.push(component.componentImport);
+      }
+      importsByPath.set(component.componentPath, existing);
+    }
+  }
+
+  return importsByPath;
 };
 
 export const generateHostRegistry = (
@@ -109,6 +145,15 @@ export const generateHostRegistry = (
     moduleSpecifier: '@remote-dom/react/host',
     namedImports: ['RemoteFragmentRenderer', 'createRemoteComponentRenderer'],
   });
+
+  const uiImports = groupImportsByPath(components);
+
+  for (const [modulePath, namedImports] of uiImports) {
+    sourceFile.addImportDeclaration({
+      moduleSpecifier: modulePath,
+      namedImports,
+    });
+  }
 
   addStatement(sourceFile, generateRuntimeUtilities(eventToReactMapping));
 

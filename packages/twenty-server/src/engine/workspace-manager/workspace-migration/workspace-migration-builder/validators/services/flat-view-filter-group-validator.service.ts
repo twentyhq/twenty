@@ -198,8 +198,10 @@ export class FlatViewFilterGroupValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
   >): FailedFlatEntityValidation<'viewFilterGroup', 'update'> {
-    const existingViewFilterGroup =
-      optimisticFlatViewFilterGroupMaps.byId[flatEntityId];
+    const existingViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatViewFilterGroupMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {

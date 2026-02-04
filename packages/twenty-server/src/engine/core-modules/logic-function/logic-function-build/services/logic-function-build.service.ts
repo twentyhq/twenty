@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
+import crypto from 'crypto';
 import fs from 'fs/promises';
 import { dirname, join } from 'path';
-import crypto from 'crypto';
 
 import { build } from 'esbuild';
 import { FileFolder } from 'twenty-shared/types';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
-import { FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 export type FunctionBuildParams = {
   flatLogicFunction: FlatLogicFunction;
@@ -26,23 +26,22 @@ export class LogicFunctionBuildService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   async hasLayerDependencies({
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
   }: {
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<boolean> {
     const packageJsonExists = await this.fileStorageService.checkFileExists_v2({
-      workspaceId: flatLogicFunctionLayer.workspaceId,
+      workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
+      fileFolder: FileFolder.Dependencies,
       resourcePath: 'package.json',
     });
-
     const yarnLockExists = await this.fileStorageService.checkFileExists_v2({
-      workspaceId: flatLogicFunctionLayer.workspaceId,
+      workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
+      fileFolder: FileFolder.Dependencies,
       resourcePath: 'yarn.lock',
     });
 
@@ -50,37 +49,14 @@ export class LogicFunctionBuildService {
   }
 
   async uploadDependencies({
-    flatLogicFunctionLayer,
-    applicationUniversalIdentifier,
+    flatApplication: _flatApplication,
+    applicationUniversalIdentifier: _applicationUniversalIdentifier,
   }: {
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
-    await this.fileStorageService.writeFile_v2({
-      workspaceId: flatLogicFunctionLayer.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: 'package.json',
-      sourceFile: JSON.stringify(flatLogicFunctionLayer.packageJson, null, 2),
-      mimeType: undefined,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
-
-    await this.fileStorageService.writeFile_v2({
-      workspaceId: flatLogicFunctionLayer.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Source,
-      resourcePath: 'yarn.lock',
-      sourceFile: flatLogicFunctionLayer.yarnLock,
-      mimeType: undefined,
-      settings: {
-        isTemporaryFile: false,
-        toDelete: false,
-      },
-    });
+    // Package files live in Dependencies; no copy needed – drivers read from
+    // Dependencies when building the layer.
   }
 
   async isBuilt({

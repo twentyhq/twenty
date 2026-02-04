@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import {
   PageLayoutTabException,
@@ -27,8 +28,12 @@ export const fromDestroyPageLayoutTabInputToFlatPageLayoutTabOrThrow = ({
     ['id'],
   );
 
-  const existingFlatPageLayoutTabToDestroy =
-    flatPageLayoutTabMaps.byId[pageLayoutTabId];
+  const existingFlatPageLayoutTabToDestroy = findFlatEntityByIdInFlatEntityMaps(
+    {
+      flatEntityId: pageLayoutTabId,
+      flatEntityMaps: flatPageLayoutTabMaps,
+    },
+  );
 
   if (!isDefined(existingFlatPageLayoutTabToDestroy)) {
     throw new PageLayoutTabException(

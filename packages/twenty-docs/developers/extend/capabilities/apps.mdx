@@ -16,9 +16,6 @@ Apps let you build and manage Twenty customizations **as code**. Instead of conf
 - Build logic functions with custom triggers
 - Deploy the same app across multiple workspaces
 
-**Coming soon:**
-- Custom UI layouts and components
-
 ## Prerequisites
 
 - Node.js 24+ and Yarn 4
@@ -93,78 +90,53 @@ my-twenty-app/
   README.md
   public/                           # Public assets folder (images, fonts, etc.)
   src/
-    application.config.ts          # Required - main application configuration
-    default-function.role.ts       # Default role for serverless functions
-    hello-world.function.ts        # Example serverless function
-    hello-world.front-component.tsx # Example front component
-    // your entities (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
-```
-
-### Convention-over-configuration
-
-Applications use a **convention-over-configuration** approach where entities are detected by their file suffix. This allows flexible organization within the `src/app/` folder:
-
-| File suffix | Entity type |
-|-------------|-------------|
-| `*.object.ts` | Custom object definitions |
-| `*.function.ts` | Serverless function definitions |
-| `*.front-component.tsx` | Front component definitions |
-| `*.role.ts` | Role definitions |
-
-### Supported folder organizations
-
-You can organize your entities in any of these patterns:
-
-**Traditional (by type):**
-```text
-src/
-├── application.config.ts
-├── objects/
-│   └── postCard.object.ts
-├── functions/
-│   └── createPostCard.function.ts
-├── components/
-│   └── card.front-component.tsx
-└── roles/
-    └── admin.role.ts
-```
-
-**Feature-based:**
-```text
-src/
-├── application.config.ts
-└── post-card/
-    ├── postCard.object.ts
-    ├── createPostCard.function.ts
-    ├── card.front-component.tsx
-    └── postCardAdmin.role.ts
-```
-
-**Flat:**
-```text
-src/
-├── application.config.ts
-├── postCard.object.ts
-├── createPostCard.function.ts
-├── card.front-component.tsx
-└── admin.role.ts
+  ├── application-config.ts           # Required - main application configuration
+  ├── roles/
+  │   └── default-role.ts               # Default role for logic functions
+  ├── logic-functions/
+  │   └── hello-world.ts                # Example logic function
+  └── front-components/
+      └── hello-world.tsx               # Example front component
 ```
 
 At a high level:
 
-- **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and `auth:login` that delegate to the local `twenty` CLI.
+- **package.json**: Declares the app name, version, engines (Node 24+, Yarn 4), and adds `twenty-sdk` plus scripts like `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall`, and authentication commands that delegate to the local `twenty` CLI.
 - **.gitignore**: Ignores common artifacts such as `node_modules`, `.yarn`, `generated/` (typed client), `dist/`, `build/`, coverage folders, log files, and `.env*` files.
 - **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Lock and configure the Yarn 4 toolchain used by the project.
 - **.nvmrc**: Pins the Node.js version expected by the project.
 - **eslint.config.mjs** and **tsconfig.json**: Provide linting and TypeScript configuration for your app's TypeScript sources.
 - **README.md**: A short README in the app root with basic instructions.
 - **public/**: A folder for storing public assets (images, fonts, static files) that will be served with your application. Files placed here are uploaded during sync and accessible at runtime.
-- **src/**: The main place where you define your application-as-code:
-  - `application.config.ts`: Global configuration for your app (metadata and runtime wiring). See "Application config" below.
-  - `*.role.ts`: Role definitions used by your logic functions. See "Default function role" below.
-  - `*.object.ts`: Custom object definitions.
-  - `*.function.ts`: Logic function definitions.
-  - `*.front-component.tsx`: Front component definitions.
+- **src/**: The main place where you define your application-as-code
+
+### Entity detection
+
+The SDK detects entities by parsing your TypeScript files for **`export default define<Entity>({...})`** calls. Each entity type has a corresponding helper function exported from `twenty-sdk`:
+
+| Helper function | Entity type |
+|-----------------|-------------|
+| `defineObject()` | Custom object definitions |
+| `defineLogicFunction()` | Logic function definitions |
+| `defineFrontComponent()` | Front component definitions |
+| `defineRole()` | Role definitions |
+| `defineField()` | Field extensions for existing objects |
+
+<Note>
+**File naming is flexible.** Entity detection is AST-based — the SDK scans your source files for the `export default define<Entity>({...})` pattern. You can organize your files and folders however you like. Grouping by entity type (e.g., `logic-functions/`, `roles/`) is just a convention for code organization, not a requirement.
+</Note>
+
+Example of a detected entity:
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
 
 Later commands will add more files and folders:
 
@@ -210,16 +182,18 @@ The twenty-sdk provides typed building blocks and helper functions you use insid
 
 ### Helper functions
 
-The SDK provides four helper functions with built-in validation for defining your app entities:
+The SDK provides helper functions for defining your app entities. As described in [Entity detection](#entity-detection), you must use `export default define<Entity>({...})` for your entities to be detected:
 
 | Function | Purpose |
 |----------|---------|
-| `defineApplication()` | Configure application metadata |
+| `defineApplication()` | Configure application metadata (required, one per app) |
 | `defineObject()` | Define custom objects with fields |
-| `defineFunction()` | Define logic functions with handlers |
+| `defineLogicFunction()` | Define logic functions with handlers |
+| `defineFrontComponent()` | Define front components for custom UI |
 | `defineRole()` | Configure role permissions and object access |
+| `defineField()` | Extend existing objects with additional fields |
 
-These functions validate your configuration at runtime and provide better IDE autocompletion and type safety.
+These functions validate your configuration at build time and provide IDE autocompletion and type safety.
 
 ### Defining objects
 
@@ -307,9 +281,9 @@ Key points:
 </Note>
 
 
-### Application config (application.config.ts)
+### Application config (application-config.ts)
 
-Every app has a single `application.config.ts` file that describes:
+Every app has a single `application-config.ts` file that describes:
 
 - **Who the app is**: identifiers, display name, and description.
 - **How its functions run**: which role they use for permissions.
@@ -318,9 +292,9 @@ Every app has a single `application.config.ts` file that describes:
 Use `defineApplication()` to define your application configuration:
 
 ```typescript
-// src/app/application.config.ts
+// src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -335,18 +309,18 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
 Notes:
 - `universalIdentifier` fields are deterministic IDs you own; generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions (for example, `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-- `roleUniversalIdentifier` must match the role you define in your `*.role.ts` file (see below).
+- `defaultRoleUniversalIdentifier` must match the role file (see below).
 
 #### Roles and permissions
 
-Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `roleUniversalIdentifier` in `application.config.ts` designates the default role used by your app's logic functions.
+Applications can define roles that encapsulate permissions on your workspace's objects and actions. The field `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions.
 
 - The runtime API key injected as `TWENTY_API_KEY` is derived from this default function role.
 - The typed client will be restricted to the permissions granted to that role.
@@ -357,7 +331,7 @@ Applications can define roles that encapsulate permissions on your workspace's o
 When you scaffold a new app, the CLI also creates a default role file. Use `defineRole()` to define roles with built-in validation:
 
 ```typescript
-// src/app/default-function.role.ts
+// src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -396,10 +370,10 @@ export default defineRole({
 });
 ```
 
-The `universalIdentifier` of this role is then referenced in `application.config.ts` as `roleUniversalIdentifier`. In other words:
+The `universalIdentifier` of this role is then referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`. In other words:
 
 - **\*.role.ts** defines what the default function role can do.
-- **application.config.ts** points to that role so your functions inherit its permissions.
+- **application-config.ts** points to that role so your functions inherit its permissions.
 
 Notes:
 - Start from the scaffolded role, then progressively restrict it following least‑privilege.
@@ -409,11 +383,11 @@ Notes:
 
 ### Logic function config and entrypoint
 
-Each function file uses `defineFunction()` to export a configuration with a handler and optional triggers. Use the `*.function.ts` file suffix for automatic detection.
+Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
 
 ```typescript
-// src/app/createPostCard.function.ts
-import { defineFunction } from 'twenty-sdk';
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '~/generated';
 
@@ -433,7 +407,7 @@ const handler = async (params: RoutePayload) => {
   return result;
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
@@ -502,7 +476,7 @@ const handler = async (event: RoutePayload) => {
 When a route trigger invokes your logic function, it receives a `RoutePayload` object that follows the AWS HTTP API v2 format. Import the type from `twenty-sdk`:
 
 ```typescript
-import { defineFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 
 const handler = async (event: RoutePayload) => {
   // Access request data
@@ -532,7 +506,7 @@ The `RoutePayload` type has the following structure:
 By default, HTTP headers from incoming requests are **not** passed to your logic function for security reasons. To access specific headers, explicitly list them in the `forwardedRequestHeaders` array:
 
 ```typescript
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
@@ -567,8 +541,44 @@ const handler = async (event: RoutePayload) => {
 
 You can create new functions in two ways:
 
-- **Scaffolded**: Run `yarn entity:add` and choose the option to add a new function. This generates a starter file with a handler and config.
-- **Manual**: Create a new `*.function.ts` file and use `defineFunction()`, following the same pattern.
+- **Scaffolded**: Run `yarn entity:add` and choose the option to add a new logic function. This generates a starter file with a handler and config.
+- **Manual**: Create a new `*.logic-function.ts` file and use `defineLogicFunction()`, following the same pattern.
+
+### Front components
+
+Front components let you build custom React components that render within Twenty's UI. Use `defineFrontComponent()` to define components with built-in validation:
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Key points:
+- Front components are React components that render in isolated contexts within Twenty.
+- Use the `*.front-component.tsx` file suffix for automatic detection.
+- The `component` field references your React component.
+- Components are built and synced automatically during `yarn app:dev`.
+
+You can create new front components in two ways:
+
+- **Scaffolded**: Run `yarn entity:add` and choose the option to add a new front component.
+- **Manual**: Create a new `*.front-component.tsx` file and use `defineFrontComponent()`.
 
 ### Generated typed client
 
@@ -592,13 +602,13 @@ When your function runs on Twenty, the platform injects credentials as environme
 
 Notes:
 - You do not need to pass URL or API key to the generated client. It reads `TWENTY_API_URL` and `TWENTY_API_KEY` from process.env at runtime.
-- The API key's permissions are determined by the role referenced in your `application.config.ts` via `roleUniversalIdentifier`. This is the default role used by logic functions of your application.
-- Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `roleUniversalIdentifier` to that role's universal identifier.
+- The API key's permissions are determined by the role referenced in your `application-config.ts` via `defaultRoleUniversalIdentifier`. This is the default role used by logic functions of your application.
+- Applications can define roles to follow least‑privilege. Grant only the permissions your functions need, then point `defaultRoleUniversalIdentifier` to that role's universal identifier.
 
 
 ### Hello World example
 
-Explore a minimal, end-to-end example that demonstrates objects, functions, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Explore a minimal, end-to-end example that demonstrates objects, logic functions, front components, and multiple triggers [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
 ## Manual setup (without the scaffolder)
 

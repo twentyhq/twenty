@@ -37,7 +37,7 @@ export class AgentService {
         'flatRoleTargetByAgentIdMaps',
       ]);
 
-    return Object.values(flatAgentMaps.byId)
+    return Object.values(flatAgentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .map((flatAgent) => {
         const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;

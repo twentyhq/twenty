@@ -41,9 +41,9 @@ export class FlatSkillValidatorService {
       type: 'create',
     });
 
-    const existingSkills = Object.values(optimisticFlatSkillMaps.byId).filter(
-      isDefined,
-    );
+    const existingSkills = Object.values(
+      optimisticFlatSkillMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     validationResult.errors.push(
       ...validateSkillRequiredProperties({ flatSkill }),
@@ -222,7 +222,9 @@ export class FlatSkillValidatorService {
     });
 
     if (isDefined(nameUpdate)) {
-      const existingSkills = Object.values(optimisticFlatSkillMaps.byId)
+      const existingSkills = Object.values(
+        optimisticFlatSkillMaps.byUniversalIdentifier,
+      )
         .filter(isDefined)
         .filter((skill) => skill.id !== flatEntityId);
 

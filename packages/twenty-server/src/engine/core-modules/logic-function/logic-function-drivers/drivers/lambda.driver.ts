@@ -28,15 +28,15 @@ import {
   type LogicFunctionExecutorDriver,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import {
   LambdaBuildDirectoryManager,
   NODE_LAYER_SUBFOLDER,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -138,8 +138,8 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     );
   }
 
-  private getLayerName(flatLogicFunctionLayer: FlatLogicFunctionLayer) {
-    return flatLogicFunctionLayer.yarnLockChecksum;
+  private getLayerName(flatApplication: FlatApplication) {
+    return flatApplication.yarnLockChecksum ?? 'default';
   }
 
   private async copyDependenciesInMemory({
@@ -155,14 +155,14 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       this.fileStorageService.downloadFile_v2({
         workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
+        fileFolder: FileFolder.Dependencies,
         resourcePath: 'package.json',
         localPath: join(inMemoryLayerFolderPath, 'package.json'),
       }),
       this.fileStorageService.downloadFile_v2({
         workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
+        fileFolder: FileFolder.Dependencies,
         resourcePath: 'yarn.lock',
         localPath: join(inMemoryLayerFolderPath, 'yarn.lock'),
       }),
@@ -170,13 +170,13 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
   }
 
   private async createLayerIfNotExists({
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
   }: {
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<string> {
-    const layerName = this.getLayerName(flatLogicFunctionLayer);
+    const layerName = this.getLayerName(flatApplication);
 
     const listLayerParams: ListLayerVersionsCommandInput = {
       LayerName: layerName,
@@ -204,7 +204,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     await this.copyDependenciesInMemory({
       applicationUniversalIdentifier,
-      workspaceId: flatLogicFunctionLayer.workspaceId,
+      workspaceId: flatApplication.workspaceId,
       inMemoryLayerFolderPath: nodeDependenciesFolder,
     });
     await copyYarnEngineAndBuildDependencies(nodeDependenciesFolder);
@@ -263,7 +263,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
   private async isAlreadyBuilt(
     flatLogicFunction: FlatLogicFunction,
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
+    flatApplication: FlatApplication,
   ) {
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
@@ -279,7 +279,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       return false;
     }
 
-    const layerName = this.getLayerName(flatLogicFunctionLayer);
+    const layerName = this.getLayerName(flatApplication);
 
     if (layers[0].Arn?.includes(layerName)) {
       return true;
@@ -292,19 +292,19 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
   private async build({
     flatLogicFunction,
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
   }: {
     flatLogicFunction: FlatLogicFunction;
-    flatLogicFunctionLayer: FlatLogicFunctionLayer;
+    flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
-    if (await this.isAlreadyBuilt(flatLogicFunction, flatLogicFunctionLayer)) {
+    if (await this.isAlreadyBuilt(flatLogicFunction, flatApplication)) {
       return;
     }
 
     const layerArn = await this.createLayerIfNotExists({
-      flatLogicFunctionLayer,
+      flatApplication,
       applicationUniversalIdentifier,
     });
 
@@ -353,14 +353,14 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
   async execute({
     flatLogicFunction,
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
     payload,
     env,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.build({
       flatLogicFunction,
-      flatLogicFunctionLayer,
+      flatApplication,
       applicationUniversalIdentifier,
     });
 

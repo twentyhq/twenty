@@ -9,11 +9,11 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 export class NoteTargetWorkspaceEntity extends BaseWorkspaceEntity {
   note: EntityRelation<NoteWorkspaceEntity> | null;
   noteId: string | null;
-  person: EntityRelation<PersonWorkspaceEntity> | null;
-  personId: string | null;
-  company: EntityRelation<CompanyWorkspaceEntity> | null;
-  companyId: string | null;
-  opportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
-  opportunityId: string | null;
+  targetPerson: EntityRelation<PersonWorkspaceEntity> | null;
+  targetPersonId: string | null;
+  targetCompany: EntityRelation<CompanyWorkspaceEntity> | null;
+  targetCompanyId: string | null;
+  targetOpportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
+  targetOpportunityId: string | null;
   custom: EntityRelation<CustomWorkspaceEntity>;
 }

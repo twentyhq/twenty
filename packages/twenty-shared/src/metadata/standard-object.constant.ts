@@ -1048,11 +1048,18 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-c02d-4124-9d24-ef123456789b',
       },
       note: { universalIdentifier: '20202020-57f3-4f50-9599-fc0f671df003' },
-      person: { universalIdentifier: '20202020-38ca-4aab-92f5-8a605ca2e4c5' },
-      company: { universalIdentifier: 'c500fbc0-d6f2-4982-a959-5a755431696c' },
-      opportunity: {
+      targetPerson: {
+        universalIdentifier: '20202020-38ca-4aab-92f5-8a605ca2e4c5',
+      },
+      targetCompany: {
+        universalIdentifier: 'c500fbc0-d6f2-4982-a959-5a755431696c',
+      },
+      targetOpportunity: {
         universalIdentifier: '20202020-4e42-417a-a705-76581c9ade79',
       },
+    },
+    morphIds: {
+      targetMorphId: { morphId: '20202020-f635-435d-ab8d-e1168b375c70' },
     },
     indexes: {
       noteIdIndex: {
@@ -1482,11 +1489,18 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-a03d-4164-9d64-fabcdefabcde',
       },
       task: { universalIdentifier: '20202020-e881-457a-8758-74aaef4ae78a' },
-      person: { universalIdentifier: '20202020-c8a0-4e85-a016-87e2349cfbec' },
-      company: { universalIdentifier: '20202020-4703-4a4e-948c-487b0c60a92c' },
-      opportunity: {
+      targetPerson: {
+        universalIdentifier: '20202020-c8a0-4e85-a016-87e2349cfbec',
+      },
+      targetCompany: {
+        universalIdentifier: '20202020-4703-4a4e-948c-487b0c60a92c',
+      },
+      targetOpportunity: {
         universalIdentifier: '20202020-6cb2-4c01-a9a5-aca3dbc11d41',
       },
+    },
+    morphIds: {
+      targetMorphId: { morphId: '20202020-f636-435d-ab8d-e1168b375c71' },
     },
     indexes: {
       taskIdIndex: {

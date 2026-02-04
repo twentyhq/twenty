@@ -5,14 +5,17 @@ import { getActivityTargetFieldNameForObject } from '@/activities/utils/getActiv
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { searchRecordStoreFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type UpdateActivityTargetFromCellProps = {
   recordPickerInstanceId: string;
@@ -50,6 +53,16 @@ export const useUpdateActivityTargetFromCell = ({
         ? activityObjectNameSingular
         : joinObjectNameSingular,
   });
+  const isNoteTargetMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_NOTE_TARGET_MIGRATED,
+  );
+  const isTaskTargetMigrated = useIsFeatureEnabled(
+    FeatureFlagKey.IS_TASK_TARGET_MIGRATED,
+  );
+  const isMorphRelation =
+    activityObjectNameSingular === CoreObjectNameSingular.Task
+      ? isTaskTargetMigrated
+      : isNoteTargetMigrated;
 
   const setActivityFromStore = useSetRecoilState(
     recordStoreFamilyState(activityId),
@@ -67,7 +80,7 @@ export const useUpdateActivityTargetFromCell = ({
             : 'note';
 
         const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
+          .getLoadable<ObjectMetadataItem[]>(objectMetadataItemsState)
           .getValue();
 
         const pickedObjectMetadataItem = objectMetadataItems.find(
@@ -83,6 +96,7 @@ export const useUpdateActivityTargetFromCell = ({
           activityObjectNameSingular,
           targetObjectMetadataId: morphItem.objectMetadataId,
           objectMetadataItems,
+          isMorphRelation,
         });
 
         if (!isDefined(targetFieldName)) {
@@ -132,7 +146,7 @@ export const useUpdateActivityTargetFromCell = ({
 
           const targetRecord = searchRecord.record;
 
-          const activityTarget =
+          const activityTarget: NoteTarget | TaskTarget =
             activityObjectNameSingular === CoreObjectNameSingular.Task
               ? {
                   id: v4(),
@@ -167,15 +181,17 @@ export const useUpdateActivityTargetFromCell = ({
             ...activityTargetWithTargetRecords.map((activityTarget) => {
               return activityTarget.activityTarget;
             }),
-            activityTarget as NoteTarget | TaskTarget,
+            activityTarget,
           ];
 
-          await createOneActivityTarget({
+          const activityTargetInput: Partial<NoteTarget | TaskTarget> = {
             ...activityTarget,
             [targetObjectName]: undefined,
             [targetFieldName]: undefined,
             [`${targetFieldName}Id`]: morphItem.recordId,
-          } as Partial<NoteTarget | TaskTarget>);
+          };
+
+          await createOneActivityTarget(activityTargetInput);
         }
 
         setActivityFromStore((currentActivity) => {
@@ -194,6 +210,7 @@ export const useUpdateActivityTargetFromCell = ({
       activityObjectNameSingular,
       createOneActivityTarget,
       deleteOneActivityTarget,
+      isMorphRelation,
       setActivityFromStore,
     ],
   );

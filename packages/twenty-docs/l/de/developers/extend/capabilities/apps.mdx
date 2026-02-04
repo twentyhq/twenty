@@ -17,10 +17,6 @@ Mit Apps können Sie Twenty-Anpassungen **als Code** erstellen und verwalten. An
 * Logikfunktionen mit benutzerdefinierten Triggern erstellen
 * Dieselbe App in mehreren Workspaces bereitstellen
 
-**Bald verfügbar:**
-
-* Benutzerdefinierte UI-Layouts und Komponenten
-
 ## Voraussetzungen
 
 * Node.js 24+ und Yarn 4
@@ -93,83 +89,56 @@ my-twenty-app/
   eslint.config.mjs
   tsconfig.json
   README.md
-  public/                           # Ordner für öffentliche Assets (Bilder, Schriftarten usw.)
+  public/                           # Public assets folder (images, fonts, etc.)
   src/
-    application.config.ts          # Erforderlich – Hauptkonfiguration der Anwendung
-    default-function.role.ts       # Standardrolle für serverlose Funktionen
-    hello-world.function.ts        # Beispiel für eine serverlose Funktion
-    hello-world.front-component.tsx # Beispiel für eine Frontend-Komponente
-    // Ihre Entitäten (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
-```
-
-### Konvention vor Konfiguration
-
-Anwendungen verwenden einen Ansatz **Konvention vor Konfiguration**, bei dem Entitäten anhand ihrer Dateiendung erkannt werden. Dies ermöglicht eine flexible Organisation im Ordner `src/app/`:
-
-| Dateiendung             | Entitätstyp                           |
-| ----------------------- | ------------------------------------- |
-| `*.object.ts`           | Benutzerdefinierte Objektdefinitionen |
-| `*.function.ts`         | Definitionen serverloser Funktionen   |
-| `*.front-component.tsx` | Definitionen von Frontend-Komponenten |
-| `*.role.ts`             | Rollendefinitionen                    |
-
-### Unterstützte Ordnerorganisationen
-
-Sie können Ihre Entitäten nach einem der folgenden Muster organisieren:
-
-**Traditionell (nach Typ):**
-
-```text
-src/
-├── application.config.ts
-├── objects/
-│   └── postCard.object.ts
-├── functions/
-│   └── createPostCard.function.ts
-├── components/
-│   └── card.front-component.tsx
-└── roles/
-    └── admin.role.ts
-```
-
-**Feature-basiert:**
-
-```text
-src/
-├── application.config.ts
-└── post-card/
-    ├── postCard.object.ts
-    ├── createPostCard.function.ts
-    ├── card.front-component.tsx
-    └── postCardAdmin.role.ts
-```
-
-**Flach:**
-
-```text
-src/
-├── application.config.ts
-├── postCard.object.ts
-├── createPostCard.function.ts
-├── card.front-component.tsx
-└── admin.role.ts
+  ├── application-config.ts           # Required - main application configuration
+  ├── roles/
+  │   └── default-role.ts               # Default role for logic functions
+  ├── logic-functions/
+  │   └── hello-world.ts                # Example logic function
+  └── front-components/
+      └── hello-world.tsx               # Example front component
 ```
 
 Auf hoher Ebene:
 
-* **package.json**: Deklariert den App-Namen, die Version, Engines (Node 24+, Yarn 4) und fügt `twenty-sdk` sowie Skripte wie `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` und `auth:login` hinzu, die an die lokale `twenty`-CLI delegieren.
+* **package.json**: Deklariert den App-Namen, die Version, Engines (Node 24+, Yarn 4) und fügt `twenty-sdk` sowie Skripte wie `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` sowie Authentifizierungsbefehle hinzu, die an die lokale `twenty`-CLI delegieren.
 * **.gitignore**: Ignoriert übliche Artefakte wie `node_modules`, `.yarn`, `generated/` (typisierter Client), `dist/`, `build/`, Coverage-Ordner, Logdateien und `.env*`-Dateien.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Fixieren und konfigurieren die vom Projekt verwendete Yarn-4-Toolchain.
 * **.nvmrc**: Legt die vom Projekt erwartete Node.js-Version fest.
 * **eslint.config.mjs** und **tsconfig.json**: Stellen Linting und TypeScript-Konfiguration für die TypeScript-Quellen Ihrer App bereit.
 * **README.md**: Ein kurzes README im App-Root mit grundlegenden Anweisungen.
 * **public/**: Ein Ordner zum Speichern öffentlicher Assets (Bilder, Schriftarten, statische Dateien), die zusammen mit Ihrer Anwendung bereitgestellt werden. Hier abgelegte Dateien werden während der Synchronisierung hochgeladen und sind zur Laufzeit zugänglich.
-* **src/**: Der Hauptort, an dem Sie Ihre Anwendung als Code definieren:
-  * `application.config.ts`: Globale Konfiguration für Ihre App (Metadaten und Laufzeit-Anbindung). Siehe unten „Anwendungskonfiguration“.
-  * `*.role.ts`: Rollendefinitionen, die von Ihren Logikfunktionen verwendet werden. Siehe unten „Standard-Funktionsrolle“.
-  * `*.object.ts`: Benutzerdefinierte Objektdefinitionen.
-  * `*.function.ts`: Definitionen von Logikfunktionen.
-  * `*.front-component.tsx`: Front-Komponenten-Definitionen.
+* **src/**: Der Hauptort, an dem Sie Ihre Anwendung als Code definieren
+
+### Entitätserkennung
+
+Das SDK erkennt Entitäten, indem es Ihre TypeScript-Dateien nach Aufrufen von **`export default define<Entity>({...})`** parst. Für jeden Entitätstyp gibt es eine entsprechende Hilfsfunktion, die aus `twenty-sdk` exportiert wird:
+
+| Hilfsfunktion            | Entitätstyp                              |
+| ------------------------ | ---------------------------------------- |
+| `defineObject()`         | Benutzerdefinierte Objektdefinitionen    |
+| `defineLogicFunction()`  | Definitionen von Logikfunktionen         |
+| `defineFrontComponent()` | Definitionen von Frontend-Komponenten    |
+| `defineRole()`           | Rollendefinitionen                       |
+| `defineField()`          | Felderweiterungen für bestehende Objekte |
+
+<Note>
+  **Dateibenennung ist flexibel.** Die Entitätserkennung ist AST-basiert — das SDK durchsucht Ihre Quelldateien nach dem Muster `export default define<Entity>({...})`. Sie können Ihre Dateien und Ordner nach Belieben organisieren. Die Gruppierung nach Entitätstyp (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention zur Codeorganisation, keine Voraussetzung.
+</Note>
+
+Beispiel für eine erkannte Entität:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
 
 Spätere Befehle fügen weitere Dateien und Ordner hinzu:
 
@@ -215,16 +184,18 @@ Das twenty-sdk stellt typisierte Bausteine und Hilfsfunktionen bereit, die Sie i
 
 ### Hilfsfunktionen
 
-Das SDK stellt vier Hilfsfunktionen mit eingebauter Validierung bereit, um Ihre App-Entitäten zu definieren:
+Das SDK stellt Hilfsfunktionen bereit, um die Entitäten Ihrer App zu definieren. Wie in [Entitätserkennung](#entity-detection) beschrieben, müssen Sie `export default define<Entity>({...})` verwenden, damit Ihre Entitäten erkannt werden:
 
-| Funktion              | Zweck                                                |
-| --------------------- | ---------------------------------------------------- |
-| `defineApplication()` | Anwendungsmetadaten konfigurieren                    |
-| `defineObject()`      | Benutzerdefinierte Objekte mit Feldern definieren    |
-| `defineFunction()`    | Logikfunktionen mit Handlern definieren              |
-| `defineRole()`        | Rollenberechtigungen und Objektzugriff konfigurieren |
+| Funktion                 | Zweck                                                          |
+| ------------------------ | -------------------------------------------------------------- |
+| `defineApplication()`    | Anwendungsmetadaten konfigurieren (erforderlich, eine pro App) |
+| `defineObject()`         | Benutzerdefinierte Objekte mit Feldern definieren              |
+| `defineLogicFunction()`  | Logikfunktionen mit Handlern definieren                        |
+| `defineFrontComponent()` | Frontend-Komponenten für benutzerdefinierte UI definieren      |
+| `defineRole()`           | Rollenberechtigungen und Objektzugriff konfigurieren           |
+| `defineField()`          | Bestehende Objekte mit zusätzlichen Feldern erweitern          |
 
-Diese Funktionen validieren Ihre Konfiguration zur Laufzeit und bieten bessere IDE-Autovervollständigung sowie Typsicherheit.
+Diese Funktionen validieren Ihre Konfiguration zur Build-Zeit und bieten IDE-Autovervollständigung sowie Typsicherheit.
 
 ### Objekte definieren
 
@@ -311,9 +282,9 @@ Hauptpunkte:
   **Basisfelder werden automatisch erstellt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, fügt Twenty automatisch Standardfelder wie `name`, `createdAt`, `updatedAt`, `createdBy`, `position` und `deletedAt` hinzu. Sie müssen diese nicht in Ihrem `fields`-Array definieren — fügen Sie nur Ihre benutzerdefinierten Felder hinzu.
 </Note>
 
-### Anwendungskonfiguration (application.config.ts)
+### Anwendungskonfiguration (application-config.ts)
 
-Jede App hat eine einzelne Datei `application.config.ts`, die Folgendes beschreibt:
+Jede App hat eine einzelne Datei `application-config.ts`, die Folgendes beschreibt:
 
 * **Was die App ist**: Bezeichner, Anzeigename und Beschreibung.
 * **Wie ihre Funktionen ausgeführt werden**: welche Rolle sie für Berechtigungen verwenden.
@@ -322,9 +293,9 @@ Jede App hat eine einzelne Datei `application.config.ts`, die Folgendes beschrei
 Verwenden Sie `defineApplication()`, um Ihre Anwendungskonfiguration zu definieren:
 
 ```typescript
-// src/app/application.config.ts
+// src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -339,7 +310,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +318,11 @@ Notizen:
 
 * `universalIdentifier`-Felder sind deterministische IDs, die Sie besitzen; generieren Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
 * `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen (zum Beispiel ist `DEFAULT_RECIPIENT_NAME` als `process.env.DEFAULT_RECIPIENT_NAME` verfügbar).
-* `roleUniversalIdentifier` muss mit der Rolle übereinstimmen, die Sie in Ihrer `*.role.ts`-Datei definieren (siehe unten).
+* `defaultRoleUniversalIdentifier` muss mit der Rollendatei übereinstimmen (siehe unten).
 
 #### Rollen und Berechtigungen
 
-Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `roleUniversalIdentifier` in `application.config.ts` legt die Standardrolle fest, die von den Logikfunktionen Ihrer App verwendet wird.
+Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und Aktionen Ihres Workspaces kapseln. Das Feld `defaultRoleUniversalIdentifier` in `application-config.ts` legt die Standardrolle fest, die von den Logikfunktionen Ihrer App verwendet wird.
 
 * Der zur Laufzeit als `TWENTY_API_KEY` injizierte API-Schlüssel wird von dieser Standard-Funktionsrolle abgeleitet.
 * Der typisierte Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
@@ -362,7 +333,7 @@ Anwendungen können Rollen definieren, die Berechtigungen für die Objekte und A
 Wenn Sie eine neue App erzeugen, erstellt die CLI auch eine Standard-Rolldatei. Verwenden Sie `defineRole()`, um Rollen mit eingebauter Validierung zu definieren:
 
 ```typescript
-// src/app/default-function.role.ts
+// src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -401,10 +372,10 @@ export default defineRole({
 });
 ```
 
-Der `universalIdentifier` dieser Rolle wird anschließend in `application.config.ts` als `roleUniversalIdentifier` referenziert. Anders ausgedrückt:
+Der `universalIdentifier` dieser Rolle wird anschließend in `application-config.ts` als `defaultRoleUniversalIdentifier` referenziert. Anders ausgedrückt:
 
 * **\*.role.ts** definiert, was die Standard-Funktionsrolle darf.
-* **application.config.ts** verweist auf diese Rolle, sodass Ihre Funktionen deren Berechtigungen erben.
+* **application-config.ts** verweist auf diese Rolle, sodass Ihre Funktionen deren Berechtigungen erben.
 
 Notizen:
 
@@ -415,11 +386,11 @@ Notizen:
 
 ### Konfiguration von Logikfunktionen und Einstiegspunkt
 
-Jede Funktionsdatei verwendet `defineFunction()`, um eine Konfiguration mit einem Handler und optionalen Triggern zu exportieren. Verwenden Sie die Dateiendung `*.function.ts` für die automatische Erkennung.
+Jede Funktionsdatei verwendet `defineLogicFunction()`, um eine Konfiguration mit einem Handler und optionalen Triggern zu exportieren.
 
 ```typescript
-// src/app/createPostCard.function.ts
-import { defineFunction } from 'twenty-sdk';
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '~/generated';
 
@@ -439,7 +410,7 @@ const handler = async (params: RoutePayload) => {
   return result;
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
@@ -515,7 +486,7 @@ Notizen:
 Wenn ein Routen-Trigger Ihre Logikfunktion aufruft, erhält sie ein `RoutePayload`-Objekt, das dem AWS HTTP API v2-Format entspricht. Importieren Sie den Typ aus `twenty-sdk`:
 
 ```typescript
-import { defineFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 
 const handler = async (event: RoutePayload) => {
   // Access request data
@@ -545,7 +516,7 @@ Der Typ `RoutePayload` hat die folgende Struktur:
 Standardmäßig werden HTTP-Header von eingehenden Anfragen aus Sicherheitsgründen nicht an Ihre Logikfunktion weitergegeben. Um auf bestimmte Header zuzugreifen, listen Sie diese explizit im Array `forwardedRequestHeaders` auf:
 
 ```typescript
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
@@ -580,8 +551,45 @@ const handler = async (event: RoutePayload) => {
 
 Sie können neue Funktionen auf zwei Arten erstellen:
 
-* **Generiert**: Führen Sie `yarn entity:add` aus und wählen Sie die Option zum Hinzufügen einer neuen Funktion. Dadurch wird eine Starterdatei mit Handler und Konfiguration erzeugt.
-* **Manuell**: Erstellen Sie eine neue `*.function.ts`-Datei und verwenden Sie `defineFunction()` nach demselben Muster.
+* **Generiert**: Führen Sie `yarn entity:add` aus und wählen Sie die Option zum Hinzufügen einer neuen Logikfunktion. Dadurch wird eine Starterdatei mit Handler und Konfiguration erzeugt.
+* **Manuell**: Erstellen Sie eine neue `*.logic-function.ts`-Datei und verwenden Sie `defineLogicFunction()` nach demselben Muster.
+
+### Frontend-Komponenten
+
+Frontend-Komponenten ermöglichen es Ihnen, benutzerdefinierte React-Komponenten zu erstellen, die innerhalb der Twenty-UI gerendert werden. Verwenden Sie `defineFrontComponent()`, um Komponenten mit eingebauter Validierung zu definieren:
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Hauptpunkte:
+
+* Frontend-Komponenten sind React-Komponenten, die in isolierten Kontexten innerhalb von Twenty gerendert werden.
+* Verwenden Sie die Dateiendung `*.front-component.tsx` für die automatische Erkennung.
+* Das Feld `component` verweist auf Ihre React-Komponente.
+* Komponenten werden während `yarn app:dev` automatisch gebaut und synchronisiert.
+
+Sie können neue Frontend-Komponenten auf zwei Arten erstellen:
+
+* **Generiert**: Führen Sie `yarn entity:add` aus und wählen Sie die Option zum Hinzufügen einer neuen Frontend-Komponente.
+* **Manuell**: Erstellen Sie eine neue `*.front-component.tsx`-Datei und verwenden Sie `defineFrontComponent()`.
 
 ### Generierter typisierter Client
 
@@ -606,12 +614,12 @@ Wenn Ihre Funktion auf Twenty läuft, injiziert die Plattform vor der Ausführun
 Notizen:
 
 * Sie müssen dem generierten Client weder URL noch API-Schlüssel übergeben. Er liest `TWENTY_API_URL` und `TWENTY_API_KEY` zur Laufzeit aus process.env.
-* Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application.config.ts` über `roleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
-* Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `roleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
+* Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, auf die in Ihrer `application-config.ts` über `defaultRoleUniversalIdentifier` verwiesen wird. Dies ist die Standardrolle, die von den Logikfunktionen Ihrer Anwendung verwendet wird.
+* Anwendungen können Rollen definieren, um das Least-Privilege-Prinzip einzuhalten. Gewähren Sie nur die Berechtigungen, die Ihre Funktionen benötigen, und verweisen Sie dann mit `defaultRoleUniversalIdentifier` auf den universellen Bezeichner dieser Rolle.
 
 ### Hello-World-Beispiel
 
-Ein minimales End-to-End-Beispiel, das Objekte, Funktionen und mehrere Trigger demonstriert, finden Sie [hier](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Ein minimales End-to-End-Beispiel, das Objekte, Logikfunktionen, Frontend-Komponenten und mehrere Trigger demonstriert, finden Sie [hier](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
 ## Manuelle Einrichtung (ohne Scaffolder)
 
