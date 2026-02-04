@@ -1,8 +1,8 @@
-import {
-  eachTestingContextFilter,
-  type EachTestingContext,
-} from 'twenty-shared/testing';
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import {
+    eachTestingContextFilter,
+    type EachTestingContext,
+} from 'twenty-shared/testing';
 
 import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { sanitizeFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/sanitize-flat-entity-update.util';

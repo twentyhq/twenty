@@ -38,7 +38,6 @@ import {
   type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -93,18 +92,15 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner } = context;
+    const { flatAction, queryRunner, workspaceId } = context;
     const fieldMetadataRepository =
       queryRunner.manager.getRepository<FieldMetadataEntity>(
         FieldMetadataEntity,
       );
 
-    const { entityId } = flatAction;
+    const { entityId, update } = flatAction;
 
-    await fieldMetadataRepository.update(
-      entityId,
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
-    );
+    await fieldMetadataRepository.update({ id: entityId, workspaceId }, update);
   }
 
   async executeForWorkspaceSchema(
@@ -116,7 +112,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { entityId, updates } = flatAction;
+    const { entityId, update } = flatAction;
 
     const currentFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: entityId,
