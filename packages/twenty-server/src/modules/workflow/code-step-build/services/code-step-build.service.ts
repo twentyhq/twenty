@@ -58,7 +58,7 @@ export class CodeStepBuildService {
     const sourceHandlerPath = `${WORKFLOW_BASE_FOLDER_PREFIX}/${logicFunctionId}/${DEFAULT_SOURCE_HANDLER_PATH}`;
     const builtHandlerPath = `${WORKFLOW_BASE_FOLDER_PREFIX}/${logicFunctionId}/${DEFAULT_BUILT_HANDLER_PATH}`;
 
-    const seedProjectFiles = await getCodeStepSeedProjectFiles;
+    const seedProjectFiles = await getCodeStepSeedProjectFiles();
 
     const sourceFiles = seedProjectFiles.filter((file) =>
       file.name.endsWith('index.ts'),

@@ -29,11 +29,11 @@ const getAllFiles = async (
   return files;
 };
 
-export const getCodeStepSeedProjectFiles = (async () => {
+export const getCodeStepSeedProjectFiles = async (): Promise<File[]> => {
   const seedProjectPath = path.join(
     ASSET_PATH,
     'modules/workflow/code-step-build/constants/seed-project',
   );
 
-  return await getAllFiles(seedProjectPath);
-})();
+  return getAllFiles(seedProjectPath);
+};
