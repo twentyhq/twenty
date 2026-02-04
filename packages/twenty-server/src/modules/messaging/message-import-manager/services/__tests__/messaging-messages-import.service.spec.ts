@@ -33,7 +33,15 @@ describe('MessagingMessagesImportService', () => {
   let saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService;
 
   const workspaceId = 'workspace-id';
-  let mockMessageChannel: MessageChannelWorkspaceEntity;
+  let mockMessageChannel: Pick<
+    MessageChannelWorkspaceEntity,
+    | 'id'
+    | 'syncStage'
+    | 'connectedAccountId'
+    | 'handle'
+    | 'messageFolders'
+    | 'messageFolderImportPolicy'
+  >;
   let mockConnectedAccount: ConnectedAccountWorkspaceEntity;
   let providersBase: Provider[];
 
@@ -55,7 +63,7 @@ describe('MessagingMessagesImportService', () => {
       handle: 'test@gmail.com',
       messageFolders: [],
       messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
-    } as unknown as MessageChannelWorkspaceEntity;
+    };
 
     providersBase = [
       MessagingMessagesImportService,
@@ -204,7 +212,7 @@ describe('MessagingMessagesImportService', () => {
 
     expect(
       service.processMessageBatchImport(
-        mockMessageChannel,
+        mockMessageChannel as MessageChannelWorkspaceEntity,
         mockConnectedAccount,
         workspaceId,
       ),
@@ -213,7 +221,7 @@ describe('MessagingMessagesImportService', () => {
 
   it('should process message batch import successfully', async () => {
     await service.processMessageBatchImport(
-      mockMessageChannel,
+      mockMessageChannel as MessageChannelWorkspaceEntity,
       mockConnectedAccount,
       workspaceId,
     );
@@ -297,7 +305,7 @@ describe('MessagingMessagesImportService', () => {
       );
 
     await service.processMessageBatchImport(
-      mockMessageChannel,
+      mockMessageChannel as MessageChannelWorkspaceEntity,
       mockConnectedAccount,
       workspaceId,
     );
