@@ -1,172 +1,238 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { FLAT_AGENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-agent/constants/flat-agent-editable-properties.constant';
-import { FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-command-menu-item/constants/flat-command-menu-item-editable-properties.constant';
-import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
-import { FLAT_FRONT_COMPONENT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-front-component/constants/flat-front-component-editable-properties.constant';
-import { FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/flat-navigation-menu-item-editable-properties.constant';
-import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
-import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
-import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
-import { FLAT_PAGE_LAYOUT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout/constants/flat-page-layout-editable-properties.constant';
-import { FLAT_ROLE_TARGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-role-target/constants/flat-role-target-editable-properties.constant';
-import { FLAT_ROLE_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-role/constants/flat-role-editable-properties.constant';
-import { FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/flat-row-level-permission-predicate-editable-properties.constant';
-import { FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/constants/flat-row-level-permission-predicate-group-editable-properties.constant';
-import { FLAT_SKILL_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-skill/constants/flat-skill-editable-properties.constant';
-import { FLAT_VIEW_FIELD_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-field/constants/flat-view-field-editable-properties.constant';
-import { FLAT_VIEW_FILTER_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter-group/constants/flat-view-filter-group-editable-properties.constant';
-import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
-import { FLAT_VIEW_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-group/constants/flat-view-group-editable-properties.constant';
-import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view/constants/flat-view-editable-properties.constant';
-import { FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/logic-function/constants/flat-logic-function-editable-properties.constant';
+import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
+import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
+import { UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
-type OneFlatEntityConfiguration<T extends AllMetadataName> = {
-  propertiesToCompare: (keyof MetadataUniversalFlatEntity<T>)[];
-  // TODO refactor to be jsonb strictly typed and record oriented to have minimal extension
-  propertiesToStringify: (keyof MetadataUniversalFlatEntity<T>)[];
+type HasObjectInUnion<T> = T extends unknown
+  ? T extends object
+    ? true
+    : false
+  : never;
+
+type FlatEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
+  [K in keyof Omit<
+    MetadataFlatEntity<TMetadataName>,
+    | Extract<
+        keyof MetadataFlatEntity<TMetadataName>,
+        keyof UniversalFlatEntityExtraProperties<
+          MetadataEntity<TMetadataName>,
+          TMetadataName
+        >
+      >
+    | '__universal'
+  >]?: {
+    universalProperty?: K extends AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
+      string
+      ? `universal${Capitalize<K>}`
+      : undefined;
+    toStringify?: K extends ExtractJsonbProperties<
+      MetadataEntity<TMetadataName>
+    >
+      ? true
+      : K extends keyof MetadataEntity<TMetadataName>
+        ? HasObjectInUnion<MetadataEntity<TMetadataName>[K]>
+        : boolean;
+  };
 };
+
+type AllFlatEntityPropertiesConfiguration = {
+  [P in AllMetadataName]: FlatEntityPropertyConfiguration<P>;
+};
+
 export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   fieldMetadata: {
-    propertiesToCompare: [
-      ...FLAT_FIELD_METADATA_EDITABLE_PROPERTIES.custom,
-      'standardOverrides',
-    ],
-    propertiesToStringify: [
-      'options',
-      'universalSettings',
-      'standardOverrides',
-      'defaultValue',
-    ],
+    defaultValue: { toStringify: true },
+    description: {},
+    icon: {},
+    isActive: {},
+    isLabelSyncedWithName: {},
+    isUnique: {},
+    label: {},
+    name: {},
+    options: { toStringify: true },
+    standardOverrides: { toStringify: true },
+    settings: { toStringify: true, universalProperty: 'universalSettings' },
   },
   objectMetadata: {
-    propertiesToCompare: [
-      ...FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES.custom,
-      'standardOverrides',
-    ],
-    propertiesToStringify: ['standardOverrides'],
+    description: {},
+    icon: {},
+    isActive: {},
+    isLabelSyncedWithName: {},
+    labelPlural: {},
+    labelSingular: {},
+    namePlural: {},
+    nameSingular: {},
+    labelIdentifierFieldMetadataUniversalIdentifier: {},
+    standardOverrides: { toStringify: true },
   },
   view: {
-    propertiesToCompare: [
-      'key',
-      'deletedAt',
-      'createdByUserWorkspaceId',
-      ...FLAT_VIEW_EDITABLE_PROPERTIES,
-    ],
-    propertiesToStringify: [],
+    key: {},
+    deletedAt: {},
+    createdByUserWorkspaceId: {},
+    name: {},
+    type: {},
+    icon: {},
+    position: {},
+    isCompact: {},
+    openRecordIn: {},
+    kanbanAggregateOperation: {},
+    kanbanAggregateOperationFieldMetadataId: {},
+    anyFieldFilterValue: {},
+    calendarLayout: {},
+    calendarFieldMetadataId: {},
+    visibility: {},
+    mainGroupByFieldMetadataId: {},
+    shouldHideEmptyGroups: {},
   },
   viewField: {
-    propertiesToCompare: [...FLAT_VIEW_FIELD_EDITABLE_PROPERTIES, 'deletedAt'],
-    propertiesToStringify: [],
+    isVisible: {},
+    size: {},
+    position: {},
+    aggregateOperation: {},
+    deletedAt: {},
   },
   viewGroup: {
-    propertiesToCompare: [...FLAT_VIEW_GROUP_EDITABLE_PROPERTIES, 'deletedAt'],
-    propertiesToStringify: [],
+    isVisible: {},
+    fieldValue: {},
+    position: {},
+    deletedAt: {},
   },
   index: {
-    propertiesToCompare: [
-      'indexType',
-      'indexWhereClause',
-      'flatIndexFieldMetadatas',
-      'isUnique',
-      'name',
-    ],
-    propertiesToStringify: ['flatIndexFieldMetadatas'],
+    indexType: {},
+    indexWhereClause: {},
+    flatIndexFieldMetadatas: { toStringify: true },
+    isUnique: {},
+    name: {},
   },
   logicFunction: {
-    propertiesToCompare: [
-      ...FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES.filter(
-        (property) => property !== 'code',
-      ),
-      'deletedAt',
-    ],
-    propertiesToStringify: ['toolInputSchema'],
+    name: {},
+    description: {},
+    timeoutSeconds: {},
+    checksum: {},
+    sourceHandlerPath: {},
+    handlerName: {},
+    toolInputSchema: { toStringify: true },
+    isTool: {},
+    deletedAt: {},
   },
   viewFilter: {
-    propertiesToCompare: [
-      'viewId',
-      'deletedAt',
-      ...FLAT_VIEW_FILTER_EDITABLE_PROPERTIES,
-    ],
-    propertiesToStringify: ['value'],
+    viewId: {},
+    deletedAt: {},
+    fieldMetadataId: {},
+    operand: {},
+    value: { toStringify: true },
+    viewFilterGroupId: {},
+    positionInViewFilterGroup: {},
+    subFieldName: {},
   },
   role: {
-    propertiesToCompare: [...FLAT_ROLE_EDITABLE_PROPERTIES],
-    propertiesToStringify: [],
+    label: {},
+    description: {},
+    icon: {},
+    canUpdateAllSettings: {},
+    canAccessAllTools: {},
+    canReadAllObjectRecords: {},
+    canUpdateAllObjectRecords: {},
+    canSoftDeleteAllObjectRecords: {},
+    canDestroyAllObjectRecords: {},
+    canBeAssignedToUsers: {},
+    canBeAssignedToAgents: {},
+    canBeAssignedToApiKeys: {},
   },
   roleTarget: {
-    propertiesToCompare: [...FLAT_ROLE_TARGET_EDITABLE_PROPERTIES],
-    propertiesToStringify: [],
+    roleId: {},
+    userWorkspaceId: {},
+    apiKeyId: {},
+    agentId: {},
   },
   agent: {
-    propertiesToCompare: [...FLAT_AGENT_EDITABLE_PROPERTIES],
-    propertiesToStringify: [
-      'responseFormat',
-      'modelConfiguration',
-      'evaluationInputs',
-    ],
+    name: {},
+    label: {},
+    icon: {},
+    description: {},
+    prompt: {},
+    modelId: {},
+    responseFormat: { toStringify: true },
+    modelConfiguration: { toStringify: true },
+    evaluationInputs: { toStringify: true },
   },
   pageLayout: {
-    propertiesToCompare: [...FLAT_PAGE_LAYOUT_EDITABLE_PROPERTIES, 'deletedAt'],
-    propertiesToStringify: [],
+    name: {},
+    type: {},
+    objectMetadataId: {},
+    deletedAt: {},
   },
   pageLayoutWidget: {
-    propertiesToCompare: [
-      ...FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
-      'deletedAt',
-    ],
-    propertiesToStringify: ['gridPosition', 'configuration'],
+    title: {},
+    type: {},
+    objectMetadataId: {},
+    gridPosition: { toStringify: true },
+    position: {},
+    configuration: {
+      toStringify: true,
+      universalProperty: 'universalConfiguration',
+    },
+    deletedAt: {},
   },
   pageLayoutTab: {
-    propertiesToCompare: [
-      ...FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES,
-      'deletedAt',
-    ],
-    propertiesToStringify: [],
+    title: {},
+    position: {},
+    deletedAt: {},
   },
   skill: {
-    propertiesToCompare: [...FLAT_SKILL_EDITABLE_PROPERTIES],
-    propertiesToStringify: [],
+    name: {},
+    label: {},
+    icon: {},
+    description: {},
+    content: {},
+    isActive: {},
   },
   commandMenuItem: {
-    propertiesToCompare: [...FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES],
-    propertiesToStringify: [],
+    label: {},
+    icon: {},
+    isPinned: {},
+    availabilityType: {},
+    availabilityObjectMetadataId: {},
   },
   navigationMenuItem: {
-    propertiesToCompare: [...FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES],
-    propertiesToStringify: [],
+    position: {},
+    folderId: {},
+    name: {},
   },
   rowLevelPermissionPredicate: {
-    propertiesToCompare: [
-      ...FLAT_ROW_LEVEL_PERMISSION_PREDICATE_EDITABLE_PROPERTIES,
-      'deletedAt',
-    ],
-    propertiesToStringify: ['value'],
+    fieldMetadataId: {},
+    operand: {},
+    value: { toStringify: true },
+    rowLevelPermissionPredicateGroupId: {},
+    positionInRowLevelPermissionPredicateGroup: {},
+    subFieldName: {},
+    workspaceMemberFieldMetadataId: {},
+    workspaceMemberSubFieldName: {},
+    deletedAt: {},
   },
   rowLevelPermissionPredicateGroup: {
-    propertiesToCompare: [
-      ...FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_EDITABLE_PROPERTIES,
-      'deletedAt',
-    ],
-    propertiesToStringify: [],
+    logicalOperator: {},
+    positionInRowLevelPermissionPredicateGroup: {},
+    parentRowLevelPermissionPredicateGroupId: {},
+    deletedAt: {},
   },
   viewFilterGroup: {
-    propertiesToCompare: [
-      'viewId',
-      'deletedAt',
-      ...FLAT_VIEW_FILTER_GROUP_EDITABLE_PROPERTIES,
-    ],
-    propertiesToStringify: [],
+    viewId: {},
+    deletedAt: {},
+    parentViewFilterGroupId: {},
+    logicalOperator: {},
+    positionInViewFilterGroup: {},
   },
   frontComponent: {
-    propertiesToCompare: [...FLAT_FRONT_COMPONENT_EDITABLE_PROPERTIES],
-    propertiesToStringify: [],
+    name: {},
   },
   webhook: {
-    propertiesToCompare: ['targetUrl', 'operations', 'description', 'secret'],
-    propertiesToStringify: ['operations'],
+    targetUrl: {},
+    operations: { toStringify: true },
+    description: {},
+    secret: {},
   },
-} as const satisfies {
-  [P in AllMetadataName]: OneFlatEntityConfiguration<P>;
-};
+} as const satisfies AllFlatEntityPropertiesConfiguration;
