@@ -1368,6 +1368,13 @@ export type EventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
+export type ExecuteCodeStepInput = {
+  /** Id of the logic function (workflow code step) to execute */
+  id: Scalars['UUID'];
+  /** Payload in JSON format */
+  payload: Scalars['JSON'];
+};
+
 export type ExecuteLogicFunctionInput = {
   /** Id of the logic function to execute */
   id: Scalars['UUID'];
@@ -2085,6 +2092,7 @@ export type Mutation = {
   emailPasswordResetLink: EmailPasswordResetLinkOutput;
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
+  executeCodeStep: LogicFunctionExecutionResult;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientTokenOutput;
@@ -2124,6 +2132,7 @@ export type Mutation = {
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
+  updateCodeStepSource: Scalars['Boolean'];
   updateCommandMenuItem: CommandMenuItem;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
@@ -2602,6 +2611,11 @@ export type MutationEmailPasswordResetLinkArgs = {
 };
 
 
+export type MutationExecuteCodeStepArgs = {
+  input: ExecuteCodeStepInput;
+};
+
+
 export type MutationExecuteOneLogicFunctionArgs = {
   input: ExecuteLogicFunctionInput;
 };
@@ -2789,6 +2803,11 @@ export type MutationUninstallApplicationArgs = {
 
 export type MutationUpdateApiKeyArgs = {
   input: UpdateApiKeyInput;
+};
+
+
+export type MutationUpdateCodeStepSourceArgs = {
+  input: UpdateCodeStepSourceInput;
 };
 
 
@@ -4438,6 +4457,13 @@ export type UpdateApiKeyInput = {
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCodeStepSourceInput = {
+  /** The source code (Sources) to write. Only updates source files. */
+  code: Scalars['JSON'];
+  /** The id of the logic function (code step). */
+  id: Scalars['UUID'];
 };
 
 export type UpdateCommandMenuItemInput = {

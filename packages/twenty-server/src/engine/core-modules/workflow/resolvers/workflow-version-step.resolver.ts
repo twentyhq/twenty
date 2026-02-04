@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -39,7 +40,6 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
-import { isDefined } from 'twenty-shared/utils';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
@@ -187,11 +187,12 @@ export class WorkflowVersionStepResolver {
       );
     }
 
-    const { checksum } =
-      await this.codeStepBuildService.buildFromSourceToBuilt({
+    const { checksum } = await this.codeStepBuildService.buildFromSourceToBuilt(
+      {
         flatLogicFunction,
         applicationUniversalIdentifier,
-      });
+      },
+    );
 
     await this.logicFunctionService.updateChecksum({
       id,

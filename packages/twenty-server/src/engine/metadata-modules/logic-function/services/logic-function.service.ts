@@ -169,12 +169,11 @@ export class LogicFunctionService {
     checksum: string;
     workspaceId: string;
   }) {
-    const resolvedOwnerFlatApplication =
-      (
-        await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-          { workspaceId },
-        )
-      ).workspaceCustomFlatApplication;
+    const resolvedOwnerFlatApplication = (
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      )
+    ).workspaceCustomFlatApplication;
 
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(

@@ -1396,6 +1396,13 @@ export type EventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
+export type ExecuteCodeStepInput = {
+  /** Id of the logic function (workflow code step) to execute */
+  id: Scalars['UUID'];
+  /** Payload in JSON format */
+  payload: Scalars['JSON'];
+};
+
 export type ExecuteLogicFunctionInput = {
   /** Id of the logic function to execute */
   id: Scalars['UUID'];
@@ -2121,6 +2128,7 @@ export type Mutation = {
   enablePostgresProxy: PostgresCredentials;
   endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
   evaluateAgentTurn: AgentTurnEvaluation;
+  executeCodeStep: LogicFunctionExecutionResult;
   executeOneLogicFunction: LogicFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientTokenOutput;
@@ -2161,6 +2169,7 @@ export type Mutation = {
   trackAnalytics: Analytics;
   uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
+  updateCodeStepSource: Scalars['Boolean'];
   updateCommandMenuItem: CommandMenuItem;
   updateCoreView: CoreView;
   updateCoreViewField: CoreViewField;
@@ -2681,6 +2690,11 @@ export type MutationEvaluateAgentTurnArgs = {
 };
 
 
+export type MutationExecuteCodeStepArgs = {
+  input: ExecuteCodeStepInput;
+};
+
+
 export type MutationExecuteOneLogicFunctionArgs = {
   input: ExecuteLogicFunctionInput;
 };
@@ -2874,6 +2888,11 @@ export type MutationUninstallApplicationArgs = {
 
 export type MutationUpdateApiKeyArgs = {
   input: UpdateApiKeyInput;
+};
+
+
+export type MutationUpdateCodeStepSourceArgs = {
+  input: UpdateCodeStepSourceInput;
 };
 
 
@@ -4599,6 +4618,13 @@ export type UpdateApiKeyInput = {
   id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateCodeStepSourceInput = {
+  /** The source code (Sources) to write. Only updates source files. */
+  code: Scalars['JSON'];
+  /** The id of the logic function (code step). */
+  id: Scalars['UUID'];
 };
 
 export type UpdateCommandMenuItemInput = {
@@ -6915,6 +6941,13 @@ export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
 
 export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
+export type ExecuteCodeStepMutationVariables = Exact<{
+  input: ExecuteCodeStepInput;
+}>;
+
+
+export type ExecuteCodeStepMutation = { __typename?: 'Mutation', executeCodeStep: { __typename?: 'LogicFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: LogicFunctionExecutionStatus, error?: any | null } };
+
 export type RunWorkflowVersionMutationVariables = Exact<{
   input: RunWorkflowVersionInput;
 }>;
@@ -6928,6 +6961,13 @@ export type StopWorkflowRunMutationVariables = Exact<{
 
 
 export type StopWorkflowRunMutation = { __typename?: 'Mutation', stopWorkflowRun: { __typename: 'WorkflowRun', id: string, status: WorkflowRunStatusEnum } };
+
+export type UpdateCodeStepSourceMutationVariables = Exact<{
+  input: UpdateCodeStepSourceInput;
+}>;
+
+
+export type UpdateCodeStepSourceMutation = { __typename?: 'Mutation', updateCodeStepSource: boolean };
 
 export type UpdateWorkflowRunStepMutationVariables = Exact<{
   input: UpdateWorkflowRunStepInput;
@@ -15229,6 +15269,43 @@ export function useDuplicateWorkflowVersionStepMutation(baseOptions?: Apollo.Mut
 export type DuplicateWorkflowVersionStepMutationHookResult = ReturnType<typeof useDuplicateWorkflowVersionStepMutation>;
 export type DuplicateWorkflowVersionStepMutationResult = Apollo.MutationResult<DuplicateWorkflowVersionStepMutation>;
 export type DuplicateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
+export const ExecuteCodeStepDocument = gql`
+    mutation ExecuteCodeStep($input: ExecuteCodeStepInput!) {
+  executeCodeStep(input: $input) {
+    data
+    logs
+    duration
+    status
+    error
+  }
+}
+    `;
+export type ExecuteCodeStepMutationFn = Apollo.MutationFunction<ExecuteCodeStepMutation, ExecuteCodeStepMutationVariables>;
+
+/**
+ * __useExecuteCodeStepMutation__
+ *
+ * To run a mutation, you first call `useExecuteCodeStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useExecuteCodeStepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [executeCodeStepMutation, { data, loading, error }] = useExecuteCodeStepMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useExecuteCodeStepMutation(baseOptions?: Apollo.MutationHookOptions<ExecuteCodeStepMutation, ExecuteCodeStepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ExecuteCodeStepMutation, ExecuteCodeStepMutationVariables>(ExecuteCodeStepDocument, options);
+      }
+export type ExecuteCodeStepMutationHookResult = ReturnType<typeof useExecuteCodeStepMutation>;
+export type ExecuteCodeStepMutationResult = Apollo.MutationResult<ExecuteCodeStepMutation>;
+export type ExecuteCodeStepMutationOptions = Apollo.BaseMutationOptions<ExecuteCodeStepMutation, ExecuteCodeStepMutationVariables>;
 export const RunWorkflowVersionDocument = gql`
     mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
   runWorkflowVersion(input: $input) {
@@ -15297,6 +15374,37 @@ export function useStopWorkflowRunMutation(baseOptions?: Apollo.MutationHookOpti
 export type StopWorkflowRunMutationHookResult = ReturnType<typeof useStopWorkflowRunMutation>;
 export type StopWorkflowRunMutationResult = Apollo.MutationResult<StopWorkflowRunMutation>;
 export type StopWorkflowRunMutationOptions = Apollo.BaseMutationOptions<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
+export const UpdateCodeStepSourceDocument = gql`
+    mutation UpdateCodeStepSource($input: UpdateCodeStepSourceInput!) {
+  updateCodeStepSource(input: $input)
+}
+    `;
+export type UpdateCodeStepSourceMutationFn = Apollo.MutationFunction<UpdateCodeStepSourceMutation, UpdateCodeStepSourceMutationVariables>;
+
+/**
+ * __useUpdateCodeStepSourceMutation__
+ *
+ * To run a mutation, you first call `useUpdateCodeStepSourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCodeStepSourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCodeStepSourceMutation, { data, loading, error }] = useUpdateCodeStepSourceMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateCodeStepSourceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCodeStepSourceMutation, UpdateCodeStepSourceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCodeStepSourceMutation, UpdateCodeStepSourceMutationVariables>(UpdateCodeStepSourceDocument, options);
+      }
+export type UpdateCodeStepSourceMutationHookResult = ReturnType<typeof useUpdateCodeStepSourceMutation>;
+export type UpdateCodeStepSourceMutationResult = Apollo.MutationResult<UpdateCodeStepSourceMutation>;
+export type UpdateCodeStepSourceMutationOptions = Apollo.BaseMutationOptions<UpdateCodeStepSourceMutation, UpdateCodeStepSourceMutationVariables>;
 export const UpdateWorkflowRunStepDocument = gql`
     mutation UpdateWorkflowRunStep($input: UpdateWorkflowRunStepInput!) {
   updateWorkflowRunStep(input: $input) {
