@@ -132,7 +132,19 @@ export const AttachmentRow = ({
     updateOneRecord({
       objectNameSingular: CoreObjectNameSingular.Attachment,
       idToUpdate: attachment.id,
-      updateOneRecordInput: { name: newFileName },
+      updateOneRecordInput: {
+        name: newFileName,
+        ...(isFilesFieldMigrated && isDefined(attachment.file?.[0]?.fileId)
+          ? {
+              file: [
+                {
+                  fileId: attachment.file?.[0]?.fileId,
+                  label: newFileName,
+                },
+              ],
+            }
+          : {}),
+      },
     });
   };
 
