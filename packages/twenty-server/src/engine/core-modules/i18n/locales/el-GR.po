@@ -397,6 +397,16 @@ msgstr "Απρίλιος"
 msgid "At least one relation is require"
 msgstr "Τουλάχιστον μία σχέση είναι απαραίτητη"
 
+#. js-lingui-id: aepsXP
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "Audit logs require an Enterprise subscription."
+msgstr ""
+
+#. js-lingui-id: PKMDuT
+#: src/engine/core-modules/event-logs/event-logs.exception.ts
+msgid "Audit logs require ClickHouse to be configured."
+msgstr ""
+
 #. js-lingui-id: DBHTm/
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
@@ -417,6 +427,11 @@ msgstr "Απαιτείται έλεγχος ταυτότητας για να α�
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Authentication is required."
 msgstr "Απαιτείται ταυτοποίηση."
+
+#. js-lingui-id: bWAwB6
+#: src/engine/core-modules/event-logs/filters/forbidden-exception-graphql.filter.ts
+msgid "Authentication required."
+msgstr ""
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -838,6 +853,11 @@ msgstr "Δεν ήταν δυνατή η εύρεση μεταδεδομένων 
 #. js-lingui-id: YzCaIm
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util.ts
 msgid "Could not find relation field parent flat object"
+msgstr ""
+
+#. js-lingui-id: KwGZ0m
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Could not found updated field metadata"
 msgstr ""
 
 #. js-lingui-id: 2ZhYYy
@@ -1342,11 +1362,6 @@ msgstr "Το αρχείο δεν βρέθηκε."
 #. js-lingui-id: psMxtB
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
 msgid "Files field is not supported for unique fields"
-msgstr ""
-
-#. js-lingui-id: AMd8Po
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util.ts
-msgid "Files field type is not supported"
 msgstr ""
 
 #. js-lingui-id: 9110hD
@@ -3913,6 +3928,11 @@ msgstr "Απαιτείται ρύθμιση ταυτοποίησης δύο πα
 msgid "Two-factor authentication verification is required."
 msgstr "Απαιτείται επαλήθευση ταυτοποίησης δύο παραγόντων."
 
+#. js-lingui-id: Qx95XY
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Udpated field is not a morph relation or a relation"
+msgstr ""
+
 #. js-lingui-id: WWSSTx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
@@ -4544,6 +4564,7 @@ msgid "Workspace {workspaceId} is not found."
 msgstr ""
 
 #. js-lingui-id: XsSVrR
+#: src/engine/core-modules/auth/services/sign-in-up.service.ts
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
 msgstr "Η δημιουργία χώρου εργασίας περιορίζεται στους διαχειριστές"

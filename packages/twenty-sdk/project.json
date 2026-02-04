@@ -18,7 +18,9 @@
         "{projectRoot}/front-component/package.json",
         "{projectRoot}/front-component/dist",
         "{projectRoot}/front-component-constants/package.json",
-        "{projectRoot}/front-component-constants/dist"
+        "{projectRoot}/front-component-constants/dist",
+        "{projectRoot}/ui/package.json",
+        "{projectRoot}/ui/dist"
       ]
     },
     "dev": {
@@ -125,6 +127,83 @@
           "projects": "twenty-server"
         }
       ]
-    }
+    },
+    "generateRemoteDomElements": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/scripts/remote-dom/**/*",
+        "{projectRoot}/src/front-component-constants/**/*"
+      ],
+      "outputs": [
+        "{projectRoot}/src/front-component/host/generated/*",
+        "{projectRoot}/src/front-component/remote/generated/*"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/remote-dom/generateRemoteDomElements.ts"
+      }
+    },
+    "storybook:prebuild": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": [
+        "generateRemoteDomElements"
+      ],
+      "inputs": [
+        "{projectRoot}/src/front-component/__stories__/mocks/**/*",
+        "{projectRoot}/src/front-component/__stories__/utils/**/*",
+        "{projectRoot}/src/cli/utilities/build/common/front-component-build/**/*",
+        "{projectRoot}/src/front-component-constants/**/*",
+        "{projectRoot}/src/sdk/**/*"
+      ],
+      "outputs": [
+        "{projectRoot}/src/front-component/__stories__/built/*"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/src/front-component/__stories__/utils/buildMockComponents.ts"
+      }
+    },
+    "storybook:build": {
+      "dependsOn": [
+        "storybook:prebuild"
+      ],
+      "configurations": {
+        "test": {}
+      }
+    },
+    "storybook:serve:dev": {
+      "dependsOn": [
+        "storybook:prebuild"
+      ],
+      "options": {
+        "port": 6008
+      }
+    },
+    "storybook:serve:static": {
+      "options": {
+        "buildTarget": "twenty-sdk:storybook:build",
+        "port": 6008
+      },
+      "configurations": {
+        "test": {}
+      }
+    },
+    "storybook:test": {
+      "dependsOn": [
+        "storybook:prebuild"
+      ],
+      "options": {
+        "command": "vitest run --coverage --config vitest.storybook.config.ts --shard={args.shard}"
+      }
+    },
+    "storybook:test:no-coverage": {
+      "dependsOn": [
+        "storybook:prebuild"
+      ],
+      "options": {
+        "command": "vitest run --config vitest.storybook.config.ts --shard={args.shard}"
+      }
+    },
+    "storybook:coverage": {}
   }
 }

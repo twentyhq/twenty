@@ -403,8 +403,8 @@ export class SignInUpService {
     );
   }
 
-  private async isFirstWorkspaceForUser(userId: string): Promise<boolean> {
-    const count = await this.userWorkspaceService.countUserWorkspaces(userId);
+  private async isFirstWorkspaceInSystem(): Promise<boolean> {
+    const count = await this.workspaceRepository.count();
 
     return count === 0;
   }
@@ -414,7 +414,8 @@ export class SignInUpService {
   ): Promise<void> {
     if (!this.isWorkspaceCreationLimitedToServerAdmins()) return;
 
-    if (await this.isFirstWorkspaceForUser(currentUser.id)) return;
+    // Only allow bypass during initial system bootstrap (no workspaces exist yet)
+    if (await this.isFirstWorkspaceInSystem()) return;
 
     if (!currentUser.canAccessFullAdminPanel) {
       throw new AuthException(
@@ -443,6 +444,25 @@ export class SignInUpService {
           userFriendlyMessage: msg`Email is required`,
         },
       );
+    }
+
+    if (
+      this.isWorkspaceCreationLimitedToServerAdmins() &&
+      !(await this.isFirstWorkspaceInSystem())
+    ) {
+      const isExistingAdmin =
+        userData.type === 'existingUser' &&
+        userData.existingUser.canAccessFullAdminPanel;
+
+      if (!isExistingAdmin) {
+        throw new AuthException(
+          'Workspace creation is restricted to admins',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`Workspace creation is restricted to admins`,
+          },
+        );
+      }
     }
 
     const { canImpersonate, canAccessFullAdminPanel } =

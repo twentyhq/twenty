@@ -90,6 +90,7 @@ export const USER_QUERY_FRAGMENT = gql`
       smartModel
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
+      eventLogRetentionDays
       editableProfileFields
     }
     availableWorkspaces {

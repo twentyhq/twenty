@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -19,7 +18,6 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -42,18 +40,15 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner, flatApplication } = context;
-    const { entityId, code } = flatAction;
+    const { flatAction, queryRunner, flatApplication, workspaceId } = context;
+    const { entityId, update } = flatAction;
 
     const logicFunctionRepository =
       queryRunner.manager.getRepository<LogicFunctionEntity>(
         LogicFunctionEntity,
       );
 
-    await logicFunctionRepository.update(
-      entityId,
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction),
-    );
+    await logicFunctionRepository.update({ id: entityId, workspaceId }, update);
 
     const flatLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: entityId,
@@ -62,27 +57,12 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
-    for (const update of flatAction.updates) {
-      if (update.property === 'checksum' && isDefined(code)) {
-        await this.verifySourceAndBuiltFilesExist({
-          flatLogicFunction,
-          applicationUniversalIdentifier,
-        });
-      }
-      if (update.property === 'deletedAt' && isDefined(update.to)) {
-        await this.handleDeletedAtUpdate({
-          flatLogicFunction,
-        });
-      }
+    if (update.checksum) {
+      await this.verifySourceAndBuiltFilesExist({
+        flatLogicFunction,
+        applicationUniversalIdentifier,
+      });
     }
-  }
-
-  async handleDeletedAtUpdate({
-    flatLogicFunction,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-  }) {
-    await this.logicFunctionExecutorService.delete(flatLogicFunction);
   }
 
   private async verifySourceAndBuiltFilesExist({

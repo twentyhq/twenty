@@ -5,6 +5,7 @@ import { type RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/
 import { fireEvent, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
+import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
@@ -19,6 +20,7 @@ const meta: Meta = {
   decorators: [
     ComponentDecorator,
     MemoryRouterDecorator,
+    FileUploadDecorator,
     RecordTableDecorator,
     ContextStoreDecorator,
     SnackBarDecorator,

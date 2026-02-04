@@ -100,6 +100,7 @@ describe('ClientConfigController', () => {
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
         isCloudflareIntegrationEnabled: false,
+        isClickHouseConfigured: false,
       };
 
       jest

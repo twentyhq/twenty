@@ -913,7 +913,7 @@ export class WorkspaceMigrationMyEntityActionsBuilderService extends WorkspaceEn
       type: 'update',
       metadataName: 'myEntity',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdates,
     };
 
     return {

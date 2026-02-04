@@ -10,7 +10,6 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateRowLevelPermissionPredicateActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -26,18 +25,15 @@ export class UpdateRowLevelPermissionPredicateActionHandlerService extends Works
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateRowLevelPermissionPredicateAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner } = context;
-    const { entityId } = flatAction;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, update } = flatAction;
 
     const repository =
       queryRunner.manager.getRepository<RowLevelPermissionPredicateEntity>(
         RowLevelPermissionPredicateEntity,
       );
 
-    const update =
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(flatAction);
-
-    await repository.update(entityId, update);
+    await repository.update({ id: entityId, workspaceId }, update);
   }
 
   async executeForWorkspaceSchema(

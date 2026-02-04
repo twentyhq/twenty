@@ -82,6 +82,7 @@ const StyledTitle = styled.div`
 type DocumentViewerProps = {
   documentName: string;
   documentUrl: string;
+  documentExtension?: string;
 };
 
 // MS Office Online viewer requires documents to be publicly accessible from the internet.
@@ -160,13 +161,16 @@ const MIME_TYPE_MAPPING: Record<
 export const DocumentViewer = ({
   documentName,
   documentUrl,
+  documentExtension,
 }: DocumentViewerProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const [csvPreview, setCsvPreview] = useState<string | undefined>(undefined);
 
   const { extension } = getFileNameAndExtension(documentName);
-  const fileExtension = extension?.toLowerCase().replace('.', '') ?? '';
+  const fileExtension = isDefined(documentExtension)
+    ? documentExtension.toLowerCase().replace('.', '')
+    : (extension?.toLowerCase().replace('.', '') ?? '');
   const fileCategory = getFileType(documentName);
   const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
   const isMsOfficeFile = MS_OFFICE_EXTENSIONS.includes(fileExtension);

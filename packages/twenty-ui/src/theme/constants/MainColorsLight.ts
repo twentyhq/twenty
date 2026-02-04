@@ -37,5 +37,5 @@ export const MAIN_COLORS_LIGHT = {
   bronze: RadixColors.bronzeP3.bronze9,
   gold: RadixColors.goldP3.gold9,
   brown: RadixColors.brownP3.brown9,
-  gray: GRAY_SCALE_LIGHT.gray7,
+  gray: GRAY_SCALE_LIGHT.gray9,
 };

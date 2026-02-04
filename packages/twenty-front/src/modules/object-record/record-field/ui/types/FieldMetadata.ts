@@ -228,6 +228,7 @@ export type FieldMetadata =
   | FieldActorMetadata
   | FieldArrayMetadata
   | FieldTsVectorMetadata
+  | FieldRawJsonMetadata
   | FieldRichTextV2Metadata
   | FieldRichTextMetadata;
 
@@ -335,10 +336,10 @@ export type FieldPhonesValue = {
   additionalPhones?: PhoneRecord[] | null;
 };
 
-export type FieldFileValue = {
+export type FieldFilesValue = {
   fileId: string;
   label: string;
-  fileCategory: FileCategory;
+  extension?: string;
+  url?: string;
+  fileCategory?: FileCategory;
 };
-
-export type FieldFilesValue = FieldFileValue[];

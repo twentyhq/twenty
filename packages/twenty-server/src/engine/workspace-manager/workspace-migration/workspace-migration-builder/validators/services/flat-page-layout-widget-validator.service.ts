@@ -28,7 +28,6 @@ import {
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatPageLayoutWidgetValidatorService {
@@ -38,7 +37,7 @@ export class FlatPageLayoutWidgetValidatorService {
 
   public async validateFlatPageLayoutWidgetUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     additionalCacheDataMaps: { featureFlagsMap },
     workspaceId,
@@ -76,9 +75,7 @@ export class FlatPageLayoutWidgetValidatorService {
 
     const updatedFlatPageLayoutWidget = {
       ...existingFlatPageLayoutWidget,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     validationResult.flatEntityMinimalInformation = {
@@ -122,7 +119,7 @@ export class FlatPageLayoutWidgetValidatorService {
         {
           flatEntityToValidate: updatedFlatPageLayoutWidget,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-          updates: flatEntityUpdates,
+          update: flatEntityUpdate,
           additionalCacheDataMaps: { featureFlagsMap },
           workspaceId,
           buildOptions,

@@ -1,22 +1,48 @@
+import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { FileChip } from '@/ui/field/display/components/FileChip';
+import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { t } from '@lingui/core/macro';
-import { Chip, ChipVariant } from 'twenty-ui/components';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 type FilesDisplayProps = {
-  value: FieldFilesValue;
+  value?: FieldFilesValue[];
+  forceDisableClick?: boolean;
 };
 
-//TODO: Draft version, UI to be improved
-export const FilesDisplay = ({ value }: FilesDisplayProps) => {
+export const FilesDisplay = ({
+  value,
+  forceDisableClick,
+}: FilesDisplayProps) => {
+  const setFilePreview = useSetRecoilState(filePreviewState);
+  const isAttachmentPreviewEnabled = useRecoilValue(
+    isAttachmentPreviewEnabledState,
+  );
+
+  const handlePreview = (file: FieldFilesValue) => {
+    if (!isAttachmentPreviewEnabled) {
+      if (isDefined(file.url)) {
+        downloadFile(file.url, file.label ?? 'file');
+      }
+      return;
+    }
+    setFilePreview(file);
+  };
+
+  if (!isDefined(value) || value.length === 0) {
+    return <></>;
+  }
+
   return (
     <ExpandableList>
-      {value?.map((file, index) => (
-        <Chip
-          key={`${file.fileId}-${index}`}
-          variant={ChipVariant.Highlighted}
-          label={file.label}
-          emptyLabel={t`Untitled`}
+      {value.map((file) => (
+        <FileChip
+          key={file.fileId}
+          file={file}
+          onClick={handlePreview}
+          forceDisableClick={forceDisableClick}
         />
       ))}
     </ExpandableList>

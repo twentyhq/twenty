@@ -20,10 +20,12 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.d.ts",
+    ".storybook/*.ts",
+    ".storybook/*.tsx",
     "**/__mocks__/**/*",
     "**/__tests__/**/*",
     "vite.config.ts",
-    "scripts/generateBarrels.ts",
+    "scripts/**/*.ts",
     "jest.config.mjs"
   ],
   "exclude": [

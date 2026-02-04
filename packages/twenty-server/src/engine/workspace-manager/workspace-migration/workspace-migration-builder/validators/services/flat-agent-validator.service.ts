@@ -15,7 +15,6 @@ import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/work
 import { validateAgentNameUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-name-uniqueness.util';
 import { validateAgentRequiredProperties } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-required-properties.util';
 import { validateAgentResponseFormat } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatAgentValidatorService {
@@ -121,7 +120,7 @@ export class FlatAgentValidatorService {
 
   public validateFlatAgentUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatAgentMaps: optimisticFlatAgentMaps,
     },
@@ -170,14 +169,9 @@ export class FlatAgentValidatorService {
       });
     }
 
-    const partialFlatAgent: Partial<FlatAgent> =
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      });
-
     const optimisticFlatAgent: FlatAgent = {
       ...fromFlatAgent,
-      ...partialFlatAgent,
+      ...flatEntityUpdate,
     };
 
     const existingAgents = Object.values(
@@ -189,23 +183,23 @@ export class FlatAgentValidatorService {
     validationResult.errors.push(
       ...validateAgentRequiredProperties({
         flatAgent: optimisticFlatAgent,
-        updatedProperties: partialFlatAgent,
+        updatedProperties: flatEntityUpdate,
       }),
     );
 
-    if (isDefined(partialFlatAgent.name)) {
+    if (isDefined(flatEntityUpdate.name)) {
       validationResult.errors.push(
         ...validateAgentNameUniqueness({
-          name: partialFlatAgent.name,
+          name: flatEntityUpdate.name,
           existingFlatAgents: existingAgents,
         }),
       );
     }
 
-    if (isDefined(partialFlatAgent.responseFormat)) {
+    if (isDefined(flatEntityUpdate.responseFormat)) {
       validationResult.errors.push(
         ...validateAgentResponseFormat({
-          responseFormat: partialFlatAgent.responseFormat,
+          responseFormat: flatEntityUpdate.responseFormat,
         }),
       );
     }

@@ -8,7 +8,6 @@ import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -25,7 +24,7 @@ export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigratio
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateCommandMenuItemAction>,
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
-    const { entityId, updates } = flatAction;
+    const { entityId, update } = flatAction;
 
     const commandMenuItemRepository =
       queryRunner.manager.getRepository<CommandMenuItemEntity>(
@@ -34,9 +33,7 @@ export class UpdateCommandMenuItemActionHandlerService extends WorkspaceMigratio
 
     await commandMenuItemRepository.update(
       { id: entityId, workspaceId },
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates,
-      }),
+      update,
     );
   }
 
