@@ -140,6 +140,11 @@ export type RawJsonFilter = {
   is?: IsFilter;
 };
 
+export type FilesFilter = {
+  like?: string;
+  is?: IsFilter;
+};
+
 export type RichTextV2LeafFilter = {
   ilike?: string;
 };
@@ -169,6 +174,7 @@ export type LeafFilter =
   | PhonesFilter
   | ArrayFilter
   | RawJsonFilter
+  | FilesFilter
   | RichTextV2Filter
   | TSVectorFilter
   | undefined;

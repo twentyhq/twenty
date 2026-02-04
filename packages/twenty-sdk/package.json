@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -14,7 +14,8 @@
     "ui"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build"
+    "build": "npx rimraf dist && npx vite build && tsx ./scripts/remove-nx-dependencies-from-dist-package-json.ts",
+    "prepack": "yarn build"
   },
   "keywords": [
     "twenty",
