@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
+import { dirname } from 'node:path';
 
 import { FileFolder } from 'twenty-shared/types';
 
@@ -10,7 +11,6 @@ import {
   type LogicFunctionExecutorDriver,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
 
-import { dirname } from 'node:path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
@@ -18,6 +18,7 @@ import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logi
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { getRelativePathFromBase } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-handler-path.util';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -119,11 +120,13 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     try {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
+      const baseFolderPath = dirname(flatLogicFunction.builtHandlerPath);
+
       await this.fileStorageService.downloadFolder_v2({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: dirname(flatLogicFunction.builtHandlerPath),
+        resourcePath: baseFolderPath,
         localPath: sourceTemporaryDir,
       });
 
@@ -176,10 +179,11 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
       });
 
       try {
-        const builtBundleFilePath = join(
-          sourceTemporaryDir,
+        const relativeBuiltPath = getRelativePathFromBase(
           flatLogicFunction.builtHandlerPath,
+          baseFolderPath,
         );
+        const builtBundleFilePath = join(sourceTemporaryDir, relativeBuiltPath);
 
         const runnerPath = await this.writeBootstrapRunner({
           dir: sourceTemporaryDir,

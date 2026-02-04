@@ -25,7 +25,10 @@ import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
-import { getLogicFunctionBaseFolderPath, getRelativePathFromBase } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-handler-path.util';
+import {
+  getLogicFunctionBaseFolderPath,
+  getRelativePathFromBase,
+} from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-handler-path.util';
 import {
   getCodeStepSeedProjectFiles,
   type CodeStepSeedProjectFile,
