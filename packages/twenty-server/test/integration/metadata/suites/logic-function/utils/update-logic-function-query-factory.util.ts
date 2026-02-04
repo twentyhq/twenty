@@ -4,9 +4,9 @@ import { type Sources } from 'twenty-shared/types';
 export type UpdateLogicFunctionFactoryInput = {
   id: string;
   update: {
-    name: string;
+    name?: string;
     description?: string;
-    code: Sources;
+    code?: Sources;
   };
 };
 
