@@ -2,9 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
-import { CodeStepBuildModule } from 'src/modules/workflow/code-step-build/code-step-build.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowVersionStepModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.module';
 import { WorkflowExecutorModule } from 'src/modules/workflow/workflow-executor/workflow-executor.module';
@@ -23,8 +21,6 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
     WorkflowRunQueueModule,
     WorkflowVersionStepModule,
     LogicFunctionModule,
-    CodeStepBuildModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [WorkflowRunnerWorkspaceService, RunWorkflowJob],
   exports: [WorkflowRunnerWorkspaceService],

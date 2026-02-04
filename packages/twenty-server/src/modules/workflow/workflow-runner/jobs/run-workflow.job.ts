@@ -7,16 +7,10 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import {
@@ -35,9 +29,6 @@ export class RunWorkflowJob {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly metricsService: MetricsService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly codeStepBuildService: CodeStepBuildService,
-    private readonly logicFunctionService: LogicFunctionService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Process(RUN_WORKFLOW_JOB_NAME)
@@ -106,7 +97,7 @@ export class RunWorkflowJob {
       );
     }
 
-    await this.buildCodeStepsFromSource({
+    await this.workflowCommonWorkspaceService.buildCodeStepsFromSourceForSteps({
       workspaceId,
       steps: workflowVersion.steps,
     });
@@ -184,81 +175,6 @@ export class RunWorkflowJob {
       workflowRunId,
       workspaceId,
     });
-  }
-
-  private async buildCodeStepsFromSource({
-    workspaceId,
-    steps,
-  }: {
-    workspaceId: string;
-    steps: WorkflowAction[];
-  }): Promise<void> {
-    const codeSteps = steps.filter(
-      (
-        step,
-      ): step is WorkflowAction & {
-        type: typeof WorkflowActionType.CODE;
-        settings: { input: { logicFunctionId: string } };
-      } =>
-        step.type === WorkflowActionType.CODE &&
-        isDefined(
-          (step.settings?.input as { logicFunctionId?: string })
-            ?.logicFunctionId,
-        ),
-    );
-
-    if (codeSteps.length === 0) {
-      return;
-    }
-
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-        },
-      );
-
-    for (const step of codeSteps) {
-      const logicFunctionId = step.settings.input.logicFunctionId;
-      const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: logicFunctionId,
-        flatEntityMaps: flatLogicFunctionMaps,
-      });
-
-      if (
-        !isDefined(flatLogicFunction) ||
-        flatLogicFunction.deletedAt ||
-        !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
-          flatLogicFunction,
-        )
-      ) {
-        continue;
-      }
-
-      const applicationUniversalIdentifier = isDefined(
-        flatLogicFunction.applicationId,
-      )
-        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-            ?.universalIdentifier
-        : undefined;
-
-      if (!isDefined(applicationUniversalIdentifier)) {
-        continue;
-      }
-
-      const { checksum } =
-        await this.codeStepBuildService.buildFromSourceToBuilt({
-          flatLogicFunction,
-          applicationUniversalIdentifier,
-        });
-
-      await this.logicFunctionService.updateChecksum({
-        id: flatLogicFunction.id,
-        checksum,
-        workspaceId,
-      });
-    }
   }
 
   private async incrementTriggerMetrics({

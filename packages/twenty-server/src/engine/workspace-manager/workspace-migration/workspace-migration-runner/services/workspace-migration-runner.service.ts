@@ -182,11 +182,13 @@ export class WorkspaceMigrationRunnerService {
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
     this.logger.time('Runner', 'Transaction execution');
 
+    let flatApplication: FlatApplication | undefined;
+
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
 
-      const flatApplication = (await queryRunner.manager
+      flatApplication = (await queryRunner.manager
         .getRepository(ApplicationEntity)
         .findOne({
           where: {
@@ -245,18 +247,20 @@ export class WorkspaceMigrationRunnerService {
 
       const invertedActions = [...actions].reverse();
 
-      for (const invertedAction of invertedActions) {
-        await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
-          {
-            action: invertedAction,
-            context: {
-              flatApplication,
+      if (isDefined(flatApplication)) {
+        for (const invertedAction of invertedActions) {
+          await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionRollbackHandler(
+            {
               action: invertedAction,
-              allFlatEntityMaps,
-              workspaceId,
+              context: {
+                flatApplication,
+                action: invertedAction,
+                allFlatEntityMaps,
+                workspaceId,
+              },
             },
-          },
-        );
+          );
+        }
       }
 
       if (error instanceof WorkspaceMigrationRunnerException) {

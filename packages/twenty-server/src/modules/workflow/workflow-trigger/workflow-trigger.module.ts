@@ -4,10 +4,8 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { CodeStepBuildModule } from 'src/modules/workflow/code-step-build/code-step-build.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
@@ -23,8 +21,6 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
     FeatureFlagModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
     LogicFunctionModule,
-    CodeStepBuildModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [WorkflowTriggerWorkspaceService, WorkflowTriggerJob],
   exports: [WorkflowTriggerWorkspaceService],

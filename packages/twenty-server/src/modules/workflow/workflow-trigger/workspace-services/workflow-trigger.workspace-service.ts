@@ -2,21 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { CodeStepBuildService } from 'src/modules/workflow/code-step-build/services/code-step-build.service';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import {
   WorkflowVersionStatus,
@@ -25,8 +20,6 @@ import {
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 import { type WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
@@ -54,9 +47,6 @@ export class WorkflowTriggerWorkspaceService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly codeStepBuildService: CodeStepBuildService,
-    private readonly logicFunctionService: LogicFunctionService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async runWorkflowVersion({
@@ -132,9 +122,11 @@ export class WorkflowTriggerWorkspaceService {
 
         assertVersionCanBeActivated(workflowVersion, workflow);
 
-        await this.buildCodeStepsFromSourceForWorkflowVersion(
-          workspaceId,
-          workflowVersion,
+        await this.workflowCommonWorkspaceService.buildCodeStepsFromSourceForSteps(
+          {
+            workspaceId,
+            steps: workflowVersion.steps ?? [],
+          },
         );
 
         await this.performActivationSteps(
@@ -183,79 +175,6 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
       workflowRunId,
     );
-  }
-
-  private async buildCodeStepsFromSourceForWorkflowVersion(
-    workspaceId: string,
-    workflowVersion: WorkflowVersionWorkspaceEntity,
-  ): Promise<void> {
-    const steps = workflowVersion.steps ?? [];
-    const codeSteps = steps.filter(
-      (
-        step,
-      ): step is WorkflowAction & {
-        type: typeof WorkflowActionType.CODE;
-        settings: { input: { logicFunctionId: string } };
-      } =>
-        step.type === WorkflowActionType.CODE &&
-        isDefined(
-          (step.settings?.input as { logicFunctionId?: string })
-            ?.logicFunctionId,
-        ),
-    );
-
-    if (codeSteps.length === 0) {
-      return;
-    }
-
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-        },
-      );
-
-    for (const step of codeSteps) {
-      const logicFunctionId = step.settings.input.logicFunctionId;
-      const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: logicFunctionId,
-        flatEntityMaps: flatLogicFunctionMaps,
-      });
-
-      if (
-        !isDefined(flatLogicFunction) ||
-        flatLogicFunction.deletedAt ||
-        !this.codeStepBuildService.isWorkflowCodeStepLogicFunction(
-          flatLogicFunction,
-        )
-      ) {
-        continue;
-      }
-
-      const applicationUniversalIdentifier = isDefined(
-        flatLogicFunction.applicationId,
-      )
-        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-            ?.universalIdentifier
-        : undefined;
-
-      if (!isDefined(applicationUniversalIdentifier)) {
-        continue;
-      }
-
-      const { checksum } =
-        await this.codeStepBuildService.buildFromSourceToBuilt({
-          flatLogicFunction,
-          applicationUniversalIdentifier,
-        });
-
-      await this.logicFunctionService.updateChecksum({
-        id: flatLogicFunction.id,
-        checksum,
-        workspaceId,
-      });
-    }
   }
 
   private async performActivationSteps(
