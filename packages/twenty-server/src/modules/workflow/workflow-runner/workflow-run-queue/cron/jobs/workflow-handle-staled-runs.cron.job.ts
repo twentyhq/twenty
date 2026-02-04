@@ -82,12 +82,9 @@ export class WorkflowHandleStaledRunsCronJob {
             { shouldBypassPermissionChecks: true },
           );
 
-        const count = await workflowRunRepository.count({
+        return workflowRunRepository.exists({
           where: getStaledRunsFindOptions(),
-          take: 1,
         });
-
-        return count > 0;
       },
       authContext,
     );

@@ -83,12 +83,9 @@ export class WorkflowRunEnqueueCronJob {
             { shouldBypassPermissionChecks: true },
           );
 
-        const count = await workflowRunRepository.count({
+        return workflowRunRepository.exists({
           where: NOT_STARTED_RUNS_FIND_OPTIONS,
-          take: 1,
         });
-
-        return count > 0;
       },
       authContext,
     );

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -13,7 +13,11 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowRunStatus,
+  WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { NUMBER_OF_WORKFLOW_RUNS_TO_KEEP } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/number-of-workflow-runs-to-keep';
 import {
   WorkflowCleanWorkflowRunsJob,
   WorkflowCleanWorkflowRunsJobData,
@@ -82,12 +86,21 @@ export class WorkflowCleanWorkflowRunsCronJob {
             { shouldBypassPermissionChecks: true },
           );
 
-        const count = await workflowRunRepository.count({
+        const hasOldRuns = await workflowRunRepository.exists({
           where: getRunsToCleanFindOptions(),
-          take: 1,
         });
 
-        return count > 0;
+        if (hasOldRuns) {
+          return true;
+        }
+
+        const totalCompletedRunsCount = await workflowRunRepository.count({
+          where: {
+            status: In([WorkflowRunStatus.COMPLETED, WorkflowRunStatus.FAILED]),
+          },
+        });
+
+        return totalCompletedRunsCount > NUMBER_OF_WORKFLOW_RUNS_TO_KEEP;
       },
       authContext,
     );

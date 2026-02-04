@@ -52,7 +52,7 @@ export class WorkflowHandleStaledRunsCommand extends CommandRunner {
       } catch (error) {
         this.logger.error(
           `Failed to handle staled runs for workspace ${workspaceId}`,
-          error,
+          error instanceof Error ? error.stack : String(error),
         );
       }
     }
