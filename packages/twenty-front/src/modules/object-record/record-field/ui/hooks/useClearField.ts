@@ -43,12 +43,12 @@ export const useClearField = () => {
           foundFieldMetadataItem.type === FieldMetadataType.RELATION ||
           foundFieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
 
-        const isOneToManyRelation =
+        const shouldSkipClearingBecauseInvolvesMultipleRecords =
           isRelation &&
           foundFieldMetadataItem.settings?.relationType ===
             RelationType.ONE_TO_MANY;
 
-        if (isOneToManyRelation) {
+        if (shouldSkipClearingBecauseInvolvesMultipleRecords) {
           return;
         }
 
@@ -71,6 +71,13 @@ export const useClearField = () => {
         const updateFieldName = isManyToOneRelation
           ? getForeignKeyNameFromRelationFieldName(fieldName)
           : fieldName;
+
+        if (isManyToOneRelation) {
+          set(
+            recordStoreFamilySelector({ recordId, fieldName: updateFieldName }),
+            emptyFieldValue,
+          );
+        }
 
         updateRecord?.({
           variables: {
