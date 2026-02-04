@@ -3,30 +3,23 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-sdk/src",
   "projectType": "library",
-  "tags": [
-    "scope:sdk",
-    "scope:shared"
-  ],
+  "tags": ["scope:sdk", "scope:shared"],
   "targets": {
     "build": {
-      "dependsOn": [
-        "generateBarrels",
-        "^build"
-      ],
+      "dependsOn": ["generateBarrels", "^build"],
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/front-component/package.json",
         "{projectRoot}/front-component/dist",
         "{projectRoot}/front-component-constants/package.json",
-        "{projectRoot}/front-component-constants/dist"
+        "{projectRoot}/front-component-constants/dist",
+        "{projectRoot}/ui/package.json",
+        "{projectRoot}/ui/dist"
       ]
     },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "generateBarrels",
-        "^build"
-      ],
+      "dependsOn": ["generateBarrels", "^build"],
       "options": {
         "cwd": "packages/twenty-sdk",
         "command": "npx rimraf dist && npx vite build --watch"
@@ -34,9 +27,7 @@
     },
     "start": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-sdk",
         "command": "node dist/cli.cjs"
@@ -45,10 +36,7 @@
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "production",
-        "{projectRoot}/scripts/generateBarrels.ts"
-      ],
+      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
       "outputs": [
         "{projectRoot}/src/index.ts",
         "{projectRoot}/src/*/index.ts",
@@ -61,16 +49,12 @@
     "typecheck": {},
     "lint": {
       "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/src/**/*.{ts,json}"
-        ],
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
         "maxWarnings": 0
       },
       "configurations": {
         "ci": {
-          "lintFilePatterns": [
-            "{projectRoot}/src/**/*.{ts,json}"
-          ],
+          "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
           "maxWarnings": 0
         },
         "fix": {}
@@ -78,9 +62,7 @@
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "config": "{projectRoot}/vitest.config.ts"
       },

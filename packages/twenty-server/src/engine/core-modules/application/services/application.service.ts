@@ -405,6 +405,51 @@ export class ApplicationService {
     }
   }
 
+  async uploadPackageFilesFromContent(
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >,
+    packageJsonContent: string,
+    yarnLockContent: string,
+  ): Promise<void> {
+    const packageJsonChecksum = logicFunctionCreateHash(packageJsonContent);
+    const yarnLockChecksum = logicFunctionCreateHash(yarnLockContent);
+    const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
+      packageJsonContent,
+      yarnLockContent,
+    );
+
+    const packageJsonFile = await this.fileStorageService.writeFile_v2({
+      sourceFile: packageJsonContent,
+      mimeType: undefined,
+      fileFolder: FileFolder.Dependencies,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId: application.workspaceId,
+      resourcePath: 'package.json',
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    const yarnLockFile = await this.fileStorageService.writeFile_v2({
+      sourceFile: yarnLockContent,
+      mimeType: undefined,
+      fileFolder: FileFolder.Dependencies,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId: application.workspaceId,
+      resourcePath: 'yarn.lock',
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    await this.update(application.id, {
+      packageJsonFileId: packageJsonFile.id,
+      yarnLockFileId: yarnLockFile.id,
+      packageJsonChecksum,
+      yarnLockChecksum,
+      availablePackages,
+      workspaceId: application.workspaceId,
+    });
+  }
+
   async create(
     data: Partial<ApplicationEntity> & { workspaceId: string },
     queryRunner?: QueryRunner,

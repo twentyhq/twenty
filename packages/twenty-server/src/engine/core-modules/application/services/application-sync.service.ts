@@ -26,7 +26,6 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LogicFunctionLayerService } from 'src/engine/core-modules/logic-function/logic-function-layer/services/logic-function-layer.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
@@ -54,7 +53,6 @@ export class ApplicationSyncService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
-    private readonly logicFunctionLayerService: LogicFunctionLayerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly logicFunctionService: LogicFunctionService,
@@ -102,19 +100,11 @@ export class ApplicationSyncService {
     }
 
     if (manifest.logicFunctions.length > 0) {
-      if (!isDefined(application.logicFunctionLayerId)) {
-        throw new ApplicationException(
-          `Failed to sync logic function, could not find a logic function layer.`,
-          ApplicationExceptionCode.FIELD_NOT_FOUND,
-        );
-      }
-
       await this.syncLogicFunctions({
         logicFunctionsToSync: manifest.logicFunctions,
         code: manifest.sources,
         workspaceId,
         ownerFlatApplication,
-        logicFunctionLayerId: application.logicFunctionLayerId,
       });
     }
 
@@ -162,7 +152,6 @@ export class ApplicationSyncService {
         description: manifest.application.description,
         version: packageJson.version,
         sourcePath: 'cli-sync', // Placeholder for CLI-synced apps
-        logicFunctionLayerId: null,
         defaultRoleId: null,
         workspaceId,
         packageJsonChecksum: defaultPackageFields.packageJsonChecksum,
@@ -179,35 +168,27 @@ export class ApplicationSyncService {
       application = created;
     }
 
-    let logicFunctionLayerId = application.logicFunctionLayerId;
-
     if (
       manifest.logicFunctions.length > 0 &&
       isDefined(manifest.application.packageJsonChecksum) &&
       isDefined(manifest.application.yarnLockChecksum)
     ) {
-      if (!isDefined(logicFunctionLayerId)) {
-        logicFunctionLayerId = (
-          await this.logicFunctionLayerService.create(
-            {
-              packageJsonChecksum: manifest.application.packageJsonChecksum,
-              yarnLockChecksum: manifest.application.yarnLockChecksum,
-              applicationUniversalIdentifier:
-                manifest.application.universalIdentifier,
-            },
+      const yarnLockContent = (
+        await streamToBuffer(
+          await this.fileStorageService.readFile_v2({
+            applicationUniversalIdentifier:
+              manifest.application.universalIdentifier,
+            fileFolder: FileFolder.Source,
+            resourcePath: 'yarn.lock',
             workspaceId,
-          )
-        ).id;
-      }
+          }),
+        )
+      ).toString('utf-8');
 
-      await this.logicFunctionLayerService.update(
-        logicFunctionLayerId,
-        {
-          packageJsonChecksum: manifest.application.packageJsonChecksum,
-          yarnLockChecksum: manifest.application.yarnLockChecksum,
-        },
-        manifest.application.universalIdentifier,
-        workspaceId,
+      await this.applicationService.uploadPackageFilesFromContent(
+        application,
+        JSON.stringify(packageJson, null, 2),
+        yarnLockContent,
       );
     }
 
@@ -223,7 +204,6 @@ export class ApplicationSyncService {
       name,
       description: manifest.application.description,
       version: packageJson.version,
-      logicFunctionLayerId,
       defaultRoleId: null,
     });
   }
@@ -848,13 +828,11 @@ export class ApplicationSyncService {
     code,
     workspaceId,
     ownerFlatApplication,
-    logicFunctionLayerId,
   }: {
     logicFunctionsToSync: LogicFunctionManifest[];
     workspaceId: string;
     code: Sources;
     ownerFlatApplication: FlatApplication;
-    logicFunctionLayerId: string;
   }) {
     const { flatLogicFunctionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -964,7 +942,6 @@ export class ApplicationSyncService {
           sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
           handlerName: logicFunctionToCreate.handlerName,
           builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
-          logicFunctionLayerId,
           toolInputSchema: logicFunctionToCreate.toolInputSchema,
           isTool: logicFunctionToCreate.isTool,
         },
