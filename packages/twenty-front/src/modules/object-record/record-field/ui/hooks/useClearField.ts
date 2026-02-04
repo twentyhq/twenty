@@ -39,6 +39,19 @@ export const useClearField = () => {
           throw new Error('Field metadata item cannot be found');
         }
 
+        const isRelation =
+          foundFieldMetadataItem.type === FieldMetadataType.RELATION ||
+          foundFieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
+
+        const isOneToManyRelation =
+          isRelation &&
+          foundFieldMetadataItem.settings?.relationType ===
+            RelationType.ONE_TO_MANY;
+
+        if (isOneToManyRelation) {
+          return;
+        }
+
         const fieldName = fieldDefinition.metadata.fieldName;
 
         const emptyFieldValue = generateEmptyFieldValue({
@@ -51,7 +64,7 @@ export const useClearField = () => {
         );
 
         const isManyToOneRelation =
-          foundFieldMetadataItem.type === FieldMetadataType.RELATION &&
+          isRelation &&
           foundFieldMetadataItem.settings?.relationType ===
             RelationType.MANY_TO_ONE;
 
