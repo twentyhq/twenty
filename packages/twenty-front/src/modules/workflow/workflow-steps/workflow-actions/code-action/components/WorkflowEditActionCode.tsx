@@ -137,7 +137,7 @@ export const WorkflowEditActionCode = ({
   });
 
   useEffect(() => {
-    if (codeFromApi) {
+    if (isDefined(codeFromApi)) {
       setFormValues((prev) => ({ ...prev, code: codeFromApi }));
     }
   }, [codeFromApi]);
