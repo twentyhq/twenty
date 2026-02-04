@@ -1649,8 +1649,8 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetLogicFunctionSourceCodeInput = {
-  /** The id of the function. */
+export type GetCodeStepSourceCodeInput = {
+  /** The id of the logic function (code step). */
   id: Scalars['ID'];
 };
 
@@ -3600,6 +3600,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
+  getCodeStepSourceCode?: Maybe<Scalars['JSON']>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
@@ -3617,7 +3618,6 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
-  getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -3766,6 +3766,11 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
+export type QueryGetCodeStepSourceCodeArgs = {
+  input: GetCodeStepSourceCodeInput;
+};
+
+
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
   id: Scalars['UUID'];
 };
@@ -3838,11 +3843,6 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
-};
-
-
-export type QueryGetLogicFunctionSourceCodeArgs = {
-  input: GetLogicFunctionSourceCodeInput;
 };
 
 
@@ -6368,12 +6368,12 @@ export type GetOneLogicFunctionQueryVariables = Exact<{
 
 export type GetOneLogicFunctionQuery = { __typename?: 'Query', findOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
-export type FindOneLogicFunctionSourceCodeQueryVariables = Exact<{
-  input: GetLogicFunctionSourceCodeInput;
+export type FindOneCodeStepSourceCodeQueryVariables = Exact<{
+  input: GetCodeStepSourceCodeInput;
 }>;
 
 
-export type FindOneLogicFunctionSourceCodeQuery = { __typename?: 'Query', getLogicFunctionSourceCode?: any | null };
+export type FindOneCodeStepSourceCodeQuery = { __typename?: 'Query', getCodeStepSourceCode?: any | null };
 
 export type UploadWorkspaceMemberProfilePictureMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -12687,39 +12687,39 @@ export function useGetOneLogicFunctionLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetOneLogicFunctionQueryHookResult = ReturnType<typeof useGetOneLogicFunctionQuery>;
 export type GetOneLogicFunctionLazyQueryHookResult = ReturnType<typeof useGetOneLogicFunctionLazyQuery>;
 export type GetOneLogicFunctionQueryResult = Apollo.QueryResult<GetOneLogicFunctionQuery, GetOneLogicFunctionQueryVariables>;
-export const FindOneLogicFunctionSourceCodeDocument = gql`
-    query FindOneLogicFunctionSourceCode($input: GetLogicFunctionSourceCodeInput!) {
-  getLogicFunctionSourceCode(input: $input)
+export const FindOneCodeStepSourceCodeDocument = gql`
+    query FindOneCodeStepSourceCode($input: GetCodeStepSourceCodeInput!) {
+  getCodeStepSourceCode(input: $input)
 }
     `;
 
 /**
- * __useFindOneLogicFunctionSourceCodeQuery__
+ * __useFindOneCodeStepSourceCodeQuery__
  *
- * To run a query within a React component, call `useFindOneLogicFunctionSourceCodeQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneLogicFunctionSourceCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useFindOneCodeStepSourceCodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindOneCodeStepSourceCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useFindOneLogicFunctionSourceCodeQuery({
+ * const { data, loading, error } = useFindOneCodeStepSourceCodeQuery({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useFindOneLogicFunctionSourceCodeQuery(baseOptions: Apollo.QueryHookOptions<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>) {
+export function useFindOneCodeStepSourceCodeQuery(baseOptions: Apollo.QueryHookOptions<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>(FindOneLogicFunctionSourceCodeDocument, options);
+        return Apollo.useQuery<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>(FindOneCodeStepSourceCodeDocument, options);
       }
-export function useFindOneLogicFunctionSourceCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>) {
+export function useFindOneCodeStepSourceCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>(FindOneLogicFunctionSourceCodeDocument, options);
+          return Apollo.useLazyQuery<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>(FindOneCodeStepSourceCodeDocument, options);
         }
-export type FindOneLogicFunctionSourceCodeQueryHookResult = ReturnType<typeof useFindOneLogicFunctionSourceCodeQuery>;
-export type FindOneLogicFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useFindOneLogicFunctionSourceCodeLazyQuery>;
-export type FindOneLogicFunctionSourceCodeQueryResult = Apollo.QueryResult<FindOneLogicFunctionSourceCodeQuery, FindOneLogicFunctionSourceCodeQueryVariables>;
+export type FindOneCodeStepSourceCodeQueryHookResult = ReturnType<typeof useFindOneCodeStepSourceCodeQuery>;
+export type FindOneCodeStepSourceCodeLazyQueryHookResult = ReturnType<typeof useFindOneCodeStepSourceCodeLazyQuery>;
+export type FindOneCodeStepSourceCodeQueryResult = Apollo.QueryResult<FindOneCodeStepSourceCodeQuery, FindOneCodeStepSourceCodeQueryVariables>;
 export const UploadWorkspaceMemberProfilePictureDocument = gql`
     mutation UploadWorkspaceMemberProfilePicture($file: Upload!) {
   uploadWorkspaceMemberProfilePicture(file: $file) {

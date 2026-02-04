@@ -9,12 +9,12 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import {
   LogicFunctionExecutorDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
-import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
@@ -183,10 +183,10 @@ export class LogicFunctionExecutorService
         applicationUniversalIdentifier,
       }))
     ) {
-      await this.functionBuildService.uploadDependencies({
-        flatApplication,
-        applicationUniversalIdentifier,
-      });
+      throw new LogicFunctionExecutionException(
+        'Logic function dependencies not found',
+        LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+      );
     }
 
     const resultLogicFunction = await this.callWithTimeout({

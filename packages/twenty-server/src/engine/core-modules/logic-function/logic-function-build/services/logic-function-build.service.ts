@@ -37,27 +37,4 @@ export class LogicFunctionBuildService {
 
     return packageJsonExists && yarnLockExists;
   }
-
-  async uploadDependencies({
-    flatApplication: _flatApplication,
-    applicationUniversalIdentifier: _applicationUniversalIdentifier,
-  }: {
-    flatApplication: FlatApplication;
-    applicationUniversalIdentifier: string;
-  }) {
-    // Package files live in Dependencies; no copy needed – drivers read from
-    // Dependencies when building the layer.
-  }
-
-  async isBuilt({
-    flatLogicFunction,
-    applicationUniversalIdentifier,
-  }: FunctionBuildParams): Promise<boolean> {
-    return await this.fileStorageService.checkFileExists_v2({
-      workspaceId: flatLogicFunction.workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: flatLogicFunction.builtHandlerPath,
-    });
-  }
 }

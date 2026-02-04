@@ -1,9 +1,9 @@
-import { useQuery } from '@apollo/client';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE } from '@/settings/logic-functions/graphql/queries/findOneLogicFunctionSourceCode';
+import { FIND_ONE_CODE_STEP_SOURCE_CODE } from '@/settings/logic-functions/graphql/queries/findOneLogicFunctionSourceCode';
+import { useQuery } from '@apollo/client';
 import {
-  type FindOneLogicFunctionSourceCodeQuery,
-  type FindOneLogicFunctionSourceCodeQueryVariables,
+  type FindOneCodeStepSourceCodeQuery,
+  type FindOneCodeStepSourceCodeQueryVariables,
 } from '~/generated-metadata/graphql';
 
 export const useGetOneLogicFunctionSourceCode = ({
@@ -11,13 +11,13 @@ export const useGetOneLogicFunctionSourceCode = ({
   onCompleted,
 }: {
   id: string;
-  onCompleted?: (data: FindOneLogicFunctionSourceCodeQuery) => void;
+  onCompleted?: (data: FindOneCodeStepSourceCodeQuery) => void;
 }) => {
   const apolloMetadataClient = useApolloCoreClient();
   const { data, loading } = useQuery<
-    FindOneLogicFunctionSourceCodeQuery,
-    FindOneLogicFunctionSourceCodeQueryVariables
-  >(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE, {
+    FindOneCodeStepSourceCodeQuery,
+    FindOneCodeStepSourceCodeQueryVariables
+  >(FIND_ONE_CODE_STEP_SOURCE_CODE, {
     client: apolloMetadataClient ?? undefined,
     variables: {
       input: { id },
@@ -25,5 +25,5 @@ export const useGetOneLogicFunctionSourceCode = ({
     onCompleted,
     fetchPolicy: 'network-only',
   });
-  return { code: data?.getLogicFunctionSourceCode, loading };
+  return { code: data?.getCodeStepSourceCode, loading };
 };

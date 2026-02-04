@@ -1621,8 +1621,8 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetLogicFunctionSourceCodeInput = {
-  /** The id of the function. */
+export type GetCodeStepSourceCodeInput = {
+  /** The id of the logic function (code step). */
   id: Scalars['ID'];
 };
 
@@ -3501,6 +3501,7 @@ export type Query = {
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
   getAvailablePackages: Scalars['JSON'];
+  getCodeStepSourceCode?: Maybe<Scalars['JSON']>;
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getCoreView?: Maybe<CoreView>;
@@ -3518,7 +3519,6 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getEmailingDomains: Array<EmailingDomain>;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
-  getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
@@ -3637,6 +3637,11 @@ export type QueryGetAvailablePackagesArgs = {
 };
 
 
+export type QueryGetCodeStepSourceCodeArgs = {
+  input: GetCodeStepSourceCodeInput;
+};
+
+
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
   id: Scalars['UUID'];
 };
@@ -3709,11 +3714,6 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
-};
-
-
-export type QueryGetLogicFunctionSourceCodeArgs = {
-  input: GetLogicFunctionSourceCodeInput;
 };
 
 

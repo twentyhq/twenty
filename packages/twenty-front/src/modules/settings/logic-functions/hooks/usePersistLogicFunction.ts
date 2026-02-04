@@ -7,7 +7,7 @@ import { CREATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mu
 import { DELETE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/deleteOneLogicFunction';
 import { UPDATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/updateOneLogicFunction';
 import { FIND_MANY_LOGIC_FUNCTIONS } from '@/settings/logic-functions/graphql/queries/findManyLogicFunctions';
-import { FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE } from '@/settings/logic-functions/graphql/queries/findOneLogicFunctionSourceCode';
+import { FIND_ONE_CODE_STEP_SOURCE_CODE } from '@/settings/logic-functions/graphql/queries/findOneLogicFunctionSourceCode';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
@@ -98,7 +98,7 @@ export const usePersistLogicFunction = () => {
         const result = await updateLogicFunctionMutation({
           variables,
           refetchQueries: [
-            getOperationName(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
+            getOperationName(FIND_ONE_CODE_STEP_SOURCE_CODE) ?? '',
           ],
         });
 
@@ -138,7 +138,7 @@ export const usePersistLogicFunction = () => {
           variables,
           awaitRefetchQueries: true,
           refetchQueries: [
-            getOperationName(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
+            getOperationName(FIND_ONE_CODE_STEP_SOURCE_CODE) ?? '',
           ],
         });
 

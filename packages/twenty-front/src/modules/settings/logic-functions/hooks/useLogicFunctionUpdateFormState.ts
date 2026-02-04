@@ -8,7 +8,7 @@ import { useRecoilState } from 'recoil';
 import { type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type FindOneLogicFunctionSourceCodeQuery,
+  type FindOneCodeStepSourceCodeQuery,
   type GetOneLogicFunctionQuery,
 } from '~/generated-metadata/graphql';
 import { type LogicFunction } from '~/generated/graphql';
@@ -65,8 +65,8 @@ export const useLogicFunctionUpdateFormState = ({
   const { loading: logicFunctionSourceCodeLoading } =
     useGetOneLogicFunctionSourceCode({
       id: logicFunctionId,
-      onCompleted: async (data: FindOneLogicFunctionSourceCodeQuery) => {
-        const code = data?.getLogicFunctionSourceCode;
+      onCompleted: async (data: FindOneCodeStepSourceCodeQuery) => {
+        const code = data?.getCodeStepSourceCode;
 
         setFormValues((prevState) => ({
           ...prevState,
