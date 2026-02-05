@@ -134,25 +134,24 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
       );
 
       if (!isDryRun) {
-        avatarFileFieldMetadata =
-          await this.fieldMetadataService.createOneField({
-            createFieldInput: {
-              objectMetadataId: personObjectMetadata.id,
-              type: FieldMetadataType.FILES,
-              name: 'avatarFile',
-              label: 'Avatar File',
-              description: "Contact's avatar file",
-              icon: 'IconFileUpload',
-              isSystem: true,
-              isNullable: true,
-              settings: {
-                maxNumberOfValues: 1,
-              },
-              universalIdentifier: avatarFileUniversalIdentifier,
+        await this.fieldMetadataService.createOneField({
+          createFieldInput: {
+            objectMetadataId: personObjectMetadata.id,
+            type: FieldMetadataType.FILES,
+            name: 'avatarFile',
+            label: 'Avatar File',
+            description: "Contact's avatar file",
+            icon: 'IconFileUpload',
+            isSystem: true,
+            isNullable: true,
+            settings: {
+              maxNumberOfValues: 1,
             },
-            workspaceId,
-            ownerFlatApplication: twentyStandardApplication,
-          });
+            universalIdentifier: avatarFileUniversalIdentifier,
+          },
+          workspaceId,
+          ownerFlatApplication: twentyStandardApplication,
+        });
 
         const { flatFieldMetadataMaps: updatedFlatFieldMetadataMaps } =
           await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -246,7 +245,7 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
             path: newResourcePath,
             workspaceId,
             applicationId: twentyStandardApplication.id,
-            size: 0,
+            size: -1,
             settings: {
               isTemporaryFile: true,
               toDelete: false,
