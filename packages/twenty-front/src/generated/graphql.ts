@@ -1419,7 +1419,9 @@ export type EventWithQueryIds = {
   queryIds: Array<Scalars['String']>;
 };
 
-export type ExecuteLogicFunctionInput = {
+export type ExecuteOneLogicFunctionInput = {
+  /** Force rebuild from source before executing */
+  forceRebuild?: InputMaybe<Scalars['Boolean']>;
   /** Id of the logic function to execute */
   id: Scalars['UUID'];
   /** Payload in JSON format */
@@ -2184,10 +2186,10 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
+  updateLogicFunctionSource: Scalars['Boolean'];
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneField: Field;
-  updateOneLogicFunction: LogicFunction;
   updateOneObject: Object;
   updateOneRole: Role;
   updatePageLayout: PageLayout;
@@ -2653,7 +2655,7 @@ export type MutationEmailPasswordResetLinkArgs = {
 
 
 export type MutationExecuteOneLogicFunctionArgs = {
-  input: ExecuteLogicFunctionInput;
+  input: ExecuteOneLogicFunctionInput;
 };
 
 
@@ -2896,6 +2898,11 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 };
 
 
+export type MutationUpdateLogicFunctionSourceArgs = {
+  input: UpdateLogicFunctionSourceInput;
+};
+
+
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
 };
@@ -2910,11 +2917,6 @@ export type MutationUpdateOneApplicationVariableArgs = {
 
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
-};
-
-
-export type MutationUpdateOneLogicFunctionArgs = {
-  input: UpdateLogicFunctionInput;
 };
 
 
@@ -4538,23 +4540,11 @@ export type UpdateLabPublicFeatureFlagInput = {
   value: Scalars['Boolean'];
 };
 
-export type UpdateLogicFunctionInput = {
-  /** Id of the logic function to update */
-  id: Scalars['UUID'];
-  /** The logic function updates */
-  update: UpdateLogicFunctionInputUpdates;
-};
-
-export type UpdateLogicFunctionInputUpdates = {
-  builtHandlerPath?: InputMaybe<Scalars['String']>;
+export type UpdateLogicFunctionSourceInput = {
+  /** The source code (Sources) to write. Only updates source files. */
   code: Scalars['JSON'];
-  description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
+  /** The id of the logic function. */
+  id: Scalars['UUID'];
 };
 
 export type UpdateObjectPayload = {

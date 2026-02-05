@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -9,6 +8,7 @@ import { v4 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -38,7 +38,7 @@ export class RowLevelPermissionPredicateService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingService: BillingService,
-    private readonly configService: ConfigService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly applicationService: ApplicationService,
   ) {}
 
@@ -515,7 +515,7 @@ export class RowLevelPermissionPredicateService {
     workspaceId: string,
   ): Promise<boolean> {
     const hasValidEnterpriseKey = isDefined(
-      this.configService.get('ENTERPRISE_KEY'),
+      this.twentyConfigService.get('ENTERPRISE_KEY'),
     );
 
     const isRowLevelPermissionEnabled =

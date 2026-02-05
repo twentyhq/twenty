@@ -1,6 +1,6 @@
 import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
-import { useLogicFunctionUpdateFormState } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 
 import { INDEX_FILE_NAME } from '@/logic-functions/constants/IndexFileName';
 import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
@@ -31,7 +31,7 @@ export const WorkflowReadonlyActionCode = ({
     id: logicFunctionId,
   });
 
-  const { formValues, loading } = useLogicFunctionUpdateFormState({
+  const { code, loading } = useGetLogicFunctionSourceCode({
     logicFunctionId,
   });
 
@@ -53,9 +53,10 @@ export const WorkflowReadonlyActionCode = ({
   }
 
   const indexFileContent =
-    typeof formValues.code?.[SOURCE_FOLDER_NAME] !== 'string' &&
-    typeof formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME] === 'string'
-      ? formValues.code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
+    code != null &&
+    typeof code?.[SOURCE_FOLDER_NAME] !== 'string' &&
+    typeof code[SOURCE_FOLDER_NAME]?.[INDEX_FILE_NAME] === 'string'
+      ? code[SOURCE_FOLDER_NAME][INDEX_FILE_NAME]
       : '';
 
   return (

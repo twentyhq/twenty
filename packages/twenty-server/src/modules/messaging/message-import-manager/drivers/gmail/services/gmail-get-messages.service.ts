@@ -6,7 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
+import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
@@ -29,6 +31,10 @@ export class GmailGetMessagesService {
       | 'id'
       | 'handle'
       | 'handleAliases'
+    >,
+    messageChannel: Pick<
+      MessageChannelWorkspaceEntity,
+      'messageFolders' | 'messageFolderImportPolicy'
     >,
   ): Promise<MessageWithParticipants[]> {
     const oAuth2Client =
@@ -73,6 +79,11 @@ export class GmailGetMessagesService {
       })
       .filter(isDefined);
 
-    return messages;
+    const filteredMessages = filterGmailMessagesByFolderPolicy(
+      messages,
+      messageChannel,
+    );
+
+    return filteredMessages;
   }
 }

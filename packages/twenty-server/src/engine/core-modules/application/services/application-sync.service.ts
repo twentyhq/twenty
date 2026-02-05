@@ -923,9 +923,6 @@ export class ApplicationSyncService {
         workspaceId,
         ownerFlatApplication,
       });
-
-      // Trigger settings are now embedded in the logic function entity
-      // They are handled through the update input
     }
 
     for (const logicFunctionToCreate of logicFunctionsToCreate) {

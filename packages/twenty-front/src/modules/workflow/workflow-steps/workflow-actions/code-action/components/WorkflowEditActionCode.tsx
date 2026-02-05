@@ -1,8 +1,6 @@
+import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
-import {
-  type LogicFunctionFormValues,
-  useLogicFunctionUpdateFormState,
-} from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
+import { type LogicFunctionFormValues } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
@@ -14,7 +12,6 @@ import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { INDEX_FILE_NAME } from '@/logic-functions/constants/IndexFileName';
-import { useTestLogicFunction } from '@/logic-functions/hooks/useTestLogicFunction';
 import { getFunctionInputFromSourceCode } from '@/logic-functions/utils/getFunctionInputFromSourceCode';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/logic-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -39,8 +36,9 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
 import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
+import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { computeNewSources } from '@/logic-functions/utils/computeNewSources';
-import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
@@ -106,7 +104,7 @@ export const WorkflowEditActionCode = ({
     activeTabIdComponentState,
     WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { updateLogicFunction } = usePersistLogicFunction();
+  const { updateLogicFunctionSource } = usePersistLogicFunction();
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow();
 
@@ -128,10 +126,21 @@ export const WorkflowEditActionCode = ({
       action.settings.input.logicFunctionInput,
     );
 
-  const { formValues, setFormValues, loading } =
-    useLogicFunctionUpdateFormState({
-      logicFunctionId,
-    });
+  const { code: codeFromApi, loading } = useGetLogicFunctionSourceCode({
+    logicFunctionId,
+  });
+
+  const [formValues, setFormValues] = useState<LogicFunctionFormValues>({
+    name: '',
+    description: '',
+    code: { src: { 'index.ts': '' } },
+  });
+
+  useEffect(() => {
+    if (isDefined(codeFromApi)) {
+      setFormValues((prev) => ({ ...prev, code: codeFromApi }));
+    }
+  }, [codeFromApi]);
 
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {
@@ -144,20 +153,16 @@ export const WorkflowEditActionCode = ({
     });
   };
 
-  const { testLogicFunction, isTesting } = useTestLogicFunction({
+  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
     logicFunctionId,
     callback: updateOutputSchemaFromTestResult,
   });
 
   const handleSave = useDebouncedCallback(async () => {
-    await updateLogicFunction({
+    await updateLogicFunctionSource({
       input: {
         id: logicFunctionId,
-        update: {
-          name: formValues.name,
-          description: formValues.description,
-          code: formValues.code,
-        },
+        code: formValues.code,
       },
     });
   }, 500);
@@ -267,8 +272,8 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    if (!isTesting) {
-      await testLogicFunction();
+    if (!isExecuting) {
+      await executeLogicFunction({ forceRebuild: true });
     }
   };
 
@@ -461,7 +466,7 @@ export const WorkflowEditActionCode = ({
                 <InputLabel>{t`Result`}</InputLabel>
                 <LogicFunctionExecutionResult
                   logicFunctionTestData={logicFunctionTestData}
-                  isTesting={isTesting}
+                  isTesting={isExecuting}
                 />
               </StyledCodeEditorContainer>
               {logicFunctionTestData.output.logs.length > 0 && (
@@ -469,7 +474,7 @@ export const WorkflowEditActionCode = ({
                   <InputLabel>{t`Logs`}</InputLabel>
                   <TextArea
                     textAreaId={testLogsTextAreaId}
-                    value={isTesting ? '' : logicFunctionTestData.output.logs}
+                    value={isExecuting ? '' : logicFunctionTestData.output.logs}
                     maxRows={20}
                     disabled
                   />
@@ -487,7 +492,7 @@ export const WorkflowEditActionCode = ({
                     <CmdEnterActionButton
                       title={t`Test`}
                       onClick={handleRunFunction}
-                      disabled={isTesting}
+                      disabled={isExecuting}
                     />,
                   ]
                 : []

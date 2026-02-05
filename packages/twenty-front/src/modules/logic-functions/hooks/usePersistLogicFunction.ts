@@ -1,26 +1,28 @@
 import { useCallback } from 'react';
 
+import { UPDATE_LOGIC_FUNCTION_SOURCE } from '@/logic-functions/graphql/mutations/updateLogicFunctionSource';
+import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { CREATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/createOneLogicFunction';
 import { DELETE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/deleteOneLogicFunction';
-import { UPDATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/updateOneLogicFunction';
 import { FIND_MANY_LOGIC_FUNCTIONS } from '@/settings/logic-functions/graphql/queries/findManyLogicFunctions';
-import { FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE } from '@/settings/logic-functions/graphql/queries/findOneLogicFunctionSourceCode';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
-import { CrudOperationType } from 'twenty-shared/types';
+import { type Sources, CrudOperationType } from 'twenty-shared/types';
 import {
   type CreateOneLogicFunctionItemMutation,
   type CreateOneLogicFunctionItemMutationVariables,
   type DeleteOneLogicFunctionMutation,
   type DeleteOneLogicFunctionMutationVariables,
-  type UpdateOneLogicFunctionMutation,
-  type UpdateOneLogicFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
+
+type UpdateLogicFunctionSourceMutationVariables = {
+  input: { id: string; code: Sources };
+};
 
 export const usePersistLogicFunction = () => {
   const apolloMetadataClient = useApolloCoreClient();
@@ -34,17 +36,17 @@ export const usePersistLogicFunction = () => {
     client: apolloMetadataClient,
   });
 
-  const [updateLogicFunctionMutation] = useMutation<
-    UpdateOneLogicFunctionMutation,
-    UpdateOneLogicFunctionMutationVariables
-  >(UPDATE_ONE_LOGIC_FUNCTION, {
-    client: apolloMetadataClient,
-  });
-
   const [deleteLogicFunctionMutation] = useMutation<
     DeleteOneLogicFunctionMutation,
     DeleteOneLogicFunctionMutationVariables
   >(DELETE_ONE_LOGIC_FUNCTION, {
+    client: apolloMetadataClient,
+  });
+
+  const [updateLogicFunctionSourceMutation] = useMutation<
+    { updateLogicFunctionSource: boolean },
+    UpdateLogicFunctionSourceMutationVariables
+  >(UPDATE_LOGIC_FUNCTION_SOURCE, {
     client: apolloMetadataClient,
   });
 
@@ -86,19 +88,19 @@ export const usePersistLogicFunction = () => {
     [createLogicFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
   );
 
-  const updateLogicFunction = useCallback(
+  const updateLogicFunctionSource = useCallback(
     async (
-      variables: UpdateOneLogicFunctionMutationVariables,
+      variables: UpdateLogicFunctionSourceMutationVariables,
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof updateLogicFunctionMutation>>
+        Awaited<ReturnType<typeof updateLogicFunctionSourceMutation>>
       >
     > => {
       try {
-        const result = await updateLogicFunctionMutation({
+        const result = await updateLogicFunctionSourceMutation({
           variables,
           refetchQueries: [
-            getOperationName(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
+            getOperationName(GET_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
           ],
         });
 
@@ -122,7 +124,11 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [updateLogicFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      updateLogicFunctionSourceMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   const deleteLogicFunction = useCallback(
@@ -138,7 +144,7 @@ export const usePersistLogicFunction = () => {
           variables,
           awaitRefetchQueries: true,
           refetchQueries: [
-            getOperationName(FIND_ONE_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
+            getOperationName(GET_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
           ],
         });
 
@@ -167,7 +173,7 @@ export const usePersistLogicFunction = () => {
 
   return {
     createLogicFunction,
-    updateLogicFunction,
+    updateLogicFunctionSource,
     deleteLogicFunction,
   };
 };

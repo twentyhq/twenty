@@ -155,6 +155,30 @@ export class WorkspaceMigrationRunnerService {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
+    const queryRunner = this.coreDataSource.createQueryRunner();
+    const actionMetadataNames = [
+      ...new Set(actions.flatMap((action) => action.metadataName)),
+    ];
+    const actionsMetadataAndRelatedMetadataNames: AllMetadataName[] = [
+      ...new Set([
+        ...actionMetadataNames,
+        ...actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
+      ]),
+    ];
+    const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(
+      getMetadataFlatEntityMapsKey,
+    );
+
+    let allFlatEntityMaps =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
+        typeof allFlatEntityMapsKeys
+      >({
+        workspaceId,
+        flatMapsKeys: allFlatEntityMapsKeys,
+      });
+
+    this.logger.timeEnd('Runner', 'Initial cache retrieval');
+
     const { flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
@@ -175,35 +199,12 @@ export class WorkspaceMigrationRunnerService {
       });
     }
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
-    const actionMetadataNames = [
-      ...new Set(actions.flatMap((action) => action.metadataName)),
-    ];
-    const actionsMetadataAndRelatedMetadataNames: AllMetadataName[] = [
-      ...new Set([
-        ...actionMetadataNames,
-        ...actionMetadataNames.flatMap(getMetadataRelatedMetadataNames),
-      ]),
-    ];
-    const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(
-      getMetadataFlatEntityMapsKey,
-    );
-
-    let allFlatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
-        typeof allFlatEntityMapsKeys,
-        false
-      >({
-        workspaceId,
-        flatMapsKeys: allFlatEntityMapsKeys,
-      });
-
-    this.logger.timeEnd('Runner', 'Initial cache retrieval');
     this.logger.time('Runner', 'Transaction execution');
 
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+
       for (const action of actions) {
         const result =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
@@ -222,7 +223,7 @@ export class WorkspaceMigrationRunnerService {
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
           ...result,
-        };
+        } as typeof allFlatEntityMaps;
       }
 
       await queryRunner.commitTransaction();

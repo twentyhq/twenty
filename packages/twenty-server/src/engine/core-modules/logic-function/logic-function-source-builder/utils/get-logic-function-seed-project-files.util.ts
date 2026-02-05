@@ -1,15 +1,19 @@
 import fs from 'fs/promises';
-import path, { join } from 'path';
+import path from 'path';
 
 import { ASSET_PATH } from 'src/constants/assets-path';
 
-type File = { name: string; path: string; content: Buffer };
+export type LogicFunctionSeedProjectFile = {
+  name: string;
+  path: string;
+  content: Buffer;
+};
 
 const getAllFiles = async (
   rootDir: string,
   dir: string = rootDir,
-  files: File[] = [],
-): Promise<File[]> => {
+  files: LogicFunctionSeedProjectFile[] = [],
+): Promise<LogicFunctionSeedProjectFile[]> => {
   const dirEntries = await fs.readdir(dir, { withFileTypes: true });
 
   for (const entry of dirEntries) {
@@ -29,11 +33,13 @@ const getAllFiles = async (
   return files;
 };
 
-export const getSeedProjectFiles = (async () => {
-  const seedProjectPath = join(
+export const getLogicFunctionSeedProjectFiles = async (): Promise<
+  LogicFunctionSeedProjectFile[]
+> => {
+  const seedProjectPath = path.join(
     ASSET_PATH,
-    `engine/core-modules/logic-function/logic-function-drivers/constants/seed-project`,
+    'engine/core-modules/logic-function/logic-function-source-builder/constants/seed-project',
   );
 
-  return await getAllFiles(seedProjectPath);
-})();
+  return getAllFiles(seedProjectPath);
+};

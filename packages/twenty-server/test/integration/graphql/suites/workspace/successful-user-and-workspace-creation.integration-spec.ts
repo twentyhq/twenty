@@ -194,6 +194,9 @@ describe('Successful user and workspace creation', () => {
       input: {
         name: 'test-function-for-deletion',
         description: 'A test logic function for workspace deletion test',
+        code: {
+          'src/index.ts': 'export const main = async () => { return {}; };',
+        },
       },
       token: newWorkspaceAccessToken,
       expectToFail: false,
