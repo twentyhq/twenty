@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { BACKUP_PATH, PKG_PATH } from './constants/dependency-contants';
+import { BACKUP_PATH, PKG_PATH } from './constants';
 
 const stripWorkspace = (deps = {}) =>
   Object.fromEntries(

@@ -15,8 +15,8 @@
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build",
-    "prepack": "tsx ./scripts/prepack.ts",
-    "postpack": "tsx ./scripts/postpack.ts"
+    "prepack": "tsx ../twenty-utils/pack-scripts/prepack.ts",
+    "postpack": "tsx ../twenty-utils/pack-scripts/postpack.ts"
   },
   "keywords": [
     "twenty",
