@@ -1895,6 +1895,11 @@ msgstr "Invalid row level permission predicate data."
 msgid "Invalid row level permission predicate group data."
 msgstr "Invalid row level permission predicate group data."
 
+#. js-lingui-id: xzNMzS
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Invalid seed project configuration."
+msgstr "Invalid seed project configuration."
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
