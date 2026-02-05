@@ -5,7 +5,9 @@
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",
   "files": [
-    "dist/**/*"
+    "dist",
+    "README.md",
+    "package.json"
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build",

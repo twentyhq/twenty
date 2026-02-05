@@ -9,8 +9,8 @@
   },
   "files": [
     "dist",
-    "ui",
-    "front-component"
+    "README.md",
+    "package.json"
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build",
