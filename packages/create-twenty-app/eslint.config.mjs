@@ -1,4 +1,4 @@
-import baseConfig from 'eslint.config.mjs';
+import baseConfig from '../../eslint.config.mjs';
 
 export default [
   ...baseConfig,
@@ -10,5 +10,11 @@ export default [
     rules: {
       'prettier/prettier': 'error',
     },
+  },
+  {
+    rules: {
+      'no-console': 'off',
+    },
+    ignores: ['src/**/*.ts', '!src/cli/**/*.ts'],
   },
 ];
