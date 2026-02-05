@@ -124,9 +124,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
       providers: [CommonSelectFieldsHelper],
     }).compile();
 
-    handler = module.get<CommonSelectFieldsHelper>(
-      CommonSelectFieldsHelper,
-    );
+    handler = module.get<CommonSelectFieldsHelper>(CommonSelectFieldsHelper);
   });
 
   describe('computeFromDepth', () => {
