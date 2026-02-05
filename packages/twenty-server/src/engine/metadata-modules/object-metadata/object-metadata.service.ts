@@ -404,6 +404,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
     });
 
+    const optimisticFlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: flatDefaultViewToCreate,
+      flatEntityMaps: createEmptyFlatEntityMaps(),
+    });
+
     const flatDefaultViewFieldsToCreate =
       await this.computeFlatViewFieldsToCreate({
         flatApplication: workspaceCustomFlatApplication,
@@ -412,6 +417,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId,
         labelIdentifierFieldMetadataId:
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataId,
+        flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+        flatViewMaps: optimisticFlatViewMaps,
       });
 
     const isNavigationMenuItemEnabled =
@@ -548,12 +555,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId,
     flatApplication,
     labelIdentifierFieldMetadataId,
+    flatFieldMetadataMaps,
+    flatViewMaps,
   }: {
     flatApplication: FlatApplication;
     objectFlatFieldMetadatas: FlatFieldMetadata[];
     viewId: string;
     workspaceId: string;
     labelIdentifierFieldMetadataId: string | null;
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
   }) {
     const defaultViewFields = objectFlatFieldMetadatas
       .filter(
@@ -573,6 +584,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           },
           flatApplication,
           workspaceId: workspaceId,
+          flatFieldMetadataMaps,
+          flatViewMaps,
         }),
       );
 

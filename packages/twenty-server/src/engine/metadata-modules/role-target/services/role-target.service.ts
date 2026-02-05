@@ -56,11 +56,15 @@ export class RoleTargetService {
       return [];
     }
 
-    const { flatRoleTargetMaps, flatApplicationMaps } =
+    const { flatRoleTargetMaps, flatApplicationMaps, flatRoleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleTargetMaps', 'flatApplicationMaps'],
+          flatMapsKeys: [
+            'flatRoleTargetMaps',
+            'flatApplicationMaps',
+            'flatRoleMaps',
+          ],
         },
       );
 
@@ -83,6 +87,7 @@ export class RoleTargetService {
         fromCreateRoleTargetInputToFlatRoleTargetToCreate({
           createRoleTargetInput,
           flatRoleTargetMaps,
+          flatRoleMaps,
           workspaceId,
           flatApplication: flatApplication ?? workspaceCustomFlatApplication,
         });

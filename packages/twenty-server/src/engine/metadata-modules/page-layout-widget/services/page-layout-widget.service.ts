@@ -157,11 +157,21 @@ export class PageLayoutWidgetService {
         { workspaceId },
       );
 
+    const { flatPageLayoutTabMaps, flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutTabMaps', 'flatObjectMetadataMaps'],
+        },
+      );
+
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
         createPageLayoutWidgetInput: input,
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
+        flatPageLayoutTabMaps,
+        flatObjectMetadataMaps,
       });
 
     await this.validateAndRunWidgetMigration({

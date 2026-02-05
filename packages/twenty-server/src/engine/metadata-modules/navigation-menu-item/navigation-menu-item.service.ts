@@ -148,11 +148,19 @@ export class NavigationMenuItemService {
         { workspaceId },
       );
 
-    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
+    const {
+      flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+      flatObjectMetadataMaps,
+      flatViewMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatNavigationMenuItemMaps'],
+          flatMapsKeys: [
+            'flatNavigationMenuItemMaps',
+            'flatObjectMetadataMaps',
+            'flatViewMaps',
+          ],
         },
       );
 
@@ -170,6 +178,8 @@ export class NavigationMenuItemService {
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+        flatObjectMetadataMaps,
+        flatViewMaps,
       });
 
     const validateAndBuildResult =

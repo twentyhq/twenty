@@ -45,11 +45,26 @@ export class ViewFilterService {
         },
       );
 
+    const { flatFieldMetadataMaps, flatViewMaps, flatViewFilterGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatViewMaps',
+            'flatViewFilterGroupMaps',
+          ],
+        },
+      );
+
     const flatViewFilterToCreate =
       fromCreateViewFilterInputToFlatViewFilterToCreate({
         createViewFilterInput,
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
+        flatFieldMetadataMaps,
+        flatViewMaps,
+        flatViewFilterGroupMaps,
       });
 
     const buildAndRunResult =

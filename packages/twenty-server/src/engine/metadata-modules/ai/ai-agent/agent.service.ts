@@ -106,9 +106,10 @@ export class AgentService {
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
-    const { flatApplicationMaps } =
+    const { flatApplicationMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
+        'flatRoleMaps',
       ]);
 
     const { workspaceCustomFlatApplication } =
@@ -127,6 +128,7 @@ export class AgentService {
         createAgentInput: input,
         workspaceId,
         flatApplication: flatApplication ?? workspaceCustomFlatApplication,
+        flatRoleMaps,
       });
 
     const validateAndBuildResult =

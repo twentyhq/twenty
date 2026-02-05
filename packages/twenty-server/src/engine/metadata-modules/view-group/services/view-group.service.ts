@@ -103,6 +103,7 @@ export class ViewGroupService {
           createViewGroupInput,
           workspaceId,
           flatApplication: workspaceCustomFlatApplication,
+          flatViewMaps,
         });
       },
     );
