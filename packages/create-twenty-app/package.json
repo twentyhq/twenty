@@ -8,7 +8,9 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build"
+    "build": "npx rimraf dist && npx vite build",
+    "prepack": "tsx ./scripts/prepack.ts",
+    "postpack": "tsx ./scripts/postpack.ts"
   },
   "keywords": [
     "twenty",
