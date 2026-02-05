@@ -22,6 +22,7 @@ type DeleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArg
   flatEntity: MetadataFlatEntity<T>;
   flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
 };
+
 export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow =
   <T extends AllMetadataName>({
     metadataName,
@@ -38,7 +39,7 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
         flatEntityAndRelatedMapsToMutate[flatEntityMapsKey],
     });
 
-    const manyToOneRelations = Object.values(
+    const idBasedManyToOneRelations = Object.values(
       ALL_METADATA_RELATIONS[metadataName].manyToOne,
     ) as Array<{
       metadataName: AllMetadataName;
@@ -46,8 +47,8 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
       foreignKey: keyof MetadataFlatEntity<T>;
     } | null>;
 
-    for (const relation of manyToOneRelations) {
-      if (!isDefined(relation)) {
+    for (const idBasedRelation of idBasedManyToOneRelations) {
+      if (!isDefined(idBasedRelation)) {
         continue;
       }
 
@@ -55,7 +56,7 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
         metadataName: relatedMetadataName,
         flatEntityForeignKeyAggregator,
         foreignKey,
-      } = relation;
+      } = idBasedRelation;
 
       if (!isDefined(flatEntityForeignKeyAggregator)) {
         continue;
@@ -92,7 +93,7 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
         )
       ) {
         throw new FlatEntityMapsException(
-          `Should never occur, invalid flat entity typing. flat ${metadataName} should contain ${flatEntityForeignKeyAggregator}`,
+          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${flatEntityForeignKeyAggregator}`,
           FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
         );
       }

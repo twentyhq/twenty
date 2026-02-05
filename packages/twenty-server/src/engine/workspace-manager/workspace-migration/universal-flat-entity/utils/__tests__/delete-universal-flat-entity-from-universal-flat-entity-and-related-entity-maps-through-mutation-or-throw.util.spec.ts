@@ -11,8 +11,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
-import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
+import { deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 
 const createEmptyUniversalFlatEntityMaps = <T>(): UniversalFlatEntityMaps<
   T & { universalIdentifier: string; applicationUniversalIdentifier: string }
@@ -20,8 +20,8 @@ const createEmptyUniversalFlatEntityMaps = <T>(): UniversalFlatEntityMaps<
   byUniversalIdentifier: {},
 });
 
-describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', () => {
-  it('should add a view and update related objectMetadata with viewUniversalIdentifier', () => {
+describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', () => {
+  it('should delete a view and update related objectMetadata by removing viewUniversalIdentifier', () => {
     const objectMetadataUniversalIdentifier = 'object-universal-1';
     const fieldMetadataUniversalIdentifier = 'field-universal-1';
     const viewUniversalIdentifier = 'view-universal-1';
@@ -30,7 +30,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
 
     const mockUniversalObjectMetadata = {
       universalIdentifier: objectMetadataUniversalIdentifier,
-      viewUniversalIdentifiers: [],
+      viewUniversalIdentifiers: [viewUniversalIdentifier],
       fieldUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
       description: 'default flat object metadata description',
@@ -67,7 +67,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       applicationUniversalIdentifier,
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
-      calendarViewUniversalIdentifiers: [],
+      calendarViewUniversalIdentifiers: [viewUniversalIdentifier],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       createdAt: '2024-01-01T00:00:00.000Z',
@@ -134,14 +134,29 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       universalFlatEntityMapsToMutate: flatFieldMetadataMaps,
     });
 
+    const flatViewMaps =
+      createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>();
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: mockUniversalView,
+      universalFlatEntityMapsToMutate: flatViewMaps,
+    });
+
     const universalFlatEntityAndRelatedMapsToMutate = {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
-      flatViewMaps:
-        createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>(),
+      flatViewMaps,
     } as unknown as MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'>;
 
-    addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+    expect(
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: viewUniversalIdentifier,
+        flatEntityMaps:
+          universalFlatEntityAndRelatedMapsToMutate.flatViewMaps as UniversalFlatEntityMaps<FlatView>,
+      }),
+    ).toBeDefined();
+
+    deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
       {
         metadataName: 'view',
         universalFlatEntity:
@@ -156,9 +171,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
         flatEntityMaps:
           universalFlatEntityAndRelatedMapsToMutate.flatViewMaps as UniversalFlatEntityMaps<FlatView>,
       }),
-    ).toMatchObject({
-      universalIdentifier: viewUniversalIdentifier,
-    });
+    ).toBeUndefined();
 
     const updatedObjectMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier: objectMetadataUniversalIdentifier,
@@ -167,7 +180,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
     });
 
     expect(updatedObjectMetadata).toMatchObject({
-      viewUniversalIdentifiers: [viewUniversalIdentifier],
+      viewUniversalIdentifiers: [],
     });
 
     const updatedFieldMetadata = findFlatEntityByUniversalIdentifier({
@@ -177,7 +190,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
     });
 
     expect(updatedFieldMetadata).toMatchObject({
-      calendarViewUniversalIdentifiers: [viewUniversalIdentifier],
+      calendarViewUniversalIdentifiers: [],
     });
   });
 
@@ -213,15 +226,22 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
     };
 
+    const flatViewMaps =
+      createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>();
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: mockUniversalView,
+      universalFlatEntityMapsToMutate: flatViewMaps,
+    });
+
     const universalFlatEntityAndRelatedMapsToMutate = {
       flatFieldMetadataMaps: createEmptyUniversalFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyUniversalFlatEntityMaps(),
-      flatViewMaps:
-        createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>(),
+      flatViewMaps,
     } as unknown as MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'>;
 
     expect(() =>
-      addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+      deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
         {
           metadataName: 'view',
           universalFlatEntity:
