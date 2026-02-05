@@ -11,7 +11,6 @@ import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/servi
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { createAddDashboardWidgetTool } from 'src/modules/dashboard/tools/add-dashboard-widget.tool';
-import { createBuildDashboardWidgetConfigTool } from 'src/modules/dashboard/tools/build-dashboard-widget-config.tool';
 import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/create-complete-dashboard.tool';
 import { createDeleteDashboardWidgetTool } from 'src/modules/dashboard/tools/delete-dashboard-widget.tool';
 import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
@@ -64,16 +63,11 @@ export class DashboardToolWorkspaceService {
       this.deps,
       context,
     );
-    const buildDashboardWidgetConfig = createBuildDashboardWidgetConfigTool(
-      this.deps,
-      context,
-    );
 
     return {
       [createCompleteDashboard.name]: createCompleteDashboard,
       [listDashboards.name]: listDashboards,
       [getDashboard.name]: getDashboard,
-      [buildDashboardWidgetConfig.name]: buildDashboardWidgetConfig,
       [addDashboardWidget.name]: addDashboardWidget,
       [updateDashboardWidget.name]: updateDashboardWidget,
       [deleteDashboardWidget.name]: deleteDashboardWidget,

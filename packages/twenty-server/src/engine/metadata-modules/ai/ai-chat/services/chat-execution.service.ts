@@ -246,10 +246,6 @@ export class ChatExecutionService {
       return this.buildListViewContext(browsingContext);
     }
 
-    this.logger.warn(
-      `Unhandled browsing context type: ${(browsingContext as { type: string }).type}`,
-    );
-
     return '';
   }
 
@@ -270,16 +266,12 @@ export class ChatExecutionService {
 
     let context = `The user is viewing a ${objectNameSingular} record (ID: ${recordId}, URL: ${resourceUrl}). Use tools to fetch record details if needed.`;
 
-    if (objectNameSingular === 'dashboard') {
-      context += `\nLoad \`dashboard-building\` skill before making dashboard edits.`;
+    if (isDefined(pageLayoutId)) {
+      context += `\nPage layout ID: ${pageLayoutId}.`;
+    }
 
-      if (isDefined(pageLayoutId)) {
-        context += `\nDashboard pageLayoutId: ${pageLayoutId}.`;
-      }
-
-      if (isDefined(activeTabId)) {
-        context += `\nActive dashboard tab ID: ${activeTabId}. Use this tab for widget additions unless the user specifies otherwise.`;
-      }
+    if (isDefined(activeTabId)) {
+      context += `\nActive tab ID: ${activeTabId}.`;
     }
 
     return context;

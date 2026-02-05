@@ -11,7 +11,6 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -73,35 +72,31 @@ export const useGetBrowsingContext = () => {
             recordId: targetedRecordsRule.selectedRecordIds[0],
           };
 
-          if (
-            objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard
-          ) {
-            const pageLayoutId = snapshot
+          const pageLayoutId = snapshot
+            .getLoadable(
+              recordStoreFamilySelector<string | null | undefined>({
+                recordId: targetedRecordsRule.selectedRecordIds[0],
+                fieldName: 'pageLayoutId',
+              }),
+            )
+            .getValue();
+
+          if (isDefined(pageLayoutId)) {
+            const tabListInstanceId =
+              getTabListInstanceIdFromPageLayoutId(pageLayoutId);
+            const activeTabId = snapshot
               .getLoadable(
-                recordStoreFamilySelector<string | null | undefined>({
-                  recordId: targetedRecordsRule.selectedRecordIds[0],
-                  fieldName: 'pageLayoutId',
+                activeTabIdComponentState.atomFamily({
+                  instanceId: tabListInstanceId,
                 }),
               )
               .getValue();
 
-            if (isDefined(pageLayoutId)) {
-              const tabListInstanceId =
-                getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-              const activeTabId = snapshot
-                .getLoadable(
-                  activeTabIdComponentState.atomFamily({
-                    instanceId: tabListInstanceId,
-                  }),
-                )
-                .getValue();
-
-              return {
-                ...recordContext,
-                pageLayoutId,
-                activeTabId,
-              };
-            }
+            return {
+              ...recordContext,
+              pageLayoutId,
+              activeTabId,
+            };
           }
 
           return recordContext;
