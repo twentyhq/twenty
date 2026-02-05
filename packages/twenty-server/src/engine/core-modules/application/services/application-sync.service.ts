@@ -112,7 +112,7 @@ export class ApplicationSyncService {
       });
     }
 
-    if (manifest.frontComponents.length > 0) {
+    if ((manifest.frontComponents ?? []).length > 0) {
       await this.syncFrontComponents({
         frontComponentsToSync: manifest.frontComponents,
         workspaceId,
@@ -1040,13 +1040,11 @@ export class ApplicationSyncService {
         );
       }
 
-      const name =
-        frontComponentToSync.name ?? frontComponentToSync.componentName;
-
       await this.frontComponentService.updateOne({
         id: frontComponentToUpdate.id,
         update: {
-          name,
+          ...frontComponentToSync,
+          checksum: frontComponentToSync.builtComponentChecksum ?? undefined,
         },
         workspaceId,
         ownerFlatApplication,
@@ -1054,13 +1052,10 @@ export class ApplicationSyncService {
     }
 
     for (const frontComponentToCreate of frontComponentsToCreate) {
-      const name =
-        frontComponentToCreate.name ?? frontComponentToCreate.componentName;
-
       await this.frontComponentService.createOne({
         input: {
-          name,
-          id: frontComponentToCreate.universalIdentifier,
+          ...frontComponentToCreate,
+          checksum: frontComponentToCreate.builtComponentChecksum ?? undefined,
         },
         workspaceId,
         ownerFlatApplication,
