@@ -24,11 +24,11 @@ type FlatEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
       >
     | '__universal'
   >]?: {
-    universalProperty?: K extends AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
+    universalProperty: K extends AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
       string
       ? `universal${Capitalize<K>}`
       : undefined;
-    toStringify?: K extends ExtractJsonbProperties<
+    toStringify: K extends ExtractJsonbProperties<
       MetadataEntity<TMetadataName>
     >
       ? true
@@ -41,6 +41,32 @@ type FlatEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
 type AllFlatEntityPropertiesConfiguration = {
   [P in AllMetadataName]: FlatEntityPropertyConfiguration<P>;
 };
+
+// type Result<T extends AllMetadataName> = {
+//   propertiesToCompare: MetadataUniversalFlatEntityPropertiesToCompare<T>[];
+//   propertiesToStringify: MetadataUniversalFlatEntityPropertiesToStringify<T>[];
+// };
+// export const getToto = <T extends AllMetadataName>(
+//   metadataName: T,
+// ): Result<T> => {
+//   const occurence =
+//     ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME[metadataName];
+
+//   const values = Object.values(occurence);
+//   const initialAccumulator: Result<T> = {
+//     propertiesToCompare: [],
+//     propertiesToStringify: [],
+//   };
+
+//   for (const value of values) {
+//     if (Object.keys(values))
+//   }
+
+//   return {
+//     propertiesToCompare: [],
+//     propertiesToStringify: [],
+//   };
+// };
 
 export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME = {
   fieldMetadata: {

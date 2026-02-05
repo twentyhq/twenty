@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/testing';
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
 
-import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-and-stringify.constant';
+import { ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-by-metadata-name.constant';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { compareTwoFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/compare-two-flat-entity.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -64,10 +64,10 @@ describe('compareTwoFlatEntity', () => {
       const result = compareTwoFlatEntity({
         fromFlatEntity,
         propertiesToCompare:
-          ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[metadataName]
+          ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME[metadataName]
             .propertiesToCompare as any,
         propertiesToStringify:
-          ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[metadataName]
+          ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME[metadataName]
             .propertiesToStringify as any,
         toFlatEntity,
       });

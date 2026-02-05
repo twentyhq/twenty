@@ -3,27 +3,19 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 
-import { type FlatEntityPropertiesToCompare } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-to-compare.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { transformFlatEntityForComparison } from 'src/engine/metadata-modules/flat-entity/utils/transform-flat-entity-for-comparison.util';
 import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
-export const compareTwoFlatEntity = <
-  T extends AllMetadataName,
-  PToCompare extends Extract<
-    FlatEntityPropertiesToCompare<T>,
-    keyof MetadataUniversalFlatEntity<T>
-  >,
-  PJsonB extends PToCompare = PToCompare,
->({
+export const compareTwoFlatEntity = <T extends AllMetadataName>({
   fromFlatEntity,
   toFlatEntity,
-  propertiesToCompare,
-  propertiesToStringify,
-}: FromTo<MetadataUniversalFlatEntity<T>, 'flatEntity'> & {
-  propertiesToCompare: readonly PToCompare[];
-  propertiesToStringify: readonly PJsonB[];
-}): UniversalFlatEntityUpdate<T> | undefined => {
+}: FromTo<MetadataUniversalFlatEntity<T>, 'flatEntity'>):
+  | UniversalFlatEntityUpdate<T>
+  | undefined => {
+
+
+
   const [transformedFromFlatEntity, transformedToFlatEntity] = [
     fromFlatEntity,
     toFlatEntity,
