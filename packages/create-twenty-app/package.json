@@ -34,7 +34,8 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.kebabcase": "^4.1.1",
     "lodash.startcase": "^4.4.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "twenty-shared": "workspace:*"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.0",

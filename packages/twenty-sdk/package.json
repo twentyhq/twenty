@@ -14,9 +14,7 @@
     "ui"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build",
-    "prepack": "tsx ./scripts/prepack.ts",
-    "postpack": "tsx ./scripts/postpack.ts"
+    "build": "npx rimraf dist && npx vite build"
   },
   "keywords": [
     "twenty",
@@ -76,7 +74,9 @@
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
     "vite-tsconfig-paths": "^4.2.1",
-    "zod": "^4.1.11"
+    "zod": "^4.1.11",
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*"
   },
   "devDependencies": {
     "@prettier/sync": "^0.5.2",
