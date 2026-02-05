@@ -41,7 +41,7 @@ export const FrontComponentRenderer = ({
       theme={theme}
       componentUrl={getMockFrontComponentUrl()}
       executionContext={{
-        userId: currentUser?.id ?? '',
+        userId: currentUser?.id,
       }}
       onError={handleError}
     />

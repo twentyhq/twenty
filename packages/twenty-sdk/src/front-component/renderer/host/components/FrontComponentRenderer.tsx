@@ -4,8 +4,8 @@ import { type FrontComponentExecutionContext } from '@/front-component/renderer/
 import { type WorkerExports } from '@/front-component/renderer/types/WorkerExports';
 import { type ThreadWebWorker } from '@quilted/threads';
 import {
-    type RemoteReceiver,
-    RemoteRootRenderer,
+  type RemoteReceiver,
+  RemoteRootRenderer,
 } from '@remote-dom/react/host';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
