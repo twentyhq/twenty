@@ -14,6 +14,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { fromUniversalFlatFieldMetadataUpdateToFlatFieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-update-to-flat-field-metadata-update.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -96,14 +97,14 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       universalIdentifier: action.universalIdentifier,
     });
 
-    // TODO: transpile settings universal identifiers when builder has been migrated
-    // For now, updates only contain flat entity diff properties (already IDs, not universal identifiers)
-
     return {
       type: 'update',
       metadataName: 'fieldMetadata',
       entityId: flatFieldMetadata.id,
-      update: action.update,
+      update: fromUniversalFlatFieldMetadataUpdateToFlatFieldMetadataUpdate({
+        universalUpdate: action.update,
+        flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+      }),
     };
   }
 
