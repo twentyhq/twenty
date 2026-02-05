@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
   type FlatIndexFieldMetadata,
@@ -80,11 +81,14 @@ export const createStandardIndexFlatMetadata = <
     flatIndex: {
       createdAt: now,
       applicationId: twentyStandardApplicationId,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION.universalIdentifier,
       indexType,
       indexWhereClause,
       isCustom: false,
       isUnique,
       objectMetadataId,
+      objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       universalIdentifier: indexDefinition.universalIdentifier,
       updatedAt: now,
       workspaceId,
