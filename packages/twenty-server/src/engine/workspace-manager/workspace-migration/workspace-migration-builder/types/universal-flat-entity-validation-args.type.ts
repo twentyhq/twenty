@@ -6,7 +6,7 @@ import { type WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engin
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
-export type FlatEntityValidationArgs<T extends AllMetadataName> = {
+export type UniversalFlatEntityValidationArgs<T extends AllMetadataName> = {
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
   flatEntityToValidate: MetadataUniversalFlatEntity<T>;
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<T>;

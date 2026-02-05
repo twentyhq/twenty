@@ -14,7 +14,7 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { IndexExceptionCode } from 'src/engine/metadata-modules/flat-index-metadata/exceptions/index-exception-code';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatIndexValidatorService {
@@ -23,7 +23,7 @@ export class FlatIndexValidatorService {
       flatIndexMaps: optimisticFlatIndexMaps,
     },
     flatEntityToValidate: { id: indexIdToDelete, universalIdentifier },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<'index', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -57,7 +57,7 @@ export class FlatIndexValidatorService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.index
   >): FailedFlatEntityValidation<'index', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({

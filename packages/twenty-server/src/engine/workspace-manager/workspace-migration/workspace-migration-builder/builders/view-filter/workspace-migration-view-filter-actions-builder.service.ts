@@ -4,9 +4,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { FlatUpdateViewFilterAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/types/workspace-migration-view-filter-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatViewFilterValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service';
 
 @Injectable()
@@ -20,8 +20,8 @@ export class WorkspaceMigrationViewFilterActionsBuilderService extends Workspace
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
     'create'
   > {
@@ -48,8 +48,8 @@ export class WorkspaceMigrationViewFilterActionsBuilderService extends Workspace
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
     'delete'
   > {
@@ -77,7 +77,7 @@ export class WorkspaceMigrationViewFilterActionsBuilderService extends Workspace
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.viewFilter>,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilter,
     'update'
   > {

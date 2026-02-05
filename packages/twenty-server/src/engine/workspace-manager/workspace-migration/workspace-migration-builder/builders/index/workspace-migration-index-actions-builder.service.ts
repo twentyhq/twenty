@@ -10,9 +10,9 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatIndexValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service';
 
 @Injectable()
@@ -26,8 +26,8 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.index>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'create'> {
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.index>,
+  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'create'> {
     const validationResult =
       this.flatIndexValidatorService.validateFlatIndexCreation(args);
 
@@ -51,8 +51,8 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.index>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'delete'> {
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.index>,
+  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'delete'> {
     const validationResult =
       this.flatIndexValidatorService.validateFlatIndexDeletion(args);
 
@@ -84,7 +84,7 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
     additionalCacheDataMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.index
-  >): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'update'> {
+  >): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'update'> {
     const flatEntity = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,
       flatEntityMaps:

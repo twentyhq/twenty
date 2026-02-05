@@ -4,9 +4,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { FlatUpdateCommandMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatCommandMenuItemValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service';
 
 @Injectable()
@@ -20,8 +20,8 @@ export class WorkspaceMigrationCommandMenuItemActionsBuilderService extends Work
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.commandMenuItem>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.commandMenuItem>,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.commandMenuItem,
     'create'
   > {
@@ -50,8 +50,8 @@ export class WorkspaceMigrationCommandMenuItemActionsBuilderService extends Work
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.commandMenuItem>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.commandMenuItem>,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.commandMenuItem,
     'delete'
   > {
@@ -83,7 +83,7 @@ export class WorkspaceMigrationCommandMenuItemActionsBuilderService extends Work
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.commandMenuItem
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.commandMenuItem,
     'update'
   > {

@@ -8,8 +8,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { PageLayoutExceptionCode } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 const PAGE_LAYOUT_TAB_EXCEPTION_CODE = {
   PAGE_LAYOUT_TAB_NOT_FOUND: 'PAGE_LAYOUT_TAB_NOT_FOUND',
@@ -20,7 +20,7 @@ export class FlatPageLayoutTabValidatorService {
   public validateFlatPageLayoutTabCreation({
     flatEntityToValidate: flatPageLayoutTab,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatPageLayoutMaps },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutTab
   >): FailedFlatEntityValidation<'pageLayoutTab', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -54,7 +54,7 @@ export class FlatPageLayoutTabValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutTab
   >): FailedFlatEntityValidation<'pageLayoutTab', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({

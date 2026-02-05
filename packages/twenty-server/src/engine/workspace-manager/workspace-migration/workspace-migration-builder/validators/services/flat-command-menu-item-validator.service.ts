@@ -9,14 +9,14 @@ import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/comman
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatCommandMenuItemValidatorService {
   public validateFlatCommandMenuItemCreation({
     flatEntityToValidate: flatCommandMenuItem,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -57,7 +57,7 @@ export class FlatCommandMenuItemValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({

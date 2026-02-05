@@ -26,8 +26,8 @@ import {
   FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatPageLayoutWidgetValidatorService {
@@ -141,7 +141,7 @@ export class FlatPageLayoutWidgetValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPageLayoutWidgetMaps: optimisticFlatPageLayoutWidgetMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): FailedFlatEntityValidation<'pageLayoutWidget', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -178,7 +178,7 @@ export class FlatPageLayoutWidgetValidatorService {
     workspaceId,
     buildOptions,
     remainingFlatEntityMapsToValidate,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): Promise<FailedFlatEntityValidation<'pageLayoutWidget', 'create'>> {
     const isDashboardV2Enabled =

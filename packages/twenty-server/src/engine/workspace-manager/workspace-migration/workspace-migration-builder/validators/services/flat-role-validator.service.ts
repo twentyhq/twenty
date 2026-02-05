@@ -8,8 +8,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateRoleIsEditable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
@@ -22,7 +22,7 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -67,7 +67,7 @@ export class FlatRoleValidatorService {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
     buildOptions,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({

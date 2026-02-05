@@ -13,8 +13,8 @@ import {
   type FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 // View filter groups can have at most 2 levels of nesting (root and one child level)
 const VIEW_FILTER_GROUP_MAX_DEPTH = 2;
@@ -79,7 +79,7 @@ export class FlatViewFilterGroupValidatorService {
       flatViewMaps,
     },
     remainingFlatEntityMapsToValidate,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
   >): FailedFlatEntityValidation<'viewFilterGroup', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -160,7 +160,7 @@ export class FlatViewFilterGroupValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
   >): FailedFlatEntityValidation<'viewFilterGroup', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({

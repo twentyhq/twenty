@@ -13,8 +13,8 @@ import {
   type FlatEntityValidationError,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 const NAVIGATION_MENU_ITEM_MAX_DEPTH = 2;
 
@@ -153,7 +153,7 @@ export class FlatNavigationMenuItemValidatorService {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
     },
     remainingFlatEntityMapsToValidate,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
   >): FailedFlatEntityValidation<'navigationMenuItem', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -231,7 +231,7 @@ export class FlatNavigationMenuItemValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.navigationMenuItem
   >): FailedFlatEntityValidation<'navigationMenuItem', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({

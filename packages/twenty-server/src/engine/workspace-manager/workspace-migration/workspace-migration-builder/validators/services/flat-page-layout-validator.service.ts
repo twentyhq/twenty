@@ -7,8 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 const PAGE_LAYOUT_EXCEPTION_CODE = {
   PAGE_LAYOUT_NOT_FOUND: 'PAGE_LAYOUT_NOT_FOUND',
@@ -18,7 +18,7 @@ const PAGE_LAYOUT_EXCEPTION_CODE = {
 export class FlatPageLayoutValidatorService {
   public validateFlatPageLayoutCreation({
     flatEntityToValidate: flatPageLayout,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayout
   >): FailedFlatEntityValidation<'pageLayout', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -39,7 +39,7 @@ export class FlatPageLayoutValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayout
   >): FailedFlatEntityValidation<'pageLayout', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({

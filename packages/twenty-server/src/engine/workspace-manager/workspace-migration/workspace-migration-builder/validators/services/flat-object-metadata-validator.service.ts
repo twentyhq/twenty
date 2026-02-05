@@ -11,8 +11,8 @@ import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
@@ -103,7 +103,7 @@ export class FlatObjectMetadataValidatorService {
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
     },
     buildOptions,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<'objectMetadata', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -163,7 +163,7 @@ export class FlatObjectMetadataValidatorService {
       flatFieldMetadataMaps,
     },
     buildOptions,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.objectMetadata
   >): FailedFlatEntityValidation<'objectMetadata', 'create'> {
     const objectValidationResult = getEmptyFlatEntityValidationError({

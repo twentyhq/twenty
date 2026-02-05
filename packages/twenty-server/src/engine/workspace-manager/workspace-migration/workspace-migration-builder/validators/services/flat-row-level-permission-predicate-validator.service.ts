@@ -10,15 +10,15 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateValidatorService {
   validateFlatRowLevelPermissionPredicateCreation({
     flatEntityToValidate: flatPredicateToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
   >): FailedFlatEntityValidation<'rowLevelPermissionPredicate', 'create'> {
     const {
@@ -121,7 +121,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
   validateFlatRowLevelPermissionPredicateDeletion({
     flatEntityToValidate: flatPredicateToDelete,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicate
   >): FailedFlatEntityValidation<'rowLevelPermissionPredicate', 'delete'> {
     const { flatRowLevelPermissionPredicateMaps: optimisticFlatPredicateMaps } =

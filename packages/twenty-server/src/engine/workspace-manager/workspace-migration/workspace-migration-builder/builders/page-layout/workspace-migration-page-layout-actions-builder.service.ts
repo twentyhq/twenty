@@ -4,9 +4,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { FlatUpdatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatPageLayoutValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service';
 
 @Injectable()
@@ -20,9 +20,9 @@ export class WorkspaceMigrationPageLayoutActionsBuilderService extends Workspace
   }
 
   protected async validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
   ): Promise<
-    FlatEntityValidationReturnType<
+    UniversalFlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.pageLayout,
       'create'
     >
@@ -50,8 +50,8 @@ export class WorkspaceMigrationPageLayoutActionsBuilderService extends Workspace
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayout,
     'delete'
   > {
@@ -80,7 +80,7 @@ export class WorkspaceMigrationPageLayoutActionsBuilderService extends Workspace
   protected async validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.pageLayout>,
   ): Promise<
-    FlatEntityValidationReturnType<
+    UniversalFlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.pageLayout,
       'update'
     >

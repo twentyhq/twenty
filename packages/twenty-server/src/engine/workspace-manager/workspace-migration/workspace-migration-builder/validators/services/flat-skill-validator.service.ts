@@ -10,8 +10,8 @@ import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exce
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateSkillNameUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-name-uniqueness.util';
 import {
   validateSkillContentIsDefined,
@@ -26,7 +26,7 @@ export class FlatSkillValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatSkillMaps: optimisticFlatSkillMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.skill
   >): FailedFlatEntityValidation<'skill', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -63,7 +63,7 @@ export class FlatSkillValidatorService {
       flatSkillMaps: optimisticFlatSkillMaps,
     },
     buildOptions,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.skill
   >): FailedFlatEntityValidation<'skill', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({

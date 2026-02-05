@@ -9,14 +9,14 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatFrontComponentValidatorService {
   public validateFlatFrontComponentCreation({
     flatEntityToValidate: flatFrontComponent,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.frontComponent
   >): FailedFlatEntityValidation<'frontComponent', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
@@ -45,7 +45,7 @@ export class FlatFrontComponentValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.frontComponent
   >): FailedFlatEntityValidation<'frontComponent', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({

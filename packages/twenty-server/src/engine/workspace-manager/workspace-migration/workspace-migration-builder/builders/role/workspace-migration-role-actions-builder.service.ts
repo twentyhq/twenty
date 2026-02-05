@@ -4,9 +4,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { FlatUpdateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatRoleValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service';
 
 @Injectable()
@@ -20,8 +20,8 @@ export class WorkspaceMigrationRoleActionsBuilderService extends WorkspaceEntity
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'create'> {
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.role>,
+  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'create'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleCreation(args);
 
@@ -45,8 +45,8 @@ export class WorkspaceMigrationRoleActionsBuilderService extends WorkspaceEntity
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'delete'> {
+    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.role>,
+  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'delete'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleDeletion(args);
 
@@ -71,7 +71,7 @@ export class WorkspaceMigrationRoleActionsBuilderService extends WorkspaceEntity
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.role>,
-  ): FlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'update'> {
+  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.role, 'update'> {
     const validationResult =
       this.flatRoleValidatorService.validateFlatRoleUpdate(args);
 
