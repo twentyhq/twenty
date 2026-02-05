@@ -9,16 +9,23 @@ import {
 import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/create-command-menu-item.input';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 
 export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   createCommandMenuItemInput,
   workspaceId,
   flatApplication,
+  flatObjectMetadataMaps,
+  flatFrontComponentMaps,
 }: {
   createCommandMenuItemInput: CreateCommandMenuItemInput;
   workspaceId: string;
   flatApplication: FlatApplication;
-}): FlatCommandMenuItem => {
+} & Pick<
+  AllFlatEntityMaps,
+  'flatObjectMetadataMaps' | 'flatFrontComponentMaps'
+>): FlatCommandMenuItem => {
   const hasWorkflowVersionId = isDefined(
     createCommandMenuItemInput.workflowVersionId,
   );
@@ -36,11 +43,35 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const id = uuidv4();
   const now = new Date().toISOString();
 
+  let availabilityObjectMetadataUniversalIdentifier: string | null = null;
+
+  if (isDefined(createCommandMenuItemInput.availabilityObjectMetadataId)) {
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: createCommandMenuItemInput.availabilityObjectMetadataId,
+    });
+
+    availabilityObjectMetadataUniversalIdentifier =
+      flatObjectMetadata.universalIdentifier;
+  }
+
+  let frontComponentUniversalIdentifier: string | null = null;
+
+  if (isDefined(createCommandMenuItemInput.frontComponentId)) {
+    const flatFrontComponent = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFrontComponentMaps,
+      flatEntityId: createCommandMenuItemInput.frontComponentId,
+    });
+
+    frontComponentUniversalIdentifier = flatFrontComponent.universalIdentifier;
+  }
+
   return {
     id,
     universalIdentifier: id,
     workflowVersionId: createCommandMenuItemInput.workflowVersionId ?? null,
     frontComponentId: createCommandMenuItemInput.frontComponentId ?? null,
+    frontComponentUniversalIdentifier,
     label: createCommandMenuItemInput.label,
     icon: createCommandMenuItemInput.icon ?? null,
     isPinned: createCommandMenuItemInput.isPinned ?? false,
@@ -49,6 +80,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
       CommandMenuItemAvailabilityType.GLOBAL,
     availabilityObjectMetadataId:
       createCommandMenuItemInput.availabilityObjectMetadataId ?? null,
+    availabilityObjectMetadataUniversalIdentifier,
     workspaceId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

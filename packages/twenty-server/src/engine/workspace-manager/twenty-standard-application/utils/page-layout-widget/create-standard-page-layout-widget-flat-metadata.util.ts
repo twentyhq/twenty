@@ -54,7 +54,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   now,
 }: CreateStandardPageLayoutWidgetArgs & {
   objectMetadataUniversalIdentifier: string | null;
-}): Omit<FlatPageLayoutWidget, 'universalConfiguration'> => {
+}): FlatPageLayoutWidget => {
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
   const layout = STANDARD_PAGE_LAYOUTS[
     layoutName as keyof typeof STANDARD_PAGE_LAYOUTS

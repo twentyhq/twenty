@@ -42,6 +42,8 @@ export const fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate = ({
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     viewFilterIds: [],
+    viewFilterUniversalIdentifiers: [],
     childViewFilterGroupIds: [],
+    childViewFilterGroupUniversalIdentifiers: [],
   };
 };

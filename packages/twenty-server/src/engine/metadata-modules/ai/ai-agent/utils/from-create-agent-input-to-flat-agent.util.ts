@@ -9,18 +9,22 @@ import { v4 } from 'uuid';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 
 export type FromCreateAgentInputToFlatAgentArgs = {
   createAgentInput: CreateAgentInput;
   workspaceId: string;
   flatApplication: FlatApplication;
+  flatRoleMaps: AllFlatEntityMaps['flatRoleMaps'];
 };
 
 export const fromCreateAgentInputToFlatAgent = ({
   createAgentInput: rawCreateAgentInput,
   workspaceId,
   flatApplication,
+  flatRoleMaps,
 }: FromCreateAgentInputToFlatAgentArgs): {
   flatAgentToCreate: FlatAgent;
   flatRoleTargetToCreate: FlatRoleTarget | null;
@@ -57,20 +61,29 @@ export const fromCreateAgentInputToFlatAgent = ({
     deletedAt: null,
   };
 
-  const flatRoleTargetToCreate: FlatRoleTarget | null = isDefined(roleId)
-    ? {
-        id: v4(),
-        roleId,
-        userWorkspaceId: null,
-        agentId,
-        apiKeyId: null,
-        createdAt,
-        updatedAt: createdAt,
-        universalIdentifier: v4(),
-        workspaceId,
-        applicationId: flatApplication.id,
-      }
-    : null;
+  let flatRoleTargetToCreate: FlatRoleTarget | null = null;
+
+  if (isDefined(roleId)) {
+    const flatRole = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatRoleMaps,
+      flatEntityId: roleId,
+    });
+
+    flatRoleTargetToCreate = {
+      id: v4(),
+      roleId,
+      roleUniversalIdentifier: flatRole.universalIdentifier,
+      userWorkspaceId: null,
+      agentId,
+      apiKeyId: null,
+      createdAt,
+      updatedAt: createdAt,
+      universalIdentifier: v4(),
+      workspaceId,
+      applicationId: flatApplication.id,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    };
+  }
 
   return {
     flatAgentToCreate,

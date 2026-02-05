@@ -52,10 +52,13 @@ export const fromCreateRoleInputToFlatRoleToCreate = ({
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     roleTargetIds: [],
+    roleTargetUniversalIdentifiers: [],
     objectPermissionIds: [],
     permissionFlagIds: [],
     fieldPermissionIds: [],
     rowLevelPermissionPredicateIds: [],
+    rowLevelPermissionPredicateUniversalIdentifiers: [],
     rowLevelPermissionPredicateGroupIds: [],
+    rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
   };
 };

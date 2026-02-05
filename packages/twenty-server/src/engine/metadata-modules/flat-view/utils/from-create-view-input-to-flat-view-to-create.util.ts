@@ -67,9 +67,13 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     viewFieldIds: [],
+    viewFieldUniversalIdentifiers: [],
     viewFilterIds: [],
+    viewFilterUniversalIdentifiers: [],
     viewGroupIds: [],
+    viewGroupUniversalIdentifiers: [],
     viewFilterGroupIds: [],
+    viewFilterGroupUniversalIdentifiers: [],
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
