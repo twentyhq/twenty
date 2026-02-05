@@ -72,13 +72,13 @@
     "lodash.camelcase": "^4.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "twenty-shared": "workspace:*",
+    "twenty-ui": "workspace:*",
     "typescript": "^5.9.2",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
     "vite-tsconfig-paths": "^4.2.1",
-    "zod": "^4.1.11",
-    "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@prettier/sync": "^0.5.2",
