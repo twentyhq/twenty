@@ -1,6 +1,6 @@
-import { type FrontComponentConfig } from '@/sdk/front-components/front-component-config';
-import type { DefineEntity } from '@/sdk/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk';
+import type { DefineEntity } from '@/sdk/common/types/define-entity.type';
+import { type FrontComponentConfig } from '@/sdk/front-component-config';
 
 export const defineFrontComponent: DefineEntity<FrontComponentConfig> = (
   config,

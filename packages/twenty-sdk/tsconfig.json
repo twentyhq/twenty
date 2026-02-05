@@ -25,7 +25,6 @@
     "**/__mocks__/**/*",
     "**/__tests__/**/*",
     "vite.config.ts",
-    "scripts/**/*.ts",
     "jest.config.mjs"
   ],
   "exclude": [

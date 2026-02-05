@@ -5,11 +5,12 @@ import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 
-const moduleEntries = Object.keys((packageJson as any).exports || {})
-  .filter((key) => key !== '.' && !key.startsWith('./src/'))
-  .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
-
-const entries = ['src/index.ts', 'src/cli/cli.ts', ...moduleEntries];
+const entries = [
+  'src/index.ts',
+  'src/cli/cli.ts',
+  'src/ui/index.ts',
+  'src/front-component/index.ts',
+];
 
 export const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
 
@@ -20,18 +21,15 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
     );
   }
 
-  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-  if (splitFaceModuleId === undefined) {
-    throw new Error(
-      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
-  if (moduleDirectory === 'src') {
+  // Find which entry this chunk corresponds to
+  const entry = entries.find((e) => chunk.facadeModuleId?.endsWith(e));
+  if (!entry || entry === 'src/index.ts' || entry === 'src/cli/cli.ts') {
     return `${chunk.name}.${extension}`;
   }
-  return `${moduleDirectory}/index.${extension}`;
+
+  // Remove 'src/' prefix and '/index.ts' suffix to get the module path
+  const modulePath = entry.replace('src/', '').replace('/index.ts', '');
+  return `${modulePath}/index.${extension}`;
 };
 
 const copyTwentyPackagesInVendor = (packages: string[]) => {

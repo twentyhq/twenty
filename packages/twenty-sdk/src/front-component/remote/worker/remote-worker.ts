@@ -12,14 +12,18 @@ import {
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
+import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
+import { frontComponentExecutionContextStore } from '../context/FrontComponentExecutionContextStore';
 import * as RemoteComponents from '../generated/remote-components';
 
 (globalThis as Record<string, unknown>).React = React;
 (globalThis as Record<string, unknown>).RemoteComponents = RemoteComponents;
 (globalThis as Record<string, unknown>).jsx = jsx;
 (globalThis as Record<string, unknown>).jsxs = jsxs;
+(globalThis as Record<string, unknown>).frontComponentExecutionContextStore =
+  frontComponentExecutionContextStore;
 
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
@@ -37,4 +41,10 @@ const render: WorkerExports['render'] = async (
   reactRoot.render(componentModule.default);
 };
 
-ThreadWebWorker.self.export({ render });
+const updateContext: WorkerExports['updateContext'] = async (
+  context: FrontComponentExecutionContext,
+) => {
+  frontComponentExecutionContextStore.setContext(context);
+};
+
+ThreadWebWorker.self.export({ render, updateContext });
