@@ -8,7 +8,7 @@ import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-mo
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
 export const validateFilesFlatFieldMetadata = ({
-  flatEntityToValidate,
+  universalFlatEntityToValidate: flatEntityToValidate,
 }: FlatFieldMetadataTypeValidationArgs<FieldMetadataType.FILES>): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
@@ -21,9 +21,9 @@ export const validateFilesFlatFieldMetadata = ({
   }
 
   if (
-    !isDefined(flatEntityToValidate?.settings?.maxNumberOfValues) ||
-    flatEntityToValidate.settings.maxNumberOfValues < 1 ||
-    flatEntityToValidate.settings.maxNumberOfValues >
+    !isDefined(flatEntityToValidate?.universalSettings?.maxNumberOfValues) ||
+    flatEntityToValidate.universalSettings.maxNumberOfValues < 1 ||
+    flatEntityToValidate.universalSettings.maxNumberOfValues >
       FILES_FIELD_MAX_NUMBER_OF_VALUES
   ) {
     errors.push({

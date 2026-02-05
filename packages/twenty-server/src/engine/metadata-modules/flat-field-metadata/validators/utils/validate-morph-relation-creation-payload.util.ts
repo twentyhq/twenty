@@ -4,29 +4,29 @@ import { type RelationCreationPayload } from 'twenty-shared/types';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
   type FailedFieldInputTranspilation,
   type FieldInputTranspilationResult,
   type SuccessfulFieldInputTranspilation,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { validateRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 type RelationCreationPayloadAndObjectMetadata = {
   relationCreationPayload: RelationCreationPayload;
-  targetFlatObjectMetadata: FlatObjectMetadata;
+  targetUniversalFlatObjectMetadata: UniversalFlatObjectMetadata;
 };
 
 type ValidateMorphRelationCreationPayloadUtilArgs = {
   morphRelationCreationPayload: RelationCreationPayload[];
-  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  objectMetadataId: string;
+  existingUniversalFlatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
+  objectMetadataUniversalIdentifier: string;
 };
 export const validateMorphRelationCreationPayload = async ({
-  existingFlatObjectMetadataMaps,
+  existingUniversalFlatObjectMetadataMaps,
   morphRelationCreationPayload,
-  objectMetadataId,
+  objectMetadataUniversalIdentifier,
 }: ValidateMorphRelationCreationPayloadUtilArgs): Promise<
   FieldInputTranspilationResult<RelationCreationPayloadAndObjectMetadata[]>
 > => {
@@ -72,7 +72,7 @@ export const validateMorphRelationCreationPayload = async ({
     ...new Set(allRelatedObjectMetadataIds),
   ];
 
-  if (allRelatedObjectMetadataIdsSet.includes(objectMetadataId)) {
+  if (allRelatedObjectMetadataIdsSet.includes(objectMetadataUniversalIdentifier)) {
     return {
       status: 'fail',
       errors: [
@@ -112,7 +112,7 @@ export const validateMorphRelationCreationPayload = async ({
 
   for (const rawRelationCreationPayload of morphRelationCreationPayload) {
     const relationValidationResult = await validateRelationCreationPayload({
-      existingFlatObjectMetadataMaps,
+      existingUniversalFlatObjectMetadataMaps,
       relationCreationPayload: rawRelationCreationPayload,
     });
 
@@ -121,14 +121,14 @@ export const validateMorphRelationCreationPayload = async ({
       continue;
     }
 
-    const { relationCreationPayload, targetFlatObjectMetadata } =
+    const { relationCreationPayload, targetUniversalFlatObjectMetadata } =
       relationValidationResult.result;
 
     relationCreationPayloadReport.success.push({
       status: 'success',
       result: {
         relationCreationPayload,
-        targetFlatObjectMetadata,
+        targetUniversalFlatObjectMetadata,
       },
     });
   }
