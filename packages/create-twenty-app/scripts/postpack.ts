@@ -4,7 +4,7 @@ import { BACKUP_PATH, PKG_PATH } from './constants/dependency-contants';
 const main = async () => {
   if (await fs.pathExists(BACKUP_PATH)) {
     const original = await fs.readJson(BACKUP_PATH);
-    await fs.rm(PKG_PATH);
+    await fs.remove(PKG_PATH);
     await fs.writeJson(PKG_PATH, original, { spaces: 2 });
     await fs.remove(BACKUP_PATH);
   }
