@@ -225,10 +225,13 @@ export const createGetDashboardTool = (
         },
       };
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       return {
         success: false,
-        message: `Failed to get dashboard: ${error.message}`,
-        error: error.message,
+        message: `Failed to get dashboard: ${errorMessage}`,
+        error: errorMessage,
       };
     }
   },

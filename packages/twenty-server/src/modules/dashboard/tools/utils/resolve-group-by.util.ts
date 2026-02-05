@@ -200,20 +200,36 @@ export const resolveGroupBy = ({
     let targetObjectId = field.relationTargetObjectMetadataId;
 
     if (field.type === FieldMetadataType.MORPH_RELATION) {
-      const morphTargets = new Set<string>();
-
-      if (isDefined(field.morphId)) {
-        allFields.forEach((flatField) => {
-          if (
-            flatField.morphId === field.morphId &&
-            isDefined(flatField.relationTargetObjectMetadataId)
-          ) {
-            morphTargets.add(flatField.relationTargetObjectMetadataId);
-          }
-        });
+      if (!isDefined(field.morphId)) {
+        return {
+          error: {
+            success: false,
+            message: `Morph relation field "${field.name}" is missing morphId configuration.`,
+          },
+        };
       }
 
+      const morphTargets = new Set<string>();
+
+      allFields.forEach((flatField) => {
+        if (
+          flatField.morphId === field.morphId &&
+          isDefined(flatField.relationTargetObjectMetadataId)
+        ) {
+          morphTargets.add(flatField.relationTargetObjectMetadataId);
+        }
+      });
+
       const morphTargetIds = [...morphTargets];
+
+      if (morphTargetIds.length === 0) {
+        return {
+          error: {
+            success: false,
+            message: `Morph relation field "${field.name}" has no active target objects.`,
+          },
+        };
+      }
 
       if (morphTargetIds.length > 1) {
         const candidates = morphTargetIds

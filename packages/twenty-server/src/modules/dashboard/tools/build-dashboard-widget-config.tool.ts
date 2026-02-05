@@ -379,10 +379,13 @@ export const createBuildDashboardWidgetConfigTool = (
         },
       };
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       return {
         success: false,
-        message: `Failed to build widget configuration: ${error.message}`,
-        error: error.message,
+        message: `Failed to build widget configuration: ${errorMessage}`,
+        error: errorMessage,
       };
     }
   },

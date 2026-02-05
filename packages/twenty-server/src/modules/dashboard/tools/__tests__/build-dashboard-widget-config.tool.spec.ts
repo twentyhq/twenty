@@ -4,6 +4,7 @@ import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { createBuildDashboardWidgetConfigTool } from 'src/modules/dashboard/tools/build-dashboard-widget-config.tool';
 import { widgetConfigurationSchema } from 'src/modules/dashboard/tools/schemas/widget.schema';
+import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 
 const mockWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
@@ -15,6 +16,12 @@ const OWNER_FIELD_ID = '20202020-2222-4148-8a79-b3144f743694';
 const PERSON_OBJECT_ID = '20202020-3333-4148-8a79-b3144f743694';
 const PERSON_NAME_FIELD_ID = '20202020-4444-4148-8a79-b3144f743694';
 const ACCOUNT_RELATION_FIELD_ID = '20202020-5555-4148-8a79-b3144f743694';
+const MORPH_FIELD_ID = '20202020-6666-4148-8a79-b3144f743694';
+const TASK_OBJECT_ID = '20202020-7777-4148-8a79-b3144f743694';
+const NOTE_OBJECT_ID = '20202020-8888-4148-8a79-b3144f743694';
+const TASK_TITLE_FIELD_ID = '20202020-9999-4148-8a79-b3144f743694';
+const NOTE_TITLE_FIELD_ID = '20202020-aaaa-4148-8a79-b3144f743694';
+const MORPH_ID = 'morph-target-001';
 
 type ObjectMapEntry = {
   id: string;
@@ -186,9 +193,13 @@ const buildTool = ({
     },
   };
 
-  return createBuildDashboardWidgetConfigTool(deps as any, {
-    workspaceId: mockWorkspaceId,
-  });
+  return createBuildDashboardWidgetConfigTool(
+    deps as unknown as Pick<
+      DashboardToolDependencies,
+      'flatEntityMapsCacheService'
+    >,
+    { workspaceId: mockWorkspaceId },
+  );
 };
 
 describe('build_dashboard_widget_config tool', () => {
@@ -381,5 +392,232 @@ describe('build_dashboard_widget_config tool', () => {
 
     assertSuccess(result);
     expect(result.warnings?.length).toBeGreaterThan(0);
+  });
+
+  describe('MORPH_RELATION handling', () => {
+    const morphFieldMaps: FlatEntityMaps<FieldMapEntry> = {
+      byUniversalIdentifier: {
+        ...baseFieldMaps.byUniversalIdentifier,
+        'field-morph': {
+          id: MORPH_FIELD_ID,
+          name: 'target',
+          label: 'Target',
+          objectMetadataId: COMPANY_OBJECT_ID,
+          isActive: true,
+          type: FieldMetadataType.MORPH_RELATION,
+          morphId: MORPH_ID,
+          relationTargetObjectMetadataId: TASK_OBJECT_ID,
+        },
+        'field-morph-note': {
+          id: '20202020-bbbb-4148-8a79-b3144f743694',
+          name: 'targetNote',
+          label: 'Target Note',
+          objectMetadataId: COMPANY_OBJECT_ID,
+          isActive: true,
+          type: FieldMetadataType.MORPH_RELATION,
+          morphId: MORPH_ID,
+          relationTargetObjectMetadataId: NOTE_OBJECT_ID,
+        },
+        'field-task-title': {
+          id: TASK_TITLE_FIELD_ID,
+          name: 'title',
+          label: 'Title',
+          objectMetadataId: TASK_OBJECT_ID,
+          isActive: true,
+          type: FieldMetadataType.TEXT,
+        },
+        'field-note-title': {
+          id: NOTE_TITLE_FIELD_ID,
+          name: 'title',
+          label: 'Title',
+          objectMetadataId: NOTE_OBJECT_ID,
+          isActive: true,
+          type: FieldMetadataType.TEXT,
+        },
+      },
+      universalIdentifierById: {
+        ...baseFieldMaps.universalIdentifierById,
+        [MORPH_FIELD_ID]: 'field-morph',
+        '20202020-bbbb-4148-8a79-b3144f743694': 'field-morph-note',
+        [TASK_TITLE_FIELD_ID]: 'field-task-title',
+        [NOTE_TITLE_FIELD_ID]: 'field-note-title',
+      },
+      universalIdentifiersByApplicationId: {},
+    };
+
+    const morphObjectMaps: FlatEntityMaps<ObjectMapEntry> = {
+      byUniversalIdentifier: {
+        ...baseObjectMaps.byUniversalIdentifier,
+        'object-task': {
+          id: TASK_OBJECT_ID,
+          nameSingular: 'task',
+          namePlural: 'tasks',
+          labelSingular: 'Task',
+          labelPlural: 'Tasks',
+          isActive: true,
+        },
+        'object-note': {
+          id: NOTE_OBJECT_ID,
+          nameSingular: 'note',
+          namePlural: 'notes',
+          labelSingular: 'Note',
+          labelPlural: 'Notes',
+          isActive: true,
+        },
+      },
+      universalIdentifierById: {
+        ...baseObjectMaps.universalIdentifierById,
+        [TASK_OBJECT_ID]: 'object-task',
+        [NOTE_OBJECT_ID]: 'object-note',
+      },
+      universalIdentifiersByApplicationId: {},
+    };
+
+    it('returns candidates when MORPH_RELATION has multiple targets', async () => {
+      const tool = buildTool({
+        objectMaps: morphObjectMaps,
+        fieldMaps: morphFieldMaps,
+      });
+
+      const result = await tool.execute({
+        object: 'company',
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateField: 'Amount',
+        groupByField: 'target.title',
+      });
+
+      assertFailure(result);
+      expect(result.message).toMatch('Multiple targets');
+      expect(result.candidates?.objects).toHaveLength(2);
+    });
+
+    it('resolves MORPH_RELATION with single target', async () => {
+      const singleTargetFieldMaps: FlatEntityMaps<FieldMapEntry> = {
+        byUniversalIdentifier: {
+          ...baseFieldMaps.byUniversalIdentifier,
+          'field-morph-single': {
+            id: MORPH_FIELD_ID,
+            name: 'target',
+            label: 'Target',
+            objectMetadataId: COMPANY_OBJECT_ID,
+            isActive: true,
+            type: FieldMetadataType.MORPH_RELATION,
+            morphId: 'single-morph-id',
+            relationTargetObjectMetadataId: TASK_OBJECT_ID,
+          },
+          'field-task-title': {
+            id: TASK_TITLE_FIELD_ID,
+            name: 'title',
+            label: 'Title',
+            objectMetadataId: TASK_OBJECT_ID,
+            isActive: true,
+            type: FieldMetadataType.TEXT,
+          },
+        },
+        universalIdentifierById: {
+          ...baseFieldMaps.universalIdentifierById,
+          [MORPH_FIELD_ID]: 'field-morph-single',
+          [TASK_TITLE_FIELD_ID]: 'field-task-title',
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+      const tool = buildTool({
+        objectMaps: morphObjectMaps,
+        fieldMaps: singleTargetFieldMaps,
+      });
+
+      const result = await tool.execute({
+        object: 'company',
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateField: 'Amount',
+        groupByField: 'target.title',
+      });
+
+      assertSuccess(result);
+      const payload = result.result as BuiltWidgetResult;
+
+      expect(payload.configuration?.primaryAxisGroupBySubFieldName).toBe(
+        'title',
+      );
+    });
+
+    it('returns error when MORPH_RELATION has no targets', async () => {
+      const noTargetFieldMaps: FlatEntityMaps<FieldMapEntry> = {
+        byUniversalIdentifier: {
+          ...baseFieldMaps.byUniversalIdentifier,
+          'field-morph-no-target': {
+            id: MORPH_FIELD_ID,
+            name: 'target',
+            label: 'Target',
+            objectMetadataId: COMPANY_OBJECT_ID,
+            isActive: true,
+            type: FieldMetadataType.MORPH_RELATION,
+            morphId: 'orphan-morph-id',
+            relationTargetObjectMetadataId: null,
+          },
+        },
+        universalIdentifierById: {
+          ...baseFieldMaps.universalIdentifierById,
+          [MORPH_FIELD_ID]: 'field-morph-no-target',
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+      const tool = buildTool({
+        fieldMaps: noTargetFieldMaps,
+      });
+
+      const result = await tool.execute({
+        object: 'company',
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateField: 'Amount',
+        groupByField: 'target.title',
+      });
+
+      assertFailure(result);
+      expect(result.message).toMatch('no active target');
+    });
+
+    it('returns error when MORPH_RELATION has no morphId', async () => {
+      const noMorphIdFieldMaps: FlatEntityMaps<FieldMapEntry> = {
+        byUniversalIdentifier: {
+          ...baseFieldMaps.byUniversalIdentifier,
+          'field-morph-no-id': {
+            id: MORPH_FIELD_ID,
+            name: 'target',
+            label: 'Target',
+            objectMetadataId: COMPANY_OBJECT_ID,
+            isActive: true,
+            type: FieldMetadataType.MORPH_RELATION,
+            morphId: null,
+            relationTargetObjectMetadataId: TASK_OBJECT_ID,
+          },
+        },
+        universalIdentifierById: {
+          ...baseFieldMaps.universalIdentifierById,
+          [MORPH_FIELD_ID]: 'field-morph-no-id',
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+      const tool = buildTool({
+        fieldMaps: noMorphIdFieldMaps,
+      });
+
+      const result = await tool.execute({
+        object: 'company',
+        configurationType: WidgetConfigurationType.BAR_CHART,
+        aggregateOperation: AggregateOperations.COUNT,
+        aggregateField: 'Amount',
+        groupByField: 'target.title',
+      });
+
+      assertFailure(result);
+      expect(result.message).toMatch('missing morphId');
+    });
   });
 });

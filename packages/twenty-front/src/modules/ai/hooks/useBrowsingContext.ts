@@ -1,3 +1,7 @@
+import { t } from '@lingui/core/macro';
+import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -8,13 +12,10 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { t } from '@lingui/core/macro';
-import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { coreViewFromViewIdFamilySelector } from '@/views/states/selectors/coreViewFromViewIdFamilySelector';
 
 export const useGetBrowsingContext = () => {
   const getBrowsingContext = useRecoilCallback(
@@ -75,25 +76,33 @@ export const useGetBrowsingContext = () => {
           if (
             objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard
           ) {
-            const pageLayoutId = snapshot
-              .getLoadable(
-                recordStoreFamilySelector<string | null | undefined>({
-                  recordId: targetedRecordsRule.selectedRecordIds[0],
-                  fieldName: 'pageLayoutId',
-                }),
-              )
-              .getValue();
+            const pageLayoutIdLoadable = snapshot.getLoadable(
+              recordStoreFamilySelector<string | null | undefined>({
+                recordId: targetedRecordsRule.selectedRecordIds[0],
+                fieldName: 'pageLayoutId',
+              }),
+            );
+
+            if (pageLayoutIdLoadable.state === 'hasError') {
+              return recordContext;
+            }
+
+            const pageLayoutId = pageLayoutIdLoadable.valueMaybe();
 
             if (isDefined(pageLayoutId)) {
               const tabListInstanceId =
                 getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-              const activeTabId = snapshot
-                .getLoadable(
-                  activeTabIdComponentState.atomFamily({
-                    instanceId: tabListInstanceId,
-                  }),
-                )
-                .getValue();
+
+              const activeTabIdLoadable = snapshot.getLoadable(
+                activeTabIdComponentState.atomFamily({
+                  instanceId: tabListInstanceId,
+                }),
+              );
+
+              const activeTabId =
+                activeTabIdLoadable.state === 'hasError'
+                  ? undefined
+                  : activeTabIdLoadable.valueMaybe();
 
               return {
                 ...recordContext,

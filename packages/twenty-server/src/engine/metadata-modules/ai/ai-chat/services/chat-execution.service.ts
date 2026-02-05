@@ -246,6 +246,10 @@ export class ChatExecutionService {
       return this.buildListViewContext(browsingContext);
     }
 
+    this.logger.warn(
+      `Unhandled browsing context type: ${(browsingContext as { type: string }).type}`,
+    );
+
     return '';
   }
 
