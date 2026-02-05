@@ -152,7 +152,6 @@ export class MigrateNoteTargetToMorphRelationsCommand extends ActiveOrSuspendedW
 
       const fieldMigrations = noteTargetRelationFields.map((field) => {
         const newFieldName = `target${capitalize(field.name)}`;
-        // All fields in the morph relation share the same generic label
         const newFieldLabel = 'Target';
         const relationSettings: RelationFieldMetadataSettings = field.settings;
         const oldJoinColumnName =
