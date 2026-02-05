@@ -16,7 +16,10 @@ export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
     createPageLayoutWidgetInput: CreatePageLayoutWidgetInput;
     workspaceId: string;
     flatApplication: FlatApplication;
-  } & Pick<AllFlatEntityMaps, 'flatPageLayoutTabMaps' | 'flatObjectMetadataMaps'>;
+  } & Pick<
+    AllFlatEntityMaps,
+    'flatPageLayoutTabMaps' | 'flatObjectMetadataMaps'
+  >;
 
 export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
   createPageLayoutWidgetInput: rawCreatePageLayoutWidgetInput,

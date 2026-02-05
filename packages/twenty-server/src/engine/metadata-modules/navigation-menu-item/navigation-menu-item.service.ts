@@ -152,17 +152,16 @@ export class NavigationMenuItemService {
       flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
-    } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatNavigationMenuItemMaps',
-            'flatObjectMetadataMaps',
-            'flatViewMaps',
-          ],
-        },
-      );
+    } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatNavigationMenuItemMaps',
+          'flatObjectMetadataMaps',
+          'flatViewMaps',
+        ],
+      },
+    );
 
     const normalizedInput: CreateNavigationMenuItemInput = {
       ...input,
