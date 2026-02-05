@@ -30,13 +30,11 @@ import {
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { NODE_LAYER_SUBFOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/lambda-layer.constant';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
-import {
-  LambdaBuildDirectoryManager,
-  NODE_LAYER_SUBFOLDER,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -193,9 +191,9 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       return listLayerResult.LayerVersions[0].LayerVersionArn;
     }
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const buildTemporaryDirectoryManager = new LambdaBuildDirectoryManager();
     const { sourceTemporaryDir, lambdaZipPath } =
-      await lambdaBuildDirectoryManager.init();
+      await buildTemporaryDirectoryManager.init();
 
     const nodeDependenciesFolder = join(
       sourceTemporaryDir,
@@ -226,7 +224,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     const result = await (await this.getLambdaClient()).send(command);
 
-    await lambdaBuildDirectoryManager.clean();
+    await buildTemporaryDirectoryManager.clean();
 
     if (!isDefined(result.LayerVersionArn)) {
       throw new Error('new layer version arn if undefined');
@@ -308,10 +306,10 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       applicationUniversalIdentifier,
     });
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const buildTemporaryDirectoryManager = new LambdaBuildDirectoryManager();
 
     const { sourceTemporaryDir, lambdaZipPath } =
-      await lambdaBuildDirectoryManager.init();
+      await buildTemporaryDirectoryManager.init();
 
     await copyExecutor(sourceTemporaryDir);
 
@@ -333,7 +331,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     await (await this.getLambdaClient()).send(command);
 
-    await lambdaBuildDirectoryManager.clean();
+    await buildTemporaryDirectoryManager.clean();
   }
 
   private extractLogs(logString: string): string {

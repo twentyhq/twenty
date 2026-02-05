@@ -33,6 +33,7 @@ export type CurrentWorkspace = Pick<
   | 'metadataVersion'
   | 'isTwoFactorAuthenticationEnforced'
   | 'trashRetentionDays'
+  | 'eventLogRetentionDays'
   | 'fastModel'
   | 'smartModel'
   | 'editableProfileFields'

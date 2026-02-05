@@ -2,15 +2,11 @@ import gql from 'graphql-tag';
 import request from 'supertest';
 import { makeGraphqlAPIRequestWithFileUpload } from 'test/integration/graphql/utils/make-graphql-api-request-with-file-upload.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const uploadWorkspaceFieldFileMutation = gql`
   mutation UploadFilesFieldFile($file: Upload!) {
@@ -104,14 +100,6 @@ describe('files-field.controller - GET /files-field/:id', () => {
   beforeAll(async () => {
     jest.useRealTimers();
 
-    await makeGraphqlAPIRequest(
-      updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-        true,
-      ),
-    );
-
     const {
       data: {
         createOneObject: { id: objectMetadataId },
@@ -167,14 +155,6 @@ describe('files-field.controller - GET /files-field/:id', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataId },
     });
-
-    await makeGraphqlAPIRequest(
-      updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-        false,
-      ),
-    );
   });
 
   it('should download file successfully with valid url', async () => {

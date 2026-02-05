@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
+import { dirname } from 'node:path';
 
 import { FileFolder } from 'twenty-shared/types';
 
@@ -12,15 +13,12 @@ import {
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import {
-  getLogicFunctionBaseFolderPath,
-  getRelativePathFromBase,
-} from 'src/engine/core-modules/logic-function/logic-function-build/utils/get-logic-function-base-folder-path.util';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { getRelativePathFromBase } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-handler-path.util';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -122,9 +120,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     try {
       const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
 
-      const baseFolderPath = getLogicFunctionBaseFolderPath(
-        flatLogicFunction.builtHandlerPath,
-      );
+      const baseFolderPath = dirname(flatLogicFunction.builtHandlerPath);
 
       await this.fileStorageService.downloadFolder_v2({
         workspaceId: flatLogicFunction.workspaceId,

@@ -3,12 +3,7 @@ import { expectGqlCreateInputValidationError } from 'test/integration/graphql/su
 import { expectRestCreateInputValidationError } from 'test/integration/graphql/suites/inputs-validation/create-validation/utils/expect-rest-create-input-validation-error.util';
 import { destroyManyObjectsMetadata } from 'test/integration/graphql/suites/inputs-validation/utils/destroy-many-objects-metadata';
 import { setupTestObjectsWithAllFieldTypes } from 'test/integration/graphql/suites/inputs-validation/utils/setup-test-objects-with-all-field-types.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const FIELD_METADATA_TYPE = FieldMetadataType.FILES;
 
@@ -23,14 +18,6 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
   let targetObjectMetadata2Id: string;
 
   beforeAll(async () => {
-    await makeGraphqlAPIRequest(
-      updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-        true,
-      ),
-    );
-
     const setupTest = await setupTestObjectsWithAllFieldTypes(true);
 
     objectMetadataId = setupTest.objectMetadataId;
@@ -46,14 +33,6 @@ describe(`Create input validation - ${FIELD_METADATA_TYPE}`, () => {
       targetObjectMetadata1Id,
       targetObjectMetadata2Id,
     ]);
-
-    await makeGraphqlAPIRequest(
-      updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-        false,
-      ),
-    );
   });
 
   describe('Gql create input - failure', () => {

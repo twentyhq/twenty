@@ -15,12 +15,10 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -30,7 +28,7 @@ export class FlatFieldMetadataValidatorService {
 
   validateFlatFieldMetadataUpdate({
     flatEntityId,
-    flatEntityUpdates: updates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps,
@@ -69,7 +67,7 @@ export class FlatFieldMetadataValidatorService {
 
     const flatFieldMetadataToValidate = {
       ...existingFlatFieldMetadataToUpdate,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({ updates }),
+      ...flatEntityUpdate,
     };
 
     validationResult.flatEntityMinimalInformation = {
@@ -103,12 +101,7 @@ export class FlatFieldMetadataValidatorService {
     } else if (
       flatObjectMetadata.labelIdentifierFieldMetadataId ===
         flatFieldMetadataToValidate.id &&
-      isDefined(
-        findFlatEntityPropertyUpdate({
-          flatEntityUpdates: updates,
-          property: 'isActive',
-        }),
-      ) &&
+      isDefined(flatEntityUpdate.isActive) &&
       flatFieldMetadataToValidate.isActive === false
     ) {
       validationResult.errors.push({
@@ -120,13 +113,12 @@ export class FlatFieldMetadataValidatorService {
 
     // Should be moved in relation field validator
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToValidate)) {
-      const relationNonEditableUpdatedProperties = updates.flatMap(
-        ({ property }) =>
+      const updatedProperties = Object.keys(flatEntityUpdate);
+      const relationNonEditableUpdatedProperties = updatedProperties.filter(
+        (property) =>
           !FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE.includes(
             property as FlatFieldMetadataRelationPropertiesToCompare,
-          )
-            ? property
-            : [],
+          ),
       );
 
       if (relationNonEditableUpdatedProperties.length > 0) {
@@ -139,7 +131,7 @@ export class FlatFieldMetadataValidatorService {
     }
     ///
 
-    if (updates.some((update) => update.property === 'name')) {
+    if (isDefined(flatEntityUpdate.name)) {
       validationResult.errors.push(
         ...validateFlatFieldMetadataName({
           name: flatFieldMetadataToValidate.name,
@@ -182,7 +174,7 @@ export class FlatFieldMetadataValidatorService {
     const fieldMetadataTypeValidationErrors =
       this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
-          updates,
+          update: flatEntityUpdate,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
             flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
             flatObjectMetadataMaps,

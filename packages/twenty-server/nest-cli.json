@@ -7,7 +7,8 @@
       "**/node_modules/**",
       "**/dist/**",
       "**/.git/**",
-      "**/.nx/**"
+      "**/.nx/**",
+      "**/.local-storage/**"
     ]
   },
   "compilerOptions": {
@@ -16,7 +17,11 @@
     "watchAssets": true,
     "assets": [
       {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/constants/seed-project/**",
+        "include": "modules/workflow/workflow-builder/workflow-version-step/code-step/constants/seed-project/**",
+        "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/core-modules/logic-function/logic-function-source-builder/constants/seed-project/**",
         "outDir": "dist/assets"
       },
       {

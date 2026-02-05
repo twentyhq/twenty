@@ -26,7 +26,7 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   workspaceId,
   ownerFlatApplication,
 }: FromCreateLogicFunctionInputToFlatLogicFunctionArgs): FlatLogicFunction => {
-  const id = v4();
+  const id = rawCreateLogicFunctionInput.id ?? v4();
   const currentDate = new Date();
 
   // Build full paths including the base folder
@@ -40,6 +40,14 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
 
   const universalIdentifier =
     rawCreateLogicFunctionInput.universalIdentifier ?? v4();
+
+  const checksum = isDefined(rawCreateLogicFunctionInput.checksum)
+    ? rawCreateLogicFunctionInput.checksum
+    : rawCreateLogicFunctionInput?.code
+      ? logicFunctionCreateHash(
+          JSON.stringify(rawCreateLogicFunctionInput.code),
+        )
+      : null;
 
   return {
     id,
@@ -61,11 +69,7 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,
     workspaceId,
     code: rawCreateLogicFunctionInput?.code,
-    checksum: rawCreateLogicFunctionInput?.code
-      ? logicFunctionCreateHash(
-          JSON.stringify(rawCreateLogicFunctionInput.code),
-        )
-      : null,
+    checksum,
     // If no schema provided and no code provided, use default schema
     // (because the default template will be used)
     toolInputSchema: isDefined(rawCreateLogicFunctionInput?.toolInputSchema)

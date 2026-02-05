@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        task: [lint, typecheck, test:unit]
+        task: [lint, typecheck, test:unit, storybook:build, storybook:test]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -39,6 +39,9 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Build
         run: npx nx build twenty-sdk
+      - name: Install Playwright
+        if: contains(matrix.task, 'storybook')
+        run: npx playwright install chromium
       - name: Run ${{ matrix.task }} task
         uses: ./.github/actions/nx-affected
         with:

@@ -13,7 +13,7 @@ const entries = [
   'src/front-component/api/index.ts',
 ];
 
-const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
+export const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
@@ -126,7 +126,7 @@ export default defineConfig(() => {
         },
         external: [
           ...Object.keys((packageJson as any).dependencies || {}).filter(
-            (dep) => dep !== 'twenty-ui',
+            (dep) => !PACKAGES_TO_VENDOR.includes(dep),
           ),
           'path',
           'fs',
@@ -155,5 +155,16 @@ export default defineConfig(() => {
       },
     },
     logLevel: 'warn',
+    optimizeDeps: {
+      include: [
+        '@remote-dom/core/polyfill',
+        '@remote-dom/react/polyfill',
+        '@remote-dom/core/elements',
+        '@remote-dom/react',
+        '@remote-dom/react/host',
+        'react-dom/client',
+        'react/jsx-runtime',
+      ],
+    },
   };
 });

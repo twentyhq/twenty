@@ -66,7 +66,33 @@ const filterProps = (props: Record<string, unknown>) => {
 };`;
 };
 
+// HTML void elements cannot have children
+// https://developer.mozilla.org/en-US/docs/Glossary/Void_element
+const VOID_ELEMENTS = new Set([
+  'input',
+  'br',
+  'hr',
+  'img',
+  'area',
+  'base',
+  'col',
+  'embed',
+  'link',
+  'meta',
+  'source',
+  'track',
+  'wbr',
+]);
+
 const generateHtmlWrapperComponent = (component: ComponentSchema): string => {
+  const isVoidElement = VOID_ELEMENTS.has(component.htmlTag ?? '');
+
+  if (isVoidElement) {
+    return `const ${component.name}Wrapper = ({ children: _children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
+  return React.createElement('${component.htmlTag}', filterProps(props));
+};`;
+  }
+
   return `const ${component.name}Wrapper = ({ children, ...props }: { children?: React.ReactNode } & Record<string, unknown>) => {
   return React.createElement('${component.htmlTag}', filterProps(props), children);
 };`;

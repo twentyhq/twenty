@@ -21,7 +21,7 @@ export const executeLogicFunctionQueryFactory = ({
   gqlFields?: string;
 }) => ({
   query: gql`
-    mutation ExecuteOneLogicFunction($input: ExecuteLogicFunctionInput!) {
+    mutation ExecuteOneLogicFunction($input: ExecuteOneLogicFunctionInput!) {
       executeOneLogicFunction(input: $input) {
         ${gqlFields}
       }

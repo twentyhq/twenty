@@ -97,11 +97,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_MARKETPLACE_ENABLED,
         workspaceId: workspaceId,
         value: true,

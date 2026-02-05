@@ -78,18 +78,20 @@ export const reactGlobalsPlugin: esbuild.Plugin = {
         if (importer && !reactImportsByFilePath.has(importer)) {
           try {
             const sourceFileContent = await fs.readFile(importer, 'utf-8');
-
             reactImportsByFilePath.set(
               importer,
               collectReactImports(sourceFileContent),
             );
           } catch {
-            reactImportsByFilePath.set(importer, new Set());
+            reactImportsByFilePath.set(importer, new Set<string>());
           }
         }
 
         return {
-          path,
+          path:
+            path === 'react' && importer
+              ? `react?importer=${encodeURIComponent(importer)}`
+              : path,
           namespace: 'react-globals',
           pluginData: { importer },
         };
@@ -98,11 +100,7 @@ export const reactGlobalsPlugin: esbuild.Plugin = {
 
     build.onLoad(
       { filter: /.*/, namespace: 'react-globals' },
-      ({ pluginData, path }) => {
-        const importerFilePath = pluginData?.importer || '';
-        const collectedReactImports =
-          reactImportsByFilePath.get(importerFilePath) || new Set<string>();
-
+      ({ path, pluginData }) => {
         if (path === 'react/jsx-runtime') {
           return {
             contents: JSX_RUNTIME_EXPORTS,
@@ -110,7 +108,13 @@ export const reactGlobalsPlugin: esbuild.Plugin = {
           };
         }
 
-        if (path === 'react') {
+        if (path === 'react' || path.startsWith('react?importer=')) {
+          const importerFilePath =
+            pluginData?.importer ||
+            decodeURIComponent(path.split('react?importer=')[1] || '');
+          const collectedReactImports =
+            reactImportsByFilePath.get(importerFilePath) || new Set<string>();
+
           return {
             contents: generateReactExports(collectedReactImports),
             loader: 'js',

@@ -72,6 +72,7 @@ import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
+import { EventLogsModule } from './event-logs/event-logs.module';
 import { FileModule } from './file/file.module';
 
 @Module({
@@ -158,6 +159,7 @@ import { FileModule } from './file/file.module';
     TrashCleanupModule,
     DashboardModule,
     RowLevelPermissionModule,
+    EventLogsModule,
   ],
   exports: [
     AuditModule,

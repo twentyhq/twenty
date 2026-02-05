@@ -25,9 +25,7 @@ export class MessagingMessagesImportCronCommand extends CommandRunner {
       jobName: MessagingMessagesImportCronJob.name,
       data: undefined,
       options: {
-        repeat: {
-          pattern: MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
-        },
+        repeat: { pattern: MESSAGING_MESSAGES_IMPORT_CRON_PATTERN },
       },
     });
   }
