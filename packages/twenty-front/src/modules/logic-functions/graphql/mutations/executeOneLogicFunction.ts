@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const EXECUTE_ONE_LOGIC_FUNCTION = gql`
-  mutation ExecuteOneLogicFunction($input: ExecuteLogicFunctionInput!) {
+  mutation ExecuteOneLogicFunction($input: ExecuteOneLogicFunctionInput!) {
     executeOneLogicFunction(input: $input) {
       data
       logs

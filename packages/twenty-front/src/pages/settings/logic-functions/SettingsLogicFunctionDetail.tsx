@@ -1,11 +1,12 @@
-import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
+import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
 import {
-    type LogicFunctionFormValues,
-    useLogicFunctionUpdateFormState,
+  type LogicFunctionFormValues,
+  useLogicFunctionUpdateFormState,
 } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -15,8 +16,7 @@ import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconBolt, IconSettings } from 'twenty-ui/display';
-import { useDebouncedCallback } from 'use-debounce';
+import { IconBolt, IconPlayerPlay, IconSettings } from 'twenty-ui/display';
 import { useFindOneApplicationQuery } from '~/generated-metadata/graphql';
 
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
@@ -37,44 +37,36 @@ export const SettingsLogicFunctionDetail = () => {
     activeTabIdComponentState,
     instanceId,
   );
-  const { updateLogicFunction } = usePersistLogicFunction();
 
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({ logicFunctionId });
 
-  const handleSave = useDebouncedCallback(
-    async (toolInputSchema?: object | null) => {
-      await updateLogicFunction({
-        input: {
-          id: logicFunctionId,
-          update: {
-            name: formValues.name,
-            description: formValues.description,
-            ...(toolInputSchema !== undefined && { toolInputSchema }),
-          },
-        },
-      });
-    },
-    500,
-  );
+  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
+    logicFunctionId,
+  });
+
+  const handleExecute = async () => {
+    await executeLogicFunction({ forceRebuild: true });
+  };
 
   const onChange = (key: string) => {
-    return async (value: string) => {
+    return (value: string) => {
       setFormValues((prevState: LogicFunctionFormValues) => ({
         ...prevState,
         [key]: value,
       }));
-      await handleSave();
     };
   };
 
   const tabs = [
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
+    { id: 'test', title: t`Test`, Icon: IconPlayerPlay },
     { id: 'triggers', title: t`Triggers`, Icon: IconBolt },
   ];
 
   const isTriggersTab = activeTabId === 'triggers';
   const isSettingsTab = activeTabId === 'settings';
+  const isTestTab = activeTabId === 'test';
 
   const breadcrumbLinks =
     isDefined(applicationId) && applicationId !== ''
@@ -133,6 +125,13 @@ export const SettingsLogicFunctionDetail = () => {
             <SettingsLogicFunctionSettingsTab
               formValues={formValues}
               onChange={onChange}
+            />
+          )}
+          {isTestTab && (
+            <SettingsLogicFunctionTestTab
+              handleExecute={handleExecute}
+              logicFunctionId={logicFunctionId}
+              isTesting={isExecuting}
             />
           )}
         </SettingsPageContainer>

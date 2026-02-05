@@ -36,7 +36,7 @@ import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
 import { SOURCE_FOLDER_NAME } from '@/logic-functions/constants/SourceFolderName';
-import { useBuildAndExecuteLogicFunction } from '@/logic-functions/hooks/useBuildAndExecuteLogicFunction';
+import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { computeNewSources } from '@/logic-functions/utils/computeNewSources';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -153,7 +153,7 @@ export const WorkflowEditActionCode = ({
     });
   };
 
-  const { buildAndExecuteLogicFunction, isExecuting } = useBuildAndExecuteLogicFunction({
+  const { executeLogicFunction, isExecuting } = useExecuteLogicFunction({
     logicFunctionId,
     callback: updateOutputSchemaFromTestResult,
   });
@@ -273,7 +273,7 @@ export const WorkflowEditActionCode = ({
     }
 
     if (!isExecuting) {
-      await buildAndExecuteLogicFunction();
+      await executeLogicFunction({ forceRebuild: true });
     }
   };
 

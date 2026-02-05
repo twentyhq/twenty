@@ -1,5 +1,5 @@
+import { EXECUTE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/executeOneLogicFunction';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { BUILD_AND_EXECUTE_ONE_LOGIC_FUNCTION } from '@/logic-functions/graphql/mutations/buildAndExecuteOneLogicFunction';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
@@ -8,12 +8,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { LogicFunctionExecutionStatus } from '~/generated-metadata/graphql';
 import { sleep } from '~/utils/sleep';
 
-type BuildAndExecuteOneLogicFunctionInput = {
+type ExecuteOneLogicFunctionInput = {
   id: string;
   payload: object;
+  forceRebuild?: boolean;
 };
 
-type BuildAndExecuteOneLogicFunctionResult = {
+type ExecuteOneLogicFunctionResult = {
   data?: object | null;
   logs: string;
   duration: number;
@@ -25,19 +26,19 @@ type BuildAndExecuteOneLogicFunctionResult = {
   } | null;
 };
 
-export const useBuildAndExecuteLogicFunction = ({
+export const useExecuteLogicFunction = ({
   logicFunctionId,
   callback,
 }: {
   logicFunctionId: string;
-  callback?: (testResult: object) => void;
+  callback?: (result: object) => void;
 }) => {
   const [isExecuting, setIsExecuting] = useState(false);
   const apolloMetadataClient = useApolloCoreClient();
-  const [buildAndExecuteOneLogicFunctionMutation] = useMutation<
-    { buildAndExecuteOneLogicFunction: BuildAndExecuteOneLogicFunctionResult },
-    { input: BuildAndExecuteOneLogicFunctionInput }
-  >(BUILD_AND_EXECUTE_ONE_LOGIC_FUNCTION, {
+  const [executeOneLogicFunctionMutation] = useMutation<
+    { executeOneLogicFunction: ExecuteOneLogicFunctionResult },
+    { input: ExecuteOneLogicFunctionInput }
+  >(EXECUTE_ONE_LOGIC_FUNCTION, {
     client: apolloMetadataClient,
   });
 
@@ -45,23 +46,25 @@ export const useBuildAndExecuteLogicFunction = ({
     logicFunctionTestDataFamilyState(logicFunctionId),
   );
 
-  const buildAndExecuteLogicFunction = async () => {
+  const executeLogicFunction = async ({
+    forceRebuild = false,
+  }: { forceRebuild?: boolean } = {}) => {
     try {
       setIsExecuting(true);
       await sleep(200); // Delay artificially to avoid flashing the UI
-      const result = await buildAndExecuteOneLogicFunctionMutation({
+      const result = await executeOneLogicFunctionMutation({
         variables: {
           input: {
             id: logicFunctionId,
             payload: logicFunctionTestData.input,
+            forceRebuild,
           },
         },
       });
 
       setIsExecuting(false);
 
-      const executionResult =
-        result?.data?.buildAndExecuteOneLogicFunction;
+      const executionResult = result?.data?.executeOneLogicFunction;
 
       if (isDefined(executionResult?.data)) {
         callback?.(executionResult.data);
@@ -90,5 +93,5 @@ export const useBuildAndExecuteLogicFunction = ({
     }
   };
 
-  return { buildAndExecuteLogicFunction, isExecuting };
+  return { executeLogicFunction, isExecuting };
 };

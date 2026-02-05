@@ -104,10 +104,10 @@ export class LogicFunctionSourceBuilderService {
     // Use seed project files
     const seedProjectFiles = await getLogicFunctionSeedProjectFiles();
 
-    const sourceFiles = seedProjectFiles.filter((file) =>
+    const sourceFiles = seedProjectFiles.filter((file: File) =>
       file.name.endsWith('index.ts'),
     );
-    const builtFiles = seedProjectFiles.filter((file) =>
+    const builtFiles = seedProjectFiles.filter((file: File) =>
       file.name.endsWith('.mjs'),
     );
 

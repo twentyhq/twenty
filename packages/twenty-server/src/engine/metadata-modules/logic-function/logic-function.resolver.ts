@@ -24,7 +24,6 @@ import { LogicFunctionIdInput } from 'src/engine/metadata-modules/logic-function
 import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.dto';
 import { LogicFunctionLogsInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.input';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
-import { UpdateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function.input';
 import { UpdateLogicFunctionSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-source.input';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -156,28 +155,6 @@ export class LogicFunctionResolver {
     try {
       const flatLogicFunction = await this.logicFunctionService.destroyOne({
         id: input.id,
-        workspaceId,
-      });
-
-      return fromFlatLogicFunctionToLogicFunctionDto({
-        flatLogicFunction,
-      });
-    } catch (error) {
-      return logicFunctionGraphQLApiExceptionHandler(error);
-    }
-  }
-
-  @Mutation(() => LogicFunctionDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
-  async updateOneLogicFunction(
-    @Args('input')
-    input: UpdateLogicFunctionInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<LogicFunctionDTO> {
-    try {
-      const flatLogicFunction = await this.logicFunctionService.updateOne({
-        id: input.id,
-        update: input.update,
         workspaceId,
       });
 
