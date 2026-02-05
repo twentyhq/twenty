@@ -5812,6 +5812,11 @@ msgstr "Dosya \"{fileName}\" {maxUploadSize} boyutunu aşıyor"
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "\"{fileName}\" dosyası başarıyla yüklendi"
 
+#. js-lingui-id: EYl2hs
+#: src/modules/activities/files/hooks/useUploadAttachmentFile.tsx
+msgid "File field not found for attachment object"
+msgstr ""
+
 #. js-lingui-id: N793lP
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "File label"
@@ -5820,6 +5825,12 @@ msgstr ""
 #. js-lingui-id: ncBVqE
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 msgid "File upload failed"
+msgstr ""
+
+#. js-lingui-id: H/+55l
+#: src/modules/activities/files/components/AttachmentRow.tsx
+#: src/modules/activities/files/components/AttachmentList.tsx
+msgid "File URL is not defined"
 msgstr ""
 
 #. js-lingui-id: o7J4JM

@@ -5807,6 +5807,11 @@ msgstr "File \"{fileName}\" exceeds {maxUploadSize}"
 msgid "File \"{fileName}\" uploaded successfully"
 msgstr "File \"{fileName}\" uploaded successfully"
 
+#. js-lingui-id: EYl2hs
+#: src/modules/activities/files/hooks/useUploadAttachmentFile.tsx
+msgid "File field not found for attachment object"
+msgstr "File field not found for attachment object"
+
 #. js-lingui-id: N793lP
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "File label"
@@ -5816,6 +5821,12 @@ msgstr "File label"
 #: src/modules/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile.ts
 msgid "File upload failed"
 msgstr "File upload failed"
+
+#. js-lingui-id: H/+55l
+#: src/modules/activities/files/components/AttachmentRow.tsx
+#: src/modules/activities/files/components/AttachmentList.tsx
+msgid "File URL is not defined"
+msgstr "File URL is not defined"
 
 #. js-lingui-id: o7J4JM
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
