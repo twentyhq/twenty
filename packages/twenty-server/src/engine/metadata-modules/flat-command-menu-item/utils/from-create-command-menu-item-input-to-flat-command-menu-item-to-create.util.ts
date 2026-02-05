@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   CommandMenuItemException,
   CommandMenuItemExceptionCode,
@@ -12,11 +13,11 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   createCommandMenuItemInput,
   workspaceId,
-  applicationId,
+  flatApplication,
 }: {
   createCommandMenuItemInput: CreateCommandMenuItemInput;
   workspaceId: string;
-  applicationId: string;
+  flatApplication: FlatApplication;
 }): FlatCommandMenuItem => {
   const hasWorkflowVersionId = isDefined(
     createCommandMenuItemInput.workflowVersionId,
@@ -49,7 +50,8 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     availabilityObjectMetadataId:
       createCommandMenuItemInput.availabilityObjectMetadataId ?? null,
     workspaceId,
-    applicationId,
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
     createdAt: now,
     updatedAt: now,
   };

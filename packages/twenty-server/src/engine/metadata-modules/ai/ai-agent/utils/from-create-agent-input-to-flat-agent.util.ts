@@ -6,18 +6,21 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 
 export type FromCreateAgentInputToFlatAgentArgs = {
-  createAgentInput: CreateAgentInput & { applicationId: string };
+  createAgentInput: CreateAgentInput;
   workspaceId: string;
+  flatApplication: FlatApplication;
 };
 
 export const fromCreateAgentInputToFlatAgent = ({
   createAgentInput: rawCreateAgentInput,
   workspaceId,
+  flatApplication,
 }: FromCreateAgentInputToFlatAgentArgs): {
   flatAgentToCreate: FlatAgent;
   flatRoleTargetToCreate: FlatRoleTarget | null;
@@ -32,7 +35,6 @@ export const fromCreateAgentInputToFlatAgent = ({
         'description',
         'prompt',
         'modelId',
-        'applicationId',
         'roleId',
       ],
     );
@@ -54,7 +56,8 @@ export const fromCreateAgentInputToFlatAgent = ({
     workspaceId,
     isCustom: true,
     universalIdentifier: v4(),
-    applicationId: createAgentInput.applicationId,
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
     modelConfiguration: createAgentInput.modelConfiguration ?? null,
     evaluationInputs: createAgentInput.evaluationInputs ?? [],
     createdAt,
@@ -73,7 +76,7 @@ export const fromCreateAgentInputToFlatAgent = ({
         updatedAt: createdAt,
         universalIdentifier: v4(),
         workspaceId,
-        applicationId: createAgentInput.applicationId,
+        applicationId: flatApplication.id,
       }
     : null;
 

@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
@@ -9,12 +10,12 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
   ({
     createNavigationMenuItemInput,
     workspaceId,
-    applicationId,
+    flatApplication,
     flatNavigationMenuItemMaps,
   }: {
     createNavigationMenuItemInput: CreateNavigationMenuItemInput;
     workspaceId: string;
-    applicationId: string;
+    flatApplication: FlatApplication;
     flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
   }): FlatNavigationMenuItem => {
     const id = uuidv4();
@@ -52,7 +53,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       name: createNavigationMenuItemInput.name ?? null,
       position,
       workspaceId,
-      applicationId,
+      applicationId: flatApplication.id,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
       createdAt: now,
       updatedAt: now,
     };

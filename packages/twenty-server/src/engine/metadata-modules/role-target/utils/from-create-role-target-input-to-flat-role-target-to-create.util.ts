@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
@@ -10,9 +11,11 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   createRoleTargetInput,
   workspaceId,
   flatRoleTargetMaps,
+  flatApplication,
 }: {
-  createRoleTargetInput: CreateRoleTargetInput & { applicationId: string };
+  createRoleTargetInput: CreateRoleTargetInput;
   workspaceId: string;
+  flatApplication: FlatApplication;
 } & Pick<AllFlatEntityMaps, 'flatRoleTargetMaps'>): {
   flatRoleTargetToCreate: FlatRoleTarget;
   flatRoleTargetsToDelete: FlatRoleTarget[];
@@ -31,7 +34,8 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
     updatedAt: now.toISOString(),
     universalIdentifier: universalIdentifier ?? v4(),
     workspaceId,
-    applicationId: createRoleTargetInput.applicationId,
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
     [targetMetadataForeignKey]: targetId,
   };
 

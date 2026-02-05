@@ -1,6 +1,7 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
@@ -9,13 +10,13 @@ export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
   {
     createPageLayoutWidgetInput: CreatePageLayoutWidgetInput;
     workspaceId: string;
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
   };
 
 export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
   createPageLayoutWidgetInput: rawCreatePageLayoutWidgetInput,
   workspaceId,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs): FlatPageLayoutWidget => {
   const { pageLayoutTabId, ...createPageLayoutWidgetInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -44,7 +45,8 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
     gridPosition: createPageLayoutWidgetInput.gridPosition,
     position: createPageLayoutWidgetInput.position ?? null,
     configuration: createPageLayoutWidgetInput.configuration,
-    applicationId: workspaceCustomApplicationId,
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
     conditionalDisplay: null,
   };
 };

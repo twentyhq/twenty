@@ -1,6 +1,7 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
@@ -8,13 +9,13 @@ import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/pa
 export type FromCreatePageLayoutInputToFlatPageLayoutToCreateArgs = {
   createPageLayoutInput: CreatePageLayoutInput;
   workspaceId: string;
-  workspaceCustomApplicationId: string;
+  flatApplication: FlatApplication;
 };
 
 export const fromCreatePageLayoutInputToFlatPageLayoutToCreate = ({
   createPageLayoutInput: rawCreatePageLayoutInput,
   workspaceId,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: FromCreatePageLayoutInputToFlatPageLayoutToCreateArgs): FlatPageLayout => {
   const createPageLayoutInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -35,7 +36,8 @@ export const fromCreatePageLayoutInputToFlatPageLayoutToCreate = ({
     updatedAt: createdAt,
     deletedAt: null,
     universalIdentifier: pageLayoutId,
-    applicationId: workspaceCustomApplicationId,
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
     tabIds: [],
     defaultTabToFocusOnMobileAndSidePanelId: null,
   };

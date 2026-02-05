@@ -1,9 +1,10 @@
 import {
-  isDefined,
-  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+    isDefined,
+    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
@@ -17,13 +18,13 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,
   workspaceId,
   createdByUserWorkspaceId,
-  workspaceCustomApplicationId,
+  flatApplication,
   flatFieldMetadataMaps,
 }: {
   createViewInput: CreateViewInput;
   workspaceId: string;
   createdByUserWorkspaceId?: string;
-  workspaceCustomApplicationId: string;
+  flatApplication: FlatApplication;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
 }): {
   flatViewToCreate: FlatView;
@@ -69,7 +70,8 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     viewFilterIds: [],
     viewGroupIds: [],
     viewFilterGroupIds: [],
-    applicationId: workspaceCustomApplicationId,
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 
   let flatViewGroupsToCreate: FlatViewGroup[] = [];

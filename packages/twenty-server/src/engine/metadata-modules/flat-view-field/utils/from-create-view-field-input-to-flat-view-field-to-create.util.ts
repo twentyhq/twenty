@@ -1,6 +1,7 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
@@ -8,13 +9,13 @@ import { type CreateViewFieldInput } from 'src/engine/metadata-modules/view-fiel
 export type FromCreateViewFieldInputToFlatViewFieldToCreateArgs = {
   createViewFieldInput: CreateViewFieldInput;
   workspaceId: string;
-  workspaceCustomApplicationId: string;
+  flatApplication: FlatApplication;
 };
 
 export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
   createViewFieldInput: rawCreateViewFieldInput,
   workspaceId,
-  workspaceCustomApplicationId,
+  flatApplication,
 }: FromCreateViewFieldInputToFlatViewFieldToCreateArgs): FlatViewField => {
   const { fieldMetadataId, viewId, ...createViewFieldInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -38,6 +39,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     size: createViewFieldInput.size ?? DEFAULT_VIEW_FIELD_SIZE,
     position: createViewFieldInput.position ?? 0,
     aggregateOperation: createViewFieldInput.aggregateOperation ?? null,
-    applicationId: workspaceCustomApplicationId,
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };
