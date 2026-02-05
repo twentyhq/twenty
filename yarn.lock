@@ -4366,8 +4366,8 @@ __metadata:
   linkType: hard
 
 "@cyntler/react-doc-viewer@npm:^1.17.0":
-  version: 1.17.0
-  resolution: "@cyntler/react-doc-viewer@npm:1.17.0"
+  version: 1.17.1
+  resolution: "@cyntler/react-doc-viewer@npm:1.17.1"
   dependencies:
     "@types/mustache": "npm:^4.2.5"
     "@types/papaparse": "npm:^5.3.14"
@@ -4380,7 +4380,7 @@ __metadata:
   peerDependencies:
     react: ">=17.0.0"
     react-dom: ">=17.0.0"
-  checksum: 10c0/940e16894564384861bb56c4fa2896653e2ab2db48f9c7e60503468a300b06d7571677bcf62e2a1f934171b84a843669879233ad3492d23812265796e9315c28
+  checksum: 10c0/2fbd14627d6d86af50b0261abfc4493e25f4426e971a39d6306dfb45d01bf9ec61e71e6a8e89975ddf2aff11ca2d51d41615860bec145decbe9e077a50844b24
   languageName: node
   linkType: hard
 
