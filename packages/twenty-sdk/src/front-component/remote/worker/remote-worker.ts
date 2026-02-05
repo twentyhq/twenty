@@ -3,6 +3,18 @@ import '@remote-dom/react/polyfill';
 
 import '../generated/remote-elements';
 
+import {
+  getFrontComponentExecutionContext,
+  setFrontComponentExecutionContext,
+  subscribeToFrontComponentExecutionContext,
+  unsubscribeFromFrontComponentExecutionContext,
+} from '@/sdk/front-component-api/context/frontComponentContext';
+import {
+  navigate,
+  setNavigate,
+} from '@/sdk/front-component-api/functions/navigate';
+import { useFrontComponentExecutionContext } from '@/sdk/front-component-api/hooks/useFrontComponentExecutionContext';
+import { useUserId } from '@/sdk/front-component-api/hooks/useUserId';
 import { ThreadWebWorker } from '@quilted/threads';
 import {
   BatchingRemoteConnection,
@@ -13,17 +25,24 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
+import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
-import { frontComponentExecutionContextStore } from '../context/FrontComponentExecutionContextStore';
 import * as RemoteComponents from '../generated/remote-components';
+import { exposeGlobals } from '../utils/exposeGlobals';
 
-(globalThis as Record<string, unknown>).React = React;
-(globalThis as Record<string, unknown>).RemoteComponents = RemoteComponents;
-(globalThis as Record<string, unknown>).jsx = jsx;
-(globalThis as Record<string, unknown>).jsxs = jsxs;
-(globalThis as Record<string, unknown>).frontComponentExecutionContextStore =
-  frontComponentExecutionContextStore;
+exposeGlobals({
+  React,
+  RemoteComponents,
+  jsx,
+  jsxs,
+  getFrontComponentExecutionContext,
+  subscribeToFrontComponentExecutionContext,
+  unsubscribeFromFrontComponentExecutionContext,
+  useFrontComponentExecutionContext,
+  navigate,
+  useUserId,
+});
 
 const render: WorkerExports['render'] = async (
   connection: RemoteConnection,
@@ -41,10 +60,21 @@ const render: WorkerExports['render'] = async (
   reactRoot.render(componentModule.default);
 };
 
+const initializeHostCommunicationApi: WorkerExports['initializeHostCommunicationApi'] =
+  async () => {
+    const hostApi =
+      ThreadWebWorker.self.import<FrontComponentHostCommunicationApi>();
+    setNavigate(hostApi.navigate);
+  };
+
 const updateContext: WorkerExports['updateContext'] = async (
   context: FrontComponentExecutionContext,
 ) => {
-  frontComponentExecutionContextStore.setContext(context);
+  setFrontComponentExecutionContext(context);
 };
 
-ThreadWebWorker.self.export({ render, updateContext });
+ThreadWebWorker.self.export({
+  render,
+  initializeHostCommunicationApi,
+  updateContext,
+});

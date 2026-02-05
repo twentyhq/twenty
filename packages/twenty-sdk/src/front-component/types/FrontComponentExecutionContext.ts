@@ -1,11 +1,4 @@
-import { type AppPath, type NavigateOptions } from 'twenty-shared/types';
-
+// Serializable execution context that can be passed via postMessage (no functions)
 export type FrontComponentExecutionContext = {
   userId: string | null;
-  navigate: (
-    to: AppPath,
-    params?: Record<string, string | null>,
-    queryParams?: Record<string, unknown>,
-    options?: NavigateOptions,
-  ) => Promise<void>;
 };

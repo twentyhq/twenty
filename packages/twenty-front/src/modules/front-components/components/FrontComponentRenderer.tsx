@@ -19,7 +19,7 @@ export const FrontComponentRenderer = ({
   const [hasError, setHasError] = useState(false);
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { frontComponentExecutionContext } =
+  const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext();
 
   const handleError = (error?: Error) => {
@@ -41,7 +41,8 @@ export const FrontComponentRenderer = ({
     <SharedFrontComponentRenderer
       theme={theme}
       componentUrl={getMockFrontComponentUrl()}
-      executionContext={frontComponentExecutionContext}
+      executionContext={executionContext}
+      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
       onError={handleError}
     />
   );
