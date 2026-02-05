@@ -5,9 +5,9 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 import {
-    assertIsDefinedOrThrow,
-    extractFolderPathFilenameAndTypeOrThrow,
-    isDefined,
+  assertIsDefinedOrThrow,
+  extractFolderPathFilenameAndTypeOrThrow,
+  isDefined,
 } from 'twenty-shared/utils';
 import { DataSource, ILike, Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -92,7 +92,7 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
         universalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
       });
 
-    if (!personObjectMetadata) {
+    if (!isDefined(personObjectMetadata)) {
       this.logger.warn(
         `Person object metadata not found for workspace ${workspaceId}, skipping`,
       );
