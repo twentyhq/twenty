@@ -6,7 +6,6 @@ import { useTriggerEventStreamDestroy } from '@/sse-db-event/hooks/useTriggerEve
 import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
 import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
-import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyArray } from '@apollo/client/utilities';
@@ -17,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey, OnboardingStatus } from '~/generated/graphql';
 
 export const SSEEventStreamEffect = () => {
-  const sseClient = useRecoilValue(sseClientState);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const sseEventStreamId = useRecoilValue(sseEventStreamIdState);
@@ -40,9 +38,7 @@ export const SSEEventStreamEffect = () => {
 
   useEffect(() => {
     const isSseClientAvailabble =
-      isDefined(sseClient) &&
-      !isCreatingSseEventStream &&
-      !isDestroyingEventStream;
+      !isCreatingSseEventStream && !isDestroyingEventStream;
 
     const willCreateEventStream =
       isSseClientAvailabble &&
@@ -62,7 +58,7 @@ export const SSEEventStreamEffect = () => {
     if (willDestroyEventStream) {
       triggerEventStreamDestroy();
     } else if (willCreateEventStream) {
-      triggerEventStreamCreation(sseClient);
+      triggerEventStreamCreation();
     }
   }, [
     isCreatingSseEventStream,
@@ -72,7 +68,6 @@ export const SSEEventStreamEffect = () => {
     isSseDbEventsEnabled,
     isDestroyingEventStream,
     triggerEventStreamDestroy,
-    sseClient,
     shouldDestroyEventStream,
     sseEventStreamId,
     objectMetadataItems,
