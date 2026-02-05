@@ -7,13 +7,17 @@ import { createRemoteWorker } from '../worker/createRemoteWorker';
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
-  onError: (error?: Error) => void;
+  setThread: React.Dispatch<
+    React.SetStateAction<ThreadWebWorker<WorkerExports> | null>
+  >;
+  setError: React.Dispatch<React.SetStateAction<Error | null>>;
 };
 
 export const FrontComponentWorkerEffect = ({
   componentUrl,
   setReceiver,
-  onError,
+  setThread,
+  setError,
 }: FrontComponentWorkerEffectProps) => {
   useEffect(() => {
     const newReceiver = new RemoteReceiver({ retain, release });
@@ -21,23 +25,25 @@ export const FrontComponentWorkerEffect = ({
     const worker = createRemoteWorker();
 
     worker.onerror = (event: ErrorEvent) => {
-      onError(event.error);
+      setError(event.error);
     };
 
     const thread = new ThreadWebWorker<WorkerExports>(worker);
+    setThread(thread);
 
     thread.imports
       .render(newReceiver.connection, { componentUrl })
       .catch((error: Error) => {
-        onError(error);
+        setError(error);
       });
 
     setReceiver(newReceiver);
 
     return () => {
+      setThread(null);
       worker.terminate();
     };
-  }, [componentUrl, onError, setReceiver]);
+  }, [componentUrl, setError, setReceiver, setThread]);
 
   return null;
 };
