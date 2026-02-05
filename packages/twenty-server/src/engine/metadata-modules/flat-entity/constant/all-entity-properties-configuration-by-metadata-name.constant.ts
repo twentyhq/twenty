@@ -1,10 +1,10 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
-import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
-import { UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { type UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
 type HasObjectInUnion<T> = T extends unknown
   ? T extends object
@@ -12,7 +12,7 @@ type HasObjectInUnion<T> = T extends unknown
     : false
   : never;
 
-type FlatEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
+type MetadataEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
   [K in keyof Omit<
     MetadataFlatEntity<TMetadataName>,
     | Extract<
@@ -296,5 +296,5 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     secret: { toStringify: false, universalProperty: undefined },
   },
 } as const satisfies {
-  [P in AllMetadataName]: FlatEntityPropertyConfiguration<P>;
+  [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
 };

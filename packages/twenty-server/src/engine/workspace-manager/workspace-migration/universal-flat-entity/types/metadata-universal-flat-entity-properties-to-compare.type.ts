@@ -1,8 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type Equal, type Expect } from 'twenty-shared/testing';
 
 import { type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
-import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { Equal, Expect } from 'twenty-shared/testing';
+import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 
 type ExtractPropertyToCompare<
   MetadataConfig,
@@ -16,8 +16,8 @@ export type MetadataUniversalFlatEntityPropertiesToCompare<
   MetadataConfig = (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
 > = {
   [P in keyof MetadataConfig]: ExtractPropertyToCompare<MetadataConfig, P>;
-}[keyof MetadataConfig] & keyof MetadataUniversalFlatEntity<T>;
-
+}[keyof MetadataConfig] &
+  keyof MetadataUniversalFlatEntity<T>;
 
 // TODO ignore eslint
 type Assertions = [
