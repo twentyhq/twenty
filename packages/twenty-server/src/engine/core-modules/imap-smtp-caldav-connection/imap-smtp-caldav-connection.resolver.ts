@@ -8,16 +8,28 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedImapSmtpCaldavAccountDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
-import { ImapSmtpCaldavConnectionSuccessDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
-import { EmailAccountConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
-import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
-import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
+import {
+  ConnectedImapSmtpCaldavAccountDTO,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto';
+import {
+  ImapSmtpCaldavConnectionSuccessDTO,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection-success.dto';
+import {
+  EmailAccountConnectionParameters,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import {
+  ImapSmtpCaldavValidatorService,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
+import {
+  ImapSmtpCaldavService,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import {
+  PermissionsGraphqlApiExceptionFilter,
+} from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services/imap-smtp-caldav-apis.service';
 
 @Resolver()
@@ -32,7 +44,7 @@ export class ImapSmtpCaldavResolver {
   ) {}
 
   @Query(() => ConnectedImapSmtpCaldavAccountDTO)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
   async getConnectedImapSmtpCaldavAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -59,7 +71,7 @@ export class ImapSmtpCaldavResolver {
   }
 
   @Mutation(() => ImapSmtpCaldavConnectionSuccessDTO)
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
   async saveImapSmtpCaldavAccount(
     @Args('accountOwnerId', { type: () => UUIDScalarType })
     accountOwnerId: string,

@@ -25,6 +25,8 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
+import { PermissionFlagType } from 'twenty-shared/constants';
 
 @ArgsType()
 class GetTimelineThreadsFromPersonIdArgs {
@@ -156,6 +158,7 @@ export class TimelineMessagingResolver {
     return timelineThreads;
   }
 
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
   @Mutation(() => Boolean)
   async dismissReconnectAccountBanner(
     @AuthUser() user: UserEntity,
