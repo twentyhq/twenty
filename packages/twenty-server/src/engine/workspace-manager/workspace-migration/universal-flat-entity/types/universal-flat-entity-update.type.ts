@@ -9,10 +9,7 @@ import { Expect } from 'twenty-shared/testing';
 export type UniversalFlatEntityUpdate<T extends AllMetadataName> = Partial<
   Pick<
     MetadataUniversalFlatEntity<T>,
-    Extract<
-      keyof MetadataUniversalFlatEntity<T>,
-      MetadataUniversalFlatEntityPropertiesToCompare<T>
-    >
+    MetadataUniversalFlatEntityPropertiesToCompare<T>
   >
 >;
 

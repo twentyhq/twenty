@@ -17,10 +17,7 @@ export function transformUniversalFlatEntityForComparison<
 }) {
   return propertiesToCompare.reduce(
     (flatEntityAccumulator, propertyToCompare) => {
-      const currentValue =
-        universalFlatEntity[
-          propertyToCompare as keyof MetadataUniversalFlatEntity<T>
-        ];
+      const currentValue = universalFlatEntity[propertyToCompare];
 
       if (
         propertiesToStringify.includes(

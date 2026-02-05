@@ -5,7 +5,7 @@ import {
   type UniversalFlatEntityUpdate
 } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
-export const sanitizeFlatEntityUpdate = <T extends AllMetadataName>({
+export const sanitizeUniversalFlatEntityUpdate = <T extends AllMetadataName>({
   flatEntityUpdate,
   metadataName,
 }: {

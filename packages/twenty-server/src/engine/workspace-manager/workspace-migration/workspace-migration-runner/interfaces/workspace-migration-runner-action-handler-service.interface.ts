@@ -13,6 +13,7 @@ import { WorkspaceMigrationActionType } from 'src/engine/metadata-modules/flat-e
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+import { sanitizeUniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/sanitize-universal-flat-entity-update.util';
 import { BaseFlatDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-flat-delete-workspace-migration-action.type';
 import {
   buildActionHandlerKey,
@@ -31,7 +32,6 @@ import {
 import { optimisticallyApplyCreateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-create-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyDeleteActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-delete-action-on-all-flat-entity-maps.util';
 import { optimisticallyApplyUpdateActionOnAllFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/optimistically-apply-update-action-on-all-flat-entity-maps.util';
-import { sanitizeFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/sanitize-flat-entity-update.util';
 
 type OptimisticallyApplyActionOnAllFlatEntityMapsArgs<
   TFlatAction extends AllFlatWorkspaceMigrationAction,
@@ -137,7 +137,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     universalAction: TUniversalAction,
   ): TUniversalAction {
     if (universalAction.type === 'update') {
-      const sanitizedFlatEntityUpdate = sanitizeFlatEntityUpdate({
+      const sanitizedFlatEntityUpdate = sanitizeUniversalFlatEntityUpdate({
         metadataName: universalAction.metadataName,
         flatEntityUpdate: universalAction.update as UniversalFlatEntityUpdate<
           typeof universalAction.metadataName
