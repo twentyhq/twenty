@@ -22,6 +22,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
+import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { PageLayoutRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-rest-api-exception.filter';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 
@@ -36,11 +37,15 @@ export class PageLayoutController {
   async findMany(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('objectMetadataId') objectMetadataId?: string,
+    @Query('pageLayoutType') pageLayoutType?: PageLayoutType,
   ): Promise<PageLayoutDTO[]> {
     if (isDefined(objectMetadataId)) {
-      return this.pageLayoutService.findByObjectMetadataId({
+      return this.pageLayoutService.findBy({
         workspaceId: workspace.id,
-        objectMetadataId,
+        filter: {
+          objectMetadataId,
+          pageLayoutType,
+        },
       });
     }
 
