@@ -5,7 +5,11 @@ import {
   TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
-import { type ApplicationConfig, type FrontComponentConfig, type LogicFunctionConfig } from '@/sdk';
+import {
+  type ApplicationConfig,
+  type FrontComponentConfig,
+  type LogicFunctionConfig,
+} from '@/sdk';
 import { glob } from 'fast-glob';
 import * as fs from 'fs-extra';
 import { readFile } from 'fs-extra';
