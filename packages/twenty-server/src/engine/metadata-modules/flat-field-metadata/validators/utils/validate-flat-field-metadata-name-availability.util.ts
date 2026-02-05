@@ -52,7 +52,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
   const errors: FlatFieldMetadataValidationError[] = [];
   const objectUniversalFlatFieldMetadatas =
     findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
-      universalFlatEntityMaps: universalFlatFieldMetadataMaps,
+      flatEntityMaps: universalFlatFieldMetadataMaps,
       universalIdentifiers:
         universalFlatObjectMetadata.fieldUniversalIdentifiers,
     });
