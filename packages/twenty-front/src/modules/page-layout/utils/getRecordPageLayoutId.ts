@@ -1,5 +1,4 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyRecordPageLayoutId';
 import { DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultNoteRecordPageLayoutId';
 import { DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultOpportunityRecordPageLayoutId';
@@ -9,7 +8,6 @@ import { DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/Defa
 import { DEFAULT_WORKFLOW_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowPageLayoutId';
 import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowRunPageLayoutId';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowVersionPageLayoutId';
-import { isDefined } from 'twenty-shared/utils';
 
 const OBJECT_NAME_TO_DEFAULT_LAYOUT_ID: Record<string, string> = {
   [CoreObjectNameSingular.Company]: DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID,
@@ -25,20 +23,10 @@ const OBJECT_NAME_TO_DEFAULT_LAYOUT_ID: Record<string, string> = {
 };
 
 export const getRecordPageLayoutId = ({
-  record,
   targetObjectNameSingular,
 }: {
-  record: ObjectRecord | null | undefined;
   targetObjectNameSingular: string;
-}): string | null => {
-  if (!isDefined(record)) {
-    return null;
-  }
-
-  if (isDefined(record.pageLayoutId)) {
-    return record.pageLayoutId;
-  }
-
+}): string => {
   const defaultLayoutId =
     OBJECT_NAME_TO_DEFAULT_LAYOUT_ID[targetObjectNameSingular] ??
     DEFAULT_RECORD_PAGE_LAYOUT_ID;

@@ -1,9 +1,8 @@
 import { CommandMenuPageLayoutInfoContent } from '@/command-menu/components/CommandMenuPageLayoutInfoContent';
-import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
+import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 
 export const CommandMenuRecordPageLayoutInfo = () => {
-  const { pageLayoutId } =
-    usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
+  const { pageLayoutId } = useRecordPageLayoutIdFromRecordStoreOrThrow();
 
   return <CommandMenuPageLayoutInfoContent pageLayoutId={pageLayoutId} />;
 };

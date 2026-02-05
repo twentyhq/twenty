@@ -6,6 +6,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentPageLayoutIdComponentState } from '@/context-store/states/contextStoreCurrentPageLayoutIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
@@ -149,6 +150,19 @@ export const useOpenRecordInCommandMenu = () => {
           snapshot
             .getLoadable(
               contextStoreIsPageInEditModeComponentState.atomFamily({
+                instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+              }),
+            )
+            .getValue(),
+        );
+
+        set(
+          contextStoreCurrentPageLayoutIdComponentState.atomFamily({
+            instanceId: pageComponentInstanceId,
+          }),
+          snapshot
+            .getLoadable(
+              contextStoreCurrentPageLayoutIdComponentState.atomFamily({
                 instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
               }),
             )

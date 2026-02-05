@@ -1,5 +1,6 @@
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentPageLayoutIdComponentState } from '@/context-store/states/contextStoreCurrentPageLayoutIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -152,6 +153,21 @@ export const useCopyContextStoreStates = () => {
             instanceId: instanceIdToCopyTo,
           }),
           contextStoreIsFullTabWidgetInEditMode,
+        );
+
+        const contextStoreCurrentPageLayoutId = snapshot
+          .getLoadable(
+            contextStoreCurrentPageLayoutIdComponentState.atomFamily({
+              instanceId: instanceIdToCopyFrom,
+            }),
+          )
+          .getValue();
+
+        set(
+          contextStoreCurrentPageLayoutIdComponentState.atomFamily({
+            instanceId: instanceIdToCopyTo,
+          }),
+          contextStoreCurrentPageLayoutId,
         );
       },
     [],

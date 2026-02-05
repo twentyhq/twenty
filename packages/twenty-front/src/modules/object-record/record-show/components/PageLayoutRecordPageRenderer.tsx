@@ -51,7 +51,6 @@ export const PageLayoutRecordPageRenderer = ({
   );
 
   const { pageLayoutId } = useRecordPageLayoutId({
-    id: targetRecordIdentifier.id,
     targetObjectNameSingular: targetRecordIdentifier.targetObjectNameSingular,
   });
 

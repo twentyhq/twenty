@@ -1,5 +1,6 @@
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentPageLayoutIdComponentState } from '@/context-store/states/contextStoreCurrentPageLayoutIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
@@ -57,6 +58,13 @@ export const useResetContextStoreStates = () => {
 
       set(
         contextStoreCurrentViewIdComponentState.atomFamily({
+          instanceId,
+        }),
+        undefined,
+      );
+
+      set(
+        contextStoreCurrentPageLayoutIdComponentState.atomFamily({
           instanceId,
         }),
         undefined,

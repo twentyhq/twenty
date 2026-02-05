@@ -3,9 +3,10 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuList } from '@/command-menu/components/CommandMenuList';
 import { WidgetSettingsFooter } from '@/command-menu/pages/page-layout/components/WidgetSettingsFooter';
 import { useNavigatePageLayoutCommandMenu } from '@/command-menu/pages/page-layout/hooks/useNavigatePageLayoutCommandMenu';
-import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import styled from '@emotion/styled';
@@ -29,8 +30,9 @@ const StyledCommandMenuContainer = styled.div`
 export const CommandMenuPageLayoutFieldsSettings = () => {
   const { t } = useLingui();
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
-  const { pageLayoutId, objectNameSingular } =
-    usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
+  const { pageLayoutId } = useRecordPageLayoutIdFromRecordStoreOrThrow();
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const objectNameSingular = objectMetadataItem.nameSingular;
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const fieldsConfiguration =

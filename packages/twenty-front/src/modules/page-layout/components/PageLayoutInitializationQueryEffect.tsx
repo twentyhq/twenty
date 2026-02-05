@@ -1,3 +1,4 @@
+import { contextStoreCurrentPageLayoutIdComponentState } from '@/context-store/states/contextStoreCurrentPageLayoutIdComponentState';
 import { FIND_ONE_PAGE_LAYOUT } from '@/dashboards/graphql/queries/findOnePageLayout';
 import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT } from '@/page-layout/constants/DefaultCompanyRecordPageLayout';
 import { DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultCompanyRecordPageLayoutId';
@@ -27,6 +28,7 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client';
@@ -71,6 +73,10 @@ export const PageLayoutInitializationQueryEffect = ({
 }: PageLayoutInitializationQueryEffectProps) => {
   const [isInitialized, setIsInitialized] = useRecoilComponentState(
     pageLayoutIsInitializedComponentState,
+  );
+
+  const setContextStoreCurrentPageLayoutId = useSetRecoilComponentState(
+    contextStoreCurrentPageLayoutIdComponentState,
   );
 
   const isRecordPageLayoutEditingEnabled = useIsFeatureEnabled(
@@ -157,6 +163,10 @@ export const PageLayoutInitializationQueryEffect = ({
     onInitialized,
     setIsInitialized,
   ]);
+
+  useEffect(() => {
+    setContextStoreCurrentPageLayoutId(pageLayoutId);
+  }, [pageLayoutId, setContextStoreCurrentPageLayoutId]);
 
   return null;
 };

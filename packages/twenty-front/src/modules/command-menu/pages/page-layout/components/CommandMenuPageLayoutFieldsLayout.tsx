@@ -1,7 +1,8 @@
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { SidePanelSubPageNavigationHeader } from '@/command-menu/pages/common/components/SidePanelSubPageNavigationHeader';
-import { usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord } from '@/command-menu/pages/page-layout/hooks/usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord';
 import { useWidgetInEditMode } from '@/command-menu/pages/page-layout/hooks/useWidgetInEditMode';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { useRecordPageLayoutIdFromRecordStoreOrThrow } from '@/page-layout/hooks/useRecordPageLayoutIdFromRecordStoreOrThrow';
 import { useTemporaryFieldsConfiguration } from '@/page-layout/hooks/useTemporaryFieldsConfiguration';
 import { type FieldsConfiguration } from '@/page-layout/types/FieldsConfiguration';
 import { FieldsConfigurationEditor } from '@/page-layout/widgets/fields/components/FieldsConfigurationEditor';
@@ -28,8 +29,9 @@ const StyledContainer = styled.div`
 export const CommandMenuPageLayoutFieldsLayout = () => {
   const { goBackFromCommandMenu } = useCommandMenuHistory();
 
-  const { pageLayoutId, objectNameSingular } =
-    usePageLayoutIdForRecordPageLayoutFromContextStoreTargetedRecord();
+  const { pageLayoutId } = useRecordPageLayoutIdFromRecordStoreOrThrow();
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const objectNameSingular = objectMetadataItem.nameSingular;
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const defaultFieldsConfiguration =

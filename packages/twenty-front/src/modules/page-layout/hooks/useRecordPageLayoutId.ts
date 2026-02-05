@@ -1,6 +1,4 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIND_PAGE_LAYOUTS } from '@/page-layout/graphql/queries/findPageLayouts';
 import { getRecordPageLayoutId } from '@/page-layout/utils/getRecordPageLayoutId';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
@@ -16,17 +14,8 @@ import {
 } from '~/generated/graphql';
 
 export const useRecordPageLayoutId = ({
-  id,
   targetObjectNameSingular,
-}: TargetRecordIdentifier) => {
-  const { record } = useFindOneRecord<ObjectRecord & { pageLayoutId?: string }>(
-    {
-      objectNameSingular: targetObjectNameSingular,
-      objectRecordId: id,
-      withSoftDeleted: true,
-    },
-  );
-
+}: Pick<TargetRecordIdentifier, 'targetObjectNameSingular'>) => {
   const isRecordPageLayoutEditingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
   );
@@ -63,14 +52,12 @@ export const useRecordPageLayoutId = ({
     }
 
     return getRecordPageLayoutId({
-      record,
       targetObjectNameSingular,
     });
   }, [
     isRecordPageLayoutEditingEnabled,
     pageLayoutsLoading,
     pageLayoutsData,
-    record,
     targetObjectNameSingular,
   ]);
 
