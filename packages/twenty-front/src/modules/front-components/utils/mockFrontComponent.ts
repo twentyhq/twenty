@@ -77,7 +77,8 @@ var TestComponent = () => {
               borderRadius: "5px",
               cursor: "pointer",
               transition: "all 0.3s ease",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)"
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+              marginBottom: "10px"
             },
             onMouseEnter: (e) => {
               e.currentTarget.style.backgroundColor = "#0056b3";
@@ -90,6 +91,34 @@ var TestComponent = () => {
               e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
             },
             children: "Increment"
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          RemoteComponents.HtmlButton,
+          {
+            onClick: () => context?.navigate("/objects/:objectNamePlural", { objectNamePlural: "people" }),
+            style: {
+              padding: "10px 20px",
+              fontSize: "16px",
+              backgroundColor: "#28a745",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)"
+            },
+            onMouseEnter: (e) => {
+              e.currentTarget.style.backgroundColor = "#1e7e34";
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)";
+            },
+            onMouseLeave: (e) => {
+              e.currentTarget.style.backgroundColor = "#28a745";
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+            },
+            children: "Go to People"
           }
         )
       ]
