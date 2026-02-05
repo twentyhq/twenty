@@ -54,6 +54,7 @@ describe('people resolvers (integration)', () => {
       expect(person).toHaveProperty('id');
       expect(person).toHaveProperty('jobTitle');
       expect(person).toHaveProperty('avatarUrl');
+      expect(person).toHaveProperty('avatarFile');
       expect(person).toHaveProperty('intro');
       expect(person).toHaveProperty('searchVector');
       expect(person).toHaveProperty('name');
@@ -84,6 +85,7 @@ describe('people resolvers (integration)', () => {
     expect(createdPerson).toHaveProperty('id');
     expect(createdPerson).toHaveProperty('jobTitle');
     expect(createdPerson).toHaveProperty('avatarUrl');
+    expect(createdPerson).toHaveProperty('avatarFile');
     expect(createdPerson).toHaveProperty('intro');
     expect(createdPerson).toHaveProperty('searchVector');
     expect(createdPerson).toHaveProperty('name');
@@ -113,6 +115,7 @@ describe('people resolvers (integration)', () => {
       expect(person).toHaveProperty('id');
       expect(person).toHaveProperty('jobTitle');
       expect(person).toHaveProperty('avatarUrl');
+      expect(person).toHaveProperty('avatarFile');
       expect(person).toHaveProperty('intro');
       expect(person).toHaveProperty('searchVector');
       expect(person).toHaveProperty('name');
@@ -141,6 +144,7 @@ describe('people resolvers (integration)', () => {
     expect(person).toHaveProperty('id');
     expect(person).toHaveProperty('jobTitle');
     expect(person).toHaveProperty('avatarUrl');
+    expect(person).toHaveProperty('avatarFile');
     expect(person).toHaveProperty('intro');
     expect(person).toHaveProperty('searchVector');
     expect(person).toHaveProperty('name');
