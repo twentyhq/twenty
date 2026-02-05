@@ -2,7 +2,6 @@ import { type FrontComponentExecutionContext } from '@/front-component/renderer/
 import { type WorkerExports } from '@/front-component/renderer/types/WorkerExports';
 import { type ThreadWebWorker } from '@quilted/threads';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 type FrontComponentUpdateContextEffectProps = {
   thread: ThreadWebWorker<WorkerExports>;
@@ -14,9 +13,7 @@ export const FrontComponentUpdateContextEffect = ({
   executionContext,
 }: FrontComponentUpdateContextEffectProps) => {
   useEffect(() => {
-    if (isDefined(thread)) {
-      thread.imports.updateContext(executionContext).catch(() => {});
-    }
+    thread.imports.updateContext(executionContext).catch(() => {});
   }, [executionContext, thread]);
 
   return null;
