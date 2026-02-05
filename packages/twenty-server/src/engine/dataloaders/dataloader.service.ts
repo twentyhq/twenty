@@ -25,7 +25,6 @@ import { fromMorphOrRelationFlatFieldMetadataToRelationDto } from 'src/engine/me
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
-import { getMorphLabelFromMorphFieldMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-label-from-morph-field-metadata.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
@@ -422,11 +421,6 @@ export class DataloaderService {
                   return {
                     ...flatFieldMetadata,
                     name: getMorphNameFromMorphFieldMetadataName({
-                      morphRelationFlatFieldMetadata: flatFieldMetadata,
-                      nameSingular: relationTargetObjectMetadata.nameSingular,
-                      namePlural: relationTargetObjectMetadata.namePlural,
-                    }),
-                    label: getMorphLabelFromMorphFieldMetadata({
                       morphRelationFlatFieldMetadata: flatFieldMetadata,
                       nameSingular: relationTargetObjectMetadata.nameSingular,
                       namePlural: relationTargetObjectMetadata.namePlural,
