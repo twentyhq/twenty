@@ -20,7 +20,9 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.frontComponent>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.frontComponent
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.frontComponent,
     'create'
@@ -50,7 +52,9 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.frontComponent>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.frontComponent
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.frontComponent,
     'delete'

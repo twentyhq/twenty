@@ -20,7 +20,9 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.fieldMetadata
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.fieldMetadata,
     'create'
@@ -56,7 +58,9 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.fieldMetadata>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.fieldMetadata
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.fieldMetadata,
     'delete'

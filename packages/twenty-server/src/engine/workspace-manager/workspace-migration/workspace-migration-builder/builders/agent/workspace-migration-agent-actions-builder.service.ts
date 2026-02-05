@@ -21,7 +21,10 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
 
   protected validateFlatEntityCreation(
     args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'create'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.agent,
+    'create'
+  > {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentCreation(args);
 
@@ -46,7 +49,10 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
 
   protected validateFlatEntityDeletion(
     args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'delete'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.agent,
+    'delete'
+  > {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentDeletion(args);
 
@@ -71,7 +77,10 @@ export class WorkspaceMigrationAgentActionsBuilderService extends WorkspaceEntit
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.agent>,
-  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.agent, 'update'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.agent,
+    'update'
+  > {
     const validationResult =
       this.flatAgentValidatorService.validateFlatAgentUpdate(args);
 

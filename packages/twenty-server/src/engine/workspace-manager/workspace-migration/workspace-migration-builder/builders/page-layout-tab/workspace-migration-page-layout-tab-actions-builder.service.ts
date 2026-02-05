@@ -20,7 +20,9 @@ export class WorkspaceMigrationPageLayoutTabActionsBuilderService extends Worksp
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutTab>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutTab
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutTab,
     'create'
@@ -50,7 +52,9 @@ export class WorkspaceMigrationPageLayoutTabActionsBuilderService extends Worksp
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutTab>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutTab
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutTab,
     'delete'

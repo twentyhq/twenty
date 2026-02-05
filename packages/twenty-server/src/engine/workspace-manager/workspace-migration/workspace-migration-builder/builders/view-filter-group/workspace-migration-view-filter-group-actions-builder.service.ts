@@ -20,7 +20,9 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilterGroup>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.viewFilterGroup
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilterGroup,
     'create'
@@ -50,7 +52,9 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilterGroup>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.viewFilterGroup
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilterGroup,
     'delete'

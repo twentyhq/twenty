@@ -60,7 +60,9 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.logicFunction>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.logicFunction
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.logicFunction,
     'create'
@@ -90,7 +92,9 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.logicFunction>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.logicFunction
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.logicFunction,
     'delete'

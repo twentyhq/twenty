@@ -20,7 +20,9 @@ export class WorkspaceMigrationRoleTargetActionsBuilderService extends Workspace
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.roleTarget>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.roleTarget
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.roleTarget,
     'create'
@@ -48,7 +50,9 @@ export class WorkspaceMigrationRoleTargetActionsBuilderService extends Workspace
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.roleTarget>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.roleTarget
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.roleTarget,
     'delete'

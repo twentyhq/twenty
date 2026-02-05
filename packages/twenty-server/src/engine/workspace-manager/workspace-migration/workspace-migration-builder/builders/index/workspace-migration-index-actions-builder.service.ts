@@ -27,7 +27,10 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
 
   protected validateFlatEntityCreation(
     args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.index>,
-  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'create'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.index,
+    'create'
+  > {
     const validationResult =
       this.flatIndexValidatorService.validateFlatIndexCreation(args);
 
@@ -52,7 +55,10 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
 
   protected validateFlatEntityDeletion(
     args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.index>,
-  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'delete'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.index,
+    'delete'
+  > {
     const validationResult =
       this.flatIndexValidatorService.validateFlatIndexDeletion(args);
 
@@ -84,7 +90,10 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
     additionalCacheDataMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.index
-  >): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.index, 'update'> {
+  >): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.index,
+    'update'
+  > {
     const flatEntity = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId,
       flatEntityMaps:

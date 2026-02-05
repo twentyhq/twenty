@@ -20,7 +20,9 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
   }
 
   protected async validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutWidget
+    >,
   ): Promise<
     UniversalFlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.pageLayoutWidget,
@@ -50,7 +52,9 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutWidget
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutWidget,
     'delete'

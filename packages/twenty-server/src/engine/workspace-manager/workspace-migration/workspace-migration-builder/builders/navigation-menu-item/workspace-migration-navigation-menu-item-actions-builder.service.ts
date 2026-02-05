@@ -20,7 +20,9 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
   }
 
   protected validateFlatEntityCreation(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.navigationMenuItem>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.navigationMenuItem
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.navigationMenuItem,
     'create'
@@ -50,7 +52,9 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
   }
 
   protected validateFlatEntityDeletion(
-    args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.navigationMenuItem>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.navigationMenuItem
+    >,
   ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.navigationMenuItem,
     'delete'

@@ -21,7 +21,10 @@ export class WorkspaceMigrationViewActionsBuilderService extends WorkspaceEntity
 
   protected validateFlatEntityCreation(
     args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'create'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.view,
+    'create'
+  > {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewCreation(args);
 
@@ -46,7 +49,10 @@ export class WorkspaceMigrationViewActionsBuilderService extends WorkspaceEntity
 
   protected validateFlatEntityDeletion(
     args: UniversalFlatEntityValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'delete'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.view,
+    'delete'
+  > {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewDeletion(args);
 
@@ -71,7 +77,10 @@ export class WorkspaceMigrationViewActionsBuilderService extends WorkspaceEntity
 
   protected validateFlatEntityUpdate(
     args: FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.view>,
-  ): UniversalFlatEntityValidationReturnType<typeof ALL_METADATA_NAME.view, 'update'> {
+  ): UniversalFlatEntityValidationReturnType<
+    typeof ALL_METADATA_NAME.view,
+    'update'
+  > {
     const validationResult =
       this.flatViewValidatorService.validateFlatViewUpdate(args);
 
