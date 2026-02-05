@@ -76,33 +76,25 @@ export const useGetBrowsingContext = () => {
           if (
             objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard
           ) {
-            const pageLayoutIdLoadable = snapshot.getLoadable(
-              recordStoreFamilySelector<string | null | undefined>({
-                recordId: targetedRecordsRule.selectedRecordIds[0],
-                fieldName: 'pageLayoutId',
-              }),
-            );
-
-            if (pageLayoutIdLoadable.state === 'hasError') {
-              return recordContext;
-            }
-
-            const pageLayoutId = pageLayoutIdLoadable.valueMaybe();
+            const pageLayoutId = snapshot
+              .getLoadable(
+                recordStoreFamilySelector<string | null | undefined>({
+                  recordId: targetedRecordsRule.selectedRecordIds[0],
+                  fieldName: 'pageLayoutId',
+                }),
+              )
+              .getValue();
 
             if (isDefined(pageLayoutId)) {
               const tabListInstanceId =
                 getTabListInstanceIdFromPageLayoutId(pageLayoutId);
-
-              const activeTabIdLoadable = snapshot.getLoadable(
-                activeTabIdComponentState.atomFamily({
-                  instanceId: tabListInstanceId,
-                }),
-              );
-
-              const activeTabId =
-                activeTabIdLoadable.state === 'hasError'
-                  ? undefined
-                  : activeTabIdLoadable.valueMaybe();
+              const activeTabId = snapshot
+                .getLoadable(
+                  activeTabIdComponentState.atomFamily({
+                    instanceId: tabListInstanceId,
+                  }),
+                )
+                .getValue();
 
               return {
                 ...recordContext,
