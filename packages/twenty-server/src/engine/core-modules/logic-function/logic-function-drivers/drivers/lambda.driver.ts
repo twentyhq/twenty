@@ -34,7 +34,7 @@ import { NODE_LAYER_SUBFOLDER } from 'src/engine/core-modules/logic-function/log
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
-import { BuildTemporaryDirectoryManager } from 'src/engine/core-modules/logic-function/utils/build-temporary-directory-manager';
+import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -191,7 +191,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       return listLayerResult.LayerVersions[0].LayerVersionArn;
     }
 
-    const buildTemporaryDirectoryManager = new BuildTemporaryDirectoryManager();
+    const buildTemporaryDirectoryManager = new LambdaBuildDirectoryManager();
     const { sourceTemporaryDir, lambdaZipPath } =
       await buildTemporaryDirectoryManager.init();
 
@@ -306,7 +306,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       applicationUniversalIdentifier,
     });
 
-    const buildTemporaryDirectoryManager = new BuildTemporaryDirectoryManager();
+    const buildTemporaryDirectoryManager = new LambdaBuildDirectoryManager();
 
     const { sourceTemporaryDir, lambdaZipPath } =
       await buildTemporaryDirectoryManager.init();

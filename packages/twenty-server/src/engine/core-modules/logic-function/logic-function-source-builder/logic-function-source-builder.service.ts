@@ -25,6 +25,10 @@ import {
   DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_SOURCE_HANDLER_PATH,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 type SeedSourceFilesParams = {
   logicFunctionId: string;
@@ -115,8 +119,9 @@ export class LogicFunctionSourceBuilderService {
     );
 
     if (sourceFiles.length !== 1 || builtFiles.length !== 1) {
-      throw new Error(
+      throw new LogicFunctionException(
         'Logic function seed project should have one index.ts file and one index.mjs file',
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT,
       );
     }
 
