@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import {
   gridPositionSchema,
@@ -12,6 +12,7 @@ import {
   type DashboardToolContext,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+import { validateGraphWidgetConfiguration } from 'src/modules/dashboard/tools/utils/validate-graph-widget-configuration.util';
 
 const addDashboardWidgetSchema = z.object({
   pageLayoutTabId: z.string().uuid().describe('Tab UUID from get_dashboard'),
@@ -27,7 +28,10 @@ const addDashboardWidgetSchema = z.object({
 });
 
 export const createAddDashboardWidgetTool = (
-  deps: Pick<DashboardToolDependencies, 'pageLayoutWidgetService'>,
+  deps: Pick<
+    DashboardToolDependencies,
+    'pageLayoutWidgetService' | 'flatEntityMapsCacheService'
+  >,
   context: DashboardToolContext,
 ) => ({
   name: 'add_dashboard_widget' as const,
@@ -52,6 +56,32 @@ See create_complete_dashboard for configuration examples.`,
     configuration?: AllPageLayoutWidgetConfiguration;
   }) => {
     try {
+      if (parameters.type === WidgetType.GRAPH && !parameters.configuration) {
+        return {
+          success: false,
+          message: 'configuration is required for GRAPH widgets.',
+          error: 'MISSING_GRAPH_CONFIGURATION',
+        };
+      }
+
+      if (parameters.configuration) {
+        const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+          await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId: context.workspaceId,
+              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+            },
+          );
+
+        validateGraphWidgetConfiguration({
+          configuration: parameters.configuration,
+          objectMetadataId: parameters.objectMetadataId,
+          widgetType: parameters.type,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        });
+      }
+
       const widget = await deps.pageLayoutWidgetService.create({
         input: parameters as CreatePageLayoutWidgetInput,
         workspaceId: context.workspaceId,

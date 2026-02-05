@@ -1,7 +1,8 @@
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import {
   gridPositionSchema,
   widgetConfigurationSchemaWithoutDefaults,
@@ -11,6 +12,7 @@ import {
   type DashboardToolContext,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
+import { validateGraphWidgetConfiguration } from 'src/modules/dashboard/tools/utils/validate-graph-widget-configuration.util';
 
 const updateDashboardWidgetSchema = z.object({
   widgetId: z.string().uuid().describe('The UUID of the widget to update'),
@@ -28,7 +30,10 @@ const updateDashboardWidgetSchema = z.object({
 });
 
 export const createUpdateDashboardWidgetTool = (
-  deps: Pick<DashboardToolDependencies, 'pageLayoutWidgetService'>,
+  deps: Pick<
+    DashboardToolDependencies,
+    'pageLayoutWidgetService' | 'flatEntityMapsCacheService'
+  >,
   context: DashboardToolContext,
 ) => ({
   name: 'update_dashboard_widget' as const,
@@ -49,9 +54,54 @@ Only provide fields you want to change - others remain unchanged.`,
       columnSpan: number;
     };
     objectMetadataId?: string;
-    configuration?: Record<string, unknown>;
+    configuration?: AllPageLayoutWidgetConfiguration;
   }) => {
     try {
+      const shouldValidateConfiguration =
+        isDefined(parameters.configuration) ||
+        isDefined(parameters.objectMetadataId);
+
+      if (shouldValidateConfiguration) {
+        const existingWidget =
+          await deps.pageLayoutWidgetService.findByIdOrThrow({
+            id: parameters.widgetId,
+            workspaceId: context.workspaceId,
+          });
+
+        const effectiveConfiguration =
+          parameters.configuration ?? existingWidget.configuration;
+        const effectiveObjectMetadataId =
+          parameters.objectMetadataId ?? existingWidget.objectMetadataId;
+        const effectiveWidgetType = parameters.type ?? existingWidget.type;
+
+        if (
+          effectiveWidgetType === WidgetType.GRAPH &&
+          !isDefined(effectiveConfiguration)
+        ) {
+          return {
+            success: false,
+            message: 'configuration is required for GRAPH widgets.',
+            error: 'MISSING_GRAPH_CONFIGURATION',
+          };
+        }
+
+        const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+          await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId: context.workspaceId,
+              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+            },
+          );
+
+        validateGraphWidgetConfiguration({
+          configuration: effectiveConfiguration,
+          objectMetadataId: effectiveObjectMetadataId,
+          widgetType: effectiveWidgetType,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        });
+      }
+
       const { widgetId, ...updates } = parameters;
       const updateData = Object.fromEntries(
         Object.entries(updates).filter(([key, value]) => {
