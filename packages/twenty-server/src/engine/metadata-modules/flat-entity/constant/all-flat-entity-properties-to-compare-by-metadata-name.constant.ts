@@ -28,9 +28,7 @@ type FlatEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
       string
       ? `universal${Capitalize<K>}`
       : undefined;
-    toStringify: K extends ExtractJsonbProperties<
-      MetadataEntity<TMetadataName>
-    >
+    toStringify: K extends ExtractJsonbProperties<MetadataEntity<TMetadataName>>
       ? true
       : K extends keyof MetadataEntity<TMetadataName>
         ? HasObjectInUnion<MetadataEntity<TMetadataName>[K]>
@@ -38,227 +36,265 @@ type FlatEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
   };
 };
 
-type AllFlatEntityPropertiesConfiguration = {
-  [P in AllMetadataName]: FlatEntityPropertyConfiguration<P>;
-};
-
-// type Result<T extends AllMetadataName> = {
-//   propertiesToCompare: MetadataUniversalFlatEntityPropertiesToCompare<T>[];
-//   propertiesToStringify: MetadataUniversalFlatEntityPropertiesToStringify<T>[];
-// };
-// export const getToto = <T extends AllMetadataName>(
-//   metadataName: T,
-// ): Result<T> => {
-//   const occurence =
-//     ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME[metadataName];
-
-//   const values = Object.values(occurence);
-//   const initialAccumulator: Result<T> = {
-//     propertiesToCompare: [],
-//     propertiesToStringify: [],
-//   };
-
-//   for (const value of values) {
-//     if (Object.keys(values))
-//   }
-
-//   return {
-//     propertiesToCompare: [],
-//     propertiesToStringify: [],
-//   };
-// };
-
 export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME = {
   fieldMetadata: {
-    defaultValue: { toStringify: true },
-    description: {},
-    icon: {},
-    isActive: {},
-    isLabelSyncedWithName: {},
-    isUnique: {},
-    label: {},
-    name: {},
-    options: { toStringify: true },
-    standardOverrides: { toStringify: true },
+    defaultValue: { toStringify: true, universalProperty: undefined },
+    description: { toStringify: false, universalProperty: undefined },
+    icon: { toStringify: false, universalProperty: undefined },
+    isActive: { toStringify: false, universalProperty: undefined },
+    isLabelSyncedWithName: { toStringify: false, universalProperty: undefined },
+    isUnique: { toStringify: false, universalProperty: undefined },
+    label: { toStringify: false, universalProperty: undefined },
+    name: { toStringify: false, universalProperty: undefined },
+    options: { toStringify: true, universalProperty: undefined },
+    standardOverrides: { toStringify: true, universalProperty: undefined },
     settings: { toStringify: true, universalProperty: 'universalSettings' },
   },
   objectMetadata: {
-    description: {},
-    icon: {},
-    isActive: {},
-    isLabelSyncedWithName: {},
-    labelPlural: {},
-    labelSingular: {},
-    namePlural: {},
-    nameSingular: {},
-    labelIdentifierFieldMetadataUniversalIdentifier: {},
-    standardOverrides: { toStringify: true },
+    description: { toStringify: false, universalProperty: undefined },
+    icon: { toStringify: false, universalProperty: undefined },
+    isActive: { toStringify: false, universalProperty: undefined },
+    isLabelSyncedWithName: { toStringify: false, universalProperty: undefined },
+    labelPlural: { toStringify: false, universalProperty: undefined },
+    labelSingular: { toStringify: false, universalProperty: undefined },
+    namePlural: { toStringify: false, universalProperty: undefined },
+    nameSingular: { toStringify: false, universalProperty: undefined },
+    labelIdentifierFieldMetadataUniversalIdentifier: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    standardOverrides: { toStringify: true, universalProperty: undefined },
   },
   view: {
-    key: {},
-    deletedAt: {},
-    createdByUserWorkspaceId: {},
-    name: {},
-    type: {},
-    icon: {},
-    position: {},
-    isCompact: {},
-    openRecordIn: {},
-    kanbanAggregateOperation: {},
-    kanbanAggregateOperationFieldMetadataId: {},
-    anyFieldFilterValue: {},
-    calendarLayout: {},
-    calendarFieldMetadataId: {},
-    visibility: {},
-    mainGroupByFieldMetadataId: {},
-    shouldHideEmptyGroups: {},
+    key: { toStringify: false, universalProperty: undefined },
+    deletedAt: { toStringify: false, universalProperty: undefined },
+    createdByUserWorkspaceId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    name: { toStringify: false, universalProperty: undefined },
+    type: { toStringify: false, universalProperty: undefined },
+    icon: { toStringify: false, universalProperty: undefined },
+    position: { toStringify: false, universalProperty: undefined },
+    isCompact: { toStringify: false, universalProperty: undefined },
+    openRecordIn: { toStringify: false, universalProperty: undefined },
+    kanbanAggregateOperation: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    kanbanAggregateOperationFieldMetadataId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    anyFieldFilterValue: { toStringify: false, universalProperty: undefined },
+    calendarLayout: { toStringify: false, universalProperty: undefined },
+    calendarFieldMetadataId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    visibility: { toStringify: false, universalProperty: undefined },
+    mainGroupByFieldMetadataId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    shouldHideEmptyGroups: { toStringify: false, universalProperty: undefined },
   },
   viewField: {
-    isVisible: {},
-    size: {},
-    position: {},
-    aggregateOperation: {},
-    deletedAt: {},
+    isVisible: { toStringify: false, universalProperty: undefined },
+    size: { toStringify: false, universalProperty: undefined },
+    position: { toStringify: false, universalProperty: undefined },
+    aggregateOperation: { toStringify: false, universalProperty: undefined },
+    deletedAt: { toStringify: false, universalProperty: undefined },
   },
   viewGroup: {
-    isVisible: {},
-    fieldValue: {},
-    position: {},
-    deletedAt: {},
+    isVisible: { toStringify: false, universalProperty: undefined },
+    fieldValue: { toStringify: false, universalProperty: undefined },
+    position: { toStringify: false, universalProperty: undefined },
+    deletedAt: { toStringify: false, universalProperty: undefined },
   },
   index: {
-    indexType: {},
-    indexWhereClause: {},
-    flatIndexFieldMetadatas: { toStringify: true },
-    isUnique: {},
-    name: {},
+    indexType: { toStringify: false, universalProperty: undefined },
+    indexWhereClause: { toStringify: false, universalProperty: undefined },
+    flatIndexFieldMetadatas: {
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    isUnique: { toStringify: false, universalProperty: undefined },
+    name: { toStringify: false, universalProperty: undefined },
   },
   logicFunction: {
-    name: {},
-    description: {},
-    timeoutSeconds: {},
-    checksum: {},
-    sourceHandlerPath: {},
-    handlerName: {},
-    toolInputSchema: { toStringify: true },
-    isTool: {},
-    deletedAt: {},
+    name: { toStringify: false, universalProperty: undefined },
+    description: { toStringify: false, universalProperty: undefined },
+    timeoutSeconds: { toStringify: false, universalProperty: undefined },
+    checksum: { toStringify: false, universalProperty: undefined },
+    sourceHandlerPath: { toStringify: false, universalProperty: undefined },
+    handlerName: { toStringify: false, universalProperty: undefined },
+    toolInputSchema: { toStringify: true, universalProperty: undefined },
+    isTool: { toStringify: false, universalProperty: undefined },
+    deletedAt: { toStringify: false, universalProperty: undefined },
   },
   viewFilter: {
-    viewId: {},
-    deletedAt: {},
-    fieldMetadataId: {},
-    operand: {},
-    value: { toStringify: true },
-    viewFilterGroupId: {},
-    positionInViewFilterGroup: {},
-    subFieldName: {},
+    viewId: { toStringify: false, universalProperty: undefined },
+    deletedAt: { toStringify: false, universalProperty: undefined },
+    fieldMetadataId: { toStringify: false, universalProperty: undefined },
+    operand: { toStringify: false, universalProperty: undefined },
+    value: { toStringify: true, universalProperty: undefined },
+    viewFilterGroupId: { toStringify: false, universalProperty: undefined },
+    positionInViewFilterGroup: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    subFieldName: { toStringify: false, universalProperty: undefined },
   },
   role: {
-    label: {},
-    description: {},
-    icon: {},
-    canUpdateAllSettings: {},
-    canAccessAllTools: {},
-    canReadAllObjectRecords: {},
-    canUpdateAllObjectRecords: {},
-    canSoftDeleteAllObjectRecords: {},
-    canDestroyAllObjectRecords: {},
-    canBeAssignedToUsers: {},
-    canBeAssignedToAgents: {},
-    canBeAssignedToApiKeys: {},
+    label: { toStringify: false, universalProperty: undefined },
+    description: { toStringify: false, universalProperty: undefined },
+    icon: { toStringify: false, universalProperty: undefined },
+    canUpdateAllSettings: { toStringify: false, universalProperty: undefined },
+    canAccessAllTools: { toStringify: false, universalProperty: undefined },
+    canReadAllObjectRecords: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canUpdateAllObjectRecords: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canSoftDeleteAllObjectRecords: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canDestroyAllObjectRecords: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    canBeAssignedToUsers: { toStringify: false, universalProperty: undefined },
+    canBeAssignedToAgents: { toStringify: false, universalProperty: undefined },
+    canBeAssignedToApiKeys: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   roleTarget: {
-    roleId: {},
-    userWorkspaceId: {},
-    apiKeyId: {},
-    agentId: {},
+    roleId: { toStringify: false, universalProperty: undefined },
+    userWorkspaceId: { toStringify: false, universalProperty: undefined },
+    apiKeyId: { toStringify: false, universalProperty: undefined },
+    agentId: { toStringify: false, universalProperty: undefined },
   },
   agent: {
-    name: {},
-    label: {},
-    icon: {},
-    description: {},
-    prompt: {},
-    modelId: {},
-    responseFormat: { toStringify: true },
-    modelConfiguration: { toStringify: true },
-    evaluationInputs: { toStringify: true },
+    name: { toStringify: false, universalProperty: undefined },
+    label: { toStringify: false, universalProperty: undefined },
+    icon: { toStringify: false, universalProperty: undefined },
+    description: { toStringify: false, universalProperty: undefined },
+    prompt: { toStringify: false, universalProperty: undefined },
+    modelId: { toStringify: false, universalProperty: undefined },
+    responseFormat: { toStringify: true, universalProperty: undefined },
+    modelConfiguration: { toStringify: true, universalProperty: undefined },
+    evaluationInputs: { toStringify: true, universalProperty: undefined },
   },
   pageLayout: {
-    name: {},
-    type: {},
-    objectMetadataId: {},
-    deletedAt: {},
+    name: { toStringify: false, universalProperty: undefined },
+    type: { toStringify: false, universalProperty: undefined },
+    objectMetadataId: { toStringify: false, universalProperty: undefined },
+    deletedAt: { toStringify: false, universalProperty: undefined },
   },
   pageLayoutWidget: {
-    title: {},
-    type: {},
-    objectMetadataId: {},
-    gridPosition: { toStringify: true },
-    position: {},
+    title: { toStringify: false, universalProperty: undefined },
+    type: { toStringify: false, universalProperty: undefined },
+    objectMetadataId: { toStringify: false, universalProperty: undefined },
+    gridPosition: { toStringify: true, universalProperty: undefined },
+    position: { toStringify: true, universalProperty: undefined },
     configuration: {
       toStringify: true,
       universalProperty: 'universalConfiguration',
     },
-    deletedAt: {},
+    deletedAt: { toStringify: false, universalProperty: undefined },
   },
   pageLayoutTab: {
-    title: {},
-    position: {},
-    deletedAt: {},
+    title: { toStringify: false, universalProperty: undefined },
+    position: { toStringify: false, universalProperty: undefined },
+    deletedAt: { toStringify: false, universalProperty: undefined },
   },
   skill: {
-    name: {},
-    label: {},
-    icon: {},
-    description: {},
-    content: {},
-    isActive: {},
+    name: { toStringify: false, universalProperty: undefined },
+    label: { toStringify: false, universalProperty: undefined },
+    icon: { toStringify: false, universalProperty: undefined },
+    description: { toStringify: false, universalProperty: undefined },
+    content: { toStringify: false, universalProperty: undefined },
+    isActive: { toStringify: false, universalProperty: undefined },
   },
   commandMenuItem: {
-    label: {},
-    icon: {},
-    isPinned: {},
-    availabilityType: {},
-    availabilityObjectMetadataId: {},
+    label: { toStringify: false, universalProperty: undefined },
+    icon: { toStringify: false, universalProperty: undefined },
+    isPinned: { toStringify: false, universalProperty: undefined },
+    availabilityType: { toStringify: false, universalProperty: undefined },
+    availabilityObjectMetadataId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   navigationMenuItem: {
-    position: {},
-    folderId: {},
-    name: {},
+    position: { toStringify: false, universalProperty: undefined },
+    folderId: { toStringify: false, universalProperty: undefined },
+    name: { toStringify: false, universalProperty: undefined },
   },
   rowLevelPermissionPredicate: {
-    fieldMetadataId: {},
-    operand: {},
-    value: { toStringify: true },
-    rowLevelPermissionPredicateGroupId: {},
-    positionInRowLevelPermissionPredicateGroup: {},
-    subFieldName: {},
-    workspaceMemberFieldMetadataId: {},
-    workspaceMemberSubFieldName: {},
-    deletedAt: {},
+    fieldMetadataId: { toStringify: false, universalProperty: undefined },
+    operand: { toStringify: false, universalProperty: undefined },
+    value: { toStringify: true, universalProperty: undefined },
+    rowLevelPermissionPredicateGroupId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    positionInRowLevelPermissionPredicateGroup: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    subFieldName: { toStringify: false, universalProperty: undefined },
+    workspaceMemberFieldMetadataId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    workspaceMemberSubFieldName: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: { toStringify: false, universalProperty: undefined },
   },
   rowLevelPermissionPredicateGroup: {
-    logicalOperator: {},
-    positionInRowLevelPermissionPredicateGroup: {},
-    parentRowLevelPermissionPredicateGroupId: {},
-    deletedAt: {},
+    logicalOperator: { toStringify: false, universalProperty: undefined },
+    positionInRowLevelPermissionPredicateGroup: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    parentRowLevelPermissionPredicateGroupId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: { toStringify: false, universalProperty: undefined },
   },
   viewFilterGroup: {
-    viewId: {},
-    deletedAt: {},
-    parentViewFilterGroupId: {},
-    logicalOperator: {},
-    positionInViewFilterGroup: {},
+    viewId: { toStringify: false, universalProperty: undefined },
+    deletedAt: { toStringify: false, universalProperty: undefined },
+    parentViewFilterGroupId: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    logicalOperator: { toStringify: false, universalProperty: undefined },
+    positionInViewFilterGroup: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
   },
   frontComponent: {
-    name: {},
+    name: { toStringify: false, universalProperty: undefined },
   },
   webhook: {
-    targetUrl: {},
-    operations: { toStringify: true },
-    description: {},
-    secret: {},
+    targetUrl: { toStringify: false, universalProperty: undefined },
+    operations: { toStringify: true, universalProperty: undefined },
+    description: { toStringify: false, universalProperty: undefined },
+    secret: { toStringify: false, universalProperty: undefined },
   },
-} as const satisfies AllFlatEntityPropertiesConfiguration;
+} as const satisfies {
+  [P in AllMetadataName]: FlatEntityPropertyConfiguration<P>;
+};
