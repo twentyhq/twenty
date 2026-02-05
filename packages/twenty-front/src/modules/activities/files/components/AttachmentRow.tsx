@@ -105,7 +105,7 @@ export const AttachmentRow = ({
     : attachment.fileCategory;
 
   const fileUrl = isFilesFieldMigrated
-    ? attachment.file?.[0]?.url || attachment.fullPath
+    ? attachment.file?.[0]?.url || ''
     : attachment.fullPath;
 
   assertIsDefinedOrThrow(fileUrl, new Error(t`File URL is not defined`));

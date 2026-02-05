@@ -1,8 +1,7 @@
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { useUploadFilesFieldFile } from '@/object-record/record-field/ui/meta-types/hooks/useUploadFilesFieldFile';
 import { uploadMultipleFiles } from '@/object-record/record-field/ui/meta-types/utils/uploadMultipleFiles';
-import { filesFieldIsUploadingState } from '@/object-record/record-field/ui/states/filesFieldIsUploadingState';
-import { filesFieldUploadWindowOpenState } from '@/object-record/record-field/ui/states/filesFieldUploadWindowOpenState';
+import { filesFieldUploadState } from '@/object-record/record-field/ui/states/filesFieldUploadState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -96,7 +95,10 @@ export const useOpenFilesFieldInput = () => {
 
         const currentFileCount = isDefined(fieldValue) ? fieldValue.length : 0;
 
-        set(filesFieldUploadWindowOpenState({ recordId, fieldName }), true);
+        set(
+          filesFieldUploadState({ recordId, fieldName }),
+          'UPLOAD_WINDOW_OPEN',
+        );
 
         openFileUpload({
           multiple: true,
@@ -106,10 +108,7 @@ export const useOpenFilesFieldInput = () => {
                 message: t`Cannot upload more than ${maxNumberOfValues} files`,
               });
 
-              set(
-                filesFieldUploadWindowOpenState({ recordId, fieldName }),
-                false,
-              );
+              set(filesFieldUploadState({ recordId, fieldName }), null);
 
               if (isTableContext && isDefined(recordTableId)) {
                 set(
@@ -129,10 +128,9 @@ export const useOpenFilesFieldInput = () => {
             }
 
             set(
-              filesFieldUploadWindowOpenState({ recordId, fieldName }),
-              false,
+              filesFieldUploadState({ recordId, fieldName }),
+              'UPLOADING_FILE',
             );
-            set(filesFieldIsUploadingState({ recordId, fieldName }), true);
 
             try {
               const uploadedFiles = await uploadMultipleFiles(
@@ -147,7 +145,7 @@ export const useOpenFilesFieldInput = () => {
                 });
               }
             } finally {
-              set(filesFieldIsUploadingState({ recordId, fieldName }), false);
+              set(filesFieldUploadState({ recordId, fieldName }), null);
 
               if (isTableContext && isDefined(recordTableId)) {
                 set(
@@ -166,10 +164,7 @@ export const useOpenFilesFieldInput = () => {
             }
           },
           onCancel: () => {
-            set(
-              filesFieldUploadWindowOpenState({ recordId, fieldName }),
-              false,
-            );
+            set(filesFieldUploadState({ recordId, fieldName }), null);
 
             if (isTableContext && isDefined(recordTableId)) {
               set(

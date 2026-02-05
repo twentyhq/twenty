@@ -277,6 +277,28 @@ export class FilesFieldSync {
     }
   }
 
+  private validateFileFieldUniversalIdentifier(
+    fileId: string,
+    fileEntity: FileEntity,
+    fileIdToFieldUniversalIdentifier: Map<string, string>,
+  ): void {
+    const expectedUniversalIdentifier =
+      fileIdToFieldUniversalIdentifier.get(fileId);
+
+    if (
+      isDefined(expectedUniversalIdentifier) &&
+      !fileEntity.path.includes(expectedUniversalIdentifier)
+    ) {
+      throw new TwentyORMException(
+        `File ${fileId} was not uploaded for this field`,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`File ${fileId} was not uploaded for this field. Please re-upload the file.`,
+        },
+      );
+    }
+  }
+
   private validateAndComputeFilesFieldDiff(
     entity: Record<string, unknown>,
     filesField: FlatFieldMetadata,
@@ -414,7 +436,6 @@ export class FilesFieldSync {
       filesFields.map((field) => [field.name, field.universalIdentifier]),
     );
 
-    // Track which fileId belongs to which field's universalIdentifier
     const fileIdToFieldUniversalIdentifier = new Map<string, string>();
 
     for (const entityDiffs of Object.values(filesFieldDiffByEntityIndex)) {
@@ -425,7 +446,7 @@ export class FilesFieldSync {
         diff.toAdd.forEach((file) => {
           allFileIds.toAdd.add(file.fileId);
           allFileIdsToFetch.add(file.fileId);
-          if (fieldUniversalIdentifier) {
+          if (isDefined(fieldUniversalIdentifier)) {
             fileIdToFieldUniversalIdentifier.set(
               file.fileId,
               fieldUniversalIdentifier,
@@ -435,7 +456,7 @@ export class FilesFieldSync {
         diff.toUpdate.forEach((file) => {
           allFileIds.toUpdate.add(file.fileId);
           allFileIdsToFetch.add(file.fileId);
-          if (fieldUniversalIdentifier) {
+          if (isDefined(fieldUniversalIdentifier)) {
             fileIdToFieldUniversalIdentifier.set(
               file.fileId,
               fieldUniversalIdentifier,
@@ -476,23 +497,11 @@ export class FilesFieldSync {
             );
           }
 
-          const expectedUniversalIdentifier =
-            fileIdToFieldUniversalIdentifier.get(file.fileId);
-
-          if (
-            expectedUniversalIdentifier &&
-            !fileEntity.path.includes(expectedUniversalIdentifier)
-          ) {
-            const fileId = file.fileId;
-
-            throw new TwentyORMException(
-              `File ${fileId} was not uploaded for this field`,
-              TwentyORMExceptionCode.INVALID_INPUT,
-              {
-                userFriendlyMessage: msg`File ${fileId} was not uploaded for this field. Please re-upload the file.`,
-              },
-            );
-          }
+          this.validateFileFieldUniversalIdentifier(
+            file.fileId,
+            fileEntity,
+            fileIdToFieldUniversalIdentifier,
+          );
 
           if (!fileEntity.settings?.isTemporaryFile) {
             const fileId = file.fileId;
@@ -519,21 +528,11 @@ export class FilesFieldSync {
             );
           }
 
-          const expectedUniversalIdentifier =
-            fileIdToFieldUniversalIdentifier.get(file.fileId);
-
-          if (
-            expectedUniversalIdentifier &&
-            !fileEntity.path.includes(expectedUniversalIdentifier)
-          ) {
-            throw new TwentyORMException(
-              `File ${file.fileId} does not belong to this field`,
-              TwentyORMExceptionCode.INVALID_INPUT,
-              {
-                userFriendlyMessage: STANDARD_ERROR_MESSAGE,
-              },
-            );
-          }
+          this.validateFileFieldUniversalIdentifier(
+            file.fileId,
+            fileEntity,
+            fileIdToFieldUniversalIdentifier,
+          );
 
           if (fileEntity.settings?.isTemporaryFile) {
             throw new TwentyORMException(
