@@ -3,7 +3,7 @@ import { BACKUP_PATH, PKG_PATH } from './constants';
 
 const stripWorkspace = (deps = {}) =>
   Object.fromEntries(
-    Object.entries(deps).filter(([_, value]) => !value.includes('workspace:*')),
+    Object.entries(deps).filter(([_, value]) => !value.startsWith('workspace:')),
   );
 
 const main = async () => {
