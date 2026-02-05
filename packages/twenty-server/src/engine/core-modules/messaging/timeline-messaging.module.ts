@@ -10,7 +10,13 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
-  imports: [WorkspaceDataSourceModule, UserModule, ConnectedAccountModule, FeatureFlagModule, PermissionsModule],
+  imports: [
+    WorkspaceDataSourceModule,
+    UserModule,
+    ConnectedAccountModule,
+    FeatureFlagModule,
+    PermissionsModule,
+  ],
   exports: [],
   providers: [
     TimelineMessagingResolver,
