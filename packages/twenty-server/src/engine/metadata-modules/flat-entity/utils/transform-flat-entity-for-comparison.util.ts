@@ -1,25 +1,32 @@
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { orderObjectProperties } from 'src/engine/metadata-modules/flat-entity/utils/order-object-properties.util';
-import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
+import { MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-stringify.type';
+import { AllMetadataName } from 'twenty-shared/metadata';
 
-export function transformFlatEntityForComparison<
-  TFlatEntity extends SyncableFlatEntity | UniversalSyncableFlatEntity,
-  PToCompare extends keyof TFlatEntity,
-  PJsonB extends PToCompare,
+export function transformUniversalFlatEntityForComparison<
+  T extends AllMetadataName,
 >({
-  flatEntity,
+  universalFlatEntity,
   propertiesToCompare,
   propertiesToStringify,
 }: {
-  flatEntity: TFlatEntity;
-  propertiesToCompare: readonly PToCompare[];
-  propertiesToStringify: readonly PJsonB[];
-}): Pick<TFlatEntity, PToCompare> {
+  universalFlatEntity: MetadataUniversalFlatEntity<T>;
+  propertiesToCompare: MetadataUniversalFlatEntityPropertiesToCompare<T>[];
+  propertiesToStringify: MetadataUniversalFlatEntityPropertiesToStringify<T>[];
+}) {
   return propertiesToCompare.reduce(
     (flatEntityAccumulator, propertyToCompare) => {
-      const currentValue = flatEntity[propertyToCompare];
+      const currentValue =
+        universalFlatEntity[
+          propertyToCompare as keyof MetadataUniversalFlatEntity<T>
+        ];
 
-      if (propertiesToStringify.includes(propertyToCompare as PJsonB)) {
+      if (
+        propertiesToStringify.includes(
+          propertyToCompare as MetadataUniversalFlatEntityPropertiesToStringify<T>,
+        )
+      ) {
         const orderedValue = orderObjectProperties(currentValue);
 
         return {
@@ -33,6 +40,6 @@ export function transformFlatEntityForComparison<
         [propertyToCompare]: currentValue,
       };
     },
-    {} as Pick<TFlatEntity, PToCompare>,
+    {},
   );
 }

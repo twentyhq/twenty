@@ -3,33 +3,40 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 
+import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { transformFlatEntityForComparison } from 'src/engine/metadata-modules/flat-entity/utils/transform-flat-entity-for-comparison.util';
+import { transformUniversalFlatEntityForComparison } from 'src/engine/metadata-modules/flat-entity/utils/transform-flat-entity-for-comparison.util';
+import { MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-stringify.type';
 import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
+type CompareTwoUniversalFlatEntityArgs<T extends AllMetadataName> = FromTo<
+  MetadataUniversalFlatEntity<T>,
+  'universalFlatEntity'
+> & { metadataName: T };
+
 export const compareTwoFlatEntity = <T extends AllMetadataName>({
-  fromFlatEntity,
-  toFlatEntity,
-}: FromTo<MetadataUniversalFlatEntity<T>, 'flatEntity'>):
+  fromUniversalFlatEntity,
+  toUniversalFlatEntity,
+  metadataName,
+}: CompareTwoUniversalFlatEntityArgs<T>):
   | UniversalFlatEntityUpdate<T>
   | undefined => {
+  const { propertiesToStringify, propertiesToCompare } =
+    ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[metadataName];
 
-
-
-  const [transformedFromFlatEntity, transformedToFlatEntity] = [
-    fromFlatEntity,
-    toFlatEntity,
-  ].map((flatEntity) =>
-    transformFlatEntityForComparison({
-      flatEntity,
-      propertiesToCompare,
-      propertiesToStringify,
-    }),
-  );
+  const [transformedFromUniversalFlatEntity, transformedToUniversalFlatEntity] =
+    [fromUniversalFlatEntity, toUniversalFlatEntity].map(
+      (universalFlatEntity) =>
+        transformUniversalFlatEntityForComparison({
+          universalFlatEntity,
+          propertiesToCompare,
+          propertiesToStringify,
+        }),
+    );
 
   const flatEntityDifferences = diff(
-    transformedFromFlatEntity,
-    transformedToFlatEntity,
+    transformedFromUniversalFlatEntity,
+    transformedToUniversalFlatEntity,
   );
 
   if (flatEntityDifferences.length === 0) {
@@ -42,9 +49,9 @@ export const compareTwoFlatEntity = <T extends AllMetadataName>({
     switch (difference.type) {
       case 'CHANGE': {
         const { path, value } = difference;
-        const property = path[0] as PToCompare;
+        const property = path[0];
         const isJsonb = propertiesToStringify.includes(
-          property as unknown as PJsonB,
+          property as MetadataUniversalFlatEntityPropertiesToStringify<T>,
         );
 
         if (isJsonb) {
