@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -72,7 +73,7 @@ export class PageLayoutDuplicationService {
           objectMetadataId: originalFlatLayout.objectMetadataId,
         },
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
       },
     );
 
@@ -81,14 +82,14 @@ export class PageLayoutDuplicationService {
         originalTabs: originalTabsWithWidgets.map(({ tab }) => tab),
         newPageLayoutId: newFlatPageLayout.id,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
       });
 
     const newFlatWidgets = this.createDuplicatedWidgets({
       originalTabsWithWidgets,
       originalTabIdToNewTabIdMap,
       workspaceId,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      flatApplication: workspaceCustomFlatApplication,
     });
 
     const validateAndBuildResult =
@@ -224,12 +225,12 @@ export class PageLayoutDuplicationService {
     originalTabs,
     newPageLayoutId,
     workspaceId,
-    workspaceCustomApplicationId,
+    flatApplication,
   }: {
     originalTabs: FlatPageLayoutTab[];
     newPageLayoutId: string;
     workspaceId: string;
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
   }): {
     newFlatTabs: FlatPageLayoutTab[];
     originalTabIdToNewTabIdMap: Map<string, string>;
@@ -245,7 +246,7 @@ export class PageLayoutDuplicationService {
             pageLayoutId: newPageLayoutId,
           },
           workspaceId,
-          workspaceCustomApplicationId,
+          flatApplication,
         });
 
       originalTabIdToNewTabIdMap.set(originalTab.id, newFlatTab.id);
@@ -260,7 +261,7 @@ export class PageLayoutDuplicationService {
     originalTabsWithWidgets,
     originalTabIdToNewTabIdMap,
     workspaceId,
-    workspaceCustomApplicationId,
+    flatApplication,
   }: {
     originalTabsWithWidgets: {
       tab: FlatPageLayoutTab;
@@ -268,7 +269,7 @@ export class PageLayoutDuplicationService {
     }[];
     originalTabIdToNewTabIdMap: Map<string, string>;
     workspaceId: string;
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
   }): FlatPageLayoutWidget[] {
     return originalTabsWithWidgets.flatMap(({ tab, widgets }) => {
       const newTabId = originalTabIdToNewTabIdMap.get(tab.id)!;
@@ -284,7 +285,7 @@ export class PageLayoutDuplicationService {
             pageLayoutTabId: newTabId,
           },
           workspaceId,
-          workspaceCustomApplicationId,
+          flatApplication,
         }),
       );
     });

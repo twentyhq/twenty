@@ -97,7 +97,7 @@ export class CommandMenuItemService {
       fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate({
         createCommandMenuItemInput: input,
         workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
       });
 
     const validateAndBuildResult =

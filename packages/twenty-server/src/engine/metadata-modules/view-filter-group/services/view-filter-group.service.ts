@@ -49,7 +49,7 @@ export class ViewFilterGroupService {
       fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate({
         createViewFilterGroupInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
       });
 
     const buildAndRunResult =

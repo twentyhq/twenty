@@ -194,7 +194,7 @@ export class PageLayoutService {
       fromCreatePageLayoutInputToFlatPageLayoutToCreate({
         createPageLayoutInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
       });
 
     const validateAndBuildResult =

@@ -81,7 +81,7 @@ export class ViewFieldV2Service {
         fromCreateViewFieldInputToFlatViewFieldToCreate({
           createViewFieldInput,
           workspaceId,
-          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+          flatApplication: workspaceCustomFlatApplication,
         }),
     );
 

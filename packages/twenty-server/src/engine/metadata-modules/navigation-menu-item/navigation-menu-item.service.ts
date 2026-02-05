@@ -168,7 +168,7 @@ export class NavigationMenuItemService {
       fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
         createNavigationMenuItemInput: normalizedInput,
         workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
         flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
       });
 

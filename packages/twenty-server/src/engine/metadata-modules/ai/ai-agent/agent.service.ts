@@ -106,6 +106,11 @@ export class AgentService {
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -113,14 +118,15 @@ export class AgentService {
         },
       );
 
+    const flatApplication = isDefined(input.applicationId)
+      ? flatApplicationMaps.byId[input.applicationId]
+      : undefined;
+
     const { flatAgentToCreate, flatRoleTargetToCreate } =
       fromCreateAgentInputToFlatAgent({
-        createAgentInput: {
-          ...input,
-          applicationId:
-            input.applicationId ?? workspaceCustomFlatApplication.id,
-        },
+        createAgentInput: input,
         workspaceId,
+        flatApplication: flatApplication ?? workspaceCustomFlatApplication,
       });
 
     const validateAndBuildResult =

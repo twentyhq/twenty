@@ -144,7 +144,7 @@ export class PageLayoutTabService {
       fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate({
         createPageLayoutTabInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
       });
 
     const validateAndBuildResult =

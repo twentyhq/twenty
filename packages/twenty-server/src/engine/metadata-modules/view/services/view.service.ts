@@ -65,7 +65,7 @@ export class ViewService {
         createViewInput,
         workspaceId,
         createdByUserWorkspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       });
 
