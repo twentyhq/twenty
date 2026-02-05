@@ -36,7 +36,7 @@ type FlatEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
   };
 };
 
-export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME = {
+export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   fieldMetadata: {
     defaultValue: { toStringify: true, universalProperty: undefined },
     description: { toStringify: false, universalProperty: undefined },

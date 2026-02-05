@@ -1,6 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { type ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-properties-to-compare-by-metadata-name.constant';
+import { type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 type ExtractKeysWithToStringify<T> = {
   [K in keyof T]: T[K] extends { toStringify: true } ? K : never;
@@ -8,5 +8,5 @@ type ExtractKeysWithToStringify<T> = {
 
 export type MetadataUniversalFlatEntityPropertiesToStringify<T extends AllMetadataName> =
   ExtractKeysWithToStringify<
-    (typeof ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_BY_METADATA_NAME)[T]
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T]
   >;
