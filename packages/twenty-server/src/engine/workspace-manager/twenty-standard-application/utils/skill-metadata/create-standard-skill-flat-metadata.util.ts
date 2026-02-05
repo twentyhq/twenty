@@ -40,7 +40,8 @@ export const createStandardSkillFlatMetadata = ({
     isActive: true,
     workspaceId,
     applicationId: twentyStandardApplicationId,
-    applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
     createdAt: now,
     updatedAt: now,
   };

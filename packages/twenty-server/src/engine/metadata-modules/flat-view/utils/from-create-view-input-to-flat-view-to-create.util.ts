@@ -1,6 +1,6 @@
 import {
-    isDefined,
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+  isDefined,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 

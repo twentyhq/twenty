@@ -78,6 +78,6 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
         ? DEFAULT_TOOL_INPUT_SCHEMA
         : null,
     isTool: rawCreateLogicFunctionInput?.isTool ?? false,
-      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
+    applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
   };
 };

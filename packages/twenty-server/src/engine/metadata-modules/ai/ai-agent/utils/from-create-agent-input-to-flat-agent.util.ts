@@ -28,15 +28,7 @@ export const fromCreateAgentInputToFlatAgent = ({
   const { roleId, ...createAgentInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateAgentInput,
-      [
-        'name',
-        'label',
-        'icon',
-        'description',
-        'prompt',
-        'modelId',
-        'roleId',
-      ],
+      ['name', 'label', 'icon', 'description', 'prompt', 'modelId', 'roleId'],
     );
 
   const createdAt = new Date().toISOString();

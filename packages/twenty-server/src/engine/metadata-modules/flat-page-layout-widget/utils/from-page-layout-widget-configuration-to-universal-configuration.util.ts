@@ -6,9 +6,8 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 
 type PageLayoutWidgetConfiguration = PageLayoutWidgetEntity['configuration'];
 
-type UniversalPageLayoutWidgetConfiguration = NonNullable<
-  FlatPageLayoutWidget
->['universalConfiguration'];
+type UniversalPageLayoutWidgetConfiguration =
+  NonNullable<FlatPageLayoutWidget>['universalConfiguration'];
 
 // Field metadata IDs in widget configurations don't need to reference existing entities
 const getFieldMetadataUniversalIdentifier = ({

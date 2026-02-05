@@ -149,12 +149,11 @@ export class FlatSkillValidatorService {
       (key) => key !== 'isActive',
     );
 
-    const isTwentyStandardSkill =
-      belongsToTwentyStandardApp({
-        universalIdentifier: fromFlatSkill.universalIdentifier,
-        applicationUniversalIdentifier:
-          fromFlatSkill.applicationUniversalIdentifier,
-      });
+    const isTwentyStandardSkill = belongsToTwentyStandardApp({
+      universalIdentifier: fromFlatSkill.universalIdentifier,
+      applicationUniversalIdentifier:
+        fromFlatSkill.applicationUniversalIdentifier,
+    });
 
     if (
       !buildOptions.isSystemBuild &&

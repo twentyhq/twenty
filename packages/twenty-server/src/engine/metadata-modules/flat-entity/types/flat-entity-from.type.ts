@@ -28,12 +28,11 @@ export type FlatEntityFrom<
   CastRecordTypeOrmDatePropertiesToString<TEntity> &
   AddSuffixToEntityOneToManyProperties<TEntity, 'ids'> &
   (TEntity extends SyncableEntity
-    ?
-        UniversalFlatEntityExtraProperties<
-          TEntity,
-          TMetadataName extends undefined
-            ? FromMetadataEntityToMetadataName<TEntity>
-            : TMetadataName
-        > & { universalIdentifier: string }
+    ? UniversalFlatEntityExtraProperties<
+        TEntity,
+        TMetadataName extends undefined
+          ? FromMetadataEntityToMetadataName<TEntity>
+          : TMetadataName
+      > & { universalIdentifier: string }
     : // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       {});
