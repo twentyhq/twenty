@@ -73,70 +73,67 @@ export const useTriggerEventStreamCreation = () => {
             },
           },
           {
-            next: (
-              value: ExecutionResult<{
-                onEventSubscription: EventSubscription;
-              }>,
-            ) => {
-              if (isDefined(value?.errors)) {
-                captureException(
-                  new Error(
-                    `SSE subscription error: ${value.errors[0]?.message}`,
-                  ),
-                );
-                set(shouldDestroyEventStreamState, true);
-
-                return;
-              }
-
-              if (!hasReceivedFirstEvent) {
-                hasReceivedFirstEvent = true;
-                set(sseEventStreamReadyState, true);
-              }
-
-              const objectRecordEventsWithQueryIds =
-                value?.data?.onEventSubscription?.eventWithQueryIdsList ?? [];
-
-              const objectRecordEvents = objectRecordEventsWithQueryIds.map(
-                (eventWithQueryIds) => {
-                  return eventWithQueryIds.event;
-                },
-              );
-
-              triggerOptimisticEffectFromSseEvents({
-                objectRecordEvents,
-              });
-
-              dispatchObjectRecordEventsFromSseToBrowserEvents(
-                objectRecordEventsWithQueryIds,
-              );
-            },
-            error: (error) => {
-              captureException(error);
-            },
             complete: () => {},
+            error: () => {},
+            next: () => {},
           },
           {
             message: ({ data, event }) => {
-              if (event === 'next') {
-                if (isDefined(data?.errors)) {
-                  const subCode = data.errors[0]?.extensions?.subCode;
+              const result = data as ExecutionResult<{
+                onEventSubscription: EventSubscription;
+              }>;
 
-                  switch (subCode) {
-                    case 'EVENT_STREAM_ALREADY_EXISTS': {
-                      set(shouldDestroyEventStreamState, true);
-                      break;
+              try {
+                if (event === 'next') {
+                  if (isDefined(result?.errors)) {
+                    const subCode = result.errors[0]?.extensions?.subCode;
+
+                    switch (subCode) {
+                      case 'EVENT_STREAM_ALREADY_EXISTS': {
+                        set(shouldDestroyEventStreamState, true);
+                        break;
+                      }
+                      default: {
+                        for (const error of result.errors) {
+                          captureException(error);
+                        }
+                      }
                     }
-                    default: {
-                      captureException(
-                        new Error(
-                          `Unhandled SSE message error: ${data.errors[0]?.message}`,
-                        ),
+
+                    set(shouldDestroyEventStreamState, true);
+                  } else {
+                    if (!hasReceivedFirstEvent) {
+                      hasReceivedFirstEvent = true;
+                      set(sseEventStreamReadyState, true);
+                    }
+
+                    const objectRecordEventsWithQueryIds =
+                      result?.data?.onEventSubscription
+                        ?.eventWithQueryIdsList ?? [];
+
+                    const objectRecordEvents =
+                      objectRecordEventsWithQueryIds.map(
+                        (eventWithQueryIds) => {
+                          return eventWithQueryIds.event;
+                        },
                       );
-                      break;
-                    }
+
+                    triggerOptimisticEffectFromSseEvents({
+                      objectRecordEvents,
+                    });
+
+                    dispatchObjectRecordEventsFromSseToBrowserEvents(
+                      objectRecordEventsWithQueryIds,
+                    );
                   }
                 }
+              } catch (error) {
+                const errorProcessingSSEMessage = new Error(
+                  'Error while processing SSE message',
+                  { cause: error instanceof Error ? error : undefined },
+                );
+
+                captureException(errorProcessingSSEMessage);
               }
             },
           },
