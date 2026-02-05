@@ -7,6 +7,7 @@ import { msg } from '@lingui/core/macro';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -63,7 +64,7 @@ export class FilesFieldService {
     const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
-    const name = `${fileId}${ext ? `.${ext}` : ''}`;
+    const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
 
     const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
       select: ['applicationId', 'universalIdentifier'],

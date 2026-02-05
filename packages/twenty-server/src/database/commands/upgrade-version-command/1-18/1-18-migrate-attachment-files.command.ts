@@ -5,11 +5,10 @@ import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 import {
-  assertIsDefinedOrThrow,
   extractFolderPathFilenameAndTypeOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
-import { DataSource, Equal, ILike, IsNull, Or, Repository } from 'typeorm';
+import { DataSource, Equal, IsNull, Not, Or, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -28,14 +27,14 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
 @Command({
-  name: 'upgrade:1-18:migrate-person-avatar-files',
+  name: 'upgrade:1-18:migrate-attachment-files',
   description:
-    'Migrate person avatarUrl files to file field: copy files and create file records',
+    'Migrate attachment files to file field: copy files and create file records',
 })
-export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     protected readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -64,16 +63,14 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
 
     if (isMigrated) {
       this.logger.log(
-        `Person avatar files migration already completed for workspace ${workspaceId}, skipping`,
+        `Attachment files migration already completed for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
     this.logger.log(
-      `${
-        isDryRun ? '[DRY RUN] ' : ''
-      }Starting person avatar files migration for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Starting attachment files migration for workspace ${workspaceId}`,
     );
 
     const {
@@ -86,15 +83,15 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
       'flatApplicationMaps',
     ]);
 
-    const personObjectMetadata =
+    const attachmentObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
+        universalIdentifier: STANDARD_OBJECTS.attachment.universalIdentifier,
       });
 
-    if (!isDefined(personObjectMetadata)) {
+    if (!isDefined(attachmentObjectMetadata)) {
       this.logger.warn(
-        `Person object metadata not found for workspace ${workspaceId}, skipping`,
+        `Attachment object metadata not found for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -116,38 +113,39 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    const avatarFileUniversalIdentifier =
-      STANDARD_OBJECTS.person.fields.avatarFile.universalIdentifier;
+    const fileUniversalIdentifier =
+      STANDARD_OBJECTS.attachment.fields.file.universalIdentifier;
 
-    let avatarFileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
-      personObjectMetadata,
+    let fileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
+      attachmentObjectMetadata,
       flatFieldMetadataMaps,
     ).find(
       (field) =>
         field.type === FieldMetadataType.FILES &&
-        field.universalIdentifier === avatarFileUniversalIdentifier,
+        field.universalIdentifier === fileUniversalIdentifier,
     ) as FlatFieldMetadata | undefined;
 
-    if (!isDefined(avatarFileFieldMetadata)) {
+    if (!isDefined(fileFieldMetadata)) {
       this.logger.log(
-        `Avatar file field metadata not found for workspace ${workspaceId}, creating it`,
+        `File field metadata not found for attachments in workspace ${workspaceId}, creating it`,
       );
 
       if (!isDryRun) {
         await this.fieldMetadataService.createOneField({
           createFieldInput: {
-            objectMetadataId: personObjectMetadata.id,
+            objectMetadataId: attachmentObjectMetadata.id,
             type: FieldMetadataType.FILES,
-            name: 'avatarFile',
-            label: 'Avatar File',
-            description: "Contact's avatar file",
+            name: 'file',
+            label: 'File',
+            description: 'Attachment file',
             icon: 'IconFileUpload',
-            isSystem: true,
             isNullable: true,
+            isUIReadOnly: true,
+            isSystem: true,
             settings: {
               maxNumberOfValues: 1,
             },
-            universalIdentifier: avatarFileUniversalIdentifier,
+            universalIdentifier: fileUniversalIdentifier,
           },
           workspaceId,
           ownerFlatApplication: twentyStandardApplication,
@@ -158,82 +156,85 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
             'flatFieldMetadataMaps',
           ]);
 
-        avatarFileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
-          personObjectMetadata,
+        fileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
+          attachmentObjectMetadata,
           updatedFlatFieldMetadataMaps,
         ).find(
           (field) =>
             field.type === FieldMetadataType.FILES &&
-            field.universalIdentifier === avatarFileUniversalIdentifier,
+            field.universalIdentifier === fileUniversalIdentifier,
         ) as FlatFieldMetadata | undefined;
 
-        if (!isDefined(avatarFileFieldMetadata)) {
+        if (!isDefined(fileFieldMetadata)) {
           this.logger.error(
-            `Failed to create avatarFile field metadata for workspace ${workspaceId}`,
+            `Failed to create file field metadata for workspace ${workspaceId}`,
           );
 
           return;
         }
       }
       this.logger.log(
-        `Created avatarFile field metadata for workspace ${workspaceId}`,
+        `Created file field metadata for attachments in workspace ${workspaceId}`,
       );
     }
 
-    if (!isDefined(avatarFileFieldMetadata)) {
+    if (!isDefined(fileFieldMetadata)) {
       this.logger.error(
-        `Avatar file field metadata not found for workspace ${workspaceId}`,
+        `File field metadata not found for attachments in workspace ${workspaceId}`,
       );
 
       return;
     }
 
-    const personRepository =
-      await this.twentyORMGlobalManager.getRepository<PersonWorkspaceEntity>(
+    const attachmentRepository =
+      await this.twentyORMGlobalManager.getRepository<AttachmentWorkspaceEntity>(
         workspaceId,
-        'person',
+        'attachment',
         { shouldBypassPermissionChecks: true },
       );
 
-    const personsWithAvatars = await personRepository.find({
+    const attachments = await attachmentRepository.find({
       where: {
-        avatarUrl: ILike(`%${FileFolder.PersonPicture}%`),
-        avatarFile: Or(IsNull(), Equal([])),
+        fullPath: Not(IsNull()),
+        file: Or(IsNull(), Equal([])),
       },
-      select: ['id', 'avatarUrl'],
+      select: ['id', 'name', 'fullPath'],
     });
 
-    if (personsWithAvatars.length === 0) {
-      this.logger.log(
-        `No persons with avatarUrl found in workspace ${workspaceId}`,
-      );
+    if (attachments.length === 0) {
+      this.logger.log(`No attachments to migrate for workspace ${workspaceId}`);
 
       return;
     }
 
     this.logger.log(
-      `Found ${personsWithAvatars.length} person(s) with avatarUrl containing 'people' folder in workspace ${workspaceId}`,
+      `Found ${attachments.length} attachment(s) to migrate in workspace ${workspaceId}`,
     );
 
     const fileRepository = this.coreDataSource.getRepository(FileEntity);
 
-    for (const person of personsWithAvatars) {
-      assertIsDefinedOrThrow(person.avatarUrl);
-
-      try {
-        const { type: fileExtension } = extractFolderPathFilenameAndTypeOrThrow(
-          person.avatarUrl,
+    for (const attachment of attachments) {
+      if (!isNonEmptyString(attachment.fullPath)) {
+        this.logger.warn(
+          `Skipping attachment ${attachment.id} - invalid fullPath`,
         );
 
+        continue;
+      }
+
+      try {
+        const { type: fileExtension, filename } =
+          extractFolderPathFilenameAndTypeOrThrow(attachment.fullPath);
+
         const fileId = v4();
-        const newFileName = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
-        const newResourcePath = `${FileFolder.FilesField}/${avatarFileFieldMetadata.universalIdentifier}/${newFileName}`;
+        const newFilename = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
+        const newResourcePath = `${FileFolder.FilesField}/${fileFieldMetadata.universalIdentifier}/${newFilename}`;
 
         if (!isDryRun) {
           await this.fileStorageService.copy({
             from: {
               folderPath: `workspace-${workspaceId}`,
-              filename: person.avatarUrl,
+              filename: attachment.fullPath,
             },
             to: {
               folderPath: `${workspaceId}/${twentyStandardApplication.universalIdentifier}`,
@@ -255,37 +256,32 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
 
           await fileRepository.save(fileEntity);
 
-          await personRepository.update(
-            { id: person.id },
+          await attachmentRepository.update(
+            { id: attachment.id },
             {
-              avatarFile: [
+              file: [
                 {
                   fileId: fileEntity.id,
-                  label: newFileName,
+                  label: attachment.name || filename,
                 },
               ],
             },
           );
         }
 
-        this.logger.log(`Migrated avatar for person ${person.id}`);
+        this.logger.log(
+          `Migrated attachment ${attachment.id} (${attachment.name})`,
+        );
       } catch (error) {
         this.logger.error(
-          `Failed to migrate avatar for person ${person.id} in workspace ${workspaceId}: ${error.message}`,
+          `Failed to migrate attachment ${attachment.id} in workspace ${workspaceId}: ${error.message}`,
         );
         throw error;
       }
     }
 
-    if (!isDryRun) {
-      await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_FILES_FIELD_MIGRATED],
-        workspaceId,
-      );
-    }
-
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Completed person avatar files migration for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Completed attachment files migration for workspace ${workspaceId}`,
     );
   }
 }

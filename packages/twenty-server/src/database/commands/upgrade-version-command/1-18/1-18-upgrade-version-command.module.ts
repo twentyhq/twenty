@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MigrateAttachmentFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-attachment-files.command';
 import { MigratePersonAvatarFilesCommand } from 'src/database/commands/upgrade-version-command/1-18/1-18-migrate-person-avatar-files.command';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -10,6 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Module({
@@ -19,6 +21,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
       FeatureFlagEntity,
       PersonWorkspaceEntity,
       FileEntity,
+      AttachmentWorkspaceEntity,
     ]),
     DataSourceModule,
     FeatureFlagModule,
@@ -26,7 +29,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     WorkspaceCacheModule,
     FieldMetadataModule,
   ],
-  providers: [MigratePersonAvatarFilesCommand],
-  exports: [MigratePersonAvatarFilesCommand],
+  providers: [MigratePersonAvatarFilesCommand, MigrateAttachmentFilesCommand],
+  exports: [MigratePersonAvatarFilesCommand, MigrateAttachmentFilesCommand],
 })
 export class V1_18_UpgradeVersionCommandModule {}
