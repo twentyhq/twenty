@@ -24,7 +24,6 @@ export type ManyToOneRelationValue<
         flatEntityForeignKeyAggregator:
           | keyof AddSuffixToEntityOneToManyProperties<TTargetEntity, 'ids'>
           | null;
-        // Note: In the best of the world should not be nullable, entities should always declare inverside keys
         foreignKey: ExtractPropertiesThatEndsWithId<
           MetadataEntity<TSourceMetadataName>,
           'id' | 'workspaceId'
@@ -33,21 +32,20 @@ export type ManyToOneRelationValue<
           ? true
           : false;
       }
-    : null;
+    : // Note: In the best of the world should not be nullable, entities should always declare inverside keys
+      null;
 
 type OneToManyRelationValue<
   TSourceMetadataName extends AllMetadataName,
   TRelationProperty extends ExtractEntityOneToManyEntityRelationProperties<
     MetadataEntity<TSourceMetadataName>
   >,
-> =
-  MetadataEntity<TSourceMetadataName>[TRelationProperty] extends Relation<
-    (infer TTargetEntity extends SyncableEntity)[]
-  >
-    ? {
-        metadataName: FromMetadataEntityToMetadataName<TTargetEntity>;
-      }
-    : null;
+> = MetadataEntity<TSourceMetadataName>[TRelationProperty] extends (infer TTargetEntity extends
+  SyncableEntity)[]
+  ? {
+      metadataName: FromMetadataEntityToMetadataName<TTargetEntity>;
+    }
+  : null;
 
 type MetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
