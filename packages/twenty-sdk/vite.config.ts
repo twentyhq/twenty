@@ -69,6 +69,16 @@ export default defineConfig(() => {
       outDir: 'dist',
       lib: { entry: entries, name: 'twenty-sdk' },
       rollupOptions: {
+        onwarn: (warning, warn) => {
+          // Suppress "use client" directive warnings from framer-motion
+          if (
+            warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+            warning.message.includes('"use client"')
+          ) {
+            return;
+          }
+          warn(warning);
+        },
         external: [
           ...Object.keys((packageJson as any).dependencies || {}),
           'path',
