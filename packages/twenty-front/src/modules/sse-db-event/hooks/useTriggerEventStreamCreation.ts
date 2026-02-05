@@ -5,12 +5,12 @@ import { disposeFunctionForEventStreamState } from '@/sse-db-event/states/dispos
 import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
 import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
+import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { captureException } from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { print, type ExecutionResult } from 'graphql';
-import { type Client } from 'graphql-sse';
 
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,7 +30,9 @@ export const useTriggerEventStreamCreation = () => {
 
   const triggerEventStreamCreation = useRecoilCallback(
     ({ snapshot, set }) =>
-      (sseClient: Client) => {
+      () => {
+        const sseClient = snapshot.getLoadable(sseClientState).getValue();
+
         const isCreatingSseEventStream = snapshot
           .getLoadable(isCreatingSseEventStreamState)
           .getValue();

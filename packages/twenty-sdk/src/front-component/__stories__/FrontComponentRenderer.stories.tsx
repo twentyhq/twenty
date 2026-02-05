@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { FrontComponentRenderer } from '../renderer/host/components/FrontComponentRenderer';
+import { FrontComponentRenderer } from '../host/components/FrontComponentRenderer';
 
 import { getBuiltComponentPath } from './utils/loadBuiltComponent';
 

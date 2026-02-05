@@ -36,15 +36,10 @@
       "import": "./dist/ui/index.mjs",
       "require": "./dist/ui/index.cjs"
     },
-    "./front-component/renderer": {
-      "types": "./dist/front-component/renderer/index.d.ts",
-      "import": "./dist/front-component/renderer/index.mjs",
-      "require": "./dist/front-component/renderer/index.cjs"
-    },
-    "./front-component/api": {
-      "types": "./dist/front-component/api/index.d.ts",
-      "import": "./dist/front-component/api/index.mjs",
-      "require": "./dist/front-component/api/index.cjs"
+    "./front-component": {
+      "types": "./dist/front-component/index.d.ts",
+      "import": "./dist/front-component/index.mjs",
+      "require": "./dist/front-component/index.cjs"
     }
   },
   "license": "AGPL-3.0",
@@ -107,11 +102,8 @@
       "ui": [
         "dist/ui/index.d.ts"
       ],
-      "front-component/renderer": [
-        "dist/front-component/renderer/index.d.ts"
-      ],
-      "front-component/api": [
-        "dist/front-component/api/index.d.ts"
+      "front-component": [
+        "dist/front-component/index.d.ts"
       ]
     }
   }
