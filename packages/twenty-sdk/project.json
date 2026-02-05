@@ -10,19 +10,15 @@
   "targets": {
     "build": {
       "dependsOn": [
-        "generateBarrels",
         "^build"
       ],
       "outputs": [
-        "{projectRoot}/dist",
-        "{projectRoot}/ui/package.json",
-        "{projectRoot}/ui/dist"
+        "{projectRoot}/dist"
       ]
     },
     "dev": {
       "executor": "nx:run-commands",
       "dependsOn": [
-        "generateBarrels",
         "^build"
       ],
       "options": {
@@ -38,22 +34,6 @@
       "options": {
         "cwd": "packages/twenty-sdk",
         "command": "node dist/cli.cjs"
-      }
-    },
-    "generateBarrels": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": [
-        "production",
-        "{projectRoot}/scripts/generateBarrels.ts"
-      ],
-      "outputs": [
-        "{projectRoot}/src/index.ts",
-        "{projectRoot}/src/*/index.ts",
-        "{projectRoot}/package.json"
-      ],
-      "options": {
-        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
       }
     },
     "typecheck": {},

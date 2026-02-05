@@ -5,11 +5,13 @@ import dts from 'vite-plugin-dts';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 
-const moduleEntries = Object.keys((packageJson as any).exports || {})
-  .filter((key) => key !== '.' && !key.startsWith('./src/'))
-  .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
-
-const entries = ['src/index.ts', 'src/cli/cli.ts', ...moduleEntries];
+const entries = [
+  'src/index.ts',
+  'src/cli/cli.ts',
+  'src/ui/index.ts',
+  'src/front-component/renderer/index.ts',
+  'src/front-component/api/index.ts',
+];
 
 const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
 
