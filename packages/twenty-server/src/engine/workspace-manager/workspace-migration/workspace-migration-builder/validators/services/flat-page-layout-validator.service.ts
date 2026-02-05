@@ -4,7 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -23,7 +23,6 @@ export class FlatPageLayoutValidatorService {
   >): FailedFlatEntityValidation<'pageLayout', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatPageLayout.id,
         universalIdentifier: flatPageLayout.universalIdentifier,
         name: flatPageLayout.name,
       },
@@ -44,7 +43,6 @@ export class FlatPageLayoutValidatorService {
   >): FailedFlatEntityValidation<'pageLayout', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityToValidate.id,
         universalIdentifier: flatEntityToValidate.universalIdentifier,
         name: flatEntityToValidate.name,
       },
@@ -52,8 +50,8 @@ export class FlatPageLayoutValidatorService {
       type: 'delete',
     });
 
-    const existingPageLayout = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatEntityToValidate.id,
+    const existingPageLayout = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatEntityToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatPageLayoutMaps,
     });
 
@@ -71,22 +69,21 @@ export class FlatPageLayoutValidatorService {
   }
 
   public validateFlatPageLayoutUpdate({
-    flatEntityId,
+    universalIdentifier,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.pageLayout
   >): FailedFlatEntityValidation<'pageLayout', 'update'> {
-    const fromFlatPageLayout = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const fromFlatPageLayout = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatPageLayoutMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: fromFlatPageLayout?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'pageLayout',
       type: 'update',

@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WebhookExceptionCode } from 'src/engine/metadata-modules/webhook/webhook.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -31,7 +31,6 @@ export class FlatWebhookValidatorService {
   >): FailedFlatEntityValidation<'webhook', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatWebhook.id,
         universalIdentifier: flatWebhook.universalIdentifier,
         targetUrl: flatWebhook.targetUrl,
       },
@@ -68,7 +67,6 @@ export class FlatWebhookValidatorService {
   >): FailedFlatEntityValidation<'webhook', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityToValidate.id,
         universalIdentifier: flatEntityToValidate.universalIdentifier,
         targetUrl: flatEntityToValidate.targetUrl,
       },
@@ -76,8 +74,8 @@ export class FlatWebhookValidatorService {
       type: 'delete',
     });
 
-    const existingWebhook = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatEntityToValidate.id,
+    const existingWebhook = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatEntityToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatWebhookMaps,
     });
 
@@ -93,7 +91,7 @@ export class FlatWebhookValidatorService {
   }
 
   public validateFlatWebhookUpdate({
-    flatEntityId,
+    universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatWebhookMaps: optimisticFlatWebhookMaps,
@@ -101,15 +99,14 @@ export class FlatWebhookValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.webhook
   >): FailedFlatEntityValidation<'webhook', 'update'> {
-    const fromFlatWebhook = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const fromFlatWebhook = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatWebhookMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: fromFlatWebhook?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'webhook',
       type: 'update',

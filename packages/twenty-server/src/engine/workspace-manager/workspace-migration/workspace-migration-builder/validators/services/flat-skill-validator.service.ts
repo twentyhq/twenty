@@ -4,7 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -31,7 +31,6 @@ export class FlatSkillValidatorService {
   >): FailedFlatEntityValidation<'skill', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatSkill.id,
         universalIdentifier: flatSkill.universalIdentifier,
         name: flatSkill.name,
       },
@@ -68,7 +67,6 @@ export class FlatSkillValidatorService {
   >): FailedFlatEntityValidation<'skill', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityToValidate.id,
         universalIdentifier: flatEntityToValidate.universalIdentifier,
         name: flatEntityToValidate.name,
       },
@@ -76,8 +74,8 @@ export class FlatSkillValidatorService {
       type: 'delete',
     });
 
-    const existingSkill = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatEntityToValidate.id,
+    const existingSkill = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatEntityToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatSkillMaps,
     });
 
@@ -110,7 +108,7 @@ export class FlatSkillValidatorService {
   }
 
   public validateFlatSkillUpdate({
-    flatEntityId,
+    universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatSkillMaps: optimisticFlatSkillMaps,
@@ -119,15 +117,14 @@ export class FlatSkillValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.skill
   >): FailedFlatEntityValidation<'skill', 'update'> {
-    const fromFlatSkill = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const fromFlatSkill = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatSkillMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: fromFlatSkill?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'skill',
       type: 'update',
@@ -204,7 +201,7 @@ export class FlatSkillValidatorService {
         optimisticFlatSkillMaps.byUniversalIdentifier,
       )
         .filter(isDefined)
-        .filter((skill) => skill.id !== flatEntityId);
+        .filter((skill) => skill.universalIdentifier !== universalIdentifier);
 
       validationResult.errors.push(
         ...validateSkillNameUniqueness({

@@ -7,7 +7,6 @@ export type FlatEntityUpdateValidationArgs<T extends AllMetadataName> = Omit<
   UniversalFlatEntityValidationArgs<T>,
   'flatEntityToValidate' | 'remainingFlatEntityMapsToValidate'
 > & {
-  flatEntityId: string;
   flatEntityUpdate: UniversalFlatEntityUpdate<T>;
   universalIdentifier: string;
 };
