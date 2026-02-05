@@ -97,7 +97,7 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     initialDispatcher.updatedFlatEntityMaps.byUniversalIdentifier[
       fromUniversalFlatEntity.universalIdentifier
     ] = {
-      // TODO to handle as we want api metadata to allow doing so anyway
+      // TODO prastoin lets add an optional apiMetadataId?: string to the universal flat entity or maybe do something different ?
       id: toUniversalFlatEntity.id,
       update,
     };

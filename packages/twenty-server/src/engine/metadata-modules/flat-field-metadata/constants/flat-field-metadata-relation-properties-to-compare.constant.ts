@@ -1,4 +1,4 @@
-import { type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 
 export const FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE = [
   'label',
@@ -7,5 +7,5 @@ export const FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE = [
   'standardOverrides',
   'icon',
   'name',
-  'universalSettings',
-] as const satisfies (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME.fieldMetadata.propertiesToCompare)[number][];
+  'universalSettings', // TODO prastoin
+] as const satisfies (typeof ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY.fieldMetadata.propertiesToCompare)[number][];

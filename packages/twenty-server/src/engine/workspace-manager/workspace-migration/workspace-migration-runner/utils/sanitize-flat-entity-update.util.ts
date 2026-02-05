@@ -1,9 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 import {
-  type MetadataUniversalFlatEntityPropertiesToCompare,
-  type UniversalFlatEntityUpdate,
+  type UniversalFlatEntityUpdate
 } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
 export const sanitizeFlatEntityUpdate = <T extends AllMetadataName>({
@@ -13,17 +12,13 @@ export const sanitizeFlatEntityUpdate = <T extends AllMetadataName>({
   flatEntityUpdate: UniversalFlatEntityUpdate<T>;
   metadataName: T;
 }): UniversalFlatEntityUpdate<T> => {
-  const propertyConfiguration =
-    ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME[metadataName];
-  const propertiesToCompare = Object.keys(propertyConfiguration) as string[];
+  const { propertiesToCompare } =
+    ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY[metadataName];
 
   const initialAccumulator: UniversalFlatEntityUpdate<T> = {};
 
   return propertiesToCompare.reduce((accumulator, property) => {
-    const updatedValue =
-      flatEntityUpdate[
-        property as MetadataUniversalFlatEntityPropertiesToCompare<T>
-      ];
+    const updatedValue = flatEntityUpdate[property];
 
     if (updatedValue === undefined) {
       return accumulator;
