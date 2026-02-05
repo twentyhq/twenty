@@ -24,6 +24,7 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
+import { validateGraphWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-graph-widget-configuration.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -157,6 +158,29 @@ export class PageLayoutWidgetService {
         { workspaceId },
       );
 
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+        },
+      );
+
+    try {
+      validateGraphWidgetConfiguration({
+        configuration: input.configuration,
+        objectMetadataId: input.objectMetadataId ?? null,
+        widgetType: input.type,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
+    } catch (error) {
+      throw new PageLayoutWidgetException(
+        error instanceof Error ? error.message : String(error),
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
+    }
+
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
         createPageLayoutWidgetInput: input,
@@ -203,7 +227,53 @@ export class PageLayoutWidgetService {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    this.getExistingWidgetOrThrow(id, existingFlatPageLayoutWidgetMaps);
+    const existingWidget = this.getExistingWidgetOrThrow(
+      id,
+      existingFlatPageLayoutWidgetMaps,
+    );
+
+    const shouldValidateConfiguration =
+      Object.prototype.hasOwnProperty.call(updateData, 'configuration') ||
+      Object.prototype.hasOwnProperty.call(updateData, 'objectMetadataId') ||
+      Object.prototype.hasOwnProperty.call(updateData, 'type');
+
+    if (shouldValidateConfiguration) {
+      const effectiveConfiguration =
+        updateData.configuration ?? existingWidget.configuration;
+      const effectiveObjectMetadataId =
+        updateData.objectMetadataId ?? existingWidget.objectMetadataId;
+      const effectiveWidgetType = updateData.type ?? existingWidget.type;
+
+      if (!isDefined(effectiveConfiguration)) {
+        throw new PageLayoutWidgetException(
+          'configuration is required for widgets.',
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        );
+      }
+
+      const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+        await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+          },
+        );
+
+      try {
+        validateGraphWidgetConfiguration({
+          configuration: effectiveConfiguration,
+          objectMetadataId: effectiveObjectMetadataId,
+          widgetType: effectiveWidgetType,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        });
+      } catch (error) {
+        throw new PageLayoutWidgetException(
+          error instanceof Error ? error.message : String(error),
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        );
+      }
+    }
 
     const updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId = {
       id,

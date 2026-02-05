@@ -10,7 +10,6 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
-import { buildFieldsByObjectIdMap } from 'src/modules/dashboard/tools/utils/build-fields-by-object-id-map.util';
 
 const compositeSubFieldMaps = COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES as Record<
   string,
@@ -114,6 +113,19 @@ const resolveMorphTargetObjectId = ({
   }
 
   return [...targetIds][0] ?? null;
+};
+
+const buildFieldsByObjectIdMap = (fields: FlatFieldMetadata[]) => {
+  const map = new Map<string, FlatFieldMetadata[]>();
+
+  fields.forEach((field) => {
+    const existing = map.get(field.objectMetadataId) ?? [];
+
+    existing.push(field);
+    map.set(field.objectMetadataId, existing);
+  });
+
+  return map;
 };
 
 const validateRelationSubField = ({
@@ -267,14 +279,26 @@ export const validateGraphWidgetConfiguration = ({
 
   const graphLike = configuration as GraphConfigurationLike;
 
-  if (!isGraphConfiguration(graphLike)) {
-    return;
-  }
-
   if (widgetType && widgetType !== WidgetType.GRAPH) {
     throw new Error(
       `Graph configuration is only valid for widgets of type GRAPH.`,
     );
+  }
+
+  if (widgetType === WidgetType.GRAPH) {
+    if (!isDefined(graphLike.configurationType)) {
+      throw new Error(
+        'configurationType is required for widgets of type GRAPH.',
+      );
+    }
+
+    if (!GRAPH_CONFIGURATION_TYPES.has(graphLike.configurationType)) {
+      throw new Error(
+        'GRAPH widgets require configurationType AGGREGATE_CHART, BAR_CHART, LINE_CHART, or PIE_CHART.',
+      );
+    }
+  } else if (!isGraphConfiguration(graphLike)) {
+    return;
   }
 
   if (!isDefined(objectMetadataId)) {

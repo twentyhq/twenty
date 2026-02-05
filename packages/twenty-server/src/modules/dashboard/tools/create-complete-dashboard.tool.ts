@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -15,7 +15,6 @@ import {
   type DashboardToolContext,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { validateGraphWidgetConfiguration } from 'src/modules/dashboard/tools/utils/validate-graph-widget-configuration.util';
 
 const widgetSchema = z.object({
   title: z.string().describe('Widget title displayed in the header'),
@@ -102,14 +101,6 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
     try {
       const tabTitle = parameters.tabTitle ?? 'Main';
       const widgets = parameters.widgets ?? [];
-      const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
-        await deps.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId: context.workspaceId,
-            flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
-          },
-        );
-
       const pageLayout = await deps.pageLayoutService.create({
         createPageLayoutInput: {
           name: parameters.title,
@@ -132,20 +123,6 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 
       for (const widget of widgets) {
         try {
-          if (widget.type === WidgetType.GRAPH && !widget.configuration) {
-            throw new Error('configuration is required for GRAPH widgets.');
-          }
-
-          if (widget.configuration) {
-            validateGraphWidgetConfiguration({
-              configuration: widget.configuration,
-              objectMetadataId: widget.objectMetadataId,
-              widgetType: widget.type,
-              flatFieldMetadataMaps,
-              flatObjectMetadataMaps,
-            });
-          }
-
           const createdWidget = await deps.pageLayoutWidgetService.create({
             input: {
               ...widget,
