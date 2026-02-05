@@ -12,7 +12,9 @@ type HasObjectInUnion<T> = T extends unknown
     : false
   : never;
 
-type MetadataEntityPropertyConfiguration<TMetadataName extends AllMetadataName> = {
+type MetadataEntityPropertyConfiguration<
+  TMetadataName extends AllMetadataName,
+> = {
   [K in keyof Omit<
     MetadataFlatEntity<TMetadataName>,
     | Extract<

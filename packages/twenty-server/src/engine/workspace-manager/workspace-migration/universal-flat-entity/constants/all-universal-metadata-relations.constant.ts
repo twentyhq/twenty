@@ -1,6 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
-import { ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
+import { type ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
 
 type ToUniversalForeignKey<T extends string> = T extends `${infer Prefix}Id`
   ? `${Prefix}UniversalIdentifier`

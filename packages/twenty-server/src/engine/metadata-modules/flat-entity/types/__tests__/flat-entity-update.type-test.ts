@@ -1,6 +1,7 @@
-import { FlatEntityUpdate } from "src/engine/metadata-modules/flat-entity/types/flat-entity-update.type";
-import { UniversalFlatEntityUpdate } from "src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type";
-import { Equal, Expect } from "twenty-shared/testing";
+import { type Equal, type Expect } from 'twenty-shared/testing';
+
+import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-update.type';
+import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [

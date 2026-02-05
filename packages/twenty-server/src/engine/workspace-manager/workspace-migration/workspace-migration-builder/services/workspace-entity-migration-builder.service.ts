@@ -184,10 +184,11 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         },
       );
 
-      const universalFlatEntityToDelete = findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier: universalIdentifierToDelete,
-        flatEntityMaps: deletedFlatEntityMaps,
-      });
+      const universalFlatEntityToDelete =
+        findFlatEntityByUniversalIdentifierOrThrow({
+          universalIdentifier: universalIdentifierToDelete,
+          flatEntityMaps: deletedFlatEntityMaps,
+        });
 
       const validationResult = await this.validateFlatEntityDeletion({
         flatEntityToValidate: universalFlatEntityToDelete,

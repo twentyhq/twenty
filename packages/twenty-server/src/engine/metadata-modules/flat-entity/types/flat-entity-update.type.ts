@@ -1,6 +1,7 @@
-import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from "src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant";
-import { MetadataFlatEntity } from "src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type";
-import { AllMetadataName } from "twenty-shared/metadata";
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { type ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 
 type IsUniversalMappedProperty<
   MetadataConfig,
@@ -24,4 +25,3 @@ export type FlatEntityUpdate<
     ? never
     : IsUniversalMappedProperty<MetadataPropertyConfig, K>]?: never;
 };
-

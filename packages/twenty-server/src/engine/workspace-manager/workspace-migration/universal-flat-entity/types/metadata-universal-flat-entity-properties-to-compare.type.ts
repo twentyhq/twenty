@@ -19,7 +19,7 @@ export type MetadataUniversalFlatEntityPropertiesToCompare<
 }[keyof MetadataConfig] &
   keyof MetadataUniversalFlatEntity<T>;
 
-// TODO ignore eslint
+// eslint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
     Equal<

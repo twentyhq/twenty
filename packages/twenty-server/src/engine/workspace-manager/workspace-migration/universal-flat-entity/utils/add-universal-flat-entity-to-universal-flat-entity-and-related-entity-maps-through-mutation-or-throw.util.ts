@@ -78,12 +78,11 @@ export const addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThro
         continue;
       }
 
-      const relatedUniversalFlatEntity = findFlatEntityByUniversalIdentifierOrThrow(
-        {
+      const relatedUniversalFlatEntity =
+        findFlatEntityByUniversalIdentifierOrThrow({
           universalIdentifier: universalForeignKeyValue,
           flatEntityMaps: relatedUniversalFlatEntityMaps,
-        },
-      );
+        });
 
       if (
         !Object.prototype.hasOwnProperty.call(
@@ -100,9 +99,9 @@ export const addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThro
       const updatedRelatedEntity = {
         ...relatedUniversalFlatEntity,
         [universalFlatEntityForeignKeyAggregator]: [
-          ...((relatedUniversalFlatEntity as unknown as Record<string, string[]>)[
-            universalFlatEntityForeignKeyAggregator
-          ] ?? []),
+          ...((
+            relatedUniversalFlatEntity as unknown as Record<string, string[]>
+          )[universalFlatEntityForeignKeyAggregator] ?? []),
           universalFlatEntity.universalIdentifier,
         ],
       };
