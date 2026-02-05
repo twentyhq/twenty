@@ -68,7 +68,7 @@ export class ImapFindSentFolderService {
   ): Promise<SentFolderResult> {
     for (const folder of list) {
       if (folder.specialUse && folder.specialUse.includes('\\Sent')) {
-        this.logger.log(
+        this.logger.debug(
           `Found sent folder via special-use flag: ${folder.path}`,
         );
 
@@ -108,7 +108,7 @@ export class ImapFindSentFolderService {
       );
 
       if (messageCount > 0) {
-        this.logger.log(
+        this.logger.debug(
           `Selected sent folder via pattern match: ${folder.path}`,
         );
 
@@ -120,7 +120,7 @@ export class ImapFindSentFolderService {
     }
 
     if (regexCandidateFolders.length > 0) {
-      this.logger.log(
+      this.logger.debug(
         `Using first regex candidate sent folder: ${regexCandidateFolders[0].path} (no messages found in any regex candidate)`,
       );
 

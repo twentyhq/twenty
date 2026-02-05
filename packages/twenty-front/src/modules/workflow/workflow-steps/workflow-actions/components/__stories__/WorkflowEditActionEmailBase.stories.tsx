@@ -1,5 +1,8 @@
-import { type WorkflowSendEmailAction } from '@/workflow/types/Workflow';
-import { WorkflowEditActionSendEmail } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionSendEmail';
+import {
+  type WorkflowDraftEmailAction,
+  type WorkflowSendEmailAction,
+} from '@/workflow/types/Workflow';
+import { WorkflowEditActionEmailBase } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, within } from 'storybook/test';
@@ -16,7 +19,7 @@ import {
 } from '~/testing/mock-data/connected-accounts';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
 
-const DEFAULT_ACTION: WorkflowSendEmailAction = {
+const DEFAULT_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),
   name: 'Send Email',
   type: 'SEND_EMAIL',
@@ -45,7 +48,7 @@ const DEFAULT_ACTION: WorkflowSendEmailAction = {
   },
 };
 
-const CONFIGURED_ACTION: WorkflowSendEmailAction = {
+const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),
   name: 'Send Welcome Email',
   type: 'SEND_EMAIL',
@@ -74,9 +77,38 @@ const CONFIGURED_ACTION: WorkflowSendEmailAction = {
   },
 };
 
-const meta: Meta<typeof WorkflowEditActionSendEmail> = {
-  title: 'Modules/Workflow/Actions/SendEmail/EditAction',
-  component: WorkflowEditActionSendEmail,
+const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
+  id: getWorkflowNodeIdMock(),
+  name: 'Draft Email',
+  type: 'DRAFT_EMAIL',
+  valid: false,
+  settings: {
+    input: {
+      connectedAccountId: '',
+      recipients: {
+        to: '',
+        cc: '',
+        bcc: '',
+      },
+      subject: '',
+      body: '',
+      files: [],
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: {
+        value: false,
+      },
+      continueOnFailure: {
+        value: false,
+      },
+    },
+  },
+};
+
+const meta: Meta<typeof WorkflowEditActionEmailBase> = {
+  title: 'Modules/Workflow/Actions/Email/EditAction',
+  component: WorkflowEditActionEmailBase,
   parameters: {
     msw: {
       handlers: [
@@ -92,7 +124,7 @@ const meta: Meta<typeof WorkflowEditActionSendEmail> = {
     },
   },
   args: {
-    action: DEFAULT_ACTION,
+    action: DEFAULT_SEND_EMAIL_ACTION,
   },
   decorators: [
     WorkflowStepActionDrawerDecorator,
@@ -107,7 +139,7 @@ const meta: Meta<typeof WorkflowEditActionSendEmail> = {
 
 export default meta;
 
-type Story = StoryObj<typeof WorkflowEditActionSendEmail>;
+type Story = StoryObj<typeof WorkflowEditActionEmailBase>;
 
 export const Default: Story = {
   args: {
@@ -128,7 +160,7 @@ export const Default: Story = {
 
 export const Configured: Story = {
   args: {
-    action: CONFIGURED_ACTION,
+    action: CONFIGURED_SEND_EMAIL_ACTION,
     actionOptions: {
       onActionUpdate: fn(),
     },
@@ -144,5 +176,23 @@ export const Configured: Story = {
 
     const subjectInput = await canvas.findByText('Welcome to Twenty!');
     expect(subjectInput).toBeVisible();
+  },
+};
+
+export const DraftEmail: Story = {
+  args: {
+    action: DEFAULT_DRAFT_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('To')).toBeVisible();
+    expect(await canvas.findByText('Subject')).toBeVisible();
+    expect(await canvas.findByText('Body')).toBeVisible();
+    expect(await canvas.findByText('Advanced options')).toBeVisible();
   },
 };

@@ -24,6 +24,34 @@ describe('googleApisSetRequestExtraParams', () => {
     });
   });
 
+  it('should set extraScopes when provided', () => {
+    const request = {
+      params: {},
+    } as GoogleAPIsRequest;
+
+    setRequestExtraParams(request, {
+      transientToken: 'abc',
+      extraScopes: 'https://www.googleapis.com/auth/gmail.compose',
+    });
+
+    expect(request.params).toEqual({
+      transientToken: 'abc',
+      extraScopes: 'https://www.googleapis.com/auth/gmail.compose',
+    });
+  });
+
+  it('should not set extraScopes when not provided', () => {
+    const request = {
+      params: {},
+    } as GoogleAPIsRequest;
+
+    setRequestExtraParams(request, {
+      transientToken: 'abc',
+    });
+
+    expect(request.params.extraScopes).toBeUndefined();
+  });
+
   it('should throw error if transientToken is not provided', () => {
     const request = {
       params: {},
