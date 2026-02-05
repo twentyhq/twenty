@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import { BACKUP_PATH, PKG_PATH } from './prepack';
+import { BACKUP_PATH, PKG_PATH } from './constants/dependency-contants';
 
 const main = async () => {
   if (await fs.pathExists(BACKUP_PATH)) {

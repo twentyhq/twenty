@@ -1,12 +1,6 @@
 import fs from 'fs-extra';
-import path from 'path';
 import { PACKAGES_TO_VENDOR } from '../vite.config';
-
-export const PKG_PATH = path.resolve(process.cwd(), 'package.json');
-export const BACKUP_PATH = path.resolve(
-  process.cwd(),
-  'package.__backup__.json',
-);
+import { BACKUP_PATH, PKG_PATH } from './constants/dependency-contants';
 
 const stripWorkspace = (deps = {}) =>
   Object.fromEntries(
