@@ -152,7 +152,8 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
 
       const fieldMigrations = taskTargetRelationFields.map((field) => {
         const newFieldName = `target${capitalize(field.name)}`;
-        const newFieldLabel = `Target ${field.label}`;
+        // All fields in the morph relation share the same generic label
+        const newFieldLabel = 'Target';
         const relationSettings: RelationFieldMetadataSettings = field.settings;
         const oldJoinColumnName =
           relationSettings?.joinColumnName ??
