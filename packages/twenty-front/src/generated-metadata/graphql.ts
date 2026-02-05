@@ -5984,6 +5984,27 @@ export type UploadFilesFieldFileMutationVariables = Exact<{
 
 export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'File', id: string, path: string, size: number, createdAt: string } };
 
+export type ExecuteOneLogicFunctionMutationVariables = Exact<{
+  input: ExecuteOneLogicFunctionInput;
+}>;
+
+
+export type ExecuteOneLogicFunctionMutation = { __typename?: 'Mutation', executeOneLogicFunction: { __typename?: 'LogicFunctionExecutionResult', data?: any | null, logs: string, duration: number, status: LogicFunctionExecutionStatus, error?: any | null } };
+
+export type UpdateLogicFunctionSourceMutationVariables = Exact<{
+  input: UpdateLogicFunctionSourceInput;
+}>;
+
+
+export type UpdateLogicFunctionSourceMutation = { __typename?: 'Mutation', updateLogicFunctionSource: boolean };
+
+export type GetLogicFunctionSourceCodeQueryVariables = Exact<{
+  input: GetLogicFunctionSourceCodeInput;
+}>;
+
+
+export type GetLogicFunctionSourceCodeQuery = { __typename?: 'Query', getLogicFunctionSourceCode?: any | null };
+
 export type NavigationMenuItemFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string };
 
 export type NavigationMenuItemQueryFieldsFragment = { __typename?: 'NavigationMenuItem', id: string, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null };
@@ -10340,6 +10361,107 @@ export function useUploadFilesFieldFileMutation(baseOptions?: Apollo.MutationHoo
 export type UploadFilesFieldFileMutationHookResult = ReturnType<typeof useUploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationResult = Apollo.MutationResult<UploadFilesFieldFileMutation>;
 export type UploadFilesFieldFileMutationOptions = Apollo.BaseMutationOptions<UploadFilesFieldFileMutation, UploadFilesFieldFileMutationVariables>;
+export const ExecuteOneLogicFunctionDocument = gql`
+    mutation ExecuteOneLogicFunction($input: ExecuteOneLogicFunctionInput!) {
+  executeOneLogicFunction(input: $input) {
+    data
+    logs
+    duration
+    status
+    error
+  }
+}
+    `;
+export type ExecuteOneLogicFunctionMutationFn = Apollo.MutationFunction<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>;
+
+/**
+ * __useExecuteOneLogicFunctionMutation__
+ *
+ * To run a mutation, you first call `useExecuteOneLogicFunctionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useExecuteOneLogicFunctionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [executeOneLogicFunctionMutation, { data, loading, error }] = useExecuteOneLogicFunctionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useExecuteOneLogicFunctionMutation(baseOptions?: Apollo.MutationHookOptions<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>(ExecuteOneLogicFunctionDocument, options);
+      }
+export type ExecuteOneLogicFunctionMutationHookResult = ReturnType<typeof useExecuteOneLogicFunctionMutation>;
+export type ExecuteOneLogicFunctionMutationResult = Apollo.MutationResult<ExecuteOneLogicFunctionMutation>;
+export type ExecuteOneLogicFunctionMutationOptions = Apollo.BaseMutationOptions<ExecuteOneLogicFunctionMutation, ExecuteOneLogicFunctionMutationVariables>;
+export const UpdateLogicFunctionSourceDocument = gql`
+    mutation UpdateLogicFunctionSource($input: UpdateLogicFunctionSourceInput!) {
+  updateLogicFunctionSource(input: $input)
+}
+    `;
+export type UpdateLogicFunctionSourceMutationFn = Apollo.MutationFunction<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>;
+
+/**
+ * __useUpdateLogicFunctionSourceMutation__
+ *
+ * To run a mutation, you first call `useUpdateLogicFunctionSourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLogicFunctionSourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateLogicFunctionSourceMutation, { data, loading, error }] = useUpdateLogicFunctionSourceMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateLogicFunctionSourceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>(UpdateLogicFunctionSourceDocument, options);
+      }
+export type UpdateLogicFunctionSourceMutationHookResult = ReturnType<typeof useUpdateLogicFunctionSourceMutation>;
+export type UpdateLogicFunctionSourceMutationResult = Apollo.MutationResult<UpdateLogicFunctionSourceMutation>;
+export type UpdateLogicFunctionSourceMutationOptions = Apollo.BaseMutationOptions<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>;
+export const GetLogicFunctionSourceCodeDocument = gql`
+    query GetLogicFunctionSourceCode($input: GetLogicFunctionSourceCodeInput!) {
+  getLogicFunctionSourceCode(input: $input)
+}
+    `;
+
+/**
+ * __useGetLogicFunctionSourceCodeQuery__
+ *
+ * To run a query within a React component, call `useGetLogicFunctionSourceCodeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLogicFunctionSourceCodeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLogicFunctionSourceCodeQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetLogicFunctionSourceCodeQuery(baseOptions: Apollo.QueryHookOptions<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>(GetLogicFunctionSourceCodeDocument, options);
+      }
+export function useGetLogicFunctionSourceCodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>(GetLogicFunctionSourceCodeDocument, options);
+        }
+export type GetLogicFunctionSourceCodeQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeQuery>;
+export type GetLogicFunctionSourceCodeLazyQueryHookResult = ReturnType<typeof useGetLogicFunctionSourceCodeLazyQuery>;
+export type GetLogicFunctionSourceCodeQueryResult = Apollo.QueryResult<GetLogicFunctionSourceCodeQuery, GetLogicFunctionSourceCodeQueryVariables>;
 export const CreateNavigationMenuItemDocument = gql`
     mutation CreateNavigationMenuItem($input: CreateNavigationMenuItemInput!) {
   createNavigationMenuItem(input: $input) {
