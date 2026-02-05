@@ -1,9 +1,12 @@
-import fs from 'fs-extra';
+import * as fs from 'fs-extra';
 import { BACKUP_PATH, PKG_PATH } from './constants';
+import { type PackageJson } from 'type-fest';
 
-const stripWorkspace = (deps = {}) =>
+const stripWorkspace = (deps: PackageJson['dependencies']) =>
   Object.fromEntries(
-    Object.entries(deps).filter(([_, value]) => !value.startsWith('workspace:')),
+    Object.entries(deps).filter(
+      ([_, value]) => !value.startsWith('workspace:'),
+    ),
   );
 
 const main = async () => {
@@ -13,7 +16,7 @@ const main = async () => {
 
   const { devDependencies: _, ...builtPkg } = pkg;
 
-  builtPkg.dependencies = stripWorkspace(builtPkg.dependencies);
+  builtPkg.dependencies = stripWorkspace(builtPkg.dependencies ?? {});
 
   await fs.writeJson(PKG_PATH, builtPkg, { spaces: 2 });
 };

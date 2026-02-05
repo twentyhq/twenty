@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.4.5",
+  "version": "0.4.8",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -14,8 +14,8 @@
   ],
   "scripts": {
     "build": "npx rimraf dist && npx vite build",
-    "prepack": "tsx ../twenty-utils/pack-scripts/prepack.ts",
-    "postpack": "tsx ../twenty-utils/pack-scripts/postpack.ts"
+    "prepublishOnly": "tsx ../twenty-utils/pack-scripts/pre-publish-only.ts",
+    "postpublish": "tsx ../twenty-utils/pack-scripts/post-publish.ts"
   },
   "keywords": [
     "twenty",
