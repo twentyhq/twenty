@@ -17,7 +17,7 @@ import {
   getLogicFunctionBaseFolderPath,
   getRelativePathFromBase,
 } from 'src/engine/core-modules/logic-function/logic-function-source-builder/utils/get-logic-function-handler-path.util';
-import { getLogicFunctionSeedProjectFiles } from 'src/engine/core-modules/logic-function/logic-function-source-builder/utils/get-logic-function-seed-project-files.util';
+import { getLogicFunctionSeedProjectFiles, LogicFunctionSeedProjectFile } from 'src/engine/core-modules/logic-function/logic-function-source-builder/utils/get-logic-function-seed-project-files.util';
 import {
   DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_SOURCE_HANDLER_PATH,
@@ -104,10 +104,10 @@ export class LogicFunctionSourceBuilderService {
     // Use seed project files
     const seedProjectFiles = await getLogicFunctionSeedProjectFiles();
 
-    const sourceFiles = seedProjectFiles.filter((file: File) =>
+    const sourceFiles = seedProjectFiles.filter((file: LogicFunctionSeedProjectFile) =>
       file.name.endsWith('index.ts'),
     );
-    const builtFiles = seedProjectFiles.filter((file: File) =>
+    const builtFiles = seedProjectFiles.filter((file: LogicFunctionSeedProjectFile) =>
       file.name.endsWith('.mjs'),
     );
 

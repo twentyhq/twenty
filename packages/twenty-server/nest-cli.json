@@ -21,6 +21,10 @@
         "outDir": "dist/assets"
       },
       {
+        "include": "engine/core-modules/logic-function/logic-function-source-builder/constants/seed-project/**",
+        "outDir": "dist/assets"
+      },
+      {
         "include": "engine/core-modules/logic-function/logic-function-drivers/layers/*/package.json",
         "outDir": "dist/assets"
       },
