@@ -214,7 +214,7 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
         try {
           const result = await queryRunner.query(
             `UPDATE core."fieldMetadata"
-           SET name = $1, type = $5, "morphId" = $3, settings = $4
+           SET name = $1, type = $5, "morphId" = $3, settings = $4, "isActive" = true
            WHERE id = $2`,
             [
               newFieldName,
