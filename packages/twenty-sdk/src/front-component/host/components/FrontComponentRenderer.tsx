@@ -1,7 +1,7 @@
-import { FrontComponentErrorEffect } from '@/front-component/renderer/remote/components/FrontComponentErrorEffect';
-import { FrontComponentUpdateContextEffect } from '@/front-component/renderer/remote/components/FrontComponentUpdateContextEffect';
-import { type FrontComponentExecutionContext } from '@/front-component/renderer/types/FrontComponentExecutionContext';
-import { type WorkerExports } from '@/front-component/renderer/types/WorkerExports';
+import { FrontComponentErrorEffect } from '@/front-component/remote/components/FrontComponentErrorEffect';
+import { FrontComponentUpdateContextEffect } from '@/front-component/remote/components/FrontComponentUpdateContextEffect';
+import { type FrontComponentExecutionContext } from '@/front-component/types/FrontComponentExecutionContext';
+import { type WorkerExports } from '@/front-component/types/WorkerExports';
 import { type ThreadWebWorker } from '@quilted/threads';
 import {
   type RemoteReceiver,

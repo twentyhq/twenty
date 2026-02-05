@@ -9,8 +9,7 @@ const entries = [
   'src/index.ts',
   'src/cli/cli.ts',
   'src/ui/index.ts',
-  'src/front-component/renderer/index.ts',
-  'src/front-component/api/index.ts',
+  'src/front-component/index.ts',
 ];
 
 export const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];

@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component/renderer';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
 
 type FrontComponentRendererProps = {
