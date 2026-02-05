@@ -4,7 +4,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetConfigurationType, WidgetType } from '~/generated/graphql';
 
-const createRelationFieldWidget = (
+const getRelationFieldWidgetToInsert = (
   field: FieldMetadataItem,
   tabId: string,
 ): PageLayoutWidget => ({
@@ -32,11 +32,13 @@ const createRelationFieldWidget = (
   deletedAt: null,
 });
 
-const createRelationFieldWidgets = (
+const getRelationFieldWidgetsToInsert = (
   relationFields: FieldMetadataItem[],
   tabId: string,
 ): PageLayoutWidget[] => {
-  return relationFields.map((field) => createRelationFieldWidget(field, tabId));
+  return relationFields.map((field) =>
+    getRelationFieldWidgetToInsert(field, tabId),
+  );
 };
 
 export const injectRelationWidgetsIntoLayout = (
@@ -52,7 +54,7 @@ export const injectRelationWidgetsIntoLayout = (
     return layout;
   }
 
-  const relationWidgets = createRelationFieldWidgets(
+  const relationWidgets = getRelationFieldWidgetsToInsert(
     boxedRelationFieldMetadataItems,
     firstTab.id,
   );
