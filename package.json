@@ -99,7 +99,6 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/addressparser": "^1.0.3",
-    "@types/bcrypt": "^5.0.0",
     "@types/bytes": "^3.1.1",
     "@types/chrome": "^0.0.267",
     "@types/deep-equal": "^1.0.1",
