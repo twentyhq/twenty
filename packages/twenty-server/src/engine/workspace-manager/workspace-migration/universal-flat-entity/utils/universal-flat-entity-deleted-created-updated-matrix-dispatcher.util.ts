@@ -2,7 +2,6 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
@@ -79,20 +78,16 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     });
   }
 
-  const { propertiesToCompare, propertiesToStringify } =
-    ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME[metadataName];
+  for (const [universalIdentifier, fromUniversalFlatEntity] of fromMap) {
+    const toUniversalFlatEntity = toMap.get(universalIdentifier);
 
-  for (const [universalIdentifier, fromFlatEntity] of fromMap) {
-    const toFlatEntity = toMap.get(universalIdentifier);
-
-    if (!isDefined(toFlatEntity)) {
+    if (!isDefined(toUniversalFlatEntity)) {
       continue;
     }
     const update = compareTwoFlatEntity({
-      fromFlatEntity,
-      toFlatEntity,
-      propertiesToCompare,
-      propertiesToStringify,
+      fromUniversalFlatEntity,
+      toUniversalFlatEntity,
+      metadataName,
     });
 
     if (!isDefined(update)) {
@@ -100,10 +95,10 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     }
 
     initialDispatcher.updatedFlatEntityMaps.byUniversalIdentifier[
-      fromFlatEntity.universalIdentifier
+      fromUniversalFlatEntity.universalIdentifier
     ] = {
       // TODO to handle as we want api metadata to allow doing so anyway
-      id: toFlatEntity.id,
+      id: toUniversalFlatEntity.id,
       update,
     };
   }
