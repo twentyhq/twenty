@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getCompositeSubfieldNames } from 'src/engine/metadata-modules/page-layout-widget/utils/get-composite-subfield-names.util';
 import { resolveMorphTargetObjectId } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-morph-target-object-id.util';
 import { validateCompositeSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-composite-subfield.util';
 
@@ -62,8 +63,10 @@ export const validateRelationSubfield = ({
 
   if (!isDefined(nestedSubFieldName)) {
     if (isCompositeFieldMetadataType(nestedField.type)) {
+      const allowed = getCompositeSubfieldNames(nestedField.type);
+
       throw new Error(
-        `Composite field "${nestedFieldName}" requires a subfield.`,
+        `Composite field "${nestedFieldName}" requires a subfield. Use "${nestedFieldName}.<subfield>" where subfield is one of: ${allowed.join(', ')}`,
       );
     }
 

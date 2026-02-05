@@ -13,7 +13,11 @@ export const validateCompositeSubfield = ({
   paramName: string;
 }): void => {
   if (!isDefined(subFieldName)) {
-    throw new Error(`Composite field "${paramName}" requires a subfield.`);
+    const allowed = getCompositeSubfieldNames(field.type);
+
+    throw new Error(
+      `Composite field "${paramName}" requires a subfield. Allowed: ${allowed.join(', ')}`,
+    );
   }
 
   if (subFieldName.includes('.')) {

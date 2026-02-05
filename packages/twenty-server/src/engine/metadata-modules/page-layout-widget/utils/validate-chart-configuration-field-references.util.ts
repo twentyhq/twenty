@@ -26,12 +26,6 @@ export const validateChartConfigurationFieldReferences = ({
 }): void => {
   if (!isDefined(configuration)) return;
 
-  if (widgetType && widgetType !== WidgetType.GRAPH) {
-    throw new Error(
-      `Graph configuration is only valid for widgets of type GRAPH.`,
-    );
-  }
-
   if (!isChartFieldsForValidation(configuration)) {
     if (widgetType === WidgetType.GRAPH) {
       throw new Error(
@@ -40,6 +34,12 @@ export const validateChartConfigurationFieldReferences = ({
     }
 
     return;
+  }
+
+  if (widgetType && widgetType !== WidgetType.GRAPH) {
+    throw new Error(
+      `Graph configuration is only valid for widgets of type GRAPH.`,
+    );
   }
 
   if (!isDefined(objectMetadataId)) {
