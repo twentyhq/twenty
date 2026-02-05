@@ -16,6 +16,7 @@ import {
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
@@ -80,9 +81,10 @@ export function formatResult<T>(
       fieldIdByName[key] ||
       fieldIdByName[compositePropertyArgs?.parentField ?? ''];
 
-    const fieldMetadata = flatFieldMetadataMaps.byId[fieldMetadataId] as
-      | FlatFieldMetadata<FieldMetadataType>
-      | undefined;
+    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     const isRelation = fieldMetadata
       ? isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
@@ -116,10 +118,10 @@ export function formatResult<T>(
         );
       }
 
-      const targetObjectMetadata =
-        flatObjectMetadataMaps.byId[
-          fieldMetadata.relationTargetObjectMetadataId
-        ];
+      const targetObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
 
       if (!targetObjectMetadata) {
         throw new Error(

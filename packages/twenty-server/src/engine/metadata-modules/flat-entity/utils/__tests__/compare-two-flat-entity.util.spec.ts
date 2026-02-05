@@ -73,7 +73,7 @@ describe('compareTwoFlatEntity', () => {
       });
 
       expect(result).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(result),
+        extractRecordIdsAndDatesAsExpectAny({ ...result }),
       );
     },
   );

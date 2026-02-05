@@ -33,6 +33,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
+import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -307,6 +308,7 @@ const meta: Meta<typeof FieldWidget> = {
   decorators: [
     ComponentDecorator,
     ChipGeneratorsDecorator,
+    FileUploadDecorator,
     (Story) => (
       <MemoryRouter>
         <Story />

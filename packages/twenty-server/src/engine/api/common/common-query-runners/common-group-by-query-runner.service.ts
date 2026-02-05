@@ -17,7 +17,6 @@ import { ObjectLiteral } from 'typeorm';
 
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -46,7 +45,9 @@ import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -208,8 +209,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     );
 
     const recordFilters = viewFilters.map((viewFilter) => {
-      const fieldMetadata =
-        flatFieldMetadataMaps.byId[viewFilter.fieldMetadataId];
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: viewFilter.fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
 
       if (!fieldMetadata) {
         throw new CommonQueryRunnerException(

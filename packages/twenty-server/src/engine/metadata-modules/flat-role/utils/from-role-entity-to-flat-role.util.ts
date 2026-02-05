@@ -37,7 +37,6 @@ export const fromRoleEntityToFlatRole = ({
 
   return {
     id: roleEntity.id,
-    standardId: roleEntity.standardId,
     label: roleEntity.label,
     description: roleEntity.description,
     icon: roleEntity.icon,

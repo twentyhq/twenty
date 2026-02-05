@@ -1,6 +1,6 @@
 {
   "name": "create-twenty-app",
-  "version": "0.4.0",
+  "version": "0.4.4",
   "description": "Command-line interface to create Twenty application",
   "main": "dist/cli.cjs",
   "bin": "dist/cli.cjs",
@@ -8,7 +8,9 @@
     "dist/**/*"
   ],
   "scripts": {
-    "build": "npx rimraf dist && npx vite build"
+    "build": "npx rimraf dist && npx vite build",
+    "prepack": "tsx ../twenty-utils/pack-scripts/prepack.ts",
+    "postpack": "tsx ../twenty-utils/pack-scripts/postpack.ts"
   },
   "keywords": [
     "twenty",
@@ -34,6 +36,7 @@
     "lodash.camelcase": "^4.3.0",
     "lodash.kebabcase": "^4.1.1",
     "lodash.startcase": "^4.4.0",
+    "twenty-shared": "workspace:*",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -43,6 +46,7 @@
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/lodash.startcase": "^4",
     "@types/node": "^20.0.0",
+    "typescript": "^5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1"

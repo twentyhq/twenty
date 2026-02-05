@@ -5,7 +5,7 @@ import Skeleton from 'react-loading-skeleton';
 import { useRecoilValue } from 'recoil';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';

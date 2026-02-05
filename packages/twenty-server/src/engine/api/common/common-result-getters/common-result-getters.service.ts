@@ -18,6 +18,7 @@ import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/files-field.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
@@ -118,9 +119,11 @@ export class CommonResultGettersService {
     const handlers = [
       this.getObjectHandler(flatObjectMetadata.nameSingular),
       ...Object.keys(record)
-        .map(
-          (recordFieldName) =>
-            flatFieldMetadataMaps.byId[fieldIdByName[recordFieldName]],
+        .map((recordFieldName) =>
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldIdByName[recordFieldName],
+            flatEntityMaps: flatFieldMetadataMaps,
+          }),
         )
         .filter(isDefined)
         .map((fieldMetadata) => this.fieldHandlers.get(fieldMetadata.type))
@@ -128,9 +131,11 @@ export class CommonResultGettersService {
     ];
 
     const relationFields = Object.keys(record)
-      .map(
-        (recordFieldName) =>
-          flatFieldMetadataMaps.byId[fieldIdByName[recordFieldName]],
+      .map((recordFieldName) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldIdByName[recordFieldName],
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       )
       .filter(isDefined)
       .filter((fieldMetadata) =>
@@ -178,9 +183,11 @@ export class CommonResultGettersService {
     }
 
     const fieldMetadata = Object.keys(record)
-      .map(
-        (recordFieldName) =>
-          flatFieldMetadataMaps.byId[fieldIdByName[recordFieldName]],
+      .map((recordFieldName) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldIdByName[recordFieldName],
+          flatEntityMaps: flatFieldMetadataMaps,
+        }),
       )
       .filter(isDefined);
 

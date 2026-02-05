@@ -8,6 +8,7 @@ import { isGroupByDateFieldDefinition } from 'src/engine/api/graphql/graphql-que
 import { parseGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/parse-group-by-relation-field.util';
 import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/validate-single-key-for-group-by-or-throw.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -40,7 +41,10 @@ export const parseGroupByArgs = (
       const fieldMetadataId =
         fieldIdByName[fieldName] || fieldIdByJoinColumnName[fieldName];
       const fieldMetadata = fieldMetadataId
-        ? flatFieldMetadataMaps.byId[fieldMetadataId]
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          })
         : undefined;
 
       if (!isDefined(fieldMetadata) || !isDefined(fieldMetadataId)) {

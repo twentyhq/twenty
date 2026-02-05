@@ -12,6 +12,7 @@ import {
   RemoteFragmentRenderer,
   createRemoteComponentRenderer,
 } from '@remote-dom/react/host';
+import { Button } from 'twenty-ui/input';
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
 const EVENT_NAME_MAP: Record<string, string> = {
@@ -226,10 +227,10 @@ const HtmlAWrapper = ({
   return React.createElement('a', filterProps(props), children);
 };
 const HtmlImgWrapper = ({
-  children,
+  children: _children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
-  return React.createElement('img', filterProps(props), children);
+  return React.createElement('img', filterProps(props));
 };
 const HtmlUlWrapper = ({
   children,
@@ -262,10 +263,10 @@ const HtmlLabelWrapper = ({
   return React.createElement('label', filterProps(props), children);
 };
 const HtmlInputWrapper = ({
-  children,
+  children: _children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
-  return React.createElement('input', filterProps(props), children);
+  return React.createElement('input', filterProps(props));
 };
 const HtmlTextareaWrapper = ({
   children,
@@ -334,16 +335,22 @@ const HtmlTdWrapper = ({
   return React.createElement('td', filterProps(props), children);
 };
 const HtmlBrWrapper = ({
-  children,
+  children: _children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
-  return React.createElement('br', filterProps(props), children);
+  return React.createElement('br', filterProps(props));
 };
 const HtmlHrWrapper = ({
+  children: _children,
+  ...props
+}: { children?: React.ReactNode } & Record<string, unknown>) => {
+  return React.createElement('hr', filterProps(props));
+};
+const TwentyUiButtonWrapper = ({
   children,
   ...props
 }: { children?: React.ReactNode } & Record<string, unknown>) => {
-  return React.createElement('hr', filterProps(props), children);
+  return React.createElement(Button, filterProps(props), children);
 };
 type ComponentRegistryValue =
   | ReturnType<typeof createRemoteComponentRenderer>
@@ -393,5 +400,6 @@ export const componentRegistry: Map<string, ComponentRegistryValue> = new Map([
   ['html-td', createRemoteComponentRenderer(HtmlTdWrapper)],
   ['html-br', createRemoteComponentRenderer(HtmlBrWrapper)],
   ['html-hr', createRemoteComponentRenderer(HtmlHrWrapper)],
+  ['twenty-ui-button', createRemoteComponentRenderer(TwentyUiButtonWrapper)],
   ['remote-fragment', RemoteFragmentRenderer],
 ]);

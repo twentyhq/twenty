@@ -95,13 +95,13 @@ export class WorkspaceMigrationPageLayoutActionsBuilderService extends Workspace
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
     const updatePageLayoutAction: FlatUpdatePageLayoutAction = {
       type: 'update',
       metadataName: 'pageLayout',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

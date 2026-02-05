@@ -108,6 +108,7 @@ export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
 export { isMatchingBooleanFilter } from './filter/utils/isMatchingBooleanFilter';
 export { isMatchingCurrencyFilter } from './filter/utils/isMatchingCurrencyFilter';
 export { isMatchingDateFilter } from './filter/utils/isMatchingDateFilter';
+export { isMatchingFilesFilter } from './filter/utils/isMatchingFilesFilter';
 export { isMatchingFloatFilter } from './filter/utils/isMatchingFloatFilter';
 export { isMatchingMultiSelectFilter } from './filter/utils/isMatchingMultiSelectFilter';
 export { isMatchingRatingFilter } from './filter/utils/isMatchingRatingFilter';

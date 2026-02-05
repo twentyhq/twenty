@@ -1,4 +1,5 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
@@ -65,6 +66,13 @@ const createWelcomeRichText = ({
       title: 'Untitled Rich Text',
       type: WidgetType.STANDALONE_RICH_TEXT,
       gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 0,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType:
           WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
@@ -232,6 +240,13 @@ const createDealsByCompany = ({
       title: 'Deals by Company',
       type: WidgetType.GRAPH,
       gridPosition: { row: 0, column: 6, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 0,
+        column: 6,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.PIE_CHART,
         groupByFieldMetadataId: opportunityFields.company.id,
@@ -270,6 +285,13 @@ const createPipelineValueByStage = ({
       title: 'Pipeline Value by Stage',
       type: WidgetType.GRAPH,
       gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 6,
+        column: 0,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -314,6 +336,13 @@ const createRevenueTimeline = ({
       title: 'Revenue Timeline',
       type: WidgetType.GRAPH,
       gridPosition: { row: 6, column: 6, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 6,
+        column: 6,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.LINE_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,
@@ -353,6 +382,13 @@ const createOpportunitiesByOwner = ({
       title: 'Opportunities by Owner',
       type: WidgetType.GRAPH,
       gridPosition: { row: 12, column: 0, rowSpan: 6, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 12,
+        column: 0,
+        rowSpan: 6,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
@@ -394,6 +430,13 @@ const createStockMarketIframe = ({
       title: 'Stock market (Iframe)',
       type: WidgetType.IFRAME,
       gridPosition: { row: 12, column: 6, rowSpan: 8, columnSpan: 6 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 12,
+        column: 6,
+        rowSpan: 8,
+        columnSpan: 6,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.IFRAME as const,
         url: 'https://www.tradingview.com/embed-widget/hotlists/?locale=en',
@@ -421,6 +464,13 @@ const createDealsCreatedThisMonth = ({
       title: 'Deals created this month',
       type: WidgetType.GRAPH,
       gridPosition: { row: 18, column: 0, rowSpan: 2, columnSpan: 3 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 18,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.id.id,
@@ -464,6 +514,13 @@ const createDealValueCreatedThisMonth = ({
       title: 'Deal value created this month',
       type: WidgetType.GRAPH,
       gridPosition: { row: 18, column: 3, rowSpan: 2, columnSpan: 3 },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 18,
+        column: 3,
+        rowSpan: 2,
+        columnSpan: 3,
+      },
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: opportunityFields.amount.id,

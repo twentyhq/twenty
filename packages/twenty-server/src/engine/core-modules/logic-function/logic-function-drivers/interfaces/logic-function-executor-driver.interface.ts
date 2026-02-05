@@ -1,4 +1,4 @@
-import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
@@ -18,7 +18,7 @@ export type LogicFunctionExecuteResult = {
 
 export type LogicFunctionExecuteParams = {
   flatLogicFunction: FlatLogicFunction;
-  flatLogicFunctionLayer: FlatLogicFunctionLayer;
+  flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
   payload: object;
   env?: Record<string, string>;

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -35,12 +36,17 @@ export class MessagingGetMessagesService {
       | 'accountOwnerId'
       | 'connectionParameters'
     >,
+    messageChannel: Pick<
+      MessageChannelWorkspaceEntity,
+      'messageFolders' | 'messageFolderImportPolicy'
+    >,
   ): Promise<GetMessagesResponse> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return this.gmailGetMessagesService.getMessages(
           messageIds,
           connectedAccount,
+          messageChannel,
         );
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftGetMessagesService.getMessages(

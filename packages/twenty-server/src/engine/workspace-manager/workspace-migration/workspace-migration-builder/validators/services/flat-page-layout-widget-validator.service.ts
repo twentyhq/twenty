@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
@@ -13,6 +18,8 @@ import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
+import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util';
+import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import {
   FailedFlatEntityValidation,
@@ -21,7 +28,6 @@ import {
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatPageLayoutWidgetValidatorService {
@@ -31,7 +37,7 @@ export class FlatPageLayoutWidgetValidatorService {
 
   public async validateFlatPageLayoutWidgetUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
     additionalCacheDataMaps: { featureFlagsMap },
     workspaceId,
@@ -69,9 +75,7 @@ export class FlatPageLayoutWidgetValidatorService {
 
     const updatedFlatPageLayoutWidget = {
       ...existingFlatPageLayoutWidget,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     validationResult.flatEntityMinimalInformation = {
@@ -80,12 +84,26 @@ export class FlatPageLayoutWidgetValidatorService {
       pageLayoutTabId: updatedFlatPageLayoutWidget.pageLayoutTabId,
     };
 
+    const referencedPageLayoutTab = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: updatedFlatPageLayoutWidget.pageLayoutTabId,
+      flatEntityMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
+    });
+
     const gridPositionErrors = this.validateGridPosition({
       gridPosition: updatedFlatPageLayoutWidget.gridPosition,
       widgetTitle: updatedFlatPageLayoutWidget.title,
     });
 
     validationResult.errors.push(...gridPositionErrors);
+
+    const positionErrors = this.validatePosition({
+      position: updatedFlatPageLayoutWidget.position,
+      pageLayoutTab: referencedPageLayoutTab,
+      widgetTitle: updatedFlatPageLayoutWidget.title,
+    });
+
+    validationResult.errors.push(...positionErrors);
 
     const featureFlagErrors = this.validateFeatureFlags({
       type: updatedFlatPageLayoutWidget.type,
@@ -101,7 +119,7 @@ export class FlatPageLayoutWidgetValidatorService {
         {
           flatEntityToValidate: updatedFlatPageLayoutWidget,
           optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-          updates: flatEntityUpdates,
+          update: flatEntityUpdate,
           additionalCacheDataMaps: { featureFlagsMap },
           workspaceId,
           buildOptions,
@@ -135,8 +153,10 @@ export class FlatPageLayoutWidgetValidatorService {
       type: 'delete',
     });
 
-    const existingFlatPageLayoutWidget =
-      optimisticFlatPageLayoutWidgetMaps.byId[pageLayoutWidgetIdToDelete];
+    const existingFlatPageLayoutWidget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: pageLayoutWidgetIdToDelete,
+      flatEntityMaps: optimisticFlatPageLayoutWidgetMaps,
+    });
 
     if (!isDefined(existingFlatPageLayoutWidget)) {
       validationResult.errors.push({
@@ -174,9 +194,11 @@ export class FlatPageLayoutWidgetValidatorService {
       type: 'create',
     });
 
-    const existingFlatPageLayoutWidget =
-      optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps
-        .byId[flatPageLayoutWidgetToValidate.id];
+    const existingFlatPageLayoutWidget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatPageLayoutWidgetToValidate.id,
+      flatEntityMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps,
+    });
 
     if (isDefined(existingFlatPageLayoutWidget)) {
       const flatPageLayoutWidgetId = flatPageLayoutWidgetToValidate.id;
@@ -208,6 +230,14 @@ export class FlatPageLayoutWidgetValidatorService {
     });
 
     validationResult.errors.push(...gridPositionErrors);
+
+    const positionErrors = this.validatePosition({
+      position: flatPageLayoutWidgetToValidate.position,
+      pageLayoutTab: referencedPageLayoutTab,
+      widgetTitle: flatPageLayoutWidgetToValidate.title,
+    });
+
+    validationResult.errors.push(...positionErrors);
 
     const featureFlagErrors = this.validateFeatureFlags({
       type: flatPageLayoutWidgetToValidate.type,
@@ -294,5 +324,55 @@ export class FlatPageLayoutWidgetValidatorService {
     }
 
     return [];
+  }
+
+  private validatePosition({
+    position,
+    pageLayoutTab,
+    widgetTitle,
+  }: {
+    position: PageLayoutWidgetPosition | null | undefined;
+    pageLayoutTab: FlatPageLayoutTab | undefined;
+    widgetTitle: string;
+  }): FlatEntityValidationError[] {
+    if (!isDefined(position)) {
+      return [];
+    }
+
+    const errors: FlatEntityValidationError[] = [];
+
+    if (
+      isDefined(pageLayoutTab) &&
+      position.layoutMode !== pageLayoutTab.layoutMode
+    ) {
+      const layoutMode = position.layoutMode;
+      const tabLayoutMode = pageLayoutTab.layoutMode;
+
+      errors.push({
+        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        message: t`Position layoutMode "${layoutMode}" does not match tab layoutMode "${tabLayoutMode}"`,
+        userFriendlyMessage: msg`Widget position type must match the tab layout mode`,
+      });
+    }
+
+    switch (position.layoutMode) {
+      case PageLayoutTabLayoutMode.GRID:
+        errors.push(
+          ...validatePageLayoutWidgetGridPosition(position, widgetTitle),
+        );
+        break;
+      case PageLayoutTabLayoutMode.VERTICAL_LIST:
+        errors.push(
+          ...validatePageLayoutWidgetVerticalListPosition(
+            position,
+            widgetTitle,
+          ),
+        );
+        break;
+      case PageLayoutTabLayoutMode.CANVAS:
+        break;
+    }
+
+    return errors;
   }
 }

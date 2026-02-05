@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type DeleteViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/delete-view-group.input';
 import {
@@ -24,7 +25,10 @@ export const fromDeleteViewGroupInputToFlatViewGroupOrThrow = ({
     ['id'],
   );
 
-  const existingFlatViewGroupToDelete = flatViewGroupMaps.byId[viewGroupId];
+  const existingFlatViewGroupToDelete = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewGroupId,
+    flatEntityMaps: flatViewGroupMaps,
+  });
 
   if (!isDefined(existingFlatViewGroupToDelete)) {
     throw new ViewGroupException(
