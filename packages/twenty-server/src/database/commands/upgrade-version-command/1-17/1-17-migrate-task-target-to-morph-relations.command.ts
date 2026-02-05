@@ -152,6 +152,7 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
 
       const fieldMigrations = taskTargetRelationFields.map((field) => {
         const newFieldName = `target${capitalize(field.name)}`;
+        const newFieldLabel = `Target ${field.label}`;
         const relationSettings: RelationFieldMetadataSettings = field.settings;
         const oldJoinColumnName =
           relationSettings?.joinColumnName ??
@@ -163,6 +164,7 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
         return {
           field,
           newFieldName,
+          newFieldLabel,
           oldJoinColumnName,
           newJoinColumnName,
         };
@@ -204,6 +206,7 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
       for (const {
         field: fieldToMigrate,
         newFieldName,
+        newFieldLabel,
         newJoinColumnName,
       } of fieldMigrations) {
         const settings = {
@@ -214,7 +217,7 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
         try {
           const result = await queryRunner.query(
             `UPDATE core."fieldMetadata"
-           SET name = $1, type = $5, "morphId" = $3, settings = $4, "isActive" = true
+           SET name = $1, type = $5, "morphId" = $3, settings = $4, "isActive" = true, label = $6
            WHERE id = $2`,
             [
               newFieldName,
@@ -222,6 +225,7 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
               morphId,
               settings,
               FieldMetadataType.MORPH_RELATION,
+              newFieldLabel,
             ],
           );
 
@@ -229,7 +233,7 @@ export class MigrateTaskTargetToMorphRelationsCommand extends ActiveOrSuspendedW
 
           if (rowsUpdated > 0) {
             this.logger.log(
-              `Updated fieldMetadata: ${fieldToMigrate.name} → ${newFieldName} (type: MORPH_RELATION)`,
+              `Updated fieldMetadata: ${fieldToMigrate.name} → ${newFieldName} (label: ${newFieldLabel}, type: MORPH_RELATION)`,
             );
           }
         } catch (error) {
