@@ -9,6 +9,10 @@ import {
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
@@ -22,6 +26,17 @@ export const objectMetadataGraphqlApiExceptionHandler = (
 ) => {
   if (error instanceof WorkspaceMigrationBuilderException) {
     workspaceMigrationBuilderExceptionFormatter(error, i18n);
+  }
+
+  if (error instanceof FlatEntityMapsException) {
+    switch (error.code) {
+      case FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND:
+        throw new NotFoundError(error);
+      case FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS:
+      case FlatEntityMapsExceptionCode.ENTITY_MALFORMED:
+      case FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR:
+        throw new InternalServerError(error);
+    }
   }
 
   if (error instanceof InvalidMetadataException) {

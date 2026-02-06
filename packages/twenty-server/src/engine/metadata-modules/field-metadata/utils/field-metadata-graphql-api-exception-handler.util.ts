@@ -4,6 +4,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   ConflictError,
   ForbiddenError,
+  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -11,6 +12,10 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
@@ -21,6 +26,17 @@ export const fieldMetadataGraphqlApiExceptionHandler = (
 ) => {
   if (error instanceof WorkspaceMigrationBuilderException) {
     workspaceMigrationBuilderExceptionFormatter(error, i18n);
+  }
+
+  if (error instanceof FlatEntityMapsException) {
+    switch (error.code) {
+      case FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND:
+        throw new NotFoundError(error);
+      case FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS:
+      case FlatEntityMapsExceptionCode.ENTITY_MALFORMED:
+      case FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR:
+        throw new InternalServerError(error);
+    }
   }
 
   if (error instanceof InvalidMetadataException) {
