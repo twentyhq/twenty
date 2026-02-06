@@ -1,6 +1,7 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 } from 'uuid';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -14,7 +15,6 @@ import {
   type CreateStandardPageLayoutWidgetArgs,
   createStandardPageLayoutWidgetFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/create-standard-page-layout-widget-flat-metadata.util';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 type DashboardWidgetBuilderArgs = Omit<
   CreateStandardPageLayoutWidgetArgs,

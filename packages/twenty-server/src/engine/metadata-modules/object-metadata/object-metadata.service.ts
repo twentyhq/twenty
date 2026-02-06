@@ -397,12 +397,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createEmptyFlatEntityMaps(),
     );
 
-    const optimisticFlatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow(
-      {
+    const optimisticFlatObjectMetadataMaps =
+      addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity: flatObjectMetadataToCreate,
         flatEntityMaps: createEmptyFlatEntityMaps(),
-      },
-    );
+      });
 
     const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,

@@ -355,9 +355,7 @@ export class RowLevelPermissionPredicateService {
           | string
           | null = null;
 
-        if (
-          isDefined(inputGroup.parentRowLevelPermissionPredicateGroupId)
-        ) {
+        if (isDefined(inputGroup.parentRowLevelPermissionPredicateGroupId)) {
           const parentGroup = findFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
             flatEntityId: inputGroup.parentRowLevelPermissionPredicateGroupId,

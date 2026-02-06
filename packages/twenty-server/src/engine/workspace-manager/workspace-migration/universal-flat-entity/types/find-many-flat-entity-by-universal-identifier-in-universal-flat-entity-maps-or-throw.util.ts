@@ -1,6 +1,5 @@
-
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type UniversalSyncableFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
@@ -21,8 +20,8 @@ export const findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrT
     for (const universalIdentifier of universalIdentifiers) {
       const entity = findFlatEntityByUniversalIdentifierOrThrow({
         flatEntityMaps,
-        universalIdentifier
-      })
+        universalIdentifier,
+      });
 
       foundEntities.push(entity);
     }
