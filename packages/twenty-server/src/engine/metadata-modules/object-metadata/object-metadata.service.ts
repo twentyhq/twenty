@@ -406,7 +406,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
-      flatApplication: workspaceCustomFlatApplication,
+      flatApplication: resolvedOwnerFlatApplication,
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
       flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
     });

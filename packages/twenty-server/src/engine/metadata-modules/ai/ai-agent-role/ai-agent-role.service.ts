@@ -106,6 +106,7 @@ export class AiAgentRoleService {
         id: In(agentIds),
         workspaceId,
       },
+      relations: ['application'],
     });
 
     return agents;

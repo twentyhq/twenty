@@ -159,11 +159,14 @@ export class CommandMenuItemService {
         { workspaceId },
       );
 
-    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+    const {
+      flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatCommandMenuItemMaps'],
+          flatMapsKeys: ['flatCommandMenuItemMaps', 'flatObjectMetadataMaps'],
         },
       );
 
@@ -171,6 +174,7 @@ export class CommandMenuItemService {
       fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow({
         flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
         updateCommandMenuItemInput: input,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =

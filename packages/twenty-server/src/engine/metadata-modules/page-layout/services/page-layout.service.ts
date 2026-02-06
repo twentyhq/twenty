@@ -260,11 +260,14 @@ export class PageLayoutService {
         { workspaceId },
       );
 
-    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+    const {
+      flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatPageLayoutMaps'],
+          flatMapsKeys: ['flatPageLayoutMaps', 'flatObjectMetadataMaps'],
         },
       );
 
@@ -277,6 +280,7 @@ export class PageLayoutService {
       fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow({
         updatePageLayoutInput,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =

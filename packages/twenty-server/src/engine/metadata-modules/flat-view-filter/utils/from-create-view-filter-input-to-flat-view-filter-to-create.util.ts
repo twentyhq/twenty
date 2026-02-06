@@ -1,6 +1,5 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
 import {
-  isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';

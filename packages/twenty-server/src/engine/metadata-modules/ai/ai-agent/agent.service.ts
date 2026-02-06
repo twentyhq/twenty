@@ -123,11 +123,14 @@ export class AgentService {
       ? flatApplicationMaps.byId[input.applicationId]
       : undefined;
 
+    const resolvedFlatApplication =
+      flatApplication ?? workspaceCustomFlatApplication;
+
     const { flatAgentToCreate, flatRoleTargetToCreate } =
       fromCreateAgentInputToFlatAgent({
         createAgentInput: input,
         workspaceId,
-        flatApplication: flatApplication ?? workspaceCustomFlatApplication,
+        flatApplication: resolvedFlatApplication,
         flatRoleMaps,
       });
 

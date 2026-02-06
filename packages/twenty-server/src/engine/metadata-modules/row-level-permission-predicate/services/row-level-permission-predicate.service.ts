@@ -341,11 +341,20 @@ export class RowLevelPermissionPredicateService {
       });
 
       if (isDefined(existingGroup) && existingGroup.deletedAt === null) {
+        const parentRowLevelPermissionPredicateGroupUniversalIdentifier =
+          resolveNullableUniversalIdentifierFromFlatEntityId({
+            flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+            flatEntityId:
+              inputGroup.parentRowLevelPermissionPredicateGroupId,
+            metadataName: 'rowLevelPermissionPredicateGroup',
+          });
+
         groupsToUpdate.push({
           ...existingGroup,
           logicalOperator: inputGroup.logicalOperator,
           parentRowLevelPermissionPredicateGroupId:
             inputGroup.parentRowLevelPermissionPredicateGroupId ?? null,
+          parentRowLevelPermissionPredicateGroupUniversalIdentifier,
           positionInRowLevelPermissionPredicateGroup:
             inputGroup.positionInRowLevelPermissionPredicateGroup ?? null,
           updatedAt: createdAt,
@@ -474,18 +483,44 @@ export class RowLevelPermissionPredicateService {
         isDefined(existingPredicate) &&
         existingPredicate.deletedAt === null
       ) {
+        const fieldMetadataUniversalIdentifier =
+          resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityId: inputPredicate.fieldMetadataId,
+            metadataName: 'fieldMetadata',
+          });
+
+        const rowLevelPermissionPredicateGroupUniversalIdentifier =
+          resolveNullableUniversalIdentifierFromFlatEntityId({
+            flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+            flatEntityId:
+              inputPredicate.rowLevelPermissionPredicateGroupId,
+            metadataName: 'rowLevelPermissionPredicateGroup',
+          });
+
+        const workspaceMemberFieldMetadataUniversalIdentifier =
+          resolveNullableUniversalIdentifierFromFlatEntityId({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityId:
+              inputPredicate.workspaceMemberFieldMetadataId,
+            metadataName: 'fieldMetadata',
+          });
+
         predicatesToUpdate.push({
           ...existingPredicate,
           fieldMetadataId: inputPredicate.fieldMetadataId,
+          fieldMetadataUniversalIdentifier,
           operand: inputPredicate.operand,
           value: inputPredicate.value ?? null,
           subFieldName: inputPredicate.subFieldName ?? null,
           workspaceMemberFieldMetadataId:
             inputPredicate.workspaceMemberFieldMetadataId ?? null,
+          workspaceMemberFieldMetadataUniversalIdentifier,
           workspaceMemberSubFieldName:
             inputPredicate.workspaceMemberSubFieldName ?? null,
           rowLevelPermissionPredicateGroupId:
             inputPredicate.rowLevelPermissionPredicateGroupId ?? null,
+          rowLevelPermissionPredicateGroupUniversalIdentifier,
           positionInRowLevelPermissionPredicateGroup:
             inputPredicate.positionInRowLevelPermissionPredicateGroup ?? null,
           updatedAt: createdAt,

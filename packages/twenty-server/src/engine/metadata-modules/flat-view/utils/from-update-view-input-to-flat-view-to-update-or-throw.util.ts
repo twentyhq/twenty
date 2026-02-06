@@ -7,6 +7,7 @@ import {
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveNullableUniversalIdentifierFromFlatEntityId } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
@@ -66,6 +67,37 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     properties: FLAT_VIEW_EDITABLE_PROPERTIES,
     update: updatedEditableFieldProperties,
   });
+
+  if (
+    updatedEditableFieldProperties.kanbanAggregateOperationFieldMetadataId !==
+    undefined
+  ) {
+    flatViewToUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier =
+      resolveNullableUniversalIdentifierFromFlatEntityId({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId:
+          flatViewToUpdate.kanbanAggregateOperationFieldMetadataId,
+        metadataName: 'fieldMetadata',
+      });
+  }
+
+  if (updatedEditableFieldProperties.calendarFieldMetadataId !== undefined) {
+    flatViewToUpdate.calendarFieldMetadataUniversalIdentifier =
+      resolveNullableUniversalIdentifierFromFlatEntityId({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId: flatViewToUpdate.calendarFieldMetadataId,
+        metadataName: 'fieldMetadata',
+      });
+  }
+
+  if (updatedEditableFieldProperties.mainGroupByFieldMetadataId !== undefined) {
+    flatViewToUpdate.mainGroupByFieldMetadataUniversalIdentifier =
+      resolveNullableUniversalIdentifierFromFlatEntityId({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId: flatViewToUpdate.mainGroupByFieldMetadataId,
+        metadataName: 'fieldMetadata',
+      });
+  }
 
   // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
   // This prevents the view from disappearing for the user making the change
