@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
@@ -9,6 +10,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
@@ -42,7 +44,12 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     RouteTriggerModule,
     WebhookModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: FlatEntityMapsGraphqlApiExceptionFilter,
+    },
+  ],
   exports: [
     DataSourceModule,
     FieldMetadataModule,

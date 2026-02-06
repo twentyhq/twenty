@@ -120,7 +120,7 @@ export const resolveEntityRelationUniversalIdentifiers = <
     if (!isDefined(resolvedUniversalIdentifier)) {
       throw new FlatEntityMapsException(
         t`Could not find ${targetMetadataName} for given ${foreignKey}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
       );
     }
 

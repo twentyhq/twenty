@@ -65,7 +65,7 @@ describe('resolveEntityRelationUniversalIdentifiers', () => {
         }),
       ).toThrow(
         expect.objectContaining({
-          code: FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+          code: FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
         }),
       );
     });
@@ -122,7 +122,7 @@ describe('resolveEntityRelationUniversalIdentifiers', () => {
         }),
       ).toThrow(
         expect.objectContaining({
-          code: FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+          code: FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
         }),
       );
     });
