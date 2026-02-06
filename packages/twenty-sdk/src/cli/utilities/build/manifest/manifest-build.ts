@@ -168,7 +168,7 @@ export const buildManifest = async (
 
         const config: LogicFunctionManifest = {
           ...rest,
-          handlerName: 'default.handler',
+          handlerName: 'default.config.handler',
           sourceHandlerPath: relativeFilePath,
           builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtHandlerChecksum: '[default-checksum]',

@@ -175,7 +175,9 @@ export class ApplicationSyncService {
       name,
       description: manifest.application.description,
       version: packageJson.version,
-      defaultRoleId: null,
+      packageJsonChecksum: manifest.application.packageJsonChecksum,
+      yarnLockChecksum: manifest.application.yarnLockChecksum,
+      //availablePackages: manifest.application.availablePackages, // TODO: compute available package in dev-mode-orchestrator
     });
   }
 
