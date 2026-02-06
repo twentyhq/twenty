@@ -14,17 +14,10 @@ export const findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrT
   <T extends SyncableFlatEntity | UniversalSyncableFlatEntity>({
     flatEntityMaps,
     universalIdentifiers,
-  }: FindManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrowArgs<T>): T[] => {
-    const foundEntities: T[] = [];
-
-    for (const universalIdentifier of universalIdentifiers) {
-      const entity = findFlatEntityByUniversalIdentifierOrThrow({
+  }: FindManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrowArgs<T>): T[] =>
+    universalIdentifiers.map((universalIdentifier) =>
+      findFlatEntityByUniversalIdentifierOrThrow({
         flatEntityMaps,
         universalIdentifier,
-      });
-
-      foundEntities.push(entity);
-    }
-
-    return foundEntities;
-  };
+      }),
+    );
