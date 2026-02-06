@@ -14,15 +14,34 @@ import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types
 import { ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
 import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
-import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
+import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
-type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> = Pick<
-  AllFlatEntityMaps,
-  MetadataRelatedFlatEntityMapsKeys<T>
->;
+
 type ManyToOneConfig<T extends AllMetadataName> =
   (typeof ALL_METADATA_RELATIONS)[T]['manyToOne'];
+
+type TargetMetadataNamesForForeignKeys<
+  T extends AllMetadataName,
+  TProvidedKeys extends string,
+> = {
+  [K in keyof ManyToOneConfig<T>]: ManyToOneConfig<T>[K] extends {
+    foreignKey: infer FK extends TProvidedKeys;
+    metadataName: infer MN extends AllMetadataName;
+  }
+    ? MN
+    : never;
+}[keyof ManyToOneConfig<T>];
+
+type RequiredFlatEntityMapsForForeignKeys<
+  T extends AllMetadataName,
+  TProvidedKeys extends string,
+> = Pick<
+  AllFlatEntityMaps,
+  MetadataToFlatEntityMapsKey<
+    TargetMetadataNamesForForeignKeys<T, TProvidedKeys>
+  >
+>;
 
 type ResolvedUniversalIdentifiers<
   T extends AllMetadataName,
@@ -52,7 +71,7 @@ export const resolveEntityRelationUniversalIdentifiers = <
 }: {
   metadataName: T;
   foreignKeyValues: Record<TProvidedKeys, string | null | undefined>;
-  flatEntityMaps: MetadataRelatedFlatEntityMaps<T>;
+  flatEntityMaps: RequiredFlatEntityMapsForForeignKeys<T, TProvidedKeys>;
 }): ResolvedUniversalIdentifiers<T, TProvidedKeys> => {
   const relations = ALL_METADATA_RELATIONS[metadataName].manyToOne;
   const result: Record<string, string | null> = {};
@@ -80,7 +99,7 @@ export const resolveEntityRelationUniversalIdentifiers = <
 
     const mapsKey = getMetadataFlatEntityMapsKey(
       targetMetadataName,
-    ) as keyof MetadataRelatedFlatEntityMaps<T>;
+    ) as keyof RequiredFlatEntityMapsForForeignKeys<T, TProvidedKeys>;
     const targetFlatEntityMaps = flatEntityMaps[mapsKey];
 
     // TODO refactor using the new ALL_METADATA_UNIVERSAL_RELATION afterwards
