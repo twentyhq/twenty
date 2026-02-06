@@ -3,7 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, QueryFailedError, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -101,18 +101,34 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
         // Step 1: Attempt to rename the column, handling failures gracefully
         if (field.currentJoinColumnName !== field.expectedJoinColumnName) {
           // Use a savepoint so a failed rename doesn't abort the whole transaction
-          await queryRunner.query(`SAVEPOINT rename_column`);
+          const renameColumnSavepoint = 'rename_column';
+          await queryRunner.query(`SAVEPOINT ${renameColumnSavepoint}`);
           try {
             await queryRunner.query(
               `ALTER TABLE "${field.workspaceSchema}"."${field.sourceObjectName}"
                RENAME COLUMN "${field.currentJoinColumnName}" TO "${field.expectedJoinColumnName}"`,
             );
-            await queryRunner.query(`RELEASE SAVEPOINT rename_column`);
+            await queryRunner.query(`RELEASE SAVEPOINT ${renameColumnSavepoint}`);
             this.logger.log(
               `Renamed column ${field.currentJoinColumnName} → ${field.expectedJoinColumnName} in ${field.workspaceSchema}.${field.sourceObjectName}`,
             );
-          } catch {
-            await queryRunner.query(`ROLLBACK TO SAVEPOINT rename_column`);
+          } catch (error) {
+            await queryRunner.query(
+              `ROLLBACK TO SAVEPOINT ${renameColumnSavepoint}`,
+            );
+            await queryRunner.query(
+              `RELEASE SAVEPOINT ${renameColumnSavepoint}`,
+            );
+            const errorCode = this.getPostgresErrorCode(error);
+            if (errorCode === '42701') {
+              this.logger.warn(
+                `⚠️  SKIPPING ${field.sourceObjectName}.${field.currentFieldName}: Both columns exist (${field.currentJoinColumnName} and ${field.expectedJoinColumnName}). Manual intervention required.`,
+              );
+              continue;
+            }
+            if (errorCode !== '42703') {
+              throw error;
+            }
             this.logger.log(
               `Column rename skipped for ${field.sourceObjectName}.${field.currentJoinColumnName} (column may already be renamed or missing), updating metadata only`,
             );
@@ -296,4 +312,19 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
       );
   }
 
+  private getPostgresErrorCode(error: unknown): string | null {
+    if (!(error instanceof QueryFailedError)) {
+      return null;
+    }
+    const driverError: unknown = error.driverError;
+    if (
+      typeof driverError === 'object' &&
+      driverError !== null &&
+      'code' in driverError
+    ) {
+      const code = (driverError as { code?: unknown }).code;
+      return typeof code === 'string' ? code : null;
+    }
+    return null;
+  }
 }
