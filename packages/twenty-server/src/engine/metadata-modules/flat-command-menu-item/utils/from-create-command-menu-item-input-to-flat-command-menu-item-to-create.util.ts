@@ -10,7 +10,7 @@ import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/com
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { resolveNullableUniversalIdentifierFromFlatEntityId } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 
 export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   createCommandMenuItemInput,
@@ -43,19 +43,18 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const id = uuidv4();
   const now = new Date().toISOString();
 
-  const availabilityObjectMetadataUniversalIdentifier =
-    resolveNullableUniversalIdentifierFromFlatEntityId({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: createCommandMenuItemInput.availabilityObjectMetadataId,
-      metadataName: 'objectMetadata',
-    });
-
-  const frontComponentUniversalIdentifier =
-    resolveNullableUniversalIdentifierFromFlatEntityId({
-      flatEntityMaps: flatFrontComponentMaps,
-      flatEntityId: createCommandMenuItemInput.frontComponentId,
-      metadataName: 'frontComponent',
-    });
+  const {
+    availabilityObjectMetadataUniversalIdentifier,
+    frontComponentUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'commandMenuItem',
+    foreignKeyValues: {
+      availabilityObjectMetadataId:
+        createCommandMenuItemInput.availabilityObjectMetadataId,
+      frontComponentId: createCommandMenuItemInput.frontComponentId,
+    },
+    flatEntityMaps: { flatObjectMetadataMaps, flatFrontComponentMaps },
+  });
 
   return {
     id,

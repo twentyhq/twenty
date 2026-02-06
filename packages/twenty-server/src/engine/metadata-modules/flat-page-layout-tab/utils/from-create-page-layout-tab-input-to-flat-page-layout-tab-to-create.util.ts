@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { resolveUniversalIdentifierFromFlatEntityIdOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/create-page-layout-tab.input';
 
@@ -29,11 +29,15 @@ export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
   const createdAt = new Date().toISOString();
   const pageLayoutTabId = v4();
 
-  const pageLayoutUniversalIdentifier =
-    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
-      flatEntityMaps: flatPageLayoutMaps,
-      flatEntityId: createPageLayoutTabInput.pageLayoutId,
-      metadataName: 'pageLayout',
+  const { pageLayoutUniversalIdentifier } =
+    resolveEntityRelationUniversalIdentifiers({
+      flatEntityMaps: {
+        flatPageLayoutMaps,
+      },
+      foreignKeyValues: {
+        pageLayoutId: createPageLayoutTabInput.pageLayoutId,
+      },
+      metadataName: 'pageLayoutTab',
     });
 
   return {

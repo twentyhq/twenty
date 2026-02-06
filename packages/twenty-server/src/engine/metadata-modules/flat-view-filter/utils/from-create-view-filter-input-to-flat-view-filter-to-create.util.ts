@@ -4,10 +4,7 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import {
-  resolveNullableUniversalIdentifierFromFlatEntityId,
-  resolveUniversalIdentifierFromFlatEntityIdOrThrow,
-} from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 
@@ -42,26 +39,23 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
   const createdAt = new Date().toISOString();
   const viewFilterId = createViewFilterInput.id ?? v4();
 
-  const fieldMetadataUniversalIdentifier =
-    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: fieldMetadataId,
-      metadataName: 'fieldMetadata',
-    });
-
-  const viewUniversalIdentifier =
-    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
-      flatEntityMaps: flatViewMaps,
-      flatEntityId: viewId,
-      metadataName: 'view',
-    });
-
-  const viewFilterGroupUniversalIdentifier =
-    resolveNullableUniversalIdentifierFromFlatEntityId({
-      flatEntityMaps: flatViewFilterGroupMaps,
-      flatEntityId: createViewFilterInput.viewFilterGroupId,
-      metadataName: 'viewFilterGroup',
-    });
+  const {
+    fieldMetadataUniversalIdentifier,
+    viewUniversalIdentifier,
+    viewFilterGroupUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'viewFilter',
+    foreignKeyValues: {
+      fieldMetadataId,
+      viewId,
+      viewFilterGroupId: createViewFilterInput.viewFilterGroupId,
+    },
+    flatEntityMaps: {
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatViewFilterGroupMaps,
+    },
+  });
 
   return {
     id: viewFilterId,

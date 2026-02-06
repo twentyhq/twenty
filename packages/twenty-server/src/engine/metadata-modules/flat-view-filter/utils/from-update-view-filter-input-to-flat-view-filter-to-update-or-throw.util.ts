@@ -7,10 +7,7 @@ import {
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import {
-  resolveNullableUniversalIdentifierFromFlatEntityId,
-  resolveUniversalIdentifierFromFlatEntityIdOrThrow,
-} from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
@@ -63,21 +60,31 @@ export const fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow = ({
   });
 
   if (updatedEditableFieldProperties.fieldMetadataId !== undefined) {
-    flatViewFilterToUpdate.fieldMetadataUniversalIdentifier =
-      resolveUniversalIdentifierFromFlatEntityIdOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: flatViewFilterToUpdate.fieldMetadataId,
-        metadataName: 'fieldMetadata',
+    const { fieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'viewFilter',
+        foreignKeyValues: {
+          fieldMetadataId: flatViewFilterToUpdate.fieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
       });
+
+    flatViewFilterToUpdate.fieldMetadataUniversalIdentifier =
+      fieldMetadataUniversalIdentifier;
   }
 
   if (updatedEditableFieldProperties.viewFilterGroupId !== undefined) {
-    flatViewFilterToUpdate.viewFilterGroupUniversalIdentifier =
-      resolveNullableUniversalIdentifierFromFlatEntityId({
-        flatEntityMaps: flatViewFilterGroupMaps,
-        flatEntityId: flatViewFilterToUpdate.viewFilterGroupId,
-        metadataName: 'viewFilterGroup',
+    const { viewFilterGroupUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'viewFilter',
+        foreignKeyValues: {
+          viewFilterGroupId: flatViewFilterToUpdate.viewFilterGroupId,
+        },
+        flatEntityMaps: { flatViewFilterGroupMaps },
       });
+
+    flatViewFilterToUpdate.viewFilterGroupUniversalIdentifier =
+      viewFilterGroupUniversalIdentifier;
   }
 
   return flatViewFilterToUpdate;

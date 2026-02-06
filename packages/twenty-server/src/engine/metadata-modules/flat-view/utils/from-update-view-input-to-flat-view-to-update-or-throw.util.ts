@@ -7,7 +7,7 @@ import {
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveNullableUniversalIdentifierFromFlatEntityId } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
@@ -72,30 +72,47 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     updatedEditableFieldProperties.kanbanAggregateOperationFieldMetadataId !==
     undefined
   ) {
-    flatViewToUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier =
-      resolveNullableUniversalIdentifierFromFlatEntityId({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: flatViewToUpdate.kanbanAggregateOperationFieldMetadataId,
-        metadataName: 'fieldMetadata',
+    const { kanbanAggregateOperationFieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          kanbanAggregateOperationFieldMetadataId:
+            flatViewToUpdate.kanbanAggregateOperationFieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
       });
+
+    flatViewToUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier =
+      kanbanAggregateOperationFieldMetadataUniversalIdentifier;
   }
 
   if (updatedEditableFieldProperties.calendarFieldMetadataId !== undefined) {
-    flatViewToUpdate.calendarFieldMetadataUniversalIdentifier =
-      resolveNullableUniversalIdentifierFromFlatEntityId({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: flatViewToUpdate.calendarFieldMetadataId,
-        metadataName: 'fieldMetadata',
+    const { calendarFieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          calendarFieldMetadataId: flatViewToUpdate.calendarFieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
       });
+
+    flatViewToUpdate.calendarFieldMetadataUniversalIdentifier =
+      calendarFieldMetadataUniversalIdentifier;
   }
 
   if (updatedEditableFieldProperties.mainGroupByFieldMetadataId !== undefined) {
-    flatViewToUpdate.mainGroupByFieldMetadataUniversalIdentifier =
-      resolveNullableUniversalIdentifierFromFlatEntityId({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: flatViewToUpdate.mainGroupByFieldMetadataId,
-        metadataName: 'fieldMetadata',
+    const { mainGroupByFieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          mainGroupByFieldMetadataId:
+            flatViewToUpdate.mainGroupByFieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
       });
+
+    flatViewToUpdate.mainGroupByFieldMetadataUniversalIdentifier =
+      mainGroupByFieldMetadataUniversalIdentifier;
   }
 
   // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set

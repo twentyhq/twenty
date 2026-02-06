@@ -6,7 +6,7 @@ import {
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveNullableUniversalIdentifierFromFlatEntityId } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -76,12 +76,17 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     });
 
     if (updatedEditableFieldProperties.objectMetadataId !== undefined) {
-      flatPageLayoutWidgetToUpdate.objectMetadataUniversalIdentifier =
-        resolveNullableUniversalIdentifierFromFlatEntityId({
-          flatEntityMaps: flatObjectMetadataMaps,
-          flatEntityId: flatPageLayoutWidgetToUpdate.objectMetadataId,
-          metadataName: 'objectMetadata',
+      const { objectMetadataUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            objectMetadataId: flatPageLayoutWidgetToUpdate.objectMetadataId,
+          },
+          flatEntityMaps: { flatObjectMetadataMaps },
         });
+
+      flatPageLayoutWidgetToUpdate.objectMetadataUniversalIdentifier =
+        objectMetadataUniversalIdentifier;
     }
 
     return flatPageLayoutWidgetToUpdate;

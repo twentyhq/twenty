@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { resolveNullableUniversalIdentifierFromFlatEntityId } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
@@ -48,26 +48,24 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       position = maxPosition + 1;
     }
 
-    const targetObjectMetadataUniversalIdentifier =
-      resolveNullableUniversalIdentifierFromFlatEntityId({
-        flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: createNavigationMenuItemInput.targetObjectMetadataId,
-        metadataName: 'objectMetadata',
-      });
-
-    const viewUniversalIdentifier =
-      resolveNullableUniversalIdentifierFromFlatEntityId({
-        flatEntityMaps: flatViewMaps,
-        flatEntityId: createNavigationMenuItemInput.viewId,
-        metadataName: 'view',
-      });
-
-    const folderUniversalIdentifier =
-      resolveNullableUniversalIdentifierFromFlatEntityId({
-        flatEntityMaps: flatNavigationMenuItemMaps,
-        flatEntityId: createNavigationMenuItemInput.folderId,
-        metadataName: 'navigationMenuItem',
-      });
+    const {
+      targetObjectMetadataUniversalIdentifier,
+      viewUniversalIdentifier,
+      folderUniversalIdentifier,
+    } = resolveEntityRelationUniversalIdentifiers({
+      metadataName: 'navigationMenuItem',
+      foreignKeyValues: {
+        targetObjectMetadataId:
+          createNavigationMenuItemInput.targetObjectMetadataId,
+        viewId: createNavigationMenuItemInput.viewId,
+        folderId: createNavigationMenuItemInput.folderId,
+      },
+      flatEntityMaps: {
+        flatObjectMetadataMaps,
+        flatViewMaps,
+        flatNavigationMenuItemMaps,
+      },
+    });
 
     return {
       id,

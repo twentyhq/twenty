@@ -6,10 +6,7 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import {
-  resolveNullableUniversalIdentifierFromFlatEntityId,
-  resolveUniversalIdentifierFromFlatEntityIdOrThrow,
-} from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -45,33 +42,22 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();
 
-  const objectMetadataUniversalIdentifier =
-    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: objectMetadataId,
-      metadataName: 'objectMetadata',
-    });
-
-  const calendarFieldMetadataUniversalIdentifier =
-    resolveNullableUniversalIdentifierFromFlatEntityId({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: createViewInput.calendarFieldMetadataId,
-      metadataName: 'fieldMetadata',
-    });
-
-  const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
-    resolveNullableUniversalIdentifierFromFlatEntityId({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: createViewInput.kanbanAggregateOperationFieldMetadataId,
-      metadataName: 'fieldMetadata',
-    });
-
-  const mainGroupByFieldMetadataUniversalIdentifier =
-    resolveNullableUniversalIdentifierFromFlatEntityId({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: createViewInput.mainGroupByFieldMetadataId,
-      metadataName: 'fieldMetadata',
-    });
+  const {
+    objectMetadataUniversalIdentifier,
+    calendarFieldMetadataUniversalIdentifier,
+    kanbanAggregateOperationFieldMetadataUniversalIdentifier,
+    mainGroupByFieldMetadataUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'view',
+    foreignKeyValues: {
+      objectMetadataId,
+      calendarFieldMetadataId: createViewInput.calendarFieldMetadataId,
+      kanbanAggregateOperationFieldMetadataId:
+        createViewInput.kanbanAggregateOperationFieldMetadataId,
+      mainGroupByFieldMetadataId: createViewInput.mainGroupByFieldMetadataId,
+    },
+    flatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+  });
 
   const flatViewToCreate = {
     id: viewId,

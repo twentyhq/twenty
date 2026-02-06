@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { resolveUniversalIdentifierFromFlatEntityIdOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 import { type CreateRoleTargetInput } from 'src/engine/metadata-modules/role-target/types/create-role-target.input';
@@ -26,11 +26,11 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   const { roleId, targetId, targetMetadataForeignKey, universalIdentifier } =
     createRoleTargetInput;
 
-  const roleUniversalIdentifier =
-    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
-      flatEntityMaps: flatRoleMaps,
-      flatEntityId: roleId,
-      metadataName: 'role',
+  const { roleUniversalIdentifier } =
+    resolveEntityRelationUniversalIdentifiers({
+      metadataName: 'roleTarget',
+      foreignKeyValues: { roleId },
+      flatEntityMaps: { flatRoleMaps },
     });
 
   const flatRoleTargetToCreate: FlatRoleTarget = {
