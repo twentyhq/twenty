@@ -19,13 +19,13 @@ export class AddFrontComponentColumns1770309316193
       `ALTER TABLE "core"."frontComponent" ADD "componentName" character varying NOT NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."frontComponent" ADD "checksum" text`,
+      `ALTER TABLE "core"."frontComponent" ADD "builtComponentChecksum" character varying NOT NULL`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."frontComponent" DROP COLUMN "checksum"`,
+      `ALTER TABLE "core"."frontComponent" DROP COLUMN "builtComponentChecksum"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."frontComponent" DROP COLUMN "componentName"`,

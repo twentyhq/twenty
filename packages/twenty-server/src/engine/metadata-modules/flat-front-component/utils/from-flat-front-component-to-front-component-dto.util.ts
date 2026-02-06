@@ -14,9 +14,7 @@ export const fromFlatFrontComponentToFrontComponentDto = (
   sourceComponentPath: flatFrontComponent.sourceComponentPath,
   builtComponentPath: flatFrontComponent.builtComponentPath,
   componentName: flatFrontComponent.componentName,
-  checksum: isDefined(flatFrontComponent.checksum)
-    ? flatFrontComponent.checksum
-    : undefined,
+  builtComponentChecksum: flatFrontComponent.builtComponentChecksum,
   universalIdentifier: isDefined(flatFrontComponent.universalIdentifier)
     ? flatFrontComponent.universalIdentifier
     : undefined,

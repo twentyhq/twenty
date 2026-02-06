@@ -181,6 +181,7 @@ describe('CommandMenuItem creation should succeed', () => {
         componentName: 'TestFrontComponent',
         sourceComponentPath: 'src/front-components/index.tsx',
         builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
       },
     });
 

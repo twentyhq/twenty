@@ -1042,10 +1042,7 @@ export class ApplicationSyncService {
 
       await this.frontComponentService.updateOne({
         id: frontComponentToUpdate.id,
-        update: {
-          ...frontComponentToSync,
-          checksum: frontComponentToSync.builtComponentChecksum ?? undefined,
-        },
+        update: frontComponentToSync,
         workspaceId,
         ownerFlatApplication,
       });
@@ -1053,10 +1050,7 @@ export class ApplicationSyncService {
 
     for (const frontComponentToCreate of frontComponentsToCreate) {
       await this.frontComponentService.createOne({
-        input: {
-          ...frontComponentToCreate,
-          checksum: frontComponentToCreate.builtComponentChecksum ?? undefined,
-        },
+        input: frontComponentToCreate,
         workspaceId,
         ownerFlatApplication,
       });

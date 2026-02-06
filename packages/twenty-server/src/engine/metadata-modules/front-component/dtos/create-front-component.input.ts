@@ -41,7 +41,7 @@ export class CreateFrontComponentInput {
   componentName: string;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   @HideField()
-  checksum?: string;
+  builtComponentChecksum: string;
 }

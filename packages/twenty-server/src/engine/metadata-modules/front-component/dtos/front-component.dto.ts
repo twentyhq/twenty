@@ -39,9 +39,9 @@ export class FrontComponentDTO {
   componentName: string;
 
   @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  checksum?: string;
+  @IsNotEmpty()
+  @Field()
+  builtComponentChecksum: string;
 
   @IsUUID()
   @IsOptional()

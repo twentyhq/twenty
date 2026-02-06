@@ -22,6 +22,7 @@ describe('Front component creation should succeed', () => {
         componentName: 'TestFrontComponent',
         sourceComponentPath: 'src/front-components/index.tsx',
         builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
       },
     });
 
@@ -41,6 +42,7 @@ describe('Front component creation should succeed', () => {
         componentName: 'FrontComponentWithSpaces',
         sourceComponentPath: 'src/front-components/index.tsx',
         builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
       },
     });
 

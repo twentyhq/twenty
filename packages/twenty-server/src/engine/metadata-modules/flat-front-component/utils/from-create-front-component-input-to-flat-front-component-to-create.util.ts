@@ -31,7 +31,7 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     sourceComponentPath: createFrontComponentInput.sourceComponentPath,
     builtComponentPath: createFrontComponentInput.builtComponentPath,
     componentName: createFrontComponentInput.componentName,
-    checksum: createFrontComponentInput.checksum ?? null,
+    builtComponentChecksum: createFrontComponentInput.builtComponentChecksum,
     workspaceId,
     createdAt: now,
     updatedAt: now,

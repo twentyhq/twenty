@@ -31,8 +31,8 @@ export class FrontComponentEntity
   @Column({ nullable: false })
   componentName: string;
 
-  @Column({ nullable: true, type: 'text' })
-  checksum: string | null;
+  @Column({ nullable: false })
+  builtComponentChecksum: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

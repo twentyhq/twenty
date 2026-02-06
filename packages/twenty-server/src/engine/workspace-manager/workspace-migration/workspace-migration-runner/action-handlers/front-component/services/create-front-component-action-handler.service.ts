@@ -40,7 +40,7 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
 
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
-    if (isDefined(frontComponent.checksum)) {
+    if (isDefined(frontComponent.builtComponentChecksum)) {
       await this.verifySourceAndBuiltFilesExist({
         workspaceId,
         applicationUniversalIdentifier,

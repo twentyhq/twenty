@@ -11,6 +11,7 @@ describe('Front component deletion should succeed', () => {
         componentName: 'FrontComponentToDelete',
         sourceComponentPath: 'src/front-components/index.tsx',
         builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
       },
     });
 

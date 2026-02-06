@@ -26,7 +26,7 @@ export class UpdateFrontComponentInputUpdates {
   @IsOptional()
   @IsString()
   @HideField()
-  checksum?: string;
+  builtComponentChecksum?: string;
 }
 
 @InputType()
