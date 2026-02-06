@@ -285,7 +285,7 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
         (row: {
           fieldId: string;
           currentFieldName: string;
-          currentJoinColumnName: string;
+          currentJoinColumnName: string | null;
           sourceObjectName: string;
           targetObjectNameSingular: string;
           workspaceSchema: string;
@@ -296,13 +296,20 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
               name: expectedFieldName,
             });
 
+          // Fallback: if settings.joinColumnName is null, derive from field name
+          const currentJoinColumnName =
+            row.currentJoinColumnName ??
+            computeMorphOrRelationFieldJoinColumnName({
+              name: row.currentFieldName,
+            });
+
           return {
             fieldId: row.fieldId,
             currentFieldName: row.currentFieldName,
             expectedFieldName,
             sourceObjectName: row.sourceObjectName,
             targetObjectNameSingular: row.targetObjectNameSingular,
-            currentJoinColumnName: row.currentJoinColumnName,
+            currentJoinColumnName,
             expectedJoinColumnName,
             workspaceSchema: row.workspaceSchema,
           };
