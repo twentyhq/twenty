@@ -437,6 +437,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           view: flatDefaultViewToCreate,
           workspaceId,
           workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+          workspaceCustomApplicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         })
       : null;
 
@@ -606,10 +608,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     view,
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     view: FlatView;
     workspaceId: string;
     workspaceCustomApplicationId: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
   }): Promise<FlatNavigationMenuItem> {
     const { flatNavigationMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -636,12 +640,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       userWorkspaceId: null,
       targetRecordId: null,
       targetObjectMetadataId: null,
+      targetObjectMetadataUniversalIdentifier: null,
       viewId: view.id,
+      viewUniversalIdentifier: view.universalIdentifier,
       folderId: null,
+      folderUniversalIdentifier: null,
       name: null,
       position: nextPosition,
       workspaceId,
       applicationId: workspaceCustomApplicationId,
+      applicationUniversalIdentifier:
+        workspaceCustomApplicationUniversalIdentifier,
       createdAt: now,
       updatedAt: now,
     };
