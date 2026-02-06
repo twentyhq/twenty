@@ -4,7 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -28,28 +28,27 @@ export class FlatViewFilterValidatorService {
   >): FailedFlatEntityValidation<'viewFilter', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatViewFilterToValidate.id,
         universalIdentifier: flatViewFilterToValidate.universalIdentifier,
       },
       metadataName: 'viewFilter',
       type: 'create',
     });
 
-    const existingViewFilter = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewFilterToValidate.id,
+    const existingViewFilter = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewFilterToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatViewFilterMaps,
     });
 
     if (isDefined(existingViewFilter)) {
       validationResult.errors.push({
         code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-        message: t`View filter with this id already exists`,
-        userFriendlyMessage: msg`View filter with this id already exists`,
+        message: t`View filter with this universal identifier already exists`,
+        userFriendlyMessage: msg`View filter already exists`,
       });
     }
 
-    const referencedView = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewFilterToValidate.viewId,
+    const referencedView = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewFilterToValidate.viewUniversalIdentifier,
       flatEntityMaps: flatViewMaps,
     });
 
@@ -61,8 +60,9 @@ export class FlatViewFilterValidatorService {
       });
     }
 
-    const referencedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewFilterToValidate.fieldMetadataId,
+    const referencedFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        flatViewFilterToValidate.fieldMetadataUniversalIdentifier,
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
@@ -74,9 +74,12 @@ export class FlatViewFilterValidatorService {
       });
     }
 
-    if (isDefined(flatViewFilterToValidate.viewFilterGroupId)) {
-      const referencedViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: flatViewFilterToValidate.viewFilterGroupId,
+    if (
+      isDefined(flatViewFilterToValidate.viewFilterGroupUniversalIdentifier)
+    ) {
+      const referencedViewFilterGroup = findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          flatViewFilterToValidate.viewFilterGroupUniversalIdentifier,
         flatEntityMaps: flatViewFilterGroupMaps,
       });
 
@@ -102,15 +105,14 @@ export class FlatViewFilterValidatorService {
   >): FailedFlatEntityValidation<'viewFilter', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatViewFilterToValidate.id,
         universalIdentifier: flatViewFilterToValidate.universalIdentifier,
       },
       metadataName: 'viewFilter',
       type: 'delete',
     });
 
-    const existingViewFilter = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewFilterToValidate.id,
+    const existingViewFilter = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewFilterToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatViewFilterMaps,
     });
 
@@ -128,7 +130,7 @@ export class FlatViewFilterValidatorService {
   }
 
   validateFlatViewFilterUpdate({
-    flatEntityId,
+    universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewFilterMaps: optimisticFlatViewFilterMaps,
@@ -138,15 +140,14 @@ export class FlatViewFilterValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilter
   >): FailedFlatEntityValidation<'viewFilter', 'update'> {
-    const existingViewFilter = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const existingViewFilter = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatViewFilterMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: existingViewFilter?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'viewFilter',
       type: 'update',
@@ -167,8 +168,9 @@ export class FlatViewFilterValidatorService {
       ...flatEntityUpdate,
     };
 
-    const referencedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: updatedFlatViewFilter.fieldMetadataId,
+    const referencedFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        updatedFlatViewFilter.fieldMetadataUniversalIdentifier,
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
@@ -180,9 +182,10 @@ export class FlatViewFilterValidatorService {
       });
     }
 
-    if (isDefined(updatedFlatViewFilter.viewFilterGroupId)) {
-      const referencedViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: updatedFlatViewFilter.viewFilterGroupId,
+    if (isDefined(updatedFlatViewFilter.viewFilterGroupUniversalIdentifier)) {
+      const referencedViewFilterGroup = findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          updatedFlatViewFilter.viewFilterGroupUniversalIdentifier,
         flatEntityMaps: flatViewFilterGroupMaps,
       });
 

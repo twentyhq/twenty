@@ -4,7 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { ViewFilterGroupExceptionCode } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
@@ -84,28 +84,27 @@ export class FlatViewFilterGroupValidatorService {
   >): FailedFlatEntityValidation<'viewFilterGroup', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatViewFilterGroupToValidate.id,
         universalIdentifier: flatViewFilterGroupToValidate.universalIdentifier,
       },
       metadataName: 'viewFilterGroup',
       type: 'create',
     });
 
-    const existingViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewFilterGroupToValidate.id,
+    const existingViewFilterGroup = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewFilterGroupToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatViewFilterGroupMaps,
     });
 
     if (isDefined(existingViewFilterGroup)) {
       validationResult.errors.push({
         code: ViewFilterGroupExceptionCode.INVALID_VIEW_FILTER_GROUP_DATA,
-        message: t`View filter group with this id already exists`,
-        userFriendlyMessage: msg`View filter group with this id already exists`,
+        message: t`View filter group with this universal identifier already exists`,
+        userFriendlyMessage: msg`View filter group already exists`,
       });
     }
 
-    const referencedView = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewFilterGroupToValidate.viewId,
+    const referencedView = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewFilterGroupToValidate.viewUniversalIdentifier,
       flatEntityMaps: flatViewMaps,
     });
 
@@ -117,7 +116,11 @@ export class FlatViewFilterGroupValidatorService {
       });
     }
 
-    if (isDefined(flatViewFilterGroupToValidate.parentViewFilterGroupId)) {
+    if (
+      isDefined(
+        flatViewFilterGroupToValidate.parentViewFilterGroupUniversalIdentifier,
+      )
+    ) {
       const circularDependencyErrors =
         this.getCircularDependencyValidationErrors({
           viewFilterGroupId: flatViewFilterGroupToValidate.id,
@@ -130,13 +133,15 @@ export class FlatViewFilterGroupValidatorService {
         validationResult.errors.push(...circularDependencyErrors);
       }
 
-      const referencedParentInOptimistic = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: flatViewFilterGroupToValidate.parentViewFilterGroupId,
+      const referencedParentInOptimistic = findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          flatViewFilterGroupToValidate.parentViewFilterGroupUniversalIdentifier,
         flatEntityMaps: optimisticFlatViewFilterGroupMaps,
       });
 
-      const referencedParentInRemaining = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: flatViewFilterGroupToValidate.parentViewFilterGroupId,
+      const referencedParentInRemaining = findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          flatViewFilterGroupToValidate.parentViewFilterGroupUniversalIdentifier,
         flatEntityMaps: remainingFlatEntityMapsToValidate,
       });
 
@@ -165,15 +170,14 @@ export class FlatViewFilterGroupValidatorService {
   >): FailedFlatEntityValidation<'viewFilterGroup', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatViewFilterGroupToValidate.id,
         universalIdentifier: flatViewFilterGroupToValidate.universalIdentifier,
       },
       metadataName: 'viewFilterGroup',
       type: 'delete',
     });
 
-    const existingViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatViewFilterGroupToValidate.id,
+    const existingViewFilterGroup = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewFilterGroupToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatViewFilterGroupMaps,
     });
 
@@ -189,7 +193,7 @@ export class FlatViewFilterGroupValidatorService {
   }
 
   validateFlatViewFilterGroupUpdate({
-    flatEntityId,
+    universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
@@ -197,15 +201,14 @@ export class FlatViewFilterGroupValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewFilterGroup
   >): FailedFlatEntityValidation<'viewFilterGroup', 'update'> {
-    const existingViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const existingViewFilterGroup = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatViewFilterGroupMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: existingViewFilterGroup?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'viewFilterGroup',
       type: 'update',
@@ -217,21 +220,24 @@ export class FlatViewFilterGroupValidatorService {
         message: t`View filter group not found`,
         userFriendlyMessage: msg`View filter group not found`,
       });
-    }
 
-    const parentViewFilterGroupIdUpdate =
-      flatEntityUpdate.parentViewFilterGroupId;
-
-    if (!isDefined(parentViewFilterGroupIdUpdate)) {
       return validationResult;
     }
 
-    const newParentViewFilterGroupId = parentViewFilterGroupIdUpdate;
+    const parentViewFilterGroupUniversalIdentifierUpdate =
+      flatEntityUpdate.parentViewFilterGroupUniversalIdentifier;
+
+    if (!isDefined(parentViewFilterGroupUniversalIdentifierUpdate)) {
+      return validationResult;
+    }
+
+    const newParentViewFilterGroupUniversalIdentifier =
+      parentViewFilterGroupUniversalIdentifierUpdate;
 
     const circularDependencyErrors = this.getCircularDependencyValidationErrors(
       {
-        viewFilterGroupId: flatEntityId,
-        parentViewFilterGroupId: newParentViewFilterGroupId,
+        viewFilterGroupId: existingViewFilterGroup.id,
+        parentViewFilterGroupId: existingViewFilterGroup.parentViewFilterGroupId,
         flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
       },
     );
@@ -240,10 +246,12 @@ export class FlatViewFilterGroupValidatorService {
       validationResult.errors.push(...circularDependencyErrors);
     }
 
-    const referencedParentViewFilterGroup = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: newParentViewFilterGroupId,
-      flatEntityMaps: optimisticFlatViewFilterGroupMaps,
-    });
+    const referencedParentViewFilterGroup = findFlatEntityByUniversalIdentifier(
+      {
+        universalIdentifier: newParentViewFilterGroupUniversalIdentifier,
+        flatEntityMaps: optimisticFlatViewFilterGroupMaps,
+      },
+    );
 
     if (!isDefined(referencedParentViewFilterGroup)) {
       validationResult.errors.push({

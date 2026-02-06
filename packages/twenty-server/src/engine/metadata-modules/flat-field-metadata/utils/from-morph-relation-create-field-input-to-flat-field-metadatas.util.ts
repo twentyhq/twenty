@@ -62,9 +62,10 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
 
   const morphRelationCreationPayloadValidation =
     await validateMorphRelationCreationPayload({
-      existingFlatObjectMetadataMaps,
+      existingUniversalFlatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       morphRelationCreationPayload: rawMorphCreationPayload,
-      objectMetadataId: sourceFlatObjectMetadata.id,
+      objectMetadataUniversalIdentifier:
+        sourceFlatObjectMetadata.universalIdentifier,
     });
 
   if (morphRelationCreationPayloadValidation.status === 'fail') {
@@ -85,12 +86,14 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     morphRelationCreationPayloadValidation.result;
   const morphId = v4();
   const flatFieldsAndIndexes = morphRelationCreationPayload.reduce(
-    (acc, { relationCreationPayload, targetFlatObjectMetadata }) => {
+    (acc, { relationCreationPayload, targetUniversalFlatObjectMetadata }) => {
       const currentMorphRelationFieldName = computeMorphRelationFieldName({
         fieldName: createFieldInput.name,
         relationType: relationCreationPayload.type,
-        targetObjectMetadataNameSingular: targetFlatObjectMetadata.nameSingular,
-        targetObjectMetadataNamePlural: targetFlatObjectMetadata.namePlural,
+        targetObjectMetadataNameSingular:
+          targetUniversalFlatObjectMetadata.nameSingular,
+        targetObjectMetadataNamePlural:
+          targetUniversalFlatObjectMetadata.namePlural,
       });
       const sourceFlatObjectMetadataJoinColumnName =
         computeMorphOrRelationFieldJoinColumnName({
@@ -106,7 +109,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           },
           sourceFlatObjectMetadataJoinColumnName,
           sourceFlatObjectMetadata,
-          targetFlatObjectMetadata,
+          targetFlatObjectMetadata: targetUniversalFlatObjectMetadata,
           targetFlatFieldMetadataType: FieldMetadataType.RELATION,
           workspaceId,
           morphId,
