@@ -95,7 +95,7 @@ exports[`Page layout widget creation should fail General validation failures whe
 {
   "extensions": {
     "code": "NOT_FOUND",
-    "subCode": "ENTITY_NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
     "userFriendlyMessage": "An error occurred.",
   },
   "message": "Could not find pageLayoutTab for given pageLayoutTabId",
