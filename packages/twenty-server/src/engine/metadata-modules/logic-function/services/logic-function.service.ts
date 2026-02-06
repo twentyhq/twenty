@@ -38,11 +38,13 @@ export class LogicFunctionService {
     input,
     workspaceId,
     ownerFlatApplication,
+    baseFolderPrefix,
   }: {
     input: Omit<CreateLogicFunctionInput, 'applicationId'>;
     ownerFlatApplication?: FlatApplication;
     workspaceId: string;
     applicationId?: string;
+    baseFolderPrefix?: string;
   }) {
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ??
@@ -68,6 +70,7 @@ export class LogicFunctionService {
         applicationUniversalIdentifier:
           resolvedOwnerFlatApplication.universalIdentifier,
         code: input.code,
+        baseFolderPrefix,
       });
 
     // Update paths and checksum with actual values from seeding

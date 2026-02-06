@@ -165,6 +165,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             description: '',
           },
           workspaceId,
+          baseFolderPrefix: 'workflow',
         });
 
         if (!isDefined(newLogicFunction)) {

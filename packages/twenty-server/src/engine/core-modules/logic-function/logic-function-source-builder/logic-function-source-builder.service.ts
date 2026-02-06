@@ -35,6 +35,7 @@ type SeedSourceFilesParams = {
   workspaceId: string;
   applicationUniversalIdentifier: string;
   code?: Sources;
+  baseFolderPrefix?: string;
 };
 
 type SeedSourceFilesResult = {
@@ -81,9 +82,13 @@ export class LogicFunctionSourceBuilderService {
     workspaceId,
     applicationUniversalIdentifier,
     code,
+    baseFolderPrefix,
   }: SeedSourceFilesParams): Promise<SeedSourceFilesResult> {
-    const sourceHandlerPath = `${logicFunctionId}/${DEFAULT_SOURCE_HANDLER_PATH}`;
-    const builtHandlerPath = `${logicFunctionId}/${DEFAULT_BUILT_HANDLER_PATH}`;
+    const baseFolder = baseFolderPrefix
+      ? `${baseFolderPrefix}/${logicFunctionId}`
+      : logicFunctionId;
+    const sourceHandlerPath = `${baseFolder}/${DEFAULT_SOURCE_HANDLER_PATH}`;
+    const builtHandlerPath = `${baseFolder}/${DEFAULT_BUILT_HANDLER_PATH}`;
 
     if (isDefined(code)) {
       // Use provided code
