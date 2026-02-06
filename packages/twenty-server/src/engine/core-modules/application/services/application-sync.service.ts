@@ -147,7 +147,7 @@ export class ApplicationSyncService {
     });
 
     if (!application) {
-      const created = await this.applicationService.create({
+      application = await this.applicationService.create({
         universalIdentifier: manifest.application.universalIdentifier,
         name,
         description: manifest.application.description,
@@ -161,36 +161,6 @@ export class ApplicationSyncService {
         yarnLockFileId: null,
         availablePackages: defaultPackageFields.availablePackages,
       });
-
-      await this.applicationService.uploadDefaultPackageFilesAndSetFileIds(
-        created,
-      );
-
-      application = created;
-    }
-
-    if (
-      manifest.logicFunctions.length > 0 &&
-      isDefined(manifest.application.packageJsonChecksum) &&
-      isDefined(manifest.application.yarnLockChecksum)
-    ) {
-      const yarnLockContent = (
-        await streamToBuffer(
-          await this.fileStorageService.readFile_v2({
-            applicationUniversalIdentifier:
-              manifest.application.universalIdentifier,
-            fileFolder: FileFolder.Source,
-            resourcePath: 'yarn.lock',
-            workspaceId,
-          }),
-        )
-      ).toString('utf-8');
-
-      await this.applicationService.uploadPackageFilesFromContent(
-        application,
-        JSON.stringify(packageJson, null, 2),
-        yarnLockContent,
-      );
     }
 
     await this.applicationVariableService.upsertManyApplicationVariableEntities(

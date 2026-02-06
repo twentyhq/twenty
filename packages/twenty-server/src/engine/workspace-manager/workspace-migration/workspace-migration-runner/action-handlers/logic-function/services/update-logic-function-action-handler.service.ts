@@ -68,24 +68,16 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     flatLogicFunction: FlatLogicFunction;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const [sourceExists, builtExists] = await Promise.all([
-      this.fileStorageService.checkFileExists_v2({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: flatLogicFunction.sourceHandlerPath,
-      }),
-      this.fileStorageService.checkFileExists_v2({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: flatLogicFunction.builtHandlerPath,
-      }),
-    ]);
+    const builtExists = await this.fileStorageService.checkFileExists_v2({
+      workspaceId: flatLogicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: flatLogicFunction.builtHandlerPath,
+    });
 
-    if (!sourceExists || !builtExists) {
+    if (!builtExists) {
       throw new LogicFunctionException(
-        `Logic function source or built file missing before update (source: ${sourceExists}, built: ${builtExists})`,
+        'Logic function source or built file missing before update',
         LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_READY,
       );
     }

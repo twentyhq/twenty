@@ -194,6 +194,7 @@ export class ApplicationResolver {
       FileFolder.BuiltFrontComponent,
       FileFolder.PublicAsset,
       FileFolder.Source,
+      FileFolder.Dependencies,
     ];
 
     if (!allowedApplicationFileFolders.includes(fileFolder)) {
