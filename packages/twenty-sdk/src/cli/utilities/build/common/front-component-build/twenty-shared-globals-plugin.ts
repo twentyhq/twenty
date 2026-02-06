@@ -1,8 +1,6 @@
-import * as fs from 'fs/promises';
-
-import type * as esbuild from 'esbuild';
-
 import { isDefined } from 'twenty-shared/utils';
+
+import { createGlobalsPlugin } from './utils/create-globals-plugin';
 import { extractNamesFromImportSpecifier } from './utils/extract-names-from-import-specifier';
 
 const TWENTY_SHARED_IMPORT_PATTERN =
@@ -10,12 +8,10 @@ const TWENTY_SHARED_IMPORT_PATTERN =
 
 const TWENTY_SHARED_MODULE_FILTER_PATTERN = /^twenty-shared(\/.*)?$/;
 
-type TwentySharedImportsMap = Map<string, Set<string>>;
-
 const collectTwentySharedImports = (
   sourceContent: string,
-): TwentySharedImportsMap => {
-  const collectedImports: TwentySharedImportsMap = new Map();
+): Map<string, Set<string>> => {
+  const collectedImports = new Map<string, Set<string>>();
 
   let importMatch;
 
@@ -75,62 +71,11 @@ const generateTwentySharedExports = (
   return exportStatements.join('\n');
 };
 
-export const twentySharedGlobalsPlugin: esbuild.Plugin = {
+export const twentySharedGlobalsPlugin = createGlobalsPlugin({
   name: 'twenty-shared-globals',
-  setup: async (build) => {
-    const twentySharedImportsByFilePath = new Map<
-      string,
-      TwentySharedImportsMap
-    >();
-
-    build.onStart(() => {
-      twentySharedImportsByFilePath.clear();
-    });
-
-    build.onResolve(
-      { filter: TWENTY_SHARED_MODULE_FILTER_PATTERN },
-      async ({ importer, path }) => {
-        if (importer && !twentySharedImportsByFilePath.has(importer)) {
-          try {
-            const sourceFileContent = await fs.readFile(importer, 'utf-8');
-            twentySharedImportsByFilePath.set(
-              importer,
-              collectTwentySharedImports(sourceFileContent),
-            );
-          } catch {
-            twentySharedImportsByFilePath.set(importer, new Map());
-          }
-        }
-
-        return {
-          path: importer
-            ? `${path}?importer=${encodeURIComponent(importer)}`
-            : path,
-          namespace: 'twenty-shared-globals',
-          pluginData: { importer, originalPath: path },
-        };
-      },
-    );
-
-    build.onLoad(
-      { filter: /.*/, namespace: 'twenty-shared-globals' },
-      ({ pluginData }) => {
-        const importerFilePath = pluginData?.importer || '';
-        const originalPath: string = pluginData?.originalPath || '';
-
-        const subPath =
-          originalPath === 'twenty-shared'
-            ? ''
-            : originalPath.replace('twenty-shared/', '');
-
-        const fileImports = twentySharedImportsByFilePath.get(importerFilePath);
-        const subPathImports = fileImports?.get(subPath) ?? new Set<string>();
-
-        return {
-          contents: generateTwentySharedExports(subPathImports, subPath),
-          loader: 'js' as const,
-        };
-      },
-    );
-  },
-};
+  namespace: 'twenty-shared-globals',
+  moduleName: 'twenty-shared',
+  moduleFilter: TWENTY_SHARED_MODULE_FILTER_PATTERN,
+  collectImports: collectTwentySharedImports,
+  generateExports: generateTwentySharedExports,
+});
