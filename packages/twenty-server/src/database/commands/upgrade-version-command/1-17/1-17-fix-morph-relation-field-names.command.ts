@@ -102,13 +102,16 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
         if (field.currentJoinColumnName !== field.expectedJoinColumnName) {
           // Use a savepoint so a failed rename doesn't abort the whole transaction
           const renameColumnSavepoint = 'rename_column';
+
           await queryRunner.query(`SAVEPOINT ${renameColumnSavepoint}`);
           try {
             await queryRunner.query(
               `ALTER TABLE "${field.workspaceSchema}"."${field.sourceObjectName}"
                RENAME COLUMN "${field.currentJoinColumnName}" TO "${field.expectedJoinColumnName}"`,
             );
-            await queryRunner.query(`RELEASE SAVEPOINT ${renameColumnSavepoint}`);
+            await queryRunner.query(
+              `RELEASE SAVEPOINT ${renameColumnSavepoint}`,
+            );
             this.logger.log(
               `Renamed column ${field.currentJoinColumnName} → ${field.expectedJoinColumnName} in ${field.workspaceSchema}.${field.sourceObjectName}`,
             );
@@ -120,6 +123,7 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
               `RELEASE SAVEPOINT ${renameColumnSavepoint}`,
             );
             const errorCode = this.getPostgresErrorCode(error);
+
             if (errorCode === '42701') {
               this.logger.warn(
                 `⚠️  SKIPPING ${field.sourceObjectName}.${field.currentFieldName}: Both columns exist (${field.currentJoinColumnName} and ${field.expectedJoinColumnName}). Manual intervention required.`,
@@ -317,14 +321,17 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
       return null;
     }
     const driverError: unknown = error.driverError;
+
     if (
       typeof driverError === 'object' &&
       driverError !== null &&
       'code' in driverError
     ) {
       const code = (driverError as { code?: unknown }).code;
+
       return typeof code === 'string' ? code : null;
     }
+
     return null;
   }
 }
