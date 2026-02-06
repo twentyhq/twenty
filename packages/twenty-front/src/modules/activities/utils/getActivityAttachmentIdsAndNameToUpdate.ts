@@ -1,4 +1,5 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
+import { getAttachmentUrl } from '@/activities/utils/getAttachmentUrl';
 import { compareUrls } from '@/activities/utils/compareUrls';
 import {
   type AttachmentInfo,
@@ -9,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const getActivityAttachmentIdsAndNameToUpdate = (
   newActivityBody: string,
   oldActivityAttachments: Attachment[] = [],
+  isFilesFieldMigrated: boolean,
 ) => {
   const activityAttachmentsNameAndPaths =
     getActivityAttachmentPathsAndName(newActivityBody);
@@ -17,7 +19,7 @@ export const getActivityAttachmentIdsAndNameToUpdate = (
   return activityAttachmentsNameAndPaths.reduce(
     (acc: Partial<Attachment>[], activity: AttachmentInfo) => {
       const foundActivity = oldActivityAttachments.find((attachment) =>
-        compareUrls(attachment.fullPath, activity.path),
+        compareUrls(getAttachmentUrl(attachment, isFilesFieldMigrated), activity.path),
       );
       if (isDefined(foundActivity) && foundActivity.name !== activity.name) {
         acc.push({ id: foundActivity.id, name: activity.name });

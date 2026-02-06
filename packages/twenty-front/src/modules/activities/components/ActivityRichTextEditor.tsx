@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -56,6 +56,9 @@ export const ActivityRichTextEditor = ({
   activityObjectNameSingular,
 }: ActivityRichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
+
+  // Map to track URL -> fileId for files uploaded in this session
+  const [urlToFileIdMap] = useState<Map<string, string>>(() => new Map());
 
   const cache = useApolloCoreClient().cache;
   const activity = activityInStore as Task | Note | null;
@@ -134,15 +137,56 @@ export const ActivityRichTextEditor = ({
     });
   };
 
+  // Enrich blocknote JSON with attachmentFileId from our URL mapping
+  const enrichBlocknoteWithFileIds = useCallback(
+    (blocknoteString: string): string => {
+      try {
+        const blocks = JSON.parse(blocknoteString);
+        const enrichedBlocks = blocks.map((block: Record<string, unknown>) => {
+          const blockProps = block.props as Record<string, unknown>;
+          const url = blockProps?.url as string;
+
+          // Check if this block has a URL in our mapping
+          if (isDefined(url) && !blockProps?.attachmentFileId) {
+            const fileId = urlToFileIdMap.get(url);
+            if (isDefined(fileId)) {
+              // eslint-disable-next-line no-console
+              console.log(`Enriching ${block.type} block with fileId:`, fileId);
+              return {
+                ...block,
+                props: {
+                  ...blockProps,
+                  attachmentFileId: fileId,
+                },
+              };
+            }
+          }
+          return block;
+        });
+        return JSON.stringify(enrichedBlocks);
+      } catch {
+        return blocknoteString;
+      }
+    },
+    [urlToFileIdMap],
+  );
+
   const handlePersistBody = useCallback(
     (activityBody: string) => {
       if (!canCreateActivity) {
         setCanCreateActivity(true);
       }
 
-      persistBodyDebounced(prepareBodyWithSignedUrls(activityBody));
+      // Enrich with fileIds before persisting
+      const enrichedBody = enrichBlocknoteWithFileIds(activityBody);
+      persistBodyDebounced(prepareBodyWithSignedUrls(enrichedBody));
     },
-    [persistBodyDebounced, setCanCreateActivity, canCreateActivity],
+    [
+      persistBodyDebounced,
+      setCanCreateActivity,
+      canCreateActivity,
+      enrichBlocknoteWithFileIds,
+    ],
   );
 
   const handleBodyChange = useRecoilCallback(
@@ -199,6 +243,9 @@ export const ActivityRichTextEditor = ({
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
 
+    // eslint-disable-next-line no-console
+    console.log('📝 Editor changed, document:', editor.document);
+
     handleBodyChangeDebounced(newStringifiedBody);
   };
 
@@ -207,15 +254,56 @@ export const ActivityRichTextEditor = ({
       return undefined;
     }
 
-    return parseInitialBlocknote(
+    const parsedBody = parseInitialBlocknote(
       activity?.bodyV2?.blocknote,
       `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
     );
-  }, [activity, activityId]);
+
+    // Populate urlToFileIdMap from existing blocks that have attachmentFileId
+    if (parsedBody) {
+      parsedBody.forEach((block) => {
+        const blockProps = block.props as Record<string, unknown>;
+        const url = blockProps?.url as string;
+        const fileId = blockProps?.attachmentFileId as string;
+
+        if (isDefined(url) && isDefined(fileId)) {
+          urlToFileIdMap.set(url, fileId);
+          // eslint-disable-next-line no-console
+          console.log('Loaded existing URL -> fileId mapping:', {
+            url,
+            fileId,
+          });
+        }
+      });
+    }
+
+    return parsedBody;
+  }, [activity, activityId, urlToFileIdMap]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
-    const { attachmentAbsoluteURL } = await handleUploadAttachment(file);
+    // eslint-disable-next-line no-console
+    console.log('🔄 BlockNote upload starting:', file.name);
 
+    const { attachmentAbsoluteURL, attachmentFileId } =
+      await handleUploadAttachment(file);
+
+    // eslint-disable-next-line no-console
+    console.log('✅ Upload complete:', {
+      url: attachmentAbsoluteURL,
+      fileId: attachmentFileId,
+    });
+
+    // Store the mapping for later enrichment
+    if (isDefined(attachmentFileId)) {
+      urlToFileIdMap.set(attachmentAbsoluteURL, attachmentFileId);
+      // eslint-disable-next-line no-console
+      console.log('📝 Stored URL -> fileId mapping:', {
+        url: attachmentAbsoluteURL,
+        fileId: attachmentFileId,
+      });
+    }
+
+    // Return just the URL - BlockNote's default blocks work with this
     return attachmentAbsoluteURL;
   };
 
@@ -247,7 +335,7 @@ export const ActivityRichTextEditor = ({
       !keyboardEvent.ctrlKey &&
       !keyboardEvent.metaKey;
 
-    if (!isWritingText) {
+    if (isWritingText === false) {
       return;
     }
 

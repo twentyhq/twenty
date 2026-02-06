@@ -17,6 +17,7 @@ describe('getActivityAttachmentPathsToRestore', () => {
     const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
       newActivityBody,
       oldActivityAttachments,
+      false, // isFilesFieldMigrated
     );
     expect(attachmentPathsToRestore).toEqual([]);
   });
@@ -43,6 +44,7 @@ describe('getActivityAttachmentPathsToRestore', () => {
     const attachmentPathsToRestore = getActivityAttachmentPathsToRestore(
       newActivityBody,
       oldActivityAttachments,
+      false, // isFilesFieldMigrated
     );
     expect(attachmentPathsToRestore).toEqual([
       'https://example.com/files/images/test2.txt',

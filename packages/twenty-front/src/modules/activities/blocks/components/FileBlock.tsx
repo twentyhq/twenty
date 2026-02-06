@@ -47,6 +47,9 @@ export const FileBlock = createReactBlockSpec(
       name: {
         default: '' as string,
       },
+      attachmentFileId: {
+        default: '' as string,
+      },
       fileCategory: {
         default: 'OTHER' as AttachmentFileCategory,
       },
@@ -62,7 +65,8 @@ export const FileBlock = createReactBlockSpec(
         if (isUndefinedOrNull(file)) {
           return '';
         }
-        const fileUrl = await editor.uploadFile?.(file);
+        // uploadFile now returns just the URL string
+        const fileUrl = (await editor.uploadFile?.(file)) as string;
 
         if (!isNonEmptyString(fileUrl)) {
           return '';
@@ -71,13 +75,12 @@ export const FileBlock = createReactBlockSpec(
         editor.updateBlock(block.id, {
           props: {
             ...block.props,
-            ...{
-              url: fileUrl,
-              fileCategory: getFileType(file.name),
-              name: file.name,
-            },
+            url: fileUrl,
+            fileCategory: getFileType(file.name),
+            name: file.name,
           },
         });
+        // Note: attachmentFileId will be added by enrichBlocknoteWithFileIds
       };
       const handleUploadFileClick = () => {
         inputFileRef?.current?.click?.();

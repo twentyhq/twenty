@@ -1,5 +1,6 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
+import { ApprovedAccessDomain, AvailableWorkspacesAndAccessTokensOutput, EmailingDomain, FieldPermission, FilesFieldFile, ObjectPermission, PermissionFlag, SignedFile, UpsertRowLevelPermissionPredicatesResult, UserLookup, VerifyEmailAndGetLoginTokenOutput, VerifyTwoFactorAuthenticationMethodOutput, Workspace, WorkspaceMember } from '~/generated-metadata/graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -141,6 +142,26 @@ export type Mutation = {
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
+  updateWorkspace: Workspace;
+  updateWorkspaceFeatureFlag: Scalars['Boolean'];
+  updateWorkspaceMemberRole: WorkspaceMember;
+  uploadApplicationFile: File;
+  /** @deprecated Use uploadFilesFieldFile instead */
+  uploadFile: SignedFile;
+  uploadFilesFieldFile: FilesFieldFile;
+  uploadImage: SignedFile;
+  uploadWorkspaceLogo: SignedFile;
+  uploadWorkspaceMemberProfilePicture: SignedFile;
+  upsertFieldPermissions: Array<FieldPermission>;
+  upsertObjectPermissions: Array<ObjectPermission>;
+  upsertPermissionFlags: Array<PermissionFlag>;
+  upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
+  userLookupAdminPanel: UserLookup;
+  validateApprovedAccessDomain: ApprovedAccessDomain;
+  verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginTokenOutput;
+  verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokensOutput;
+  verifyEmailingDomain: EmailingDomain;
+  verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
 
