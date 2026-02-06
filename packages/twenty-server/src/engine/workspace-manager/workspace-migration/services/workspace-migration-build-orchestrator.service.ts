@@ -183,20 +183,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
                   ...flatFieldMetadataMaps?.from.byUniversalIdentifier,
                   ...flatFieldMetadataMaps?.to.byUniversalIdentifier,
                 },
-                universalIdentifierById: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                    ?.universalIdentifierById,
-                  ...flatFieldMetadataMaps?.from.universalIdentifierById,
-                  ...flatFieldMetadataMaps?.to.universalIdentifierById,
-                },
-                universalIdentifiersByApplicationId: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                    ?.universalIdentifiersByApplicationId,
-                  ...flatFieldMetadataMaps?.from
-                    .universalIdentifiersByApplicationId,
-                  ...flatFieldMetadataMaps?.to
-                    .universalIdentifiersByApplicationId,
-                },
               },
             },
             ///

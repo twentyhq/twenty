@@ -4,7 +4,7 @@ import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-meta
 
 export type FlatIndexFieldMetadata = FlatEntityFrom<IndexFieldMetadataEntity>;
 
+// TODO find a smooth way to handle this
 export type FlatIndexMetadata = FlatEntityFrom<IndexMetadataEntity> & {
-  universalIdentifier: string;
   flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
 };

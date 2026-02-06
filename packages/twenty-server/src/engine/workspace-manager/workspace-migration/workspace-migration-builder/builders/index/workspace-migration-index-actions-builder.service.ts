@@ -6,9 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
+import { deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
@@ -83,7 +83,7 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
 
   protected validateFlatEntityUpdate({
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
-    flatEntityId,
+    universalIdentifier,
     flatEntityUpdate,
     buildOptions,
     workspaceId,
@@ -94,8 +94,8 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
     typeof ALL_METADATA_NAME.index,
     'update'
   > {
-    const flatEntity = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const flatEntity = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps:
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatIndexMaps,
     });
@@ -106,7 +106,7 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
         metadataName: 'index',
         type: 'update',
         flatEntityMinimalInformation: {
-          id: flatEntityId,
+          universalIdentifier,
         },
         errors: [
           {
@@ -146,9 +146,9 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
       optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatIndexMaps,
     );
 
-    deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
-      entityToDeleteId: flatEntity.id,
-      flatEntityMapsToMutate: tempOptimisticFlatIndexMaps,
+    deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalIdentifierToDelete: flatEntity.universalIdentifier,
+      universalFlatEntityMapsToMutate: tempOptimisticFlatIndexMaps,
     });
 
     const creationValidationResult =
