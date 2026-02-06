@@ -3,7 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-import { DataSource, type QueryRunner, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -98,49 +98,28 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
       let fixedCount = 0;
 
       for (const field of mismatchedFields) {
-        // Step 1: Check column states
-        const sourceColumnExists = await this.columnExists(
-          queryRunner,
-          field.workspaceSchema,
-          field.sourceObjectName,
-          field.currentJoinColumnName,
-        );
-
-        const targetColumnExists = await this.columnExists(
-          queryRunner,
-          field.workspaceSchema,
-          field.sourceObjectName,
-          field.expectedJoinColumnName,
-        );
-
-        // Safety check: if both columns exist, we have a conflict - skip this field entirely
-        if (sourceColumnExists && targetColumnExists) {
-          this.logger.warn(
-            `⚠️  SKIPPING ${field.sourceObjectName}.${field.currentFieldName}: Both columns exist (${field.currentJoinColumnName} and ${field.expectedJoinColumnName}). Manual intervention required.`,
-          );
-          continue;
+        // Step 1: Attempt to rename the column, handling failures gracefully
+        if (field.currentJoinColumnName !== field.expectedJoinColumnName) {
+          // Use a savepoint so a failed rename doesn't abort the whole transaction
+          await queryRunner.query(`SAVEPOINT rename_column`);
+          try {
+            await queryRunner.query(
+              `ALTER TABLE "${field.workspaceSchema}"."${field.sourceObjectName}"
+               RENAME COLUMN "${field.currentJoinColumnName}" TO "${field.expectedJoinColumnName}"`,
+            );
+            await queryRunner.query(`RELEASE SAVEPOINT rename_column`);
+            this.logger.log(
+              `Renamed column ${field.currentJoinColumnName} → ${field.expectedJoinColumnName} in ${field.workspaceSchema}.${field.sourceObjectName}`,
+            );
+          } catch {
+            await queryRunner.query(`ROLLBACK TO SAVEPOINT rename_column`);
+            this.logger.log(
+              `Column rename skipped for ${field.sourceObjectName}.${field.currentJoinColumnName} (column may already be renamed or missing), updating metadata only`,
+            );
+          }
         }
 
-        // Step 2: Rename column if needed
-        if (sourceColumnExists && !targetColumnExists) {
-          await queryRunner.query(
-            `ALTER TABLE "${field.workspaceSchema}"."${field.sourceObjectName}"
-             RENAME COLUMN "${field.currentJoinColumnName}" TO "${field.expectedJoinColumnName}"`,
-          );
-          this.logger.log(
-            `Renamed column ${field.currentJoinColumnName} → ${field.expectedJoinColumnName} in ${field.workspaceSchema}.${field.sourceObjectName}`,
-          );
-        } else if (!sourceColumnExists && targetColumnExists) {
-          this.logger.log(
-            `Column ${field.expectedJoinColumnName} already exists (fix likely already applied), updating metadata only`,
-          );
-        } else if (!sourceColumnExists && !targetColumnExists) {
-          this.logger.warn(
-            `⚠️  Neither column exists for ${field.sourceObjectName}.${field.currentFieldName}. Updating metadata only.`,
-          );
-        }
-
-        // Step 3: Verify field still exists with expected current name before updating
+        // Step 2: Verify field still exists with expected current name before updating
         const fieldCheck = await queryRunner.query(
           `SELECT id, name FROM core."fieldMetadata" WHERE id = $1`,
           [field.fieldId],
@@ -160,7 +139,7 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
           continue;
         }
 
-        // Step 4: Update field metadata
+        // Step 3: Update field metadata
         const newSettings = {
           joinColumnName: field.expectedJoinColumnName,
         };
@@ -317,23 +296,4 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
       );
   }
 
-  private async columnExists(
-    queryRunner: QueryRunner,
-    schema: string,
-    table: string,
-    column: string,
-  ): Promise<boolean> {
-    const result = await queryRunner.query(
-      `SELECT EXISTS (
-        SELECT 1
-        FROM information_schema.columns
-        WHERE table_schema = $1
-          AND table_name = $2
-          AND column_name = $3
-      ) AS exists`,
-      [schema, table, column],
-    );
-
-    return result[0]?.exists ?? false;
-  }
 }
