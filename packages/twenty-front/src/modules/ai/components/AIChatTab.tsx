@@ -9,7 +9,6 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
-import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AIChatEmptyState } from '@/ai/components/AIChatEmptyState';
 import { AIChatMessage } from '@/ai/components/AIChatMessage';
 import { AIChatStandaloneError } from '@/ai/components/AIChatStandaloneError';
@@ -17,6 +16,7 @@ import { AIChatContextUsageButton } from '@/ai/components/internal/AIChatContext
 import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
+import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
@@ -115,7 +115,9 @@ export const AIChatTab = () => {
                 )}
             </StyledScrollWrapper>
           )}
-          {messages.length === 0 && !error && <AIChatEmptyState />}
+          {messages.length === 0 && !error && !isLoading && (
+            <AIChatEmptyState />
+          )}
           {messages.length === 0 && error && !isLoading && (
             <AIChatStandaloneError error={error} />
           )}
