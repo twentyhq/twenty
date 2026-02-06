@@ -4,9 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -16,6 +19,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
@@ -51,6 +55,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly applicationService: ApplicationService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(objectMetadataRepository);
   }
@@ -409,6 +414,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataId,
       });
 
+    const isNavigationMenuItemEnabled =
+      existingFeatureFlagsMap[FeatureFlagKey.IS_NAVIGATION_MENU_ITEM_ENABLED] ??
+      false;
+
+    const flatNavigationMenuItemToCreate = isNavigationMenuItemEnabled
+      ? await this.computeFlatNavigationMenuItemToCreate({
+          view: flatDefaultViewToCreate,
+          workspaceId,
+          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        })
+      : null;
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -441,6 +458,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
+            ...(isDefined(flatNavigationMenuItemToCreate)
+              ? {
+                  navigationMenuItem: {
+                    flatEntityToCreate: [flatNavigationMenuItemToCreate],
+                    flatEntityToDelete: [],
+                    flatEntityToUpdate: [],
+                  },
+                }
+              : {}),
           },
           workspaceId,
           isSystemBuild: false,
@@ -476,10 +502,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    await this.createWorkspaceFavoriteForNewObjectDefaultView({
-      view: flatDefaultViewToCreate,
-      workspaceId,
-    });
+    if (!isNavigationMenuItemEnabled) {
+      await this.createWorkspaceFavoriteForNewObjectDefaultView({
+        view: flatDefaultViewToCreate,
+        workspaceId,
+      });
+    }
 
     return createdFlatObjectMetadata;
   }
@@ -549,6 +577,51 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
 
     return defaultViewFields;
+  }
+
+  private async computeFlatNavigationMenuItemToCreate({
+    view,
+    workspaceId,
+    workspaceCustomApplicationId,
+  }: {
+    view: FlatView;
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+  }): Promise<FlatNavigationMenuItem> {
+    const { flatNavigationMenuItemMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatNavigationMenuItemMaps',
+      ]);
+
+    const workspaceLevelItems = Object.values(
+      flatNavigationMenuItemMaps.byUniversalIdentifier,
+    ).filter(
+      (item): item is FlatNavigationMenuItem =>
+        isDefined(item) && !isDefined(item.userWorkspaceId),
+    );
+    const nextPosition =
+      workspaceLevelItems.length > 0
+        ? Math.max(...workspaceLevelItems.map((item) => item.position)) + 1
+        : 0;
+
+    const newId = uuidv4();
+    const now = new Date().toISOString();
+
+    return {
+      id: newId,
+      universalIdentifier: newId,
+      userWorkspaceId: null,
+      targetRecordId: null,
+      targetObjectMetadataId: null,
+      viewId: view.id,
+      folderId: null,
+      name: null,
+      position: nextPosition,
+      workspaceId,
+      applicationId: workspaceCustomApplicationId,
+      createdAt: now,
+      updatedAt: now,
+    };
   }
 
   private async createWorkspaceFavoriteForNewObjectDefaultView({

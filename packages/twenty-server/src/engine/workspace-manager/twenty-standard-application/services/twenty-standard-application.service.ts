@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -10,7 +10,6 @@ import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/type
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getSubFlatEntityMapsByApplicationIdOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-id-or-throw.util';
-import { fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-create-navigation-menu-item-input-to-flat-navigation-menu-item-to-create.util';
 import { FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -58,82 +57,6 @@ export class TwentyStandardApplicationService {
 
       await favoriteRepository.insert(favoriteToCreate);
     }, authContext);
-  }
-
-  private async createManyNavigationMenuItem({
-    flatViews,
-    workspaceId,
-  }: {
-    flatViews: FlatView[];
-    workspaceId: string;
-  }) {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatNavigationMenuItemMaps'],
-        },
-      );
-
-    const existingWorkspaceItems = Object.values(
-      existingFlatNavigationMenuItemMaps.byUniversalIdentifier,
-    ).filter(
-      (item) =>
-        isDefined(item) &&
-        item.workspaceId === workspaceId &&
-        item.userWorkspaceId === null,
-    );
-
-    const maxPosition = existingWorkspaceItems.reduce(
-      (max, item) => Math.max(max, item?.position ?? 0),
-      0,
-    );
-
-    const flatNavigationMenuItemsToCreate = flatViews.map((flatView, index) => {
-      return fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate({
-        createNavigationMenuItemInput: {
-          viewId: flatView.id,
-          userWorkspaceId: undefined,
-          position: maxPosition + index + 1,
-        },
-        workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
-        flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
-      });
-    });
-
-    if (flatNavigationMenuItemsToCreate.length === 0) {
-      return;
-    }
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            navigationMenuItem: {
-              flatEntityToCreate: flatNavigationMenuItemsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-          },
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while creating workspace navigation menu items',
-      );
-    }
   }
 
   async synchronizeTwentyStandardApplicationOrThrow({
