@@ -4,7 +4,6 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import {
   ConflictError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';

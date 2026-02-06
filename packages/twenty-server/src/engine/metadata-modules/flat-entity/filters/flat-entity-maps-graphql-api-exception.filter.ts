@@ -1,8 +1,4 @@
-import {
-  Catch,
-  type ExceptionFilter,
-  Injectable,
-} from '@nestjs/common';
+import { Catch, type ExceptionFilter, Injectable } from '@nestjs/common';
 
 import {
   InternalServerError,
