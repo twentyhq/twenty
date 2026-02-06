@@ -24,6 +24,8 @@ import {
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
+import * as TwentySharedTypes from 'twenty-shared/types';
+import * as TwentySharedUtils from 'twenty-shared/utils';
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
@@ -42,6 +44,10 @@ exposeGlobals({
   useFrontComponentExecutionContext,
   navigate,
   useUserId,
+  TwentyShared: {
+    utils: TwentySharedUtils,
+    types: TwentySharedTypes,
+  },
 });
 
 const render: WorkerExports['render'] = async (
