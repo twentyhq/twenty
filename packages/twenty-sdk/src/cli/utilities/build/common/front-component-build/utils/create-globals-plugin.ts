@@ -3,16 +3,19 @@ import * as fs from 'fs/promises';
 import type * as esbuild from 'esbuild';
 
 type GlobalsPluginData = {
-  importer: string;
+  importerFilePath: string;
   originalPath: string;
 };
 
 type GlobalsPluginConfig = {
-  name: string;
+  pluginName: string;
   moduleName: string;
   moduleFilter: RegExp;
   collectImports: (sourceContent: string) => Map<string, Set<string>>;
-  generateExports: (imports: Set<string>, subPath: string) => string;
+  generateExports: (params: {
+    namedImports: Set<string>;
+    moduleSubPath: string;
+  }) => string;
   namespace?: string;
   staticContents?: Record<string, string>;
 };
@@ -20,10 +23,10 @@ type GlobalsPluginConfig = {
 export const createGlobalsPlugin = (
   config: GlobalsPluginConfig,
 ): esbuild.Plugin => {
-  const namespace = config.namespace ?? config.name;
+  const namespace = config.namespace ?? config.pluginName;
 
   return {
-    name: config.name,
+    name: config.pluginName,
     setup: (build) => {
       const importsByFilePath = new Map<string, Map<string, Set<string>>>();
 
@@ -53,7 +56,7 @@ export const createGlobalsPlugin = (
               : path,
             namespace,
             pluginData: {
-              importer,
+              importerFilePath: importer,
               originalPath: path,
             } satisfies GlobalsPluginData,
           };
@@ -61,7 +64,7 @@ export const createGlobalsPlugin = (
       );
 
       build.onLoad({ filter: /.*/, namespace }, ({ pluginData }) => {
-        const { originalPath, importer: importerFilePath } =
+        const { originalPath, importerFilePath } =
           pluginData as GlobalsPluginData;
 
         if (config.staticContents?.[originalPath]) {
@@ -71,16 +74,20 @@ export const createGlobalsPlugin = (
           };
         }
 
-        const subPath =
+        const moduleSubPath =
           originalPath === config.moduleName
             ? ''
             : originalPath.replace(`${config.moduleName}/`, '');
 
-        const fileImports = importsByFilePath.get(importerFilePath);
-        const subPathImports = fileImports?.get(subPath) ?? new Set<string>();
+        const importsBySubPath = importsByFilePath.get(importerFilePath);
+        const namedImportsForSubPath =
+          importsBySubPath?.get(moduleSubPath) ?? new Set<string>();
 
         return {
-          contents: config.generateExports(subPathImports, subPath),
+          contents: config.generateExports({
+            namedImports: namedImportsForSubPath,
+            moduleSubPath,
+          }),
           loader: 'js' as const,
         };
       });

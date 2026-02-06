@@ -4,7 +4,7 @@ import { collectNamedImports } from './utils/collect-named-imports';
 import { createGlobalsPlugin } from './utils/create-globals-plugin';
 
 const REACT_IMPORT_PATTERN =
-  /import\s+(?:(\w+)\s*,?\s*)?(?:\{([^}]*)\})?\s*from\s*['"]react['"];?/g;
+  /import\s+(?:(?<defaultImport>\w+)\s*,?\s*)?(?:\{(?<namedImports>[^}]*)\})?\s*from\s*['"]react['"];?/g;
 
 const REACT_MODULE_FILTER_PATTERN = /^react(\/jsx-runtime)?$/;
 
@@ -17,15 +17,15 @@ export var Fragment = globalThis.React.Fragment;
 const collectReactImports = (
   sourceContent: string,
 ): Map<string, Set<string>> => {
-  const namedImports = collectNamedImports(sourceContent, {
+  const namedImports = collectNamedImports({
+    sourceContent,
     pattern: REACT_IMPORT_PATTERN,
-    namedImportsCaptureGroup: 2,
   });
 
   let importMatch;
 
   while (isDefined((importMatch = REACT_IMPORT_PATTERN.exec(sourceContent)))) {
-    const defaultImportName = importMatch[1];
+    const defaultImportName = importMatch.groups?.defaultImport;
 
     if (defaultImportName) {
       if (!namedImports.has('')) {
@@ -41,24 +41,28 @@ const collectReactImports = (
   return namedImports;
 };
 
-const generateReactExports = (reactImports: Set<string>): string => {
-  const exportStatements: string[] = [];
+const generateReactExports = ({
+  namedImports,
+}: {
+  namedImports: Set<string>;
+}): string => {
+  const exportLines: string[] = [];
 
-  for (const reactImportName of reactImports) {
+  for (const reactImportName of namedImports) {
     if (reactImportName === 'default') {
-      exportStatements.push('export default globalThis.React;');
+      exportLines.push('export default globalThis.React;');
     } else {
-      exportStatements.push(
+      exportLines.push(
         `export var ${reactImportName} = globalThis.React.${reactImportName};`,
       );
     }
   }
 
-  return exportStatements.join('\n');
+  return exportLines.join('\n');
 };
 
 export const reactGlobalsPlugin = createGlobalsPlugin({
-  name: 'react-globals',
+  pluginName: 'react-globals',
   namespace: 'react-globals',
   moduleName: 'react',
   moduleFilter: REACT_MODULE_FILTER_PATTERN,

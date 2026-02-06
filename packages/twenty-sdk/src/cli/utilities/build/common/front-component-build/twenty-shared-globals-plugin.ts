@@ -2,34 +2,37 @@ import { collectNamedImports } from './utils/collect-named-imports';
 import { createGlobalsPlugin } from './utils/create-globals-plugin';
 
 const TWENTY_SHARED_IMPORT_PATTERN =
-  /import\s+\{([^}]*)\}\s*from\s*['"]twenty-shared(?:\/([^'"]*?))?['"];?/g;
+  /import\s+\{(?<namedImports>[^}]*)\}\s*from\s*['"]twenty-shared(?:\/(?<subPath>[^'"]*?))?['"];?/g;
 
 const TWENTY_SHARED_MODULE_FILTER_PATTERN = /^twenty-shared(\/.*)?$/;
 
-const getGlobalPath = (subPath: string): string => {
-  if (subPath === '') {
+const buildGlobalAccessorExpression = (moduleSubPath: string): string => {
+  if (moduleSubPath === '') {
     return 'globalThis.TwentyShared';
   }
 
-  return `globalThis.TwentyShared['${subPath}']`;
+  return `globalThis.TwentyShared['${moduleSubPath}']`;
 };
 
 export const twentySharedGlobalsPlugin = createGlobalsPlugin({
-  name: 'twenty-shared-globals',
+  pluginName: 'twenty-shared-globals',
   namespace: 'twenty-shared-globals',
   moduleName: 'twenty-shared',
   moduleFilter: TWENTY_SHARED_MODULE_FILTER_PATTERN,
   collectImports: (sourceContent) =>
-    collectNamedImports(sourceContent, {
+    collectNamedImports({
+      sourceContent,
       pattern: TWENTY_SHARED_IMPORT_PATTERN,
-      namedImportsCaptureGroup: 1,
-      subPathCaptureGroup: 2,
     }),
-  generateExports: (imports, subPath) => {
-    const globalPath = getGlobalPath(subPath);
+  generateExports: ({ namedImports, moduleSubPath }) => {
+    const globalAccessorExpression =
+      buildGlobalAccessorExpression(moduleSubPath);
 
-    return [...imports]
-      .map((name) => `export var ${name} = ${globalPath}.${name};`)
+    return [...namedImports]
+      .map(
+        (importName) =>
+          `export var ${importName} = ${globalAccessorExpression}.${importName};`,
+      )
       .join('\n');
   },
 });

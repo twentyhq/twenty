@@ -13,25 +13,20 @@ const parseImportSpecifiers = (namedImportsString: string): string[] => {
     );
 };
 
-type CollectNamedImportsOptions = {
+export const collectNamedImports = ({
+  sourceContent,
+  pattern,
+}: {
+  sourceContent: string;
   pattern: RegExp;
-  namedImportsCaptureGroup: number;
-  subPathCaptureGroup?: number;
-};
-
-export const collectNamedImports = (
-  sourceContent: string,
-  options: CollectNamedImportsOptions,
-): Map<string, Set<string>> => {
+}): Map<string, Set<string>> => {
   const collectedImports = new Map<string, Set<string>>();
 
   let importMatch;
 
-  while (isDefined((importMatch = options.pattern.exec(sourceContent)))) {
-    const namedImportsString = importMatch[options.namedImportsCaptureGroup];
-    const subPath = isDefined(options.subPathCaptureGroup)
-      ? (importMatch[options.subPathCaptureGroup] ?? '')
-      : '';
+  while (isDefined((importMatch = pattern.exec(sourceContent)))) {
+    const namedImportsString = importMatch.groups?.namedImports;
+    const subPath = importMatch.groups?.subPath ?? '';
 
     if (!collectedImports.has(subPath)) {
       collectedImports.set(subPath, new Set());
@@ -39,12 +34,12 @@ export const collectNamedImports = (
 
     if (namedImportsString) {
       parseImportSpecifiers(namedImportsString).forEach((name) =>
-        collectedImports.get(subPath)!.add(name),
+        collectedImports.get(subPath)?.add(name),
       );
     }
   }
 
-  options.pattern.lastIndex = 0;
+  pattern.lastIndex = 0;
 
   return collectedImports;
 };
