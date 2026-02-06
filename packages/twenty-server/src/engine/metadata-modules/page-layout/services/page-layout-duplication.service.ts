@@ -78,8 +78,14 @@ export class PageLayoutDuplicationService {
         },
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
+        flatObjectMetadataMaps,
       },
     );
+
+    const optimisticFlatPageLayoutMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: newFlatPageLayout,
+      flatEntityMaps: createEmptyFlatEntityMaps(),
+    });
 
     const { newFlatTabs, originalTabIdToNewTabIdMap } =
       this.createDuplicatedTabs({
@@ -87,6 +93,7 @@ export class PageLayoutDuplicationService {
         newPageLayoutId: newFlatPageLayout.id,
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
+        flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
       });
 
     const optimisticFlatPageLayoutTabMaps = newFlatTabs.reduce(
@@ -238,11 +245,13 @@ export class PageLayoutDuplicationService {
     newPageLayoutId,
     workspaceId,
     flatApplication,
+    flatPageLayoutMaps,
   }: {
     originalTabs: FlatPageLayoutTab[];
     newPageLayoutId: string;
     workspaceId: string;
     flatApplication: FlatApplication;
+    flatPageLayoutMaps: AllFlatEntityMaps['flatPageLayoutMaps'];
   }): {
     newFlatTabs: FlatPageLayoutTab[];
     originalTabIdToNewTabIdMap: Map<string, string>;
@@ -259,6 +268,7 @@ export class PageLayoutDuplicationService {
           },
           workspaceId,
           flatApplication,
+          flatPageLayoutMaps,
         });
 
       originalTabIdToNewTabIdMap.set(originalTab.id, newFlatTab.id);

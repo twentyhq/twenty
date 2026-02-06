@@ -397,11 +397,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createEmptyFlatEntityMaps(),
     );
 
+    const optimisticFlatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow(
+      {
+        flatEntity: flatObjectMetadataToCreate,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
+      },
+    );
+
     const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
       flatApplication: workspaceCustomFlatApplication,
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
     });
 
     const optimisticFlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
@@ -524,11 +532,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId,
     flatApplication,
     flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
   }: {
     flatApplication: FlatApplication;
     objectMetadata: FlatObjectMetadata;
     workspaceId: string;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   }) {
     const defaultViewInput = {
       objectMetadataId: objectMetadata.id,
@@ -544,6 +554,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
       flatApplication,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     });
 
     return flatViewToCreate;
