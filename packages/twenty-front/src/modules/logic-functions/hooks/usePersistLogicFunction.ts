@@ -103,9 +103,6 @@ export const usePersistLogicFunction = () => {
       try {
         const result = await updateLogicFunctionSourceMutation({
           variables,
-          refetchQueries: [
-            getOperationName(GET_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
-          ],
         });
 
         return {
