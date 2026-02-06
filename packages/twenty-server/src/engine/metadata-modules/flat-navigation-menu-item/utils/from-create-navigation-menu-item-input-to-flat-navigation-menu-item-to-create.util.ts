@@ -51,8 +51,7 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     const targetObjectMetadataUniversalIdentifier =
       resolveNullableUniversalIdentifierFromFlatEntityId({
         flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId:
-          createNavigationMenuItemInput.targetObjectMetadataId,
+        flatEntityId: createNavigationMenuItemInput.targetObjectMetadataId,
         metadataName: 'objectMetadata',
       });
 

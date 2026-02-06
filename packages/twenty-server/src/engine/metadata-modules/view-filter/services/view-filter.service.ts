@@ -125,17 +125,16 @@ export class ViewFilterService {
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
-    } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: [
-            'flatViewFilterMaps',
-            'flatFieldMetadataMaps',
-            'flatViewFilterGroupMaps',
-          ],
-        },
-      );
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewFilterMaps',
+          'flatFieldMetadataMaps',
+          'flatViewFilterGroupMaps',
+        ],
+      },
+    );
 
     const optimisticallyUpdatedFlatViewFilter =
       fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow({

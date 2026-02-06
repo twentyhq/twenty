@@ -344,8 +344,7 @@ export class RowLevelPermissionPredicateService {
         const parentRowLevelPermissionPredicateGroupUniversalIdentifier =
           resolveNullableUniversalIdentifierFromFlatEntityId({
             flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-            flatEntityId:
-              inputGroup.parentRowLevelPermissionPredicateGroupId,
+            flatEntityId: inputGroup.parentRowLevelPermissionPredicateGroupId,
             metadataName: 'rowLevelPermissionPredicateGroup',
           });
 
@@ -370,8 +369,7 @@ export class RowLevelPermissionPredicateService {
         const parentRowLevelPermissionPredicateGroupUniversalIdentifier =
           resolveNullableUniversalIdentifierFromFlatEntityId({
             flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-            flatEntityId:
-              inputGroup.parentRowLevelPermissionPredicateGroupId,
+            flatEntityId: inputGroup.parentRowLevelPermissionPredicateGroupId,
             metadataName: 'rowLevelPermissionPredicateGroup',
           });
 
@@ -493,16 +491,14 @@ export class RowLevelPermissionPredicateService {
         const rowLevelPermissionPredicateGroupUniversalIdentifier =
           resolveNullableUniversalIdentifierFromFlatEntityId({
             flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-            flatEntityId:
-              inputPredicate.rowLevelPermissionPredicateGroupId,
+            flatEntityId: inputPredicate.rowLevelPermissionPredicateGroupId,
             metadataName: 'rowLevelPermissionPredicateGroup',
           });
 
         const workspaceMemberFieldMetadataUniversalIdentifier =
           resolveNullableUniversalIdentifierFromFlatEntityId({
             flatEntityMaps: flatFieldMetadataMaps,
-            flatEntityId:
-              inputPredicate.workspaceMemberFieldMetadataId,
+            flatEntityId: inputPredicate.workspaceMemberFieldMetadataId,
             metadataName: 'fieldMetadata',
           });
 
@@ -536,16 +532,14 @@ export class RowLevelPermissionPredicateService {
         const rowLevelPermissionPredicateGroupUniversalIdentifier =
           resolveNullableUniversalIdentifierFromFlatEntityId({
             flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-            flatEntityId:
-              inputPredicate.rowLevelPermissionPredicateGroupId,
+            flatEntityId: inputPredicate.rowLevelPermissionPredicateGroupId,
             metadataName: 'rowLevelPermissionPredicateGroup',
           });
 
         const workspaceMemberFieldMetadataUniversalIdentifier =
           resolveNullableUniversalIdentifierFromFlatEntityId({
             flatEntityMaps: flatFieldMetadataMaps,
-            flatEntityId:
-              inputPredicate.workspaceMemberFieldMetadataId,
+            flatEntityId: inputPredicate.workspaceMemberFieldMetadataId,
             metadataName: 'fieldMetadata',
           });
 

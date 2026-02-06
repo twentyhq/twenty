@@ -46,8 +46,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const availabilityObjectMetadataUniversalIdentifier =
     resolveNullableUniversalIdentifierFromFlatEntityId({
       flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId:
-        createCommandMenuItemInput.availabilityObjectMetadataId,
+      flatEntityId: createCommandMenuItemInput.availabilityObjectMetadataId,
       metadataName: 'objectMetadata',
     });
 

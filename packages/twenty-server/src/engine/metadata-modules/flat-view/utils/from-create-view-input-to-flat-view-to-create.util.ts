@@ -62,8 +62,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
     resolveNullableUniversalIdentifierFromFlatEntityId({
       flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId:
-        createViewInput.kanbanAggregateOperationFieldMetadataId,
+      flatEntityId: createViewInput.kanbanAggregateOperationFieldMetadataId,
       metadataName: 'fieldMetadata',
     });
 

@@ -54,14 +54,11 @@ export const fromUpdateViewFilterGroupInputToFlatViewFilterGroupToUpdateOrThrow 
       update: updatedEditableFieldProperties,
     });
 
-    if (
-      updatedEditableFieldProperties.parentViewFilterGroupId !== undefined
-    ) {
+    if (updatedEditableFieldProperties.parentViewFilterGroupId !== undefined) {
       flatViewFilterGroupToUpdate.parentViewFilterGroupUniversalIdentifier =
         resolveNullableUniversalIdentifierFromFlatEntityId({
           flatEntityMaps: flatViewFilterGroupMaps,
-          flatEntityId:
-            flatViewFilterGroupToUpdate.parentViewFilterGroupId,
+          flatEntityId: flatViewFilterGroupToUpdate.parentViewFilterGroupId,
           metadataName: 'viewFilterGroup',
         });
     }

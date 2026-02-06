@@ -75,8 +75,7 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     flatViewToUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier =
       resolveNullableUniversalIdentifierFromFlatEntityId({
         flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId:
-          flatViewToUpdate.kanbanAggregateOperationFieldMetadataId,
+        flatEntityId: flatViewToUpdate.kanbanAggregateOperationFieldMetadataId,
         metadataName: 'fieldMetadata',
       });
   }

@@ -31,7 +31,10 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
   }: {
     updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId;
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
-  } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>): FlatPageLayoutWidget => {
+  } & Pick<
+    AllFlatEntityMaps,
+    'flatObjectMetadataMaps'
+  >): FlatPageLayoutWidget => {
     const { id: pageLayoutWidgetToUpdateId } =
       extractAndSanitizeObjectStringFields(rawUpdatePageLayoutWidgetInput, [
         'id',

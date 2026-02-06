@@ -1,7 +1,5 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
-import {
-  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
-} from 'twenty-shared/utils';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
