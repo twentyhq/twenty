@@ -26,12 +26,13 @@ export const fromCreateViewGroupInputToFlatViewGroupToCreate = ({
   const createdAt = new Date().toISOString();
   const viewGroupId = createViewGroupInput.id ?? v4();
 
-  const { viewUniversalIdentifier } =
-    resolveEntityRelationUniversalIdentifiers({
+  const { viewUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
+    {
       metadataName: 'viewGroup',
       foreignKeyValues: { viewId },
       flatEntityMaps: { flatViewMaps },
-    });
+    },
+  );
 
   return {
     id: viewGroupId,

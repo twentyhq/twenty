@@ -101,7 +101,6 @@ describe('resolveEntityRelationUniversalIdentifiers', () => {
           flatObjectMetadataMaps: buildFlatEntityMaps([
             { id: 'obj-id-1', universalIdentifier: 'obj-ui-1' },
           ]),
-          flatPageLayoutTabMaps: EMPTY_FLAT_ENTITY_MAPS,
         },
       });
 
@@ -119,7 +118,6 @@ describe('resolveEntityRelationUniversalIdentifiers', () => {
           },
           flatEntityMaps: {
             flatObjectMetadataMaps: EMPTY_FLAT_ENTITY_MAPS,
-            flatPageLayoutTabMaps: EMPTY_FLAT_ENTITY_MAPS,
           },
         }),
       ).toThrow(
@@ -141,7 +139,6 @@ describe('resolveEntityRelationUniversalIdentifiers', () => {
           flatFieldMetadataMaps: buildFlatEntityMaps([
             { id: 'field-id-1', universalIdentifier: 'field-ui-1' },
           ]),
-          flatViewMaps: EMPTY_FLAT_ENTITY_MAPS,
         },
       });
 

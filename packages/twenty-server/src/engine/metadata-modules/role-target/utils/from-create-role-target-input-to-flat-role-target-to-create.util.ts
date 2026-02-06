@@ -26,12 +26,13 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   const { roleId, targetId, targetMetadataForeignKey, universalIdentifier } =
     createRoleTargetInput;
 
-  const { roleUniversalIdentifier } =
-    resolveEntityRelationUniversalIdentifiers({
+  const { roleUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
+    {
       metadataName: 'roleTarget',
       foreignKeyValues: { roleId },
       flatEntityMaps: { flatRoleMaps },
-    });
+    },
+  );
 
   const flatRoleTargetToCreate: FlatRoleTarget = {
     id: v4(),

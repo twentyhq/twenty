@@ -338,18 +338,17 @@ export class RowLevelPermissionPredicateService {
       });
 
       if (isDefined(existingGroup) && existingGroup.deletedAt === null) {
-        const {
-          parentRowLevelPermissionPredicateGroupUniversalIdentifier,
-        } = resolveEntityRelationUniversalIdentifiers({
-          metadataName: 'rowLevelPermissionPredicateGroup',
-          foreignKeyValues: {
-            parentRowLevelPermissionPredicateGroupId:
-              inputGroup.parentRowLevelPermissionPredicateGroupId,
-          },
-          flatEntityMaps: {
-            flatRowLevelPermissionPredicateGroupMaps,
-          },
-        });
+        const { parentRowLevelPermissionPredicateGroupUniversalIdentifier } =
+          resolveEntityRelationUniversalIdentifiers({
+            metadataName: 'rowLevelPermissionPredicateGroup',
+            foreignKeyValues: {
+              parentRowLevelPermissionPredicateGroupId:
+                inputGroup.parentRowLevelPermissionPredicateGroupId,
+            },
+            flatEntityMaps: {
+              flatRowLevelPermissionPredicateGroupMaps,
+            },
+          });
 
         groupsToUpdate.push({
           ...existingGroup,
@@ -457,14 +456,12 @@ export class RowLevelPermissionPredicateService {
 
     const inputPredicateIds = new Set<string>();
 
-    const {
-      roleUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-    } = resolveEntityRelationUniversalIdentifiers({
-      metadataName: 'rowLevelPermissionPredicate',
-      foreignKeyValues: { roleId, objectMetadataId },
-      flatEntityMaps: { flatRoleMaps, flatObjectMetadataMaps },
-    });
+    const { roleUniversalIdentifier, objectMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'rowLevelPermissionPredicate',
+        foreignKeyValues: { roleId, objectMetadataId },
+        flatEntityMaps: { flatRoleMaps, flatObjectMetadataMaps },
+      });
 
     for (const inputPredicate of inputPredicates) {
       const predicateId = inputPredicate.id ?? v4();
