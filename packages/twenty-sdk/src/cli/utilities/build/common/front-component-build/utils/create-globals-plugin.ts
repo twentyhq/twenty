@@ -2,57 +2,67 @@ import * as fs from 'fs/promises';
 
 import type * as esbuild from 'esbuild';
 
+type GlobalsPluginData = {
+  importer: string;
+  originalPath: string;
+};
+
 type GlobalsPluginConfig = {
   name: string;
-  namespace: string;
   moduleName: string;
   moduleFilter: RegExp;
   collectImports: (sourceContent: string) => Map<string, Set<string>>;
   generateExports: (imports: Set<string>, subPath: string) => string;
+  namespace?: string;
   staticContents?: Record<string, string>;
 };
 
 export const createGlobalsPlugin = (
   config: GlobalsPluginConfig,
-): esbuild.Plugin => ({
-  name: config.name,
-  setup: async (build) => {
-    const importsByFilePath = new Map<string, Map<string, Set<string>>>();
+): esbuild.Plugin => {
+  const namespace = config.namespace ?? config.name;
 
-    build.onStart(() => {
-      importsByFilePath.clear();
-    });
+  return {
+    name: config.name,
+    setup: (build) => {
+      const importsByFilePath = new Map<string, Map<string, Set<string>>>();
 
-    build.onResolve(
-      { filter: config.moduleFilter },
-      async ({ importer, path }) => {
-        if (importer && !importsByFilePath.has(importer)) {
-          try {
-            const sourceFileContent = await fs.readFile(importer, 'utf-8');
+      build.onStart(() => {
+        importsByFilePath.clear();
+      });
 
-            importsByFilePath.set(
-              importer,
-              config.collectImports(sourceFileContent),
-            );
-          } catch {
-            importsByFilePath.set(importer, new Map());
+      build.onResolve(
+        { filter: config.moduleFilter },
+        async ({ importer, path }) => {
+          if (importer && !importsByFilePath.has(importer)) {
+            try {
+              const sourceFileContent = await fs.readFile(importer, 'utf-8');
+
+              importsByFilePath.set(
+                importer,
+                config.collectImports(sourceFileContent),
+              );
+            } catch {
+              importsByFilePath.set(importer, new Map());
+            }
           }
-        }
 
-        return {
-          path: importer
-            ? `${path}?importer=${encodeURIComponent(importer)}`
-            : path,
-          namespace: config.namespace,
-          pluginData: { importer, originalPath: path },
-        };
-      },
-    );
+          return {
+            path: importer
+              ? `${path}?importer=${encodeURIComponent(importer)}`
+              : path,
+            namespace,
+            pluginData: {
+              importer,
+              originalPath: path,
+            } satisfies GlobalsPluginData,
+          };
+        },
+      );
 
-    build.onLoad(
-      { filter: /.*/, namespace: config.namespace },
-      ({ pluginData }) => {
-        const originalPath: string = pluginData?.originalPath || '';
+      build.onLoad({ filter: /.*/, namespace }, ({ pluginData }) => {
+        const { originalPath, importer: importerFilePath } =
+          pluginData as GlobalsPluginData;
 
         if (config.staticContents?.[originalPath]) {
           return {
@@ -60,8 +70,6 @@ export const createGlobalsPlugin = (
             loader: 'js' as const,
           };
         }
-
-        const importerFilePath: string = pluginData?.importer || '';
 
         const subPath =
           originalPath === config.moduleName
@@ -75,7 +83,7 @@ export const createGlobalsPlugin = (
           contents: config.generateExports(subPathImports, subPath),
           loader: 'js' as const,
         };
-      },
-    );
-  },
-});
+      });
+    },
+  };
+};

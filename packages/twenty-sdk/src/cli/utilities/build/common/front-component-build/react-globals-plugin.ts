@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { collectNamedImports } from './utils/collect-named-imports';
 import { createGlobalsPlugin } from './utils/create-globals-plugin';
-import { extractNamesFromImportSpecifier } from './utils/extract-names-from-import-specifier';
 
 const REACT_IMPORT_PATTERN =
   /import\s+(?:(\w+)\s*,?\s*)?(?:\{([^}]*)\})?\s*from\s*['"]react['"];?/g;
@@ -17,38 +17,28 @@ export var Fragment = globalThis.React.Fragment;
 const collectReactImports = (
   sourceContent: string,
 ): Map<string, Set<string>> => {
-  const collectedReactImports = new Set<string>();
+  const namedImports = collectNamedImports(sourceContent, {
+    pattern: REACT_IMPORT_PATTERN,
+    namedImportsCaptureGroup: 2,
+  });
 
   let importMatch;
 
   while (isDefined((importMatch = REACT_IMPORT_PATTERN.exec(sourceContent)))) {
     const defaultImportName = importMatch[1];
-    const namedImportsString = importMatch[2];
 
     if (defaultImportName) {
-      collectedReactImports.add('default');
-    }
+      if (!namedImports.has('')) {
+        namedImports.set('', new Set());
+      }
 
-    if (namedImportsString) {
-      namedImportsString
-        .split(',')
-        .filter(
-          (importSpecifier) =>
-            importSpecifier.trim() &&
-            !importSpecifier.trim().startsWith('type '),
-        )
-        .forEach((importSpecifier) => {
-          const { originalName } =
-            extractNamesFromImportSpecifier(importSpecifier);
-
-          collectedReactImports.add(originalName);
-        });
+      namedImports.get('')!.add('default');
     }
   }
 
   REACT_IMPORT_PATTERN.lastIndex = 0;
 
-  return new Map([['', collectedReactImports]]);
+  return namedImports;
 };
 
 const generateReactExports = (reactImports: Set<string>): string => {

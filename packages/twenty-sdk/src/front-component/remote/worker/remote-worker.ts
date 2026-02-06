@@ -3,18 +3,6 @@ import '@remote-dom/react/polyfill';
 
 import '../generated/remote-elements';
 
-import {
-  getFrontComponentExecutionContext,
-  setFrontComponentExecutionContext,
-  subscribeToFrontComponentExecutionContext,
-  unsubscribeFromFrontComponentExecutionContext,
-} from '@/sdk/front-component-api/context/frontComponentContext';
-import {
-  navigate,
-  setNavigate,
-} from '@/sdk/front-component-api/functions/navigate';
-import { useFrontComponentExecutionContext } from '@/sdk/front-component-api/hooks/useFrontComponentExecutionContext';
-import { useUserId } from '@/sdk/front-component-api/hooks/useUserId';
 import { ThreadWebWorker } from '@quilted/threads';
 import {
   BatchingRemoteConnection,
@@ -26,6 +14,11 @@ import { createRoot } from 'react-dom/client';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import * as TwentySharedTypes from 'twenty-shared/types';
 import * as TwentySharedUtils from 'twenty-shared/utils';
+
+import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
+import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
+import * as TwentySdk from '@/sdk';
+
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type HostToWorkerRenderContext } from '../../types/HostToWorkerRenderContext';
@@ -38,12 +31,7 @@ exposeGlobals({
   RemoteComponents,
   jsx,
   jsxs,
-  getFrontComponentExecutionContext,
-  subscribeToFrontComponentExecutionContext,
-  unsubscribeFromFrontComponentExecutionContext,
-  useFrontComponentExecutionContext,
-  navigate,
-  useUserId,
+  TwentySdk,
   TwentyShared: {
     utils: TwentySharedUtils,
     types: TwentySharedTypes,
