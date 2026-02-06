@@ -7,7 +7,10 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import {
+  resolveNullableUniversalIdentifierFromFlatEntityId,
+  resolveUniversalIdentifierFromFlatEntityIdOrThrow,
+} from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 
@@ -42,34 +45,33 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
   const createdAt = new Date().toISOString();
   const viewFilterId = createViewFilterInput.id ?? v4();
 
-  const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityMaps: flatFieldMetadataMaps,
-    flatEntityId: fieldMetadataId,
-  });
-
-  const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityMaps: flatViewMaps,
-    flatEntityId: viewId,
-  });
-
-  let viewFilterGroupUniversalIdentifier: string | null = null;
-
-  if (isDefined(createViewFilterInput.viewFilterGroupId)) {
-    const flatViewFilterGroup = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatViewFilterGroupMaps,
-      flatEntityId: createViewFilterInput.viewFilterGroupId,
+  const fieldMetadataUniversalIdentifier =
+    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: fieldMetadataId,
+      metadataName: 'fieldMetadata',
     });
 
-    viewFilterGroupUniversalIdentifier =
-      flatViewFilterGroup.universalIdentifier;
-  }
+  const viewUniversalIdentifier =
+    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+      flatEntityMaps: flatViewMaps,
+      flatEntityId: viewId,
+      metadataName: 'view',
+    });
+
+  const viewFilterGroupUniversalIdentifier =
+    resolveNullableUniversalIdentifierFromFlatEntityId({
+      flatEntityMaps: flatViewFilterGroupMaps,
+      flatEntityId: createViewFilterInput.viewFilterGroupId,
+      metadataName: 'viewFilterGroup',
+    });
 
   return {
     id: viewFilterId,
     fieldMetadataId,
-    fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+    fieldMetadataUniversalIdentifier,
     viewId,
-    viewUniversalIdentifier: flatView.universalIdentifier,
+    viewUniversalIdentifier,
     workspaceId,
     createdAt: createdAt,
     updatedAt: createdAt,

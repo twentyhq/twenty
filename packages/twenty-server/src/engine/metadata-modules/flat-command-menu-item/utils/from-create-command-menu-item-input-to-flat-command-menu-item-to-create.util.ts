@@ -10,7 +10,7 @@ import { type CreateCommandMenuItemInput } from 'src/engine/metadata-modules/com
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { resolveNullableUniversalIdentifierFromFlatEntityId } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
 
 export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   createCommandMenuItemInput,
@@ -43,28 +43,20 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   const id = uuidv4();
   const now = new Date().toISOString();
 
-  let availabilityObjectMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(createCommandMenuItemInput.availabilityObjectMetadataId)) {
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+  const availabilityObjectMetadataUniversalIdentifier =
+    resolveNullableUniversalIdentifierFromFlatEntityId({
       flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: createCommandMenuItemInput.availabilityObjectMetadataId,
+      flatEntityId:
+        createCommandMenuItemInput.availabilityObjectMetadataId,
+      metadataName: 'objectMetadata',
     });
 
-    availabilityObjectMetadataUniversalIdentifier =
-      flatObjectMetadata.universalIdentifier;
-  }
-
-  let frontComponentUniversalIdentifier: string | null = null;
-
-  if (isDefined(createCommandMenuItemInput.frontComponentId)) {
-    const flatFrontComponent = findFlatEntityByIdInFlatEntityMapsOrThrow({
+  const frontComponentUniversalIdentifier =
+    resolveNullableUniversalIdentifierFromFlatEntityId({
       flatEntityMaps: flatFrontComponentMaps,
       flatEntityId: createCommandMenuItemInput.frontComponentId,
+      metadataName: 'frontComponent',
     });
-
-    frontComponentUniversalIdentifier = flatFrontComponent.universalIdentifier;
-  }
 
   return {
     id,

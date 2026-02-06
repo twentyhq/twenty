@@ -1,12 +1,12 @@
-import {
-  isDefined,
-  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
-} from 'twenty-shared/utils';
+import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import {
+  resolveNullableUniversalIdentifierFromFlatEntityId,
+  resolveUniversalIdentifierFromFlatEntityIdOrThrow,
+} from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
@@ -41,26 +41,24 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
   const createdAt = new Date().toISOString();
   const pageLayoutWidgetId = v4();
 
-  const flatPageLayoutTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityMaps: flatPageLayoutTabMaps,
-    flatEntityId: pageLayoutTabId,
-  });
-
-  let objectMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(createPageLayoutWidgetInput.objectMetadataId)) {
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: createPageLayoutWidgetInput.objectMetadataId,
+  const pageLayoutTabUniversalIdentifier =
+    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+      flatEntityMaps: flatPageLayoutTabMaps,
+      flatEntityId: pageLayoutTabId,
+      metadataName: 'pageLayoutTab',
     });
 
-    objectMetadataUniversalIdentifier = flatObjectMetadata.universalIdentifier;
-  }
+  const objectMetadataUniversalIdentifier =
+    resolveNullableUniversalIdentifierFromFlatEntityId({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: createPageLayoutWidgetInput.objectMetadataId,
+      metadataName: 'objectMetadata',
+    });
 
   return {
     id: pageLayoutWidgetId,
     pageLayoutTabId,
-    pageLayoutTabUniversalIdentifier: flatPageLayoutTab.universalIdentifier,
+    pageLayoutTabUniversalIdentifier,
     workspaceId,
     createdAt,
     updatedAt: createdAt,

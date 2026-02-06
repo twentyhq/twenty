@@ -6,7 +6,10 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import {
+  resolveNullableUniversalIdentifierFromFlatEntityId,
+  resolveUniversalIdentifierFromFlatEntityIdOrThrow,
+} from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -42,55 +45,39 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();
 
-  const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-    flatEntityMaps: flatObjectMetadataMaps,
-    flatEntityId: objectMetadataId,
-  });
-
-  let calendarFieldMetadataUniversalIdentifier: string | null = null;
-
-  if (isDefined(createViewInput.calendarFieldMetadataId)) {
-    const flatCalendarFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow(
-      {
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: createViewInput.calendarFieldMetadataId,
-      },
-    );
-
-    calendarFieldMetadataUniversalIdentifier =
-      flatCalendarFieldMetadata.universalIdentifier;
-  }
-
-  let kanbanAggregateOperationFieldMetadataUniversalIdentifier: string | null =
-    null;
-
-  if (isDefined(createViewInput.kanbanAggregateOperationFieldMetadataId)) {
-    const flatKanbanFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: createViewInput.kanbanAggregateOperationFieldMetadataId,
+  const objectMetadataUniversalIdentifier =
+    resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+      flatEntityMaps: flatObjectMetadataMaps,
+      flatEntityId: objectMetadataId,
+      metadataName: 'objectMetadata',
     });
 
-    kanbanAggregateOperationFieldMetadataUniversalIdentifier =
-      flatKanbanFieldMetadata.universalIdentifier;
-  }
+  const calendarFieldMetadataUniversalIdentifier =
+    resolveNullableUniversalIdentifierFromFlatEntityId({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: createViewInput.calendarFieldMetadataId,
+      metadataName: 'fieldMetadata',
+    });
 
-  let mainGroupByFieldMetadataUniversalIdentifier: string | null = null;
+  const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
+    resolveNullableUniversalIdentifierFromFlatEntityId({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId:
+        createViewInput.kanbanAggregateOperationFieldMetadataId,
+      metadataName: 'fieldMetadata',
+    });
 
-  if (isDefined(createViewInput.mainGroupByFieldMetadataId)) {
-    const flatMainGroupByFieldMetadata =
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: createViewInput.mainGroupByFieldMetadataId,
-      });
-
-    mainGroupByFieldMetadataUniversalIdentifier =
-      flatMainGroupByFieldMetadata.universalIdentifier;
-  }
+  const mainGroupByFieldMetadataUniversalIdentifier =
+    resolveNullableUniversalIdentifierFromFlatEntityId({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: createViewInput.mainGroupByFieldMetadataId,
+      metadataName: 'fieldMetadata',
+    });
 
   const flatViewToCreate = {
     id: viewId,
     objectMetadataId,
-    objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+    objectMetadataUniversalIdentifier,
     workspaceId,
     name: createViewInput.name,
     createdAt: createdAt,

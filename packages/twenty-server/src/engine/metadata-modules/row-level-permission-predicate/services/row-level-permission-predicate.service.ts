@@ -13,7 +13,10 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import {
+  resolveNullableUniversalIdentifierFromFlatEntityId,
+  resolveUniversalIdentifierFromFlatEntityIdOrThrow,
+} from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
 import { fromFlatRowLevelPermissionPredicateToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-to-dto.util';
 import {
@@ -319,10 +322,12 @@ export class RowLevelPermissionPredicateService {
 
     const inputGroupIds = new Set<string>();
 
-    const flatRole = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatRoleMaps,
-      flatEntityId: roleId,
-    });
+    const roleUniversalIdentifier =
+      resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+        flatEntityMaps: flatRoleMaps,
+        flatEntityId: roleId,
+        metadataName: 'role',
+      });
 
     for (const inputGroup of inputGroups) {
       const groupId = inputGroup.id ?? v4();
@@ -346,33 +351,28 @@ export class RowLevelPermissionPredicateService {
           updatedAt: createdAt,
         });
       } else {
-        const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityMaps: flatObjectMetadataMaps,
-          flatEntityId: inputGroup.objectMetadataId,
-        });
-
-        let parentRowLevelPermissionPredicateGroupUniversalIdentifier:
-          | string
-          | null = null;
-
-        if (isDefined(inputGroup.parentRowLevelPermissionPredicateGroupId)) {
-          const parentGroup = findFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-            flatEntityId: inputGroup.parentRowLevelPermissionPredicateGroupId,
+        const objectMetadataUniversalIdentifier =
+          resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+            flatEntityMaps: flatObjectMetadataMaps,
+            flatEntityId: inputGroup.objectMetadataId,
+            metadataName: 'objectMetadata',
           });
 
-          parentRowLevelPermissionPredicateGroupUniversalIdentifier =
-            parentGroup.universalIdentifier;
-        }
+        const parentRowLevelPermissionPredicateGroupUniversalIdentifier =
+          resolveNullableUniversalIdentifierFromFlatEntityId({
+            flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+            flatEntityId:
+              inputGroup.parentRowLevelPermissionPredicateGroupId,
+            metadataName: 'rowLevelPermissionPredicateGroup',
+          });
 
         groupsToCreate.push({
           id: groupId,
           workspaceId,
           roleId,
-          roleUniversalIdentifier: flatRole.universalIdentifier,
+          roleUniversalIdentifier,
           objectMetadataId: inputGroup.objectMetadataId,
-          objectMetadataUniversalIdentifier:
-            flatObjectMetadata.universalIdentifier,
+          objectMetadataUniversalIdentifier,
           logicalOperator: inputGroup.logicalOperator,
           parentRowLevelPermissionPredicateGroupId:
             inputGroup.parentRowLevelPermissionPredicateGroupId ?? null,
@@ -445,15 +445,19 @@ export class RowLevelPermissionPredicateService {
 
     const inputPredicateIds = new Set<string>();
 
-    const flatRole = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatRoleMaps,
-      flatEntityId: roleId,
-    });
+    const roleUniversalIdentifier =
+      resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+        flatEntityMaps: flatRoleMaps,
+        flatEntityId: roleId,
+        metadataName: 'role',
+      });
 
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: objectMetadataId,
-    });
+    const objectMetadataUniversalIdentifier =
+      resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+        flatEntityMaps: flatObjectMetadataMaps,
+        flatEntityId: objectMetadataId,
+        metadataName: 'objectMetadata',
+      });
 
     for (const inputPredicate of inputPredicates) {
       const predicateId = inputPredicate.id ?? v4();
@@ -487,50 +491,38 @@ export class RowLevelPermissionPredicateService {
           updatedAt: createdAt,
         });
       } else {
-        const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityMaps: flatFieldMetadataMaps,
-          flatEntityId: inputPredicate.fieldMetadataId,
-        });
-
-        let rowLevelPermissionPredicateGroupUniversalIdentifier: string | null =
-          null;
-
-        if (isDefined(inputPredicate.rowLevelPermissionPredicateGroupId)) {
-          const group = findFlatEntityByIdInFlatEntityMapsOrThrow({
-            flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-            flatEntityId: inputPredicate.rowLevelPermissionPredicateGroupId,
+        const fieldMetadataUniversalIdentifier =
+          resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityId: inputPredicate.fieldMetadataId,
+            metadataName: 'fieldMetadata',
           });
 
-          rowLevelPermissionPredicateGroupUniversalIdentifier =
-            group.universalIdentifier;
-        }
+        const rowLevelPermissionPredicateGroupUniversalIdentifier =
+          resolveNullableUniversalIdentifierFromFlatEntityId({
+            flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+            flatEntityId:
+              inputPredicate.rowLevelPermissionPredicateGroupId,
+            metadataName: 'rowLevelPermissionPredicateGroup',
+          });
 
-        let workspaceMemberFieldMetadataUniversalIdentifier: string | null =
-          null;
-
-        if (isDefined(inputPredicate.workspaceMemberFieldMetadataId)) {
-          const memberFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow(
-            {
-              flatEntityMaps: flatFieldMetadataMaps,
-              flatEntityId: inputPredicate.workspaceMemberFieldMetadataId,
-            },
-          );
-
-          workspaceMemberFieldMetadataUniversalIdentifier =
-            memberFieldMetadata.universalIdentifier;
-        }
+        const workspaceMemberFieldMetadataUniversalIdentifier =
+          resolveNullableUniversalIdentifierFromFlatEntityId({
+            flatEntityMaps: flatFieldMetadataMaps,
+            flatEntityId:
+              inputPredicate.workspaceMemberFieldMetadataId,
+            metadataName: 'fieldMetadata',
+          });
 
         predicatesToCreate.push({
           id: predicateId,
           workspaceId,
           roleId,
-          roleUniversalIdentifier: flatRole.universalIdentifier,
+          roleUniversalIdentifier,
           objectMetadataId,
-          objectMetadataUniversalIdentifier:
-            flatObjectMetadata.universalIdentifier,
+          objectMetadataUniversalIdentifier,
           fieldMetadataId: inputPredicate.fieldMetadataId,
-          fieldMetadataUniversalIdentifier:
-            flatFieldMetadata.universalIdentifier,
+          fieldMetadataUniversalIdentifier,
           operand: inputPredicate.operand,
           value: inputPredicate.value ?? null,
           subFieldName: inputPredicate.subFieldName ?? null,

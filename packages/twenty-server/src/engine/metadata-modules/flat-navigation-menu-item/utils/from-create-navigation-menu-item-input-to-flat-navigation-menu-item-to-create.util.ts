@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { resolveNullableUniversalIdentifierFromFlatEntityId } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type CreateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/create-navigation-menu-item.input';
@@ -48,39 +48,27 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       position = maxPosition + 1;
     }
 
-    let targetObjectMetadataUniversalIdentifier: string | null = null;
-
-    if (isDefined(createNavigationMenuItemInput.targetObjectMetadataId)) {
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const targetObjectMetadataUniversalIdentifier =
+      resolveNullableUniversalIdentifierFromFlatEntityId({
         flatEntityMaps: flatObjectMetadataMaps,
-        flatEntityId: createNavigationMenuItemInput.targetObjectMetadataId,
+        flatEntityId:
+          createNavigationMenuItemInput.targetObjectMetadataId,
+        metadataName: 'objectMetadata',
       });
 
-      targetObjectMetadataUniversalIdentifier =
-        flatObjectMetadata.universalIdentifier;
-    }
-
-    let viewUniversalIdentifier: string | null = null;
-
-    if (isDefined(createNavigationMenuItemInput.viewId)) {
-      const flatView = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const viewUniversalIdentifier =
+      resolveNullableUniversalIdentifierFromFlatEntityId({
         flatEntityMaps: flatViewMaps,
         flatEntityId: createNavigationMenuItemInput.viewId,
+        metadataName: 'view',
       });
 
-      viewUniversalIdentifier = flatView.universalIdentifier;
-    }
-
-    let folderUniversalIdentifier: string | null = null;
-
-    if (isDefined(createNavigationMenuItemInput.folderId)) {
-      const flatFolder = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const folderUniversalIdentifier =
+      resolveNullableUniversalIdentifierFromFlatEntityId({
         flatEntityMaps: flatNavigationMenuItemMaps,
         flatEntityId: createNavigationMenuItemInput.folderId,
+        metadataName: 'navigationMenuItem',
       });
-
-      folderUniversalIdentifier = flatFolder.universalIdentifier;
-    }
 
     return {
       id,

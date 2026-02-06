@@ -10,7 +10,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { resolveUniversalIdentifierFromFlatEntityIdOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 
 export type FromCreateAgentInputToFlatAgentArgs = {
@@ -64,15 +64,17 @@ export const fromCreateAgentInputToFlatAgent = ({
   let flatRoleTargetToCreate: FlatRoleTarget | null = null;
 
   if (isDefined(roleId)) {
-    const flatRole = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatRoleMaps,
-      flatEntityId: roleId,
-    });
+    const roleUniversalIdentifier =
+      resolveUniversalIdentifierFromFlatEntityIdOrThrow({
+        flatEntityMaps: flatRoleMaps,
+        flatEntityId: roleId,
+        metadataName: 'role',
+      });
 
     flatRoleTargetToCreate = {
       id: v4(),
       roleId,
-      roleUniversalIdentifier: flatRole.universalIdentifier,
+      roleUniversalIdentifier,
       userWorkspaceId: null,
       agentId,
       apiKeyId: null,
