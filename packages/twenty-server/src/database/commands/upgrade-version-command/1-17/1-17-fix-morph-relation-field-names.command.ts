@@ -10,7 +10,9 @@ import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 interface MismatchedField {
@@ -38,6 +40,8 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
     private readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
@@ -91,6 +95,8 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
     await queryRunner.startTransaction();
 
     try {
+      let fixedCount = 0;
+
       for (const field of mismatchedFields) {
         // Step 1: Check column states
         const sourceColumnExists = await this.columnExists(
@@ -118,7 +124,7 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
         // Step 2: Rename column if needed
         if (sourceColumnExists && !targetColumnExists) {
           await queryRunner.query(
-            `ALTER TABLE "${field.workspaceSchema}"."${field.sourceObjectName}" 
+            `ALTER TABLE "${field.workspaceSchema}"."${field.sourceObjectName}"
              RENAME COLUMN "${field.currentJoinColumnName}" TO "${field.expectedJoinColumnName}"`,
           );
           this.logger.log(
@@ -130,10 +136,8 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
           );
         } else if (!sourceColumnExists && !targetColumnExists) {
           this.logger.warn(
-            `⚠️  Neither column exists for ${field.sourceObjectName}.${field.currentFieldName}. Creating expected column.`,
+            `⚠️  Neither column exists for ${field.sourceObjectName}.${field.currentFieldName}. Updating metadata only.`,
           );
-          // The column might not exist if the object was created but never had data
-          // We'll still update metadata - TypeORM sync should create the column
         }
 
         // Step 3: Verify field still exists with expected current name before updating
@@ -163,7 +167,7 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
 
         const updateResult = await queryRunner.query(
           `UPDATE core."fieldMetadata"
-           SET name = $1, 
+           SET name = $1,
                settings = settings || $2::jsonb
            WHERE id = $3
              AND name = $4
@@ -180,6 +184,7 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
           this.logger.log(
             `✓ Updated fieldMetadata: ${field.currentFieldName} → ${field.expectedFieldName}`,
           );
+          fixedCount++;
         } else {
           this.logger.log(
             `Field metadata already up to date for ${field.currentFieldName}`,
@@ -189,13 +194,31 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
 
       await queryRunner.commitTransaction();
 
-      // Invalidate cache
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+      if (fixedCount > 0) {
+        // Invalidate flat entity caches (new cache system)
+        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'flatFieldMetadataMaps',
+          'ORMEntityMetadatas',
+          'rolesPermissions',
+          'userWorkspaceRoleMap',
+          'flatRoleTargetMaps',
+          'apiKeyRoleMap',
+          'flatRoleTargetByAgentIdMaps',
+        ]);
+
+        // Increment metadata version so GraphQL schema is regenerated
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
+
+        // Flush legacy cache (GraphQL typeDefs, ORM entity schemas, GraphQL operations)
+        await this.workspaceCacheStorageService.flush(workspaceId);
+
+        this.logger.log(`Cache invalidated and metadata version incremented`);
+      }
 
       this.logger.log(
-        `✅ Successfully fixed ${mismatchedFields.length} field(s) in workspace ${workspaceId}`,
+        `✅ Successfully fixed ${fixedCount} field(s) in workspace ${workspaceId}`,
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -221,7 +244,7 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
     ];
 
     const result = await this.coreDataSource.query(
-      `SELECT 
+      `SELECT
         fm.id AS "fieldId",
         fm.name AS "currentFieldName",
         fm.settings->>'joinColumnName' AS "currentJoinColumnName",
@@ -288,10 +311,10 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
   ): Promise<boolean> {
     const result = await queryRunner.query(
       `SELECT EXISTS (
-        SELECT 1 
-        FROM information_schema.columns 
-        WHERE table_schema = $1 
-          AND table_name = $2 
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = $1
+          AND table_name = $2
           AND column_name = $3
       ) AS exists`,
       [schema, table, column],
