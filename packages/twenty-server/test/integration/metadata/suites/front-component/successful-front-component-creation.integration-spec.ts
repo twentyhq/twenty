@@ -19,6 +19,7 @@ describe('Front component creation should succeed', () => {
       expectToFail: false,
       input: {
         name: 'testFrontComponent',
+        componentName: 'TestFrontComponent',
       },
     });
 
@@ -35,6 +36,7 @@ describe('Front component creation should succeed', () => {
       expectToFail: false,
       input: {
         name: '  frontComponentWithSpaces  ',
+        componentName: 'FrontComponentWithSpaces',
       },
     });
 

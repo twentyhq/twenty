@@ -8,6 +8,7 @@ describe('Front component deletion should succeed', () => {
       expectToFail: false,
       input: {
         name: 'frontComponentToDelete',
+        componentName: 'FrontComponentToDelete',
       },
     });
 

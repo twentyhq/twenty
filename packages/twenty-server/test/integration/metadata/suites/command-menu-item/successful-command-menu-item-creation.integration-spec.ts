@@ -176,7 +176,7 @@ describe('CommandMenuItem creation should succeed', () => {
   it('should create command menu item with frontComponentId', async () => {
     const { data: frontComponentData } = await createFrontComponent({
       expectToFail: false,
-      input: { name: 'Test Front Component' },
+      input: { name: 'Test Front Component', componentName: 'TestFrontComponent' },
     });
 
     createdFrontComponentId = frontComponentData?.createFrontComponent?.id;

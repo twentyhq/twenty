@@ -30,7 +30,7 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
 
   return {
     id,
-    name,
+    name: name ?? createFrontComponentInput.componentName,
     description: createFrontComponentInput.description ?? null,
     sourceComponentPath:
       createFrontComponentInput.sourceComponentPath ??

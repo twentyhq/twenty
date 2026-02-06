@@ -11,6 +11,7 @@ describe('Front component update should succeed', () => {
       expectToFail: false,
       input: {
         name: 'testFrontComponentToUpdate',
+        componentName: 'TestFrontComponentToUpdate',
       },
     });
 

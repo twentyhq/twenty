@@ -37,7 +37,7 @@ export class CreateFrontComponentInput {
   builtComponentPath?: string;
 
   @IsString()
-  @HideField()
+  @Field()
   componentName: string;
 
   @IsString()
