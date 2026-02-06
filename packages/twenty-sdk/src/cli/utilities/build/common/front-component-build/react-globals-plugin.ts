@@ -9,9 +9,9 @@ const REACT_IMPORT_PATTERN =
 const REACT_MODULE_FILTER_PATTERN = /^react(\/jsx-runtime)?$/;
 
 const JSX_RUNTIME_EXPORTS = `
-export var jsx = globalThis.jsx;
-export var jsxs = globalThis.jsxs;
-export var Fragment = globalThis.React.Fragment;
+export var jsx = /* @__PURE__ */ (() => globalThis.jsx)();
+export var jsxs = /* @__PURE__ */ (() => globalThis.jsxs)();
+export var Fragment = /* @__PURE__ */ (() => globalThis.React.Fragment)();
 `.trim();
 
 const collectReactImports = (
@@ -50,10 +50,12 @@ const generateReactExports = ({
 
   for (const reactImportName of namedImports) {
     if (reactImportName === 'default') {
-      exportLines.push('export default globalThis.React;');
+      exportLines.push(
+        'export default /* @__PURE__ */ (() => globalThis.React)();',
+      );
     } else {
       exportLines.push(
-        `export var ${reactImportName} = globalThis.React.${reactImportName};`,
+        `export var ${reactImportName} = /* @__PURE__ */ (() => globalThis.React.${reactImportName})();`,
       );
     }
   }

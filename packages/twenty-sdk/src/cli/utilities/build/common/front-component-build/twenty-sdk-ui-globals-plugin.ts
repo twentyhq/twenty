@@ -20,7 +20,7 @@ export const twentySdkUiGlobalsPlugin = createGlobalsPlugin({
     [...namedImports]
       .map(
         (importName) =>
-          `export var ${importName} = globalThis.RemoteComponents.TwentyUi${importName};`,
+          `export var ${importName} = /* @__PURE__ */ (() => globalThis.RemoteComponents.TwentyUi${importName})();`,
       )
       .join('\n'),
 });

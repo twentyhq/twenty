@@ -20,7 +20,7 @@ export const twentySdkGlobalsPlugin = createGlobalsPlugin({
     [...namedImports]
       .map(
         (importName) =>
-          `export var ${importName} = globalThis.TwentySdk.${importName};`,
+          `export var ${importName} = /* @__PURE__ */ (() => globalThis.TwentySdk.${importName})();`,
       )
       .join('\n'),
 });

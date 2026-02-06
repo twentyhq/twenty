@@ -18,12 +18,17 @@ export const jsxTransformToRemoteDomWorkerFormatPlugin: esbuild.Plugin = {
           const sourceWithRemoteComponents =
             replaceHtmlTagsWithRemoteComponents(frontComponentSourceCode);
 
+          const hasRemoteComponentReplacements =
+            sourceWithRemoteComponents !== frontComponentSourceCode;
+
           const sourceWithUnwrappedFrontComponent =
             unwrapDefineFrontComponentToDirectExport(
               sourceWithRemoteComponents,
             );
 
-          const transformedContents = `var RemoteComponents = globalThis.RemoteComponents;\n${sourceWithUnwrappedFrontComponent}`;
+          const transformedContents = hasRemoteComponentReplacements
+            ? `var RemoteComponents = globalThis.RemoteComponents;\n${sourceWithUnwrappedFrontComponent}`
+            : sourceWithUnwrappedFrontComponent;
 
           return { contents: transformedContents, loader: 'tsx' };
         } catch (transformError) {

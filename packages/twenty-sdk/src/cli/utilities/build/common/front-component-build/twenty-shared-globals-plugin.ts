@@ -31,7 +31,7 @@ export const twentySharedGlobalsPlugin = createGlobalsPlugin({
     return [...namedImports]
       .map(
         (importName) =>
-          `export var ${importName} = ${globalAccessorExpression}.${importName};`,
+          `export var ${importName} = /* @__PURE__ */ (() => ${globalAccessorExpression}.${importName})();`,
       )
       .join('\n');
   },
