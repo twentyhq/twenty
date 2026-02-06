@@ -46,8 +46,6 @@ export const MetadataProviderEffect = () => {
   const [localIsCurrentUserLoaded, setLocalIsCurrentUserLoaded] =
     useState(false);
   const [localAreViewsLoaded, setLocalAreViewsLoaded] = useState(false);
-  const [localAreRecordPageLayoutsLoaded, setLocalAreRecordPageLayoutsLoaded] =
-    useState(false);
 
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -127,12 +125,11 @@ export const MetadataProviderEffect = () => {
       skip: shouldSkip,
     });
 
-  const {
-    data: queryDataRecordPageLayouts,
-    loading: queryLoadingRecordPageLayouts,
-  } = useFindAllRecordPageLayoutsQuery({
-    skip: shouldSkip,
-  });
+  const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
+    {
+      skip: shouldSkip,
+    },
+  );
 
   const { data: logicFunctionsData } = useGetManyLogicFunctionsQuery({
     skip: !isLoggedIn,
@@ -250,36 +247,19 @@ export const MetadataProviderEffect = () => {
   }, [queryDataCoreViews?.getCoreViews, setCoreViews, queryLoadingCoreViews]);
 
   useEffect(() => {
-    if (!queryLoadingRecordPageLayouts) {
-      setLocalAreRecordPageLayoutsLoaded(true);
-    }
-
     if (!isDefined(queryDataRecordPageLayouts?.getPageLayouts)) return;
 
     const transformedPageLayouts =
       queryDataRecordPageLayouts.getPageLayouts.map(transformPageLayout);
 
     setRecordPageLayouts(transformedPageLayouts);
-  }, [
-    queryDataRecordPageLayouts?.getPageLayouts,
-    setRecordPageLayouts,
-    queryLoadingRecordPageLayouts,
-  ]);
+  }, [queryDataRecordPageLayouts?.getPageLayouts, setRecordPageLayouts]);
 
   useEffect(() => {
-    if (
-      localIsCurrentUserLoaded &&
-      localAreViewsLoaded &&
-      localAreRecordPageLayoutsLoaded
-    ) {
+    if (localIsCurrentUserLoaded && localAreViewsLoaded) {
       setIsCurrentUserLoaded(true);
     }
-  }, [
-    localIsCurrentUserLoaded,
-    localAreViewsLoaded,
-    localAreRecordPageLayoutsLoaded,
-    setIsCurrentUserLoaded,
-  ]);
+  }, [localIsCurrentUserLoaded, localAreViewsLoaded, setIsCurrentUserLoaded]);
 
   return null;
 };
