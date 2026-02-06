@@ -3552,6 +3552,7 @@ export type Query = {
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
   frontComponents: Array<FrontComponent>;
+  getAISystemPrompt: Scalars['String'];
   getAddressDetails: PlaceDetailsResult;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
@@ -4756,6 +4757,7 @@ export type UpdateWorkflowVersionStepInput = {
 };
 
 export type UpdateWorkspaceInput = {
+  aiAdditionalInstructions?: InputMaybe<Scalars['String']>;
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   customDomain?: InputMaybe<Scalars['String']>;
   defaultRoleId?: InputMaybe<Scalars['UUID']>;
@@ -5143,6 +5145,7 @@ export type WorkflowVersionStepChanges = {
 export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
+  aiAdditionalInstructions?: Maybe<Scalars['String']>;
   allowImpersonation: Scalars['Boolean'];
   billingEntitlements: Array<BillingEntitlement>;
   billingSubscriptions: Array<BillingSubscription>;

@@ -6,6 +6,7 @@ export type AIChatUsageMetadata = {
   outputTokens: number;
   inputCredits: number;
   outputCredits: number;
+  conversationSize: number;
 };
 
 export type AIChatModelMetadata = {

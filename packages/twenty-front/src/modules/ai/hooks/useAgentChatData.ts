@@ -23,15 +23,16 @@ const setUsageFromThread = (
   thread: AgentChatThread,
   setAgentChatUsage: SetterOrUpdater<AgentChatUsageState | null>,
 ) => {
-  const totalTokens = thread.totalInputTokens + thread.totalOutputTokens;
-  const hasUsageData = totalTokens > 0 && isDefined(thread.contextWindowTokens);
+  const hasUsageData =
+    (thread.conversationSize ?? 0) > 0 &&
+    isDefined(thread.contextWindowTokens);
 
   setAgentChatUsage(
     hasUsageData
       ? {
           inputTokens: thread.totalInputTokens,
           outputTokens: thread.totalOutputTokens,
-          totalTokens,
+          conversationSize: thread.conversationSize ?? 0,
           contextWindowTokens: thread.contextWindowTokens ?? 0,
           inputCredits: thread.totalInputCredits,
           outputCredits: thread.totalOutputCredits,

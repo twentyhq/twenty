@@ -29,6 +29,7 @@ import { createDirectRecordToolsFactory } from 'src/engine/core-modules/record-c
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isFavoriteRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-favorite-related-object.util';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
@@ -127,7 +128,7 @@ export class DatabaseToolProvider implements ToolProvider {
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((obj) => obj.isActive && !obj.isSystem);
+      .filter((obj) => obj.isActive);
 
     const factory = createDirectRecordToolsFactory({
       createRecordService: this.createRecordService,
@@ -137,7 +138,10 @@ export class DatabaseToolProvider implements ToolProvider {
     });
 
     for (const flatObject of allFlatObjects) {
-      if (isWorkflowRelatedObject(flatObject)) {
+      if (
+        isWorkflowRelatedObject(flatObject) ||
+        isFavoriteRelatedObject(flatObject)
+      ) {
         continue;
       }
 

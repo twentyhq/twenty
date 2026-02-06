@@ -99,6 +99,7 @@ export class AgentChatStreamingService {
             inputCredits: 0,
             outputCredits: 0,
           };
+          let lastStepInputTokens = 0;
 
           writer.merge(
             stream.toUIMessageStream({
@@ -109,6 +110,10 @@ export class AgentChatStreamingService {
               },
               sendStart: false,
               messageMetadata: ({ part }) => {
+                if (part.type === 'finish-step') {
+                  lastStepInputTokens = part.usage?.inputTokens ?? 0;
+                }
+
                 if (part.type === 'finish') {
                   const inputTokens = part.totalUsage?.inputTokens ?? 0;
                   const outputTokens = part.totalUsage?.outputTokens ?? 0;
@@ -141,6 +146,7 @@ export class AgentChatStreamingService {
                       outputTokens,
                       inputCredits,
                       outputCredits,
+                      conversationSize: lastStepInputTokens,
                     },
                     model: {
                       contextWindowTokens: modelConfig.contextWindowTokens,
@@ -205,6 +211,7 @@ export class AgentChatStreamingService {
                     totalOutputCredits: () =>
                       `"totalOutputCredits" + ${streamUsage.outputCredits}`,
                     contextWindowTokens: modelConfig.contextWindowTokens,
+                    conversationSize: lastStepInputTokens,
                   });
                 } catch (saveError) {
                   this.logger.error(

@@ -121,7 +121,8 @@ export const AIChatContextUsageButton = () => {
   }
 
   const percentage = Math.min(
-    (agentChatUsage.totalTokens / agentChatUsage.contextWindowTokens) * 100,
+    (agentChatUsage.conversationSize / agentChatUsage.contextWindowTokens) *
+      100,
     100,
   );
   const formattedPercentage = percentage.toFixed(1);
@@ -146,7 +147,7 @@ export const AIChatContextUsageButton = () => {
             <StyledRow>
               <StyledPercentage>{formattedPercentage}%</StyledPercentage>
               <StyledValue>
-                {formatTokenCount(agentChatUsage.totalTokens)} /{' '}
+                {formatTokenCount(agentChatUsage.conversationSize)} /{' '}
                 {formatTokenCount(agentChatUsage.contextWindowTokens)}
               </StyledValue>
             </StyledRow>

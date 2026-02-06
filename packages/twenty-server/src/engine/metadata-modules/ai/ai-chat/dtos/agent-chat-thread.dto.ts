@@ -20,6 +20,9 @@ export class AgentChatThreadDTO {
   contextWindowTokens: number | null;
 
   @Field(() => Int)
+  conversationSize: number;
+
+  @Field(() => Int)
   totalInputCredits: number;
 
   @Field(() => Int)

@@ -21,6 +21,7 @@ import {
   type ToolIndexEntry,
   ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { wrapToolsWithOutputSerialization } from 'src/engine/core-modules/tool-provider/output-serialization/wrap-tools-with-output-serialization.util';
 import {
   createLoadSkillTool,
   createLoadToolsTool,
@@ -29,7 +30,10 @@ import {
   LOAD_TOOLS_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import {
+  AgentActorContextService,
+  type UserContext,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
@@ -84,7 +88,7 @@ export class ChatExecutionService {
     browsingContext,
     onCodeExecutionUpdate,
   }: ChatExecutionOptions): Promise<ChatExecutionResult> {
-    const { actorContext, roleId, userId } =
+    const { actorContext, roleId, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
@@ -136,7 +140,7 @@ export class ChatExecutionService {
     );
 
     const activeTools: ToolSet = {
-      ...preloadedTools,
+      ...wrapToolsWithOutputSerialization(preloadedTools),
       ...this.getNativeWebSearchTool(registeredModel.provider),
       [LOAD_TOOLS_TOOL_NAME]: createLoadToolsTool(
         this.toolRegistry,
@@ -148,7 +152,10 @@ export class ChatExecutionService {
             toolContext,
           );
 
-          Object.assign(activeTools, newTools);
+          Object.assign(
+            activeTools,
+            wrapToolsWithOutputSerialization(newTools),
+          );
           this.logger.log(`Dynamically loaded tools: ${toolNames.join(', ')}`);
         },
       ),
@@ -179,6 +186,8 @@ export class ChatExecutionService {
       preloadedToolNames,
       contextString,
       storedFiles,
+      workspace.aiAdditionalInstructions ?? undefined,
+      userContext,
     );
 
     this.logger.log(
@@ -290,11 +299,21 @@ export class ChatExecutionService {
     preloadedTools: string[],
     contextString?: string,
     storedFiles?: Array<{ filename: string; storagePath: string; url: string }>,
+    workspaceInstructions?: string,
+    userContext?: UserContext,
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
       CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
     ];
+
+    if (workspaceInstructions) {
+      parts.push(this.buildWorkspaceInstructionsSection(workspaceInstructions));
+    }
+
+    if (userContext) {
+      parts.push(this.buildUserContextSection(userContext));
+    }
 
     parts.push(this.buildToolCatalogSection(toolCatalog, preloadedTools));
     parts.push(this.buildSkillCatalogSection(skillCatalog));
@@ -310,6 +329,31 @@ export class ChatExecutionService {
     }
 
     return parts.join('\n');
+  }
+
+  private buildWorkspaceInstructionsSection(instructions: string): string {
+    return `
+## Workspace Instructions
+
+The following are custom instructions provided by the workspace administrator:
+
+${instructions}`;
+  }
+
+  private buildUserContextSection(userContext: UserContext): string {
+    const parts = [
+      `User: ${userContext.firstName} ${userContext.lastName}`.trim(),
+      `Locale: ${userContext.locale}`,
+    ];
+
+    if (userContext.timezone) {
+      parts.push(`Timezone: ${userContext.timezone}`);
+    }
+
+    return `
+## User Context
+
+${parts.join('\n')}`;
   }
 
   private buildUploadedFilesSection(

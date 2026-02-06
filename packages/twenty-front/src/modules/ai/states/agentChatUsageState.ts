@@ -3,7 +3,7 @@ import { atom } from 'recoil';
 export type AgentChatUsageState = {
   inputTokens: number;
   outputTokens: number;
-  totalTokens: number;
+  conversationSize: number;
   contextWindowTokens: number;
   inputCredits: number;
   outputCredits: number;

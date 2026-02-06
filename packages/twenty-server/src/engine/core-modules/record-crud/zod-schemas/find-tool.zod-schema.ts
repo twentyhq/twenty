@@ -66,9 +66,11 @@ export const generateFindToolInputSchema = (
       .number()
       .int()
       .positive()
-      .max(1000)
-      .default(100)
-      .describe('Maximum number of records to return (default: 100)'),
+      .max(100)
+      .default(10)
+      .describe(
+        'Maximum number of records to return (default: 10, max: 100). Start small and increase only if needed.',
+      ),
     offset: z
       .number()
       .int()
