@@ -100,6 +100,8 @@ export class CodeStepBuildService {
 
     const newId = v4();
 
+    const newUniversalIdentifier = v4();
+
     const { sourceHandlerPath, builtHandlerPath } = existingLogicFunction;
 
     const toSourceHandlerPath = sourceHandlerPath.replace(
@@ -126,6 +128,7 @@ export class CodeStepBuildService {
         createLogicFunctionInput: {
           ...existingLogicFunction,
           id: newId,
+          universalIdentifier: newUniversalIdentifier,
           description: existingLogicFunction.description ?? undefined,
           builtHandlerPath: toBuiltHandlerPath,
           sourceHandlerPath: toSourceHandlerPath,
