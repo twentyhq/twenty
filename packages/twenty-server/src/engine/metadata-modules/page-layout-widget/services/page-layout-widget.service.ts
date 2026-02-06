@@ -19,6 +19,7 @@ import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-la
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
@@ -27,6 +28,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
+import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
 import { validateChartConfigurationFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -96,15 +98,9 @@ export class PageLayoutWidgetService {
     }
   }
 
-  private async enrichRichTextConfigurationBody({
-    configuration,
-  }: {
-    configuration?: AllPageLayoutWidgetConfiguration;
-  }): Promise<AllPageLayoutWidgetConfiguration | undefined> {
-    if (!isDefined(configuration)) {
-      return undefined;
-    }
-
+  private async enrichRichTextConfigurationBody(
+    configuration: AllPageLayoutWidgetConfiguration,
+  ): Promise<AllPageLayoutWidgetConfiguration> {
     if (
       configuration.configurationType !==
       WidgetConfigurationType.STANDALONE_RICH_TEXT
@@ -123,6 +119,52 @@ export class PageLayoutWidgetService {
       };
     } catch {
       return configuration;
+    }
+  }
+
+  // Only fetches metadata maps and validates when dealing with GRAPH widgets
+  // or chart configuration types. IFRAME, STANDALONE_RICH_TEXT, etc. are
+  // validated by the migration system which already has proper error handling.
+  private async validateChartFieldReferencesIfApplicable({
+    configuration,
+    objectMetadataId,
+    widgetType,
+    workspaceId,
+  }: {
+    configuration: AllPageLayoutWidgetConfiguration;
+    objectMetadataId?: string | null;
+    widgetType?: WidgetType | null;
+    workspaceId: string;
+  }): Promise<void> {
+    const needsChartValidation =
+      isChartFieldsForValidation(configuration) ||
+      widgetType === WidgetType.GRAPH;
+
+    if (!needsChartValidation) {
+      return;
+    }
+
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+        },
+      );
+
+    try {
+      validateChartConfigurationFieldReferences({
+        configuration,
+        objectMetadataId,
+        widgetType,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+      });
+    } catch (error) {
+      throw new PageLayoutWidgetException(
+        error instanceof Error ? error.message : String(error),
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
     }
   }
 
@@ -186,41 +228,28 @@ export class PageLayoutWidgetService {
     input: CreatePageLayoutWidgetInput;
     workspaceId: string;
   }): Promise<PageLayoutWidgetDTO> {
-    const configuration = await this.enrichRichTextConfigurationBody({
-      configuration: input.configuration,
-    });
-    const createInput = {
-      ...input,
-      configuration: configuration ?? input.configuration,
-    };
+    const createInput = isDefined(input.configuration)
+      ? {
+          ...input,
+          configuration: await this.enrichRichTextConfigurationBody(
+            input.configuration,
+          ),
+        }
+      : input;
+
+    if (isDefined(createInput.configuration)) {
+      await this.validateChartFieldReferencesIfApplicable({
+        configuration: createInput.configuration,
+        objectMetadataId: createInput.objectMetadataId ?? null,
+        widgetType: createInput.type,
+        workspaceId,
+      });
+    }
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
       );
-
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
-        },
-      );
-
-    try {
-      validateChartConfigurationFieldReferences({
-        configuration: createInput.configuration,
-        objectMetadataId: createInput.objectMetadataId ?? null,
-        widgetType: createInput.type,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-    } catch (error) {
-      throw new PageLayoutWidgetException(
-        error instanceof Error ? error.message : String(error),
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    }
 
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
@@ -265,19 +294,6 @@ export class PageLayoutWidgetService {
     workspaceId: string;
     updateData: UpdatePageLayoutWidgetInput;
   }): Promise<PageLayoutWidgetDTO> {
-    const normalizedConfiguration = await this.enrichRichTextConfigurationBody({
-      configuration: updateData.configuration,
-    });
-    const normalizedUpdateData = Object.prototype.hasOwnProperty.call(
-      updateData,
-      'configuration',
-    )
-      ? {
-          ...updateData,
-          configuration: normalizedConfiguration,
-        }
-      : updateData;
-
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
@@ -286,61 +302,55 @@ export class PageLayoutWidgetService {
       existingFlatPageLayoutWidgetMaps,
     );
 
-    const shouldValidateConfiguration =
-      Object.prototype.hasOwnProperty.call(
-        normalizedUpdateData,
-        'configuration',
-      ) ||
-      Object.prototype.hasOwnProperty.call(
-        normalizedUpdateData,
-        'objectMetadataId',
-      ) ||
-      Object.prototype.hasOwnProperty.call(normalizedUpdateData, 'type');
+    // Only enrich when configuration is explicitly provided and defined
+    // Preserve null semantics: null = "set to null", undefined = "no change"
+    const isConfigurationBeingUpdated = Object.prototype.hasOwnProperty.call(
+      updateData,
+      'configuration',
+    );
 
-    if (shouldValidateConfiguration) {
-      const effectiveConfiguration =
-        normalizedUpdateData.configuration ?? existingWidget.configuration;
+    const processedUpdateData =
+      isConfigurationBeingUpdated && isDefined(updateData.configuration)
+        ? {
+            ...updateData,
+            configuration: await this.enrichRichTextConfigurationBody(
+              updateData.configuration,
+            ),
+          }
+        : updateData;
+
+    // Chart field validation when config-related fields change
+    const shouldValidateChartFields =
+      isConfigurationBeingUpdated ||
+      Object.prototype.hasOwnProperty.call(updateData, 'objectMetadataId') ||
+      Object.prototype.hasOwnProperty.call(updateData, 'type');
+
+    if (shouldValidateChartFields) {
+      const effectiveConfiguration = isConfigurationBeingUpdated
+        ? processedUpdateData.configuration
+        : existingWidget.configuration;
       const effectiveObjectMetadataId =
-        normalizedUpdateData.objectMetadataId ??
-        existingWidget.objectMetadataId;
+        processedUpdateData.objectMetadataId ?? existingWidget.objectMetadataId;
       const effectiveWidgetType =
-        normalizedUpdateData.type ?? existingWidget.type;
+        processedUpdateData.type ?? existingWidget.type;
 
-      if (!isDefined(effectiveConfiguration)) {
-        throw new PageLayoutWidgetException(
-          'configuration is required for widgets.',
-          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-        );
-      }
-
-      const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
-        await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
-          },
-        );
-
-      try {
-        validateChartConfigurationFieldReferences({
+      // Only run chart validation when we have a defined configuration
+      // null/undefined/malformed configs flow through to migration validation
+      // which already surfaces proper error codes
+      if (isDefined(effectiveConfiguration)) {
+        await this.validateChartFieldReferencesIfApplicable({
           configuration: effectiveConfiguration,
           objectMetadataId: effectiveObjectMetadataId,
           widgetType: effectiveWidgetType,
-          flatFieldMetadataMaps,
-          flatObjectMetadataMaps,
+          workspaceId,
         });
-      } catch (error) {
-        throw new PageLayoutWidgetException(
-          error instanceof Error ? error.message : String(error),
-          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-        );
       }
     }
 
     const updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId = {
       id,
       update: {
-        ...normalizedUpdateData,
+        ...processedUpdateData,
       },
     };
 
