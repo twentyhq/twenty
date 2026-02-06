@@ -75,12 +75,9 @@ export const fromViewFilterEntityToFlatViewFilter = ({
     updatedAt: viewFilterEntity.updatedAt.toISOString(),
     deletedAt: viewFilterEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier: viewFilterEntityWithoutRelations.universalIdentifier,
-    __universal: {
-      universalIdentifier: viewFilterEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      fieldMetadataUniversalIdentifier,
-      viewFilterGroupUniversalIdentifier,
-      viewUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
+    fieldMetadataUniversalIdentifier,
+    viewFilterGroupUniversalIdentifier,
+    viewUniversalIdentifier,
   };
 };

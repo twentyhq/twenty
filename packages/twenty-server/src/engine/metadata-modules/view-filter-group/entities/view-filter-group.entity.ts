@@ -68,7 +68,7 @@ export class ViewFilterGroupEntity extends SyncableEntity {
     },
   )
   @JoinColumn({ name: 'parentViewFilterGroupId' })
-  parentViewFilterGroup: Relation<ViewFilterGroupEntity>;
+  parentViewFilterGroup: Relation<ViewFilterGroupEntity> | null;
 
   @OneToMany(
     () => ViewFilterGroupEntity,

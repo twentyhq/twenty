@@ -1481,6 +1481,7 @@ export enum FeatureFlagKey {
   IS_COMMAND_MENU_ITEM_ENABLED = 'IS_COMMAND_MENU_ITEM_ENABLED',
   IS_DASHBOARD_V2_ENABLED = 'IS_DASHBOARD_V2_ENABLED',
   IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
+  IS_FILES_FIELD_MIGRATED = 'IS_FILES_FIELD_MIGRATED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
   IS_MARKETPLACE_ENABLED = 'IS_MARKETPLACE_ENABLED',
@@ -3124,6 +3125,7 @@ export type MutationUploadFileArgs = {
 
 
 export type MutationUploadFilesFieldFileArgs = {
+  fieldMetadataId: Scalars['String'];
   file: Scalars['Upload'];
 };
 
@@ -3941,6 +3943,7 @@ export type QueryGetPageLayoutWidgetsArgs = {
 
 export type QueryGetPageLayoutsArgs = {
   objectMetadataId?: InputMaybe<Scalars['String']>;
+  pageLayoutType?: InputMaybe<PageLayoutType>;
 };
 
 
@@ -5990,6 +5993,7 @@ export type DeleteFileMutation = { __typename?: 'Mutation', deleteFile: { __type
 
 export type UploadFilesFieldFileMutationVariables = Exact<{
   file: Scalars['Upload'];
+  fieldMetadataId: Scalars['String'];
 }>;
 
 
@@ -10337,8 +10341,8 @@ export type DeleteFileMutationHookResult = ReturnType<typeof useDeleteFileMutati
 export type DeleteFileMutationResult = Apollo.MutationResult<DeleteFileMutation>;
 export type DeleteFileMutationOptions = Apollo.BaseMutationOptions<DeleteFileMutation, DeleteFileMutationVariables>;
 export const UploadFilesFieldFileDocument = gql`
-    mutation UploadFilesFieldFile($file: Upload!) {
-  uploadFilesFieldFile(file: $file) {
+    mutation UploadFilesFieldFile($file: Upload!, $fieldMetadataId: String!) {
+  uploadFilesFieldFile(file: $file, fieldMetadataId: $fieldMetadataId) {
     id
     path
     size
@@ -10362,6 +10366,7 @@ export type UploadFilesFieldFileMutationFn = Apollo.MutationFunction<UploadFiles
  * const [uploadFilesFieldFileMutation, { data, loading, error }] = useUploadFilesFieldFileMutation({
  *   variables: {
  *      file: // value for 'file'
+ *      fieldMetadataId: // value for 'fieldMetadataId'
  *   },
  * });
  */

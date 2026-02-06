@@ -10,6 +10,7 @@ import {
   type StandardPageLayoutTabDefinition,
   type StandardPageLayoutWidgetDefinition,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.types';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type StandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { type StandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
 
@@ -49,14 +50,25 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   workspaceId,
   twentyStandardApplicationId,
   standardPageLayoutMetadataRelatedEntityIds,
+  objectMetadataUniversalIdentifier,
   now,
-}: CreateStandardPageLayoutWidgetArgs): FlatPageLayoutWidget => {
+}: CreateStandardPageLayoutWidgetArgs & {
+  objectMetadataUniversalIdentifier: string | null;
+}): FlatPageLayoutWidget => {
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
   const layout = STANDARD_PAGE_LAYOUTS[
     layoutName as keyof typeof STANDARD_PAGE_LAYOUTS
-  ] as { tabs: Record<string, StandardPageLayoutTabDefinition> };
+  ] as {
+    tabs: Record<
+      string,
+      StandardPageLayoutTabDefinition & {
+        universalIdentifier: string;
+      }
+    >;
+  };
+  const tabDefinition = layout.tabs[tabTitle];
   const widgetDef: StandardPageLayoutWidgetDefinition =
-    layout.tabs[tabTitle].widgets[widgetName];
+    tabDefinition.widgets[widgetName];
 
   if (!isDefined(widgetDef)) {
     throw new Error(
@@ -71,14 +83,18 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     id: widgetIds.id,
     universalIdentifier: widgetDef.universalIdentifier,
     applicationId: twentyStandardApplicationId,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
     workspaceId,
     pageLayoutTabId: tabIds.id,
+    pageLayoutTabUniversalIdentifier: tabDefinition.universalIdentifier,
     title,
     type,
     gridPosition,
     position,
     configuration,
     objectMetadataId,
+    objectMetadataUniversalIdentifier,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

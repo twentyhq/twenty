@@ -52,11 +52,14 @@ export class ViewService {
         },
       );
 
-    const { flatFieldMetadataMaps: existingFlatFieldMetadataMaps } =
+    const {
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
+          flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
         },
       );
 
@@ -65,8 +68,9 @@ export class ViewService {
         createViewInput,
         workspaceId,
         createdByUserWorkspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =

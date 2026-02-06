@@ -77,7 +77,7 @@ export class SkillService {
     const flatSkillToCreate = fromCreateSkillInputToFlatSkillToCreate({
       createSkillInput: input,
       workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
+      flatApplication: workspaceCustomFlatApplication,
     });
 
     const validateAndBuildResult =

@@ -75,6 +75,7 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
           existingFlatObjectMetadata: fromFlatObjectMetadata,
           flatViewFieldMaps,
           flatViewMaps,
+          flatFieldMetadataMaps,
           updatedLabelIdentifierFieldMetadataId:
             toFlatObjectMetadata.labelIdentifierFieldMetadataId,
         })

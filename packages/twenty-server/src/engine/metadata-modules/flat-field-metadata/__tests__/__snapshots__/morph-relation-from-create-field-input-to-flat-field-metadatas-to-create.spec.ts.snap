@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload has different relation types 1`] = `
 {
@@ -315,6 +315,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
     "indexMetadatas": [
       {
         "applicationId": Any<String>,
+        "applicationUniversalIdentifier": Any<String>,
         "createdAt": Any<String>,
         "flatIndexFieldMetadatas": [
           {
@@ -333,12 +334,14 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isUnique": false,
         "name": "IDX_f687e4e4252800dddd8e5518362",
         "objectMetadataId": Any<String>,
+        "objectMetadataUniversalIdentifier": Any<String>,
         "universalIdentifier": Any<String>,
         "updatedAt": Any<String>,
         "workspaceId": Any<String>,
       },
       {
         "applicationId": Any<String>,
+        "applicationUniversalIdentifier": Any<String>,
         "createdAt": Any<String>,
         "flatIndexFieldMetadatas": [
           {
@@ -357,6 +360,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "isUnique": false,
         "name": "IDX_cb15d901e889e25d0a9acecb595",
         "objectMetadataId": Any<String>,
+        "objectMetadataUniversalIdentifier": Any<String>,
         "universalIdentifier": Any<String>,
         "updatedAt": Any<String>,
         "workspaceId": Any<String>,

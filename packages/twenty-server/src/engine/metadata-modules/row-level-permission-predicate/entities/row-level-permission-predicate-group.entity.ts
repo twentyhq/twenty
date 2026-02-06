@@ -85,7 +85,7 @@ export class RowLevelPermissionPredicateGroupEntity
     { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'parentRowLevelPermissionPredicateGroupId' })
-  parentRowLevelPermissionPredicateGroup: Relation<RowLevelPermissionPredicateGroupEntity>;
+  parentRowLevelPermissionPredicateGroup: Relation<RowLevelPermissionPredicateGroupEntity> | null;
 
   @OneToMany(
     () => RowLevelPermissionPredicateGroupEntity,

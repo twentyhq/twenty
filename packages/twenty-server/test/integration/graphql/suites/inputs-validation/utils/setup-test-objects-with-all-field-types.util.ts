@@ -1,11 +1,11 @@
-import gql from 'graphql-tag';
 import { getFieldMetadataCreationInputs } from 'test/integration/graphql/suites/inputs-validation/utils/get-field-metadata-creation-inputs.util';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { makeGraphqlAPIRequestWithFileUpload } from 'test/integration/graphql/utils/make-graphql-api-request-with-file-upload.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { uploadFilesFieldFileMutation } from 'test/integration/graphql/utils/upload-files-field-file-mutation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { RelationType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -27,17 +27,6 @@ export const TEST_UUID_FIELD_VALUE = '20202020-b21e-4ec2-873b-de4264d89025';
 
 export const TEST_TARGET_OBJECT_RECORD_ID_FIELD_VALUE =
   '20202020-b21e-4ec2-873b-de4264d89021';
-
-const uploadFilesFieldFileMutation = gql`
-  mutation UploadFilesFieldFile($file: Upload!) {
-    uploadFilesFieldFile(file: $file) {
-      id
-      path
-      size
-      createdAt
-    }
-  }
-`;
 
 export const joinColumnNameForManyToOneMorphRelationField1 =
   computeMorphRelationFieldName({
@@ -91,10 +80,17 @@ export const setupTestObjectsWithAllFieldTypes = async (
     targetObjectMetadata2Id,
   );
 
+  let filesFieldMetadataId: string | undefined;
+
   for (const input of fieldMetadataCreationInputs) {
-    await createOneFieldMetadata({
+    const result = await createOneFieldMetadata({
       input,
+      gqlFields: 'id name type',
     });
+
+    if (input.type === FieldMetadataType.FILES) {
+      filesFieldMetadataId = result.data.createOneField.id;
+    }
   }
 
   await makeGraphqlAPIRequest(
@@ -115,6 +111,10 @@ export const setupTestObjectsWithAllFieldTypes = async (
   if (withFilesField) {
     jest.useRealTimers();
 
+    if (!filesFieldMetadataId) {
+      throw new Error('FILES field metadata was not created');
+    }
+
     const testFileContent = 'Test document content';
     const testFileName = 'Document.pdf';
     const testMimeType = 'application/pdf';
@@ -122,7 +122,7 @@ export const setupTestObjectsWithAllFieldTypes = async (
     const uploadResponse = await makeGraphqlAPIRequestWithFileUpload(
       {
         query: uploadFilesFieldFileMutation,
-        variables: { file: null },
+        variables: { file: null, fieldMetadataId: filesFieldMetadataId },
       },
       {
         field: 'file',
