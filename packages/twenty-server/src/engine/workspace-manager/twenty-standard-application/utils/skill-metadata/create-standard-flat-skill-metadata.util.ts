@@ -271,7 +271,9 @@ Only set date granularity when grouping by a date field (or a relation nested da
 ## Non-graph Widgets
 
 - IFRAME: configurationType "IFRAME" + url
-- STANDALONE_RICH_TEXT: configurationType "STANDALONE_RICH_TEXT" + body (blocknote or markdown)
+- STANDALONE_RICH_TEXT: configurationType "STANDALONE_RICH_TEXT" + body with markdown content
+  - IMPORTANT: Put the actual text content in configuration.body.markdown, NOT in the widget title
+  - Widget title should be a short label (e.g. "Notes", "Summary"), body.markdown holds the real content
 
 Example (IFRAME):
 {
@@ -282,7 +284,7 @@ Example (IFRAME):
 Example (STANDALONE_RICH_TEXT):
 {
   "configurationType": "STANDALONE_RICH_TEXT",
-  "body": { "markdown": "Quarterly summary" }
+  "body": { "markdown": "## Quarterly Summary\\n\\nKey metrics:\\n- Revenue up 15%\\n- 42 new deals closed\\n\\n**Next steps**: Focus on enterprise pipeline." }
 }
 
 ## Grid System

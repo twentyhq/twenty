@@ -389,10 +389,24 @@ const richTextConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.STANDALONE_RICH_TEXT),
   body: z
     .object({
-      blocknote: z.string().nullable().optional(),
-      markdown: z.string().nullable().optional(),
+      blocknote: z
+        .string()
+        .nullable()
+        .optional()
+        .describe(
+          'BlockNote JSON string (advanced). Stringified array of BlockNote blocks.',
+        ),
+      markdown: z
+        .string()
+        .nullable()
+        .optional()
+        .describe(
+          'Markdown content string (preferred for AI). Supports headings, bold, lists, links, etc.',
+        ),
     })
-    .describe('Rich text content (RichTextV2Body)'),
+    .describe(
+      'Rich text content. Use { "markdown": "your content here" } for text. Supports full markdown syntax.',
+    ),
 });
 
 export const graphConfigurationSchema = z.discriminatedUnion(
