@@ -26,7 +26,7 @@ type TargetMetadataNamesForForeignKeys<
   TProvidedKeys extends string,
 > = {
   [K in keyof ManyToOneConfig<T>]: ManyToOneConfig<T>[K] extends {
-    foreignKey: infer FK extends TProvidedKeys;
+    foreignKey: infer _FK extends TProvidedKeys;
     metadataName: infer MN extends AllMetadataName;
   }
     ? MN
