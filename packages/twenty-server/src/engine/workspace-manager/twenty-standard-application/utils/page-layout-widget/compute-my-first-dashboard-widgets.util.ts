@@ -1,6 +1,7 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 } from 'uuid';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -59,6 +60,7 @@ const createWelcomeRichText = ({
 }): FlatPageLayoutWidget =>
   createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier: null,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -234,6 +236,8 @@ const createDealsByCompany = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -280,6 +284,8 @@ const createPipelineValueByStage = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -332,6 +338,8 @@ const createRevenueTimeline = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -379,6 +387,8 @@ const createOpportunitiesByOwner = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -428,6 +438,7 @@ const createStockMarketIframe = ({
 }): FlatPageLayoutWidget =>
   createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier: null,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -463,6 +474,8 @@ const createDealsCreatedThisMonth = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -514,6 +527,8 @@ const createDealValueCreatedThisMonth = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',

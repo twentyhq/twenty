@@ -121,6 +121,8 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     } = await this.migrateFavoriteFolders({
       workspaceId,
       workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
       existingFlatNavigationMenuItemMaps,
     });
 
@@ -128,7 +130,11 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
       await this.migrateFavorites({
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
+        twentyStandardApplicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
         flatObjectMetadataMaps,
         flatViewMaps,
         folderIdMapping,
@@ -189,10 +195,12 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
   private async migrateFavoriteFolders({
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
     existingFlatNavigationMenuItemMaps,
   }: {
     workspaceId: string;
     workspaceCustomApplicationId: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
     existingFlatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
   }): Promise<{
     folderIdMapping: Map<string, Map<string, string>>;
@@ -270,12 +278,17 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           userWorkspaceId,
           targetRecordId: null,
           targetObjectMetadataId: null,
+          targetObjectMetadataUniversalIdentifier: null,
           viewId: null,
+          viewUniversalIdentifier: null,
           folderId: null,
+          folderUniversalIdentifier: null,
           name: favoriteFolder.name,
           position: favoriteFolder.position,
           workspaceId,
           applicationId: workspaceCustomApplicationId,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
           createdAt: now,
           updatedAt: now,
         };
@@ -297,12 +310,17 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           userWorkspaceId: null,
           targetRecordId: null,
           targetObjectMetadataId: null,
+          targetObjectMetadataUniversalIdentifier: null,
           viewId: null,
+          viewUniversalIdentifier: null,
           folderId: null,
+          folderUniversalIdentifier: null,
           name: favoriteFolder.name,
           position: favoriteFolder.position,
           workspaceId,
           applicationId: workspaceCustomApplicationId,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
           createdAt: now,
           updatedAt: now,
         };
@@ -325,7 +343,9 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
   private async migrateFavorites({
     workspaceId,
     twentyStandardApplicationId,
+    twentyStandardApplicationUniversalIdentifier,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
     flatObjectMetadataMaps,
     flatViewMaps,
     folderIdMapping,
@@ -334,7 +354,9 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
   }: {
     workspaceId: string;
     twentyStandardApplicationId: string;
+    twentyStandardApplicationUniversalIdentifier: string;
     workspaceCustomApplicationId: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatViewMaps: FlatEntityMaps<FlatView>;
     folderIdMapping: Map<string, Map<string, string>>;
@@ -471,13 +493,18 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           continue;
         }
 
-        const { applicationId, universalIdentifier } =
-          this.getApplicationIdAndUniversalIdentifierForViewFavorite({
-            viewId: favorite.viewId,
-            flatViewMaps,
-            twentyStandardApplicationId,
-            workspaceCustomApplicationId,
-          });
+        const {
+          applicationId,
+          applicationUniversalIdentifier,
+          universalIdentifier,
+        } = this.getApplicationIdAndUniversalIdentifierForViewFavorite({
+          viewId: favorite.viewId,
+          flatViewMaps,
+          twentyStandardApplicationId,
+          twentyStandardApplicationUniversalIdentifier,
+          workspaceCustomApplicationId,
+          workspaceCustomApplicationUniversalIdentifier,
+        });
 
         const now = new Date().toISOString();
 
@@ -487,12 +514,17 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
           userWorkspaceId,
           targetRecordId: null,
           targetObjectMetadataId: null,
+          targetObjectMetadataUniversalIdentifier: null,
           viewId: favorite.viewId,
+          viewUniversalIdentifier:
+            flatViewMaps.universalIdentifierById[favorite.viewId] ?? null,
           folderId,
+          folderUniversalIdentifier: folderId,
           name: null,
           position: favorite.position,
           workspaceId,
           applicationId,
+          applicationUniversalIdentifier,
           createdAt: now,
           updatedAt: now,
         });
@@ -525,12 +557,20 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         userWorkspaceId,
         targetRecordId,
         targetObjectMetadataId,
+        targetObjectMetadataUniversalIdentifier:
+          flatObjectMetadataMaps.universalIdentifierById[
+            targetObjectMetadataId
+          ] ?? null,
         viewId: null,
+        viewUniversalIdentifier: null,
         folderId,
+        folderUniversalIdentifier: folderId,
         name: null,
         position: favorite.position,
         workspaceId,
         applicationId: workspaceCustomApplicationId,
+        applicationUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
         createdAt: now,
         updatedAt: now,
       });
@@ -548,13 +588,21 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     viewId,
     flatViewMaps,
     twentyStandardApplicationId,
+    twentyStandardApplicationUniversalIdentifier,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     viewId: string;
     flatViewMaps: FlatEntityMaps<FlatView>;
     twentyStandardApplicationId: string;
+    twentyStandardApplicationUniversalIdentifier: string;
     workspaceCustomApplicationId: string;
-  }): { applicationId: string; universalIdentifier: string } {
+    workspaceCustomApplicationUniversalIdentifier: string;
+  }): {
+    applicationId: string;
+    applicationUniversalIdentifier: string;
+    universalIdentifier: string;
+  } {
     const flatView = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: flatViewMaps,
       flatEntityId: viewId,
@@ -573,10 +621,14 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     return !isDefined(matchingStandardItem)
       ? {
           applicationId: workspaceCustomApplicationId,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
           universalIdentifier: uuidv4(),
         }
       : {
           applicationId: twentyStandardApplicationId,
+          applicationUniversalIdentifier:
+            twentyStandardApplicationUniversalIdentifier,
           universalIdentifier: matchingStandardItem.universalIdentifier,
         };
   }

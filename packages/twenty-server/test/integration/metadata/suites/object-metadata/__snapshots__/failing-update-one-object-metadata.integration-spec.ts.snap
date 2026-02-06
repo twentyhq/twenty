@@ -64,13 +64,15 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
 exports[`Object metadata update should fail when labelIdentifier is not a known field metadata id 1`] = `
 [
   {
+    "eventId": Any<String>,
     "extensions": {
-      "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_OBJECT_INPUT",
-      "userFriendlyMessage": "Invalid object input.",
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "subCode": "ENTITY_NOT_FOUND",
+      "userFriendlyMessage": "An error occurred.",
     },
-    "message": "New label identifier field not found for object metadata",
-    "name": "UserInputError",
+    "message": "Could not find flat entity in maps",
+    "name": "InternalServerError",
   },
 ]
 `;

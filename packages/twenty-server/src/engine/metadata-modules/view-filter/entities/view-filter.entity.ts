@@ -85,5 +85,5 @@ export class ViewFilterEntity
     },
   )
   @JoinColumn({ name: 'viewFilterGroupId' })
-  viewFilterGroup: Relation<ViewFilterGroupEntity>;
+  viewFilterGroup: Relation<ViewFilterGroupEntity> | null;
 }

@@ -77,6 +77,11 @@ const computeRecordPageWidgets = ({
           ? layoutObjectMetadataId
           : null;
 
+        const objectMetadataUniversalIdentifier =
+          RECORD_PAGE_LAYOUT_WIDGET_TYPES.includes(widget.type)
+            ? (layout.objectUniversalIdentifier ?? null)
+            : null;
+
         allWidgets.push(
           createStandardPageLayoutWidgetFlatMetadata({
             now,
@@ -84,6 +89,7 @@ const computeRecordPageWidgets = ({
             twentyStandardApplicationId,
             standardObjectMetadataRelatedEntityIds,
             standardPageLayoutMetadataRelatedEntityIds,
+            objectMetadataUniversalIdentifier,
             context: {
               layoutName,
               tabTitle,

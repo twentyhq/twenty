@@ -397,21 +397,35 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createEmptyFlatEntityMaps(),
     );
 
+    const optimisticFlatObjectMetadataMaps =
+      addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: flatObjectMetadataToCreate,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
+      });
+
     const flatDefaultViewToCreate = await this.computeFlatViewToCreate({
       objectMetadata: flatObjectMetadataToCreate,
       workspaceId,
-      workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+      flatApplication: resolvedOwnerFlatApplication,
       flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+    });
+
+    const optimisticFlatViewMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: flatDefaultViewToCreate,
+      flatEntityMaps: createEmptyFlatEntityMaps(),
     });
 
     const flatDefaultViewFieldsToCreate =
       await this.computeFlatViewFieldsToCreate({
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
         objectFlatFieldMetadatas: flatFieldMetadataToCreateOnObject,
         viewId: flatDefaultViewToCreate.id,
         workspaceId,
         labelIdentifierFieldMetadataId:
           flatObjectMetadataToCreate.labelIdentifierFieldMetadataId,
+        flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+        flatViewMaps: optimisticFlatViewMaps,
       });
 
     const isNavigationMenuItemEnabled =
@@ -423,6 +437,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           view: flatDefaultViewToCreate,
           workspaceId,
           workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+          workspaceCustomApplicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         })
       : null;
 
@@ -515,13 +531,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async computeFlatViewToCreate({
     objectMetadata,
     workspaceId,
-    workspaceCustomApplicationId,
+    flatApplication,
     flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
   }: {
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
     objectMetadata: FlatObjectMetadata;
     workspaceId: string;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   }) {
     const defaultViewInput = {
       objectMetadataId: objectMetadata.id,
@@ -535,8 +553,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const { flatViewToCreate } = fromCreateViewInputToFlatViewToCreate({
       createViewInput: defaultViewInput,
       workspaceId,
-      workspaceCustomApplicationId,
+      flatApplication,
       flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
     });
 
     return flatViewToCreate;
@@ -546,14 +565,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectFlatFieldMetadatas,
     viewId,
     workspaceId,
-    workspaceCustomApplicationId,
+    flatApplication,
     labelIdentifierFieldMetadataId,
+    flatFieldMetadataMaps,
+    flatViewMaps,
   }: {
-    workspaceCustomApplicationId: string;
+    flatApplication: FlatApplication;
     objectFlatFieldMetadatas: FlatFieldMetadata[];
     viewId: string;
     workspaceId: string;
     labelIdentifierFieldMetadataId: string | null;
+    flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
   }) {
     const defaultViewFields = objectFlatFieldMetadatas
       .filter(
@@ -571,8 +594,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             size: DEFAULT_VIEW_FIELD_SIZE,
             viewId: viewId,
           },
-          workspaceCustomApplicationId,
+          flatApplication,
           workspaceId: workspaceId,
+          flatFieldMetadataMaps,
+          flatViewMaps,
         }),
       );
 
@@ -583,10 +608,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     view,
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     view: FlatView;
     workspaceId: string;
     workspaceCustomApplicationId: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
   }): Promise<FlatNavigationMenuItem> {
     const { flatNavigationMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -613,12 +640,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       userWorkspaceId: null,
       targetRecordId: null,
       targetObjectMetadataId: null,
+      targetObjectMetadataUniversalIdentifier: null,
       viewId: view.id,
+      viewUniversalIdentifier: view.universalIdentifier,
       folderId: null,
+      folderUniversalIdentifier: null,
       name: null,
       position: nextPosition,
       workspaceId,
       applicationId: workspaceCustomApplicationId,
+      applicationUniversalIdentifier:
+        workspaceCustomApplicationUniversalIdentifier,
       createdAt: now,
       updatedAt: now,
     };

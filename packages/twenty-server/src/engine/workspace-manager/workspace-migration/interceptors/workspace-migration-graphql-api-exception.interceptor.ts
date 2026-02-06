@@ -10,6 +10,11 @@ import { type Observable, catchError } from 'rxjs';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
 import { workspaceMigrationRunnerExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-runner-exception-formatter';
@@ -29,6 +34,17 @@ export class WorkspaceMigrationGraphqlApiExceptionInterceptor
 
     return next.handle().pipe(
       catchError((error) => {
+        if (error instanceof FlatEntityMapsException) {
+          switch (error.code) {
+            case FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND:
+              throw new NotFoundError(error);
+            case FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS:
+            case FlatEntityMapsExceptionCode.ENTITY_MALFORMED:
+            case FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR:
+              throw error;
+          }
+        }
+
         if (error instanceof WorkspaceMigrationBuilderException) {
           workspaceMigrationBuilderExceptionFormatter(error, i18n);
         }
