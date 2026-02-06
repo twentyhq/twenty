@@ -15,8 +15,6 @@ import {
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
-import type { Sources } from 'twenty-shared/types';
-
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
@@ -37,11 +35,6 @@ class UpdateLogicFunctionInputUpdates {
   @Max(900)
   @IsOptional()
   timeoutSeconds?: number;
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  code?: Sources;
 
   @IsString()
   @Field({ nullable: true })
@@ -67,10 +60,15 @@ class UpdateLogicFunctionInputUpdates {
   @Field({ nullable: true })
   @IsOptional()
   isTool?: boolean;
+
+  @IsString()
+  @Field({ nullable: true })
+  @IsOptional()
+  checksum?: string;
 }
 
 @InputType()
-export class UpdateLogicFunctionInput {
+export class UpdateLogicFunctionSourceInput {
   @Field(() => UUIDScalarType, {
     description: 'Id of the logic function to update',
   })

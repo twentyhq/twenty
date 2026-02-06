@@ -131,7 +131,7 @@ export const SettingsToolsTable = () => {
       });
 
       if (result.status === 'successful' && isDefined(result.response?.data)) {
-        const newFunction = result.response.data.createOneLogicFunction;
+        const newFunction = result.response.data.createDefaultLogicFunction;
         enqueueSuccessSnackBar({ message: t`Tool created` });
 
         // Navigate to the logic function detail page

@@ -15,7 +15,7 @@ import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
-import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function/logic-function-executor/interfaces/logic-function-executor.interface';
+import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
@@ -456,13 +456,12 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
-    options: Object.values(LogicFunctionExecutorDriverType),
+    options: Object.values(LogicFunctionDriverType),
     isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  LOGIC_FUNCTION_TYPE: LogicFunctionExecutorDriverType =
-    LogicFunctionExecutorDriverType.LOCAL;
+  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType = LogicFunctionDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -496,7 +495,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsAWSRegion()
   LOGIC_FUNCTION_LAMBDA_REGION: AwsRegion;
@@ -507,7 +506,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   LOGIC_FUNCTION_LAMBDA_ROLE: string;
 
@@ -517,7 +516,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsOptional()
   LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE?: string;
@@ -529,7 +528,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsOptional()
   LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID: string;
@@ -541,7 +540,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsOptional()
   LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY: string;

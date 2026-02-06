@@ -26,7 +26,7 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   triggers: LogicFunctionTriggerManifest[];
   sourceHandlerPath: string;
   builtHandlerPath: string;
-  builtHandlerChecksum: string | null;
+  builtHandlerChecksum: string;
   handlerName: string;
   toolInputSchema?: InputJsonSchema;
   isTool?: boolean;

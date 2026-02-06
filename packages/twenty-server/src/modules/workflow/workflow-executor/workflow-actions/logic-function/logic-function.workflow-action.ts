@@ -4,7 +4,6 @@ import { resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
@@ -16,6 +15,7 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowLogicFunctionAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/guards/is-workflow-logic-function-action.guard';
 import { WorkflowLogicFunctionActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/types/workflow-logic-function-action-input.type';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 @Injectable()
 export class LogicFunctionWorkflowAction implements WorkflowAction {
@@ -70,12 +70,11 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
         );
       }
 
-      const result =
-        await this.logicFunctionExecutorService.executeOneLogicFunction({
-          id: workflowActionInput.logicFunctionId,
-          workspaceId,
-          payload: workflowActionInput.logicFunctionInput,
-        });
+      const result = await this.logicFunctionExecutorService.execute({
+        logicFunctionId: workflowActionInput.logicFunctionId,
+        workspaceId,
+        payload: workflowActionInput.logicFunctionInput,
+      });
 
       if (result.error) {
         return { error: result.error.errorMessage };

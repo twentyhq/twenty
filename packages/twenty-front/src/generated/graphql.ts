@@ -941,6 +941,14 @@ export type CreateCommandMenuItemInput = {
   workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
+export type CreateDefaultLogicFunctionInput = {
+  description?: InputMaybe<Scalars['String']>;
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -973,18 +981,6 @@ export type CreateFieldInput = {
 export type CreateFrontComponentInput = {
   id?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
-};
-
-export type CreateLogicFunctionInput = {
-  builtHandlerPath?: InputMaybe<Scalars['String']>;
-  code?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CreateObjectInput = {
@@ -1674,11 +1670,6 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetLogicFunctionSourceCodeInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
-};
-
 /** Order by options for graph widgets */
 export enum GraphOrderBy {
   FIELD_ASC = 'FIELD_ASC',
@@ -2068,6 +2059,7 @@ export type Mutation = {
   createCoreViewGroup: CoreViewGroup;
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
+  createDefaultLogicFunction: LogicFunction;
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
@@ -2080,7 +2072,6 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneApplication: Application;
   createOneField: Field;
-  createOneLogicFunction: LogicFunction;
   createOneObject: Object;
   createOneRole: Role;
   createPageLayout: PageLayout;
@@ -2329,6 +2320,11 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateDefaultLogicFunctionArgs = {
+  input: CreateDefaultLogicFunctionInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -2385,11 +2381,6 @@ export type MutationCreateOneApplicationArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
-};
-
-
-export type MutationCreateOneLogicFunctionArgs = {
-  input: CreateLogicFunctionInput;
 };
 
 
@@ -3773,7 +3764,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 
 export type QueryGetLogicFunctionSourceCodeArgs = {
-  input: GetLogicFunctionSourceCodeInput;
+  input: LogicFunctionIdInput;
 };
 
 

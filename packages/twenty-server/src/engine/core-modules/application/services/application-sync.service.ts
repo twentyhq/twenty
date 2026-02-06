@@ -14,6 +14,7 @@ import {
 import { FieldMetadataType, FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
+import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -23,7 +24,7 @@ import {
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application-layer/utils/get-default-application-package-fields.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -35,7 +36,7 @@ import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/fla
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
@@ -55,7 +56,7 @@ export class ApplicationSyncService {
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly logicFunctionService: LogicFunctionService,
+    private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -883,7 +884,7 @@ export class ApplicationSyncService {
     );
 
     for (const logicFunctionToDelete of logicFunctionsToDelete) {
-      await this.logicFunctionService.destroyOne({
+      await this.logicFunctionMetadataService.destroyOne({
         id: logicFunctionToDelete.id,
         workspaceId,
         isSystemBuild: true,
@@ -908,17 +909,17 @@ export class ApplicationSyncService {
       const name =
         logicFunctionToSync.name ?? parse(logicFunctionToSync.handlerName).name;
 
-      await this.logicFunctionService.updateOne({
+      await this.logicFunctionMetadataService.updateOne({
         id: logicFunctionToUpdate.id,
         update: {
           name,
-          code,
           timeoutSeconds: logicFunctionToSync.timeoutSeconds,
           sourceHandlerPath: logicFunctionToSync.sourceHandlerPath,
           builtHandlerPath: logicFunctionToSync.builtHandlerPath,
           handlerName: logicFunctionToSync.handlerName,
           toolInputSchema: logicFunctionToSync.toolInputSchema,
           isTool: logicFunctionToSync.isTool,
+          checksum: logicFunctionToSync.builtHandlerChecksum,
         },
         workspaceId,
         ownerFlatApplication,
@@ -930,10 +931,9 @@ export class ApplicationSyncService {
         logicFunctionToCreate.name ??
         parse(logicFunctionToCreate.handlerName).name;
 
-      await this.logicFunctionService.createOne({
+      await this.logicFunctionMetadataService.createOne({
         input: {
           name,
-          code,
           universalIdentifier: logicFunctionToCreate.universalIdentifier,
           timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
           sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
@@ -941,6 +941,8 @@ export class ApplicationSyncService {
           builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
           toolInputSchema: logicFunctionToCreate.toolInputSchema,
           isTool: logicFunctionToCreate.isTool,
+          checksum: logicFunctionToCreate.builtHandlerChecksum,
+          id: v4(),
         },
         workspaceId,
         ownerFlatApplication,

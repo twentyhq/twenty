@@ -11,7 +11,6 @@ import {
   Min,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
-import { Sources } from 'twenty-shared/types';
 
 @InputType()
 export class CreateLogicFunctionInput {
@@ -33,36 +32,28 @@ export class CreateLogicFunctionInput {
   timeoutSeconds?: number;
 
   @HideField()
-  applicationId?: string;
+  applicationId: string;
 
   @HideField()
   universalIdentifier?: string;
 
   @HideField()
-  id?: string;
+  id: string;
 
   @HideField()
-  checksum?: string;
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  code?: Sources;
+  checksum: string;
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  handlerName?: string;
+  @Field({ nullable: false })
+  handlerName: string;
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  sourceHandlerPath?: string;
+  @Field({ nullable: false })
+  sourceHandlerPath: string;
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  builtHandlerPath?: string;
+  @Field({ nullable: false })
+  builtHandlerPath: string;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
