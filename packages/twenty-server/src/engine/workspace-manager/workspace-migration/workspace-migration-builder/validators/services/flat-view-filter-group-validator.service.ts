@@ -5,8 +5,8 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { ViewFilterGroupExceptionCode } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
 import {
   type FailedFlatEntityValidation,
@@ -24,19 +24,21 @@ export class FlatViewFilterGroupValidatorService {
   constructor() {}
 
   private getCircularDependencyValidationErrors({
-    viewFilterGroupId,
-    parentViewFilterGroupId,
+    viewFilterGroupUniversalIdentifier,
+    parentViewFilterGroupUniversalIdentifier,
     flatViewFilterGroupMaps,
   }: {
-    viewFilterGroupId: string;
-    parentViewFilterGroupId: string;
-    flatViewFilterGroupMaps: FlatViewFilterGroupMaps;
+    viewFilterGroupUniversalIdentifier: string;
+    parentViewFilterGroupUniversalIdentifier: string;
+    flatViewFilterGroupMaps: MetadataUniversalFlatEntityMaps<'viewFilterGroup'>;
   }): FlatEntityValidationError<ViewFilterGroupExceptionCode>[] {
     const circularDependencyResult = validateFlatEntityCircularDependency({
-      flatEntityId: viewFilterGroupId,
-      flatEntityParentId: parentViewFilterGroupId,
+      flatEntityUniversalIdentifier: viewFilterGroupUniversalIdentifier,
+      flatEntityParentUniversalIdentifier:
+        parentViewFilterGroupUniversalIdentifier,
       maxDepth: VIEW_FILTER_GROUP_MAX_DEPTH,
-      parentIdKey: 'parentViewFilterGroupId',
+      parentUniversalIdentifierKey:
+        'parentViewFilterGroupUniversalIdentifier',
       flatEntityMaps: flatViewFilterGroupMaps,
     });
 
@@ -123,9 +125,10 @@ export class FlatViewFilterGroupValidatorService {
     ) {
       const circularDependencyErrors =
         this.getCircularDependencyValidationErrors({
-          viewFilterGroupId: flatViewFilterGroupToValidate.id,
-          parentViewFilterGroupId:
-            flatViewFilterGroupToValidate.parentViewFilterGroupId,
+          viewFilterGroupUniversalIdentifier:
+            flatViewFilterGroupToValidate.universalIdentifier,
+          parentViewFilterGroupUniversalIdentifier:
+            flatViewFilterGroupToValidate.parentViewFilterGroupUniversalIdentifier,
           flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
         });
 
@@ -236,8 +239,10 @@ export class FlatViewFilterGroupValidatorService {
 
     const circularDependencyErrors = this.getCircularDependencyValidationErrors(
       {
-        viewFilterGroupId: existingViewFilterGroup.id,
-        parentViewFilterGroupId: existingViewFilterGroup.parentViewFilterGroupId,
+        viewFilterGroupUniversalIdentifier:
+          existingViewFilterGroup.universalIdentifier,
+        parentViewFilterGroupUniversalIdentifier:
+          existingViewFilterGroup.parentViewFilterGroupUniversalIdentifier,
         flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
       },
     );

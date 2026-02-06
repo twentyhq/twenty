@@ -4,7 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
@@ -99,19 +99,19 @@ export class FlatNavigationMenuItemValidatorService {
   }
 
   private getCircularDependencyValidationErrors({
-    navigationMenuItemId,
-    folderId,
+    navigationMenuItemUniversalIdentifier,
+    folderUniversalIdentifier,
     flatNavigationMenuItemMaps,
   }: {
-    navigationMenuItemId: string;
-    folderId: string;
-    flatNavigationMenuItemMaps: MetadataFlatEntityMaps<'navigationMenuItem'>;
+    navigationMenuItemUniversalIdentifier: string;
+    folderUniversalIdentifier: string;
+    flatNavigationMenuItemMaps: MetadataUniversalFlatEntityMaps<'navigationMenuItem'>;
   }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
     const circularDependencyResult = validateFlatEntityCircularDependency({
-      flatEntityId: navigationMenuItemId,
-      flatEntityParentId: folderId,
+      flatEntityUniversalIdentifier: navigationMenuItemUniversalIdentifier,
+      flatEntityParentUniversalIdentifier: folderUniversalIdentifier,
       maxDepth: NAVIGATION_MENU_ITEM_MAX_DEPTH,
-      parentIdKey: 'folderId',
+      parentUniversalIdentifierKey: 'folderUniversalIdentifier',
       flatEntityMaps: flatNavigationMenuItemMaps,
     });
 
@@ -191,8 +191,10 @@ export class FlatNavigationMenuItemValidatorService {
     if (isDefined(flatNavigationMenuItem.folderUniversalIdentifier)) {
       const circularDependencyErrors =
         this.getCircularDependencyValidationErrors({
-          navigationMenuItemId: flatNavigationMenuItem.id,
-          folderId: flatNavigationMenuItem.folderId,
+          navigationMenuItemUniversalIdentifier:
+            flatNavigationMenuItem.universalIdentifier,
+          folderUniversalIdentifier:
+            flatNavigationMenuItem.folderUniversalIdentifier,
           flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
         });
 
@@ -334,8 +336,10 @@ export class FlatNavigationMenuItemValidatorService {
 
     const circularDependencyErrors = this.getCircularDependencyValidationErrors(
       {
-        navigationMenuItemId: fromFlatNavigationMenuItem.id,
-        folderId: fromFlatNavigationMenuItem.folderId,
+        navigationMenuItemUniversalIdentifier:
+          fromFlatNavigationMenuItem.universalIdentifier,
+        folderUniversalIdentifier:
+          fromFlatNavigationMenuItem.folderUniversalIdentifier,
         flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
       },
     );
