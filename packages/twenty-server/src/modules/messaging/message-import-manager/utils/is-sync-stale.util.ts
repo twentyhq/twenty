@@ -4,7 +4,7 @@ import { MESSAGING_IMPORT_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/mes
 
 export const isSyncStale = (syncStageStartedAt?: string | null): boolean => {
   if (!isDefined(syncStageStartedAt)) {
-    return false;
+    return true;
   }
 
   const syncStageStartedTime = new Date(syncStageStartedAt).getTime();

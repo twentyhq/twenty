@@ -1,7 +1,7 @@
-import { gql } from '@apollo/client';
 import { AGENT_FRAGMENT } from '@/ai/graphql/fragments/agentFragment';
-import { LOGIC_FUNCTION_FRAGMENT } from '@/settings/logic-functions/graphql/fragments/logicFunctionFragment';
 import { OBJECT_METADATA_FRAGMENT } from '@/object-metadata/graphql/fragment';
+import { LOGIC_FUNCTION_FRAGMENT } from '@/settings/logic-functions/graphql/fragments/logicFunctionFragment';
+import { gql } from '@apollo/client';
 
 export const APPLICATION_FRAGMENT = gql`
   ${AGENT_FRAGMENT}
@@ -14,6 +14,7 @@ export const APPLICATION_FRAGMENT = gql`
     version
     universalIdentifier
     canBeUninstalled
+    availablePackages
     applicationVariables {
       id
       key

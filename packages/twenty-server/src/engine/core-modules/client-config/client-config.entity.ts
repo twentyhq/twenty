@@ -108,8 +108,8 @@ export class PublicFeatureFlagMetadata {
   @Field(() => String)
   description: string;
 
-  @Field(() => String, { nullable: false, defaultValue: '' })
-  imagePath: string;
+  @Field(() => String, { nullable: true })
+  imagePath?: string;
 }
 
 @ObjectType()
@@ -203,4 +203,7 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isCloudflareIntegrationEnabled: boolean;
+
+  @Field(() => Boolean)
+  isClickHouseConfigured: boolean;
 }

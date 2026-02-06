@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
@@ -148,6 +149,7 @@ export class WorkspaceMigrationRunnerService {
 
   run = async ({
     actions,
+    applicationUniversalIdentifier,
     workspaceId,
   }: WorkspaceMigration): Promise<AllFlatEntityMaps> => {
     this.logger.time('Runner', 'Total execution');
@@ -168,25 +170,48 @@ export class WorkspaceMigrationRunnerService {
     );
 
     let allFlatEntityMaps =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: allFlatEntityMapsKeys,
-        },
-      );
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
+        typeof allFlatEntityMapsKeys
+      >({
+        workspaceId,
+        flatMapsKeys: allFlatEntityMapsKeys,
+      });
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const applicationId =
+      flatApplicationMaps.idByUniversalIdentifier[
+        applicationUniversalIdentifier
+      ];
+    const flatApplication = isDefined(applicationId)
+      ? flatApplicationMaps.byId[applicationId]
+      : undefined;
+
+    if (!isDefined(applicationId) || !isDefined(flatApplication)) {
+      throw new WorkspaceMigrationRunnerException({
+        message: `Could not find application for application with universal identifier: ${applicationUniversalIdentifier}`,
+        code: WorkspaceMigrationRunnerExceptionCode.APPLICATION_NOT_FOUND,
+      });
+    }
+
     this.logger.time('Runner', 'Transaction execution');
 
     try {
       await queryRunner.connect();
       await queryRunner.startTransaction();
+
       for (const action of actions) {
         const result =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
               context: {
+                flatApplication,
                 action,
                 allFlatEntityMaps,
                 queryRunner,
@@ -198,7 +223,7 @@ export class WorkspaceMigrationRunnerService {
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
           ...result,
-        };
+        } as typeof allFlatEntityMaps;
       }
 
       await queryRunner.commitTransaction();
@@ -228,6 +253,7 @@ export class WorkspaceMigrationRunnerService {
           {
             action: invertedAction,
             context: {
+              flatApplication,
               action: invertedAction,
               allFlatEntityMaps,
               workspaceId,

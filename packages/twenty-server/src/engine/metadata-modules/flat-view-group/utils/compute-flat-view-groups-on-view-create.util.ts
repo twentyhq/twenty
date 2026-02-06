@@ -7,6 +7,7 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 
 type ComputeFlatViewGroupsOnViewCreateArgs = {
@@ -19,8 +20,10 @@ export const computeFlatViewGroupsOnViewCreate = ({
   mainGroupByFieldMetadataId,
   flatFieldMetadataMaps,
 }: ComputeFlatViewGroupsOnViewCreateArgs): FlatViewGroup[] => {
-  const mainGroupByFieldMetadata =
-    flatFieldMetadataMaps.byId[mainGroupByFieldMetadataId];
+  const mainGroupByFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: mainGroupByFieldMetadataId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   if (!isDefined(mainGroupByFieldMetadata)) {
     throw new FlatEntityMapsException(

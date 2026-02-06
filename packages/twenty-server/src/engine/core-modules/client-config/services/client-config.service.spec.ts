@@ -161,6 +161,7 @@ describe('ClientConfigService', () => {
         isImapSmtpCaldavEnabled: false,
         calendarBookingPageId: 'team/twenty/talk-to-us',
         isCloudflareIntegrationEnabled: false,
+        isClickHouseConfigured: false,
       });
     });
 

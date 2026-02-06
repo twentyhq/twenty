@@ -1,6 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
@@ -19,15 +18,9 @@ const createFlatEntityToValidate = (
 
 const callValidator = (
   flatEntityToValidate: FlatFieldMetadata<FieldMetadataType.FILES>,
-  featureFlagEnabled = true,
 ) =>
   validateFilesFlatFieldMetadata({
     flatEntityToValidate,
-    additionalCacheDataMaps: {
-      featureFlagsMap: {
-        [FeatureFlagKey.IS_FILES_FIELD_ENABLED]: featureFlagEnabled,
-      },
-    },
   } as Parameters<typeof validateFilesFlatFieldMetadata>[0]);
 
 describe('validateFilesFlatFieldMetadata', () => {
@@ -35,14 +28,6 @@ describe('validateFilesFlatFieldMetadata', () => {
     const errors = callValidator(createFlatEntityToValidate());
 
     expect(errors).toHaveLength(0);
-  });
-
-  it('should return error when feature flag is disabled', () => {
-    const errors = callValidator(createFlatEntityToValidate(), false);
-
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
-    expect(errors[0].message).toContain('Files field type is not supported');
   });
 
   it('should return error when isUnique is true', () => {

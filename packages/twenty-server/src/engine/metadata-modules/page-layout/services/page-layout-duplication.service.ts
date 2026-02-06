@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate } from 'src/engine/metadata-modules/flat-page-layout-tab/utils/from-create-page-layout-tab-input-to-flat-page-layout-tab-to-create.util';
@@ -112,6 +113,8 @@ export class PageLayoutDuplicationService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -164,7 +167,10 @@ export class PageLayoutDuplicationService {
     pageLayoutId: string,
     flatPageLayoutMaps: FlatPageLayoutMaps,
   ): FlatPageLayout {
-    const flatLayout = flatPageLayoutMaps.byId[pageLayoutId];
+    const flatLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: pageLayoutId,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     if (!isDefined(flatLayout) || isDefined(flatLayout.deletedAt)) {
       throw new PageLayoutException(
@@ -186,7 +192,9 @@ export class PageLayoutDuplicationService {
   ): { tab: FlatPageLayoutTab; widgets: FlatPageLayoutWidget[] }[] {
     const widgetsByTabId = new Map<string, FlatPageLayoutWidget[]>();
 
-    for (const widget of Object.values(flatPageLayoutWidgetMaps.byId)) {
+    for (const widget of Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    )) {
       if (!isDefined(widget) || isDefined(widget.deletedAt)) {
         continue;
       }
@@ -197,7 +205,7 @@ export class PageLayoutDuplicationService {
       widgetsByTabId.set(widget.pageLayoutTabId, existingWidgets);
     }
 
-    const tabs = Object.values(flatPageLayoutTabMaps.byId)
+    const tabs = Object.values(flatPageLayoutTabMaps.byUniversalIdentifier)
       .filter(
         (tab): tab is FlatPageLayoutTab =>
           isDefined(tab) &&

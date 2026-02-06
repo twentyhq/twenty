@@ -157,23 +157,12 @@ export class EventStreamService implements OnModuleInit {
   }
 
   async isAuthorized({
-    workspaceId,
-    eventStreamChannelId,
     authContext,
+    streamData,
   }: {
-    workspaceId: string;
-    eventStreamChannelId: string;
     authContext: SerializableAuthContext;
+    streamData: EventStreamData;
   }): Promise<boolean> {
-    const streamData = await this.getStreamData(
-      workspaceId,
-      eventStreamChannelId,
-    );
-
-    if (!isDefined(streamData)) {
-      return false;
-    }
-
     if (isDefined(authContext.userWorkspaceId)) {
       return (
         streamData.authContext.userWorkspaceId === authContext.userWorkspaceId
@@ -262,7 +251,7 @@ export class EventStreamService implements OnModuleInit {
     return `workspace:${workspaceId}:activeStreams`;
   }
 
-  private async getStreamData(
+  async getStreamData(
     workspaceId: string,
     eventStreamChannelId: string,
   ): Promise<EventStreamData | undefined> {

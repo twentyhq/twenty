@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a created entity 1`] = `
 {
   "createdFlatEntityMaps": {
-    "byId": {
-      "field-id-1": {
+    "byUniversalIdentifier": {
+      "universal-identifier-1": {
         "applicationId": "application-id-1",
         "applicationUniversalIdentifier": "application-universal-identifier-1",
         "calendarViewIds": [],
@@ -36,7 +36,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
         "relationTargetObjectMetadataId": null,
         "relationTargetObjectMetadataUniversalIdentifier": null,
         "settings": null,
-        "standardId": null,
         "standardOverrides": null,
         "type": "TEXT",
         "universalIdentifier": "universal-identifier-1",
@@ -49,8 +48,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
         "workspaceId": "workspace-id-1",
       },
     },
-    "idByUniversalIdentifier": {
-      "universal-identifier-1": "field-id-1",
+    "universalIdentifierById": {
+      "field-id-1": "universal-identifier-1",
     },
     "universalIdentifiersByApplicationId": {
       "application-id-1": [
@@ -59,12 +58,12 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
     },
   },
   "deletedFlatEntityMaps": {
-    "byId": {},
-    "idByUniversalIdentifier": {},
+    "byUniversalIdentifier": {},
+    "universalIdentifierById": {},
     "universalIdentifiersByApplicationId": {},
   },
   "updatedFlatEntityMaps": {
-    "byId": {},
+    "byUniversalIdentifier": {},
   },
 }
 `;
@@ -72,13 +71,13 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a deleted entity 1`] = `
 {
   "createdFlatEntityMaps": {
-    "byId": {},
-    "idByUniversalIdentifier": {},
+    "byUniversalIdentifier": {},
+    "universalIdentifierById": {},
     "universalIdentifiersByApplicationId": {},
   },
   "deletedFlatEntityMaps": {
-    "byId": {
-      "field-id-1": {
+    "byUniversalIdentifier": {
+      "universal-identifier-1": {
         "applicationId": "application-id-1",
         "applicationUniversalIdentifier": "application-universal-identifier-1",
         "calendarViewIds": [],
@@ -110,7 +109,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
         "relationTargetObjectMetadataId": null,
         "relationTargetObjectMetadataUniversalIdentifier": null,
         "settings": null,
-        "standardId": null,
         "standardOverrides": null,
         "type": "TEXT",
         "universalIdentifier": "universal-identifier-1",
@@ -123,8 +121,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
         "workspaceId": "workspace-id-1",
       },
     },
-    "idByUniversalIdentifier": {
-      "universal-identifier-1": "field-id-1",
+    "universalIdentifierById": {
+      "field-id-1": "universal-identifier-1",
     },
     "universalIdentifiersByApplicationId": {
       "application-id-1": [
@@ -133,7 +131,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
     },
   },
   "updatedFlatEntityMaps": {
-    "byId": {},
+    "byUniversalIdentifier": {},
   },
 }
 `;
@@ -141,25 +139,22 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an updated entity 1`] = `
 {
   "createdFlatEntityMaps": {
-    "byId": {},
-    "idByUniversalIdentifier": {},
+    "byUniversalIdentifier": {},
+    "universalIdentifierById": {},
     "universalIdentifiersByApplicationId": {},
   },
   "deletedFlatEntityMaps": {
-    "byId": {},
-    "idByUniversalIdentifier": {},
+    "byUniversalIdentifier": {},
+    "universalIdentifierById": {},
     "universalIdentifiersByApplicationId": {},
   },
   "updatedFlatEntityMaps": {
-    "byId": {
-      "field-id-1": {
-        "updates": [
-          {
-            "from": false,
-            "property": "isActive",
-            "to": true,
-          },
-        ],
+    "byUniversalIdentifier": {
+      "universal-identifier-1": {
+        "id": "field-id-1",
+        "update": {
+          "isActive": true,
+        },
       },
     },
   },
@@ -169,8 +164,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an upd
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect created, deleted and updated entities 1`] = `
 {
   "createdFlatEntityMaps": {
-    "byId": {
-      "field-id-3": {
+    "byUniversalIdentifier": {
+      "universal-identifier-3": {
         "applicationId": "application-id-1",
         "applicationUniversalIdentifier": "application-universal-identifier-1",
         "calendarViewIds": [],
@@ -202,7 +197,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "relationTargetObjectMetadataId": null,
         "relationTargetObjectMetadataUniversalIdentifier": null,
         "settings": null,
-        "standardId": null,
         "standardOverrides": null,
         "type": "TEXT",
         "universalIdentifier": "universal-identifier-3",
@@ -215,8 +209,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "workspaceId": "workspace-id-1",
       },
     },
-    "idByUniversalIdentifier": {
-      "universal-identifier-3": "field-id-3",
+    "universalIdentifierById": {
+      "field-id-3": "universal-identifier-3",
     },
     "universalIdentifiersByApplicationId": {
       "application-id-1": [
@@ -225,8 +219,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
     },
   },
   "deletedFlatEntityMaps": {
-    "byId": {
-      "field-id-2": {
+    "byUniversalIdentifier": {
+      "universal-identifier-2": {
         "applicationId": "application-id-1",
         "applicationUniversalIdentifier": "application-universal-identifier-1",
         "calendarViewIds": [],
@@ -258,7 +252,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "relationTargetObjectMetadataId": null,
         "relationTargetObjectMetadataUniversalIdentifier": null,
         "settings": null,
-        "standardId": null,
         "standardOverrides": null,
         "type": "TEXT",
         "universalIdentifier": "universal-identifier-2",
@@ -271,8 +264,8 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "workspaceId": "workspace-id-1",
       },
     },
-    "idByUniversalIdentifier": {
-      "universal-identifier-2": "field-id-2",
+    "universalIdentifierById": {
+      "field-id-2": "universal-identifier-2",
     },
     "universalIdentifiersByApplicationId": {
       "application-id-1": [
@@ -281,15 +274,12 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
     },
   },
   "updatedFlatEntityMaps": {
-    "byId": {
-      "field-id-1": {
-        "updates": [
-          {
-            "from": true,
-            "property": "isActive",
-            "to": false,
-          },
-        ],
+    "byUniversalIdentifier": {
+      "universal-identifier-1": {
+        "id": "field-id-1",
+        "update": {
+          "isActive": false,
+        },
       },
     },
   },
@@ -299,17 +289,17 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should not detect deleted entities when inferDeletionFromMissingEntities is false 1`] = `
 {
   "createdFlatEntityMaps": {
-    "byId": {},
-    "idByUniversalIdentifier": {},
+    "byUniversalIdentifier": {},
+    "universalIdentifierById": {},
     "universalIdentifiersByApplicationId": {},
   },
   "deletedFlatEntityMaps": {
-    "byId": {},
-    "idByUniversalIdentifier": {},
+    "byUniversalIdentifier": {},
+    "universalIdentifierById": {},
     "universalIdentifiersByApplicationId": {},
   },
   "updatedFlatEntityMaps": {
-    "byId": {},
+    "byUniversalIdentifier": {},
   },
 }
 `;

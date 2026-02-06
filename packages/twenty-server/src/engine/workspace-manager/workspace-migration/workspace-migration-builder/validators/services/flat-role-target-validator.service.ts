@@ -12,7 +12,6 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 import { validateFlatRoleTargetAssignationAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util';
 import { validateFlatRoleTargetTargetsOnlyOneEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatRoleTargetValidatorService {
@@ -113,7 +112,7 @@ export class FlatRoleTargetValidatorService {
 
   validateFlatRoleTargetUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
       flatRoleMaps,
@@ -121,7 +120,10 @@ export class FlatRoleTargetValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
   >): FailedFlatEntityValidation<'roleTarget', 'update'> {
-    const existingRoleTarget = optimisticFlatRoleTargetMaps.byId[flatEntityId];
+    const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatRoleTargetMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -144,9 +146,7 @@ export class FlatRoleTargetValidatorService {
 
     const updatedFlatRoleTarget = {
       ...existingRoleTarget,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     validationResult.errors.push(

@@ -155,6 +155,7 @@ export const mockCurrentWorkspace = {
   databaseSchema: '',
   databaseUrl: '',
   isTwoFactorAuthenticationEnforced: false,
+  eventLogRetentionDays: 90,
   __typename: 'Workspace',
 } as const satisfies Workspace;
 

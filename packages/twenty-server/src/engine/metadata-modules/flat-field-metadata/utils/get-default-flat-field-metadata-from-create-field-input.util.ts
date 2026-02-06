@@ -49,7 +49,6 @@ export const getDefaultFlatFieldMetadata = ({
     objectMetadataId: createFieldInput.objectMetadataId,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    standardId: createFieldInput.standardId ?? null,
     standardOverrides: null,
     type: createFieldInput.type,
     universalIdentifier: createFieldInput.universalIdentifier ?? v4(),
@@ -73,6 +72,6 @@ export const getDefaultFlatFieldMetadata = ({
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
-    universalSettings: null,
+    universalSettings: settings ?? null,
   } as const satisfies FlatFieldMetadata;
 };

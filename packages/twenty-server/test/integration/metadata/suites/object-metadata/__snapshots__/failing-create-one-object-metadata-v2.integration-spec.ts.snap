@@ -322,7 +322,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -340,7 +340,7 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -1029,7 +1029,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -1047,7 +1047,7 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -1747,7 +1747,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -1765,7 +1765,7 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -2454,7 +2454,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -2472,7 +2472,7 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -3172,7 +3172,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -3190,7 +3190,7 @@ exports[`Object metadata creation should fail v2 when labels are identical 1`] =
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -3879,7 +3879,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -3897,7 +3897,7 @@ exports[`Object metadata creation should fail v2 when labels with whitespaces re
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -4600,7 +4600,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is too long",
               "userFriendlyMessage": "Name is too long",
-              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "value": "targetAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
             {
               "code": "OBJECT_METADATA_NOT_FOUND",
@@ -4610,7 +4610,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "targetAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -4624,7 +4624,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is too long",
               "userFriendlyMessage": "Name is too long",
-              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "value": "targetAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
             {
               "code": "OBJECT_METADATA_NOT_FOUND",
@@ -4634,7 +4634,7 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "name": "targetAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -5323,7 +5323,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -5341,7 +5341,7 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -6030,7 +6030,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -6048,7 +6048,7 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -6748,7 +6748,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -6766,7 +6766,7 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "listinga",
+            "name": "targetListinga",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -6802,12 +6802,6 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
       "objectMetadata": [
         {
           "errors": [
-            {
-              "code": "INVALID_OBJECT_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
-            },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -7401,10 +7395,52 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetA a",
             },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "targetA a",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "a a",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "a a",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -7431,42 +7467,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "a a",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "a a",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "a a",
-            "objectMetadataId": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetA a",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetA a",
@@ -7491,15 +7491,9 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "a a",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "a a",
+              "value": "targetA a",
             },
             {
               "code": "OBJECT_METADATA_NOT_FOUND",
@@ -7509,37 +7503,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "a a",
-            "objectMetadataId": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "a a",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "a a",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "a a",
+            "name": "targetA a",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -7575,12 +7539,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
       "objectMetadata": [
         {
           "errors": [
-            {
-              "code": "INVALID_OBJECT_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "a a",
-            },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -8239,18 +8197,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         {
           "errors": [
             {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is too short",
-              "userFriendlyMessage": "Name is too short",
-              "value": "",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "",
-            },
-            {
               "code": "OBJECT_METADATA_NOT_FOUND",
               "message": "Relation target object metadata not found",
               "userFriendlyMessage": "Object targeted by the relation not found",
@@ -8258,7 +8204,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "",
+            "name": "target",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -8269,18 +8215,6 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         {
           "errors": [
             {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is too short",
-              "userFriendlyMessage": "Name is too short",
-              "value": "",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "",
-            },
-            {
               "code": "OBJECT_METADATA_NOT_FOUND",
               "message": "Relation target object metadata not found",
               "userFriendlyMessage": "Object targeted by the relation not found",
@@ -8288,7 +8222,7 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "",
+            "name": "target",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -8923,66 +8857,6 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetΜ",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "targetΜ",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "targetΜ",
-            "objectMetadataId": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "μ",
-            "objectMetadataId": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetΜ",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetΜ",
@@ -9033,7 +8907,7 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "μ",
+              "value": "targetΜ",
             },
             {
               "code": "OBJECT_METADATA_NOT_FOUND",
@@ -9043,7 +8917,55 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "μ",
+            "name": "targetΜ",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "targetΜ",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "targetΜ",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "targetΜ",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "targetΜ",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -9731,12 +9653,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
         {
           "errors": [
             {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
-              "value": "user",
-            },
-            {
               "code": "OBJECT_METADATA_NOT_FOUND",
               "message": "Relation target object metadata not found",
               "userFriendlyMessage": "Object targeted by the relation not found",
@@ -9744,7 +9660,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "user",
+            "name": "targetUser",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -9755,12 +9671,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
         {
           "errors": [
             {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
-              "userFriendlyMessage": "This name is reserved. Use a different name or the system will add "Custom" suffix.",
-              "value": "user",
-            },
-            {
               "code": "OBJECT_METADATA_NOT_FOUND",
               "message": "Relation target object metadata not found",
               "userFriendlyMessage": "Object targeted by the relation not found",
@@ -9768,7 +9678,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "user",
+            "name": "targetUser",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -10408,10 +10318,52 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetNot_Camel_Case",
             },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "targetNot_Camel_Case",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "Not_Camel_Case",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Relation target object metadata not found",
+              "userFriendlyMessage": "Object targeted by the relation not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "id": Any<String>,
+            "name": "Not_Camel_Case",
+            "objectMetadataId": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+        {
+          "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -10438,42 +10390,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "Not_Camel_Case",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "Not_Camel_Case",
-            "objectMetadataId": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "targetNot_Camel_Case",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "targetNot_Camel_Case",
@@ -10498,15 +10414,9 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "Not_Camel_Case",
+              "value": "targetNot_Camel_Case",
             },
             {
               "code": "OBJECT_METADATA_NOT_FOUND",
@@ -10516,37 +10426,7 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "Not_Camel_Case",
-            "objectMetadataId": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "fieldMetadata",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
-            },
-            {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "value": "Not_Camel_Case",
-            },
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Relation target object metadata not found",
-              "userFriendlyMessage": "Object targeted by the relation not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "name": "Not_Camel_Case",
+            "name": "targetNot_Camel_Case",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -10582,12 +10462,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
       "objectMetadata": [
         {
           "errors": [
-            {
-              "code": "INVALID_OBJECT_INPUT",
-              "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
-              "value": "Not_Camel_Case",
-            },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
@@ -11241,7 +11115,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "fooBar",
+            "name": "targetFooBar",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -11259,7 +11133,7 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "fooBar",
+            "name": "targetFooBar",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -11948,7 +11822,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "fooBar",
+            "name": "targetFooBar",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },
@@ -11966,7 +11840,7 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           ],
           "flatEntityMinimalInformation": {
             "id": Any<String>,
-            "name": "fooBar",
+            "name": "targetFooBar",
             "objectMetadataId": Any<String>,
             "universalIdentifier": Any<String>,
           },

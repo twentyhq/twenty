@@ -49,7 +49,7 @@ export const prefillPeople = async (
         city: 'San Francisco',
         emailsPrimaryEmail: 'chesky@airbnb.com',
         avatarUrl:
-          'https://twentyhq.github.io/placeholder-images/people/image-3.png',
+          'https://twentyhq.github.io/placeholder-images/founders/brian-chesky.jpg',
         position: 1,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
@@ -68,7 +68,7 @@ export const prefillPeople = async (
         city: 'San Francisco',
         emailsPrimaryEmail: 'amodei@anthropic.com',
         avatarUrl:
-          'https://twentyhq.github.io/placeholder-images/people/image-89.png',
+          'https://twentyhq.github.io/placeholder-images/founders/dario-amodei.jpg',
         position: 2,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
@@ -87,7 +87,7 @@ export const prefillPeople = async (
         city: 'San Francisco',
         emailsPrimaryEmail: 'collison@stripe.com',
         avatarUrl:
-          'https://twentyhq.github.io/placeholder-images/people/image-47.png',
+          'https://twentyhq.github.io/placeholder-images/founders/patrick-collison.jpg',
         position: 3,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
@@ -106,7 +106,7 @@ export const prefillPeople = async (
         city: 'San Francisco',
         emailsPrimaryEmail: 'field@figma.com',
         avatarUrl:
-          'https://twentyhq.github.io/placeholder-images/people/image-40.png',
+          'https://twentyhq.github.io/placeholder-images/founders/dylan-field.jpg',
         position: 4,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
@@ -125,7 +125,7 @@ export const prefillPeople = async (
         city: 'San Francisco',
         emailsPrimaryEmail: 'zhao@notion.com',
         avatarUrl:
-          'https://twentyhq.github.io/placeholder-images/people/image-68.png',
+          'https://twentyhq.github.io/placeholder-images/founders/ivan-zhao.jpg',
         position: 5,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,

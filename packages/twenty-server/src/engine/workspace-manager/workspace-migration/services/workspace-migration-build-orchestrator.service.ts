@@ -124,6 +124,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     fromToAllFlatEntityMaps,
     dependencyAllFlatEntityMaps,
     additionalCacheDataMaps,
+    applicationUniversalIdentifier,
   }: WorkspaceMigrationOrchestratorBuildArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
     | WorkspaceMigrationOrchestratorSuccessfulResult
@@ -176,16 +177,17 @@ export class WorkspaceMigrationBuildOrchestratorService {
             // Note: That's a hacky way to allow validating object against field metadatas, not optimal
             dependencyOptimisticFlatEntityMaps: {
               flatFieldMetadataMaps: {
-                byId: {
-                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps?.byId,
-                  ...flatFieldMetadataMaps?.from.byId,
-                  ...flatFieldMetadataMaps?.to.byId,
-                },
-                idByUniversalIdentifier: {
+                byUniversalIdentifier: {
                   ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
-                    ?.idByUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.from.idByUniversalIdentifier,
-                  ...flatFieldMetadataMaps?.to.idByUniversalIdentifier,
+                    ?.byUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.from.byUniversalIdentifier,
+                  ...flatFieldMetadataMaps?.to.byUniversalIdentifier,
+                },
+                universalIdentifierById: {
+                  ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
+                    ?.universalIdentifierById,
+                  ...flatFieldMetadataMaps?.from.universalIdentifierById,
+                  ...flatFieldMetadataMaps?.to.universalIdentifierById,
                 },
                 universalIdentifiersByApplicationId: {
                   ...dependencyAllFlatEntityMaps?.flatFieldMetadataMaps
@@ -985,6 +987,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     return {
       status: 'success',
       workspaceMigration: {
+        applicationUniversalIdentifier,
         actions: [
           // Object and fields and indexes
           ...aggregatedOrchestratorActionsReport.index.delete,

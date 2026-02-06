@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { UpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   ValidateAndBuildArgs,
   ValidateAndBuildReturnType,
@@ -139,13 +139,13 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { flatEntityId, flatEntityUpdate } = args;
 
-    const updateLogicFunctionAction: UpdateLogicFunctionAction = {
+    const updateLogicFunctionAction: FlatUpdateLogicFunctionAction = {
       type: 'update',
       metadataName: 'logicFunction',
       entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      update: flatEntityUpdate,
     };
 
     return {

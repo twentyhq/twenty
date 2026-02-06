@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -31,7 +32,10 @@ export class DashboardSyncService {
         },
       );
 
-    const pageLayout = flatPageLayoutMaps.byId[pageLayoutId];
+    const pageLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: pageLayoutId,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     return (
       isDefined(pageLayout) && pageLayout.type === PageLayoutType.DASHBOARD
@@ -96,13 +100,19 @@ export class DashboardSyncService {
         },
       );
 
-    const tab = flatPageLayoutTabMaps.byId[tabId];
+    const tab = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: tabId,
+      flatEntityMaps: flatPageLayoutTabMaps,
+    });
 
     if (!isDefined(tab)) {
       return;
     }
 
-    const pageLayout = flatPageLayoutMaps.byId[tab.pageLayoutId];
+    const pageLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: tab.pageLayoutId,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     if (
       !isDefined(pageLayout) ||
@@ -143,19 +153,28 @@ export class DashboardSyncService {
         },
       );
 
-    const widget = flatPageLayoutWidgetMaps.byId[widgetId];
+    const widget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: widgetId,
+      flatEntityMaps: flatPageLayoutWidgetMaps,
+    });
 
     if (!isDefined(widget)) {
       return;
     }
 
-    const tab = flatPageLayoutTabMaps.byId[widget.pageLayoutTabId];
+    const tab = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: widget.pageLayoutTabId,
+      flatEntityMaps: flatPageLayoutTabMaps,
+    });
 
     if (!isDefined(tab)) {
       return;
     }
 
-    const pageLayout = flatPageLayoutMaps.byId[tab.pageLayoutId];
+    const pageLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: tab.pageLayoutId,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     if (
       !isDefined(pageLayout) ||

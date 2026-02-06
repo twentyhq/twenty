@@ -78,7 +78,9 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   );
 
   // TODO We should maintain a idsByObjectMetadataId in the flatIndexMaps
-  const flatIndexMetadataToDelete = Object.values(flatIndexMaps.byId).filter(
+  const flatIndexMetadataToDelete = Object.values(
+    flatIndexMaps.byUniversalIdentifier,
+  ).filter(
     (flatIndex): flatIndex is FlatIndexMetadata =>
       isDefined(flatIndex) &&
       flatIndex.objectMetadataId === flatObjectMetadataToDelete.id,

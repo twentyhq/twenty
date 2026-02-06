@@ -1,4 +1,4 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -37,7 +37,7 @@ export const STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG = {
   layoutName: 'workflowRunRecordPage',
   name: 'Default Workflow Run Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECT_IDS.workflowRun,
+  objectUniversalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
   universalIdentifier: '20202020-a108-4008-8008-a0bcf10ac008',
   defaultTabUniversalIdentifier:
     WORKFLOW_RUN_PAGE_TABS.flow.universalIdentifier,

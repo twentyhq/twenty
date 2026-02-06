@@ -38,7 +38,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.label.localeCompare(b.label))
       .map(fromFlatSkillToSkillDto);
@@ -92,6 +92,8 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -122,6 +124,11 @@ export class SkillService {
     input: UpdateSkillInput,
     workspaceId: string,
   ): Promise<SkillDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatSkillMaps: existingFlatSkillMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -147,6 +154,8 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -174,6 +183,11 @@ export class SkillService {
   }
 
   async delete(id: string, workspaceId: string): Promise<SkillDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatSkillMaps: existingFlatSkillMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -199,6 +213,8 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -221,7 +237,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatSkill) => flatSkill.isActive)
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -243,7 +259,7 @@ export class SkillService {
         },
       );
 
-    return Object.values(flatSkillMaps.byId)
+    return Object.values(flatSkillMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (flatSkill) => names.includes(flatSkill.name) && flatSkill.isActive,
@@ -251,6 +267,11 @@ export class SkillService {
   }
 
   async activate(id: string, workspaceId: string): Promise<SkillDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatSkillMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -282,6 +303,8 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -309,6 +332,11 @@ export class SkillService {
   }
 
   async deactivate(id: string, workspaceId: string): Promise<SkillDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatSkillMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -340,6 +368,8 @@ export class SkillService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

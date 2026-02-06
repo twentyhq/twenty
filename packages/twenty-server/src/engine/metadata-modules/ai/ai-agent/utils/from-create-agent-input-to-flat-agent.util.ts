@@ -32,7 +32,6 @@ export const fromCreateAgentInputToFlatAgent = ({
         'description',
         'prompt',
         'modelId',
-        'standardId',
         'applicationId',
         'roleId',
       ],
@@ -40,12 +39,9 @@ export const fromCreateAgentInputToFlatAgent = ({
 
   const createdAt = new Date().toISOString();
   const agentId = v4();
-  const standardId = createAgentInput.standardId ?? null;
-  const universalIdentifier = standardId ?? agentId;
 
   const flatAgentToCreate: FlatAgent = {
     id: agentId,
-    standardId,
     name: isNonEmptyString(createAgentInput.name)
       ? createAgentInput.name
       : computeMetadataNameFromLabel({ label: createAgentInput.label }),
@@ -57,7 +53,7 @@ export const fromCreateAgentInputToFlatAgent = ({
     responseFormat: createAgentInput.responseFormat ?? { type: 'text' },
     workspaceId,
     isCustom: true,
-    universalIdentifier,
+    universalIdentifier: v4(),
     applicationId: createAgentInput.applicationId,
     modelConfiguration: createAgentInput.modelConfiguration ?? null,
     evaluationInputs: createAgentInput.evaluationInputs ?? [],

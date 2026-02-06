@@ -1,4 +1,5 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,12 +8,14 @@ export const getActivityTargetsFilter = ({
   targetableObjects,
   activityObjectNameSingular,
   objectMetadataItems,
+  isMorphRelation = false,
 }: {
   targetableObjects: ActivityTargetableObject[];
   activityObjectNameSingular:
     | CoreObjectNameSingular.Note
     | CoreObjectNameSingular.Task;
   objectMetadataItems: ObjectMetadataItem[];
+  isMorphRelation?: boolean;
 }) => {
   const activityTargetObjectNameSingular =
     activityObjectNameSingular === CoreObjectNameSingular.Task
@@ -36,13 +39,16 @@ export const getActivityTargetsFilter = ({
           return undefined;
         }
 
-        const targetField = activityTargetObjectMetadata?.fields.find(
-          (field) =>
-            field.relation?.targetObjectMetadata.id ===
-            targetObjectMetadataItem.id,
-        );
-
-        const joinColumnName = targetField?.settings?.joinColumnName;
+        const joinColumnName = isMorphRelation
+          ? getActivityTargetObjectFieldIdName({
+              nameSingular: targetObjectMetadataItem.nameSingular,
+              isMorphRelation: true,
+            })
+          : activityTargetObjectMetadata?.fields.find(
+              (field) =>
+                field.relation?.targetObjectMetadata.id ===
+                targetObjectMetadataItem.id,
+            )?.settings?.joinColumnName;
 
         if (!isDefined(joinColumnName)) {
           return undefined;

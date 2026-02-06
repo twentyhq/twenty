@@ -1,39 +1,92 @@
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkflowHandleStaledRunsWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-handle-staled-runs.workspace-service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  WorkflowHandleStaledRunsJob,
+  WorkflowHandleStaledRunsJobData,
+} from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-handle-staled-runs.job';
+import { getStaledRunsFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-staled-runs-find-options.util';
 
 export const WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
-export class WorkflowHandleStaledRunsJob {
+export class WorkflowHandleStaledRunsCronJob {
+  private readonly logger = new Logger(WorkflowHandleStaledRunsCronJob.name);
+
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    private readonly workflowHandleStaledRunsWorkspaceService: WorkflowHandleStaledRunsWorkspaceService,
+    @InjectMessageQueue(MessageQueue.workflowQueue)
+    private readonly messageQueueService: MessageQueueService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  @Process(WorkflowHandleStaledRunsJob.name)
+  @Process(WorkflowHandleStaledRunsCronJob.name)
   @SentryCronMonitor(
-    WorkflowHandleStaledRunsJob.name,
+    WorkflowHandleStaledRunsCronJob.name,
     WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN,
   )
   async handle() {
+    this.logger.log('Starting WorkflowHandleStaledRunsCronJob cron');
+
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
+      select: ['id'],
     });
 
-    await this.workflowHandleStaledRunsWorkspaceService.handleStaledRuns({
-      workspaceIds: activeWorkspaces.map((workspace) => workspace.id),
-    });
+    let enqueuedCount = 0;
+
+    for (const workspace of activeWorkspaces) {
+      const hasStaledRuns = await this.hasStaledRuns(workspace.id);
+
+      if (hasStaledRuns) {
+        await this.messageQueueService.add<WorkflowHandleStaledRunsJobData>(
+          WorkflowHandleStaledRunsJob.name,
+          {
+            workspaceId: workspace.id,
+          },
+        );
+        enqueuedCount++;
+      }
+    }
+
+    this.logger.log(
+      `Completed WorkflowHandleStaledRunsCronJob cron, enqueued ${enqueuedCount} jobs`,
+    );
+  }
+
+  private async hasStaledRuns(workspaceId: string): Promise<boolean> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workflowRunRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            WorkflowRunWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workflowRunRepository.exists({
+          where: getStaledRunsFindOptions(),
+        });
+      },
+      authContext,
+    );
   }
 }

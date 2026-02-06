@@ -12,7 +12,6 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateGroupValidatorService {
@@ -27,11 +26,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         optimisticFlatPredicateGroupMaps,
       flatRoleMaps,
       flatObjectMetadataMaps,
-    } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps as Partial<{
-      flatRowLevelPermissionPredicateGroupMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps;
-      flatRoleMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRoleMaps;
-      flatObjectMetadataMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatObjectMetadataMaps;
-    }>;
+    } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatPredicateGroupToValidate.id,
@@ -41,8 +36,10 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       type: 'create',
     });
 
-    const existingPredicateGroup =
-      optimisticFlatPredicateGroupMaps?.byId[flatPredicateGroupToValidate.id];
+    const existingPredicateGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatPredicateGroupToValidate.id,
+      flatEntityMaps: optimisticFlatPredicateGroupMaps,
+    });
 
     if (isDefined(existingPredicateGroup)) {
       validationResult.errors.push({
@@ -55,8 +52,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     if (
       isDefined(
         flatPredicateGroupToValidate.parentRowLevelPermissionPredicateGroupId,
-      ) &&
-      optimisticFlatPredicateGroupMaps
+      )
     ) {
       const parentGroup = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId:
@@ -115,9 +111,8 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     const {
       flatRowLevelPermissionPredicateGroupMaps:
         optimisticFlatPredicateGroupMaps,
-    } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps as Partial<{
-      flatRowLevelPermissionPredicateGroupMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps;
-    }>;
+    } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
+
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         id: flatPredicateGroupToDelete.id,
@@ -127,8 +122,10 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
       type: 'delete',
     });
 
-    const existingPredicateGroup =
-      optimisticFlatPredicateGroupMaps?.byId[flatPredicateGroupToDelete.id];
+    const existingPredicateGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatPredicateGroupToDelete.id,
+      flatEntityMaps: optimisticFlatPredicateGroupMaps,
+    });
 
     if (!isDefined(existingPredicateGroup)) {
       validationResult.errors.push({
@@ -143,7 +140,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
 
   validateFlatRowLevelPermissionPredicateGroupUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.rowLevelPermissionPredicateGroup
@@ -153,14 +150,12 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
         optimisticFlatPredicateGroupMaps,
       flatRoleMaps,
       flatObjectMetadataMaps,
-    } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps as Partial<{
-      flatRowLevelPermissionPredicateGroupMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRowLevelPermissionPredicateGroupMaps;
-      flatRoleMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatRoleMaps;
-      flatObjectMetadataMaps: typeof optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatObjectMetadataMaps;
-    }>;
+    } = optimisticFlatEntityMapsAndRelatedFlatEntityMaps;
 
-    const existingPredicateGroup =
-      optimisticFlatPredicateGroupMaps?.byId[flatEntityId];
+    const existingPredicateGroup = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatPredicateGroupMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -183,9 +178,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
 
     const updatedPredicateGroup = {
       ...existingPredicateGroup,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     if (updatedPredicateGroup.roleId !== existingPredicateGroup.roleId) {
@@ -214,10 +207,7 @@ export class FlatRowLevelPermissionPredicateGroupValidatorService {
     }
 
     if (
-      isDefined(
-        updatedPredicateGroup.parentRowLevelPermissionPredicateGroupId,
-      ) &&
-      optimisticFlatPredicateGroupMaps
+      isDefined(updatedPredicateGroup.parentRowLevelPermissionPredicateGroupId)
     ) {
       const parentGroup = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId:

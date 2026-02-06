@@ -4,10 +4,9 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { NavigationMenuItemExceptionCode } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { validateFlatEntityCircularDependency } from 'src/engine/workspace-manager/workspace-migration/utils/validate-flat-entity-circular-dependency.util';
 import {
   type FailedFlatEntityValidation,
@@ -16,7 +15,6 @@ import {
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 const NAVIGATION_MENU_ITEM_MAX_DEPTH = 2;
 
@@ -107,7 +105,7 @@ export class FlatNavigationMenuItemValidatorService {
   }: {
     navigationMenuItemId: string;
     folderId: string;
-    flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
+    flatNavigationMenuItemMaps: MetadataFlatEntityMaps<'navigationMenuItem'>;
   }): FlatEntityValidationError<NavigationMenuItemExceptionCode>[] {
     const circularDependencyResult = validateFlatEntityCircularDependency({
       flatEntityId: navigationMenuItemId,
@@ -263,7 +261,7 @@ export class FlatNavigationMenuItemValidatorService {
 
   public validateFlatNavigationMenuItemUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
     },
@@ -294,14 +292,11 @@ export class FlatNavigationMenuItemValidatorService {
       return validationResult;
     }
 
-    const positionUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'position',
-    });
+    const positionUpdate = flatEntityUpdate.position;
 
     if (
       isDefined(positionUpdate) &&
-      (!Number.isInteger(positionUpdate.to) || positionUpdate.to < 0)
+      (!Number.isInteger(positionUpdate) || positionUpdate < 0)
     ) {
       validationResult.errors.push({
         code: NavigationMenuItemExceptionCode.INVALID_NAVIGATION_MENU_ITEM_INPUT,
@@ -312,15 +307,10 @@ export class FlatNavigationMenuItemValidatorService {
 
     const toFlatNavigationMenuItem = {
       ...fromFlatNavigationMenuItem,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
-    const nameUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'name',
-    });
+    const nameUpdate = flatEntityUpdate.name;
 
     const typeValidationErrors = this.validateNavigationMenuItemType({
       hasTargetRecordId: isDefined(toFlatNavigationMenuItem.targetRecordId),
@@ -328,28 +318,19 @@ export class FlatNavigationMenuItemValidatorService {
         toFlatNavigationMenuItem.targetObjectMetadataId,
       ),
       hasViewId: isDefined(toFlatNavigationMenuItem.viewId),
-      name: isDefined(nameUpdate)
-        ? nameUpdate.to
-        : toFlatNavigationMenuItem.name,
+      name: isDefined(nameUpdate) ? nameUpdate : toFlatNavigationMenuItem.name,
       isUpdate: true,
     });
 
     validationResult.errors.push(...typeValidationErrors);
 
-    const folderIdUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'folderId',
-    });
+    const folderIdUpdate = flatEntityUpdate.folderId;
 
     if (!isDefined(folderIdUpdate)) {
       return validationResult;
     }
 
-    const newFolderId = folderIdUpdate.to;
-
-    if (!isDefined(newFolderId)) {
-      return validationResult;
-    }
+    const newFolderId = folderIdUpdate;
 
     const circularDependencyErrors = this.getCircularDependencyValidationErrors(
       {

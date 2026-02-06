@@ -14,6 +14,7 @@ import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
+import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -66,22 +67,28 @@ export const PageLayoutRendererContent = () => {
   );
   const { navigatePageLayoutCommandMenu } = useNavigatePageLayoutCommandMenu();
 
-  const handleAddTab = isPageLayoutInEditMode
-    ? () => {
-        const newTabId = createPageLayoutTab(t`Untitled`);
-        setTabSettingsOpenTabId(newTabId);
-        navigatePageLayoutCommandMenu({
-          commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
-          focusTitleInput: true,
-        });
-      }
-    : undefined;
-
   const isMobile = useIsMobile();
 
   if (!isDefined(currentPageLayout)) {
     return null;
   }
+
+  const handleAddTab =
+    isPageLayoutInEditMode &&
+    shouldEnableTabEditingFeatures(currentPageLayout.type)
+      ? () => {
+          const newTabId = createPageLayoutTab(t`Untitled`);
+          setTabSettingsOpenTabId(newTabId);
+          navigatePageLayoutCommandMenu({
+            commandMenuPage: CommandMenuPages.PageLayoutTabSettings,
+            focusTitleInput: true,
+          });
+        }
+      : undefined;
+
+  const canEnableTabEditing =
+    isPageLayoutInEditMode &&
+    shouldEnableTabEditingFeatures(currentPageLayout.type);
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
@@ -123,8 +130,9 @@ export const PageLayoutRendererContent = () => {
             behaveAsLinks={!isInRightDrawer && !isPageLayoutInEditMode}
             componentInstanceId={tabListInstanceId}
             onAddTab={handleAddTab}
-            isReorderEnabled={isPageLayoutInEditMode}
-            onReorder={isPageLayoutInEditMode ? reorderTabs : undefined}
+            isReorderEnabled={canEnableTabEditing}
+            onReorder={canEnableTabEditing ? reorderTabs : undefined}
+            pageLayoutType={currentPageLayout.type}
           />
         )}
 

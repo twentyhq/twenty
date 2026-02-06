@@ -13,7 +13,6 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
 import { validateLabelIdentifierFieldMetadataIdFlatViewField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatViewFieldValidatorService {
@@ -21,7 +20,7 @@ export class FlatViewFieldValidatorService {
 
   public validateFlatViewFieldUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewFieldMaps: optimisticFlatViewFieldMaps,
       flatViewMaps,
@@ -30,8 +29,10 @@ export class FlatViewFieldValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewField
   >): FailedFlatEntityValidation<'viewField', 'update'> {
-    const existingFlatViewField =
-      optimisticFlatViewFieldMaps.byId[flatEntityId];
+    const existingFlatViewField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatViewFieldMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -54,9 +55,7 @@ export class FlatViewFieldValidatorService {
 
     const updatedFlatViewField = {
       ...existingFlatViewField,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     validationResult.flatEntityMinimalInformation = {
@@ -139,8 +138,10 @@ export class FlatViewFieldValidatorService {
       type: 'delete',
     });
 
-    const existingFlatViewField =
-      optimisticFlatViewFieldMaps.byId[viewFieldIdToDelete];
+    const existingFlatViewField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewFieldIdToDelete,
+      flatEntityMaps: optimisticFlatViewFieldMaps,
+    });
 
     if (!isDefined(existingFlatViewField)) {
       validationResult.errors.push({
@@ -206,8 +207,10 @@ export class FlatViewFieldValidatorService {
       type: 'create',
     });
 
-    const existingFlatViewField =
-      optimisticFlatViewFieldMaps.byId[flatViewFieldToValidate.id];
+    const existingFlatViewField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewFieldToValidate.id,
+      flatEntityMaps: optimisticFlatViewFieldMaps,
+    });
 
     if (isDefined(existingFlatViewField)) {
       const flatViewFieldId = flatViewFieldToValidate.id;
@@ -232,7 +235,10 @@ export class FlatViewFieldValidatorService {
       });
     }
 
-    const flatView = flatViewMaps.byId[flatViewFieldToValidate.viewId];
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewFieldToValidate.viewId,
+      flatEntityMaps: flatViewMaps,
+    });
 
     if (!isDefined(flatView)) {
       validationResult.errors.push({

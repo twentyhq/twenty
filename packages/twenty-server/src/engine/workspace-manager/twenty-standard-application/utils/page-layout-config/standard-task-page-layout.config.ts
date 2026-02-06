@@ -1,4 +1,4 @@
-import { STANDARD_OBJECT_IDS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -21,7 +21,10 @@ const TASK_PAGE_TABS = {
       },
       richText: {
         universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5512',
-        ...WIDGET_PROPS.richText,
+        title: WIDGET_PROPS.richText.title,
+        type: WIDGET_PROPS.richText.type,
+        gridPosition: WIDGET_PROPS.richText.gridPosition,
+        position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
       },
     },
   },
@@ -61,7 +64,7 @@ export const STANDARD_TASK_PAGE_LAYOUT_CONFIG = {
   layoutName: 'taskRecordPage',
   name: 'Default Task Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECT_IDS.task,
+  objectUniversalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
   universalIdentifier: '20202020-a105-4005-8005-ba5ca11a1005',
   defaultTabUniversalIdentifier: TASK_PAGE_TABS.home.universalIdentifier,
   tabs: TASK_PAGE_TABS,

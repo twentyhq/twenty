@@ -11,6 +11,7 @@ import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateD
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { getJoinColumnNameOrThrow } from '@/object-record/record-field/ui/utils/junction/getJoinColumnNameOrThrow';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,6 +42,16 @@ export const useRelationToOneFieldDisplay = () => {
     fieldDefinition,
   );
 
+  const joinColumnName = getJoinColumnNameOrThrow(
+    fieldDefinition.metadata.settings,
+  );
+
+  const foreignKeyFieldValue = useRecordFieldValue<string | null | undefined>(
+    recordId,
+    joinColumnName,
+    { type: FieldMetadataType.UUID, metadata: { fieldName: joinColumnName } },
+  );
+
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)
       ? maxWidth - FIELD_EDIT_BUTTON_WIDTH
@@ -69,6 +80,7 @@ export const useRelationToOneFieldDisplay = () => {
   return {
     fieldDefinition,
     fieldValue,
+    foreignKeyFieldValue,
     maxWidth: maxWidthForField,
     recordId,
     generateRecordChipData,

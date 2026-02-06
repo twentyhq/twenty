@@ -37,7 +37,7 @@ export class FrontComponentService {
         },
       );
 
-    return Object.values(flatFrontComponentMaps.byId)
+    return Object.values(flatFrontComponentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(fromFlatFrontComponentToFrontComponentDto);
@@ -95,6 +95,8 @@ export class FrontComponentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -125,6 +127,11 @@ export class FrontComponentService {
     input: UpdateFrontComponentInput,
     workspaceId: string,
   ): Promise<FrontComponentDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatFrontComponentMaps: existingFlatFrontComponentMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -151,6 +158,8 @@ export class FrontComponentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -178,6 +187,11 @@ export class FrontComponentService {
   }
 
   async delete(id: string, workspaceId: string): Promise<FrontComponentDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatFrontComponentMaps: existingFlatFrontComponentMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -204,6 +218,8 @@ export class FrontComponentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

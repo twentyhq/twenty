@@ -3,9 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { UpdateViewAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+import { FlatUpdateViewAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class UpdateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -16,23 +18,26 @@ export class UpdateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     super();
   }
 
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateViewAction>,
+  ): Promise<FlatUpdateViewAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateViewAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateViewAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
-    const { entityId } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, update } = flatAction;
 
     const viewRepository =
       queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
 
-    await viewRepository.update(
-      entityId,
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
-    );
+    await viewRepository.update({ id: entityId, workspaceId }, update);
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateViewAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateViewAction>,
   ): Promise<void> {
     return;
   }

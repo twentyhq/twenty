@@ -5,7 +5,7 @@ import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
+import { FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
@@ -18,7 +18,7 @@ const DEFAULT_NO_VALIDATION = (): FlatFieldMetadataValidationError[] => [];
 
 export type GenericValidateFlatFieldMetadataTypeSpecificitiesArgs =
   FlatEntityValidationArgs<'fieldMetadata'> & {
-    updates?: FlatEntityPropertiesUpdates<'fieldMetadata'>;
+    update?: FlatEntityUpdate<'fieldMetadata'>;
   };
 
 const rejectUserCreation = (
@@ -29,7 +29,7 @@ const rejectUserCreation = (
   return (
     args: GenericValidateFlatFieldMetadataTypeSpecificitiesArgs,
   ): FlatFieldMetadataValidationError[] => {
-    const isCreation = !isDefined(args.updates);
+    const isCreation = !isDefined(args.update);
     const isCustomField = args.flatEntityToValidate.isCustom;
 
     if (isCreation && isCustomField) {

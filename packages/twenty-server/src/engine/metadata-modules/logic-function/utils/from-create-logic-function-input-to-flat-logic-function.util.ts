@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/logic-function/constants/default-tool-input-schema.constant';
 import { type CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import {
@@ -15,19 +16,17 @@ import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-funct
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
 export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
-  createLogicFunctionInput: CreateLogicFunctionInput & {
-    logicFunctionLayerId: string;
-  };
+  createLogicFunctionInput: CreateLogicFunctionInput;
   workspaceId: string;
-  workspaceCustomApplicationId: string;
+  ownerFlatApplication: FlatApplication;
 };
 
 export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   createLogicFunctionInput: rawCreateLogicFunctionInput,
   workspaceId,
-  workspaceCustomApplicationId,
+  ownerFlatApplication,
 }: FromCreateLogicFunctionInputToFlatLogicFunctionArgs): FlatLogicFunction => {
-  const id = v4();
+  const id = rawCreateLogicFunctionInput.id ?? v4();
   const currentDate = new Date();
 
   // Build full paths including the base folder
@@ -38,6 +37,17 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   const builtHandlerPath =
     rawCreateLogicFunctionInput.builtHandlerPath ??
     `${baseFolder}/${DEFAULT_BUILT_HANDLER_PATH}`;
+
+  const universalIdentifier =
+    rawCreateLogicFunctionInput.universalIdentifier ?? v4();
+
+  const checksum = isDefined(rawCreateLogicFunctionInput.checksum)
+    ? rawCreateLogicFunctionInput.checksum
+    : rawCreateLogicFunctionInput?.code
+      ? logicFunctionCreateHash(
+          JSON.stringify(rawCreateLogicFunctionInput.code),
+        )
+      : null;
 
   return {
     id,
@@ -50,22 +60,16 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
     handlerName:
       rawCreateLogicFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
     builtHandlerPath,
-    universalIdentifier:
-      rawCreateLogicFunctionInput.universalIdentifier ?? v4(),
+    universalIdentifier,
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),
     deletedAt: null,
-    applicationId: workspaceCustomApplicationId,
+    applicationId: ownerFlatApplication.id,
     runtime: LogicFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,
-    logicFunctionLayerId: rawCreateLogicFunctionInput.logicFunctionLayerId,
     workspaceId,
     code: rawCreateLogicFunctionInput?.code,
-    checksum: rawCreateLogicFunctionInput?.code
-      ? logicFunctionCreateHash(
-          JSON.stringify(rawCreateLogicFunctionInput.code),
-        )
-      : null,
+    checksum,
     // If no schema provided and no code provided, use default schema
     // (because the default template will be used)
     toolInputSchema: isDefined(rawCreateLogicFunctionInput?.toolInputSchema)
@@ -74,5 +78,9 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
         ? DEFAULT_TOOL_INPUT_SCHEMA
         : null,
     isTool: rawCreateLogicFunctionInput?.isTool ?? false,
+    __universal: {
+      applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
+      universalIdentifier,
+    },
   };
 };

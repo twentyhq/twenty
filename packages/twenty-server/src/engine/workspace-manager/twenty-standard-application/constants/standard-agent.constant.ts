@@ -1,8 +1,6 @@
-import { HELPER_AGENT } from 'src/engine/workspace-manager/workspace-migration/constant/standard-agent-ids';
-
 export const STANDARD_AGENT = {
   helper: {
-    universalIdentifier: HELPER_AGENT.standardId,
+    universalIdentifier: '20202020-0002-0001-0001-000000000004',
   },
 } as const satisfies Record<
   string,

@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -66,7 +67,10 @@ export class PageLayoutUpdateService {
         },
       );
 
-    const existingPageLayout = flatPageLayoutMaps.byId[id];
+    const existingPageLayout = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutMaps,
+    });
 
     // TODO move in validator
     if (
@@ -137,6 +141,8 @@ export class PageLayoutUpdateService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -201,7 +207,9 @@ export class PageLayoutUpdateService {
     tabsToUpdate: FlatPageLayoutTab[];
     tabsToDelete: FlatPageLayoutTab[];
   } {
-    const existingTabs = Object.values(flatPageLayoutTabMaps.byId)
+    const existingTabs = Object.values(
+      flatPageLayoutTabMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((tab) => tab.pageLayoutId === existingPageLayout.id);
 
@@ -277,7 +285,10 @@ export class PageLayoutUpdateService {
 
     const tabsToDelete: FlatPageLayoutTab[] = idsToDelete
       .map((tabId) => {
-        const existingTab = flatPageLayoutTabMaps.byId[tabId];
+        const existingTab = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: tabId,
+          flatEntityMaps: flatPageLayoutTabMaps,
+        });
 
         if (!isDefined(existingTab)) {
           return null;
@@ -357,7 +368,9 @@ export class PageLayoutUpdateService {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
   } {
-    const existingWidgets = Object.values(flatPageLayoutWidgetMaps.byId)
+    const existingWidgets = Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((widget) => widget.pageLayoutTabId === tabId);
 
@@ -388,6 +401,7 @@ export class PageLayoutUpdateService {
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
+          position: widgetInput.position ?? null,
           configuration: widgetInput.configuration ?? null,
           workspaceId,
           createdAt: now.toISOString(),
@@ -414,6 +428,7 @@ export class PageLayoutUpdateService {
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
+          position: widgetInput.position ?? null,
           configuration: widgetInput.configuration ?? null,
           updatedAt: now.toISOString(),
         };
@@ -434,6 +449,7 @@ export class PageLayoutUpdateService {
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
+          position: widgetInput.position ?? null,
           configuration: widgetInput.configuration ?? null,
           deletedAt: null,
           updatedAt: now.toISOString(),
@@ -442,7 +458,10 @@ export class PageLayoutUpdateService {
 
     const widgetsToDelete: FlatPageLayoutWidget[] = idsToDelete
       .map((widgetId) => {
-        const existingWidget = flatPageLayoutWidgetMaps.byId[widgetId];
+        const existingWidget = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: widgetId,
+          flatEntityMaps: flatPageLayoutWidgetMaps,
+        });
 
         if (!isDefined(existingWidget)) {
           return null;

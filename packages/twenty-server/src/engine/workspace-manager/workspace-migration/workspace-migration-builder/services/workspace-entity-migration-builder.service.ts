@@ -11,10 +11,12 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { MetadataFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { MetadataValidationRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
@@ -28,7 +30,6 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
 import { SuccessfulFlatEntityValidateAndBuild } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/successful-flat-entity-validate-and-build.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 export type ValidateAndBuildArgs<T extends AllMetadataName> = {
   buildOptions: WorkspaceMigrationBuilderOptions;
@@ -66,12 +67,12 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       'matrix computation',
     );
 
-    const fromFlatEntities = Object.values(fromFlatEntityMaps.byId).filter(
-      isDefined,
-    );
-    const toFlatEntities = Object.values(toFlatEntityMaps.byId).filter(
-      isDefined,
-    );
+    const fromFlatEntities = Object.values(
+      fromFlatEntityMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+    const toFlatEntities = Object.values(
+      toFlatEntityMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     const {
       createdFlatEntityMaps,
@@ -109,16 +110,13 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       `EntityBuilder ${this.metadataName}`,
       'creation validation',
     );
-    for (const flatEntityToCreateId in createdFlatEntityMaps.byId) {
-      const flatEntityToCreate =
-        createdFlatEntityMaps.byId[flatEntityToCreateId];
+    for (const flatEntityToCreateUniversalIdentifier in createdFlatEntityMaps.byUniversalIdentifier) {
+      const flatEntityToCreate = findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier: flatEntityToCreateUniversalIdentifier,
+        flatEntityMaps: createdFlatEntityMaps,
+      });
 
-      if (!isDefined(flatEntityToCreate)) {
-        throw new FlatEntityMapsException(
-          'Could not find flat entity to create in maps should never occur',
-          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
+      const flatEntityToCreateId = flatEntityToCreate.id;
 
       deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
         entityToDeleteId: flatEntityToCreateId,
@@ -170,12 +168,14 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       buildOptions,
       metadataName: this.metadataName,
     })
-      ? Object.keys(deletedFlatEntityMaps.byId)
+      ? Object.keys(deletedFlatEntityMaps.universalIdentifierById)
       : [];
 
     for (const flatEntityToDeleteId of flatEntityToDeleteIds) {
-      const flatEntityToDelete =
-        deletedFlatEntityMaps.byId[flatEntityToDeleteId];
+      const flatEntityToDelete = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatEntityToDeleteId,
+        flatEntityMaps: deletedFlatEntityMaps,
+      });
 
       if (!isDefined(flatEntityToDelete)) {
         throw new FlatEntityMapsException(
@@ -223,9 +223,11 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     );
     this.logger.time(`EntityBuilder ${this.metadataName}`, 'update validation');
 
-    for (const flatEntityToUpdateId in updatedFlatEntityMaps.byId) {
+    for (const flatEntityToUpdateUniversalIdentifier in updatedFlatEntityMaps.byUniversalIdentifier) {
       const flatEntityToUpdate =
-        updatedFlatEntityMaps.byId[flatEntityToUpdateId];
+        updatedFlatEntityMaps.byUniversalIdentifier[
+          flatEntityToUpdateUniversalIdentifier
+        ];
 
       if (!isDefined(flatEntityToUpdate)) {
         throw new FlatEntityMapsException(
@@ -235,12 +237,13 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       }
 
       const validationResult = await this.validateFlatEntityUpdate({
-        flatEntityUpdates: flatEntityToUpdate.updates,
-        flatEntityId: flatEntityToUpdateId,
+        flatEntityUpdate: flatEntityToUpdate.update,
+        flatEntityId: flatEntityToUpdate.id,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         workspaceId,
         buildOptions,
         additionalCacheDataMaps,
+        universalIdentifier: flatEntityToUpdateUniversalIdentifier,
       });
 
       if (validationResult.status === 'fail') {
@@ -249,7 +252,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       }
 
       const existingFlatEntity = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: flatEntityToUpdateId,
+        flatEntityId: flatEntityToUpdate.id,
         flatEntityMaps: optimisticFlatEntityMapsAndRelatedFlatEntityMaps[
           flatEntityMapsKey
         ] as MetadataFlatEntityMaps<T>,
@@ -262,11 +265,9 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         );
       }
 
-      const updatedFlatEntity = {
+      const updatedFlatEntity: MetadataFlatEntity<T> = {
         ...existingFlatEntity,
-        ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-          updates: flatEntityToUpdate.updates,
-        }),
+        ...flatEntityToUpdate.update,
       };
 
       replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow({

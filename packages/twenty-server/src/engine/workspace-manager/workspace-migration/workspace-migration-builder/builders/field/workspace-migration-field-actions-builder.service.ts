@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { UniversalUpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
@@ -37,13 +37,20 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
 
     const { flatEntityToValidate: flatFieldMetadataToValidate } = args;
 
+    const fieldIdByUniversalIdentifier = flatFieldMetadataToValidate.id
+      ? {
+          [flatFieldMetadataToValidate.universalIdentifier]:
+            flatFieldMetadataToValidate.id,
+        }
+      : undefined;
+
     return {
       status: 'success',
       action: {
         type: 'create',
         metadataName: 'fieldMetadata',
-        objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
-        flatFieldMetadatas: [flatFieldMetadataToValidate],
+        universalFlatFieldMetadatas: [flatFieldMetadataToValidate],
+        fieldIdByUniversalIdentifier,
       },
     };
   }
@@ -94,13 +101,13 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const { flatEntityId, flatEntityUpdates } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateFieldAction: UpdateFieldAction = {
+    const updateFieldAction: UniversalUpdateFieldAction = {
       type: 'update',
       metadataName: 'fieldMetadata',
-      entityId: flatEntityId,
-      updates: flatEntityUpdates,
+      universalIdentifier,
+      update: flatEntityUpdate,
     };
 
     return {

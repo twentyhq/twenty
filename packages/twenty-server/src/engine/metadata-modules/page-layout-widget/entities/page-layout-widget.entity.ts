@@ -1,6 +1,9 @@
 import { ObjectType } from '@nestjs/graphql';
 
-import { PageLayoutWidgetConditionalDisplay } from 'twenty-shared/types';
+import {
+  PageLayoutWidgetConditionalDisplay,
+  PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -76,6 +79,9 @@ export class PageLayoutWidgetEntity<
 
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: JsonbProperty<GridPosition>;
+
+  @Column({ type: 'jsonb', nullable: true })
+  position: JsonbProperty<PageLayoutWidgetPosition | null>;
 
   @Column({ type: 'jsonb', nullable: false })
   configuration: JsonbProperty<

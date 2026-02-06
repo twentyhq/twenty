@@ -25,12 +25,14 @@ export class AuditService {
 
   createContext(context?: {
     workspaceId?: string | null | undefined;
-    userId?: string | null | undefined;
+    userWorkspaceId?: string | null | undefined;
   }) {
-    const userIdAndWorkspaceId = context
+    const contextFields = context
       ? {
-          ...(context.userId ? { userId: context.userId } : {}),
           ...(context.workspaceId ? { workspaceId: context.workspaceId } : {}),
+          ...(context.userWorkspaceId
+            ? { userWorkspaceId: context.userWorkspaceId }
+            : {}),
         }
       : {};
 
@@ -41,7 +43,7 @@ export class AuditService {
       ) =>
         this.preventIfDisabled(() =>
           this.clickHouseService.insert('workspaceEvent', [
-            { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },
+            { ...contextFields, ...makeTrackEvent(event, properties) },
           ]),
         ),
       createObjectEvent: <T extends TrackEventName>(
@@ -53,7 +55,7 @@ export class AuditService {
       ) =>
         this.preventIfDisabled(() =>
           this.clickHouseService.insert('objectEvent', [
-            { ...userIdAndWorkspaceId, ...makeTrackEvent(event, properties) },
+            { ...contextFields, ...makeTrackEvent(event, properties) },
           ]),
         ),
       createPageviewEvent: (
@@ -62,7 +64,7 @@ export class AuditService {
       ) =>
         this.preventIfDisabled(() =>
           this.clickHouseService.insert('pageview', [
-            { ...userIdAndWorkspaceId, ...makePageview(name, properties) },
+            { ...contextFields, ...makePageview(name, properties) },
           ]),
         ),
     };

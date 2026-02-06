@@ -125,6 +125,8 @@ export class WebhookService {
             },
           },
           workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -155,6 +157,11 @@ export class WebhookService {
     input: UpdateWebhookInput,
     workspaceId: string,
   ): Promise<WebhookDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const normalizedInput = {
       ...input,
       update: {
@@ -190,6 +197,8 @@ export class WebhookService {
             },
           },
           workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -217,6 +226,11 @@ export class WebhookService {
   }
 
   async delete(id: string, workspaceId: string): Promise<WebhookDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatWebhookMaps: existingFlatWebhookMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -241,6 +255,8 @@ export class WebhookService {
             },
           },
           workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

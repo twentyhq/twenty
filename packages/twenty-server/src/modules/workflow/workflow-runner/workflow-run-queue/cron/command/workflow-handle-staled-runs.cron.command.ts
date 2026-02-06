@@ -5,7 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN,
-  WorkflowHandleStaledRunsJob,
+  WorkflowHandleStaledRunsCronJob,
 } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-handle-staled-runs.cron.job';
 
 @Command({
@@ -22,7 +22,7 @@ export class WorkflowHandleStaledRunsCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron({
-      jobName: WorkflowHandleStaledRunsJob.name,
+      jobName: WorkflowHandleStaledRunsCronJob.name,
       data: undefined,
       options: {
         repeat: {

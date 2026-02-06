@@ -7,8 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
-import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
@@ -19,7 +18,6 @@ import {
   validateSkillLabelIsDefined,
   validateSkillRequiredProperties,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatSkillValidatorService {
@@ -41,9 +39,9 @@ export class FlatSkillValidatorService {
       type: 'create',
     });
 
-    const existingSkills = Object.values(optimisticFlatSkillMaps.byId).filter(
-      isDefined,
-    );
+    const existingSkills = Object.values(
+      optimisticFlatSkillMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     validationResult.errors.push(
       ...validateSkillRequiredProperties({ flatSkill }),
@@ -93,7 +91,16 @@ export class FlatSkillValidatorService {
       return validationResult;
     }
 
-    if (!buildOptions.isSystemBuild && isStandardMetadata(existingSkill)) {
+    if (
+      !buildOptions.isSystemBuild &&
+      // TODO refactor once skill has been migrated to universal pattern
+      isDefined(existingSkill.__universal) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: existingSkill.universalIdentifier,
+        applicationUniversalIdentifier:
+          existingSkill.__universal.applicationUniversalIdentifier,
+      })
+    ) {
       validationResult.errors.push({
         code: SkillExceptionCode.SKILL_IS_STANDARD,
         message: t`Cannot delete standard skill`,
@@ -106,7 +113,7 @@ export class FlatSkillValidatorService {
 
   public validateFlatSkillUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatSkillMaps: optimisticFlatSkillMaps,
     },
@@ -138,19 +145,24 @@ export class FlatSkillValidatorService {
       return validationResult;
     }
 
-    // Standard skills can only have isActive toggled, not other properties
-    const isActiveUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'isActive',
-    });
+    const isActiveUpdate = flatEntityUpdate.isActive;
 
-    const hasNonIsActiveUpdates = flatEntityUpdates.some(
-      (update) => update.property !== 'isActive',
+    const hasNonIsActiveUpdates = Object.keys(flatEntityUpdate).some(
+      (key) => key !== 'isActive',
     );
+
+    // TODO refactor once skill has been migrated to universal pattern
+    const isTwentyStandardSkill =
+      isDefined(fromFlatSkill.__universal) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: fromFlatSkill.universalIdentifier,
+        applicationUniversalIdentifier:
+          fromFlatSkill.__universal.applicationUniversalIdentifier,
+      });
 
     if (
       !buildOptions.isSystemBuild &&
-      isStandardMetadata(fromFlatSkill) &&
+      isTwentyStandardSkill &&
       hasNonIsActiveUpdates
     ) {
       validationResult.errors.push({
@@ -162,7 +174,7 @@ export class FlatSkillValidatorService {
 
     // If only isActive is being updated on a standard skill, allow it
     if (
-      isStandardMetadata(fromFlatSkill) &&
+      isTwentyStandardSkill &&
       isDefined(isActiveUpdate) &&
       !hasNonIsActiveUpdates
     ) {
@@ -171,15 +183,10 @@ export class FlatSkillValidatorService {
 
     const optimisticFlatSkill: FlatSkill = {
       ...fromFlatSkill,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
-    const labelUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'label',
-    });
+    const labelUpdate = flatEntityUpdate.label;
 
     if (isDefined(labelUpdate)) {
       validationResult.errors.push(
@@ -187,10 +194,7 @@ export class FlatSkillValidatorService {
       );
     }
 
-    const contentUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'content',
-    });
+    const contentUpdate = flatEntityUpdate.content;
 
     if (isDefined(contentUpdate)) {
       validationResult.errors.push(
@@ -198,19 +202,18 @@ export class FlatSkillValidatorService {
       );
     }
 
-    const nameUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'name',
-    });
+    const nameUpdate = flatEntityUpdate.name;
 
     if (isDefined(nameUpdate)) {
-      const existingSkills = Object.values(optimisticFlatSkillMaps.byId)
+      const existingSkills = Object.values(
+        optimisticFlatSkillMaps.byUniversalIdentifier,
+      )
         .filter(isDefined)
         .filter((skill) => skill.id !== flatEntityId);
 
       validationResult.errors.push(
         ...validateSkillNameUniqueness({
-          name: nameUpdate.to,
+          name: nameUpdate,
           existingFlatSkills: existingSkills,
         }),
       );

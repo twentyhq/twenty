@@ -2,26 +2,12 @@ import gql from 'graphql-tag';
 import request from 'supertest';
 import { makeGraphqlAPIRequestWithFileUpload } from 'test/integration/graphql/utils/make-graphql-api-request-with-file-upload.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { uploadFilesFieldFileMutation } from 'test/integration/graphql/utils/upload-files-field-file-mutation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
-const uploadWorkspaceFieldFileMutation = gql`
-  mutation UploadFilesFieldFile($file: Upload!) {
-    uploadFilesFieldFile(file: $file) {
-      id
-      path
-      size
-      createdAt
-    }
-  }
-`;
 
 const deleteFileMutation = gql`
   mutation DeleteFile($fileId: UUID!) {
@@ -63,33 +49,6 @@ type UploadedFile = {
   content: string;
 };
 
-const uploadFile = async (
-  filename: string,
-  content: string,
-  contentType: string,
-): Promise<UploadedFile> => {
-  const response = await makeGraphqlAPIRequestWithFileUpload(
-    {
-      query: uploadWorkspaceFieldFileMutation,
-      variables: { file: null },
-    },
-    {
-      field: 'file',
-      buffer: Buffer.from(content),
-      filename,
-      contentType,
-    },
-  );
-
-  expect(response.body.errors).toBeUndefined();
-
-  return {
-    id: response.body.data.uploadFilesFieldFile.id,
-    contentType,
-    content,
-  };
-};
-
 const deleteFile = async (fileId: string): Promise<void> => {
   await makeGraphqlAPIRequest({
     query: deleteFileMutation,
@@ -99,18 +58,38 @@ const deleteFile = async (fileId: string): Promise<void> => {
 
 describe('files-field.controller - GET /files-field/:id', () => {
   let createdObjectMetadataId = '';
+  let createdFieldMetadataId = '';
   let uploadedFiles: UploadedFile[] = [];
+
+  const uploadFile = async (
+    filename: string,
+    content: string,
+    contentType: string,
+  ): Promise<UploadedFile> => {
+    const response = await makeGraphqlAPIRequestWithFileUpload(
+      {
+        query: uploadFilesFieldFileMutation,
+        variables: { file: null, fieldMetadataId: createdFieldMetadataId },
+      },
+      {
+        field: 'file',
+        buffer: Buffer.from(content),
+        filename,
+        contentType,
+      },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    return {
+      id: response.body.data.uploadFilesFieldFile.id,
+      contentType,
+      content,
+    };
+  };
 
   beforeAll(async () => {
     jest.useRealTimers();
-
-    await makeGraphqlAPIRequest(
-      updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-        true,
-      ),
-    );
 
     const {
       data: {
@@ -128,7 +107,9 @@ describe('files-field.controller - GET /files-field/:id', () => {
 
     createdObjectMetadataId = objectMetadataId;
 
-    await createOneFieldMetadata({
+    const {
+      data: { createOneField: createdFieldMetadata },
+    } = await createOneFieldMetadata({
       input: {
         name: 'filesField',
         label: 'Files Field',
@@ -143,6 +124,8 @@ describe('files-field.controller - GET /files-field/:id', () => {
         type
       `,
     });
+
+    createdFieldMetadataId = createdFieldMetadata.id;
   });
 
   afterEach(async () => {
@@ -167,14 +150,6 @@ describe('files-field.controller - GET /files-field/:id', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: createdObjectMetadataId },
     });
-
-    await makeGraphqlAPIRequest(
-      updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_FILES_FIELD_ENABLED,
-        false,
-      ),
-    );
   });
 
   it('should download file successfully with valid url', async () => {

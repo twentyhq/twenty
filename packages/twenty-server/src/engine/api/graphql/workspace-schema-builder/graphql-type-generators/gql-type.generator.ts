@@ -81,7 +81,7 @@ export class GqlTypeGenerator {
   ) {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } = context;
     const objectMetadataCollection = Object.values(
-      flatObjectMetadataMaps.byId,
+      flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
     this.logger.log(

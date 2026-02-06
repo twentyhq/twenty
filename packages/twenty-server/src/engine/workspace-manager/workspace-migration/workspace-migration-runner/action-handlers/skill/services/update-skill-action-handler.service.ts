@@ -3,34 +3,37 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
-import { UpdateSkillAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
-import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+import { FlatUpdateSkillAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
+import {
+  WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
 export class UpdateSkillActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'update',
   'skill',
 ) {
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateSkillAction>,
+  ): Promise<FlatUpdateSkillAction> {
+    return context.action;
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateSkillAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateSkillAction>,
   ): Promise<void> {
-    const { action, queryRunner, workspaceId } = context;
-    const { entityId, updates } = action;
+    const { flatAction, queryRunner, workspaceId } = context;
+    const { entityId, update } = flatAction;
 
     const skillRepository =
       queryRunner.manager.getRepository<SkillEntity>(SkillEntity);
 
-    await skillRepository.update(
-      { id: entityId, workspaceId },
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates,
-      }),
-    );
+    await skillRepository.update({ id: entityId, workspaceId }, update);
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerArgs<UpdateSkillAction>,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateSkillAction>,
   ): Promise<void> {
     return;
   }

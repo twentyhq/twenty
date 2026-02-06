@@ -7,19 +7,17 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 export class FlatViewValidatorService {
   constructor() {}
 
   public validateFlatViewUpdate({
     flatEntityId,
-    flatEntityUpdates,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewMaps: optimisticFlatViewMaps,
       flatFieldMetadataMaps,
@@ -27,7 +25,10 @@ export class FlatViewValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.view
   >): FailedFlatEntityValidation<'view', 'update'> {
-    const existingFlatView = optimisticFlatViewMaps.byId[flatEntityId];
+    const existingFlatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId,
+      flatEntityMaps: optimisticFlatViewMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
@@ -48,27 +49,20 @@ export class FlatViewValidatorService {
       return validationResult;
     }
 
-    const partialUpdates = fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-      updates: flatEntityUpdates,
-    });
-
     const updatedFlatView: FlatView = {
       ...existingFlatView,
-      ...partialUpdates,
+      ...flatEntityUpdate,
     };
 
     const kanbanAggregateOperationFieldMetadataIdUpdate =
-      findFlatEntityPropertyUpdate({
-        property: 'kanbanAggregateOperationFieldMetadataId',
-        flatEntityUpdates,
-      });
+      flatEntityUpdate.kanbanAggregateOperationFieldMetadataId;
 
     if (
       isDefined(kanbanAggregateOperationFieldMetadataIdUpdate) &&
-      kanbanAggregateOperationFieldMetadataIdUpdate.to !== null &&
+      kanbanAggregateOperationFieldMetadataIdUpdate !== null &&
       !isDefined(
         findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: kanbanAggregateOperationFieldMetadataIdUpdate.to,
+          flatEntityId: kanbanAggregateOperationFieldMetadataIdUpdate,
           flatEntityMaps: flatFieldMetadataMaps,
         }),
       )
@@ -164,8 +158,10 @@ export class FlatViewValidatorService {
       type: 'delete',
     });
 
-    const existingFlatView =
-      optimisticFlatViewMaps.byId[flatEntityToValidate.id];
+    const existingFlatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatEntityToValidate.id,
+      flatEntityMaps: optimisticFlatViewMaps,
+    });
 
     if (!isDefined(existingFlatView)) {
       validationResult.errors.push({
@@ -197,8 +193,10 @@ export class FlatViewValidatorService {
       type: 'create',
     });
 
-    const optimisticFlatObjectMetadata =
-      flatObjectMetadataMaps.byId[flatViewToValidate.objectMetadataId];
+    const optimisticFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewToValidate.objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
 
     if (!isDefined(optimisticFlatObjectMetadata)) {
       validationResult.errors.push({
@@ -208,7 +206,14 @@ export class FlatViewValidatorService {
       });
     }
 
-    if (isDefined(optimisticFlatViewMaps.byId[flatViewToValidate.id])) {
+    if (
+      isDefined(
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatViewToValidate.id,
+          flatEntityMaps: optimisticFlatViewMaps,
+        }),
+      )
+    ) {
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
         message: t`View with same id is already exists`,

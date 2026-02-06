@@ -1,1 +1,1 @@
-export { STANDARD_OBJECT_IDS as STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+export { STANDARD_OBJECTS as STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';

@@ -2,7 +2,6 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 
 export const COMPANY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
-  standardId: '20202020-b374-4779-a561-80086cb2e17f',
   nameSingular: 'company',
   namePlural: 'companies',
   labelSingular: 'Company',

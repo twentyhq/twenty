@@ -72,6 +72,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     displayName: PermissionFlagType.WORKSPACE,
     logo: PermissionFlagType.WORKSPACE,
     trashRetentionDays: PermissionFlagType.WORKSPACE,
+    eventLogRetentionDays: PermissionFlagType.SECURITY,
     inviteHash: PermissionFlagType.WORKSPACE_MEMBERS,
     isPublicInviteLinkEnabled: PermissionFlagType.SECURITY,
     allowImpersonation: PermissionFlagType.SECURITY,
@@ -420,7 +421,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         },
       );
 
-    const fields = Object.values(flatFieldMetadataMaps.byId).filter(isDefined);
+    const fields = Object.values(
+      flatFieldMetadataMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     if (fields.length === 0) {
       return 0;

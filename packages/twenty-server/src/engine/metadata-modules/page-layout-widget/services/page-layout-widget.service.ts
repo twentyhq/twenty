@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -23,7 +24,6 @@ import {
   generatePageLayoutWidgetExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
-import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -66,6 +66,11 @@ export class PageLayoutWidgetService {
     operations: WidgetMigrationOperations;
     errorMessage: string;
   }): Promise<void> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -74,6 +79,8 @@ export class PageLayoutWidgetService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -95,7 +102,7 @@ export class PageLayoutWidgetService {
     const flatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    return Object.values(flatPageLayoutWidgetMaps.byId)
+    return Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (widget) =>
@@ -120,7 +127,10 @@ export class PageLayoutWidgetService {
     const flatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    const flatWidget = flatPageLayoutWidgetMaps.byId[id];
+    const flatWidget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutWidgetMaps,
+    });
 
     if (!isDefined(flatWidget) || isDefined(flatWidget.deletedAt)) {
       throw new PageLayoutWidgetException(
@@ -193,16 +203,7 @@ export class PageLayoutWidgetService {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    const existingWidget = this.getExistingWidgetOrThrow(
-      id,
-      existingFlatPageLayoutWidgetMaps,
-    );
-
-    if (updateData.gridPosition) {
-      const titleForValidation = updateData.title ?? existingWidget.title;
-
-      validateWidgetGridPosition(updateData.gridPosition, titleForValidation);
-    }
+    this.getExistingWidgetOrThrow(id, existingFlatPageLayoutWidgetMaps);
 
     const updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId = {
       id,
@@ -248,7 +249,10 @@ export class PageLayoutWidgetService {
     id: string,
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps,
   ): FlatPageLayoutWidget {
-    const existingWidget = flatPageLayoutWidgetMaps.byId[id];
+    const existingWidget = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: id,
+      flatEntityMaps: flatPageLayoutWidgetMaps,
+    });
 
     if (!isDefined(existingWidget) || isDefined(existingWidget.deletedAt)) {
       throw new PageLayoutWidgetException(

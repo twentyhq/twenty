@@ -1,9 +1,15 @@
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-one-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
-import { updateLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function.util';
 
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+
+// Default template function code that matches the expected behavior
+const DEFAULT_TEMPLATE_FUNCTION_CODE = {
+  'src/index.ts': `export const main = async (params: { a: string; b: number }): Promise<object> => {
+  return { message: \`Hello, input: \${params.a} and \${params.b}\` };
+};`,
+};
 
 // Test function using external packages from default layer (lodash.groupby)
 const EXTERNAL_PACKAGES_FUNCTION_CODE = {
@@ -46,10 +52,11 @@ describe('Logic Function Execution', () => {
   });
 
   it('should execute the default logic function template', async () => {
-    // Create the function (uses default template)
+    // Create the function with default template code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Test Default Function',
+        code: DEFAULT_TEMPLATE_FUNCTION_CODE,
       },
       expectToFail: false,
     });
@@ -82,10 +89,11 @@ describe('Logic Function Execution', () => {
   });
 
   it('should execute a function with external packages (lodash.groupby)', async () => {
-    // Create the function (uses default template initially)
+    // Create the function with the external packages code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'External Packages Test',
+        code: EXTERNAL_PACKAGES_FUNCTION_CODE,
       },
       expectToFail: false,
     });
@@ -94,18 +102,6 @@ describe('Logic Function Execution', () => {
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
-
-    // Update with custom code using external packages
-    await updateLogicFunction({
-      input: {
-        id: functionId,
-        update: {
-          name: 'External Packages Test',
-          code: EXTERNAL_PACKAGES_FUNCTION_CODE,
-        },
-      },
-      expectToFail: false,
-    });
 
     // Execute the function with items to group
     const { data: executeData } = await executeLogicFunction({
@@ -148,10 +144,11 @@ describe('Logic Function Execution', () => {
   });
 
   it('should handle errors thrown by logic functions', async () => {
-    // Create the function
+    // Create the function with error-throwing code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Error Test Function',
+        code: ERROR_FUNCTION_CODE,
       },
       expectToFail: false,
     });
@@ -160,18 +157,6 @@ describe('Logic Function Execution', () => {
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
-
-    // Update with error-throwing code
-    await updateLogicFunction({
-      input: {
-        id: functionId,
-        update: {
-          name: 'Error Test Function',
-          code: ERROR_FUNCTION_CODE,
-        },
-      },
-      expectToFail: false,
-    });
 
     // Execute with shouldFail = false (should succeed)
     const { data: successData } = await executeLogicFunction({

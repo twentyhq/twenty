@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { FLAT_VIEW_FILTER_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-filter/constants/flat-view-filter-editable-properties.constant';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
@@ -28,8 +29,10 @@ export const fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow = ({
       ['id'],
     );
 
-  const existingFlatViewFilterToUpdate =
-    flatViewFilterMaps.byId[viewFilterToUpdateId];
+  const existingFlatViewFilterToUpdate = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewFilterToUpdateId,
+    flatEntityMaps: flatViewFilterMaps,
+  });
 
   if (!isDefined(existingFlatViewFilterToUpdate)) {
     throw new ViewFilterException(

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FlatEntityPropertiesUpdates } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
+import { FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
 import {
   type FlatPageLayoutWidgetTypeValidatorForCreation,
   type FlatPageLayoutWidgetTypeValidatorForUpdate,
@@ -24,7 +24,7 @@ import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace
 
 export type GenericValidateFlatPageLayoutWidgetTypeSpecificitiesArgs =
   FlatEntityValidationArgs<'pageLayoutWidget'> & {
-    updates?: FlatEntityPropertiesUpdates<'pageLayoutWidget'>;
+    update?: FlatEntityUpdate<'pageLayoutWidget'>;
   };
 
 export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs =
@@ -32,7 +32,7 @@ export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs =
 
 export type ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs =
   FlatEntityValidationArgs<'pageLayoutWidget'> & {
-    updates: FlatEntityPropertiesUpdates<'pageLayoutWidget'>;
+    update: FlatEntityUpdate<'pageLayoutWidget'>;
   };
 
 @Injectable()

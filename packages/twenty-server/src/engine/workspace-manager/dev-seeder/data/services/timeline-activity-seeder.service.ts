@@ -463,9 +463,9 @@ export class TimelineActivitySeederService {
     }
 
     const targetChecks = [
-      { id: noteTargetSeed.personId, type: 'person' },
-      { id: noteTargetSeed.companyId, type: 'company' },
-      { id: noteTargetSeed.opportunityId, type: 'opportunity' },
+      { id: noteTargetSeed.targetPersonId, type: 'person' },
+      { id: noteTargetSeed.targetCompanyId, type: 'company' },
+      { id: noteTargetSeed.targetOpportunityId, type: 'opportunity' },
     ];
 
     for (const { id, type } of targetChecks) {
@@ -487,9 +487,9 @@ export class TimelineActivitySeederService {
     }
 
     const targetChecks = [
-      { id: taskTargetSeed.personId, type: 'person' },
-      { id: taskTargetSeed.companyId, type: 'company' },
-      { id: taskTargetSeed.opportunityId, type: 'opportunity' },
+      { id: taskTargetSeed.targetPersonId, type: 'person' },
+      { id: taskTargetSeed.targetCompanyId, type: 'company' },
+      { id: taskTargetSeed.targetOpportunityId, type: 'opportunity' },
     ];
 
     for (const { id, type } of targetChecks) {

@@ -5,12 +5,10 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -30,7 +28,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -41,6 +38,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { CreateApplicationInput } from 'src/engine/core-modules/application/dtos/create-application.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -57,8 +55,6 @@ export class ApplicationResolver {
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -69,31 +65,65 @@ export class ApplicationResolver {
     return this.applicationService.findManyApplications(workspaceId);
   }
 
+  @Query(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async checkApplicationExist(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
+    @Args('universalIdentifier', { type: () => UUIDScalarType, nullable: true })
+    universalIdentifier?: string,
+  ) {
+    return await this.applicationService.checkApplicationExist({
+      id,
+      universalIdentifier,
+      workspaceId,
+    });
+  }
+
   @Query(() => ApplicationDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async findOneApplication(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
+    @Args('universalIdentifier', { type: () => UUIDScalarType, nullable: true })
+    universalIdentifier?: string,
+  ) {
+    return await this.applicationService.findOneApplicationOrThrow({
+      id,
+      universalIdentifier,
+      workspaceId,
+    });
+  }
+
+  @Mutation(() => ApplicationDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
+  async createOneApplication(
+    @Args('input') input: CreateApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return await this.applicationService.findOneApplication(id, workspaceId);
+    return await this.applicationService.create({
+      ...input,
+      sourceType: 'local',
+      workspaceId,
+    });
   }
 
   @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async syncApplication(
-    @Args() { manifest, packageJson, yarnLock }: ApplicationInput,
+    @Args() { manifest }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     await this.applicationSyncService.synchronizeFromManifest({
       workspaceId,
       manifest,
-      yarnLock,
-      packageJson,
     });
 
     return true;
   }
 
   @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async installApplication(
     @Args() { workspaceMigration: { actions } }: InstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -114,15 +144,25 @@ export class ApplicationResolver {
       );
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     await this.workspaceMigrationRunnerService.run({
       actions,
       workspaceId,
+      applicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     return true;
   }
 
   @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async uninstallApplication(
     @Args() { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -137,6 +177,7 @@ export class ApplicationResolver {
 
   @Mutation(() => FileDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @RequireFeatureFlag(FeatureFlagKey.IS_APPLICATION_ENABLED)
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
