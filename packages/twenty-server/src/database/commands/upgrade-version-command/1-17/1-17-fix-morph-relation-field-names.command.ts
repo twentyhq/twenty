@@ -1,22 +1,17 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { Command, Option } from 'nest-commander';
+import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, type QueryRunner, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/providers/global-workspace-orm.manager';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache-storage/workspace-cache.service';
-
-interface FixMorphRelationFieldNamesCommandOptions {
-  workspaceId?: string;
-  dryRun?: boolean;
-}
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 interface MismatchedField {
   fieldId: string;
@@ -47,26 +42,10 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
-  @Option({
-    flags: '-w, --workspace-id [workspace_id]',
-    description: 'Run on a specific workspace',
-  })
-  parseWorkspaceId(val: string): string {
-    return val;
-  }
-
-  @Option({
-    flags: '-d, --dry-run',
-    description: 'Run in dry-run mode (no changes will be made)',
-  })
-  parseDryRun(): boolean {
-    return true;
-  }
-
   override async runOnWorkspace({
     workspaceId,
     options,
-  }: RunOnWorkspaceArgs<FixMorphRelationFieldNamesCommandOptions>): Promise<void> {
+  }: RunOnWorkspaceArgs): Promise<void> {
     const dryRun = options?.dryRun ?? false;
 
     this.logger.log(
@@ -95,9 +74,16 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
 
     if (dryRun) {
       this.logger.log('[DRY RUN] No changes made');
+      this.logger.log(
+        '⚠️  Before running without --dry-run, please ensure you have a database backup',
+      );
 
       return;
     }
+
+    this.logger.log(
+      '⚠️  Starting fix. Ensure you have a database backup before proceeding.',
+    );
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
@@ -106,58 +92,99 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
 
     try {
       for (const field of mismatchedFields) {
-        // Step 1: Rename column in workspace schema
-        const columnExists = await this.columnExists(
+        // Step 1: Check column states
+        const sourceColumnExists = await this.columnExists(
           queryRunner,
           field.workspaceSchema,
           field.sourceObjectName,
           field.currentJoinColumnName,
         );
 
-        if (columnExists) {
-          const targetColumnExists = await this.columnExists(
-            queryRunner,
-            field.workspaceSchema,
-            field.sourceObjectName,
-            field.expectedJoinColumnName,
-          );
+        const targetColumnExists = await this.columnExists(
+          queryRunner,
+          field.workspaceSchema,
+          field.sourceObjectName,
+          field.expectedJoinColumnName,
+        );
 
-          if (targetColumnExists) {
-            this.logger.log(
-              `Column ${field.expectedJoinColumnName} already exists in ${field.workspaceSchema}.${field.sourceObjectName}, skipping column rename`,
-            );
-          } else {
-            await queryRunner.query(
-              `ALTER TABLE "${field.workspaceSchema}"."${field.sourceObjectName}" 
-               RENAME COLUMN "${field.currentJoinColumnName}" TO "${field.expectedJoinColumnName}"`,
-            );
-            this.logger.log(
-              `Renamed column ${field.currentJoinColumnName} → ${field.expectedJoinColumnName} in ${field.workspaceSchema}.${field.sourceObjectName}`,
-            );
-          }
-        } else {
-          this.logger.log(
-            `Column ${field.currentJoinColumnName} does not exist in ${field.workspaceSchema}.${field.sourceObjectName}, skipping column rename`,
+        // Safety check: if both columns exist, we have a conflict - skip this field entirely
+        if (sourceColumnExists && targetColumnExists) {
+          this.logger.warn(
+            `⚠️  SKIPPING ${field.sourceObjectName}.${field.currentFieldName}: Both columns exist (${field.currentJoinColumnName} and ${field.expectedJoinColumnName}). Manual intervention required.`,
           );
+          continue;
         }
 
-        // Step 2: Update field metadata
+        // Step 2: Rename column if needed
+        if (sourceColumnExists && !targetColumnExists) {
+          await queryRunner.query(
+            `ALTER TABLE "${field.workspaceSchema}"."${field.sourceObjectName}" 
+             RENAME COLUMN "${field.currentJoinColumnName}" TO "${field.expectedJoinColumnName}"`,
+          );
+          this.logger.log(
+            `Renamed column ${field.currentJoinColumnName} → ${field.expectedJoinColumnName} in ${field.workspaceSchema}.${field.sourceObjectName}`,
+          );
+        } else if (!sourceColumnExists && targetColumnExists) {
+          this.logger.log(
+            `Column ${field.expectedJoinColumnName} already exists (fix likely already applied), updating metadata only`,
+          );
+        } else if (!sourceColumnExists && !targetColumnExists) {
+          this.logger.warn(
+            `⚠️  Neither column exists for ${field.sourceObjectName}.${field.currentFieldName}. Creating expected column.`,
+          );
+          // The column might not exist if the object was created but never had data
+          // We'll still update metadata - TypeORM sync should create the column
+        }
+
+        // Step 3: Verify field still exists with expected current name before updating
+        const fieldCheck = await queryRunner.query(
+          `SELECT id, name FROM core."fieldMetadata" WHERE id = $1`,
+          [field.fieldId],
+        );
+
+        if (fieldCheck.length === 0) {
+          this.logger.warn(
+            `⚠️  Field ${field.fieldId} no longer exists, skipping`,
+          );
+          continue;
+        }
+
+        if (fieldCheck[0].name !== field.currentFieldName) {
+          this.logger.warn(
+            `⚠️  Field ${field.fieldId} name changed from ${field.currentFieldName} to ${fieldCheck[0].name} since query, skipping`,
+          );
+          continue;
+        }
+
+        // Step 4: Update field metadata
         const newSettings = {
           joinColumnName: field.expectedJoinColumnName,
         };
 
-        await queryRunner.query(
+        const updateResult = await queryRunner.query(
           `UPDATE core."fieldMetadata"
            SET name = $1, 
                settings = settings || $2::jsonb
            WHERE id = $3
-             AND name != $1`,
-          [field.expectedFieldName, JSON.stringify(newSettings), field.fieldId],
+             AND name = $4
+           RETURNING id`,
+          [
+            field.expectedFieldName,
+            JSON.stringify(newSettings),
+            field.fieldId,
+            field.currentFieldName,
+          ],
         );
 
-        this.logger.log(
-          `Updated fieldMetadata: ${field.currentFieldName} → ${field.expectedFieldName}`,
-        );
+        if (updateResult.length > 0) {
+          this.logger.log(
+            `✓ Updated fieldMetadata: ${field.currentFieldName} → ${field.expectedFieldName}`,
+          );
+        } else {
+          this.logger.log(
+            `Field metadata already up to date for ${field.currentFieldName}`,
+          );
+        }
       }
 
       await queryRunner.commitTransaction();
@@ -185,6 +212,14 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
   private async findMismatchedFields(
     workspaceId: string,
   ): Promise<MismatchedField[]> {
+    // Only process fields on these specific objects that use the target morph pattern
+    const allowedSourceObjects = [
+      'noteTarget',
+      'taskTarget',
+      'attachment',
+      'timelineActivity',
+    ];
+
     const result = await this.coreDataSource.query(
       `SELECT 
         fm.id AS "fieldId",
@@ -199,8 +234,9 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
       JOIN core."dataSource" ds ON ds."workspaceId" = fm."workspaceId"
       WHERE fm."workspaceId" = $1
         AND fm.type = $2
-        AND fm.name LIKE 'target%'`,
-      [workspaceId, FieldMetadataType.MORPH_RELATION],
+        AND fm.name LIKE 'target%'
+        AND source_om."nameSingular" = ANY($3)`,
+      [workspaceId, FieldMetadataType.MORPH_RELATION, allowedSourceObjects],
     );
 
     // Filter in JavaScript to handle camelCase properly
@@ -245,7 +281,7 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
   }
 
   private async columnExists(
-    queryRunner: import('typeorm').QueryRunner,
+    queryRunner: QueryRunner,
     schema: string,
     table: string,
     column: string,
