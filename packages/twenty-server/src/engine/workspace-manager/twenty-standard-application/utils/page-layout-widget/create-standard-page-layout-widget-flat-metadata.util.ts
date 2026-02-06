@@ -1,4 +1,7 @@
-import { type PageLayoutWidgetPosition } from 'twenty-shared/types';
+import {
+  type PageLayoutWidgetConditionalDisplay,
+  type PageLayoutWidgetPosition,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -7,9 +10,9 @@ import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modul
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
 import { STANDARD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
 import {
-  type StandardPageLayoutTabDefinition,
-  type StandardPageLayoutWidgetDefinition,
-} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.types';
+  type StandardPageLayoutTabConfig,
+  type StandardPageLayoutWidgetConfig,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
 import { type StandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { type StandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
 
@@ -23,6 +26,7 @@ export type CreateStandardPageLayoutWidgetContext = {
   position: PageLayoutWidgetPosition | null;
   configuration: AllPageLayoutWidgetConfiguration;
   objectMetadataId: string | null;
+  conditionalDisplay: PageLayoutWidgetConditionalDisplay | null;
 };
 
 export type CreateStandardPageLayoutWidgetArgs = {
@@ -45,6 +49,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     position,
     configuration,
     objectMetadataId,
+    conditionalDisplay,
   },
   workspaceId,
   twentyStandardApplicationId,
@@ -54,8 +59,8 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   const layoutIds = standardPageLayoutMetadataRelatedEntityIds[layoutName];
   const layout = STANDARD_PAGE_LAYOUTS[
     layoutName as keyof typeof STANDARD_PAGE_LAYOUTS
-  ] as { tabs: Record<string, StandardPageLayoutTabDefinition> };
-  const widgetDef: StandardPageLayoutWidgetDefinition =
+  ] as { tabs: Record<string, StandardPageLayoutTabConfig> };
+  const widgetDef: StandardPageLayoutWidgetConfig =
     layout.tabs[tabTitle].widgets[widgetName];
 
   if (!isDefined(widgetDef)) {
@@ -82,6 +87,6 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
-    conditionalDisplay: null,
+    conditionalDisplay: conditionalDisplay ?? null,
   };
 };

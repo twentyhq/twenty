@@ -218,6 +218,7 @@ const createWelcomeRichText = ({
         },
       },
       objectMetadataId: null,
+      conditionalDisplay: null,
     },
   });
 
@@ -262,6 +263,7 @@ const createDealsByCompany = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -313,6 +315,7 @@ const createPipelineValueByStage = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -359,6 +362,7 @@ const createRevenueTimeline = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -412,6 +416,7 @@ const createOpportunitiesByOwner = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -442,6 +447,7 @@ const createStockMarketIframe = ({
         url: 'https://www.tradingview.com/embed-widget/hotlists/?locale=en',
       },
       objectMetadataId: null,
+      conditionalDisplay: null,
     },
   });
 
@@ -491,6 +497,7 @@ const createDealsCreatedThisMonth = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -541,6 +548,7 @@ const createDealValueCreatedThisMonth = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
