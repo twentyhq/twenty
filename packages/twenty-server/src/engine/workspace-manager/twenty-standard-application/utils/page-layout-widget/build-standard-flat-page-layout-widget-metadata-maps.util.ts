@@ -31,6 +31,9 @@ const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.EMAILS,
   WidgetType.CALENDAR,
   WidgetType.FIELD_RICH_TEXT,
+  WidgetType.WORKFLOW,
+  WidgetType.WORKFLOW_VERSION,
+  WidgetType.WORKFLOW_RUN,
 ];
 
 const computeRecordPageWidgets = ({
