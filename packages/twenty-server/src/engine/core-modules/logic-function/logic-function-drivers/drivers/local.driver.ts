@@ -1,7 +1,6 @@
 import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
-import { dirname } from 'node:path';
 
 import {
   type LogicFunctionExecuteParams,
@@ -14,7 +13,6 @@ import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/l
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { getRelativePathFromBase } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-handler-path.util';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application-layer/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
@@ -91,13 +89,16 @@ export class LocalDriver implements LogicFunctionDriver {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const baseFolderPath = dirname(flatLogicFunction.builtHandlerPath);
+      const inMemoryBuiltHandlerPath = join(
+        sourceTemporaryDir,
+        flatLogicFunction.builtHandlerPath,
+      );
 
       await this.logicFunctionResourceService.copyBuiltCodeInMemory({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
         builtHandlerPath: flatLogicFunction.builtHandlerPath,
-        inMemoryDestinationPath: join(sourceTemporaryDir, baseFolderPath),
+        inMemoryDestinationPath: inMemoryBuiltHandlerPath,
       });
 
       try {
@@ -149,15 +150,9 @@ export class LocalDriver implements LogicFunctionDriver {
       });
 
       try {
-        const relativeBuiltPath = getRelativePathFromBase(
-          flatLogicFunction.builtHandlerPath,
-          baseFolderPath,
-        );
-        const builtBundleFilePath = join(sourceTemporaryDir, relativeBuiltPath);
-
         const runnerPath = await this.writeBootstrapRunner({
           dir: sourceTemporaryDir,
-          builtFileAbsPath: builtBundleFilePath,
+          builtFileAbsPath: inMemoryBuiltHandlerPath,
           handlerName: flatLogicFunction.handlerName,
         });
 
