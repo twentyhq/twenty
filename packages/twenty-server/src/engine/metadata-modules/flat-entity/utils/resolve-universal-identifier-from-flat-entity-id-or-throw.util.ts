@@ -6,20 +6,19 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 
 export const resolveUniversalIdentifierFromFlatEntityIdOrThrow = <
-  T extends SyncableFlatEntity,
+  T extends AllMetadataName,
 >({
   flatEntityMaps,
   flatEntityId,
   metadataName,
 }: {
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMaps: MetadataFlatEntityMaps<T>;
   flatEntityId: string;
-  metadataName: AllMetadataName;
+  metadataName: T;
 }): string => {
   const flatEntity = findFlatEntityByIdInFlatEntityMaps({
     flatEntityMaps,
@@ -28,7 +27,7 @@ export const resolveUniversalIdentifierFromFlatEntityIdOrThrow = <
 
   if (!isDefined(flatEntity)) {
     throw new FlatEntityMapsException(
-      t`Could not find ${metadataName} with id ${flatEntityId}`,
+      t`Could not find ${metadataName}`,
       FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
     );
   }
@@ -37,15 +36,15 @@ export const resolveUniversalIdentifierFromFlatEntityIdOrThrow = <
 };
 
 export const resolveNullableUniversalIdentifierFromFlatEntityId = <
-  T extends SyncableFlatEntity,
+  T extends AllMetadataName,
 >({
   flatEntityMaps,
   flatEntityId,
   metadataName,
 }: {
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMaps: MetadataFlatEntityMaps<T>;
   flatEntityId: string | null | undefined;
-  metadataName: AllMetadataName;
+  metadataName: T;
 }): string | null => {
   if (!isDefined(flatEntityId)) {
     return null;

@@ -1,0 +1,112 @@
+import { t } from '@lingui/core/macro';
+import { type AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  ALL_METADATA_RELATIONS,
+  ManyToOneRelationValue,
+} from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { ExtractEntityManyToOneEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/types/extract-entity-many-to-one-entity-relation-properties.type';
+import { MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
+import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
+import { MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { type RemoveSuffix } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/remove-suffix.type';
+type MetadataRelatedFlatEntityMaps<T extends AllMetadataName> = Pick<
+  AllFlatEntityMaps,
+  MetadataRelatedFlatEntityMapsKeys<T>
+>;
+type ManyToOneConfig<T extends AllMetadataName> =
+  (typeof ALL_METADATA_RELATIONS)[T]['manyToOne'];
+
+type ResolvedUniversalIdentifiers<
+  T extends AllMetadataName,
+  TProvidedKeys extends Extract<MetadataManyToOneJoinColumn<T>, string>,
+> = {
+  [K in keyof ManyToOneConfig<T> as ManyToOneConfig<T>[K] extends {
+    foreignKey: infer FK extends string;
+  }
+    ? FK extends TProvidedKeys
+      ? `${RemoveSuffix<FK, 'Id'>}UniversalIdentifier`
+      : never
+    : never]: ManyToOneConfig<T>[K] extends { isNullable: true }
+    ? string | null
+    : string;
+};
+
+export const resolveEntityRelationUniversalIdentifiers = <
+  T extends AllMetadataName,
+  TProvidedKeys extends Extract<
+    MetadataManyToOneJoinColumn<T>,
+    string
+  > = Extract<MetadataManyToOneJoinColumn<T>, string>,
+>({
+  metadataName,
+  foreignKeyValues,
+  flatEntityMaps,
+}: {
+  metadataName: T;
+  foreignKeyValues: Record<TProvidedKeys, string | null | undefined>;
+  flatEntityMaps: MetadataRelatedFlatEntityMaps<T>;
+}): ResolvedUniversalIdentifiers<T, TProvidedKeys> => {
+  const relations = ALL_METADATA_RELATIONS[metadataName].manyToOne;
+  const result: Record<string, string | null> = {};
+
+  for (const relation of Object.values(relations) as ManyToOneRelationValue<
+    T,
+    ExtractEntityManyToOneEntityRelationProperties<MetadataEntity<T>>
+  >[]) {
+    if (!isDefined(relation)) {
+      continue;
+    }
+
+    const {
+      foreignKey,
+      metadataName: targetMetadataName,
+      isNullable,
+    } = relation;
+
+    if (!Object.prototype.hasOwnProperty.call(foreignKeyValues, foreignKey)) {
+      continue;
+    }
+
+    const foreignKeyValue =
+      foreignKeyValues[foreignKey as keyof typeof foreignKeyValues];
+
+    const mapsKey = getMetadataFlatEntityMapsKey(
+      targetMetadataName,
+    ) as keyof MetadataRelatedFlatEntityMaps<T>;
+    const targetFlatEntityMaps = flatEntityMaps[mapsKey];
+
+    // TODO refactor using the new ALL_METADATA_UNIVERSAL_RELATION afterwards
+    const universalIdentifierKey = foreignKey.replace(
+      /Id$/,
+      'UniversalIdentifier',
+    );
+
+    if (isNullable && !isDefined(foreignKeyValue)) {
+      result[universalIdentifierKey] = null;
+
+      continue;
+    }
+
+    const resolvedUniversalIdentifier =
+      targetFlatEntityMaps.universalIdentifierById[foreignKeyValue as string];
+
+    if (!isDefined(resolvedUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        t`Could not find ${targetMetadataName} with given id`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    result[universalIdentifierKey] = resolvedUniversalIdentifier;
+  }
+
+  return result as ResolvedUniversalIdentifiers<T, TProvidedKeys>;
+};
