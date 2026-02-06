@@ -83,14 +83,35 @@ const StyledTitle = styled.div`
 `;
 
 const StyledCsvTable = styled.table`
-  width: 100%;
-  text-align: left;
   border-collapse: collapse;
-  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  text-align: left;
+  width: 100%;
 
-  th,
+  th {
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+    color: ${({ theme }) => theme.font.color.tertiary};
+    font-weight: ${({ theme }) => theme.font.weight.medium};
+    height: ${({ theme }) => theme.spacing(8)};
+    padding: 0 ${({ theme }) => theme.spacing(2)};
+  }
+
   td {
-    padding: 5px 10px;
+    color: ${({ theme }) => theme.font.color.secondary};
+    height: ${({ theme }) => theme.spacing(8)};
+    max-width: 200px;
+    overflow: hidden;
+    padding: 0 ${({ theme }) => theme.spacing(2)};
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  }
+
+  tbody tr:hover {
+    background-color: ${({ theme }) => theme.background.transparent.light};
   }
 `;
 
@@ -240,7 +261,7 @@ export const DocumentViewer = ({
       );
     }
     return (
-      <StyledDocumentViewerContainer>
+      <StyledDocumentViewerContainer style={{ background: 'transparent' }}>
         <StyledCsvTable>
           <thead>
             <tr>
