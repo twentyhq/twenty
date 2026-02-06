@@ -11,6 +11,7 @@ import {
 } from 'src/database/commands/command-runners/upgrade.command-runner';
 import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
 import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files.command';
+import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-fix-morph-relation-field-names.command';
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
@@ -47,6 +48,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
     protected readonly migrateWorkflowCodeStepsCommand: MigrateWorkflowCodeStepsCommand,
     protected readonly updateFileTableMigrationCommand: UpdateFileTableMigrationCommand,
+    protected readonly fixMorphRelationFieldNamesCommand: FixMorphRelationFieldNamesCommand,
   ) {
     super(
       workspaceRepository,
@@ -69,6 +71,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.deleteFileRecordsCommand,
       this.backfillApplicationPackageFilesCommand,
       this.updateFileTableMigrationCommand,
+      this.fixMorphRelationFieldNamesCommand,
     ];
 
     this.allCommands = {
