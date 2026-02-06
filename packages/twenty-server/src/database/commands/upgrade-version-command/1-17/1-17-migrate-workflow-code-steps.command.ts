@@ -199,6 +199,7 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       },
       workspaceId,
       applicationId: oldLogicFunction.applicationId,
+      baseFolderPrefix: NEW_WORKFLOW_RESOURCE_PREFIX,
     });
 
     const newLogicFunctionId = newFlatLogicFunction.id;

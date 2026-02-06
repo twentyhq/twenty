@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { LogicFunctionSourceBuilderService } from 'src/engine/core-modules/logic-function/logic-function-source-builder/logic-function-source-builder.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -21,7 +20,6 @@ export class CodeStepBuildService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly logicFunctionService: LogicFunctionService,
-    private readonly applicationService: ApplicationService,
     private readonly logicFunctionSourceBuilderService: LogicFunctionSourceBuilderService,
   ) {}
 
