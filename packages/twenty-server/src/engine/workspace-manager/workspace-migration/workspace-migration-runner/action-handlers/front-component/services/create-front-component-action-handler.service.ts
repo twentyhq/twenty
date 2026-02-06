@@ -44,7 +44,6 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
       await this.verifySourceAndBuiltFilesExist({
         workspaceId,
         applicationUniversalIdentifier,
-        sourceComponentPath: frontComponent.sourceComponentPath,
         builtComponentPath: frontComponent.builtComponentPath,
       });
     }
@@ -63,12 +62,10 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
   private async verifySourceAndBuiltFilesExist({
     workspaceId,
     applicationUniversalIdentifier,
-    sourceComponentPath,
     builtComponentPath,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
-    sourceComponentPath: string;
     builtComponentPath: string;
   }): Promise<void> {
     const builtExists = await this.fileStorageService.checkFileExists_v2({
