@@ -20,6 +20,7 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 import {
   FilesFieldException,
@@ -32,6 +33,8 @@ export class FilesFieldService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(FieldMetadataEntity)
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly twentyConfigService: TwentyConfigService,
@@ -43,13 +46,13 @@ export class FilesFieldService {
     filename,
     declaredMimeType,
     workspaceId,
-    applicationId,
+    fieldMetadataId,
   }: {
     file: Buffer;
     filename: string;
     declaredMimeType: string | undefined;
     workspaceId: string;
-    applicationId: string;
+    fieldMetadataId: string;
   }): Promise<FileEntity> {
     const { mimeType, ext } = await extractFileInfo({
       file,
@@ -62,16 +65,24 @@ export class FilesFieldService {
     const fileId = v4();
     const name = `${fileId}${ext ? `.${ext}` : ''}`;
 
+    const fieldMetadata = await this.fieldMetadataRepository.findOneOrFail({
+      select: ['applicationId', 'universalIdentifier'],
+      where: {
+        id: fieldMetadataId,
+        workspaceId,
+      },
+    });
+
     const application = await this.applicationRepository.findOneOrFail({
       where: {
-        id: applicationId,
+        id: fieldMetadata.applicationId,
         workspaceId,
       },
     });
 
     return await this.fileStorageService.writeFile_v2({
       sourceFile: sanitizedFile,
-      resourcePath: name,
+      resourcePath: `${fieldMetadata.universalIdentifier}/${name}`,
       mimeType,
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,

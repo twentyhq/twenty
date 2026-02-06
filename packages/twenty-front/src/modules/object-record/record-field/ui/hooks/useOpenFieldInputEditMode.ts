@@ -99,6 +99,7 @@ export const useOpenFieldInputEditMode = () => {
           if (isDefined(objectMetadataItem)) {
             openFilesFieldInput({
               fieldName: fieldDefinition.metadata.fieldName,
+              fieldMetadataId: fieldDefinition.fieldMetadataId,
               recordId,
               prefix,
               updateRecord: (updateInput) => {

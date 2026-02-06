@@ -31097,6 +31097,8 @@ __metadata:
     lodash.camelcase: "npm:^4.3.0"
     lodash.kebabcase: "npm:^4.1.1"
     lodash.startcase: "npm:^4.4.0"
+    twenty-shared: "workspace:*"
+    typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:^4.5.4"
@@ -32880,8 +32882,8 @@ __metadata:
   linkType: hard
 
 "drizzle-kit@npm:^0.31.5":
-  version: 0.31.5
-  resolution: "drizzle-kit@npm:0.31.5"
+  version: 0.31.8
+  resolution: "drizzle-kit@npm:0.31.8"
   dependencies:
     "@drizzle-team/brocli": "npm:^0.10.2"
     "@esbuild-kit/esm-loader": "npm:^2.5.5"
@@ -32889,7 +32891,7 @@ __metadata:
     esbuild-register: "npm:^3.5.0"
   bin:
     drizzle-kit: bin.cjs
-  checksum: 10c0/7f172b1ba8cecf85b32e85621043d4ada867080e9ea2767c60b20ef2adb0292ff16832d8c8eae5d1bc9504d8165a58c449c9a25ab56c8ec30f1c3c8cb12ef6ad
+  checksum: 10c0/e5818433d06449c24b5dea61c1f97ffeb82dc2dde8f2adbe2dbe1c3030659c05a9263724916f58c411a8c4b0b170bc08842e5bc50287bef6902d11952fa55834
   languageName: node
   linkType: hard
 
@@ -57032,7 +57034,7 @@ __metadata:
     wait-on: "npm:^7.2.0"
     zod: "npm:^4.1.11"
   bin:
-    twenty: dist/cli/index.cjs
+    twenty: dist/cli.cjs
   languageName: unknown
   linkType: soft
 

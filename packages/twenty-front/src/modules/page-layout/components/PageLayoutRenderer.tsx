@@ -1,4 +1,5 @@
 import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/PageLayoutInitializationQueryEffect';
+import { PageLayoutRelationWidgetsSyncEffect } from '@/page-layout/components/PageLayoutRelationWidgetsSyncEffect';
 import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRendererContent';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -42,6 +43,7 @@ export const PageLayoutRenderer = ({
           pageLayoutId={pageLayoutId}
           onInitialized={onInitialized}
         />
+        <PageLayoutRelationWidgetsSyncEffect pageLayoutId={pageLayoutId} />
         <PageLayoutRendererContent />
       </TabListComponentInstanceContext.Provider>
     </PageLayoutComponentInstanceContext.Provider>

@@ -1,4 +1,3 @@
-import * as fs from 'fs-extra';
 import path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -11,8 +10,6 @@ const entries = [
   'src/ui/index.ts',
   'src/front-component/index.ts',
 ];
-
-export const PACKAGES_TO_VENDOR = ['twenty-ui', 'twenty-shared'];
 
 const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   if (!chunk.isEntry) {
@@ -32,20 +29,6 @@ const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
   return `${modulePath}/index.${extension}`;
 };
 
-const copyTwentyPackagesInVendor = (packages: string[]) => {
-  return packages.map((packageName) => ({
-    name: `copy-${packageName}-dist`,
-    closeBundle: async () => {
-      const sharedDist = path.resolve(__dirname, `../${packageName}/dist`);
-      const vendorDist = path.resolve(__dirname, `dist/vendor/${packageName}`);
-
-      await fs.remove(vendorDist);
-      await fs.ensureDir(path.dirname(vendorDist));
-      await fs.copy(sharedDist, vendorDist);
-    },
-  }));
-};
-
 export default defineConfig(() => {
   const tsConfigPath = path.resolve(__dirname, './tsconfig.lib.json');
 
@@ -61,36 +44,7 @@ export default defineConfig(() => {
       tsconfigPaths({
         root: __dirname,
       }),
-      ...copyTwentyPackagesInVendor(PACKAGES_TO_VENDOR),
-      dts({
-        entryRoot: './src',
-        tsconfigPath: tsConfigPath,
-        exclude: ['vite.config.ts'],
-        beforeWriteFile: (filePath, content) => {
-          const fromDir = path.dirname(filePath);
-          const vendorDir = path.resolve(process.cwd(), 'dist/vendor');
-
-          let rel = path
-            .relative(fromDir, vendorDir)
-            .split(path.sep)
-            .join(path.posix.sep);
-          if (!rel.startsWith('.')) rel = `./${rel}`;
-
-          const formattedContent = PACKAGES_TO_VENDOR.reduce((acc, pkg) => {
-            const regex = new RegExp(
-              `(from\\s+["'])${pkg}(\\/[^"']*)?(["'])`,
-              'g',
-            );
-
-            return acc.replace(regex, `$1${rel}/${pkg}$2$3`);
-          }, content);
-
-          return {
-            filePath,
-            content: formattedContent,
-          };
-        },
-      }),
+      dts({ entryRoot: './src', tsconfigPath: tsConfigPath }),
     ],
     worker: {
       format: 'iife',
@@ -124,9 +78,7 @@ export default defineConfig(() => {
           warn(warning);
         },
         external: [
-          ...Object.keys((packageJson as any).dependencies || {}).filter(
-            (dep) => !PACKAGES_TO_VENDOR.includes(dep),
-          ),
+          ...Object.keys((packageJson as any).dependencies || {}),
           'path',
           'fs',
           'fs/promises',

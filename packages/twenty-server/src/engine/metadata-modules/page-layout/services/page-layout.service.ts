@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
@@ -69,12 +69,15 @@ export class PageLayoutService {
     );
   }
 
-  async findByObjectMetadataId({
+  async findBy({
     workspaceId,
-    objectMetadataId,
+    filter: { objectMetadataId, pageLayoutType },
   }: {
     workspaceId: string;
-    objectMetadataId: string;
+    filter: {
+      objectMetadataId?: string;
+      pageLayoutType?: PageLayoutType;
+    };
   }): Promise<PageLayoutDTO[]> {
     const {
       flatPageLayoutMaps,
@@ -86,11 +89,17 @@ export class PageLayoutService {
       flatPageLayoutMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (layout) =>
-          layout.objectMetadataId === objectMetadataId &&
-          !isDefined(layout.deletedAt),
-      );
+      .filter((layout) => {
+        const isNotDeleted = !isDefined(layout.deletedAt);
+        const matchesObjectMetadataId = isNonEmptyString(objectMetadataId)
+          ? layout.objectMetadataId === objectMetadataId
+          : true;
+        const matchesPageLayoutType = isDefined(pageLayoutType)
+          ? layout.type === pageLayoutType
+          : true;
+
+        return isNotDeleted && matchesObjectMetadataId && matchesPageLayoutType;
+      });
 
     return activeLayouts.map((layout) =>
       fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto(

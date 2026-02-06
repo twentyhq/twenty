@@ -21,11 +21,17 @@ export const useNavigationMenuItemsByFolder = () => {
   const coreViews = useRecoilValue(coreViewsState);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const { navigationMenuItems } = usePrefetchedNavigationMenuItemsData();
+  const { navigationMenuItems, workspaceNavigationMenuItems } =
+    usePrefetchedNavigationMenuItemsData();
 
   const views = coreViews.map(convertCoreViewToView);
 
-  const { folders, itemsByFolderId } = navigationMenuItems.reduce<{
+  const allNavigationMenuItems = [
+    ...navigationMenuItems,
+    ...workspaceNavigationMenuItems,
+  ];
+
+  const { folders, itemsByFolderId } = allNavigationMenuItems.reduce<{
     folders: Array<{ id: string; name: string }>;
     itemsByFolderId: Map<string, NavigationMenuItem[]>;
   }>(
