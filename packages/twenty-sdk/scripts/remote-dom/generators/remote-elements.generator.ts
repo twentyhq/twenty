@@ -84,7 +84,9 @@ const generateCommonEventsType = (
     type: (writer) => {
       writer.block(() => {
         for (const event of events) {
-          writer.writeLine(`${event}(event: RemoteEvent): void;`);
+          writer.writeLine(
+            `${event}(event: RemoteEvent<SerializedEventData>): void;`,
+          );
         }
       });
     },
@@ -184,7 +186,7 @@ const generateElementDefinition = (
   const eventsType = hasEvents
     ? useSharedEvents
       ? TYPE_NAMES.COMMON_EVENTS
-      : `{ ${component.events.map((event) => `${event}(event: RemoteEvent): void`).join('; ')} }`
+      : `{ ${component.events.map((event) => `${event}(event: RemoteEvent<SerializedEventData>): void`).join('; ')} }`
     : TYPE_NAMES.EMPTY_RECORD;
 
   sourceFile.addVariableStatement({
@@ -344,6 +346,11 @@ export const generateRemoteElements = (
       INTERNAL_ELEMENT_CLASSES.FRAGMENT,
       { name: 'RemoteEvent', isTypeOnly: true },
     ],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '../../../sdk/front-component-common/SerializedEventData',
+    namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
   });
 
   const commonPropertyNames = new Set(Object.keys(commonProperties));
