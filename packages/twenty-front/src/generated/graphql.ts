@@ -1631,8 +1631,8 @@ export type FindAvailableSsoidpOutput = {
 export type FrontComponent = {
   __typename?: 'FrontComponent';
   applicationId: Scalars['UUID'];
+  builtComponentChecksum: Scalars['String'];
   builtComponentPath: Scalars['String'];
-  checksum?: Maybe<Scalars['String']>;
   componentName: Scalars['String'];
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
