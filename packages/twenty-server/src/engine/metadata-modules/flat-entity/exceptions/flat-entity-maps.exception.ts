@@ -8,6 +8,8 @@ import {
 } from 'src/utils/custom-exception';
 
 export const FlatEntityMapsExceptionCode = appendCommonExceptionCode({
+  RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND:
+    'RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND',
   ENTITY_ALREADY_EXISTS: 'ENTITY_ALREADY_EXISTS',
   ENTITY_NOT_FOUND: 'ENTITY_NOT_FOUND',
   ENTITY_MALFORMED: 'ENTITY_MALFORMED',
@@ -17,6 +19,7 @@ const getFlatEntityMapsExceptionUserFriendlyMessage = (
   code: keyof typeof FlatEntityMapsExceptionCode,
 ) => {
   switch (code) {
+    case FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND:
     case FlatEntityMapsExceptionCode.ENTITY_ALREADY_EXISTS:
     case FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND:
     case FlatEntityMapsExceptionCode.ENTITY_MALFORMED:

@@ -190,11 +190,20 @@ export class PageLayoutService {
         { workspaceId },
       );
 
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
     const flatPageLayoutToCreate =
       fromCreatePageLayoutInputToFlatPageLayoutToCreate({
         createPageLayoutInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =
@@ -251,11 +260,14 @@ export class PageLayoutService {
         { workspaceId },
       );
 
-    const { flatPageLayoutMaps: existingFlatPageLayoutMaps } =
+    const {
+      flatPageLayoutMaps: existingFlatPageLayoutMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatPageLayoutMaps'],
+          flatMapsKeys: ['flatPageLayoutMaps', 'flatObjectMetadataMaps'],
         },
       );
 
@@ -268,6 +280,7 @@ export class PageLayoutService {
       fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow({
         updatePageLayoutInput,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =

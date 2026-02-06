@@ -45,11 +45,26 @@ export class ViewFilterService {
         },
       );
 
+    const { flatFieldMetadataMaps, flatViewMaps, flatViewFilterGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatViewMaps',
+            'flatViewFilterGroupMaps',
+          ],
+        },
+      );
+
     const flatViewFilterToCreate =
       fromCreateViewFilterInputToFlatViewFilterToCreate({
         createViewFilterInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatFieldMetadataMaps,
+        flatViewMaps,
+        flatViewFilterGroupMaps,
       });
 
     const buildAndRunResult =
@@ -106,18 +121,27 @@ export class ViewFilterService {
         },
       );
 
-    const { flatViewFilterMaps: existingFlatViewFilterMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFilterMaps'],
-        },
-      );
+    const {
+      flatViewFilterMaps: existingFlatViewFilterMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewFilterMaps',
+          'flatFieldMetadataMaps',
+          'flatViewFilterGroupMaps',
+        ],
+      },
+    );
 
     const optimisticallyUpdatedFlatViewFilter =
       fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow({
         flatViewFilterMaps: existingFlatViewFilterMaps,
         updateViewFilterInput,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
       });
 
     const validateAndBuildResult =

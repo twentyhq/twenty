@@ -4,7 +4,9 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -17,14 +19,16 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,
   workspaceId,
   createdByUserWorkspaceId,
-  workspaceCustomApplicationId,
+  flatApplication,
   flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
 }: {
   createViewInput: CreateViewInput;
   workspaceId: string;
   createdByUserWorkspaceId?: string;
-  workspaceCustomApplicationId: string;
+  flatApplication: FlatApplication;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+  flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
 }): {
   flatViewToCreate: FlatView;
   flatViewGroupsToCreate: FlatViewGroup[];
@@ -38,9 +42,27 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();
 
+  const {
+    objectMetadataUniversalIdentifier,
+    calendarFieldMetadataUniversalIdentifier,
+    kanbanAggregateOperationFieldMetadataUniversalIdentifier,
+    mainGroupByFieldMetadataUniversalIdentifier,
+  } = resolveEntityRelationUniversalIdentifiers({
+    metadataName: 'view',
+    foreignKeyValues: {
+      objectMetadataId,
+      calendarFieldMetadataId: createViewInput.calendarFieldMetadataId,
+      kanbanAggregateOperationFieldMetadataId:
+        createViewInput.kanbanAggregateOperationFieldMetadataId,
+      mainGroupByFieldMetadataId: createViewInput.mainGroupByFieldMetadataId,
+    },
+    flatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+  });
+
   const flatViewToCreate = {
     id: viewId,
     objectMetadataId,
+    objectMetadataUniversalIdentifier,
     workspaceId,
     name: createViewInput.name,
     createdAt: createdAt,
@@ -49,6 +71,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     isCustom: true,
     anyFieldFilterValue: createViewInput.anyFieldFilterValue ?? null,
     calendarFieldMetadataId: createViewInput.calendarFieldMetadataId ?? null,
+    calendarFieldMetadataUniversalIdentifier,
     calendarLayout: createViewInput.calendarLayout ?? null,
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? false,
@@ -56,8 +79,10 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataId:
       createViewInput.kanbanAggregateOperationFieldMetadataId ?? null,
+    kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataId:
       createViewInput.mainGroupByFieldMetadataId ?? null,
+    mainGroupByFieldMetadataUniversalIdentifier,
     key: createViewInput.key ?? null,
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     position: createViewInput.position ?? 0,
@@ -66,10 +91,15 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     viewFieldIds: [],
+    viewFieldUniversalIdentifiers: [],
     viewFilterIds: [],
+    viewFilterUniversalIdentifiers: [],
     viewGroupIds: [],
+    viewGroupUniversalIdentifiers: [],
     viewFilterGroupIds: [],
-    applicationId: workspaceCustomApplicationId,
+    viewFilterGroupUniversalIdentifiers: [],
+    applicationId: flatApplication.id,
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 
   let flatViewGroupsToCreate: FlatViewGroup[] = [];
@@ -77,6 +107,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   if (isDefined(flatViewToCreate.mainGroupByFieldMetadataId)) {
     flatViewGroupsToCreate = computeFlatViewGroupsOnViewCreate({
       flatViewToCreateId: flatViewToCreate.id,
+      flatViewToCreateUniversalIdentifier: flatViewToCreate.universalIdentifier,
       mainGroupByFieldMetadataId: flatViewToCreate.mainGroupByFieldMetadataId,
       flatFieldMetadataMaps,
     });

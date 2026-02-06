@@ -80,7 +80,7 @@ export class FrontComponentService {
       fromCreateFrontComponentInputToFlatFrontComponentToCreate({
         createFrontComponentInput: input,
         workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
       });
 
     const validateAndBuildResult =
