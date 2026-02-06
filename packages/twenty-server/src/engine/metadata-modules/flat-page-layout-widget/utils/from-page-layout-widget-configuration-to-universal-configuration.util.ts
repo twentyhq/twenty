@@ -7,6 +7,7 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 type PageLayoutWidgetConfiguration = PageLayoutWidgetEntity['configuration'];
 
 type UniversalPageLayoutWidgetConfiguration =
+  // @ts-expect-error Ignoring until the pageLayoutWidget has been universally migrated
   NonNullable<FlatPageLayoutWidget>['universalConfiguration'];
 
 // Field metadata IDs in widget configurations don't need to reference existing entities
