@@ -5,7 +5,7 @@ type JsonManifestInput = {
     [key: string]: unknown;
   }>;
   frontComponents?: Array<{
-    builtComponentChecksum?: string | null;
+    builtComponentChecksum?: string;
     [key: string]: unknown;
   }>;
   [key: string]: unknown;
@@ -24,7 +24,7 @@ export const normalizeManifestForComparison = <T extends JsonManifestInput>(
     ...component,
     builtComponentChecksum: component.builtComponentChecksum
       ? '[checksum]'
-      : null,
+      : '',
   })),
   sources: {}, // removing sources for now, waiting compressed file implementation
 });
