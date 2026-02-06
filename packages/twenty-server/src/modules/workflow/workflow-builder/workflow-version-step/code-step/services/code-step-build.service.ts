@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { LogicFunctionSourceBuilderService } from 'src/engine/core-modules/logic-function/logic-function-source-builder/logic-function-source-builder.service';
@@ -10,7 +9,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
-import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
 import {
   WorkflowActionType,
   type WorkflowAction,
@@ -34,11 +32,11 @@ export class CodeStepBuildService {
     existingLogicFunctionId: string;
     workspaceId: string;
   }): Promise<FlatLogicFunction> {
-    const { flatLogicFunctionMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
         },
       );
 
@@ -47,49 +45,35 @@ export class CodeStepBuildService {
       flatLogicFunctionMaps,
     });
 
-    const resolvedOwnerFlatApplication = (
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      )
-    ).workspaceCustomFlatApplication;
+    const applicationUniversalIdentifier = isDefined(
+      existingLogicFunction.applicationId,
+    )
+      ? flatApplicationMaps.byId[existingLogicFunction.applicationId]
+          ?.universalIdentifier
+      : undefined;
 
-    const applicationUniversalIdentifier =
-      resolvedOwnerFlatApplication.universalIdentifier;
+    if (!isDefined(applicationUniversalIdentifier)) {
+      throw new Error(
+        'Cannot duplicate code step: application not found for existing logic function',
+      );
+    }
 
-    const newId = v4();
-    const newFlatLogicFunction =
-      fromCreateLogicFunctionInputToFlatLogicFunction({
-        createLogicFunctionInput: {
-          name: existingLogicFunction.name,
-          description: existingLogicFunction.description ?? undefined,
-          timeoutSeconds: existingLogicFunction.timeoutSeconds,
-          id: newId,
-        },
+    const existingCode =
+      await this.logicFunctionSourceBuilderService.getSourceCode({
+        sourceHandlerPath: existingLogicFunction.sourceHandlerPath,
         workspaceId,
-        ownerFlatApplication: resolvedOwnerFlatApplication,
+        applicationUniversalIdentifier,
       });
-
-    await this.logicFunctionSourceBuilderService.copySourceAndBuilt({
-      fromSourceHandlerPath: existingLogicFunction.sourceHandlerPath,
-      fromBuiltHandlerPath: existingLogicFunction.builtHandlerPath,
-      toSourceHandlerPath: newFlatLogicFunction.sourceHandlerPath,
-      toBuiltHandlerPath: newFlatLogicFunction.builtHandlerPath,
-      workspaceId,
-      applicationUniversalIdentifier,
-    });
 
     const created = await this.logicFunctionService.createOne({
       input: {
         name: existingLogicFunction.name,
         description: existingLogicFunction.description ?? undefined,
         timeoutSeconds: existingLogicFunction.timeoutSeconds,
-        id: newFlatLogicFunction.id,
-        sourceHandlerPath: newFlatLogicFunction.sourceHandlerPath,
-        builtHandlerPath: newFlatLogicFunction.builtHandlerPath,
-        checksum: existingLogicFunction.checksum ?? undefined,
+        code: existingCode ?? undefined,
       },
       workspaceId,
-      ownerFlatApplication: resolvedOwnerFlatApplication,
+      baseFolderPrefix: WORKFLOW_BASE_FOLDER_PREFIX,
     });
 
     if (!isDefined(created)) {

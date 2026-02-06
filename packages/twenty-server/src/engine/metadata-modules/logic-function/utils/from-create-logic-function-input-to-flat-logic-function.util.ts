@@ -13,8 +13,6 @@ import {
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 
-const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
-
 export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
   createLogicFunctionInput: CreateLogicFunctionInput;
   workspaceId: string;
@@ -29,14 +27,12 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   const id = rawCreateLogicFunctionInput.id ?? v4();
   const currentDate = new Date();
 
-  // Build full paths including the base folder
-  const baseFolder = `${WORKFLOW_BASE_FOLDER_PREFIX}/${id}`;
   const sourceHandlerPath =
     rawCreateLogicFunctionInput.sourceHandlerPath ??
-    `${baseFolder}/${DEFAULT_SOURCE_HANDLER_PATH}`;
+    `${id}/${DEFAULT_SOURCE_HANDLER_PATH}`;
   const builtHandlerPath =
     rawCreateLogicFunctionInput.builtHandlerPath ??
-    `${baseFolder}/${DEFAULT_BUILT_HANDLER_PATH}`;
+    `${id}/${DEFAULT_BUILT_HANDLER_PATH}`;
 
   const universalIdentifier =
     rawCreateLogicFunctionInput.universalIdentifier ?? v4();
