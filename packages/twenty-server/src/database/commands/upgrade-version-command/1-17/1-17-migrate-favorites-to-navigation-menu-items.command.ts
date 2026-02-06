@@ -198,7 +198,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
     folderIdMapping: Map<string, Map<string, string>>;
     flatNavigationMenuItemsToCreate: FlatNavigationMenuItem[];
   }> {
-    const existingFlatNavigationMenuItemIds = Object.values(
+    const existingFlatNavigationMenuItemIds = Object.keys(
       existingFlatNavigationMenuItemMaps.universalIdentifierById,
     );
 
@@ -351,7 +351,7 @@ export class MigrateFavoritesToNavigationMenuItemsCommand extends ActiveOrSuspen
         { shouldBypassPermissionChecks: true },
       );
 
-    const existingFlatNavigationMenuItemIds = Object.values(
+    const existingFlatNavigationMenuItemIds = Object.keys(
       existingFlatNavigationMenuItemMaps.universalIdentifierById,
     );
 
