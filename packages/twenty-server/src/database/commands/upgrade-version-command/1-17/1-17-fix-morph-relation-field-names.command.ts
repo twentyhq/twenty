@@ -221,11 +221,18 @@ export class FixMorphRelationFieldNamesCommand extends ActiveOrSuspendedWorkspac
         `✅ Successfully fixed ${fixedCount} field(s) in workspace ${workspaceId}`,
       );
     } catch (error) {
-      await queryRunner.rollbackTransaction();
-      this.logger.error(
-        `Error fixing morph relation field names for workspace ${workspaceId}`,
-        error,
-      );
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+        this.logger.error(
+          `Error fixing morph relation field names (rolled transaction back on ${workspaceId})`,
+          error,
+        );
+      } else {
+        this.logger.error(
+          `Error fixing morph relation field names after commit on ${workspaceId}`,
+          error,
+        );
+      }
       throw error;
     } finally {
       await queryRunner.release();
