@@ -4,10 +4,6 @@ import { v4 } from 'uuid';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 
-const DEFAULT_SOURCE_COMPONENT_PATH = 'src/front-components/index.tsx';
-const DEFAULT_BUILT_COMPONENT_PATH = 'src/front-components/index.mjs';
-const DEFAULT_COMPONENT_NAME = 'default';
-
 export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
   createFrontComponentInput,
   workspaceId,
@@ -32,14 +28,9 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     id,
     name: name ?? createFrontComponentInput.componentName,
     description: createFrontComponentInput.description ?? null,
-    sourceComponentPath:
-      createFrontComponentInput.sourceComponentPath ??
-      DEFAULT_SOURCE_COMPONENT_PATH,
-    builtComponentPath:
-      createFrontComponentInput.builtComponentPath ??
-      DEFAULT_BUILT_COMPONENT_PATH,
-    componentName:
-      createFrontComponentInput.componentName ?? DEFAULT_COMPONENT_NAME,
+    sourceComponentPath: createFrontComponentInput.sourceComponentPath,
+    builtComponentPath: createFrontComponentInput.builtComponentPath,
+    componentName: createFrontComponentInput.componentName,
     checksum: createFrontComponentInput.checksum ?? null,
     workspaceId,
     createdAt: now,

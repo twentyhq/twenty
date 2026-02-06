@@ -1,6 +1,6 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -27,14 +27,14 @@ export class CreateFrontComponentInput {
   description?: string;
 
   @IsString()
-  @IsOptional()
-  @HideField()
-  sourceComponentPath?: string;
+  @IsNotEmpty()
+  @Field()
+  sourceComponentPath: string;
 
   @IsString()
-  @IsOptional()
-  @HideField()
-  builtComponentPath?: string;
+  @IsNotEmpty()
+  @Field()
+  builtComponentPath: string;
 
   @IsString()
   @Field()

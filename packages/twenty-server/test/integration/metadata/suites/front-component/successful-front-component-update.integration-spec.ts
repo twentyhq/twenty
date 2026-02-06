@@ -12,6 +12,8 @@ describe('Front component update should succeed', () => {
       input: {
         name: 'testFrontComponentToUpdate',
         componentName: 'TestFrontComponentToUpdate',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: 'src/front-components/index.mjs',
       },
     });
 

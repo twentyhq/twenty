@@ -9,6 +9,8 @@ describe('Front component deletion should succeed', () => {
       input: {
         name: 'frontComponentToDelete',
         componentName: 'FrontComponentToDelete',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: 'src/front-components/index.mjs',
       },
     });
 

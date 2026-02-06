@@ -20,6 +20,8 @@ describe('Front component creation should succeed', () => {
       input: {
         name: 'testFrontComponent',
         componentName: 'TestFrontComponent',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: 'src/front-components/index.mjs',
       },
     });
 
@@ -37,6 +39,8 @@ describe('Front component creation should succeed', () => {
       input: {
         name: '  frontComponentWithSpaces  ',
         componentName: 'FrontComponentWithSpaces',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: 'src/front-components/index.mjs',
       },
     });
 
