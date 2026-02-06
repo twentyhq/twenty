@@ -14,6 +14,7 @@ import {
   type CreateStandardPageLayoutWidgetArgs,
   createStandardPageLayoutWidgetFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/create-standard-page-layout-widget-flat-metadata.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 type DashboardWidgetBuilderArgs = Omit<
   CreateStandardPageLayoutWidgetArgs,
@@ -59,6 +60,7 @@ const createWelcomeRichText = ({
 }): FlatPageLayoutWidget =>
   createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier: null,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -233,6 +235,8 @@ const createDealsByCompany = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -278,6 +282,8 @@ const createPipelineValueByStage = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -329,6 +335,8 @@ const createRevenueTimeline = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -375,6 +383,8 @@ const createOpportunitiesByOwner = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -423,6 +433,7 @@ const createStockMarketIframe = ({
 }): FlatPageLayoutWidget =>
   createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier: null,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -457,6 +468,8 @@ const createDealsCreatedThisMonth = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -507,6 +520,8 @@ const createDealValueCreatedThisMonth = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
