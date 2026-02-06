@@ -41,10 +41,13 @@ export const generateIndexForFlatFieldMetadata = ({
         isCustom: true,
         isUnique: flatFieldMetadata.isUnique ?? false,
         objectMetadataId: flatObjectMetadata.id,
+        objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
         universalIdentifier: indexId,
         updatedAt: createdAt,
         workspaceId,
         applicationId: flatFieldMetadata.applicationId,
+        applicationUniversalIdentifier:
+          flatFieldMetadata.applicationUniversalIdentifier,
       },
       flatObjectMetadata,
     },

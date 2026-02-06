@@ -12,11 +12,13 @@ import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/
 
 type ComputeFlatViewGroupsOnViewCreateArgs = {
   flatViewToCreateId: string;
+  flatViewToCreateUniversalIdentifier: string;
   mainGroupByFieldMetadataId: string;
 } & Pick<AllFlatEntityMaps, 'flatFieldMetadataMaps'>;
 
 export const computeFlatViewGroupsOnViewCreate = ({
   flatViewToCreateId,
+  flatViewToCreateUniversalIdentifier,
   mainGroupByFieldMetadataId,
   flatFieldMetadataMaps,
 }: ComputeFlatViewGroupsOnViewCreateArgs): FlatViewGroup[] => {
@@ -43,6 +45,7 @@ export const computeFlatViewGroupsOnViewCreate = ({
       id: viewGroupId,
       fieldMetadataId: mainGroupByFieldMetadata.id,
       viewId: flatViewToCreateId,
+      viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
       workspaceId: mainGroupByFieldMetadata.workspaceId,
       createdAt,
       updatedAt: createdAt,
@@ -52,6 +55,8 @@ export const computeFlatViewGroupsOnViewCreate = ({
       fieldValue: option.value,
       position: index,
       applicationId: mainGroupByFieldMetadata.applicationId,
+      applicationUniversalIdentifier:
+        mainGroupByFieldMetadata.applicationUniversalIdentifier,
     };
   });
 
@@ -64,6 +69,7 @@ export const computeFlatViewGroupsOnViewCreate = ({
     flatViewGroups.push({
       id: emptyGroupId,
       viewId: flatViewToCreateId,
+      viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
       workspaceId: mainGroupByFieldMetadata.workspaceId,
       createdAt,
       updatedAt: createdAt,
@@ -73,6 +79,8 @@ export const computeFlatViewGroupsOnViewCreate = ({
       fieldValue: '',
       position: emptyGroupPosition,
       applicationId: mainGroupByFieldMetadata.applicationId,
+      applicationUniversalIdentifier:
+        mainGroupByFieldMetadata.applicationUniversalIdentifier,
     });
   }
 

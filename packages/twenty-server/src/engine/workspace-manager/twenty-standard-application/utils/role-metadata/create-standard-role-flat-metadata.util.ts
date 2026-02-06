@@ -76,7 +76,10 @@ export const createStandardRoleFlatMetadata = ({
     fieldPermissionIds: [],
     objectPermissionIds: [],
     roleTargetIds: [],
+    roleTargetUniversalIdentifiers: [],
     rowLevelPermissionPredicateIds: [],
     rowLevelPermissionPredicateGroupIds: [],
+    rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
+    rowLevelPermissionPredicateUniversalIdentifiers: [],
   };
 };

@@ -314,6 +314,8 @@ export class RoleResolver {
         updatedAt: agentEntity.updatedAt.toISOString(),
         deletedAt: agentEntity.deletedAt?.toISOString() ?? null,
         universalIdentifier: agentEntity.universalIdentifier,
+        applicationUniversalIdentifier:
+          agentEntity.application.universalIdentifier,
         roleId: role.id,
       }),
     );

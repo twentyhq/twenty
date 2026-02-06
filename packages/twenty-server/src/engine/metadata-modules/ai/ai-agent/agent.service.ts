@@ -192,10 +192,11 @@ export class AgentService {
         },
       );
 
-    const { flatRoleTargetByAgentIdMaps, flatAgentMaps } =
+    const { flatRoleTargetByAgentIdMaps, flatAgentMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatRoleTargetByAgentIdMaps',
         'flatAgentMaps',
+        'flatRoleMaps',
       ]);
 
     const {
@@ -207,6 +208,7 @@ export class AgentService {
       updateAgentInput: input,
       flatAgentMaps,
       flatRoleTargetByAgentIdMaps,
+      flatRoleMaps,
     });
 
     const validateAndBuildResult =

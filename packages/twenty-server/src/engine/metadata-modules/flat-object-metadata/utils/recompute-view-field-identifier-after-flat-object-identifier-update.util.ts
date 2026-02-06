@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
@@ -10,7 +11,10 @@ import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/
 type RecomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdateArgs = {
   existingFlatObjectMetadata: FlatObjectMetadata;
   updatedLabelIdentifierFieldMetadataId: string;
-} & Pick<AllFlatEntityMaps, 'flatViewFieldMaps' | 'flatViewMaps'>;
+} & Pick<
+  AllFlatEntityMaps,
+  'flatViewFieldMaps' | 'flatViewMaps' | 'flatFieldMetadataMaps'
+>;
 
 type FlatViewFieldToCreateAndUpdate = {
   flatViewFieldsToCreate: FlatViewField[];
@@ -20,12 +24,19 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
   existingFlatObjectMetadata,
   flatViewFieldMaps,
   flatViewMaps,
+  flatFieldMetadataMaps,
   updatedLabelIdentifierFieldMetadataId,
 }: RecomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdateArgs): FlatViewFieldToCreateAndUpdate => {
   const flatViews = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
     flatEntityMaps: flatViewMaps,
     flatEntityIds: existingFlatObjectMetadata.viewIds,
   });
+
+  const updatedLabelIdentifierFieldMetadata =
+    findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: updatedLabelIdentifierFieldMetadataId,
+    });
 
   const accumulator: FlatViewFieldToCreateAndUpdate = {
     flatViewFieldsToCreate: [],
@@ -55,10 +66,13 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
       const createdAt = new Date().toISOString();
       const flatViewFieldToCreate: FlatViewField = {
         fieldMetadataId: updatedLabelIdentifierFieldMetadataId,
+        fieldMetadataUniversalIdentifier:
+          updatedLabelIdentifierFieldMetadata.universalIdentifier,
         position: lowestViewFieldPosition - 1,
         isVisible: true,
         size: DEFAULT_VIEW_FIELD_SIZE,
         viewId: flatView.id,
+        viewUniversalIdentifier: flatView.universalIdentifier,
         workspaceId: flatView.workspaceId,
         id: viewFieldId,
         createdAt: createdAt,
@@ -67,6 +81,8 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         universalIdentifier: viewFieldId,
         aggregateOperation: null,
         applicationId: existingFlatObjectMetadata.applicationId,
+        applicationUniversalIdentifier:
+          existingFlatObjectMetadata.applicationUniversalIdentifier,
       };
 
       accumulator.flatViewFieldsToCreate.push(flatViewFieldToCreate);
