@@ -13,10 +13,10 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
@@ -57,7 +57,6 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
     Required<
       Pick<CreateFieldInput, 'relationCreationPayload' | 'type' | 'name'>
     > & { type: MorphOrRelationFieldMetadataType };
-  workspaceId: string;
   morphId?: string | null;
   flatApplication: FlatApplication;
   targetFieldName?: string;
@@ -67,7 +66,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
   flatFieldMetadatas: UniversalFlatFieldMetadata[];
   // TODO
-  indexMetadatas: FlatIndexMetadata[];
+  indexMetadatas: UniversalFlatIndexMetadata[];
 };
 
 export const generateMorphOrRelationFlatFieldMetadataPair = ({
@@ -75,7 +74,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   targetFlatFieldMetadataType,
-  workspaceId,
   flatApplication,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
@@ -187,7 +185,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       sourceFieldUniversalIdentifier,
   };
 
-  const indexMetadata: FlatIndexMetadata = generateIndexForFlatFieldMetadata({
+  const indexMetadata: UniversalFlatIndexMetadata = generateIndexForFlatFieldMetadata({
     flatFieldMetadata:
       relationCreationPayload.type === RelationType.MANY_TO_ONE
         ? sourceFlatFieldMetadata
@@ -196,7 +194,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       relationCreationPayload.type === RelationType.MANY_TO_ONE
         ? sourceFlatObjectMetadata
         : targetFlatObjectMetadata,
-    workspaceId,
   });
 
   return {

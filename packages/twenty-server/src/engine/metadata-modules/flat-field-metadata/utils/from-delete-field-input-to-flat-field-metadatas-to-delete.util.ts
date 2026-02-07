@@ -9,13 +9,14 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 type FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs = {
   deleteOneFieldInput: DeleteOneFieldInput;
@@ -31,8 +32,8 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
 }: FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs): {
   flatFieldMetadatasToDelete: UniversalFlatFieldMetadata[];
-  flatIndexesToUpdate: FlatIndexMetadata[];
-  flatIndexesToDelete: FlatIndexMetadata[];
+  flatIndexesToUpdate: UniversalFlatIndexMetadata[];
+  flatIndexesToDelete: UniversalFlatIndexMetadata[];
 } => {
   const { id: fieldMetadataToDeleteId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -125,8 +126,8 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   const { flatIndexesToDelete, flatIndexesToUpdate } = [
     ...flatIndexMap.values(),
   ].reduce<{
-    flatIndexesToUpdate: FlatIndexMetadata[];
-    flatIndexesToDelete: FlatIndexMetadata[];
+    flatIndexesToUpdate: UniversalFlatIndexMetadata[];
+    flatIndexesToDelete: UniversalFlatIndexMetadata[];
   }>(
     (acc, flatIndex) => {
       if (flatIndex.flatIndexFieldMetadatas.length === 0) {
@@ -136,15 +137,17 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
         };
       }
 
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
         flatEntityMaps: existingFlatObjectMetadataMaps,
-        flatEntityId: flatIndex.objectMetadataId,
+        universalIdentifier: flatIndex.objectMetadataUniversalIdentifier,
       });
       const objectFlatFieldMetadatas =
-        findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityMaps: existingFlatFieldMetadataMaps,
-          flatEntityIds: flatObjectMetadata.fieldIds,
-        });
+        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
+          {
+            flatEntityMaps: existingFlatFieldMetadataMaps,
+            universalIdentifiers: flatObjectMetadata.fieldUniversalIdentifiers,
+          },
+        );
 
       const newIndex = generateFlatIndexMetadataWithNameOrThrow({
         flatObjectMetadata,

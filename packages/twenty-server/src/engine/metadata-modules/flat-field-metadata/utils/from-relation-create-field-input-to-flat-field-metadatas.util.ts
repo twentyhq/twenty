@@ -13,9 +13,9 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> & {
@@ -24,7 +24,6 @@ type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   existingFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   sourceFlatObjectMetadata: FlatObjectMetadata;
-  workspaceId: string;
   flatApplication: FlatApplication;
 };
 export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
@@ -32,12 +31,11 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
   existingFlatFieldMetadataMaps,
   sourceFlatObjectMetadata,
   createFieldInput,
-  workspaceId,
   flatApplication,
 }: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
   FieldInputTranspilationResult<{
     flatFieldMetadatas: UniversalFlatFieldMetadata[];
-    indexMetadatas: FlatIndexMetadata[];
+    indexMetadatas: UniversalFlatIndexMetadata[];
   }>
 > => {
   const rawCreationPayload = createFieldInput.relationCreationPayload;
@@ -89,7 +87,6 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
     sourceFlatObjectMetadata,
     targetFlatObjectMetadata: targetUniversalFlatObjectMetadata,
     targetFlatFieldMetadataType: FieldMetadataType.RELATION,
-    workspaceId,
     flatApplication,
     junctionTargetFlatFieldMetadata,
   });
