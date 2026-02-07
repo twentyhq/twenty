@@ -3,7 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { parse } from 'path';
 
 import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
   FieldManifest,
+  HttpRouteTriggerSettings,
   LogicFunctionManifest,
   Manifest,
   ObjectFieldManifest,
@@ -27,6 +30,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application-layer/utils/get-default-application-package-fields.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
@@ -889,11 +893,17 @@ export class ApplicationSyncService {
           toolInputSchema: logicFunctionToSync.toolInputSchema,
           isTool: logicFunctionToSync.isTool,
           checksum: logicFunctionToSync.builtHandlerChecksum,
-          cronTriggerSettings: logicFunctionToSync.cronTriggerSettings ?? null,
+          cronTriggerSettings: logicFunctionToSync.cronTriggerSettings as
+            | JsonbProperty<CronTriggerSettings>
+            | undefined,
           databaseEventTriggerSettings:
-            logicFunctionToSync.databaseEventTriggerSettings ?? null,
+            logicFunctionToSync.databaseEventTriggerSettings as
+              | JsonbProperty<DatabaseEventTriggerSettings>
+              | undefined,
           httpRouteTriggerSettings:
-            logicFunctionToSync.httpRouteTriggerSettings ?? null,
+            logicFunctionToSync.httpRouteTriggerSettings as
+              | JsonbProperty<HttpRouteTriggerSettings>
+              | undefined,
         },
         workspaceId,
         ownerFlatApplication,
@@ -917,11 +927,17 @@ export class ApplicationSyncService {
           isTool: logicFunctionToCreate.isTool,
           checksum: logicFunctionToCreate.builtHandlerChecksum,
           id: v4(),
-          cronTriggerSettings: logicFunctionToCreate.cronTriggerSettings,
+          cronTriggerSettings: logicFunctionToCreate.cronTriggerSettings as
+            | JsonbProperty<CronTriggerSettings>
+            | undefined,
           databaseEventTriggerSettings:
-            logicFunctionToCreate.databaseEventTriggerSettings,
+            logicFunctionToCreate.databaseEventTriggerSettings as
+              | JsonbProperty<DatabaseEventTriggerSettings>
+              | undefined,
           httpRouteTriggerSettings:
-            logicFunctionToCreate.httpRouteTriggerSettings,
+            logicFunctionToCreate.httpRouteTriggerSettings as
+              | JsonbProperty<HttpRouteTriggerSettings>
+              | undefined,
         },
         workspaceId,
         ownerFlatApplication,

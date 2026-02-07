@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'twenty-shared/application';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -16,6 +21,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-logic-function-input-schema';
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
@@ -134,6 +140,17 @@ export class CodeStepBuildService {
           sourceHandlerPath: toSourceHandlerPath,
           toolInputSchema: existingLogicFunction.toolInputSchema ?? {},
           checksum: existingLogicFunction.checksum ?? '[default-checksum]', // TODO: checksum should never be null, update column in logicFunction entity to set it non nullable
+          cronTriggerSettings: existingLogicFunction.cronTriggerSettings as
+            | JsonbProperty<CronTriggerSettings>
+            | undefined,
+          databaseEventTriggerSettings:
+            existingLogicFunction.databaseEventTriggerSettings as
+              | JsonbProperty<DatabaseEventTriggerSettings>
+              | undefined,
+          httpRouteTriggerSettings:
+            existingLogicFunction.httpRouteTriggerSettings as
+              | JsonbProperty<HttpRouteTriggerSettings>
+              | undefined,
         },
         workspaceId,
         ownerFlatApplication: resolvedOwnerFlatApplication,
@@ -145,6 +162,17 @@ export class CodeStepBuildService {
         description: newFlatLogicFunction.description ?? undefined,
         checksum: newFlatLogicFunction.checksum ?? '[default-checksum]',
         toolInputSchema: newFlatLogicFunction.toolInputSchema ?? {},
+        cronTriggerSettings: newFlatLogicFunction.cronTriggerSettings as
+          | JsonbProperty<CronTriggerSettings>
+          | undefined,
+        databaseEventTriggerSettings:
+          newFlatLogicFunction.databaseEventTriggerSettings as
+            | JsonbProperty<DatabaseEventTriggerSettings>
+            | undefined,
+        httpRouteTriggerSettings:
+          newFlatLogicFunction.httpRouteTriggerSettings as
+            | JsonbProperty<HttpRouteTriggerSettings>
+            | undefined,
       },
       workspaceId,
       ownerFlatApplication: resolvedOwnerFlatApplication,

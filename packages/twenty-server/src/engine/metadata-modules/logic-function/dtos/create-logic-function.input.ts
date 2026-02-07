@@ -11,13 +11,13 @@ import {
   Min,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
-
-import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+} from 'twenty-shared/application';
+
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @InputType()
 export class CreateLogicFunctionInput {
