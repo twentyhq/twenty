@@ -308,7 +308,17 @@ export class ViewFilterService {
       );
     }
 
-    return fromFlatViewFilterToViewFilterDto(existingViewFilterToDelete);
+    const existingFlatViewFilter =
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          existingViewFilterToDelete.universalIdentifier,
+        flatEntityMaps: existingFlatViewFilterMaps,
+      });
+
+    return fromFlatViewFilterToViewFilterDto({
+      ...existingFlatViewFilter,
+      deletedAt: new Date().toISOString(),
+    });
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {

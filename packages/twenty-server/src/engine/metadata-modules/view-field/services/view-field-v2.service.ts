@@ -321,7 +321,17 @@ export class ViewFieldV2Service {
       );
     }
 
-    return fromFlatViewFieldToViewFieldDto(existingViewFieldToDelete);
+    const existingFlatViewField =
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          existingViewFieldToDelete.universalIdentifier,
+        flatEntityMaps: existingFlatViewFieldMaps,
+      });
+
+    return fromFlatViewFieldToViewFieldDto({
+      ...existingFlatViewField,
+      deletedAt: new Date().toISOString(),
+    });
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {

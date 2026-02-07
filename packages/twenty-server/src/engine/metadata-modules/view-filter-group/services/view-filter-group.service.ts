@@ -305,9 +305,17 @@ export class ViewFilterGroupService {
       );
     }
 
-    return fromFlatViewFilterGroupToViewFilterGroupDto(
-      existingViewFilterGroupToDelete,
-    );
+    const existingFlatViewFilterGroup =
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          existingViewFilterGroupToDelete.universalIdentifier,
+        flatEntityMaps: existingFlatViewFilterGroupMaps,
+      });
+
+    return fromFlatViewFilterGroupToViewFilterGroupDto({
+      ...existingFlatViewFilterGroup,
+      deletedAt: new Date().toISOString(),
+    });
   }
 
   async findByWorkspaceId(

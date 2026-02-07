@@ -337,7 +337,17 @@ export class ViewGroupService {
       );
     }
 
-    return fromFlatViewGroupToViewGroupDto(existingViewGroupToDelete);
+    const existingFlatViewGroup =
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          existingViewGroupToDelete.universalIdentifier,
+        flatEntityMaps: existingFlatViewGroupMaps,
+      });
+
+    return fromFlatViewGroupToViewGroupDto({
+      ...existingFlatViewGroup,
+      deletedAt: new Date().toISOString(),
+    });
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
