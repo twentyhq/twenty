@@ -112,7 +112,7 @@ export type CalloutProps = {
   learnMoreText: string;
   learnMoreUrl: string;
   onClose: () => void;
-  className: string;
+  className?: string;
 };
 
 export const Callout = ({
