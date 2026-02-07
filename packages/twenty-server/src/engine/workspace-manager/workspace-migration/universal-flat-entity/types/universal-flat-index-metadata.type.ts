@@ -5,7 +5,7 @@ import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/works
 // Note: IndexFieldMetadataEntity is just in between a SyncableEntity and a jsonb we should decide one of both
 export type UniversalFlatIndexFieldMetadata = Omit<
   IndexFieldMetadataEntity,
-  'indexMetadataId' | 'indexMetadata' | 'fieldMetadataId' | 'fieldMetadata'
+  'indexMetadataId' | 'indexMetadata' | 'fieldMetadataId' | 'fieldMetadata' | 'id'
 > & {
   indexMetadataUniversalIdentifier: string;
   fieldMetadataUniversalIdentifier: string;

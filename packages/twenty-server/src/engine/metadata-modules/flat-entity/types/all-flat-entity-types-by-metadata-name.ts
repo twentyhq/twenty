@@ -80,6 +80,7 @@ import {
   type UniversalUpdateFrontComponentAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 import {
+  UniversalCreateIndexAction,
   type FlatCreateIndexAction,
   type FlatDeleteIndexAction,
   type FlatUpdateIndexAction,
@@ -158,10 +159,10 @@ import {
   type UniversalUpdateRowLevelPermissionPredicateAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import {
-  type UniversalCreateSkillAction,
   type FlatCreateSkillAction,
   type FlatDeleteSkillAction,
   type FlatUpdateSkillAction,
+  type UniversalCreateSkillAction,
   type UniversalDeleteSkillAction,
   type UniversalUpdateSkillAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
@@ -348,7 +349,7 @@ export type AllFlatEntityTypesByMetadataName = {
   index: {
     flatEntityMaps: FlatEntityMaps<FlatIndexMetadata>;
     universalActions: {
-      create: FlatCreateIndexAction;
+      create: UniversalCreateIndexAction;
       update: UniversalUpdateIndexAction;
       delete: UniversalDeleteIndexAction;
     };

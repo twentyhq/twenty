@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -137,7 +137,7 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
       };
     }
 
-    const updatedFlatIndex: FlatIndexMetadata = {
+    const updatedFlatIndex: UniversalFlatIndexMetadata = {
       ...flatEntity,
       ...flatEntityUpdate,
     };
@@ -180,10 +180,8 @@ export class WorkspaceMigrationIndexActionsBuilderService extends WorkspaceEntit
       action: {
         type: 'update',
         metadataName: 'index',
-        entityId: flatEntity.id,
-        // Note: Index update action ignores the native update field
-        // As under the hood it result as a drop and create
-        updatedFlatEntity: updatedFlatIndex,
+        universalIdentifier,
+        updatedUniversalFlatIndex: updatedFlatIndex,
         update: {},
       },
     };

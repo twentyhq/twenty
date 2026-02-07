@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { IndexExceptionCode } from 'src/engine/metadata-modules/flat-index-metadata/exceptions/index-exception-code';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -113,105 +113,96 @@ export class FlatIndexValidatorService {
       });
     }
 
-    if (flatIndexToValidate.flatIndexFieldMetadatas.length === 0) {
+    if (
+      flatIndexToValidate.universalFlatIndexFieldMetadatas.length === 0
+    ) {
       validationResult.errors.push({
         code: IndexExceptionCode.INDEX_EMPTY_FIELDS,
         message: t`Index must have at least one field`,
         userFriendlyMessage: msg`An index must contain at least one field`,
       });
     } else {
-      flatIndexToValidate.flatIndexFieldMetadatas.forEach((flatIndexField) => {
-        const relatedFlatField = findFlatEntityByUniversalIdentifier({
-          universalIdentifier: flatIndexField.fieldMetadataUniversalIdentifier,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!isDefined(relatedFlatField)) {
-          validationResult.errors.push({
-            code: IndexExceptionCode.INDEX_FIELD_NOT_FOUND,
-            message: t`Could not find index field related field metadata`,
-            userFriendlyMessage: msg`Field referenced in index does not exist`,
+      flatIndexToValidate.universalFlatIndexFieldMetadatas.forEach(
+        (universalFlatIndexField) => {
+          const relatedFlatField = findFlatEntityByUniversalIdentifier({
+            universalIdentifier:
+              universalFlatIndexField.fieldMetadataUniversalIdentifier,
+            flatEntityMaps: flatFieldMetadataMaps,
           });
-        } else {
+
+          if (!isDefined(relatedFlatField)) {
+            validationResult.errors.push({
+              code: IndexExceptionCode.INDEX_FIELD_NOT_FOUND,
+              message: t`Could not find index field related field metadata`,
+              userFriendlyMessage: msg`Field referenced in index does not exist`,
+            });
+          } else {
+            if (
+              relatedFlatField.objectMetadataUniversalIdentifier !==
+              flatIndexToValidate.objectMetadataUniversalIdentifier
+            ) {
+              validationResult.errors.push({
+                code: IndexExceptionCode.INDEX_FIELD_WRONG_OBJECT,
+                message: t`Field does not belong to the indexed object`,
+                userFriendlyMessage: msg`Field cannot be indexed as it belongs to a different object`,
+              });
+            }
+
+            if (flatIndexToValidate.isUnique) {
+              if (
+                isDefined(relatedFlatField.defaultValue) &&
+                relatedFlatField.isUnique
+              ) {
+                const fieldName = relatedFlatField.name;
+                const fieldType = relatedFlatField.type;
+
+                validationResult.errors.push({
+                  code: IndexExceptionCode.INDEX_FIELD_INVALID_DEFAULT_VALUE,
+                  message: t`Unique index cannot be created for field ${fieldName} of type ${fieldType}`,
+                  userFriendlyMessage: msg`${fieldType} fields cannot have a default value.`,
+                });
+              }
+
+              const isCompositeFieldWithNonIncludedUniqueConstraint =
+                isCompositeUniversalFlatFieldMetadata(relatedFlatField) &&
+                !compositeTypeDefinitions
+                  .get(relatedFlatField.type)
+                  ?.properties.some(
+                    (property) => property.isIncludedInUniqueConstraint,
+                  );
+
+              if (
+                [
+                  FieldMetadataType.MORPH_RELATION,
+                  FieldMetadataType.RELATION,
+                ].includes(relatedFlatField.type) ||
+                isCompositeFieldWithNonIncludedUniqueConstraint
+              ) {
+                const fieldType = relatedFlatField.type;
+                const fieldName = relatedFlatField.name;
+
+                validationResult.errors.push({
+                  code: IndexExceptionCode.INDEX_FIELD_INVALID_TYPE_FOR_UNIQUE,
+                  message: t`Unique index cannot be created for field ${fieldName} of type ${fieldType}`,
+                  userFriendlyMessage: msg`${fieldType} fields cannot be unique.`,
+                });
+              }
+            }
+          }
+
           if (
-            relatedFlatField.objectMetadataUniversalIdentifier !==
-            flatIndexToValidate.objectMetadataUniversalIdentifier
+            universalFlatIndexField.indexMetadataUniversalIdentifier !==
+            flatIndexToValidate.universalIdentifier
           ) {
             validationResult.errors.push({
-              code: IndexExceptionCode.INDEX_FIELD_WRONG_OBJECT,
-              message: t`Field does not belong to the indexed object`,
-              userFriendlyMessage: msg`Field cannot be indexed as it belongs to a different object`,
+              code: IndexExceptionCode.INDEX_FIELD_INVALID_REFERENCE,
+              message: t`Index field references incorrect index metadata`,
+              userFriendlyMessage: msg`Index field has an invalid reference`,
             });
           }
 
-          if (flatIndexToValidate.isUnique) {
-            if (
-              isDefined(relatedFlatField.defaultValue) &&
-              relatedFlatField.isUnique
-            ) {
-              const fieldName = relatedFlatField.name;
-              const fieldType = relatedFlatField.type;
-
-              validationResult.errors.push({
-                code: IndexExceptionCode.INDEX_FIELD_INVALID_DEFAULT_VALUE,
-                message: t`Unique index cannot be created for field ${fieldName} of type ${fieldType}`,
-                userFriendlyMessage: msg`${fieldType} fields cannot have a default value.`,
-              });
-            }
-
-            const isCompositeFieldWithNonIncludedUniqueConstraint =
-              isCompositeFlatFieldMetadata(relatedFlatField) &&
-              !compositeTypeDefinitions
-                .get(relatedFlatField.type)
-                ?.properties.some(
-                  (property) => property.isIncludedInUniqueConstraint,
-                );
-
-            if (
-              [
-                FieldMetadataType.MORPH_RELATION,
-                FieldMetadataType.RELATION,
-              ].includes(relatedFlatField.type) ||
-              isCompositeFieldWithNonIncludedUniqueConstraint
-            ) {
-              const fieldType = relatedFlatField.type;
-              const fieldName = relatedFlatField.name;
-
-              validationResult.errors.push({
-                code: IndexExceptionCode.INDEX_FIELD_INVALID_TYPE_FOR_UNIQUE,
-                message: t`Unique index cannot be created for field ${fieldName} of type ${fieldType}`,
-                userFriendlyMessage: msg`${fieldType} fields cannot be unique.`,
-              });
-            }
-          }
-        }
-
-        if (
-          flatIndexField.indexMetadataUniversalIdentifier !==
-          flatIndexToValidate.universalIdentifier
-        ) {
-          validationResult.errors.push({
-            code: IndexExceptionCode.INDEX_FIELD_INVALID_REFERENCE,
-            message: t`Index field references incorrect index metadata`,
-            userFriendlyMessage: msg`Index field has an invalid reference`,
-          });
-        }
-
-        if (
-          allExistingFlatIndex.some(({ flatIndexFieldMetadatas }) =>
-            flatIndexFieldMetadatas.some(
-              ({ universalIdentifier }) =>
-                universalIdentifier === flatIndexField.universalIdentifier,
-            ),
-          )
-        ) {
-          validationResult.errors.push({
-            code: IndexExceptionCode.INDEX_FIELD_ID_DUPLICATE,
-            message: t`Index field universal identifier already exists in another index`,
-            userFriendlyMessage: msg`Field is already used in another index`,
-          });
-        }
-      });
+        },
+      );
     }
 
     return validationResult;
