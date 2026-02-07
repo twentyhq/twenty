@@ -5,7 +5,10 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { type WorkflowFormAction, WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  type WorkflowFormAction,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowMessage } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowMessage';
@@ -29,6 +32,8 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
+import { Callout } from '@/workflow/workflow-steps/workflow-actions/components/Callout';
+import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 
 export type WorkflowEditActionFormBuilderProps = {
   trigger: WorkflowTrigger | null;
@@ -215,7 +220,19 @@ export const WorkflowEditActionFormBuilder = ({
   return (
     <>
       <StyledWorkflowStepBody>
-        {trigger?.type !== 'MANUAL' && (<WorkflowMessage title={'test'} description={'test'}/> )}
+        {trigger?.type !== 'MANUAL' && (
+          <Callout
+            learnMoreText={t`Learn more`}
+            variant={'warning'}
+            title={t`This form will appear in workflow runs.`}
+            description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
+            className={'test'}
+            onClose={useCloseAnyOpenDropdown}
+            learnMoreUrl={
+              'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form'
+            }
+          />
+        )}
         {formData.length === 0 && (
           <WorkflowMessage
             title={t`Add inputs to your form`}
