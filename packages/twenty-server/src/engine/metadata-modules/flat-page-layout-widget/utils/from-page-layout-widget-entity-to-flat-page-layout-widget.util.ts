@@ -11,7 +11,7 @@ import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/type
 
 type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
   FromEntityToFlatEntityArgs<'pageLayoutWidget'> & {
-    fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
+    fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
   };
 
 export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
@@ -19,7 +19,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
   applicationIdToUniversalIdentifierMap,
   pageLayoutTabIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
-  fieldMetadataIdToUniversalIdentifierMap,
+  fieldMetadataUniversalIdentifierById,
 }: FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs): FlatPageLayoutWidget => {
   const pageLayoutWidgetEntityWithoutRelations = removePropertiesFromRecord(
     pageLayoutWidgetEntity,
@@ -69,7 +69,7 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
   const configurationWithUniversalIdentifiers =
     fromPageLayoutWidgetConfigurationToUniversalConfiguration({
       configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
-      fieldMetadataIdToUniversalIdentifierMap,
+      fieldMetadataUniversalIdentifierById,
     });
 
   return {

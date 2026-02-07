@@ -1,5 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -9,23 +13,40 @@ type PageLayoutWidgetConfiguration = PageLayoutWidgetEntity['configuration'];
 type UniversalPageLayoutWidgetConfiguration =
   NonNullable<FlatPageLayoutWidget>['universalConfiguration'];
 
-// Field metadata IDs in widget configurations might references non existing entities
 const getFieldMetadataUniversalIdentifier = ({
   fieldMetadataId,
-  fieldMetadataIdToUniversalIdentifierMap,
+  fieldMetadataUniversalIdentifierById,
+  shouldThrowOnMissingIdentifier,
 }: {
   fieldMetadataId: string;
-  fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  shouldThrowOnMissingIdentifier: boolean;
 }): string | null => {
-  return fieldMetadataIdToUniversalIdentifierMap.get(fieldMetadataId) ?? null;
+  const universalIdentifier =
+    fieldMetadataUniversalIdentifierById[fieldMetadataId];
+
+  if (!isDefined(universalIdentifier)) {
+    if (shouldThrowOnMissingIdentifier) {
+      throw new FlatEntityMapsException(
+        `Field metadata universal identifier not found for id: ${fieldMetadataId}`,
+        FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+      );
+    }
+
+    return null;
+  }
+
+  return universalIdentifier;
 };
 
 export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
   configuration,
-  fieldMetadataIdToUniversalIdentifierMap,
+  fieldMetadataUniversalIdentifierById,
+  shouldThrowOnMissingIdentifier = false,
 }: {
   configuration: PageLayoutWidgetConfiguration;
-  fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
+  fieldMetadataUniversalIdentifierById: Partial<Record<string, string>>;
+  shouldThrowOnMissingIdentifier?: boolean;
 }): UniversalPageLayoutWidgetConfiguration => {
   switch (configuration.configurationType) {
     case WidgetConfigurationType.AGGREGATE_CHART: {
@@ -35,7 +56,8 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       const aggregateFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
           fieldMetadataId: aggregateFieldMetadataId,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
         });
 
       const universalRatioAggregateConfig = isDefined(ratioAggregateConfig)
@@ -44,7 +66,8 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
             fieldMetadataUniversalIdentifier:
               getFieldMetadataUniversalIdentifier({
                 fieldMetadataId: ratioAggregateConfig.fieldMetadataId,
-                fieldMetadataIdToUniversalIdentifierMap,
+                fieldMetadataUniversalIdentifierById,
+                shouldThrowOnMissingIdentifier,
               }),
           }
         : undefined;
@@ -62,7 +85,8 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       const aggregateFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
           fieldMetadataId: aggregateFieldMetadataId,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
         });
 
       return {
@@ -78,13 +102,15 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       const aggregateFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
           fieldMetadataId: aggregateFieldMetadataId,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
         });
 
       const groupByFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
           fieldMetadataId: groupByFieldMetadataId,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
         });
 
       return {
@@ -105,13 +131,15 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       const aggregateFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
           fieldMetadataId: aggregateFieldMetadataId,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
         });
 
       const primaryAxisGroupByFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
           fieldMetadataId: primaryAxisGroupByFieldMetadataId,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
         });
 
       const secondaryAxisGroupByFieldMetadataUniversalIdentifier = isDefined(
@@ -119,7 +147,8 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       )
         ? getFieldMetadataUniversalIdentifier({
             fieldMetadataId: secondaryAxisGroupByFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
+            fieldMetadataUniversalIdentifierById,
+            shouldThrowOnMissingIdentifier,
           })
         : undefined;
 
@@ -142,13 +171,15 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       const aggregateFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
           fieldMetadataId: aggregateFieldMetadataId,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
         });
 
       const primaryAxisGroupByFieldMetadataUniversalIdentifier =
         getFieldMetadataUniversalIdentifier({
           fieldMetadataId: primaryAxisGroupByFieldMetadataId,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
         });
 
       const secondaryAxisGroupByFieldMetadataUniversalIdentifier = isDefined(
@@ -156,7 +187,8 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       )
         ? getFieldMetadataUniversalIdentifier({
             fieldMetadataId: secondaryAxisGroupByFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
+            fieldMetadataUniversalIdentifierById,
+            shouldThrowOnMissingIdentifier,
           })
         : undefined;
 
