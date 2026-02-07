@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  Callout,
   IconChevronDown,
   IconGripVertical,
   IconPlus,
@@ -32,7 +33,6 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
-import { Callout } from '@/workflow/workflow-steps/workflow-actions/components/Callout';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 
 export type WorkflowEditActionFormBuilderProps = {
