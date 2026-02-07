@@ -7,11 +7,15 @@ import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow }
 import { deleteUniversalFlatEntityFromUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-maps-through-mutation-or-throw.util';
 import { replaceUniversalFlatEntityInUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/replace-universal-flat-entity-in-universal-flat-entity-maps-through-mutation-or-throw.util';
 
-export type ComputeUniversalFlatEntityMapsFromToArgs<T extends AllMetadataName> = {
+export type ComputeUniversalFlatEntityMapsFromToArgs<
+  T extends AllMetadataName,
+> = {
   flatEntityMaps: MetadataUniversalFlatEntityMaps<T>;
 } & FlatEntityToCreateDeleteUpdate<T>;
 
-export const computeUniversalFlatEntityMapsFromTo = <T extends AllMetadataName>({
+export const computeUniversalFlatEntityMapsFromTo = <
+  T extends AllMetadataName,
+>({
   flatEntityMaps,
   flatEntityToCreate,
   flatEntityToDelete,

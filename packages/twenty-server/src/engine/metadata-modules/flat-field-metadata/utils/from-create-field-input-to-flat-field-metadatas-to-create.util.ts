@@ -122,7 +122,9 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
               options: generateRatingOptions(),
               universalSettings: null,
-            } satisfies UniversalFlatFieldMetadata<typeof createFieldInput.type>,
+            } satisfies UniversalFlatFieldMetadata<
+              typeof createFieldInput.type
+            >,
           ],
           indexMetadatas: [],
         },

@@ -189,12 +189,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       const flatEntityMaps = allRelatedFlatEntityMaps[flatEntityMapsKey];
 
       // @ts-expect-error Metadata flat entity maps cache key and metadataName colliding
-      fromToAllFlatEntityMaps[flatEntityMapsKey] = computeUniversalFlatEntityMapsFromTo({
-        flatEntityMaps,
-        flatEntityToCreate,
-        flatEntityToDelete,
-        flatEntityToUpdate,
-      });
+      fromToAllFlatEntityMaps[flatEntityMapsKey] =
+        computeUniversalFlatEntityMapsFromTo({
+          flatEntityMaps,
+          flatEntityToCreate,
+          flatEntityToDelete,
+          flatEntityToUpdate,
+        });
 
       if (flatEntityToDelete.length > 0) {
         inferDeletionFromMissingEntities[metadataName] = true;
