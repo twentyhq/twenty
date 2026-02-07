@@ -16,6 +16,7 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
 import { WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY } from 'src/engine/workspace-manager/workspace-migration/constant/workspace-migration-additional-cache-data-maps-key.constant';
+import { enrichCreateWorkspaceMigrationActionsWithIds } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import {
@@ -205,16 +206,13 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return validateAndBuildResult;
     }
 
-    // Note: This should be removed once we've refactored the runner optimistic rendering
-    // As with the current implementation passing an empty workspace migration might result
-    // in dependency flat entity maps invalidation
-    if (validateAndBuildResult.workspaceMigration.actions.length === 0) {
-      return;
-    }
+    const enrichedWorkspaceMigration =
+      enrichCreateWorkspaceMigrationActionsWithIds({
+        idByUniversalIdentifierByMetadataName: {},
+        workspaceMigration: validateAndBuildResult.workspaceMigration,
+      });
 
-    await this.workspaceMigrationRunnerService.run(
-      validateAndBuildResult.workspaceMigration,
-    );
+    await this.workspaceMigrationRunnerService.run(enrichedWorkspaceMigration);
   }
 
   public async validateBuildAndRunWorkspaceMigration({
