@@ -118,7 +118,7 @@ describe('defineLogicFunction', () => {
 
     const result = defineLogicFunction(config as any);
 
-    expect(result.config.trigger).toBeUndefined();
+    expect(result.config.httpRouteTriggerSettings).toBeUndefined();
   });
 
   it('should accept missing trigger', () => {
@@ -130,7 +130,7 @@ describe('defineLogicFunction', () => {
 
     const result = defineLogicFunction(config as any);
 
-    expect(result.config.trigger).toBeUndefined();
+    expect(result.config.httpRouteTriggerSettings).toBeUndefined();
   });
 
   it('should return error when route trigger is missing path', () => {

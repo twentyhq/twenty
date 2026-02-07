@@ -9,9 +9,7 @@ export default defineLogicFunction({
   name: 'root-function',
   timeoutSeconds: 5,
   handler: rootHandler,
-  trigger: {
-    universalIdentifier: 'f0f1f2f3-f4f5-4000-8000-000000000002',
-    type: 'route',
+  httpRouteTriggerSettings: {
     path: '/root',
     httpMethod: 'GET',
     isAuthRequired: false,

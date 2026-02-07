@@ -10,9 +10,7 @@ export default defineLogicFunction({
   name: 'test-function',
   timeoutSeconds: 2,
   handler,
-  trigger: {
-    universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-    type: 'route',
+  httpRouteTriggerSettings: {
     path: '/post-card/create',
     httpMethod: 'GET',
     isAuthRequired: false,

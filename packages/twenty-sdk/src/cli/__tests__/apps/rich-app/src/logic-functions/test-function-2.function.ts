@@ -6,9 +6,7 @@ export default defineLogicFunction({
   name: 'test-function-2',
   timeoutSeconds: 2,
   handler: testFunction2,
-  trigger: {
-    universalIdentifier: '9fd0dda9-4664-4fbc-9656-509f4477b9ff',
-    type: 'cron',
+  cronTriggerSettings: {
     pattern: '0 0 1 1 *',
   },
 });
