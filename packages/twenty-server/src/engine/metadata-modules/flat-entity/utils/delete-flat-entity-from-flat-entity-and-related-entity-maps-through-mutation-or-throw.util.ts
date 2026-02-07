@@ -33,7 +33,6 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
       {
         metadataName,
         universalFlatEntity: flatEntity,
-        // TODO investigate
         universalFlatEntityAndRelatedMapsToMutate:
           flatEntityAndRelatedMapsToMutate,
       },
