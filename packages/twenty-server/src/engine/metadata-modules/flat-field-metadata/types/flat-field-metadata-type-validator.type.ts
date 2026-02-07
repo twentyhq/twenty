@@ -10,9 +10,9 @@ export type FlatFieldMetadataTypeValidationArgs<T extends FieldMetadataType> =
     UniversalFlatEntityValidationArgs<'fieldMetadata'> & {
       update?: UniversalFlatEntityUpdate<'fieldMetadata'>;
     },
-    'universalFlatEntityToValidate'
+    'flatEntityToValidate'
   > & {
-    universalFlatEntityToValidate: UniversalFlatFieldMetadata<T>;
+    flatEntityToValidate: UniversalFlatFieldMetadata<T>;
   };
 
 export type FlatFieldMetadataTypeValidator = {

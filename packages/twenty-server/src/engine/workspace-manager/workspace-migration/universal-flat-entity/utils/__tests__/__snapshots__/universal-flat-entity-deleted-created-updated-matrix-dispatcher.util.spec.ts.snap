@@ -48,13 +48,9 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
         "workspaceId": "workspace-id-1",
       },
     },
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "deletedFlatEntityMaps": {
     "byUniversalIdentifier": {},
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {},
@@ -66,8 +62,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
 {
   "createdFlatEntityMaps": {
     "byUniversalIdentifier": {},
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "deletedFlatEntityMaps": {
     "byUniversalIdentifier": {
@@ -115,8 +109,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
         "workspaceId": "workspace-id-1",
       },
     },
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {},
@@ -128,18 +120,13 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an upd
 {
   "createdFlatEntityMaps": {
     "byUniversalIdentifier": {},
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "deletedFlatEntityMaps": {
     "byUniversalIdentifier": {},
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {
       "universal-identifier-1": {
-        "id": "field-id-1",
         "update": {
           "isActive": true,
         },
@@ -197,8 +184,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "workspaceId": "workspace-id-1",
       },
     },
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "deletedFlatEntityMaps": {
     "byUniversalIdentifier": {
@@ -246,13 +231,10 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "workspaceId": "workspace-id-1",
       },
     },
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {
       "universal-identifier-1": {
-        "id": "field-id-1",
         "update": {
           "isActive": false,
         },
@@ -266,13 +248,9 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should not detect de
 {
   "createdFlatEntityMaps": {
     "byUniversalIdentifier": {},
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "deletedFlatEntityMaps": {
     "byUniversalIdentifier": {},
-    "universalIdentifierById": {},
-    "universalIdentifiersByApplicationId": {},
   },
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {},

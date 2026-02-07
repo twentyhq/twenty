@@ -18,8 +18,6 @@ export type DeletedCreatedUpdatedMatrix<T extends AllMetadataName> = {
       string,
       {
         update: UniversalFlatEntityUpdate<T>;
-        // TMP remove when maps is universal based
-        id: string;
       }
     >;
   };
@@ -96,8 +94,6 @@ export const flatEntityDeletedCreatedUpdatedMatrixDispatcher = <
     initialDispatcher.updatedFlatEntityMaps.byUniversalIdentifier[
       fromUniversalFlatEntity.universalIdentifier
     ] = {
-      // TODO prastoin lets add an optional apiMetadataId?: string to the universal flat entity or maybe do something different ?
-      id: toUniversalFlatEntity.id,
       update,
     };
   }
