@@ -19,14 +19,12 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs =
   {
     createObjectInput: CreateObjectInput;
-    workspaceId: string;
     flatApplication: FlatApplication;
     existingFeatureFlagsMap: FeatureFlagMap;
   } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
 export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
   ({
     createObjectInput: rawCreateObjectInput,
-    workspaceId,
     flatApplication,
     flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     existingFeatureFlagsMap,

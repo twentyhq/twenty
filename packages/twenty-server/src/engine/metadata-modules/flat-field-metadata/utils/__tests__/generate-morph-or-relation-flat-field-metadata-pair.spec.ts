@@ -51,8 +51,6 @@ type TestCase = EachTestingContext<{
 }>;
 
 describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () => {
-  const mockWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
-
   describe('Success cases', () => {
     const testCases: TestCase[] = [
       {

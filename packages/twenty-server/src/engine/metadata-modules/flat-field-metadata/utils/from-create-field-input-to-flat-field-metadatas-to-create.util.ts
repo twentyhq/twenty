@@ -26,13 +26,11 @@ import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/wo
 
 export type FromCreateFieldInputToFlatObjectMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
-  workspaceId: string;
   flatApplication: FlatApplication;
 } & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'>;
 
 export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   createFieldInput: rawCreateFieldInput,
-  workspaceId,
   flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
   flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
   flatApplication,
