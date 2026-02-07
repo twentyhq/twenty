@@ -80,7 +80,7 @@ import {
   type UniversalUpdateFrontComponentAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 import {
-  UniversalCreateIndexAction,
+  type UniversalCreateIndexAction,
   type FlatCreateIndexAction,
   type FlatDeleteIndexAction,
   type FlatUpdateIndexAction,

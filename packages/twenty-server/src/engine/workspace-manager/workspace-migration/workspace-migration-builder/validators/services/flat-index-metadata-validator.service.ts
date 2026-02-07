@@ -113,9 +113,7 @@ export class FlatIndexValidatorService {
       });
     }
 
-    if (
-      flatIndexToValidate.universalFlatIndexFieldMetadatas.length === 0
-    ) {
+    if (flatIndexToValidate.universalFlatIndexFieldMetadatas.length === 0) {
       validationResult.errors.push({
         code: IndexExceptionCode.INDEX_EMPTY_FIELDS,
         message: t`Index must have at least one field`,
@@ -200,7 +198,6 @@ export class FlatIndexValidatorService {
               userFriendlyMessage: msg`Index field has an invalid reference`,
             });
           }
-
         },
       );
     }

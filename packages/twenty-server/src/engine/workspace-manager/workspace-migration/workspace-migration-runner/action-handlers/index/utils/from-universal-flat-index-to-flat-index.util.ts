@@ -67,8 +67,7 @@ export const fromUniversalFlatIndexToFlatIndex = ({
 
   return {
     id: indexMetadataId,
-    universalIdentifier:
-      universalFlatIndexMetadata.universalIdentifier,
+    universalIdentifier: universalFlatIndexMetadata.universalIdentifier,
     applicationId,
     applicationUniversalIdentifier:
       universalFlatIndexMetadata.applicationUniversalIdentifier,

@@ -34,8 +34,7 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateIndexAction>,
   ): Promise<FlatCreateIndexAction> {
-    const { action, allFlatEntityMaps, workspaceId, flatApplication } =
-      context;
+    const { action, allFlatEntityMaps, workspaceId, flatApplication } = context;
 
     const flatEntity = fromUniversalFlatIndexToFlatIndex({
       universalFlatIndexMetadata: action.flatEntity,
