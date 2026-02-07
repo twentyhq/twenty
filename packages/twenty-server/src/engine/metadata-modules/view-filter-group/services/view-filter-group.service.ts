@@ -59,7 +59,6 @@ export class ViewFilterGroupService {
     const flatViewFilterGroupToCreate =
       fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate({
         createViewFilterGroupInput,
-        workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatViewMaps: existingFlatViewMaps,
         flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,

@@ -60,7 +60,6 @@ export class ViewFilterService {
     const flatViewFilterToCreate =
       fromCreateViewFilterInputToFlatViewFilterToCreate({
         createViewFilterInput,
-        workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatFieldMetadataMaps,
         flatViewMaps,

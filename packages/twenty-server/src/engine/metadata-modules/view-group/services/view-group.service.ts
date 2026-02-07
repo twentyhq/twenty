@@ -101,7 +101,6 @@ export class ViewGroupService {
 
         return fromCreateViewGroupInputToFlatViewGroupToCreate({
           createViewGroupInput,
-          workspaceId,
           flatApplication: workspaceCustomFlatApplication,
           flatViewMaps,
         });
