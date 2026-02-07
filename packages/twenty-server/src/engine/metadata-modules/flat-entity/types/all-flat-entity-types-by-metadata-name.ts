@@ -43,6 +43,7 @@ import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-mo
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { type UniversalFlatSkill } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-skill.type';
 import {
   type FlatCreateAgentAction,
   type FlatDeleteAgentAction,
@@ -441,7 +442,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteSkillAction;
     };
     flatEntity: FlatSkill;
-    universalFlatEntity: FlatSkill;
+    universalFlatEntity: UniversalFlatSkill;
     entity: MetadataEntity<'skill'>;
   };
   commandMenuItem: {

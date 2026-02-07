@@ -155,11 +155,6 @@ export class AgentService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          idByUniversalIdentifierByMetadataName: {
-            agent: {
-              [flatAgentToCreate.universalIdentifier]: flatAgentToCreate.id,
-            },
-          },
         },
       );
 

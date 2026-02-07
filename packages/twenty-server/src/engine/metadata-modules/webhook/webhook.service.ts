@@ -127,12 +127,6 @@ export class WebhookService {
           workspaceId,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          idByUniversalIdentifierByMetadataName: {
-            webhook: {
-              [flatWebhookToCreate.universalIdentifier]:
-                flatWebhookToCreate.id,
-            },
-          },
         },
       );
 

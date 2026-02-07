@@ -11,6 +11,7 @@ import { ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION } from 'src/engine/metada
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -39,7 +40,6 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   // TODO remove once application synchronization do not consume services atomically anymore
   // Should always be the universal workspace custom app id
   applicationUniversalIdentifier: string;
-  idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
 };
 
 @Injectable()
@@ -137,6 +137,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     inferDeletionFromMissingEntities: InferDeletionFromMissingEntities;
     dependencyAllFlatEntityMaps: Partial<AllFlatEntityMaps>;
     additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
+    idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
   }> {
     const {
       allRelatedFlatEntityMaps,
@@ -151,6 +152,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
     const inferDeletionFromMissingEntities: InferDeletionFromMissingEntities =
       {};
+    const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =
+      {};
     const allMetadataNameToCompare = Object.keys(
       allFlatEntityOperationByMetadataName,
     ) as AllMetadataName[];
@@ -164,6 +167,24 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       }
       const { flatEntityToCreate, flatEntityToDelete, flatEntityToUpdate } =
         flatEntityOperations;
+
+      const idByUniversalIdentifier = Object.fromEntries(
+        flatEntityToCreate
+          .filter(
+            (
+              flatEntity,
+            ): flatEntity is MetadataUniversalFlatEntity<
+              typeof metadataName
+            > & { id: string } => isDefined(flatEntity.id),
+          )
+          .map((flatEntity) => [flatEntity.universalIdentifier, flatEntity.id]),
+      );
+
+      if (Object.keys(idByUniversalIdentifier).length > 0) {
+        idByUniversalIdentifierByMetadataName[metadataName] =
+          idByUniversalIdentifier;
+      }
+
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
       const flatEntityMaps = allRelatedFlatEntityMaps[flatEntityMapsKey];
 
@@ -185,6 +206,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       inferDeletionFromMissingEntities,
       dependencyAllFlatEntityMaps,
       additionalCacheDataMaps,
+      idByUniversalIdentifierByMetadataName,
     };
   }
 
@@ -214,9 +236,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return validateAndBuildResult;
     }
 
-    const workspaceMigration = isDefined(
-      idByUniversalIdentifierByMetadataName,
-    )
+    const workspaceMigration = isDefined(idByUniversalIdentifierByMetadataName)
       ? enrichCreateWorkspaceMigrationActionsWithIds({
           idByUniversalIdentifierByMetadataName,
           workspaceMigration: validateAndBuildResult.workspaceMigration,
@@ -231,7 +251,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
-    idByUniversalIdentifierByMetadataName,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     WorkspaceMigrationOrchestratorFailedResult | undefined
   > {
@@ -240,6 +259,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       inferDeletionFromMissingEntities,
       dependencyAllFlatEntityMaps,
       additionalCacheDataMaps,
+      idByUniversalIdentifierByMetadataName,
     } = await this.computeFromToAllFlatEntityMapsAndBuildOptions({
       allFlatEntityOperationByMetadataName: allFlatEntities,
       workspaceId,

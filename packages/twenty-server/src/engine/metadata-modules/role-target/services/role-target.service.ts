@@ -107,14 +107,6 @@ export class RoleTargetService {
             },
           },
           workspaceId,
-          idByUniversalIdentifierByMetadataName: {
-            roleTarget: Object.fromEntries(
-              allFlatRoleTargetsToCreate.map((flatRoleTarget) => [
-                flatRoleTarget.universalIdentifier,
-                flatRoleTarget.id,
-              ]),
-            ),
-          },
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,

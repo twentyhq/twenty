@@ -122,14 +122,6 @@ export class ViewGroupService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          idByUniversalIdentifierByMetadataName: {
-            viewGroup: Object.fromEntries(
-              flatViewGroupsToCreate.map((flatViewGroup) => [
-                flatViewGroup.universalIdentifier,
-                flatViewGroup.id,
-              ]),
-            ),
-          },
         },
       );
 

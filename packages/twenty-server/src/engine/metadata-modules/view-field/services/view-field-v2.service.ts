@@ -107,14 +107,6 @@ export class ViewFieldV2Service {
           },
           workspaceId,
           isSystemBuild: false,
-          idByUniversalIdentifierByMetadataName: {
-            viewField: Object.fromEntries(
-              flatViewFieldsToCreate.map((flatViewField) => [
-                flatViewField.universalIdentifier,
-                flatViewField.id,
-              ]),
-            ),
-          },
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },

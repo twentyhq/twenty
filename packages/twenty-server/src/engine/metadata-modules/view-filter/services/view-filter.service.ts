@@ -81,12 +81,6 @@ export class ViewFilterService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          idByUniversalIdentifierByMetadataName: {
-            viewFilter: {
-              [flatViewFilterToCreate.universalIdentifier]:
-                flatViewFilterToCreate.id,
-            },
-          },
         },
       );
 

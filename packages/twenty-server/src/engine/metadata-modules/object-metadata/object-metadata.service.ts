@@ -488,12 +488,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           isSystemBuild: false,
           applicationUniversalIdentifier:
             resolvedOwnerFlatApplication.universalIdentifier,
-          idByUniversalIdentifierByMetadataName: {
-            objectMetadata: {
-              [flatObjectMetadataToCreate.universalIdentifier]:
-                flatObjectMetadataToCreate.id,
-            },
-          },
         },
       );
 

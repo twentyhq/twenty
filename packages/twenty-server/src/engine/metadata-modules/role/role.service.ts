@@ -128,11 +128,6 @@ export class RoleService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
-          idByUniversalIdentifierByMetadataName: {
-            role: {
-              [flatRoleToCreate.universalIdentifier]: flatRoleToCreate.id,
-            },
-          },
         },
       );
 

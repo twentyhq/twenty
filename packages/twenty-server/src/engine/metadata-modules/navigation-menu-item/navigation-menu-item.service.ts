@@ -195,12 +195,6 @@ export class NavigationMenuItemService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
-          idByUniversalIdentifierByMetadataName: {
-            navigationMenuItem: {
-              [flatNavigationMenuItemToCreate.universalIdentifier]:
-                flatNavigationMenuItemToCreate.id,
-            },
-          },
         },
       );
 
