@@ -167,6 +167,7 @@ import {
   type FlatCreateViewFieldAction,
   type FlatDeleteViewFieldAction,
   type FlatUpdateViewFieldAction,
+  type UniversalCreateViewFieldAction,
   type UniversalDeleteViewFieldAction,
   type UniversalUpdateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
@@ -174,6 +175,7 @@ import {
   type FlatCreateViewFilterGroupAction,
   type FlatDeleteViewFilterGroupAction,
   type FlatUpdateViewFilterGroupAction,
+  type UniversalCreateViewFilterGroupAction,
   type UniversalDeleteViewFilterGroupAction,
   type UniversalUpdateViewFilterGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action.type';
@@ -181,6 +183,7 @@ import {
   type FlatCreateViewFilterAction,
   type FlatDeleteViewFilterAction,
   type FlatUpdateViewFilterAction,
+  type UniversalCreateViewFilterAction,
   type UniversalDeleteViewFilterAction,
   type UniversalUpdateViewFilterAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/types/workspace-migration-view-filter-action.type';
@@ -188,6 +191,7 @@ import {
   type FlatCreateViewGroupAction,
   type FlatDeleteViewGroupAction,
   type FlatUpdateViewGroupAction,
+  type UniversalCreateViewGroupAction,
   type UniversalDeleteViewGroupAction,
   type UniversalUpdateViewGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
@@ -195,6 +199,7 @@ import {
   type FlatCreateViewAction,
   type FlatDeleteViewAction,
   type FlatUpdateViewAction,
+  type UniversalCreateViewAction,
   type UniversalDeleteViewAction,
   type UniversalUpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
@@ -245,7 +250,7 @@ export type AllFlatEntityTypesByMetadataName = {
   view: {
     flatEntityMaps: FlatViewMaps;
     universalActions: {
-      create: FlatCreateViewAction;
+      create: UniversalCreateViewAction;
       update: UniversalUpdateViewAction;
       delete: UniversalDeleteViewAction;
     };
@@ -261,7 +266,7 @@ export type AllFlatEntityTypesByMetadataName = {
   viewField: {
     flatEntityMaps: FlatViewFieldMaps;
     universalActions: {
-      create: FlatCreateViewFieldAction;
+      create: UniversalCreateViewFieldAction;
       update: UniversalUpdateViewFieldAction;
       delete: UniversalDeleteViewFieldAction;
     };
@@ -277,7 +282,7 @@ export type AllFlatEntityTypesByMetadataName = {
   viewGroup: {
     flatEntityMaps: FlatViewGroupMaps;
     universalActions: {
-      create: FlatCreateViewGroupAction;
+      create: UniversalCreateViewGroupAction;
       update: UniversalUpdateViewGroupAction;
       delete: UniversalDeleteViewGroupAction;
     };
@@ -325,7 +330,7 @@ export type AllFlatEntityTypesByMetadataName = {
   viewFilterGroup: {
     flatEntityMaps: FlatViewFilterGroupMaps;
     universalActions: {
-      create: FlatCreateViewFilterGroupAction;
+      create: UniversalCreateViewFilterGroupAction;
       update: UniversalUpdateViewFilterGroupAction;
       delete: UniversalDeleteViewFilterGroupAction;
     };
@@ -373,7 +378,7 @@ export type AllFlatEntityTypesByMetadataName = {
   viewFilter: {
     flatEntityMaps: FlatViewFilterMaps;
     universalActions: {
-      create: FlatCreateViewFilterAction;
+      create: UniversalCreateViewFilterAction;
       update: UniversalUpdateViewFilterAction;
       delete: UniversalDeleteViewFilterAction;
     };
