@@ -49,3 +49,18 @@ export { defineObject } from './objects/define-object';
 export { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from './objects/standard-object-ids';
 export { defineRole } from './roles/define-role';
 export { PermissionFlag } from './roles/permission-flag-type';
+
+// Front Component API exports
+export { useFrontComponentExecutionContext } from './front-component-api';
+export type { FrontComponentExecutionContext } from './front-component-api';
+export type { FrontComponentExecutionContextStore } from './front-component-api';
+
+// Front Component Common exports
+export type { AllowedHtmlElement } from './front-component-common';
+export { ALLOWED_HTML_ELEMENTS } from './front-component-common';
+export type { AllowedUiComponent } from './front-component-common';
+export { ALLOWED_UI_COMPONENTS } from './front-component-common';
+export { COMMON_HTML_EVENTS } from './front-component-common';
+export { EVENT_TO_REACT } from './front-component-common';
+export { HTML_COMMON_PROPERTIES } from './front-component-common';
+export { HTML_TAG_TO_REMOTE_COMPONENT } from './front-component-common';

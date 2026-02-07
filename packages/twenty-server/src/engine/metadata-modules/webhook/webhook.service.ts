@@ -111,7 +111,7 @@ export class WebhookService {
         targetUrl: normalizedTargetUrl,
       },
       workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
+      flatApplication: workspaceCustomFlatApplication,
     });
 
     const validateAndBuildResult =

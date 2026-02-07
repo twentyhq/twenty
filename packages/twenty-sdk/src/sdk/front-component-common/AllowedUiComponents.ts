@@ -1,4 +1,4 @@
-import { type PropertySchema } from '../renderer/types/PropertySchema';
+import { type PropertySchema } from '@/front-component/types/PropertySchema';
 
 export type AllowedUiComponent = {
   tag: string;

@@ -1,6 +1,6 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -10,6 +10,7 @@ import {
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
@@ -80,11 +81,14 @@ export const createStandardIndexFlatMetadata = <
     flatIndex: {
       createdAt: now,
       applicationId: twentyStandardApplicationId,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION.universalIdentifier,
       indexType,
       indexWhereClause,
       isCustom: false,
       isUnique,
       objectMetadataId,
+      objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       universalIdentifier: indexDefinition.universalIdentifier,
       updatedAt: now,
       workspaceId,

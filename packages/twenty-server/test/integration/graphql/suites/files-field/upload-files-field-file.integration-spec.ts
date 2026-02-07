@@ -1,18 +1,12 @@
 import gql from 'graphql-tag';
 import { makeGraphqlAPIRequestWithFileUpload } from 'test/integration/graphql/utils/make-graphql-api-request-with-file-upload.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { FileFolder } from 'twenty-shared/types';
-
-const uploadFilesFieldFileMutation = gql`
-  mutation uploadFilesFieldFile($file: Upload!) {
-    uploadFilesFieldFile(file: $file) {
-      id
-      path
-      size
-      createdAt
-    }
-  }
-`;
+import { uploadFilesFieldFileMutation } from 'test/integration/graphql/utils/upload-files-field-file-mutation.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 
 const deleteFileMutation = gql`
   mutation DeleteFile($fileId: UUID!) {
@@ -23,10 +17,61 @@ const deleteFileMutation = gql`
 `;
 
 describe('uploadFilesFieldFile', () => {
+  let createdObjectMetadataId: string;
+  let createdFieldMetadataId: string;
   let uploadedFileId: string | null = null;
 
-  beforeAll(() => {
+  const getFieldMetadataUniversalIdentifier = async (
+    fieldMetadataId: string,
+  ): Promise<string> => {
+    const result = await global.testDataSource.query(
+      'SELECT "universalIdentifier" FROM core."fieldMetadata" WHERE id = $1',
+      [fieldMetadataId],
+    );
+
+    return result[0].universalIdentifier;
+  };
+
+  beforeAll(async () => {
     jest.useRealTimers();
+
+    const {
+      data: {
+        createOneObject: { id: objectMetadataId },
+      },
+    } = await createOneObjectMetadata({
+      input: {
+        nameSingular: 'uploadTestObject',
+        namePlural: 'uploadTestObjects',
+        labelSingular: 'Upload Test Object',
+        labelPlural: 'Upload Test Objects',
+        icon: 'IconFile',
+      },
+    });
+
+    createdObjectMetadataId = objectMetadataId;
+
+    const {
+      data: {
+        createOneField: { id: fieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      input: {
+        name: 'filesField',
+        label: 'Files Field',
+        type: FieldMetadataType.FILES,
+        objectMetadataId: createdObjectMetadataId,
+        settings: { maxNumberOfValues: 5 },
+      },
+      gqlFields: `
+        id
+        name
+        label
+        type
+      `,
+    });
+
+    createdFieldMetadataId = fieldMetadataId;
   });
 
   afterAll(async () => {
@@ -36,6 +81,20 @@ describe('uploadFilesFieldFile', () => {
         variables: { fileId: uploadedFileId },
       });
     }
+
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: createdObjectMetadataId,
+        updatePayload: {
+          isActive: false,
+        },
+      },
+    });
+    await deleteOneObjectMetadata({
+      input: { idToDelete: createdObjectMetadataId },
+    });
+
     jest.useFakeTimers();
   });
 
@@ -47,7 +106,10 @@ describe('uploadFilesFieldFile', () => {
     const response = await makeGraphqlAPIRequestWithFileUpload(
       {
         query: uploadFilesFieldFileMutation,
-        variables: { file: null },
+        variables: {
+          file: null,
+          fieldMetadataId: createdFieldMetadataId,
+        },
       },
       {
         field: 'file',
@@ -69,6 +131,12 @@ describe('uploadFilesFieldFile', () => {
     expect(fileResult.path).toBeDefined();
     expect(typeof fileResult.path).toBe('string');
     expect(fileResult.path).toContain(FileFolder.FilesField);
+
+    const fieldUniversalIdentifier = await getFieldMetadataUniversalIdentifier(
+      createdFieldMetadataId,
+    );
+
+    expect(fileResult.path).toContain(fieldUniversalIdentifier);
     expect(fileResult.size).toBe(testFileContent.length);
     expect(fileResult.createdAt).toBeDefined();
 

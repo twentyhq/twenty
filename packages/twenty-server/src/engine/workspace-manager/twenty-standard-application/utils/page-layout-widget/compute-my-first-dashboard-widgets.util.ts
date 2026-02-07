@@ -1,6 +1,7 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { v4 } from 'uuid';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
@@ -59,6 +60,7 @@ const createWelcomeRichText = ({
 }): FlatPageLayoutWidget =>
   createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier: null,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -218,6 +220,7 @@ const createWelcomeRichText = ({
         },
       },
       objectMetadataId: null,
+      conditionalDisplay: null,
     },
   });
 
@@ -233,6 +236,8 @@ const createDealsByCompany = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -262,6 +267,7 @@ const createDealsByCompany = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -278,6 +284,8 @@ const createPipelineValueByStage = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -313,6 +321,7 @@ const createPipelineValueByStage = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -329,6 +338,8 @@ const createRevenueTimeline = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -359,6 +370,7 @@ const createRevenueTimeline = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -375,6 +387,8 @@ const createOpportunitiesByOwner = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -412,6 +426,7 @@ const createOpportunitiesByOwner = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -423,6 +438,7 @@ const createStockMarketIframe = ({
 }): FlatPageLayoutWidget =>
   createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier: null,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -442,6 +458,7 @@ const createStockMarketIframe = ({
         url: 'https://www.tradingview.com/embed-widget/hotlists/?locale=en',
       },
       objectMetadataId: null,
+      conditionalDisplay: null,
     },
   });
 
@@ -457,6 +474,8 @@ const createDealsCreatedThisMonth = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -491,6 +510,7 @@ const createDealsCreatedThisMonth = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -507,6 +527,8 @@ const createDealValueCreatedThisMonth = ({
 
   return createStandardPageLayoutWidgetFlatMetadata({
     ...args,
+    objectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.opportunity.universalIdentifier,
     context: {
       layoutName: 'myFirstDashboard',
       tabTitle: 'tab1',
@@ -541,6 +563,7 @@ const createDealValueCreatedThisMonth = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };

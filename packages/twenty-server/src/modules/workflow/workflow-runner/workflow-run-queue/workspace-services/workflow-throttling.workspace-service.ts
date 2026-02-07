@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { In } from 'typeorm';
-
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -9,10 +7,8 @@ import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.se
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import {
-  WorkflowRunStatus,
-  WorkflowRunWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { NOT_STARTED_RUNS_FIND_OPTIONS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/not-started-runs-find-options';
 
 @Injectable()
 export class WorkflowThrottlingWorkspaceService {
@@ -89,9 +85,7 @@ export class WorkflowThrottlingWorkspaceService {
             );
 
           return workflowRunRepository.count({
-            where: {
-              status: In([WorkflowRunStatus.NOT_STARTED]),
-            },
+            where: NOT_STARTED_RUNS_FIND_OPTIONS,
           });
         },
         authContext,
@@ -122,9 +116,7 @@ export class WorkflowThrottlingWorkspaceService {
           );
 
         return workflowRunRepository.count({
-          where: {
-            status: In([WorkflowRunStatus.NOT_STARTED]),
-          },
+          where: NOT_STARTED_RUNS_FIND_OPTIONS,
         });
       },
       authContext,

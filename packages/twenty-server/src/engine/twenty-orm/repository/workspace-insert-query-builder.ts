@@ -169,7 +169,6 @@ export class WorkspaceInsertQueryBuilder<
       );
 
       let filesFieldFileIds = null;
-      let fileIdToApplicationId = new Map<string, string>();
 
       const entities = Array.isArray(this.expressionMap.valuesSet)
         ? this.expressionMap.valuesSet
@@ -191,7 +190,6 @@ export class WorkspaceInsertQueryBuilder<
         });
 
         filesFieldFileIds = result.fileIds;
-        fileIdToApplicationId = result.fileIdToApplicationId;
 
         this.expressionMap.valuesSet = Array.isArray(
           this.expressionMap.valuesSet,
@@ -227,10 +225,7 @@ export class WorkspaceInsertQueryBuilder<
       const result = await super.execute();
 
       if (isDefined(filesFieldFileIds)) {
-        await this.filesFieldSync.updateFileEntityRecords(
-          filesFieldFileIds,
-          fileIdToApplicationId,
-        );
+        await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
       const eventSelectQueryBuilder = (
         this.connection.manager as WorkspaceEntityManager

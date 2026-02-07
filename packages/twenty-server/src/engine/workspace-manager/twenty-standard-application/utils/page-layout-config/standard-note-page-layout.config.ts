@@ -2,6 +2,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+  CONDITIONAL_DISPLAY_DEVICE_MOBILE,
   TAB_PROPS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
@@ -19,12 +21,13 @@ const NOTE_PAGE_TABS = {
         universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a411',
         ...WIDGET_PROPS.fields,
       },
-      richText: {
+      noteRichText: {
         universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a412',
-        title: WIDGET_PROPS.richText.title,
-        type: WIDGET_PROPS.richText.type,
-        gridPosition: WIDGET_PROPS.richText.gridPosition,
+        title: WIDGET_PROPS.noteRichText.title,
+        type: WIDGET_PROPS.noteRichText.type,
+        gridPosition: WIDGET_PROPS.noteRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
+        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
       },
     },
   },
@@ -32,9 +35,10 @@ const NOTE_PAGE_TABS = {
     universalIdentifier: '20202020-ab04-4004-8004-a0be5a11a402',
     ...TAB_PROPS.note,
     widgets: {
-      richText: {
+      noteRichText: {
         universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a421',
-        ...WIDGET_PROPS.richText,
+        ...WIDGET_PROPS.noteRichText,
+        conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
       },
     },
   },
@@ -61,11 +65,10 @@ const NOTE_PAGE_TABS = {
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_NOTE_PAGE_LAYOUT_CONFIG = {
-  layoutName: 'noteRecordPage',
   name: 'Default Note Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: STANDARD_OBJECTS.note.universalIdentifier,
   universalIdentifier: '20202020-a104-4004-8004-a0be5a11a004',
-  defaultTabUniversalIdentifier: NOTE_PAGE_TABS.home.universalIdentifier,
+  defaultTabUniversalIdentifier: null,
   tabs: NOTE_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;
