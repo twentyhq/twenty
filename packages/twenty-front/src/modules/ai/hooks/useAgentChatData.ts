@@ -30,10 +30,11 @@ const setUsageFromThread = (
   setAgentChatUsage(
     hasUsageData
       ? {
-          inputTokens: thread.totalInputTokens,
-          outputTokens: thread.totalOutputTokens,
+          lastMessage: null,
           conversationSize: thread.conversationSize ?? 0,
           contextWindowTokens: thread.contextWindowTokens ?? 0,
+          inputTokens: thread.totalInputTokens,
+          outputTokens: thread.totalOutputTokens,
           inputCredits: thread.totalInputCredits,
           outputCredits: thread.totalOutputCredits,
         }

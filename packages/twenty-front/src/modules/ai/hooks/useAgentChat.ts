@@ -119,6 +119,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
       type UsageMetadata = {
         inputTokens: number;
         outputTokens: number;
+        cachedInputTokens: number;
         inputCredits: number;
         outputCredits: number;
         conversationSize: number;
@@ -134,10 +135,17 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
 
       if (isDefined(usage) && isDefined(model)) {
         setAgentChatUsage((prev) => ({
-          inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
-          outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
+          lastMessage: {
+            inputTokens: usage.inputTokens,
+            outputTokens: usage.outputTokens,
+            cachedInputTokens: usage.cachedInputTokens,
+            inputCredits: usage.inputCredits,
+            outputCredits: usage.outputCredits,
+          },
           conversationSize: usage.conversationSize,
           contextWindowTokens: model.contextWindowTokens,
+          inputTokens: (prev?.inputTokens ?? 0) + usage.inputTokens,
+          outputTokens: (prev?.outputTokens ?? 0) + usage.outputTokens,
           inputCredits: (prev?.inputCredits ?? 0) + usage.inputCredits,
           outputCredits: (prev?.outputCredits ?? 0) + usage.outputCredits,
         }));

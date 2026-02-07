@@ -117,6 +117,8 @@ export class AgentChatStreamingService {
                 if (part.type === 'finish') {
                   const inputTokens = part.totalUsage?.inputTokens ?? 0;
                   const outputTokens = part.totalUsage?.outputTokens ?? 0;
+                  const cachedInputTokens =
+                    part.totalUsage?.cachedInputTokens ?? 0;
 
                   const inputCostInCents =
                     (inputTokens / 1000) *
@@ -144,6 +146,7 @@ export class AgentChatStreamingService {
                     usage: {
                       inputTokens,
                       outputTokens,
+                      cachedInputTokens,
                       inputCredits,
                       outputCredits,
                       conversationSize: lastStepInputTokens,

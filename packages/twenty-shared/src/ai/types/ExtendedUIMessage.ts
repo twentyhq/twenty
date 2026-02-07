@@ -4,6 +4,7 @@ import { type UIMessage } from 'ai';
 export type AIChatUsageMetadata = {
   inputTokens: number;
   outputTokens: number;
+  cachedInputTokens: number;
   inputCredits: number;
   outputCredits: number;
   conversationSize: number;
