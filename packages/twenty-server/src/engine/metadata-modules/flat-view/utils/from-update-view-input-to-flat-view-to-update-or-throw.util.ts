@@ -13,13 +13,14 @@ import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-gr
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { FLAT_VIEW_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view/constants/flat-view-editable-properties.constant';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { handleFlatViewUpdateSideEffect } from 'src/engine/metadata-modules/flat-view/utils/handle-flat-view-update-side-effect.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
@@ -35,8 +36,8 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   userWorkspaceId?: string;
 }): {
-  flatViewToUpdate: FlatView;
-  flatViewGroupsToDelete: FlatViewGroup[];
+  flatViewToUpdate: UniversalFlatView;
+  flatViewGroupsToDelete: UniversalFlatViewGroup[];
   flatViewGroupsToCreate: FlatViewGroup[];
 } => {
   const { id: viewToUpdateId } =

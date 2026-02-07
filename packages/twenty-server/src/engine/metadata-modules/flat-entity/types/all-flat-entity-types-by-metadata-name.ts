@@ -44,6 +44,11 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatSkill } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-skill.type';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
+import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter-group.type';
+import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import {
   type FlatCreateAgentAction,
   type FlatDeleteAgentAction,
@@ -250,7 +255,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteViewAction;
     };
     flatEntity: FlatView;
-    universalFlatEntity: FlatView;
+    universalFlatEntity: UniversalFlatView;
     entity: MetadataEntity<'view'>;
   };
   viewField: {
@@ -266,7 +271,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteViewFieldAction;
     };
     flatEntity: FlatViewField;
-    universalFlatEntity: FlatViewField;
+    universalFlatEntity: UniversalFlatViewField;
     entity: MetadataEntity<'viewField'>;
   };
   viewGroup: {
@@ -282,7 +287,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteViewGroupAction;
     };
     flatEntity: FlatViewGroup;
-    universalFlatEntity: FlatViewGroup;
+    universalFlatEntity: UniversalFlatViewGroup;
     entity: MetadataEntity<'viewGroup'>;
   };
   rowLevelPermissionPredicate: {
@@ -330,7 +335,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteViewFilterGroupAction;
     };
     flatEntity: FlatViewFilterGroup;
-    universalFlatEntity: FlatViewFilterGroup;
+    universalFlatEntity: UniversalFlatViewFilterGroup;
     entity: MetadataEntity<'viewFilterGroup'>;
   };
   index: {
@@ -378,7 +383,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteViewFilterAction;
     };
     flatEntity: FlatViewFilter;
-    universalFlatEntity: FlatViewFilter;
+    universalFlatEntity: UniversalFlatViewFilter;
     entity: MetadataEntity<'viewFilter'>;
   };
   role: {

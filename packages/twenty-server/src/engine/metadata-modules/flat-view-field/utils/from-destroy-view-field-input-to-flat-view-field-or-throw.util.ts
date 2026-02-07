@@ -6,12 +6,12 @@ import {
 
 import { type FlatViewFieldMaps } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
+import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 export const fromDestroyViewFieldInputToFlatViewFieldOrThrow = ({
   destroyViewFieldInput,
@@ -19,7 +19,7 @@ export const fromDestroyViewFieldInputToFlatViewFieldOrThrow = ({
 }: {
   destroyViewFieldInput: DestroyViewFieldInput;
   flatViewFieldMaps: FlatViewFieldMaps;
-}): FlatViewField => {
+}): UniversalFlatViewField => {
   const { id: viewFieldId } = extractAndSanitizeObjectStringFields(
     destroyViewFieldInput,
     ['id'],
