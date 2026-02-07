@@ -7,10 +7,9 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 type PageLayoutWidgetConfiguration = PageLayoutWidgetEntity['configuration'];
 
 type UniversalPageLayoutWidgetConfiguration =
-  // @ts-expect-error Ignoring until the pageLayoutWidget has been universally migrated
   NonNullable<FlatPageLayoutWidget>['universalConfiguration'];
 
-// Field metadata IDs in widget configurations don't need to reference existing entities
+// Field metadata IDs in widget configurations might references non existing entities
 const getFieldMetadataUniversalIdentifier = ({
   fieldMetadataId,
   fieldMetadataIdToUniversalIdentifierMap,
@@ -33,36 +32,42 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       const { aggregateFieldMetadataId, ratioAggregateConfig, ...rest } =
         configuration;
 
-      return {
-        ...rest,
-        aggregateFieldMetadataUniversalIdentifier:
-          getFieldMetadataUniversalIdentifier({
-            fieldMetadataId: aggregateFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
-          }),
-        ...(isDefined(ratioAggregateConfig) && {
-          ratioAggregateConfig: {
+      const aggregateFieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId: aggregateFieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap,
+        });
+
+      const universalRatioAggregateConfig = isDefined(ratioAggregateConfig)
+        ? {
             optionValue: ratioAggregateConfig.optionValue,
             fieldMetadataUniversalIdentifier:
               getFieldMetadataUniversalIdentifier({
                 fieldMetadataId: ratioAggregateConfig.fieldMetadataId,
                 fieldMetadataIdToUniversalIdentifierMap,
               }),
-          },
-        }),
+          }
+        : undefined;
+
+      return {
+        ...rest,
+        aggregateFieldMetadataUniversalIdentifier,
+        ratioAggregateConfig: universalRatioAggregateConfig,
       };
     }
 
     case WidgetConfigurationType.GAUGE_CHART: {
       const { aggregateFieldMetadataId, ...rest } = configuration;
 
+      const aggregateFieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId: aggregateFieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap,
+        });
+
       return {
         ...rest,
-        aggregateFieldMetadataUniversalIdentifier:
-          getFieldMetadataUniversalIdentifier({
-            fieldMetadataId: aggregateFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
-          }),
+        aggregateFieldMetadataUniversalIdentifier,
       };
     }
 
@@ -70,18 +75,22 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       const { aggregateFieldMetadataId, groupByFieldMetadataId, ...rest } =
         configuration;
 
+      const aggregateFieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId: aggregateFieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap,
+        });
+
+      const groupByFieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId: groupByFieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap,
+        });
+
       return {
         ...rest,
-        aggregateFieldMetadataUniversalIdentifier:
-          getFieldMetadataUniversalIdentifier({
-            fieldMetadataId: aggregateFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
-          }),
-        groupByFieldMetadataUniversalIdentifier:
-          getFieldMetadataUniversalIdentifier({
-            fieldMetadataId: groupByFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
-          }),
+        aggregateFieldMetadataUniversalIdentifier,
+        groupByFieldMetadataUniversalIdentifier,
       };
     }
 
@@ -93,25 +102,32 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         ...rest
       } = configuration;
 
+      const aggregateFieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId: aggregateFieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap,
+        });
+
+      const primaryAxisGroupByFieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId: primaryAxisGroupByFieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap,
+        });
+
+      const secondaryAxisGroupByFieldMetadataUniversalIdentifier = isDefined(
+        secondaryAxisGroupByFieldMetadataId,
+      )
+        ? getFieldMetadataUniversalIdentifier({
+            fieldMetadataId: secondaryAxisGroupByFieldMetadataId,
+            fieldMetadataIdToUniversalIdentifierMap,
+          })
+        : undefined;
+
       return {
         ...rest,
-        aggregateFieldMetadataUniversalIdentifier:
-          getFieldMetadataUniversalIdentifier({
-            fieldMetadataId: aggregateFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
-          }),
-        primaryAxisGroupByFieldMetadataUniversalIdentifier:
-          getFieldMetadataUniversalIdentifier({
-            fieldMetadataId: primaryAxisGroupByFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
-          }),
-        ...(isDefined(secondaryAxisGroupByFieldMetadataId) && {
-          secondaryAxisGroupByFieldMetadataUniversalIdentifier:
-            getFieldMetadataUniversalIdentifier({
-              fieldMetadataId: secondaryAxisGroupByFieldMetadataId,
-              fieldMetadataIdToUniversalIdentifierMap,
-            }),
-        }),
+        aggregateFieldMetadataUniversalIdentifier,
+        primaryAxisGroupByFieldMetadataUniversalIdentifier,
+        secondaryAxisGroupByFieldMetadataUniversalIdentifier,
       };
     }
 
@@ -123,25 +139,32 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         ...rest
       } = configuration;
 
+      const aggregateFieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId: aggregateFieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap,
+        });
+
+      const primaryAxisGroupByFieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId: primaryAxisGroupByFieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap,
+        });
+
+      const secondaryAxisGroupByFieldMetadataUniversalIdentifier = isDefined(
+        secondaryAxisGroupByFieldMetadataId,
+      )
+        ? getFieldMetadataUniversalIdentifier({
+            fieldMetadataId: secondaryAxisGroupByFieldMetadataId,
+            fieldMetadataIdToUniversalIdentifierMap,
+          })
+        : undefined;
+
       return {
         ...rest,
-        aggregateFieldMetadataUniversalIdentifier:
-          getFieldMetadataUniversalIdentifier({
-            fieldMetadataId: aggregateFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
-          }),
-        primaryAxisGroupByFieldMetadataUniversalIdentifier:
-          getFieldMetadataUniversalIdentifier({
-            fieldMetadataId: primaryAxisGroupByFieldMetadataId,
-            fieldMetadataIdToUniversalIdentifierMap,
-          }),
-        ...(isDefined(secondaryAxisGroupByFieldMetadataId) && {
-          secondaryAxisGroupByFieldMetadataUniversalIdentifier:
-            getFieldMetadataUniversalIdentifier({
-              fieldMetadataId: secondaryAxisGroupByFieldMetadataId,
-              fieldMetadataIdToUniversalIdentifierMap,
-            }),
-        }),
+        aggregateFieldMetadataUniversalIdentifier,
+        primaryAxisGroupByFieldMetadataUniversalIdentifier,
+        secondaryAxisGroupByFieldMetadataUniversalIdentifier,
       };
     }
 

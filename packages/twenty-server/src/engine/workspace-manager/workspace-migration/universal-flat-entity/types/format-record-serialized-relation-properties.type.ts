@@ -21,10 +21,8 @@ export type FormatRecordSerializedRelationProperties<T> = T extends unknown
   ? T extends (infer U)[]
     ? FormatRecordSerializedRelationProperties<U>[]
     : T extends string
-      ? // By definition we assume that any SerializedRelation are not enforced at pg scope through an FK
-        // Which mean that SerializedRelation might resolve to non-existent entities ( null )
-        IsSerializedRelation<T> extends true
-        ? T | null
+      ? IsSerializedRelation<T> extends true
+        ? T
         : T
       : T extends object
         ? {

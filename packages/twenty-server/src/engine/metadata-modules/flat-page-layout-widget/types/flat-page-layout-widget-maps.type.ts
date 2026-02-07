@@ -2,5 +2,5 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 
 export type FlatPageLayoutWidgetMaps = FlatEntityMaps<
-  Omit<FlatPageLayoutWidget, 'universalConfiguration'>
+  FlatPageLayoutWidget
 >;
