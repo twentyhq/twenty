@@ -317,16 +317,41 @@ export const useSaveDraftRoleToDB = ({
         objectUsedGroupIds.has(group.id),
       );
 
-      // First, create/update predicate groups
-      // This must be done before creating predicates that reference these groups
-      if (objectPredicateGroups.length > 0) {
+      // Sort groups so parents are created before children
+      const sortedGroups: typeof objectPredicateGroups = [];
+      const groupsById = new Map(objectPredicateGroups.map((g) => [g.id, g]));
+      const added = new Set<string>();
+
+      const addGroupWithParents = (
+        group: (typeof objectPredicateGroups)[0],
+      ) => {
+        if (added.has(group.id) === true) {
+          return;
+        }
+
+        if (isDefined(group.parentRowLevelPermissionPredicateGroupId)) {
+          const parent = groupsById.get(
+            group.parentRowLevelPermissionPredicateGroupId,
+          );
+          if (isDefined(parent)) {
+            addGroupWithParents(parent);
+          }
+        }
+
+        sortedGroups.push(group);
+        added.add(group.id);
+      };
+
+      objectPredicateGroups.forEach(addGroupWithParents);
+
+      if (sortedGroups.length > 0) {
         await upsertRowLevelPermissionPredicates({
           variables: {
             input: {
               roleId: targetRoleId,
               objectMetadataId,
               predicates: [],
-              predicateGroups: objectPredicateGroups.map((group) => ({
+              predicateGroups: sortedGroups.map((group) => ({
                 id: group.id,
                 objectMetadataId,
                 parentRowLevelPermissionPredicateGroupId:
@@ -343,7 +368,6 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      // Then, create/update predicates that reference the groups
       await upsertRowLevelPermissionPredicates({
         variables: {
           input: {
@@ -364,7 +388,16 @@ export const useSaveDraftRoleToDB = ({
               positionInRowLevelPermissionPredicateGroup:
                 predicate.positionInRowLevelPermissionPredicateGroup,
             })),
-            predicateGroups: [],
+            predicateGroups: sortedGroups.map((group) => ({
+              id: group.id,
+              objectMetadataId,
+              parentRowLevelPermissionPredicateGroupId:
+                group.parentRowLevelPermissionPredicateGroupId,
+              logicalOperator:
+                group.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
+              positionInRowLevelPermissionPredicateGroup:
+                group.positionInRowLevelPermissionPredicateGroup,
+            })),
           },
         },
         refetchQueries: [getOperationName(GET_ROLES) ?? ''],
