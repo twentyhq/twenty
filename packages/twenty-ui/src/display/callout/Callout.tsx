@@ -1,53 +1,53 @@
-import { IconHelp, IconX } from 'twenty-ui/display';
 import styled from '@emotion/styled';
-import { IconButton } from 'twenty-ui/input';
+import { IconHelp, IconX } from '@ui/display';
+import { IconButton } from '@ui/input';
 
 type CalloutVariant = 'info' | 'warning' | 'error' | 'neutral' | 'success';
 
 const StyledCalloutContainer = styled.div<{ variant: CalloutVariant }>`
   background-color: ${({ theme, variant }) =>
-  variant === 'info'
-    ? theme.color.blue1
-    : variant === 'warning'
-      ? theme.color.yellow1
-      : variant === 'success'
-        ? theme.color.green1
-        : variant === 'error'
-          ? theme.color.red1
-          : theme.color.gray1};
+    variant === 'info'
+      ? theme.color.blue1
+      : variant === 'warning'
+        ? theme.color.yellow1
+        : variant === 'success'
+          ? theme.color.green1
+          : variant === 'error'
+            ? theme.color.red1
+            : theme.color.gray1};
   border: 1px solid
     ${({ theme, variant }) =>
-  variant === 'info'
-    ? theme.color.blue6
-    : variant === 'warning'
-      ? theme.color.yellow6
-      : variant === 'success'
-        ? theme.color.green6
-        : variant === 'error'
-          ? theme.color.red6
-          : theme.color.gray6};
+      variant === 'info'
+        ? theme.color.blue6
+        : variant === 'warning'
+          ? theme.color.yellow6
+          : variant === 'success'
+            ? theme.color.green6
+            : variant === 'error'
+              ? theme.color.red6
+              : theme.color.gray6};
   border-radius: 8px;
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(4)};
   position: relative;
-    margin-bottom: ${({ theme }) => theme.spacing(2)};
-    margin-left: ${({ theme }) => theme.spacing(7)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${({ theme }) => theme.spacing(7)};
 `;
 
 const StyledIconContainer = styled.div<{ variant: CalloutVariant }>`
   align-items: flex-start;
   color: ${({ theme, variant }) =>
-  variant === 'info'
-    ? theme.color.blue9
-    : variant === 'warning'
-      ? theme.color.orange9
-      : variant === 'success'
-        ? theme.color.green9
-        : variant === 'error'
-          ? theme.color.red9
-          : theme.color.gray9};
+    variant === 'info'
+      ? theme.color.blue9
+      : variant === 'warning'
+        ? theme.color.orange9
+        : variant === 'success'
+          ? theme.color.green9
+          : variant === 'error'
+            ? theme.color.red9
+            : theme.color.gray9};
   display: flex;
   flex-shrink: 0;
   padding-top: ${({ theme }) => theme.spacing(0.5)};
@@ -116,14 +116,14 @@ export type CalloutProps = {
 };
 
 export const Callout = ({
-                          variant,
-                          title,
-                          description,
-                          learnMoreText,
-                          learnMoreUrl,
-                          onClose,
-                          className,
-                        }: CalloutProps) => {
+  variant,
+  title,
+  description,
+  learnMoreText,
+  learnMoreUrl,
+  onClose,
+  className,
+}: CalloutProps) => {
   return (
     <StyledCalloutContainer variant={variant} className={className}>
       <StyledIconContainer variant={variant}>

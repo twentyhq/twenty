@@ -33,7 +33,6 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
-import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 
 export type WorkflowEditActionFormBuilderProps = {
   trigger: WorkflowTrigger | null;
@@ -228,7 +227,7 @@ export const WorkflowEditActionFormBuilder = ({
             title={t`This form will appear in workflow runs.`}
             description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
             className={'test'}
-            onClose={()=>setIsCalloutVisible(false)}
+            onClose={() => setIsCalloutVisible(false)}
             learnMoreUrl={
               'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form'
             }
