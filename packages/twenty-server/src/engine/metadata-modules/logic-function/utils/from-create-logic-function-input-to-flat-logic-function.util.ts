@@ -32,9 +32,12 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
 
   return {
     id,
-    cronTriggerSettings: null,
-    databaseEventTriggerSettings: null,
-    httpRouteTriggerSettings: null,
+    cronTriggerSettings:
+      rawCreateLogicFunctionInput.cronTriggerSettings ?? null,
+    databaseEventTriggerSettings:
+      rawCreateLogicFunctionInput.databaseEventTriggerSettings ?? null,
+    httpRouteTriggerSettings:
+      rawCreateLogicFunctionInput.httpRouteTriggerSettings ?? null,
     name: rawCreateLogicFunctionInput.name,
     description: rawCreateLogicFunctionInput.description ?? null,
     sourceHandlerPath,

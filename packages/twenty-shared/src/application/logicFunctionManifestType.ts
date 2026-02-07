@@ -23,7 +23,9 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
-  triggers: LogicFunctionTriggerManifest[];
+  cronTriggerSettings?: CronTriggerSettings;
+  databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
+  httpRouteTriggerSettings?: HttpRouteTriggerSettings;
   sourceHandlerPath: string;
   builtHandlerPath: string;
   builtHandlerChecksum: string;
@@ -32,24 +34,18 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   isTool?: boolean;
 };
 
-export type DatabaseEventTrigger = {
-  type: 'databaseEvent';
+export type CronTriggerSettings = {
+  pattern: string;
+};
+
+export type DatabaseEventTriggerSettings = {
   eventName: string;
   updatedFields?: string[];
 };
 
-export type CronTrigger = {
-  type: 'cron';
-  pattern: string;
-};
-
-export type RouteTrigger = {
-  type: 'route';
+export type HttpRouteTriggerSettings = {
   path: string;
-  httpMethod: `${HTTPMethod}`;
+  httpMethod: HTTPMethod | `${HTTPMethod}`;
   isAuthRequired: boolean;
   forwardedRequestHeaders?: string[];
 };
-
-export type LogicFunctionTriggerManifest = SyncableEntityOptions &
-  (CronTrigger | DatabaseEventTrigger | RouteTrigger);

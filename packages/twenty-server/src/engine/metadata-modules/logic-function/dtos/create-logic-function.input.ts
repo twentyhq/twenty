@@ -12,6 +12,13 @@ import {
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+
 @InputType()
 export class CreateLogicFunctionInput {
   @IsString()
@@ -64,4 +71,19 @@ export class CreateLogicFunctionInput {
   @Field({ nullable: true })
   @IsOptional()
   isTool?: boolean;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  cronTriggerSettings?: JsonbProperty<CronTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  httpRouteTriggerSettings?: JsonbProperty<HttpRouteTriggerSettings>;
 }

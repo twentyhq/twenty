@@ -18,7 +18,7 @@ describe('getFunctionBaseFile', () => {
     expect(result).toContain("name: 'my-function'");
     expect(result).toContain('timeoutSeconds: 5');
     expect(result).toContain('handler,');
-    expect(result).toContain('triggers: [');
+    expect(result).toContain('trigger: {');
 
     expect(result).toContain('const handler = async');
 

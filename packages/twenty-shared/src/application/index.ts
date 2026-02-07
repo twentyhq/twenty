@@ -29,10 +29,9 @@ export type { FrontComponentManifest } from './frontComponentManifestType';
 export type {
   InputJsonSchema,
   LogicFunctionManifest,
-  DatabaseEventTrigger,
-  CronTrigger,
-  RouteTrigger,
-  LogicFunctionTriggerManifest,
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { Manifest } from './manifestType';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';

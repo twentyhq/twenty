@@ -261,15 +261,13 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'root-function',
       sourceHandlerPath: 'src/root.function.ts',
       timeoutSeconds: 5,
-      triggers: [
-        {
-          httpMethod: 'GET',
-          isAuthRequired: false,
-          path: '/root',
-          type: 'route',
-          universalIdentifier: 'f0f1f2f3-f4f5-4000-8000-000000000002',
-        },
-      ],
+      trigger: {
+        httpMethod: 'GET',
+        isAuthRequired: false,
+        path: '/root',
+        type: 'route',
+        universalIdentifier: 'f0f1f2f3-f4f5-4000-8000-000000000002',
+      },
       universalIdentifier: 'f0f1f2f3-f4f5-4000-8000-000000000001',
     },
     {
@@ -279,15 +277,13 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'greeting-function',
       sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
       timeoutSeconds: 5,
-      triggers: [
-        {
-          httpMethod: 'GET',
-          isAuthRequired: false,
-          path: '/greet',
-          type: 'route',
-          universalIdentifier: 'f7b12160-3d25-4c92-a13f-a325dd60eb04',
-        },
-      ],
+      trigger: {
+        httpMethod: 'GET',
+        isAuthRequired: false,
+        path: '/greet',
+        type: 'route',
+        universalIdentifier: 'f7b12160-3d25-4c92-a13f-a325dd60eb04',
+      },
       universalIdentifier: '9d412d9e-2caf-487c-8b66-d1585883dd4e',
     },
     {
@@ -297,13 +293,11 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'test-function-2',
       sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
       timeoutSeconds: 2,
-      triggers: [
-        {
-          pattern: '0 0 1 1 *',
-          type: 'cron',
-          universalIdentifier: '9fd0dda9-4664-4fbc-9656-509f4477b9ff',
-        },
-      ],
+      trigger: {
+        pattern: '0 0 1 1 *',
+        type: 'cron',
+        universalIdentifier: '9fd0dda9-4664-4fbc-9656-509f4477b9ff',
+      },
       universalIdentifier: 'eb3ffc98-88ec-45d4-9b4a-56833b219ccb',
     },
     {
@@ -313,26 +307,14 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'test-function',
       sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
       timeoutSeconds: 2,
-      triggers: [
-        {
-          forwardedRequestHeaders: ['signature'],
-          httpMethod: 'GET',
-          isAuthRequired: false,
-          path: '/post-card/create',
-          type: 'route',
-          universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
-        },
-        {
-          pattern: '0 0 1 1 *',
-          type: 'cron',
-          universalIdentifier: 'dd802808-0695-49e1-98c9-d5c9e2704ce2',
-        },
-        {
-          eventName: 'person.created',
-          type: 'databaseEvent',
-          universalIdentifier: '203f1df3-4a82-4d06-a001-b8cf22a31156',
-        },
-      ],
+      trigger: {
+        forwardedRequestHeaders: ['signature'],
+        httpMethod: 'GET',
+        isAuthRequired: false,
+        path: '/post-card/create',
+        type: 'route',
+        universalIdentifier: 'c9f84c8d-b26d-40d1-95dd-4f834ae5a2c6',
+      },
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
     },
   ],

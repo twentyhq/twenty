@@ -16,6 +16,12 @@ import {
 import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 @InputType()
 class UpdateLogicFunctionInputUpdates {
@@ -65,6 +71,21 @@ class UpdateLogicFunctionInputUpdates {
   @Field({ nullable: true })
   @IsOptional()
   checksum?: string;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  cronTriggerSettings?: JsonbProperty<CronTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  httpRouteTriggerSettings?: JsonbProperty<HttpRouteTriggerSettings>;
 }
 
 @InputType()

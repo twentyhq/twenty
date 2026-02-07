@@ -9,4 +9,7 @@ export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'handlerName',
   'toolInputSchema',
   'isTool',
+  'cronTriggerSettings',
+  'databaseEventTriggerSettings',
+  'httpRouteTriggerSettings',
 ] as const satisfies (keyof FlatLogicFunction)[];

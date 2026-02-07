@@ -11,7 +11,7 @@ import {
   RelationFieldManifest,
   RoleManifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType, FileFolder, Sources } from 'twenty-shared/types';
+import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
@@ -103,7 +103,6 @@ export class ApplicationSyncService {
     if (manifest.logicFunctions.length > 0) {
       await this.syncLogicFunctions({
         logicFunctionsToSync: manifest.logicFunctions,
-        code: manifest.sources,
         workspaceId,
         ownerFlatApplication,
       });
@@ -798,13 +797,11 @@ export class ApplicationSyncService {
 
   private async syncLogicFunctions({
     logicFunctionsToSync,
-    code,
     workspaceId,
     ownerFlatApplication,
   }: {
     logicFunctionsToSync: LogicFunctionManifest[];
     workspaceId: string;
-    code: Sources;
     ownerFlatApplication: FlatApplication;
   }) {
     const { flatLogicFunctionMaps } =
@@ -892,6 +889,11 @@ export class ApplicationSyncService {
           toolInputSchema: logicFunctionToSync.toolInputSchema,
           isTool: logicFunctionToSync.isTool,
           checksum: logicFunctionToSync.builtHandlerChecksum,
+          cronTriggerSettings: logicFunctionToSync.cronTriggerSettings ?? null,
+          databaseEventTriggerSettings:
+            logicFunctionToSync.databaseEventTriggerSettings ?? null,
+          httpRouteTriggerSettings:
+            logicFunctionToSync.httpRouteTriggerSettings ?? null,
         },
         workspaceId,
         ownerFlatApplication,
@@ -915,6 +917,11 @@ export class ApplicationSyncService {
           isTool: logicFunctionToCreate.isTool,
           checksum: logicFunctionToCreate.builtHandlerChecksum,
           id: v4(),
+          cronTriggerSettings: logicFunctionToCreate.cronTriggerSettings,
+          databaseEventTriggerSettings:
+            logicFunctionToCreate.databaseEventTriggerSettings,
+          httpRouteTriggerSettings:
+            logicFunctionToCreate.httpRouteTriggerSettings,
         },
         workspaceId,
         ownerFlatApplication,
