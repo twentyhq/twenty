@@ -12,6 +12,7 @@ import {
   assertUnreachable,
   isDefined,
   isEmptyObject,
+  lowercaseUrlOriginAndRemoveTrailingSlash,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -73,13 +74,22 @@ const buildRelationConnectFieldRecord = (
         isCompositeFieldType(uniqueFieldMetadataItem.type) &&
         isDefined(field.compositeSubFieldKey)
       ) {
+        const rawValue = importedStructuredRow[field.key];
+        const isLinkUrlField =
+          uniqueFieldMetadataItem.type === FieldMetadataType.LINKS &&
+          field.compositeSubFieldKey === 'primaryLinkUrl' &&
+          typeof rawValue === 'string';
+        const value = isLinkUrlField
+          ? lowercaseUrlOriginAndRemoveTrailingSlash(rawValue)
+          : rawValue;
+
         return {
           ...acc,
           [uniqueFieldMetadataItem.name]: {
             ...(isDefined(acc?.[uniqueFieldMetadataItem.name])
               ? acc[uniqueFieldMetadataItem.name]
               : {}),
-            [field.compositeSubFieldKey]: importedStructuredRow[field.key],
+            [field.compositeSubFieldKey]: value,
           },
         };
       }
