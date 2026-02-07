@@ -143,6 +143,7 @@ export const WorkflowEditActionFormBuilder = ({
 
   const [formData, setFormData] = useState<FormData>(action.settings.input);
 
+  const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(true);
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
 
@@ -220,14 +221,14 @@ export const WorkflowEditActionFormBuilder = ({
   return (
     <>
       <StyledWorkflowStepBody>
-        {trigger?.type !== 'MANUAL' && (
+        {trigger?.type !== 'MANUAL' && isCalloutVisible && (
           <Callout
             learnMoreText={t`Learn more`}
             variant={'warning'}
             title={t`This form will appear in workflow runs.`}
             description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
             className={'test'}
-            onClose={useCloseAnyOpenDropdown}
+            onClose={()=>setIsCalloutVisible(false)}
             learnMoreUrl={
               'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form'
             }
