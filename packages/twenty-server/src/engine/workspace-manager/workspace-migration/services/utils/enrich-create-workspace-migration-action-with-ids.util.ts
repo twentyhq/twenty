@@ -5,9 +5,9 @@ import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/wo
 import { type UniversalCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration';
 
-type IdByUniversalIdentifierByMetadataName = Partial<{
+export type IdByUniversalIdentifierByMetadataName = {
   [P in AllMetadataName]?: Record<string, string>;
-}>;
+};
 
 const buildFieldIdByUniversalIdentifier = ({
   action,
