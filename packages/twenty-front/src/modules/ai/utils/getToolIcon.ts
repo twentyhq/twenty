@@ -1,6 +1,16 @@
-import { IconDatabase, IconMail, IconTool, IconWorld } from 'twenty-ui/display';
+import {
+  IconBook2,
+  IconDatabase,
+  IconMail,
+  IconTool,
+  IconWorld,
+} from 'twenty-ui/display';
 
 const TOOL_ICON_MAPPINGS = [
+  {
+    keywords: ['learn_tools'],
+    icon: IconBook2,
+  },
   {
     keywords: ['email'],
     icon: IconMail,

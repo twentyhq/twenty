@@ -9,9 +9,7 @@ import { compactToolOutput } from './compact-tool-output.util';
 //
 // This is a composable utility — it can be chained with other
 // wrappers like wrapToolsWithErrorContext.
-export const wrapToolsWithOutputSerialization = (
-  tools: ToolSet,
-): ToolSet => {
+export const wrapToolsWithOutputSerialization = (tools: ToolSet): ToolSet => {
   const wrappedTools: ToolSet = {};
 
   for (const [toolName, tool] of Object.entries(tools)) {
@@ -34,4 +32,3 @@ export const wrapToolsWithOutputSerialization = (
 
   return wrappedTools;
 };
-

@@ -17,9 +17,7 @@ export const stripEmptyValues = (value: unknown): unknown => {
   if (typeof value === 'object') {
     const result: Record<string, unknown> = {};
 
-    for (const [key, val] of Object.entries(
-      value as Record<string, unknown>,
-    )) {
+    for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
       const stripped = stripEmptyValues(val);
 
       if (stripped !== undefined) {
@@ -32,4 +30,3 @@ export const stripEmptyValues = (value: unknown): unknown => {
 
   return value;
 };
-

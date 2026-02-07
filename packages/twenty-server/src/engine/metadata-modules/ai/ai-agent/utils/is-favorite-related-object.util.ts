@@ -12,4 +12,3 @@ export const isFavoriteRelatedObject = (objectMetadata: {
     objectMetadata.universalIdentifier as (typeof FAVORITE_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS)[number],
   );
 };
-

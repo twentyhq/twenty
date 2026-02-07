@@ -41,16 +41,60 @@ const extractLoadingMessage = (input: ToolInput): string => {
   return 'Processing...';
 };
 
+// For execute_tool, unwrap the inner arguments so display logic sees the real tool's input
+const resolveToolInput = (
+  input: ToolInput,
+  toolName: string,
+): { resolvedInput: ToolInput; resolvedToolName: string } => {
+  if (
+    toolName === 'execute_tool' &&
+    isDefined(input) &&
+    typeof input === 'object' &&
+    'toolName' in input &&
+    'arguments' in input
+  ) {
+    return {
+      resolvedInput: input.arguments as ToolInput,
+      resolvedToolName: String(input.toolName),
+    };
+  }
+
+  return { resolvedInput: input, resolvedToolName: toolName };
+};
+
+const extractLearnToolNames = (input: ToolInput): string => {
+  if (
+    isDefined(input) &&
+    typeof input === 'object' &&
+    'toolNames' in input &&
+    Array.isArray(input.toolNames)
+  ) {
+    return input.toolNames.join(', ');
+  }
+
+  return '';
+};
+
 export const getToolDisplayMessage = (
   input: ToolInput,
   toolName: string,
   isFinished?: boolean,
 ): string => {
-  if (toolName === 'web_search') {
-    const query = extractSearchQuery(input);
+  const { resolvedInput, resolvedToolName } = resolveToolInput(input, toolName);
+
+  if (resolvedToolName === 'web_search') {
+    const query = extractSearchQuery(resolvedInput);
     const action = isFinished ? 'Searched' : 'Searching';
+
     return query ? `${action} the web for '${query}'` : `${action} the web`;
   }
 
-  return extractLoadingMessage(input);
+  if (toolName === 'learn_tools') {
+    const names = extractLearnToolNames(input);
+    const action = isFinished ? 'Learned' : 'Learning';
+
+    return names ? `${action} ${names}` : `${action} tools...`;
+  }
+
+  return extractLoadingMessage(resolvedInput);
 };

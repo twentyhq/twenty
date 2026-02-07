@@ -11,4 +11,3 @@ export const compactToolOutput = (output: unknown): unknown => {
 
   return stripEmptyValues(output);
 };
-

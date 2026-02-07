@@ -17,4 +17,3 @@ export class AddConversationSizeToAgentChatThread1770400000000
     );
   }
 }
-

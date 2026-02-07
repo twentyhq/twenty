@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type ToolSet, zodSchema } from 'ai';
+import { type ToolCallOptions, type ToolSet, zodSchema } from 'ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { type ZodType } from 'zod';
 
@@ -13,7 +13,12 @@ import {
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
+import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
+import { type ExecuteToolResult } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+
+const TOOL_CACHE_TTL_MS = 60_000;
 
 export type ToolIndexEntry = {
   name: string;
@@ -52,9 +57,15 @@ export type ToolContext = {
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };
 
+type CachedToolSet = {
+  tools: ToolSet;
+  timestamp: number;
+};
+
 @Injectable()
 export class ToolRegistryService {
   private readonly logger = new Logger(ToolRegistryService.name);
+  private readonly toolCache = new Map<string, CachedToolSet>();
 
   constructor(
     @Inject(TOOL_PROVIDERS)
@@ -186,6 +197,129 @@ export class ToolRegistryService {
         .filter((name) => name in allTools)
         .map((name) => [name, allTools[name]]),
     );
+  }
+
+  async getToolInfo(
+    names: string[],
+    context: ToolContext,
+    aspects: LearnToolsAspect[] = ['description', 'schema'],
+  ): Promise<
+    Array<{ name: string; description?: string; inputSchema?: object }>
+  > {
+    const index = await this.buildToolIndex(
+      context.workspaceId,
+      context.roleId,
+      { userId: context.userId, userWorkspaceId: context.userWorkspaceId },
+    );
+
+    const nameSet = new Set(names);
+    const filtered = index.filter((entry) => nameSet.has(entry.name));
+
+    return filtered.map((entry) => {
+      const info: { name: string; description?: string; inputSchema?: object } =
+        { name: entry.name };
+
+      if (aspects.includes('description')) {
+        info.description = entry.description;
+      }
+
+      if (aspects.includes('schema')) {
+        info.inputSchema = entry.inputSchema;
+      }
+
+      return info;
+    });
+  }
+
+  async resolveAndExecute(
+    toolName: string,
+    args: Record<string, unknown>,
+    context: ToolContext,
+    options: ToolCallOptions,
+  ): Promise<ExecuteToolResult> {
+    try {
+      const tool = await this.resolveTool(toolName, context);
+
+      if (!tool) {
+        return {
+          toolName,
+          error: {
+            message: `Tool "${toolName}" not found. Check the tool catalog for correct names.`,
+            suggestion:
+              'Use learn_tools to discover available tools and their correct names.',
+          },
+        };
+      }
+
+      if (!tool.execute) {
+        return {
+          toolName,
+          error: {
+            message: `Tool "${toolName}" does not have an execute function.`,
+            suggestion:
+              'This tool may be a provider-only tool (e.g. web_search).',
+          },
+        };
+      }
+
+      const result = await tool.execute(args, options);
+
+      return {
+        toolName,
+        result: compactToolOutput(result),
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      this.logger.error(`Error executing tool "${toolName}": ${errorMessage}`);
+
+      return {
+        toolName,
+        error: {
+          message: errorMessage,
+          suggestion: this.generateErrorSuggestion(toolName, errorMessage),
+        },
+      };
+    }
+  }
+
+  private async resolveTool(
+    toolName: string,
+    context: ToolContext,
+  ): Promise<ToolSet[string] | undefined> {
+    const cacheKey = `${context.workspaceId}:${context.roleId}`;
+    const cached = this.toolCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.timestamp < TOOL_CACHE_TTL_MS) {
+      return cached.tools[toolName];
+    }
+
+    const fullContext = this.buildContext(
+      context.workspaceId,
+      context.roleId,
+      context.onCodeExecutionUpdate,
+      context.userId,
+      context.userWorkspaceId,
+    );
+
+    const allTools: ToolSet = {};
+
+    for (const provider of this.providers) {
+      if (await provider.isAvailable(fullContext)) {
+        const tools = await provider.generateTools(fullContext);
+
+        Object.assign(allTools, tools);
+      }
+    }
+
+    this.toolCache.set(cacheKey, { tools: allTools, timestamp: Date.now() });
+
+    this.logger.log(
+      `Cached ${Object.keys(allTools).length} tools for ${cacheKey}`,
+    );
+
+    return allTools[toolName];
   }
 
   // Main method for eager loading tools by categories (replaces ToolProviderService.getTools)

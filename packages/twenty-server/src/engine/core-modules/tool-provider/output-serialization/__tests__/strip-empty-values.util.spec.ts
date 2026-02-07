@@ -151,4 +151,3 @@ describe('stripEmptyValues', () => {
     expect(stripEmptyValues('')).toBeUndefined();
   });
 });
-

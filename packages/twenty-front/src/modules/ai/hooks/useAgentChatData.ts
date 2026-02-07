@@ -24,8 +24,7 @@ const setUsageFromThread = (
   setAgentChatUsage: SetterOrUpdater<AgentChatUsageState | null>,
 ) => {
   const hasUsageData =
-    (thread.conversationSize ?? 0) > 0 &&
-    isDefined(thread.contextWindowTokens);
+    (thread.conversationSize ?? 0) > 0 && isDefined(thread.contextWindowTokens);
 
   setAgentChatUsage(
     hasUsageData

@@ -5,7 +5,9 @@ import { type CreateRecordService } from 'src/engine/core-modules/record-crud/se
 import { type DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { type FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { type UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
+import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
@@ -107,6 +109,43 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
           });
         },
       };
+
+      const createManyKey = `create_many_${camelToSnakeCase(objectMetadata.namePlural)}`;
+
+      tools[createManyKey] = {
+        description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the results for each record creation.`,
+        inputSchema: generateCreateManyRecordInputSchema(
+          objectMetadata,
+          restrictedFields,
+        ),
+        execute: async (parameters) => {
+          const results = await Promise.all(
+            parameters.records.map((record: Record<string, unknown>) =>
+              deps.createRecordService.execute({
+                objectName: objectMetadata.nameSingular,
+                objectRecord: record,
+                authContext,
+                rolePermissionConfig: context.rolePermissionConfig,
+                createdBy: context.actorContext,
+              }),
+            ),
+          );
+
+          const successCount = results.filter(
+            (result) => result.success,
+          ).length;
+          const failureCount = results.length - successCount;
+
+          return {
+            success: failureCount === 0,
+            message: `Created ${successCount} of ${results.length} ${objectMetadata.labelPlural} records${failureCount > 0 ? ` (${failureCount} failed)` : ''}`,
+            result: results.map((result) => result.result),
+            recordReferences: results.flatMap(
+              (result) => result.recordReferences ?? [],
+            ),
+          };
+        },
+      };
     }
 
     if (canUpdate) {
@@ -132,6 +171,51 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
             authContext,
             rolePermissionConfig: context.rolePermissionConfig,
           });
+        },
+      };
+
+      const updateManyKey = `update_many_${camelToSnakeCase(objectMetadata.namePlural)}`;
+
+      tools[updateManyKey] = {
+        description: `Update multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of record updates, each containing the record ID and the fields to change. Maximum 20 records per call. Returns the results for each record update.`,
+        inputSchema: generateUpdateManyRecordInputSchema(
+          objectMetadata,
+          restrictedFields,
+        ),
+        execute: async (parameters) => {
+          const results = await Promise.all(
+            parameters.records.map((record: Record<string, unknown>) => {
+              const { id, ...allFields } = record;
+
+              const objectRecord = Object.fromEntries(
+                Object.entries(allFields).filter(
+                  ([, value]) => value !== undefined,
+                ),
+              );
+
+              return deps.updateRecordService.execute({
+                objectName: objectMetadata.nameSingular,
+                objectRecordId: id as string,
+                objectRecord,
+                authContext,
+                rolePermissionConfig: context.rolePermissionConfig,
+              });
+            }),
+          );
+
+          const successCount = results.filter(
+            (result) => result.success,
+          ).length;
+          const failureCount = results.length - successCount;
+
+          return {
+            success: failureCount === 0,
+            message: `Updated ${successCount} of ${results.length} ${objectMetadata.labelPlural} records${failureCount > 0 ? ` (${failureCount} failed)` : ''}`,
+            result: results.map((result) => result.result),
+            recordReferences: results.flatMap(
+              (result) => result.recordReferences ?? [],
+            ),
+          };
         },
       };
     }

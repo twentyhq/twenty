@@ -9,14 +9,14 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { t } from '@lingui/core/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import {
-  useGetAiSystemPromptQuery,
+  useGetAiSystemPromptPreviewQuery,
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
 
@@ -24,6 +24,16 @@ const StyledFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledTokenBadge = styled.span`
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  padding: ${({ theme }) => theme.spacing(0.5)}
+    ${({ theme }) => theme.spacing(1.5)};
+  white-space: nowrap;
 `;
 
 export const SettingsAIPrompts = () => {
@@ -34,8 +44,8 @@ export const SettingsAIPrompts = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const { data: systemPromptData, loading: systemPromptLoading } =
-    useGetAiSystemPromptQuery();
+  const { data: previewData, loading: previewLoading } =
+    useGetAiSystemPromptPreviewQuery();
 
   const [workspaceInstructions, setWorkspaceInstructions] = useState(
     currentWorkspace?.aiAdditionalInstructions ?? '',
@@ -44,14 +54,22 @@ export const SettingsAIPrompts = () => {
     currentWorkspace?.aiAdditionalInstructions ?? '',
   );
 
-  useEffect(() => {
+  const handleWorkspaceInstructionsInit = () => {
     if (currentWorkspace?.aiAdditionalInstructions !== undefined) {
-      setWorkspaceInstructions(
-        currentWorkspace.aiAdditionalInstructions ?? '',
-      );
+      setWorkspaceInstructions(currentWorkspace.aiAdditionalInstructions ?? '');
       setOriginalInstructions(currentWorkspace.aiAdditionalInstructions ?? '');
     }
-  }, [currentWorkspace?.aiAdditionalInstructions]);
+  };
+
+  // Initialize workspace instructions when workspace data loads
+  if (
+    currentWorkspace?.aiAdditionalInstructions !== undefined &&
+    originalInstructions === '' &&
+    currentWorkspace.aiAdditionalInstructions !== null &&
+    currentWorkspace.aiAdditionalInstructions !== originalInstructions
+  ) {
+    handleWorkspaceInstructionsInit();
+  }
 
   const autoSave = useDebouncedCallback(async (newValue: string) => {
     if (!currentWorkspace?.id || newValue === originalInstructions) {
@@ -96,32 +114,48 @@ export const SettingsAIPrompts = () => {
     autoSave(value);
   };
 
-  useEffect(() => {
-    return () => {
-      autoSave.flush();
-    };
-  }, [autoSave]);
+  const preview = previewData?.getAISystemPromptPreview;
+  const sections = preview?.sections ?? [];
 
-  const userContextPreview = buildUserContextPreview();
-
-  function buildUserContextPreview(): string {
-    if (!currentWorkspaceMember) {
+  const buildUserContextPreview = (): string => {
+    if (!isDefined(currentWorkspaceMember)) {
       return '';
     }
 
     const parts = [
-      `**User:** ${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`.trim(),
-      `**Locale:** ${currentWorkspaceMember.locale ?? 'en'}`,
+      `**${t`User`}:** ${currentWorkspaceMember.name.firstName} ${currentWorkspaceMember.name.lastName}`.trim(),
+      `**${t`Locale`}:** ${currentWorkspaceMember.locale ?? 'en'}`,
     ];
 
-    if (currentWorkspaceMember.timeZone) {
-      parts.push(`**Timezone:** ${currentWorkspaceMember.timeZone}`);
+    if (isDefined(currentWorkspaceMember.timeZone)) {
+      parts.push(`**${t`Timezone`}:** ${currentWorkspaceMember.timeZone}`);
     }
 
     return parts.join('\n\n');
-  }
+  };
 
-  const systemPrompt = systemPromptData?.getAISystemPrompt ?? '';
+  const userContextPreview = buildUserContextPreview();
+
+  // Separate prompt sections from user-editable ones
+  const promptSections = sections.filter(
+    (section) =>
+      section.title !== 'Workspace Instructions' &&
+      section.title !== 'User Context',
+  );
+
+  const formatTokenCount = (count: number): string => {
+    if (count >= 1000) {
+      const kTokens = (count / 1000).toFixed(1);
+
+      return t`~${kTokens}k tokens`;
+    }
+
+    return t`~${count} tokens`;
+  };
+
+  const totalTokensDescription = isDefined(preview)
+    ? t`Full AI prompt sent with each request — ${formatTokenCount(preview.estimatedTokenCount)} total`
+    : t`Full AI prompt sent with each request`;
 
   return (
     <SubMenuTopBarContainer
@@ -136,34 +170,47 @@ export const SettingsAIPrompts = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
-            title={t`System Prompt`}
-            description={t`The base instructions that guide AI behavior (managed by Twenty)`}
-          />
-          <StyledFormContainer>
-            <FormAdvancedTextFieldInput
-              key={systemPromptLoading ? 'loading' : 'loaded'}
-              label={t`Base Instructions`}
-              readonly={true}
-              defaultValue={systemPrompt}
-              contentType="markdown"
-              onChange={() => {}}
-              enableFullScreen={true}
-              fullScreenBreadcrumbs={[
-                {
-                  children: t`System Prompt`,
-                  href: '#',
-                },
-                {
-                  children: t`Base Instructions`,
-                },
-              ]}
-              minHeight={200}
-              maxWidth={700}
+        {promptSections.map((section) => (
+          <Section key={section.title}>
+            <H2Title
+              title={section.title}
+              description={
+                section === promptSections[0]
+                  ? totalTokensDescription
+                  : t`Read-only — managed by Twenty`
+              }
+              adornment={
+                <StyledTokenBadge>
+                  {formatTokenCount(section.estimatedTokenCount)}
+                </StyledTokenBadge>
+              }
             />
-          </StyledFormContainer>
-        </Section>
+            <StyledFormContainer>
+              <FormAdvancedTextFieldInput
+                key={
+                  previewLoading ? `loading-${section.title}` : section.title
+                }
+                label={section.title}
+                readonly={true}
+                defaultValue={section.content}
+                contentType="markdown"
+                onChange={() => {}}
+                enableFullScreen={true}
+                fullScreenBreadcrumbs={[
+                  {
+                    children: t`System Prompt`,
+                    href: '#',
+                  },
+                  {
+                    children: section.title,
+                  },
+                ]}
+                minHeight={120}
+                maxWidth={700}
+              />
+            </StyledFormContainer>
+          </Section>
+        ))}
 
         <Section>
           <H2Title
@@ -217,4 +264,3 @@ export const SettingsAIPrompts = () => {
     </SubMenuTopBarContainer>
   );
 };
-

@@ -5,4 +5,3 @@ export const GET_AI_SYSTEM_PROMPT = gql`
     getAISystemPrompt
   }
 `;
-
