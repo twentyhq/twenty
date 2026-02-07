@@ -6,8 +6,8 @@ import {
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 export const fromUniversalFlatIndexToFlatIndex = ({
@@ -67,6 +67,8 @@ export const fromUniversalFlatIndexToFlatIndex = ({
 
   return {
     id: indexMetadataId,
+    universalFlatIndexFieldMetadatas:
+      universalFlatIndexMetadata.universalFlatIndexFieldMetadatas,
     universalIdentifier: universalFlatIndexMetadata.universalIdentifier,
     applicationId,
     applicationUniversalIdentifier:
