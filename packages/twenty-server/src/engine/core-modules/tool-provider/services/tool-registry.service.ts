@@ -14,11 +14,11 @@ import {
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
-import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ExecuteToolResult } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
+import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
+import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-
-const TOOL_CACHE_TTL_MS = 60_000;
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export type ToolIndexEntry = {
   name: string;
@@ -57,20 +57,77 @@ export type ToolContext = {
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
 };
 
-type CachedToolSet = {
+type CachedToolGeneration = {
   tools: ToolSet;
-  timestamp: number;
+  index: ToolIndexEntry[];
+};
+
+const MEMOIZER_TTL_MS = 60_000;
+
+const PROVIDER_TO_INDEX_CATEGORY: Record<
+  ToolCategory,
+  ToolIndexEntry['category']
+> = {
+  DATABASE_CRUD: 'DATABASE',
+  ACTION: 'ACTION',
+  WORKFLOW: 'WORKFLOW',
+  METADATA: 'METADATA',
+  NATIVE_MODEL: 'ACTION',
+  VIEW: 'VIEW',
+  DASHBOARD: 'DASHBOARD',
+  LOGIC_FUNCTION: 'LOGIC_FUNCTION',
 };
 
 @Injectable()
 export class ToolRegistryService {
   private readonly logger = new Logger(ToolRegistryService.name);
-  private readonly toolCache = new Map<string, CachedToolSet>();
+  private readonly memoizer =
+    new PromiseMemoizer<CachedToolGeneration>(MEMOIZER_TTL_MS);
 
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
+
+  private async getCachedGeneration(
+    context: ToolProviderContext,
+  ): Promise<CachedToolGeneration> {
+    const metadataVersion =
+      (await this.workspaceCacheStorageService.getMetadataVersion(
+        context.workspaceId,
+      )) ?? 0;
+
+    const cacheKey =
+      `tools-${context.workspaceId}-v${metadataVersion}-${context.roleId}-${context.userId ?? 'system'}` as const;
+
+    const result = await this.memoizer.memoizePromiseAndExecute(
+      cacheKey,
+      async () => {
+        const tools: ToolSet = {};
+        const index: ToolIndexEntry[] = [];
+
+        for (const provider of this.providers) {
+          if (await provider.isAvailable(context)) {
+            const providerTools = await provider.generateTools(context);
+
+            Object.assign(tools, providerTools);
+            index.push(
+              ...this.toolSetToIndex(providerTools, provider.category),
+            );
+          }
+        }
+
+        this.logger.log(
+          `Generated ${Object.keys(tools).length} tools for workspace ${context.workspaceId} (v${metadataVersion})`,
+        );
+
+        return { tools, index };
+      },
+    );
+
+    return result ?? { tools: {}, index: [] };
+  }
 
   async buildToolIndex(
     workspaceId: string,
@@ -84,21 +141,10 @@ export class ToolRegistryService {
       options?.userId,
       options?.userWorkspaceId,
     );
-    const entries: ToolIndexEntry[] = [];
 
-    for (const provider of this.providers) {
-      if (await provider.isAvailable(context)) {
-        const tools = await provider.generateTools(context);
+    const { index } = await this.getCachedGeneration(context);
 
-        entries.push(...this.toolSetToIndex(tools, provider.category));
-      }
-    }
-
-    this.logger.log(
-      `Built tool index with ${entries.length} tools for workspace ${workspaceId}`,
-    );
-
-    return entries;
+    return index;
   }
 
   async searchTools(
@@ -111,10 +157,15 @@ export class ToolRegistryService {
     } = {},
   ): Promise<ToolIndexEntry[]> {
     const { limit = 5, category, userId, userWorkspaceId } = options;
-    const index = await this.buildToolIndex(workspaceId, roleId, {
+    const context = this.buildContext(
+      workspaceId,
+      roleId,
+      undefined,
       userId,
       userWorkspaceId,
-    });
+    );
+
+    const { index } = await this.getCachedGeneration(context);
 
     const queryLower = query.toLowerCase();
     const queryTerms = queryLower
@@ -182,20 +233,13 @@ export class ToolRegistryService {
       context.userId,
       context.userWorkspaceId,
     );
-    const allTools: ToolSet = {};
 
-    for (const provider of this.providers) {
-      if (await provider.isAvailable(fullContext)) {
-        const tools = await provider.generateTools(fullContext);
-
-        Object.assign(allTools, tools);
-      }
-    }
+    const { tools } = await this.getCachedGeneration(fullContext);
 
     return Object.fromEntries(
       names
-        .filter((name) => name in allTools)
-        .map((name) => [name, allTools[name]]),
+        .filter((name) => name in tools)
+        .map((name) => [name, tools[name]]),
     );
   }
 
@@ -206,11 +250,15 @@ export class ToolRegistryService {
   ): Promise<
     Array<{ name: string; description?: string; inputSchema?: object }>
   > {
-    const index = await this.buildToolIndex(
+    const fullContext = this.buildContext(
       context.workspaceId,
       context.roleId,
-      { userId: context.userId, userWorkspaceId: context.userWorkspaceId },
+      context.onCodeExecutionUpdate,
+      context.userId,
+      context.userWorkspaceId,
     );
+
+    const { index } = await this.getCachedGeneration(fullContext);
 
     const nameSet = new Set(names);
     const filtered = index.filter((entry) => nameSet.has(entry.name));
@@ -238,7 +286,16 @@ export class ToolRegistryService {
     options: ToolCallOptions,
   ): Promise<ExecuteToolResult> {
     try {
-      const tool = await this.resolveTool(toolName, context);
+      const fullContext = this.buildContext(
+        context.workspaceId,
+        context.roleId,
+        context.onCodeExecutionUpdate,
+        context.userId,
+        context.userWorkspaceId,
+      );
+
+      const { tools } = await this.getCachedGeneration(fullContext);
+      const tool = tools[toolName];
 
       if (!tool) {
         return {
@@ -284,80 +341,50 @@ export class ToolRegistryService {
     }
   }
 
-  private async resolveTool(
-    toolName: string,
-    context: ToolContext,
-  ): Promise<ToolSet[string] | undefined> {
-    const cacheKey = `${context.workspaceId}:${context.roleId}`;
-    const cached = this.toolCache.get(cacheKey);
-
-    if (cached && Date.now() - cached.timestamp < TOOL_CACHE_TTL_MS) {
-      return cached.tools[toolName];
-    }
-
-    const fullContext = this.buildContext(
-      context.workspaceId,
-      context.roleId,
-      context.onCodeExecutionUpdate,
-      context.userId,
-      context.userWorkspaceId,
-    );
-
-    const allTools: ToolSet = {};
-
-    for (const provider of this.providers) {
-      if (await provider.isAvailable(fullContext)) {
-        const tools = await provider.generateTools(fullContext);
-
-        Object.assign(allTools, tools);
-      }
-    }
-
-    this.toolCache.set(cacheKey, { tools: allTools, timestamp: Date.now() });
-
-    this.logger.log(
-      `Cached ${Object.keys(allTools).length} tools for ${cacheKey}`,
-    );
-
-    return allTools[toolName];
-  }
-
   // Main method for eager loading tools by categories (replaces ToolProviderService.getTools)
   async getToolsByCategories(
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
     const { categories, excludeTools, wrapWithErrorContext } = options;
-    const tools: ToolSet = {};
+    const { tools, index } = await this.getCachedGeneration(context);
 
-    for (const provider of this.providers) {
-      if (categories && !categories.includes(provider.category)) {
-        continue;
-      }
-      if (await provider.isAvailable(context)) {
-        const providerTools = await provider.generateTools(context);
+    let filteredTools: ToolSet;
 
-        Object.assign(tools, providerTools);
-      }
+    if (categories) {
+      const indexCategories = new Set(
+        categories.map((category) => PROVIDER_TO_INDEX_CATEGORY[category]),
+      );
+      const allowedNames = new Set(
+        index
+          .filter((entry) => indexCategories.has(entry.category))
+          .map((entry) => entry.name),
+      );
+
+      filteredTools = Object.fromEntries(
+        Object.entries(tools).filter(([name]) => allowedNames.has(name)),
+      );
+    } else {
+      filteredTools = { ...tools };
     }
 
     // Apply excludeTools filter
     if (excludeTools?.length) {
       for (const toolType of excludeTools) {
-        delete tools[toolType.toLowerCase()];
+        delete filteredTools[toolType.toLowerCase()];
       }
     }
 
     this.logger.log(
-      `Generated ${Object.keys(tools).length} tools for categories: [${categories?.join(', ') ?? 'all'}]`,
+      `Generated ${Object.keys(filteredTools).length} tools for categories: [${categories?.join(', ') ?? 'all'}]`,
     );
 
     // Apply error wrapping if requested
     if (wrapWithErrorContext) {
-      return this.wrapToolsWithErrorContext(tools);
+      return this.wrapToolsWithErrorContext(filteredTools);
     }
 
-    return tools;
+    return filteredTools;
   }
 
   private buildContext(
@@ -385,24 +412,13 @@ export class ToolRegistryService {
     tools: ToolSet,
     category: ToolCategory,
   ): ToolIndexEntry[] {
-    const categoryMap: Record<ToolCategory, ToolIndexEntry['category']> = {
-      DATABASE_CRUD: 'DATABASE',
-      ACTION: 'ACTION',
-      WORKFLOW: 'WORKFLOW',
-      METADATA: 'METADATA',
-      NATIVE_MODEL: 'ACTION',
-      VIEW: 'VIEW',
-      DASHBOARD: 'DASHBOARD',
-      LOGIC_FUNCTION: 'LOGIC_FUNCTION',
-    };
-
     return Object.entries(tools).map(([name, tool]) => {
       const inputSchema = this.extractJsonSchema(tool.inputSchema);
 
       return {
         name,
         description: tool.description ?? '',
-        category: categoryMap[category],
+        category: PROVIDER_TO_INDEX_CATEGORY[category],
         inputSchema,
       };
     });

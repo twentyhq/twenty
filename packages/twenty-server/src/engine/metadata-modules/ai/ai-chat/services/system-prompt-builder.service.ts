@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import {
     type ToolIndexEntry,
     ToolRegistryService,
@@ -27,8 +28,6 @@ export type SystemPromptPreview = {
   sections: SystemPromptSection[];
   estimatedTokenCount: number;
 };
-
-const COMMON_PRELOAD_TOOLS = ['search_help_center'];
 
 // ~4 characters per token for mixed English/code content
 const estimateTokenCount = (text: string): number =>

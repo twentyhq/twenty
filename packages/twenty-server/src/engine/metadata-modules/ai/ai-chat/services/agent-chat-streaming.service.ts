@@ -84,15 +84,6 @@ export class AgentChatStreamingService {
               onCodeExecutionUpdate,
             });
 
-          writer.write({
-            type: 'data-routing-status' as const,
-            id: 'execution-status',
-            data: {
-              text: 'Processing your request...',
-              state: 'loading',
-            },
-          });
-
           let streamUsage = {
             inputTokens: 0,
             outputTokens: 0,
@@ -187,15 +178,6 @@ export class AgentChatStreamingService {
                 if (responseMessage.parts.length === 0) {
                   return;
                 }
-
-                writer.write({
-                  type: 'data-routing-status' as const,
-                  id: 'execution-status',
-                  data: {
-                    text: 'Completed',
-                    state: 'routed',
-                  },
-                });
 
                 const validThreadId = thread.id;
 
