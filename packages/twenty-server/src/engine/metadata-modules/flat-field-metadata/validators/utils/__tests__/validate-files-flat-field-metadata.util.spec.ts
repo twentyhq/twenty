@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 const createFlatEntityToValidate = (

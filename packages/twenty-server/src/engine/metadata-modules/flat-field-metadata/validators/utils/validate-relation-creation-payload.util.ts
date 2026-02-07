@@ -10,22 +10,22 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type ValidateRelationCreationPayloadUtilArgs = {
   relationCreationPayload: RelationCreationPayload;
-  existingUniversalFlatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
+  existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
 export const validateRelationCreationPayload = async ({
-  existingUniversalFlatObjectMetadataMaps,
+  existingFlatObjectMetadataMaps,
   relationCreationPayload: rawRelationCreationPayload,
 }: ValidateRelationCreationPayloadUtilArgs): Promise<
   FieldInputTranspilationResult<{
     relationCreationPayload: RelationCreationPayload;
-    targetUniversalFlatObjectMetadata: UniversalFlatObjectMetadata;
+    targetFlatObjectMetadata: FlatObjectMetadata;
   }>
 > => {
   const relationCreationPayload =
@@ -54,14 +54,12 @@ export const validateRelationCreationPayload = async ({
     }
   }
 
-  const targetUniversalFlatObjectMetadata = findFlatEntityByUniversalIdentifier(
-    {
-      universalIdentifier: relationCreationPayload.targetObjectMetadataId,
-      flatEntityMaps: existingUniversalFlatObjectMetadataMaps,
-    },
-  );
+  const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: relationCreationPayload.targetObjectMetadataId,
+    flatEntityMaps: existingFlatObjectMetadataMaps,
+  });
 
-  if (!isDefined(targetUniversalFlatObjectMetadata)) {
+  if (!isDefined(targetFlatObjectMetadata)) {
     return {
       status: 'fail',
       errors: [
@@ -79,7 +77,7 @@ export const validateRelationCreationPayload = async ({
     status: 'success',
     result: {
       relationCreationPayload,
-      targetUniversalFlatObjectMetadata,
+      targetFlatObjectMetadata,
     },
   };
 };

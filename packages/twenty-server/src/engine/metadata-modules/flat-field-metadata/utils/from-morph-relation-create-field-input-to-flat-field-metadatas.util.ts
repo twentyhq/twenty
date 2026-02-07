@@ -61,7 +61,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
 
   const morphRelationCreationPayloadValidation =
     await validateMorphRelationCreationPayload({
-      existingUniversalFlatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      existingFlatObjectMetadataMaps,
       morphRelationCreationPayload: rawMorphCreationPayload,
       objectMetadataUniversalIdentifier:
         sourceFlatObjectMetadata.universalIdentifier,
@@ -85,14 +85,14 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     morphRelationCreationPayloadValidation.result;
   const morphId = v4();
   const flatFieldsAndIndexes = morphRelationCreationPayload.reduce(
-    (acc, { relationCreationPayload, targetUniversalFlatObjectMetadata }) => {
+    (acc, { relationCreationPayload, targetFlatObjectMetadata }) => {
       const currentMorphRelationFieldName = computeMorphRelationFieldName({
         fieldName: createFieldInput.name,
         relationType: relationCreationPayload.type,
         targetObjectMetadataNameSingular:
-          targetUniversalFlatObjectMetadata.nameSingular,
+          targetFlatObjectMetadata.nameSingular,
         targetObjectMetadataNamePlural:
-          targetUniversalFlatObjectMetadata.namePlural,
+          targetFlatObjectMetadata.namePlural,
       });
       const sourceFlatObjectMetadataJoinColumnName =
         computeMorphOrRelationFieldJoinColumnName({
@@ -108,7 +108,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           },
           sourceFlatObjectMetadataJoinColumnName,
           sourceFlatObjectMetadata,
-          targetFlatObjectMetadata: targetUniversalFlatObjectMetadata,
+          targetFlatObjectMetadata,
           targetFlatFieldMetadataType: FieldMetadataType.RELATION,
           morphId,
           flatApplication,

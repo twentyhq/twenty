@@ -55,14 +55,14 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
   }
 
   const relationValidationResult = await validateRelationCreationPayload({
-    existingUniversalFlatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    existingFlatObjectMetadataMaps,
     relationCreationPayload: rawCreationPayload,
   });
 
   if (relationValidationResult.status === 'fail') {
     return relationValidationResult;
   }
-  const { relationCreationPayload, targetUniversalFlatObjectMetadata } =
+  const { relationCreationPayload, targetFlatObjectMetadata } =
     relationValidationResult.result;
 
   const { junctionTargetFieldId } = extractJunctionTargetSettingsFromSettings(
@@ -85,7 +85,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
         name: createFieldInput.name,
       }),
     sourceFlatObjectMetadata,
-    targetFlatObjectMetadata: targetUniversalFlatObjectMetadata,
+    targetFlatObjectMetadata,
     targetFlatFieldMetadataType: FieldMetadataType.RELATION,
     flatApplication,
     junctionTargetFlatFieldMetadata,
