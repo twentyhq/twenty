@@ -84,6 +84,7 @@ print("Chart saved successfully!")`,
       outputTokens: 890,
       inputCredits: 12,
       outputCredits: 8,
+      conversationSize: 1250,
     },
   },
 };
