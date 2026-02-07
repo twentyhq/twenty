@@ -13,6 +13,7 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
   type FlatUpdateObjectAction,
   type UniversalUpdateObjectAction,
@@ -49,8 +50,11 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       universalIdentifier: action.universalIdentifier,
     });
 
-    // TODO: transpile updates universal identifiers when builder has been migrated
-    // For now, updates only contain flat entity diff properties (already IDs, not universal identifiers)
+    resolveUniversalUpdateRelationIdentifiersToIds({
+      allFlatEntityMaps,
+      metadataName: 'objectMetadata',
+      universalUpdate: action.update,
+    });
 
     return {
       type: 'update',

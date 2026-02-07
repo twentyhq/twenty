@@ -10,7 +10,7 @@ import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modul
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
-export type ManyToOneRelationValue<
+export type MetadataManyToOneRelationConfiguration<
   TSourceMetadataName extends AllMetadataName,
   TRelationProperty extends ExtractEntityManyToOneEntityRelationProperties<
     MetadataEntity<TSourceMetadataName>
@@ -52,7 +52,7 @@ type MetadataRelationsProperties = {
     manyToOne: {
       [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
         MetadataEntity<TSourceMetadataName>
-      >]: ManyToOneRelationValue<TSourceMetadataName, TRelationProperty>;
+      >]: MetadataManyToOneRelationConfiguration<TSourceMetadataName, TRelationProperty>;
     };
     oneToMany: {
       [TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
