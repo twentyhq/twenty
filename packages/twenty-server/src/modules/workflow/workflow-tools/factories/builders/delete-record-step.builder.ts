@@ -1,4 +1,5 @@
 import { type ToolSet } from 'ai';
+import { camelToSnakeCase } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
@@ -37,7 +38,7 @@ export function buildDeleteRecordStepTool(
   });
 
   return {
-    [`configure_delete_${objectMetadata.nameSingular}_step`]: {
+    [`configure_delete_${camelToSnakeCase(objectMetadata.nameSingular)}_step`]: {
       description:
         `Add a workflow step that deletes a ${objectMetadata.labelSingular} record. ` +
         `This performs a soft delete (marks as deleted but preserves data).`,

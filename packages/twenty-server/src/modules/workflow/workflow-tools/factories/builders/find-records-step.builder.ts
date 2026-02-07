@@ -4,6 +4,7 @@ import {
   RelationType,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
+import { camelToSnakeCase } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
@@ -85,7 +86,7 @@ export function buildFindRecordsStepTool(
   });
 
   return {
-    [`configure_find_${objectMetadata.namePlural}_step`]: {
+    [`configure_find_${camelToSnakeCase(objectMetadata.namePlural)}_step`]: {
       description:
         `Add a workflow step that searches for ${objectMetadata.labelPlural} records. ` +
         `Results can be used in subsequent steps via {{stepId.result}}.`,

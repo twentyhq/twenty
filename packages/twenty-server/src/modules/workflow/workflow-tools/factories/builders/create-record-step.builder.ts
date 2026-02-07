@@ -1,5 +1,6 @@
 import { type ToolSet } from 'ai';
 import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
+import { camelToSnakeCase } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
@@ -44,7 +45,7 @@ export function buildCreateRecordStepTool(
   });
 
   return {
-    [`configure_create_${objectMetadata.nameSingular}_step`]: {
+    [`configure_create_${camelToSnakeCase(objectMetadata.nameSingular)}_step`]: {
       description:
         `Add a workflow step that creates a ${objectMetadata.labelSingular} record. ` +
         `Provide the record fields directly - use {{trigger.fieldName}} or {{stepId.fieldName}} to reference values from previous steps.`,

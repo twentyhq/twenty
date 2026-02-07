@@ -1,5 +1,6 @@
 import { type ToolSet } from 'ai';
 import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
+import { camelToSnakeCase } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
@@ -50,7 +51,7 @@ export function buildUpdateRecordStepTool(
   });
 
   return {
-    [`configure_update_${objectMetadata.nameSingular}_step`]: {
+    [`configure_update_${camelToSnakeCase(objectMetadata.nameSingular)}_step`]: {
       description:
         `Add a workflow step that updates an existing ${objectMetadata.labelSingular} record. ` +
         `Specify the record ID and only the fields you want to update.`,
