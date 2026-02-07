@@ -50,7 +50,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       universalIdentifier: action.universalIdentifier,
     });
 
-    resolveUniversalUpdateRelationIdentifiersToIds({
+    const update = resolveUniversalUpdateRelationIdentifiersToIds({
       allFlatEntityMaps,
       metadataName: 'objectMetadata',
       universalUpdate: action.update,
@@ -60,7 +60,7 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       type: 'update',
       metadataName: 'objectMetadata',
       entityId: flatObjectMetadata.id,
-      update: action.update,
+      update,
     };
   }
 
