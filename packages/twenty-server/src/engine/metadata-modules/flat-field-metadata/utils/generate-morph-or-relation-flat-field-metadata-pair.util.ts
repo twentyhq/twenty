@@ -16,7 +16,7 @@ import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fi
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
@@ -185,16 +185,17 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       sourceFieldUniversalIdentifier,
   };
 
-  const indexMetadata: UniversalFlatIndexMetadata = generateIndexForFlatFieldMetadata({
-    flatFieldMetadata:
-      relationCreationPayload.type === RelationType.MANY_TO_ONE
-        ? sourceFlatFieldMetadata
-        : targetFlatFieldMetadata,
-    flatObjectMetadata:
-      relationCreationPayload.type === RelationType.MANY_TO_ONE
-        ? sourceFlatObjectMetadata
-        : targetFlatObjectMetadata,
-  });
+  const indexMetadata: UniversalFlatIndexMetadata =
+    generateIndexForFlatFieldMetadata({
+      flatFieldMetadata:
+        relationCreationPayload.type === RelationType.MANY_TO_ONE
+          ? sourceFlatFieldMetadata
+          : targetFlatFieldMetadata,
+      flatObjectMetadata:
+        relationCreationPayload.type === RelationType.MANY_TO_ONE
+          ? sourceFlatObjectMetadata
+          : targetFlatObjectMetadata,
+    });
 
   return {
     flatFieldMetadatas: [sourceFlatFieldMetadata, targetFlatFieldMetadata],
