@@ -39,20 +39,12 @@ export class WorkspaceMigrationFieldActionsBuilderService extends WorkspaceEntit
 
     const { flatEntityToValidate: flatFieldMetadataToValidate } = args;
 
-    const fieldIdByUniversalIdentifier = flatFieldMetadataToValidate.id
-      ? {
-          [flatFieldMetadataToValidate.universalIdentifier]:
-            flatFieldMetadataToValidate.id,
-        }
-      : undefined;
-
     return {
       status: 'success',
       action: {
         type: 'create',
         metadataName: 'fieldMetadata',
         universalFlatFieldMetadatas: [flatFieldMetadataToValidate],
-        fieldIdByUniversalIdentifier,
       },
     };
   }

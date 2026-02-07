@@ -4,7 +4,6 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataUniversalFlatEntityAndRelatedUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
@@ -13,6 +12,7 @@ import {
   type WorkspaceMigrationOrchestratorFailedResult,
   type WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
@@ -70,12 +70,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
   }: Pick<
     WorkspaceMigrationOrchestratorBuildArgs,
     'fromToAllFlatEntityMaps' | 'dependencyAllFlatEntityMaps'
-  >): AllFlatEntityMaps {
+  >): AllUniversalFlatEntityMaps {
     const allFromToFlatEntityMapsKeys = Object.keys(
       fromToAllFlatEntityMaps,
-    ) as (keyof AllFlatEntityMaps)[];
+    ) as (keyof AllUniversalFlatEntityMaps)[];
 
-    return allFromToFlatEntityMapsKeys.reduce<AllFlatEntityMaps>(
+    return allFromToFlatEntityMapsKeys.reduce<AllUniversalFlatEntityMaps>(
       (allFlatEntityMaps, currFlatMaps) => {
         const fromToOccurence = fromToAllFlatEntityMaps[currFlatMaps];
 
@@ -105,7 +105,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     flatEntityMapsAndRelatedFlatEntityMaps,
   }: {
     flatEntityMapsAndRelatedFlatEntityMaps: MetadataUniversalFlatEntityAndRelatedUniversalFlatEntityMaps<T>;
-    allFlatEntityMaps: AllFlatEntityMaps;
+    allFlatEntityMaps: AllUniversalFlatEntityMaps;
   }) {
     const flatEntityMapsKeys = Object.keys(
       flatEntityMapsAndRelatedFlatEntityMaps,

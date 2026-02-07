@@ -46,7 +46,6 @@ export class WorkspaceMigrationObjectActionsBuilderService extends WorkspaceEnti
         metadataName: 'objectMetadata',
         universalFlatFieldMetadatas: [],
         flatEntity: flatObjectMetadataToValidate,
-        id: flatObjectMetadataToValidate.id,
       },
     };
   }
