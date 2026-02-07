@@ -364,16 +364,7 @@ export const useSaveDraftRoleToDB = ({
               positionInRowLevelPermissionPredicateGroup:
                 predicate.positionInRowLevelPermissionPredicateGroup,
             })),
-            predicateGroups: objectPredicateGroups.map((group) => ({
-              id: group.id,
-              objectMetadataId,
-              parentRowLevelPermissionPredicateGroupId:
-                group.parentRowLevelPermissionPredicateGroupId,
-              logicalOperator:
-                group.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
-              positionInRowLevelPermissionPredicateGroup:
-                group.positionInRowLevelPermissionPredicateGroup,
-            })),
+            predicateGroups: [],
           },
         },
         refetchQueries: [getOperationName(GET_ROLES) ?? ''],
