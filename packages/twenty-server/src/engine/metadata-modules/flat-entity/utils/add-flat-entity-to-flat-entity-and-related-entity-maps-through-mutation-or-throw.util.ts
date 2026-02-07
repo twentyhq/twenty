@@ -12,7 +12,7 @@ import { type MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modu
 import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
+import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 
 type AddFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<
@@ -29,13 +29,15 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
     flatEntity,
     flatEntityAndRelatedMapsToMutate,
   }: AddFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<T>) => {
-    const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
-
-    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-      flatEntity,
-      flatEntityMapsToMutate:
-        flatEntityAndRelatedMapsToMutate[flatEntityMapsKey],
-    });
+    addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+      {
+        metadataName,
+        universalFlatEntity: flatEntity,
+        // TODO investigate
+        universalFlatEntityAndRelatedMapsToMutate:
+          flatEntityAndRelatedMapsToMutate,
+      },
+    );
 
     const idBasedManyToOneRelations = Object.values(
       ALL_METADATA_RELATIONS[metadataName].manyToOne,

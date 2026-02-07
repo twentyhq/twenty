@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
+import { type MetadataUniversalFlatEntityAndRelatedUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import {
@@ -104,12 +104,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
     allFlatEntityMaps,
     flatEntityMapsAndRelatedFlatEntityMaps,
   }: {
-    flatEntityMapsAndRelatedFlatEntityMaps: MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
+    flatEntityMapsAndRelatedFlatEntityMaps: MetadataUniversalFlatEntityAndRelatedUniversalFlatEntityMaps<T>;
     allFlatEntityMaps: AllFlatEntityMaps;
   }) {
     const flatEntityMapsKeys = Object.keys(
       flatEntityMapsAndRelatedFlatEntityMaps,
-    ) as (keyof MetadataFlatEntityAndRelatedFlatEntityMaps<T>)[];
+    ) as (keyof MetadataUniversalFlatEntityAndRelatedUniversalFlatEntityMaps<T>)[];
 
     for (const flatEntityMapsKey of flatEntityMapsKeys) {
       // @ts-expect-error TODO improve
