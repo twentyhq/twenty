@@ -62,30 +62,28 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = ({
       }),
     ),
     universalFlatIndexFieldMetadatas:
-      indexMetadataEntity.indexFieldMetadatas.map(
-        (indexFieldMetadata) => {
-          const fieldMetadataUniversalIdentifier =
-            fieldMetadataIdToUniversalIdentifierMap.get(
-              indexFieldMetadata.fieldMetadataId,
-            );
+      indexMetadataEntity.indexFieldMetadatas.map((indexFieldMetadata) => {
+        const fieldMetadataUniversalIdentifier =
+          fieldMetadataIdToUniversalIdentifierMap.get(
+            indexFieldMetadata.fieldMetadataId,
+          );
 
-          if (!isDefined(fieldMetadataUniversalIdentifier)) {
-            throw new FlatEntityMapsException(
-              `FieldMetadata with id ${indexFieldMetadata.fieldMetadataId} not found for index field metadata ${indexFieldMetadata.id}`,
-              FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
-            );
-          }
+        if (!isDefined(fieldMetadataUniversalIdentifier)) {
+          throw new FlatEntityMapsException(
+            `FieldMetadata with id ${indexFieldMetadata.fieldMetadataId} not found for index field metadata ${indexFieldMetadata.id}`,
+            FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+          );
+        }
 
-          return {
-            order: indexFieldMetadata.order,
-            createdAt: indexFieldMetadata.createdAt,
-            updatedAt: indexFieldMetadata.updatedAt,
-            indexMetadataUniversalIdentifier:
-              indexMetadataEntity.universalIdentifier,
-            fieldMetadataUniversalIdentifier,
-          };
-        },
-      ),
+        return {
+          order: indexFieldMetadata.order,
+          createdAt: indexFieldMetadata.createdAt.toISOString(),
+          updatedAt: indexFieldMetadata.updatedAt.toISOString(),
+          indexMetadataUniversalIdentifier:
+            indexMetadataEntity.universalIdentifier,
+          fieldMetadataUniversalIdentifier,
+        };
+      }),
     applicationUniversalIdentifier,
     objectMetadataUniversalIdentifier,
   };

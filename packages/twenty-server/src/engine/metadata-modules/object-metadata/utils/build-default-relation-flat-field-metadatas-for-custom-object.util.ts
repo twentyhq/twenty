@@ -49,7 +49,6 @@ const DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS =
 export type BuildDefaultRelationFieldsForCustomObjectArgs = {
   existingFeatureFlagsMap: FeatureFlagMap;
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  workspaceId: string;
   sourceFlatObjectMetadata: UniversalFlatObjectMetadata;
   flatApplication: FlatApplication;
 };
@@ -68,7 +67,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   existingFeatureFlagsMap,
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,
-  workspaceId,
   flatApplication,
 }: BuildDefaultRelationFieldsForCustomObjectArgs): SourceAndTargetFlatFieldMetadatasRecord => {
   const objectIdByNameSingular = Object.values(
@@ -145,7 +143,6 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             targetFlatFieldMetadataType: isObjectMigratedToMorphRelations
               ? FieldMetadataType.MORPH_RELATION
               : FieldMetadataType.RELATION,
-            workspaceId,
             flatApplication,
             sourceFlatObjectMetadataJoinColumnName: joinColumnName,
             morphId,

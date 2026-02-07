@@ -12,10 +12,10 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 type ComputeFlatFieldToUpdateFromMorphRelationUpdatePayloadArgs = {
   flatApplication: FlatApplication;
@@ -33,10 +33,10 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
   flatObjectMetadataMaps,
 }: ComputeFlatFieldToUpdateFromMorphRelationUpdatePayloadArgs): {
   flatFieldMetadatasToCreate: UniversalFlatFieldMetadata[];
-  flatIndexMetadatasToCreate: FlatIndexMetadata[];
+  flatIndexMetadatasToCreate: UniversalFlatIndexMetadata[];
 } => {
   const flatFieldMetadatasToCreate: UniversalFlatFieldMetadata[] = [];
-  const flatIndexMetadatasToCreate: FlatIndexMetadata[] = [];
+  const flatIndexMetadatasToCreate: UniversalFlatIndexMetadata[] = [];
 
   if (!isDefined(morphRelationsUpdatePayload)) {
     return { flatFieldMetadatasToCreate, flatIndexMetadatasToCreate };
@@ -112,7 +112,6 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
         sourceFlatObjectMetadata: sourceObjectMetadata,
         targetFlatObjectMetadata: newTargetObjectMetadata,
         targetFlatFieldMetadataType: FieldMetadataType.RELATION,
-        workspaceId: fieldMetadataToUpdate.workspaceId,
         flatApplication,
         sourceFlatObjectMetadataJoinColumnName:
           computeMorphOrRelationFieldJoinColumnName({

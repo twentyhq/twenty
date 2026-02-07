@@ -6,7 +6,7 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewFieldInputToFlatViewFieldToCreate } from 'src/engine/metadata-modules/flat-view-field/utils/from-create-view-field-input-to-flat-view-field-to-create.util';
 import { fromDeleteViewFieldInputToFlatViewFieldOrThrow } from 'src/engine/metadata-modules/flat-view-field/utils/from-delete-view-field-input-to-flat-view-field-or-throw.util';
@@ -193,8 +193,8 @@ export class ViewFieldV2Service {
       );
 
     return fromFlatViewFieldToViewFieldDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatView.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier: optimisticallyUpdatedFlatView.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewFieldMaps,
       }),
     );
@@ -261,8 +261,9 @@ export class ViewFieldV2Service {
       );
 
     return fromFlatViewFieldToViewFieldDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatViewWithDeletedAt.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewWithDeletedAt.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewFieldMaps,
       }),
     );
