@@ -17,7 +17,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
@@ -402,12 +402,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         },
       );
 
-    return findManyFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityIds: allTranspiledTranspilationInputs.map(
-        ({ result: { flatFieldMetadatas } }) => flatFieldMetadatas[0].id,
-      ),
-      flatEntityMaps: recomputedFlatFieldMetadataMaps,
-    });
+    return findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
+      {
+        universalIdentifiers: allTranspiledTranspilationInputs.map(
+          ({ result: { flatFieldMetadatas } }) =>
+            flatFieldMetadatas[0].universalIdentifier,
+        ),
+        flatEntityMaps: recomputedFlatFieldMetadataMaps,
+      },
+    );
   }
 
   public async findOneWithinWorkspace(
