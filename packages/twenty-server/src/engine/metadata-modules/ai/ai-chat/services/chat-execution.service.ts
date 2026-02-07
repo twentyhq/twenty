@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { anthropic } from '@ai-sdk/anthropic';
+import { groq } from '@ai-sdk/groq';
 import { openai } from '@ai-sdk/openai';
 import {
   convertToModelMessages,
@@ -122,8 +123,11 @@ export class ChatExecutionService {
 
     const preloadedToolNames = Object.keys(preloadedTools);
 
+    // Respect the workspace's model preference (Settings > AI > Model Router)
     const registeredModel =
-      this.aiModelRegistryService.getDefaultPerformanceModel();
+      await this.aiModelRegistryService.resolveModelForAgent({
+        modelId: workspace.smartModel,
+      });
 
     const modelConfig = this.aiModelRegistryService.getEffectiveModelConfig(
       registeredModel.modelId,
@@ -289,8 +293,12 @@ export class ChatExecutionService {
         return { web_search: anthropic.tools.webSearch_20250305() };
       case ModelProvider.OPENAI:
         return { web_search: openai.tools.webSearch() };
+      case ModelProvider.GROQ:
+        // Type assertion needed due to @ai-sdk/groq tool type mismatch
+        return {
+          web_search: groq.tools.browserSearch({}) as ToolSet[string],
+        };
       default:
-        // Other providers don't have native web search
         return {};
     }
   }

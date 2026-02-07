@@ -101,7 +101,16 @@ const formatTokenCount = (count: number): string => {
 };
 
 const formatCredits = (credits: number): string => {
-  return credits.toLocaleString();
+  // Credits are already in display units from the API (internal / 1000)
+  // Show up to 1 decimal for fractional values, none for whole numbers
+  if (Number.isInteger(credits)) {
+    return credits.toLocaleString();
+  }
+
+  return credits.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 1,
+  });
 };
 
 const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
@@ -160,7 +169,8 @@ export const AIChatContextUsageButton = () => {
               <StyledPercentage>{formattedPercentage}%</StyledPercentage>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.conversationSize)} /{' '}
-                {formatTokenCount(agentChatUsage.contextWindowTokens)}
+                {formatTokenCount(agentChatUsage.contextWindowTokens)}{' '}
+                {t`tokens`}
               </StyledValue>
             </StyledRow>
             <ProgressBar
@@ -183,14 +193,14 @@ export const AIChatContextUsageButton = () => {
               <StyledSection>
                 <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
                 <StyledRow>
-                  <StyledLabel>{t`Input`}</StyledLabel>
+                  <StyledLabel>{t`Input tokens`}</StyledLabel>
                   <StyledValue>
                     {formatTokenCount(lastMessage.inputTokens)}
                     {getCachedLabel(lastMessage)}
                   </StyledValue>
                 </StyledRow>
                 <StyledRow>
-                  <StyledLabel>{t`Output`}</StyledLabel>
+                  <StyledLabel>{t`Output tokens`}</StyledLabel>
                   <StyledValue>
                     {formatTokenCount(lastMessage.outputTokens)}
                   </StyledValue>
@@ -212,13 +222,13 @@ export const AIChatContextUsageButton = () => {
           <StyledSection>
             <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
             <StyledRow>
-              <StyledLabel>{t`Input`}</StyledLabel>
+              <StyledLabel>{t`Input tokens`}</StyledLabel>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.inputTokens)}
               </StyledValue>
             </StyledRow>
             <StyledRow>
-              <StyledLabel>{t`Output`}</StyledLabel>
+              <StyledLabel>{t`Output tokens`}</StyledLabel>
               <StyledValue>
                 {formatTokenCount(agentChatUsage.outputTokens)}
               </StyledValue>

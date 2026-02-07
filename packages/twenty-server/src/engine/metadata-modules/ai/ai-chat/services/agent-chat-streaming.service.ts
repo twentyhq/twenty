@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { convertCentsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-cents-to-billing-credits.util';
+import { toDisplayCredits } from 'src/engine/core-modules/billing/utils/to-display-credits.util';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 import { AgentChatService } from './agent-chat.service';
@@ -162,8 +163,8 @@ export class AgentChatStreamingService {
                       inputTokens,
                       outputTokens,
                       cachedInputTokens,
-                      inputCredits,
-                      outputCredits,
+                      inputCredits: toDisplayCredits(inputCredits),
+                      outputCredits: toDisplayCredits(outputCredits),
                       conversationSize: lastStepConversationSize,
                     },
                     model: {
@@ -220,7 +221,7 @@ export class AgentChatStreamingService {
                     totalOutputCredits: () =>
                       `"totalOutputCredits" + ${streamUsage.outputCredits}`,
                     contextWindowTokens: modelConfig.contextWindowTokens,
-                    conversationSize: lastStepInputTokens,
+                    conversationSize: lastStepConversationSize,
                   });
                 } catch (saveError) {
                   this.logger.error(
