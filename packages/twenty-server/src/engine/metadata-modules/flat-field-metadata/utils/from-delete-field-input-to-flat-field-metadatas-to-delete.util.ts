@@ -12,10 +12,10 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs = {
   deleteOneFieldInput: DeleteOneFieldInput;
@@ -30,7 +30,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
   flatIndexMaps: existingFlatIndexMaps,
   flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
 }: FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs): {
-  flatFieldMetadatasToDelete: FlatFieldMetadata[];
+  flatFieldMetadatasToDelete: UniversalFlatFieldMetadata[];
   flatIndexesToUpdate: FlatIndexMetadata[];
   flatIndexesToDelete: FlatIndexMetadata[];
 } => {

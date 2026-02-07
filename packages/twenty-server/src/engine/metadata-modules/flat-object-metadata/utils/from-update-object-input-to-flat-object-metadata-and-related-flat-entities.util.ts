@@ -6,7 +6,6 @@ import {
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   type FlatObjectMetadataUpdateSideEffects,
   handleFlatObjectMetadataUpdateSideEffect,
@@ -18,6 +17,7 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
@@ -40,7 +40,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     flatViewFieldMaps,
     flatViewMaps,
   }: FromUpdateObjectInputToFlatObjectMetadataArgs): FlatObjectMetadataUpdateSideEffects & {
-    flatObjectMetadataToUpdate: FlatObjectMetadata;
+    flatObjectMetadataToUpdate: UniversalFlatObjectMetadata;
   } => {
     const { id: objectMetadataIdToUpdate } =
       trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(

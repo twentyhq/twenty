@@ -1,20 +1,23 @@
 import { v4 } from 'uuid';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { type DefaultFlatFieldForCustomObjectMaps } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 export const buildDefaultIndexesForCustomObject = ({
   workspaceId,
   flatObjectMetadata,
+  flatApplication,
   defaultFlatFieldForCustomObjectMaps,
   objectFlatFieldMetadatas,
 }: {
   workspaceId: string;
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: UniversalFlatObjectMetadata & { id: string };
+  flatApplication: FlatApplication;
   objectFlatFieldMetadatas: FlatFieldMetadata[];
   defaultFlatFieldForCustomObjectMaps: DefaultFlatFieldForCustomObjectMaps;
 }) => {
@@ -45,7 +48,7 @@ export const buildDefaultIndexesForCustomObject = ({
       universalIdentifier: tsFlatVectorIndexId,
       updatedAt: createdAt.toISOString(),
       workspaceId,
-      applicationId: flatObjectMetadata.applicationId,
+      applicationId: flatApplication.id,
       applicationUniversalIdentifier:
         flatObjectMetadata.applicationUniversalIdentifier,
     },

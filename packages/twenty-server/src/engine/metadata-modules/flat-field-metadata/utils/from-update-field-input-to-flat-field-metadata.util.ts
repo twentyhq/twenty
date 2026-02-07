@@ -21,6 +21,7 @@ import {
   handleFlatFieldMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
@@ -38,8 +39,8 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
 >;
 
 type FlatFieldMetadataAndIndexToUpdate = {
-  flatFieldMetadatasToUpdate: FlatFieldMetadata[];
-  flatFieldMetadatasToCreate: FlatFieldMetadata[];
+  flatFieldMetadatasToUpdate: UniversalFlatFieldMetadata[];
+  flatFieldMetadatasToCreate: UniversalFlatFieldMetadata[];
 } & FlatFieldMetadataUpdateSideEffects;
 export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatApplication,

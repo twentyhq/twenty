@@ -11,12 +11,11 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
-import {
-  generateMorphOrRelationFlatFieldMetadataPair,
-  type SourceTargetMorphOrRelationFlatFieldAndFlatIndex,
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
+import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util';
+import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> & {
@@ -36,7 +35,10 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
   workspaceId,
   flatApplication,
 }: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
-  FieldInputTranspilationResult<SourceTargetMorphOrRelationFlatFieldAndFlatIndex>
+  FieldInputTranspilationResult<{
+    flatFieldMetadatas: UniversalFlatFieldMetadata[];
+    indexMetadatas: FlatIndexMetadata[];
+  }>
 > => {
   const rawCreationPayload = createFieldInput.relationCreationPayload;
 

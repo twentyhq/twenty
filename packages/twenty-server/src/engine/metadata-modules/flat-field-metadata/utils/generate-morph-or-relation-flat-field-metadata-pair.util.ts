@@ -14,26 +14,22 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
+import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
   relationType: RelationType;
   joinColumnName: string;
-  junctionTargetFieldId?: string;
   junctionTargetFieldUniversalIdentifier?: string;
 };
 
 const computeFieldMetadataRelationSettingsForRelationType = ({
   relationType,
   joinColumnName,
-  junctionTargetFieldId,
   junctionTargetFieldUniversalIdentifier,
-}: ComputeFieldMetadataRelationSettingsForRelationTypeArgs): Pick<
-  FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
-  'settings' | 'universalSettings'
-> => {
+}: ComputeFieldMetadataRelationSettingsForRelationTypeArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType>['universalSettings'] => {
   if (relationType === RelationType.MANY_TO_ONE) {
     const settings = {
       relationType: RelationType.MANY_TO_ONE,
@@ -41,29 +37,23 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
       joinColumnName,
     };
 
-    return { settings, universalSettings: settings };
+    return settings;
   }
 
   return {
-    settings: {
-      relationType: RelationType.ONE_TO_MANY,
-      ...(junctionTargetFieldId && { junctionTargetFieldId }),
-    },
-    universalSettings: {
-      relationType: RelationType.ONE_TO_MANY,
-      ...(junctionTargetFieldUniversalIdentifier && {
-        junctionTargetFieldUniversalIdentifier,
-      }),
-    },
+    relationType: RelationType.ONE_TO_MANY,
+    ...(junctionTargetFieldUniversalIdentifier && {
+      junctionTargetFieldUniversalIdentifier,
+    }),
   };
 };
 
 type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
-  targetFlatObjectMetadata: FlatObjectMetadata;
-  sourceFlatObjectMetadata: FlatObjectMetadata;
+  targetFlatObjectMetadata: UniversalFlatObjectMetadata;
+  sourceFlatObjectMetadata: UniversalFlatObjectMetadata;
   targetFlatFieldMetadataType: FieldMetadataType;
   sourceFlatObjectMetadataJoinColumnName: string;
-  createFieldInput: Omit<CreateFieldInput, 'workspaceId'> &
+  createFieldInput: Omit<CreateFieldInput, 'workspaceId' | 'objectMetadataId'> &
     Required<
       Pick<CreateFieldInput, 'relationCreationPayload' | 'type' | 'name'>
     > & { type: MorphOrRelationFieldMetadataType };
@@ -75,7 +65,8 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
-  flatFieldMetadatas: FlatFieldMetadata[];
+  flatFieldMetadatas: UniversalFlatFieldMetadata[];
+  // TODO
   indexMetadatas: FlatIndexMetadata[];
 };
 
@@ -95,18 +86,13 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
 
   const { relationCreationPayload } = createFieldInput;
 
-  const {
-    settings: sourceFlatFieldMetadataSettings,
-    universalSettings: sourceFlatFieldMetadataUniversalSettings,
-  } = computeFieldMetadataRelationSettingsForRelationType({
-    joinColumnName: sourceFlatObjectMetadataJoinColumnName,
-    relationType: relationCreationPayload.type,
-    junctionTargetFieldId: junctionTargetFlatFieldMetadata?.id,
-    junctionTargetFieldUniversalIdentifier:
-      junctionTargetFlatFieldMetadata?.universalIdentifier,
-  });
-  const targetRelationTargetFieldMetadataId = v4();
-  const sourceRelationTargetFieldMetadataId = v4();
+  const sourceFlatFieldMetadataUniversalSettings =
+    computeFieldMetadataRelationSettingsForRelationType({
+      joinColumnName: sourceFlatObjectMetadataJoinColumnName,
+      relationType: relationCreationPayload.type,
+      junctionTargetFieldUniversalIdentifier:
+        junctionTargetFlatFieldMetadata?.universalIdentifier,
+    });
   const sourceFieldUniversalIdentifier = v4();
   const targetFieldUniversalIdentifier = v4();
 
@@ -120,43 +106,38 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       relationObjectMetadataNamePlural: targetFlatObjectMetadata.namePlural,
       targetObjectLabelSingular: sourceFlatObjectMetadata.labelSingular,
     });
-  const sourceFlatFieldMetadata: Omit<
-    FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
-    'flatRelationTargetFieldMetadata'
-  > = {
-    ...getDefaultFlatFieldMetadata({
-      createFieldInput: {
-        ...createFieldInput,
-        universalIdentifier: sourceFieldUniversalIdentifier,
-      },
-      workspaceId,
-      fieldMetadataId: sourceRelationTargetFieldMetadataId,
-      flatApplication,
-      objectMetadataUniversalIdentifier:
-        sourceFlatObjectMetadata.universalIdentifier,
-    }),
-    morphId:
-      sourceFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION
-        ? morphId
-        : null,
-    objectMetadataId: sourceFlatObjectMetadata.id,
-    icon: createFieldInput.icon ?? 'IconRelationOneToMany',
-    type: sourceFlatFieldMetadataType,
-    description:
-      createFieldInput.description ?? defaultDescriptionFromField.description,
-    defaultValue: null,
-    settings: sourceFlatFieldMetadataSettings,
-    universalSettings: sourceFlatFieldMetadataUniversalSettings,
-    options: null,
-    relationTargetFieldMetadataId: targetRelationTargetFieldMetadataId,
-    relationTargetObjectMetadataId: targetFlatObjectMetadata.id,
-    relationTargetObjectMetadataUniversalIdentifier:
-      targetFlatObjectMetadata.universalIdentifier,
-    relationTargetFieldMetadataUniversalIdentifier:
-      targetFieldUniversalIdentifier,
-  };
+  const sourceFlatFieldMetadata: UniversalFlatFieldMetadata<MorphOrRelationFieldMetadataType> =
+    {
+      ...getDefaultFlatFieldMetadata({
+        createFieldInput: {
+          ...createFieldInput,
+          universalIdentifier: sourceFieldUniversalIdentifier,
+        },
+        flatApplication,
+        objectMetadataUniversalIdentifier:
+          sourceFlatObjectMetadata.universalIdentifier,
+      }),
+      morphId:
+        sourceFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION
+          ? morphId
+          : null,
+      icon: createFieldInput.icon ?? 'IconRelationOneToMany',
+      type: sourceFlatFieldMetadataType,
+      description:
+        createFieldInput.description ?? defaultDescriptionFromField.description,
+      defaultValue: null,
+      universalSettings: sourceFlatFieldMetadataUniversalSettings,
+      options: null,
+      relationTargetObjectMetadataUniversalIdentifier:
+        targetFlatObjectMetadata.universalIdentifier,
+      relationTargetFieldMetadataUniversalIdentifier:
+        targetFieldUniversalIdentifier,
+    };
 
-  const targetCreateFieldInput: CreateFieldInput = {
+  const targetCreateFieldInput: Omit<
+    CreateFieldInput,
+    'objectMetadataId' | 'workspaceId'
+  > = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
     description:
       createFieldInput.description ?? defaultDescriptionToField.description,
@@ -166,25 +147,21 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       computeMetadataNameFromLabel({
         label: relationCreationPayload.targetFieldLabel,
       }),
-    objectMetadataId: targetFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
-    workspaceId,
     isSystem: createFieldInput.isSystem ?? false,
   };
-  const {
-    settings: targetFlatFieldMetadataSettings,
-    universalSettings: targetFlatFieldMetadataUniversalSettings,
-  } = computeFieldMetadataRelationSettingsForRelationType({
-    joinColumnName: computeMorphOrRelationFieldJoinColumnName({
-      name: targetCreateFieldInput.name,
-    }),
-    relationType:
-      relationCreationPayload.type === RelationType.ONE_TO_MANY
-        ? RelationType.MANY_TO_ONE
-        : RelationType.ONE_TO_MANY,
-  });
+  const targetFlatFieldMetadataUniversalSettings =
+    computeFieldMetadataRelationSettingsForRelationType({
+      joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+        name: targetCreateFieldInput.name,
+      }),
+      relationType:
+        relationCreationPayload.type === RelationType.ONE_TO_MANY
+          ? RelationType.MANY_TO_ONE
+          : RelationType.ONE_TO_MANY,
+    });
 
-  const targetFlatFieldMetadata: FlatFieldMetadata<
+  const targetFlatFieldMetadata: UniversalFlatFieldMetadata<
     typeof targetFlatFieldMetadataType
   > = {
     ...getDefaultFlatFieldMetadata({
@@ -192,8 +169,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         ...targetCreateFieldInput,
         universalIdentifier: targetFieldUniversalIdentifier,
       },
-      workspaceId,
-      fieldMetadataId: targetRelationTargetFieldMetadataId,
       flatApplication,
       objectMetadataUniversalIdentifier:
         targetFlatObjectMetadata.universalIdentifier,
@@ -204,11 +179,8 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         : null,
     type: targetFlatFieldMetadataType,
     defaultValue: null,
-    settings: targetFlatFieldMetadataSettings,
     universalSettings: targetFlatFieldMetadataUniversalSettings,
     options: null,
-    relationTargetFieldMetadataId: sourceRelationTargetFieldMetadataId,
-    relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
     relationTargetObjectMetadataUniversalIdentifier:
       sourceFlatObjectMetadata.universalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier:
