@@ -317,10 +317,10 @@ export const useSaveDraftRoleToDB = ({
         objectUsedGroupIds.has(group.id),
       );
 
-      // Sort groups so parents are created before children
       const sortedGroups: typeof objectPredicateGroups = [];
       const groupsById = new Map(objectPredicateGroups.map((g) => [g.id, g]));
       const added = new Set<string>();
+      const visiting = new Set<string>();
 
       const addGroupWithParents = (
         group: (typeof objectPredicateGroups)[0],
@@ -328,6 +328,12 @@ export const useSaveDraftRoleToDB = ({
         if (added.has(group.id) === true) {
           return;
         }
+
+        if (visiting.has(group.id) === true) {
+          return;
+        }
+
+        visiting.add(group.id);
 
         if (isDefined(group.parentRowLevelPermissionPredicateGroupId)) {
           const parent = groupsById.get(
@@ -337,6 +343,8 @@ export const useSaveDraftRoleToDB = ({
             addGroupWithParents(parent);
           }
         }
+
+        visiting.delete(group.id);
 
         sortedGroups.push(group);
         added.add(group.id);
