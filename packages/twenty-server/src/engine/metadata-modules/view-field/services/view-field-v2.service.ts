@@ -321,12 +321,10 @@ export class ViewFieldV2Service {
       );
     }
 
-    const existingFlatViewField =
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          existingViewFieldToDelete.universalIdentifier,
-        flatEntityMaps: existingFlatViewFieldMaps,
-      });
+    const existingFlatViewField = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: existingViewFieldToDelete.universalIdentifier,
+      flatEntityMaps: existingFlatViewFieldMaps,
+    });
 
     return fromFlatViewFieldToViewFieldDto({
       ...existingFlatViewField,

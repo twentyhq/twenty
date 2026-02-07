@@ -324,8 +324,7 @@ export class ViewService {
     }
 
     const existingFlatView = findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier:
-        flatViewFromDestroyInput.universalIdentifier,
+      universalIdentifier: flatViewFromDestroyInput.universalIdentifier,
       flatEntityMaps: existingFlatViewMaps,
     });
 

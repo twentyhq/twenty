@@ -142,8 +142,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier:
-        flatFieldMetadatasToDelete[0].universalIdentifier,
+      universalIdentifier: flatFieldMetadatasToDelete[0].universalIdentifier,
       flatEntityMaps: existingFlatFieldMetadataMaps,
     });
   }

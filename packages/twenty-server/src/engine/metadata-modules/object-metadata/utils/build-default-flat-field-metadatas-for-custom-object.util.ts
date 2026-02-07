@@ -1,6 +1,6 @@
 import {
-    type FieldMetadataSettingsMapping,
-    FieldMetadataType,
+  type FieldMetadataSettingsMapping,
+  FieldMetadataType,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 

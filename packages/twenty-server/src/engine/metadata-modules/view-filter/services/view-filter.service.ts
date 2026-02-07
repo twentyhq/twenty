@@ -308,12 +308,10 @@ export class ViewFilterService {
       );
     }
 
-    const existingFlatViewFilter =
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          existingViewFilterToDelete.universalIdentifier,
-        flatEntityMaps: existingFlatViewFilterMaps,
-      });
+    const existingFlatViewFilter = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: existingViewFilterToDelete.universalIdentifier,
+      flatEntityMaps: existingFlatViewFilterMaps,
+    });
 
     return fromFlatViewFilterToViewFilterDto({
       ...existingFlatViewFilter,

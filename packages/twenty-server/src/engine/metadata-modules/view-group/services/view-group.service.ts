@@ -337,12 +337,10 @@ export class ViewGroupService {
       );
     }
 
-    const existingFlatViewGroup =
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          existingViewGroupToDelete.universalIdentifier,
-        flatEntityMaps: existingFlatViewGroupMaps,
-      });
+    const existingFlatViewGroup = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: existingViewGroupToDelete.universalIdentifier,
+      flatEntityMaps: existingFlatViewGroupMaps,
+    });
 
     return fromFlatViewGroupToViewGroupDto({
       ...existingFlatViewGroup,

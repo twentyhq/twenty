@@ -351,13 +351,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    return flatObjectMetadatasToDelete.map(
-      (flatObjectMetadataToDelete) =>
-        findFlatEntityByUniversalIdentifierOrThrow({
-          universalIdentifier:
-            flatObjectMetadataToDelete.universalIdentifier,
-          flatEntityMaps: flatObjectMetadataMaps,
-        }),
+    return flatObjectMetadatasToDelete.map((flatObjectMetadataToDelete) =>
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier: flatObjectMetadataToDelete.universalIdentifier,
+        flatEntityMaps: flatObjectMetadataMaps,
+      }),
     );
   }
 
