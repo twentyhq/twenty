@@ -8,6 +8,7 @@ import { isObject } from '@sniptt/guards';
 import { build } from 'esbuild';
 import { FileFolder, Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { NODE_ESM_CJS_BANNER } from 'twenty-shared/application';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
@@ -413,6 +414,7 @@ export class LogicFunctionResourceService {
       bundle: true,
       sourcemap: true,
       packages: 'external',
+      banner: NODE_ESM_CJS_BANNER,
     });
 
     return builtBundleFilePath;
