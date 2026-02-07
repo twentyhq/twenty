@@ -12,7 +12,7 @@ import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inpu
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
-import { UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
+import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 export const fromCreateViewInputToFlatViewToCreate = ({
