@@ -1,4 +1,4 @@
-import { type ToolCallOptions } from 'ai';
+import { type ToolCallOptions, type ToolSet } from 'ai';
 import { z } from 'zod';
 
 import {
@@ -31,6 +31,7 @@ export type ExecuteToolResult = {
 export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
+  directTools?: ToolSet,
 ) => ({
   description:
     'Execute a tool by name. Use learn_tools first to discover the correct schema, then call this with the tool name and arguments.',
@@ -40,6 +41,16 @@ export const createExecuteToolTool = (
     options: ToolCallOptions,
   ): Promise<ExecuteToolResult> => {
     const { toolName, arguments: args } = parameters;
+
+    // Native provider tools and preloaded tools are already in the ToolSet;
+    // dispatch directly if the LLM routes them through execute_tool.
+    const directTool = directTools?.[toolName];
+
+    if (directTool?.execute) {
+      const result = await directTool.execute(args, options);
+
+      return { toolName, result };
+    }
 
     return toolRegistry.resolveAndExecute(toolName, args, context, options);
   },

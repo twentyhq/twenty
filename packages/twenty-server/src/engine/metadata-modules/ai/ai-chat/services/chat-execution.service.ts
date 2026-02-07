@@ -133,11 +133,17 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
+    // Direct tools: native provider tools + preloaded tools.
+    // These are callable directly AND as fallback through execute_tool.
+    const directTools: ToolSet = {
+      ...wrapToolsWithOutputSerialization(preloadedTools),
+      ...this.getNativeWebSearchTool(registeredModel.provider),
+    };
+
     // ToolSet is constant for the entire conversation — no mutation.
     // learn_tools returns schemas as text; execute_tool dispatches to cached tools.
     const activeTools: ToolSet = {
-      ...wrapToolsWithOutputSerialization(preloadedTools),
-      ...this.getNativeWebSearchTool(registeredModel.provider),
+      ...directTools,
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
@@ -145,6 +151,7 @@ export class ChatExecutionService {
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
+        directTools,
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool((skillNames) =>
         this.skillService.findFlatSkillsByNames(skillNames, workspace.id),
