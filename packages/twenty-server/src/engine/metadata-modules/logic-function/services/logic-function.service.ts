@@ -87,6 +87,12 @@ export class LogicFunctionService {
           },
           workspaceId,
           isSystemBuild: false,
+          idByUniversalIdentifierByMetadataName: {
+            logicFunction: {
+              [flatLogicFunctionToCreate.universalIdentifier]:
+                flatLogicFunctionToCreate.id,
+            },
+          },
           applicationUniversalIdentifier:
             resolvedOwnerFlatApplication.universalIdentifier,
         },

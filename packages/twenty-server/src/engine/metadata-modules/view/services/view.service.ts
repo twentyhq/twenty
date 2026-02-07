@@ -93,6 +93,11 @@ export class ViewService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName: {
+            view: {
+              [flatViewToCreate.universalIdentifier]: flatViewToCreate.id,
+            },
+          },
         },
       );
 

@@ -384,6 +384,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           isSystemBuild,
           applicationUniversalIdentifier:
             resolvedOwnerFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName: {
+            fieldMetadata: Object.fromEntries(
+              flatFieldMetadatasToCreate.map((flatFieldMetadata) => [
+                flatFieldMetadata.universalIdentifier,
+                flatFieldMetadata.id,
+              ]),
+            ),
+          },
         },
       );
 

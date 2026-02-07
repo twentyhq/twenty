@@ -124,6 +124,12 @@ export class CommandMenuItemService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName: {
+            commandMenuItem: {
+              [flatCommandMenuItemToCreate.universalIdentifier]:
+                flatCommandMenuItemToCreate.id,
+            },
+          },
         },
       );
 

@@ -609,6 +609,20 @@ export class RowLevelPermissionPredicateService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName: {
+            rowLevelPermissionPredicate: Object.fromEntries(
+              predicatesToCreate.map((predicate) => [
+                predicate.universalIdentifier,
+                predicate.id,
+              ]),
+            ),
+            rowLevelPermissionPredicateGroup: Object.fromEntries(
+              groupsToCreate.map((group) => [
+                group.universalIdentifier,
+                group.id,
+              ]),
+            ),
+          },
         },
       );
 

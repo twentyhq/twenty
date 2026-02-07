@@ -97,6 +97,12 @@ export class FrontComponentService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName: {
+            frontComponent: {
+              [flatFrontComponentToCreate.universalIdentifier]:
+                flatFrontComponentToCreate.id,
+            },
+          },
         },
       );
 

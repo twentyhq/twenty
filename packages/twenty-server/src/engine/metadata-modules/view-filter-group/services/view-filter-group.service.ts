@@ -79,6 +79,12 @@ export class ViewFilterGroupService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName: {
+            viewFilterGroup: {
+              [flatViewFilterGroupToCreate.universalIdentifier]:
+                flatViewFilterGroupToCreate.id,
+            },
+          },
         },
       );
 
