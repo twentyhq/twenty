@@ -111,12 +111,13 @@ export class WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderSer
 
     const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateAction: UniversalUpdateRowLevelPermissionPredicateGroupAction = {
-      type: 'update',
-      metadataName: 'rowLevelPermissionPredicateGroup',
-      universalIdentifier,
-      update: flatEntityUpdate,
-    };
+    const updateAction: UniversalUpdateRowLevelPermissionPredicateGroupAction =
+      {
+        type: 'update',
+        metadataName: 'rowLevelPermissionPredicateGroup',
+        universalIdentifier,
+        update: flatEntityUpdate,
+      };
 
     return {
       status: 'success',

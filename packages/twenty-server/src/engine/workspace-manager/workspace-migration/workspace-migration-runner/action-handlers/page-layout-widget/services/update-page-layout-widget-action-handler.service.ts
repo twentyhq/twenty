@@ -49,8 +49,7 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
             configuration:
               fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
                 universalConfiguration,
-                flatFieldMetadataMaps:
-                  allFlatEntityMaps.flatFieldMetadataMaps,
+                flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
               }),
           };
 

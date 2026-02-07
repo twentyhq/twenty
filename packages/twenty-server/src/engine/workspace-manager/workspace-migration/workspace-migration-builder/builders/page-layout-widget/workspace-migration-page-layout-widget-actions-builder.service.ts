@@ -107,12 +107,13 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
 
     const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updatePageLayoutWidgetAction: UniversalUpdatePageLayoutWidgetAction = {
-      type: 'update',
-      metadataName: 'pageLayoutWidget',
-      universalIdentifier,
-      update: flatEntityUpdate,
-    };
+    const updatePageLayoutWidgetAction: UniversalUpdatePageLayoutWidgetAction =
+      {
+        type: 'update',
+        metadataName: 'pageLayoutWidget',
+        universalIdentifier,
+        update: flatEntityUpdate,
+      };
 
     return {
       status: 'success',
