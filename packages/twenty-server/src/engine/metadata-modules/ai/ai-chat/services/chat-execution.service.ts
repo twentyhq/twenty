@@ -6,6 +6,7 @@ import {
   convertToModelMessages,
   stepCountIs,
   streamText,
+  type SystemModelMessage,
   type ToolSet,
   type UIDataTypes,
   type UIMessage,
@@ -17,11 +18,11 @@ import { getAppPath } from 'twenty-shared/utils';
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { wrapToolsWithOutputSerialization } from 'src/engine/core-modules/tool-provider/output-serialization/wrap-tools-with-output-serialization.util';
 import {
   type ToolIndexEntry,
   ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { wrapToolsWithOutputSerialization } from 'src/engine/core-modules/tool-provider/output-serialization/wrap-tools-with-output-serialization.util';
 import {
   createLoadSkillTool,
   createLoadToolsTool,
@@ -194,17 +195,20 @@ export class ChatExecutionService {
       `Starting chat execution with model ${registeredModel.modelId}, ${Object.keys(activeTools).length} active tools`,
     );
 
+    const systemMessage: SystemModelMessage = {
+      role: 'system',
+      content: systemPrompt,
+      providerOptions:
+        registeredModel.provider === ModelProvider.ANTHROPIC
+          ? { anthropic: { cacheControl: { type: 'ephemeral' } } }
+          : undefined,
+    };
+
     const stream = streamText({
       model: registeredModel.model,
-      system: systemPrompt,
-      messages: convertToModelMessages(processedMessages),
+      messages: [systemMessage, ...convertToModelMessages(processedMessages)],
       tools: activeTools,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
-      providerOptions: {
-        anthropic: {
-          cacheControl: { type: 'ephemeral' },
-        },
-      },
       experimental_telemetry: AI_TELEMETRY_CONFIG,
       experimental_repairToolCall: async ({
         toolCall,
