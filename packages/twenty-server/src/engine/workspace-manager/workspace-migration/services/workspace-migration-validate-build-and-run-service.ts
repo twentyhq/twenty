@@ -12,7 +12,6 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { computeFlatEntityMapsFromTo } from 'src/engine/metadata-modules/flat-entity/utils/compute-flat-entity-maps-from-to.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
@@ -28,6 +27,7 @@ import {
   WorkspaceMigrationOrchestratorBuildArgs,
   WorkspaceMigrationOrchestratorFailedResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
+import { computeUniversalFlatEntityMapsFromTo } from 'src/engine/workspace-manager/workspace-migration/utils/compute-universal-flat-entity-maps-from-to.util';
 import { InferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/infer-deletion-from-missing-entities.type';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
@@ -189,7 +189,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       const flatEntityMaps = allRelatedFlatEntityMaps[flatEntityMapsKey];
 
       // @ts-expect-error Metadata flat entity maps cache key and metadataName colliding
-      fromToAllFlatEntityMaps[flatEntityMapsKey] = computeFlatEntityMapsFromTo({
+      fromToAllFlatEntityMaps[flatEntityMapsKey] = computeUniversalFlatEntityMapsFromTo({
         flatEntityMaps,
         flatEntityToCreate,
         flatEntityToDelete,
