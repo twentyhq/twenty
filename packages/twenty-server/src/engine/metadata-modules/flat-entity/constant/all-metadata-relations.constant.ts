@@ -52,7 +52,10 @@ type MetadataRelationsProperties = {
     manyToOne: {
       [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
         MetadataEntity<TSourceMetadataName>
-      >]: MetadataManyToOneRelationConfiguration<TSourceMetadataName, TRelationProperty>;
+      >]: MetadataManyToOneRelationConfiguration<
+        TSourceMetadataName,
+        TRelationProperty
+      >;
     };
     oneToMany: {
       [TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<

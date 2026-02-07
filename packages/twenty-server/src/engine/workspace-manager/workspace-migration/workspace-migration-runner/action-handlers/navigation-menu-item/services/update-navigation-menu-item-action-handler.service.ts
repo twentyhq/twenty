@@ -24,11 +24,10 @@ export class UpdateNavigationMenuItemActionHandlerService extends WorkspaceMigra
   ): Promise<FlatUpdateNavigationMenuItemAction> {
     const { action, allFlatEntityMaps } = context;
 
-    const flatNavigationMenuItem =
-      findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
-        universalIdentifier: action.universalIdentifier,
-      });
+    const flatNavigationMenuItem = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
 
     const update = resolveUniversalUpdateRelationIdentifiersToIds({
       metadataName: 'navigationMenuItem',

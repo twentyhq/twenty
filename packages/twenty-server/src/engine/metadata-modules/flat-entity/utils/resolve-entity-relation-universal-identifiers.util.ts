@@ -76,7 +76,9 @@ export const resolveEntityRelationUniversalIdentifiers = <
   const relations = ALL_METADATA_RELATIONS[metadataName].manyToOne;
   const result: Record<string, string | null> = {};
 
-  for (const relation of Object.values(relations) as MetadataManyToOneRelationConfiguration<
+  for (const relation of Object.values(
+    relations,
+  ) as MetadataManyToOneRelationConfiguration<
     T,
     ExtractEntityManyToOneEntityRelationProperties<MetadataEntity<T>>
   >[]) {

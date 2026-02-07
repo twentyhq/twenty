@@ -28,8 +28,7 @@ export class UpdateRowLevelPermissionPredicateActionHandlerService extends Works
 
     const flatRowLevelPermissionPredicate =
       findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps:
-          allFlatEntityMaps.flatRowLevelPermissionPredicateMaps,
+        flatEntityMaps: allFlatEntityMaps.flatRowLevelPermissionPredicateMaps,
         universalIdentifier: action.universalIdentifier,
       });
 

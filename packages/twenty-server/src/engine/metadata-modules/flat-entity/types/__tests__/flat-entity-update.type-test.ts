@@ -1,5 +1,5 @@
 import {
-  HasAllProperties,
+  type HasAllProperties,
   type Equal,
   type Expect,
 } from 'twenty-shared/testing';
