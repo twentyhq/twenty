@@ -317,6 +317,33 @@ export const useSaveDraftRoleToDB = ({
         objectUsedGroupIds.has(group.id),
       );
 
+      // First, create/update predicate groups
+      // This must be done before creating predicates that reference these groups
+      if (objectPredicateGroups.length > 0) {
+        await upsertRowLevelPermissionPredicates({
+          variables: {
+            input: {
+              roleId: targetRoleId,
+              objectMetadataId,
+              predicates: [],
+              predicateGroups: objectPredicateGroups.map((group) => ({
+                id: group.id,
+                objectMetadataId,
+                parentRowLevelPermissionPredicateGroupId:
+                  group.parentRowLevelPermissionPredicateGroupId,
+                logicalOperator:
+                  group.logicalOperator as RowLevelPermissionPredicateGroupLogicalOperator,
+                positionInRowLevelPermissionPredicateGroup:
+                  group.positionInRowLevelPermissionPredicateGroup,
+              })),
+            },
+          },
+          refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+          awaitRefetchQueries: true,
+        });
+      }
+
+      // Then, create/update predicates that reference the groups
       await upsertRowLevelPermissionPredicates({
         variables: {
           input: {
