@@ -158,7 +158,7 @@ import {
   type UniversalUpdateRowLevelPermissionPredicateAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import {
-  UniversalCreateSkillAction,
+  type UniversalCreateSkillAction,
   type FlatCreateSkillAction,
   type FlatDeleteSkillAction,
   type FlatUpdateSkillAction,
