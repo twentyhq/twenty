@@ -4,15 +4,15 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
+import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 export type GenerateFlatIndexArgs = {
   flatObjectMetadata: UniversalFlatObjectMetadata;
-  objectFlatFieldMetadatas: FlatFieldMetadata[];
+  objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   flatIndex: Omit<FlatIndexMetadata, 'name'>;
 };
 export const generateFlatIndexMetadataWithNameOrThrow = ({
@@ -25,7 +25,9 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
     .map((flatIndexField) => {
       const relatedFlatFieldMetadata = objectFlatFieldMetadatas.find(
         (flatFieldMetadata) =>
-          flatFieldMetadata.id === flatIndexField.fieldMetadataId,
+          // TODO prasotin when migrating index
+          flatFieldMetadata.universalIdentifier ===
+          flatIndexField.fieldMetadataUniversalIdentifier,
       );
 
       if (!isDefined(relatedFlatFieldMetadata)) {
@@ -35,8 +37,10 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
         );
       }
 
-      const name = isMorphOrRelationFlatFieldMetadata(relatedFlatFieldMetadata)
-        ? (relatedFlatFieldMetadata.settings.joinColumnName ??
+      const name = isMorphOrRelationUniversalFlatFieldMetadata(
+        relatedFlatFieldMetadata,
+      )
+        ? (relatedFlatFieldMetadata.universalSettings.joinColumnName ??
           relatedFlatFieldMetadata.name)
         : relatedFlatFieldMetadata.name;
 
