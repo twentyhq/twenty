@@ -20,7 +20,7 @@ const callValidator = (
   flatEntityToValidate: UniversalFlatFieldMetadata<FieldMetadataType.FILES>,
 ) =>
   validateFilesFlatFieldMetadata({
-    universalFlatEntityToValidate: flatEntityToValidate,
+    flatEntityToValidate,
   } as Parameters<typeof validateFilesFlatFieldMetadata>[0]);
 
 describe('validateFilesFlatFieldMetadata', () => {

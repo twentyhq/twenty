@@ -13,7 +13,7 @@ export const validateMorphRelationFlatFieldMetadata = (
   args: FlatFieldMetadataTypeValidationArgs<FieldMetadataType.MORPH_RELATION>,
 ): FlatFieldMetadataValidationError[] => {
   const {
-    universalFlatEntityToValidate: universalFlatFieldMetadataToValidate,
+    flatEntityToValidate: universalFlatFieldMetadataToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: { flatFieldMetadataMaps },
     remainingFlatEntityMapsToValidate,
   } = args;

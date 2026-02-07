@@ -10,8 +10,7 @@ export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
     'labelSingular',
     'namePlural',
     'nameSingular',
-    // TODO prastoin
-    'labelIdentifierFieldMetadataUniversalIdentifier',
+    'labelIdentifierFieldMetadataId',
   ],
   standard: ['description', 'icon', 'isActive', 'labelPlural', 'labelSingular'],
 } as const satisfies Record<

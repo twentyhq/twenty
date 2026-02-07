@@ -21,7 +21,7 @@ type ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs = Omit<
 };
 
 export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
-  universalFlatEntityToValidate: universalFlatFieldMetadata,
+  flatEntityToValidate: universalFlatFieldMetadata,
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
@@ -89,7 +89,7 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
 };
 
 export const validateMorphOrRelationFlatFieldMetadata = ({
-  universalFlatEntityToValidate: universalFlatFieldMetadataToValidate,
+  flatEntityToValidate: universalFlatFieldMetadataToValidate,
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
@@ -211,7 +211,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   if (isDefined(update)) {
     errors.push(
       ...validateMorphOrRelationFlatFieldMetadataUpdates({
-        universalFlatEntityToValidate: universalFlatFieldMetadataToValidate,
+        flatEntityToValidate: universalFlatFieldMetadataToValidate,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
