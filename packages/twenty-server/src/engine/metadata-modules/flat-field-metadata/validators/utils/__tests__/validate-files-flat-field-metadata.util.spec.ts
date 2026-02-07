@@ -23,9 +23,7 @@ const callValidator = (
     flatEntityToValidate,
   } as Parameters<typeof validateFilesFlatFieldMetadata>[0]);
 
-const stripUserFriendlyMessage = (
-  errors: FlatFieldMetadataValidationError[],
-) =>
+const stripUserFriendlyMessage = (errors: FlatFieldMetadataValidationError[]) =>
   errors.map(({ userFriendlyMessage: _, ...rest }) => rest);
 
 describe('validateFilesFlatFieldMetadata', () => {
