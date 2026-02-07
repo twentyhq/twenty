@@ -1,6 +1,7 @@
 import { type PageLayoutWidgetPosition } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -23,6 +24,7 @@ export type CreateStandardPageLayoutWidgetContext = {
   gridPosition: GridPosition;
   position: PageLayoutWidgetPosition | null;
   configuration: AllPageLayoutWidgetConfiguration;
+  universalConfiguration: MetadataUniversalFlatEntity<'pageLayoutWidget'>['universalConfiguration'];
   objectMetadataId: string | null;
 };
 
@@ -45,6 +47,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     gridPosition,
     position,
     configuration,
+    universalConfiguration,
     objectMetadataId,
   },
   workspaceId,
@@ -93,6 +96,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     gridPosition,
     position,
     configuration,
+    universalConfiguration,
     objectMetadataId,
     objectMetadataUniversalIdentifier,
     createdAt: now,
