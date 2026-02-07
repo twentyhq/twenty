@@ -98,8 +98,7 @@ export class FlatLogicFunctionValidatorService {
     if (
       isDefined(
         findFlatEntityByUniversalIdentifier({
-          universalIdentifier:
-            flatLogicFunctionToValidate.universalIdentifier,
+          universalIdentifier: flatLogicFunctionToValidate.universalIdentifier,
           flatEntityMaps: optimisticFlatLogicFunctionMaps,
         }),
       )

@@ -56,12 +56,11 @@ export const validateFlatObjectMetadataIdentifiers = ({
   }
 
   if (isDefined(imageIdentifierFieldMetadataUniversalIdentifier)) {
-    const relatedUniversalFlatFieldMetadata = findFlatEntityByUniversalIdentifier(
-      {
+    const relatedUniversalFlatFieldMetadata =
+      findFlatEntityByUniversalIdentifier({
         universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
         flatEntityMaps: universalFlatFieldMetadataMaps,
-      },
-    );
+      });
 
     if (!isDefined(relatedUniversalFlatFieldMetadata)) {
       errors.push({

@@ -37,9 +37,7 @@ export const validateFlatEntityCircularDependency = <
   flatEntityMaps: UniversalFlatEntityMaps<T>;
 }): CircularDependencyValidationResult => {
   // Direct self-reference check
-  if (
-    flatEntityUniversalIdentifier === flatEntityParentUniversalIdentifier
-  ) {
+  if (flatEntityUniversalIdentifier === flatEntityParentUniversalIdentifier) {
     return {
       status: 'fail',
       reason: 'self_reference',

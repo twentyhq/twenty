@@ -57,7 +57,9 @@ export class FlatViewValidatorService {
       flatEntityUpdate.kanbanAggregateOperationFieldMetadataUniversalIdentifier;
 
     if (
-      isDefined(kanbanAggregateOperationFieldMetadataUniversalIdentifierUpdate) &&
+      isDefined(
+        kanbanAggregateOperationFieldMetadataUniversalIdentifierUpdate,
+      ) &&
       kanbanAggregateOperationFieldMetadataUniversalIdentifierUpdate !== null &&
       !isDefined(
         findFlatEntityByUniversalIdentifier({
@@ -80,9 +82,7 @@ export class FlatViewValidatorService {
 
     if (viewBecomesKanban) {
       if (
-        !isDefined(
-          updatedFlatView.mainGroupByFieldMetadataUniversalIdentifier,
-        )
+        !isDefined(updatedFlatView.mainGroupByFieldMetadataUniversalIdentifier)
       ) {
         validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
@@ -197,8 +197,7 @@ export class FlatViewValidatorService {
     });
 
     const optimisticFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier:
-        flatViewToValidate.objectMetadataUniversalIdentifier,
+      universalIdentifier: flatViewToValidate.objectMetadataUniversalIdentifier,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 

@@ -16,7 +16,8 @@ export const validateMorphOrRelationFlatFieldOnDelete = ({
 
   if (
     isDefined(universalFlatFieldMetadata.universalSettings.onDelete) &&
-    universalFlatFieldMetadata.universalSettings.relationType !== RelationType.MANY_TO_ONE
+    universalFlatFieldMetadata.universalSettings.relationType !==
+      RelationType.MANY_TO_ONE
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

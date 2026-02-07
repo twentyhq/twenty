@@ -99,14 +99,16 @@ export class FlatViewFieldValidatorService {
       updatedFlatViewField.fieldMetadataUniversalIdentifier
     ) {
       const otherFlatViewFields =
-        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow({
-          universalIdentifiers: flatView.viewFieldUniversalIdentifiers.filter(
-            (viewFieldUniversalIdentifier) =>
-              viewFieldUniversalIdentifier !==
-              updatedFlatViewField.universalIdentifier,
-          ),
-          flatEntityMaps: optimisticFlatViewFieldMaps,
-        });
+        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow(
+          {
+            universalIdentifiers: flatView.viewFieldUniversalIdentifiers.filter(
+              (viewFieldUniversalIdentifier) =>
+                viewFieldUniversalIdentifier !==
+                updatedFlatViewField.universalIdentifier,
+            ),
+            flatEntityMaps: optimisticFlatViewFieldMaps,
+          },
+        );
 
       validationResult.errors.push(
         ...validateLabelIdentifierFieldMetadataIdFlatViewField({
@@ -199,7 +201,8 @@ export class FlatViewFieldValidatorService {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatViewFieldToValidate.universalIdentifier,
-        viewUniversalIdentifier: flatViewFieldToValidate.viewUniversalIdentifier,
+        viewUniversalIdentifier:
+          flatViewFieldToValidate.viewUniversalIdentifier,
         fieldMetadataUniversalIdentifier:
           flatViewFieldToValidate.fieldMetadataUniversalIdentifier,
       },

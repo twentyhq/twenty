@@ -63,7 +63,8 @@ export class FlatObjectMetadataValidatorService {
 
     validationResult.errors.push(
       ...validateFlatObjectMetadataNameAndLabels({
-        optimisticUniversalFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+        optimisticUniversalFlatObjectMetadataMaps:
+          optimisticFlatObjectMetadataMaps,
         universalFlatObjectMetadataToValidate: updatedFlatObjectMetadata,
         buildOptions,
       }),

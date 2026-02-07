@@ -82,7 +82,8 @@ export class FlatIndexValidatorService {
     }
 
     const relatedObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatIndexToValidate.objectMetadataUniversalIdentifier,
+      universalIdentifier:
+        flatIndexToValidate.objectMetadataUniversalIdentifier,
       flatEntityMaps: flatObjectMetadataMaps,
     });
 

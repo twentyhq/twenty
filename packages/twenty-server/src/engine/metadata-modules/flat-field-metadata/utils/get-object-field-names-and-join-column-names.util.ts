@@ -35,7 +35,9 @@ export const getObjectFieldNamesAndJoinColumnNames = ({
     objectUniversalFlatFieldMetadatas.reduce(
       (acc, universalFlatFieldMetadata) => {
         if (
-          isMorphOrRelationUniversalFlatFieldMetadata(universalFlatFieldMetadata) &&
+          isMorphOrRelationUniversalFlatFieldMetadata(
+            universalFlatFieldMetadata,
+          ) &&
           universalFlatFieldMetadata.universalSettings.relationType ===
             RelationType.MANY_TO_ONE &&
           isDefined(universalFlatFieldMetadata.universalSettings.joinColumnName)

@@ -72,7 +72,9 @@ export const validateMorphRelationCreationPayload = async ({
     ...new Set(allRelatedObjectMetadataIds),
   ];
 
-  if (allRelatedObjectMetadataIdsSet.includes(objectMetadataUniversalIdentifier)) {
+  if (
+    allRelatedObjectMetadataIdsSet.includes(objectMetadataUniversalIdentifier)
+  ) {
     return {
       status: 'fail',
       errors: [

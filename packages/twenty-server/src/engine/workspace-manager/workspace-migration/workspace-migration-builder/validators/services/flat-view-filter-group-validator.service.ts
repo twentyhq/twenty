@@ -37,8 +37,7 @@ export class FlatViewFilterGroupValidatorService {
       flatEntityParentUniversalIdentifier:
         parentViewFilterGroupUniversalIdentifier,
       maxDepth: VIEW_FILTER_GROUP_MAX_DEPTH,
-      parentUniversalIdentifierKey:
-        'parentViewFilterGroupUniversalIdentifier',
+      parentUniversalIdentifierKey: 'parentViewFilterGroupUniversalIdentifier',
       flatEntityMaps: flatViewFilterGroupMaps,
     });
 
@@ -106,7 +105,8 @@ export class FlatViewFilterGroupValidatorService {
     }
 
     const referencedView = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatViewFilterGroupToValidate.viewUniversalIdentifier,
+      universalIdentifier:
+        flatViewFilterGroupToValidate.viewUniversalIdentifier,
       flatEntityMaps: flatViewMaps,
     });
 

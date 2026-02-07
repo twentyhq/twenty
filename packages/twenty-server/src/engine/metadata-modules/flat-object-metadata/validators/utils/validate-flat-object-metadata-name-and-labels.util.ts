@@ -30,7 +30,8 @@ export const doesOtherObjectWithSameNameExists = ({
         (universalFlatObjectMetadata.nameSingular ===
           objectMetadataNameSingular ||
           universalFlatObjectMetadata.namePlural === objectMetadataNamePlural ||
-          universalFlatObjectMetadata.nameSingular === objectMetadataNamePlural ||
+          universalFlatObjectMetadata.nameSingular ===
+            objectMetadataNamePlural ||
           universalFlatObjectMetadata.namePlural ===
             objectMetadataNameSingular) &&
         universalFlatObjectMetadata.universalIdentifier !==
@@ -82,7 +83,8 @@ export const validateFlatObjectMetadataNameAndLabels = ({
         universalFlatObjectMetadataToValidate.namePlural,
       objectMetadataNameSingular:
         universalFlatObjectMetadataToValidate.nameSingular,
-      universalFlatObjectMetadataMaps: optimisticUniversalFlatObjectMetadataMaps,
+      universalFlatObjectMetadataMaps:
+        optimisticUniversalFlatObjectMetadataMaps,
       existingObjectMetadataUniversalIdentifier:
         universalFlatObjectMetadataToValidate.universalIdentifier,
     })

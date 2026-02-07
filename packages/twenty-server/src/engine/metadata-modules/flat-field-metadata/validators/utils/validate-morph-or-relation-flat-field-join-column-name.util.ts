@@ -27,7 +27,9 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
 
   switch (universalFlatFieldMetadata.universalSettings.relationType) {
     case RelationType.MANY_TO_ONE: {
-      if (!isDefined(universalFlatFieldMetadata.universalSettings.joinColumnName)) {
+      if (
+        !isDefined(universalFlatFieldMetadata.universalSettings.joinColumnName)
+      ) {
         errors.push({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message:
@@ -65,7 +67,9 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
       break;
     }
     case RelationType.ONE_TO_MANY: {
-      if (isDefined(universalFlatFieldMetadata.universalSettings.joinColumnName)) {
+      if (
+        isDefined(universalFlatFieldMetadata.universalSettings.joinColumnName)
+      ) {
         errors.push({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message:
@@ -76,7 +80,9 @@ export const validateMorphOrRelationFlatFieldJoinColumName = ({
       break;
     }
     default: {
-      assertUnreachable(universalFlatFieldMetadata.universalSettings.relationType);
+      assertUnreachable(
+        universalFlatFieldMetadata.universalSettings.relationType,
+      );
     }
   }
 

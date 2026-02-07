@@ -203,14 +203,12 @@ export class FlatNavigationMenuItemValidatorService {
       }
 
       const referencedParentInOptimistic = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          flatNavigationMenuItem.folderUniversalIdentifier,
+        universalIdentifier: flatNavigationMenuItem.folderUniversalIdentifier,
         flatEntityMaps: optimisticFlatNavigationMenuItemMaps,
       });
 
       const referencedParentInRemaining = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          flatNavigationMenuItem.folderUniversalIdentifier,
+        universalIdentifier: flatNavigationMenuItem.folderUniversalIdentifier,
         flatEntityMaps: remainingFlatEntityMapsToValidate,
       });
 
