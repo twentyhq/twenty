@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { FlatUpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
+import { UniversalUpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
@@ -104,14 +104,15 @@ export class WorkspaceMigrationNavigationMenuItemActionsBuilderService extends W
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateNavigationMenuItemAction: FlatUpdateNavigationMenuItemAction = {
-      type: 'update',
-      metadataName: 'navigationMenuItem',
-      entityId: flatEntityId,
-      update: flatEntityUpdate,
-    };
+    const updateNavigationMenuItemAction: UniversalUpdateNavigationMenuItemAction =
+      {
+        type: 'update',
+        metadataName: 'navigationMenuItem',
+        universalIdentifier,
+        update: flatEntityUpdate,
+      };
 
     return {
       status: 'success',

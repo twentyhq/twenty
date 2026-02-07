@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { UniversalUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   ValidateAndBuildArgs,
   ValidateAndBuildReturnType,
@@ -39,8 +39,8 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
         return action;
       }
 
-      const toLogicFunction = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: action.entityId,
+      const toLogicFunction = findFlatEntityByUniversalIdentifier({
+        universalIdentifier: action.universalIdentifier,
         flatEntityMaps: toFlatEntityMaps,
       });
 
@@ -143,12 +143,12 @@ export class WorkspaceMigrationLogicFunctionActionsBuilderService extends Worksp
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateLogicFunctionAction: FlatUpdateLogicFunctionAction = {
+    const updateLogicFunctionAction: UniversalUpdateLogicFunctionAction = {
       type: 'update',
       metadataName: 'logicFunction',
-      entityId: flatEntityId,
+      universalIdentifier,
       update: flatEntityUpdate,
     };
 
