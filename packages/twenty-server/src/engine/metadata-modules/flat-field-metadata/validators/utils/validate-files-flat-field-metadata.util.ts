@@ -8,7 +8,7 @@ import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-mo
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
 export const validateFilesFlatFieldMetadata = ({
-  flatEntityToValidate
+  flatEntityToValidate,
 }: FlatFieldMetadataTypeValidationArgs<FieldMetadataType.FILES>): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 

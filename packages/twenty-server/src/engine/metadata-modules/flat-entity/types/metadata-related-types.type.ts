@@ -20,7 +20,9 @@ export type MetadataFlatEntityAndRelatedFlatEntityMaps<
   MetadataRelatedFlatEntityMapsKeys<T> | MetadataToFlatEntityMapsKey<T>
 >;
 
-export type MetadataValidationRelatedUniversalFlatEntityMaps<T extends AllMetadataName> =
+export type MetadataValidationRelatedUniversalFlatEntityMaps<
+  T extends AllMetadataName,
+> =
   MetadataValidationRelatedMetadataNames<T> extends undefined
     ? undefined
     : Pick<

@@ -354,7 +354,7 @@ const validateFieldMetadataDefaultValue = ({
 };
 
 export const validateEnumSelectFlatFieldMetadata = ({
-  flatEntityToValidate: universalFlatFieldMetadataToValidate
+  flatEntityToValidate: universalFlatFieldMetadataToValidate,
 }: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const optionsValidationErrors = validateFieldMetadataInputOptions(
     universalFlatFieldMetadataToValidate,

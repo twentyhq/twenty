@@ -59,8 +59,7 @@ const createWelcomeRichText = ({
   args: DashboardWidgetBuilderArgs;
 }): FlatPageLayoutWidget => {
   const configuration = {
-    configurationType:
-      WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
+    configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT as const,
     body: {
       blocknote: JSON.stringify([
         {
@@ -272,8 +271,7 @@ const createDealsByCompany = ({
       universalConfiguration: {
         configurationType: WidgetConfigurationType.PIE_CHART,
         groupByFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.company
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.company.universalIdentifier,
         groupBySubFieldName: 'name',
         aggregateFieldMetadataUniversalIdentifier:
           STANDARD_OBJECTS.opportunity.fields.id.universalIdentifier,
@@ -342,17 +340,14 @@ const createPipelineValueByStage = ({
       universalConfiguration: {
         configurationType: WidgetConfigurationType.BAR_CHART,
         aggregateFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.amount
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.amount.universalIdentifier,
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisGroupByFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.stage
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.stage.universalIdentifier,
         primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         primaryAxisOrderBy: GraphOrderBy.FIELD_POSITION_ASC,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.company
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.company.universalIdentifier,
         secondaryAxisGroupBySubFieldName: 'name',
         secondaryAxisGroupByDateGranularity:
           ObjectRecordGroupByDateGranularity.DAY,
@@ -416,12 +411,10 @@ const createRevenueTimeline = ({
       universalConfiguration: {
         configurationType: WidgetConfigurationType.LINE_CHART,
         aggregateFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.amount
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.amount.universalIdentifier,
         aggregateOperation: AggregateOperations.SUM,
         primaryAxisGroupByFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.closeDate
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.closeDate.universalIdentifier,
         primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         axisNameDisplay: AxisNameDisplay.NONE,
@@ -493,14 +486,12 @@ const createOpportunitiesByOwner = ({
           STANDARD_OBJECTS.opportunity.fields.id.universalIdentifier,
         aggregateOperation: AggregateOperations.COUNT,
         primaryAxisGroupByFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.owner
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier,
         primaryAxisGroupBySubFieldName: 'name.firstName',
         primaryAxisDateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
         secondaryAxisGroupByFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.owner
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier,
         secondaryAxisGroupBySubFieldName: 'name.firstName',
         secondaryAxisGroupByDateGranularity:
           ObjectRecordGroupByDateGranularity.DAY,
@@ -670,8 +661,7 @@ const createDealValueCreatedThisMonth = ({
       universalConfiguration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataUniversalIdentifier:
-          STANDARD_OBJECTS.opportunity.fields.amount
-            .universalIdentifier,
+          STANDARD_OBJECTS.opportunity.fields.amount.universalIdentifier,
         aggregateOperation: AggregateOperations.SUM,
         displayDataLabel: false,
         filter: filterConfig,
