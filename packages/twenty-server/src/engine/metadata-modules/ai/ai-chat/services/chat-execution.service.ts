@@ -200,6 +200,11 @@ export class ChatExecutionService {
       messages: convertToModelMessages(processedMessages),
       tools: activeTools,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+      providerOptions: {
+        anthropic: {
+          cacheControl: { type: 'ephemeral' },
+        },
+      },
       experimental_telemetry: AI_TELEMETRY_CONFIG,
       experimental_repairToolCall: async ({
         toolCall,
