@@ -37,4 +37,27 @@ type Assertions = [
       | 'universalSettings'
     >
   >,
+
+  Expect<
+    Equal<
+      MetadataUniversalFlatEntityPropertiesToCompare<'view'>,
+      | 'name'
+      | 'icon'
+      | 'deletedAt'
+      | 'type'
+      | 'position'
+      | 'key'
+      | 'isCompact'
+      | 'openRecordIn'
+      | 'kanbanAggregateOperation'
+      | 'kanbanAggregateOperationFieldMetadataUniversalIdentifier'
+      | 'calendarLayout'
+      | 'calendarFieldMetadataUniversalIdentifier'
+      | 'mainGroupByFieldMetadataUniversalIdentifier'
+      | 'shouldHideEmptyGroups'
+      | 'anyFieldFilterValue'
+      | 'visibility'
+      | 'createdByUserWorkspaceId'
+    >
+  >,
 ];

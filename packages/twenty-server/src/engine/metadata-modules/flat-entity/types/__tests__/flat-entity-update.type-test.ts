@@ -1,28 +1,62 @@
-import { type Equal, type Expect } from 'twenty-shared/testing';
+import {
+  HasAllProperties,
+  type Equal,
+  type Expect,
+} from 'twenty-shared/testing';
 
 import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-update.type';
-import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
   Expect<
-    'settings' extends keyof FlatEntityUpdate<'fieldMetadata'> ? true : false
+    Equal<
+      keyof FlatEntityUpdate<'fieldMetadata'>,
+      | 'name'
+      | 'label'
+      | 'icon'
+      | 'description'
+      | 'isActive'
+      | 'defaultValue'
+      | 'standardOverrides'
+      | 'options'
+      | 'settings'
+      | 'isUnique'
+      | 'isLabelSyncedWithName'
+      | 'universalSettings'
+    >
   >,
   Expect<
-    Equal<
-      FlatEntityUpdate<'fieldMetadata'>['universalSettings'],
-      never | undefined
+    HasAllProperties<
+      FlatEntityUpdate<'fieldMetadata'>,
+      {
+        universalSettings?: never;
+      }
     >
   >,
 
   Expect<
-    'settings' extends keyof UniversalFlatEntityUpdate<'fieldMetadata'>
-      ? false
-      : true
+    Equal<
+      keyof FlatEntityUpdate<'objectMetadata'>,
+      | 'icon'
+      | 'description'
+      | 'isActive'
+      | 'standardOverrides'
+      | 'isLabelSyncedWithName'
+      | 'nameSingular'
+      | 'namePlural'
+      | 'labelSingular'
+      | 'labelPlural'
+      | 'labelIdentifierFieldMetadataId'
+      | 'labelIdentifierFieldMetadataUniversalIdentifier'
+    >
   >,
+
   Expect<
-    'universalSettings' extends keyof UniversalFlatEntityUpdate<'fieldMetadata'>
-      ? true
-      : false
+    HasAllProperties<
+      FlatEntityUpdate<'objectMetadata'>,
+      {
+        labelIdentifierFieldMetadataUniversalIdentifier?: never;
+      }
+    >
   >,
 ];

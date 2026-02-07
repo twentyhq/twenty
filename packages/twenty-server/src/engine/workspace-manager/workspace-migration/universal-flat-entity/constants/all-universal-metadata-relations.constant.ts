@@ -2,9 +2,8 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type ALL_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
 
-type ToUniversalForeignKey<T extends string> = T extends `${infer Prefix}Id`
-  ? `${Prefix}UniversalIdentifier`
-  : never;
+export type ToUniversalForeignKey<T extends string> =
+  T extends `${infer Prefix}Id` ? `${Prefix}UniversalIdentifier` : never;
 
 type ToUniversalAggregator<T extends string> = T extends `${infer Prefix}Ids`
   ? `${Prefix}UniversalIdentifiers`

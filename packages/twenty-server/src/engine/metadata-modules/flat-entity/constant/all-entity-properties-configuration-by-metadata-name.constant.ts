@@ -2,7 +2,9 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
+import { type MetadataManyToOneJoinColumn } from 'src/engine/metadata-modules/flat-entity/types/metadata-many-to-one-join-column.type';
 import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
+import { type ToUniversalForeignKey } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-universal-metadata-relations.constant';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
 import { type UniversalFlatEntityExtraProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
@@ -29,7 +31,9 @@ type MetadataEntityPropertyConfiguration<
     universalProperty: K extends AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
       string
       ? `universal${Capitalize<K>}`
-      : undefined;
+      : K extends MetadataManyToOneJoinColumn<TMetadataName> & string
+        ? ToUniversalForeignKey<K>
+        : undefined;
     toStringify: K extends ExtractJsonbProperties<MetadataEntity<TMetadataName>>
       ? true
       : K extends keyof MetadataEntity<TMetadataName>
@@ -61,9 +65,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     labelSingular: { toStringify: false, universalProperty: undefined },
     namePlural: { toStringify: false, universalProperty: undefined },
     nameSingular: { toStringify: false, universalProperty: undefined },
-    labelIdentifierFieldMetadataUniversalIdentifier: {
+    labelIdentifierFieldMetadataId: {
       toStringify: false,
-      universalProperty: undefined,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+      universalProperty: 'labelIdentifierFieldMetadataUniversalIdentifier',
     },
     standardOverrides: { toStringify: true, universalProperty: undefined },
   },
@@ -86,18 +91,19 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     kanbanAggregateOperationFieldMetadataId: {
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty:
+        'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
     },
     anyFieldFilterValue: { toStringify: false, universalProperty: undefined },
     calendarLayout: { toStringify: false, universalProperty: undefined },
     calendarFieldMetadataId: {
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'calendarFieldMetadataUniversalIdentifier',
     },
     visibility: { toStringify: false, universalProperty: undefined },
     mainGroupByFieldMetadataId: {
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'mainGroupByFieldMetadataUniversalIdentifier',
     },
     shouldHideEmptyGroups: { toStringify: false, universalProperty: undefined },
   },
@@ -136,12 +142,21 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     deletedAt: { toStringify: false, universalProperty: undefined },
   },
   viewFilter: {
-    viewId: { toStringify: false, universalProperty: undefined },
+    viewId: {
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
     deletedAt: { toStringify: false, universalProperty: undefined },
-    fieldMetadataId: { toStringify: false, universalProperty: undefined },
+    fieldMetadataId: {
+      toStringify: false,
+      universalProperty: 'fieldMetadataUniversalIdentifier',
+    },
     operand: { toStringify: false, universalProperty: undefined },
     value: { toStringify: true, universalProperty: undefined },
-    viewFilterGroupId: { toStringify: false, universalProperty: undefined },
+    viewFilterGroupId: {
+      toStringify: false,
+      universalProperty: 'viewFilterGroupUniversalIdentifier',
+    },
     positionInViewFilterGroup: {
       toStringify: false,
       universalProperty: undefined,
@@ -178,7 +193,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
   },
   roleTarget: {
-    roleId: { toStringify: false, universalProperty: undefined },
+    roleId: {
+      toStringify: false,
+      universalProperty: 'roleUniversalIdentifier',
+    },
     userWorkspaceId: { toStringify: false, universalProperty: undefined },
     apiKeyId: { toStringify: false, universalProperty: undefined },
     agentId: { toStringify: false, universalProperty: undefined },
@@ -197,13 +215,19 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   pageLayout: {
     name: { toStringify: false, universalProperty: undefined },
     type: { toStringify: false, universalProperty: undefined },
-    objectMetadataId: { toStringify: false, universalProperty: undefined },
+    objectMetadataId: {
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
     deletedAt: { toStringify: false, universalProperty: undefined },
   },
   pageLayoutWidget: {
     title: { toStringify: false, universalProperty: undefined },
     type: { toStringify: false, universalProperty: undefined },
-    objectMetadataId: { toStringify: false, universalProperty: undefined },
+    objectMetadataId: {
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
     gridPosition: { toStringify: true, universalProperty: undefined },
     position: { toStringify: true, universalProperty: undefined },
     configuration: {
@@ -232,21 +256,27 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     availabilityType: { toStringify: false, universalProperty: undefined },
     availabilityObjectMetadataId: {
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'availabilityObjectMetadataUniversalIdentifier',
     },
   },
   navigationMenuItem: {
     position: { toStringify: false, universalProperty: undefined },
-    folderId: { toStringify: false, universalProperty: undefined },
+    folderId: {
+      toStringify: false,
+      universalProperty: 'folderUniversalIdentifier',
+    },
     name: { toStringify: false, universalProperty: undefined },
   },
   rowLevelPermissionPredicate: {
-    fieldMetadataId: { toStringify: false, universalProperty: undefined },
+    fieldMetadataId: {
+      toStringify: false,
+      universalProperty: 'fieldMetadataUniversalIdentifier',
+    },
     operand: { toStringify: false, universalProperty: undefined },
     value: { toStringify: true, universalProperty: undefined },
     rowLevelPermissionPredicateGroupId: {
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'rowLevelPermissionPredicateGroupUniversalIdentifier',
     },
     positionInRowLevelPermissionPredicateGroup: {
       toStringify: false,
@@ -255,7 +285,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     subFieldName: { toStringify: false, universalProperty: undefined },
     workspaceMemberFieldMetadataId: {
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'workspaceMemberFieldMetadataUniversalIdentifier',
     },
     workspaceMemberSubFieldName: {
       toStringify: false,
@@ -271,16 +301,20 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     },
     parentRowLevelPermissionPredicateGroupId: {
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty:
+        'parentRowLevelPermissionPredicateGroupUniversalIdentifier',
     },
     deletedAt: { toStringify: false, universalProperty: undefined },
   },
   viewFilterGroup: {
-    viewId: { toStringify: false, universalProperty: undefined },
+    viewId: {
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
     deletedAt: { toStringify: false, universalProperty: undefined },
     parentViewFilterGroupId: {
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'parentViewFilterGroupUniversalIdentifier',
     },
     logicalOperator: { toStringify: false, universalProperty: undefined },
     positionInViewFilterGroup: {

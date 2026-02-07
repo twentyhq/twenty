@@ -60,6 +60,8 @@ export const resolveUniversalUpdateRelationIdentifiersToIds = <
       | null
       | undefined;
 
+    delete result[universalForeignKey];
+
     if (!isDefined(universalIdentifierValue)) {
       if (universalIdentifierValue === null) {
         result[foreignKey] = null;
