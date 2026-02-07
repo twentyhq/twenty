@@ -99,7 +99,8 @@ export class AgentChatStreamingService {
             inputCredits: 0,
             outputCredits: 0,
           };
-          let lastStepInputTokens = 0;
+          let lastStepConversationSize = 0;
+          let totalCacheCreationTokens = 0;
 
           writer.merge(
             stream.toUIMessageStream({
@@ -111,14 +112,37 @@ export class AgentChatStreamingService {
               sendStart: false,
               messageMetadata: ({ part }) => {
                 if (part.type === 'finish-step') {
-                  lastStepInputTokens = part.usage?.inputTokens ?? 0;
+                  const stepInput = part.usage?.inputTokens ?? 0;
+                  const stepCached = part.usage?.cachedInputTokens ?? 0;
+
+                  // Anthropic excludes cached/created tokens from input_tokens,
+                  // reporting them separately as cache_creation_input_tokens
+                  const anthropicUsage = (
+                    part as {
+                      providerMetadata?: {
+                        anthropic?: {
+                          usage?: { cache_creation_input_tokens?: number };
+                        };
+                      };
+                    }
+                  ).providerMetadata?.anthropic?.usage;
+                  const stepCacheCreation =
+                    anthropicUsage?.cache_creation_input_tokens ?? 0;
+
+                  totalCacheCreationTokens += stepCacheCreation;
+                  lastStepConversationSize =
+                    stepInput + stepCached + stepCacheCreation;
                 }
 
                 if (part.type === 'finish') {
-                  const inputTokens = part.totalUsage?.inputTokens ?? 0;
+                  const inputTokens =
+                    (part.totalUsage?.inputTokens ?? 0) +
+                    (part.totalUsage?.cachedInputTokens ?? 0) +
+                    totalCacheCreationTokens;
                   const outputTokens = part.totalUsage?.outputTokens ?? 0;
                   const cachedInputTokens =
-                    part.totalUsage?.cachedInputTokens ?? 0;
+                    (part.totalUsage?.cachedInputTokens ?? 0) +
+                    totalCacheCreationTokens;
 
                   const inputCostInCents =
                     (inputTokens / 1000) *
@@ -149,7 +173,7 @@ export class AgentChatStreamingService {
                       cachedInputTokens,
                       inputCredits,
                       outputCredits,
-                      conversationSize: lastStepInputTokens,
+                      conversationSize: lastStepConversationSize,
                     },
                     model: {
                       contextWindowTokens: modelConfig.contextWindowTokens,
