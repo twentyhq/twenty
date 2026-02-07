@@ -1,4 +1,6 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { CalendarChannelSyncStage } from '@/accounts/types/CalendarChannel';
+import { MessageChannelSyncStage } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
@@ -15,6 +17,7 @@ import {
   IconCalendarEvent,
   IconDotsVertical,
   IconMail,
+  IconPlayerPlay,
   IconRefresh,
   IconTrash,
 } from 'twenty-ui/display';
@@ -44,6 +47,16 @@ export const SettingsAccountsRowDropdownMenu = ({
   });
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
 
+  const hasPendingConfiguration =
+    account.messageChannels.some(
+      (channel) =>
+        channel.syncStage === MessageChannelSyncStage.PENDING_CONFIGURATION,
+    ) ||
+    account.calendarChannels.some(
+      (channel) =>
+        channel.syncStage === CalendarChannelSyncStage.PENDING_CONFIGURATION,
+    );
+
   const deleteAccount = async () => {
     await destroyOneRecord(account.id);
   };
@@ -59,6 +72,18 @@ export const SettingsAccountsRowDropdownMenu = ({
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
+              {hasPendingConfiguration && (
+                <MenuItem
+                  LeftIcon={IconPlayerPlay}
+                  text={t`Complete setup`}
+                  onClick={() => {
+                    navigate(SettingsPath.AccountsConfiguration, {
+                      connectedAccountId: account.id,
+                    });
+                    closeDropdown(dropdownId);
+                  }}
+                />
+              )}
               {account.provider ===
                 ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
                 <MenuItem
