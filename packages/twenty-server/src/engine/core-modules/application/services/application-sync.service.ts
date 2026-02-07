@@ -130,7 +130,7 @@ export class ApplicationSyncService {
           await this.fileStorageService.readFile_v2({
             applicationUniversalIdentifier:
               manifest.application.universalIdentifier,
-            fileFolder: FileFolder.Source,
+            fileFolder: FileFolder.Dependencies,
             resourcePath: 'package.json',
             workspaceId,
           }),

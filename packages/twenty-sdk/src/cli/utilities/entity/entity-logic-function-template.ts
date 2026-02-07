@@ -30,6 +30,7 @@ export default defineLogicFunction({
   name: '${kebabCaseName}',
   description: 'Add a description for your logic function',
   timeoutSeconds: 5,
+  handler,
     // Add your trigger here
     // Route trigger example:
     // httpRouteTriggerSettings: {
