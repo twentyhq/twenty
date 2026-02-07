@@ -242,7 +242,7 @@ export class FlatViewFilterGroupValidatorService {
         viewFilterGroupUniversalIdentifier:
           existingViewFilterGroup.universalIdentifier,
         parentViewFilterGroupUniversalIdentifier:
-          existingViewFilterGroup.parentViewFilterGroupUniversalIdentifier,
+          newParentViewFilterGroupUniversalIdentifier,
         flatViewFilterGroupMaps: optimisticFlatViewFilterGroupMaps,
       },
     );

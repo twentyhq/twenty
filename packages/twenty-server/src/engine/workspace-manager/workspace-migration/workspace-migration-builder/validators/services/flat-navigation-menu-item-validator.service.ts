@@ -336,8 +336,7 @@ export class FlatNavigationMenuItemValidatorService {
       {
         navigationMenuItemUniversalIdentifier:
           fromFlatNavigationMenuItem.universalIdentifier,
-        folderUniversalIdentifier:
-          fromFlatNavigationMenuItem.folderUniversalIdentifier,
+        folderUniversalIdentifier: newFolderUniversalIdentifier,
         flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
       },
     );

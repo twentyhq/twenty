@@ -4,8 +4,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -48,7 +48,7 @@ export class FlatViewValidatorService {
       return validationResult;
     }
 
-    const updatedFlatView: FlatView = {
+    const updatedFlatView: UniversalFlatView = {
       ...existingFlatView,
       ...flatEntityUpdate,
     };
