@@ -48,12 +48,14 @@ import {
   type FlatDeleteAgentAction,
   type FlatUpdateAgentAction,
   type UniversalDeleteAgentAction,
+  type UniversalUpdateAgentAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/types/workspace-migration-agent-action-builder.service';
 import {
   type FlatCreateCommandMenuItemAction,
   type FlatDeleteCommandMenuItemAction,
   type FlatUpdateCommandMenuItemAction,
   type UniversalDeleteCommandMenuItemAction,
+  type UniversalUpdateCommandMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/types/workspace-migration-command-menu-item-action.type';
 import {
   type FlatCreateFieldAction,
@@ -68,24 +70,28 @@ import {
   type FlatDeleteFrontComponentAction,
   type FlatUpdateFrontComponentAction,
   type UniversalDeleteFrontComponentAction,
+  type UniversalUpdateFrontComponentAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 import {
   type FlatCreateIndexAction,
   type FlatDeleteIndexAction,
   type FlatUpdateIndexAction,
   type UniversalDeleteIndexAction,
+  type UniversalUpdateIndexAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
 import {
   type FlatCreateLogicFunctionAction,
   type FlatDeleteLogicFunctionAction,
   type FlatUpdateLogicFunctionAction,
   type UniversalDeleteLogicFunctionAction,
+  type UniversalUpdateLogicFunctionAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   type FlatCreateNavigationMenuItemAction,
   type FlatDeleteNavigationMenuItemAction,
   type FlatUpdateNavigationMenuItemAction,
   type UniversalDeleteNavigationMenuItemAction,
+  type UniversalUpdateNavigationMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import {
   type FlatCreateObjectAction,
@@ -100,84 +106,98 @@ import {
   type FlatDeletePageLayoutTabAction,
   type FlatUpdatePageLayoutTabAction,
   type UniversalDeletePageLayoutTabAction,
+  type UniversalUpdatePageLayoutTabAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
 import {
   type FlatCreatePageLayoutWidgetAction,
   type FlatDeletePageLayoutWidgetAction,
   type FlatUpdatePageLayoutWidgetAction,
   type UniversalDeletePageLayoutWidgetAction,
+  type UniversalUpdatePageLayoutWidgetAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
 import {
   type FlatCreatePageLayoutAction,
   type FlatDeletePageLayoutAction,
   type FlatUpdatePageLayoutAction,
   type UniversalDeletePageLayoutAction,
+  type UniversalUpdatePageLayoutAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
 import {
   type FlatCreateRoleTargetAction,
   type FlatDeleteRoleTargetAction,
   type FlatUpdateRoleTargetAction,
   type UniversalDeleteRoleTargetAction,
+  type UniversalUpdateRoleTargetAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/types/workspace-migration-role-target-action.type';
 import {
   type FlatCreateRoleAction,
   type FlatDeleteRoleAction,
   type FlatUpdateRoleAction,
   type UniversalDeleteRoleAction,
+  type UniversalUpdateRoleAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
 import {
   type FlatCreateRowLevelPermissionPredicateGroupAction,
   type FlatDeleteRowLevelPermissionPredicateGroupAction,
   type FlatUpdateRowLevelPermissionPredicateGroupAction,
   type UniversalDeleteRowLevelPermissionPredicateGroupAction,
+  type UniversalUpdateRowLevelPermissionPredicateGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/types/workspace-migration-row-level-permission-predicate-group-action.type';
 import {
   type FlatCreateRowLevelPermissionPredicateAction,
   type FlatDeleteRowLevelPermissionPredicateAction,
   type FlatUpdateRowLevelPermissionPredicateAction,
   type UniversalDeleteRowLevelPermissionPredicateAction,
+  type UniversalUpdateRowLevelPermissionPredicateAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import {
   type FlatCreateSkillAction,
   type FlatDeleteSkillAction,
   type FlatUpdateSkillAction,
   type UniversalDeleteSkillAction,
+  type UniversalUpdateSkillAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/types/workspace-migration-skill-action.type';
 import {
   type FlatCreateViewFieldAction,
   type FlatDeleteViewFieldAction,
   type FlatUpdateViewFieldAction,
   type UniversalDeleteViewFieldAction,
+  type UniversalUpdateViewFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import {
   type FlatCreateViewFilterGroupAction,
   type FlatDeleteViewFilterGroupAction,
   type FlatUpdateViewFilterGroupAction,
   type UniversalDeleteViewFilterGroupAction,
+  type UniversalUpdateViewFilterGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action.type';
 import {
   type FlatCreateViewFilterAction,
   type FlatDeleteViewFilterAction,
   type FlatUpdateViewFilterAction,
   type UniversalDeleteViewFilterAction,
+  type UniversalUpdateViewFilterAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/types/workspace-migration-view-filter-action.type';
 import {
   type FlatCreateViewGroupAction,
   type FlatDeleteViewGroupAction,
   type FlatUpdateViewGroupAction,
   type UniversalDeleteViewGroupAction,
+  type UniversalUpdateViewGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
 import {
   type FlatCreateViewAction,
   type FlatDeleteViewAction,
   type FlatUpdateViewAction,
   type UniversalDeleteViewAction,
+  type UniversalUpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
 import {
   type FlatCreateWebhookAction,
   type FlatDeleteWebhookAction,
   type FlatUpdateWebhookAction,
   type UniversalDeleteWebhookAction,
+  type UniversalUpdateWebhookAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
@@ -220,7 +240,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatViewMaps;
     universalActions: {
       create: FlatCreateViewAction;
-      update: FlatUpdateViewAction;
+      update: UniversalUpdateViewAction;
       delete: UniversalDeleteViewAction;
     };
     flatActions: {
@@ -236,7 +256,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatViewFieldMaps;
     universalActions: {
       create: FlatCreateViewFieldAction;
-      update: FlatUpdateViewFieldAction;
+      update: UniversalUpdateViewFieldAction;
       delete: UniversalDeleteViewFieldAction;
     };
     flatActions: {
@@ -252,7 +272,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatViewGroupMaps;
     universalActions: {
       create: FlatCreateViewGroupAction;
-      update: FlatUpdateViewGroupAction;
+      update: UniversalUpdateViewGroupAction;
       delete: UniversalDeleteViewGroupAction;
     };
     flatActions: {
@@ -268,7 +288,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatRowLevelPermissionPredicateMaps;
     universalActions: {
       create: FlatCreateRowLevelPermissionPredicateAction;
-      update: FlatUpdateRowLevelPermissionPredicateAction;
+      update: UniversalUpdateRowLevelPermissionPredicateAction;
       delete: UniversalDeleteRowLevelPermissionPredicateAction;
     };
     flatActions: {
@@ -284,7 +304,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatRowLevelPermissionPredicateGroupMaps;
     universalActions: {
       create: FlatCreateRowLevelPermissionPredicateGroupAction;
-      update: FlatUpdateRowLevelPermissionPredicateGroupAction;
+      update: UniversalUpdateRowLevelPermissionPredicateGroupAction;
       delete: UniversalDeleteRowLevelPermissionPredicateGroupAction;
     };
     flatActions: {
@@ -300,7 +320,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatViewFilterGroupMaps;
     universalActions: {
       create: FlatCreateViewFilterGroupAction;
-      update: FlatUpdateViewFilterGroupAction;
+      update: UniversalUpdateViewFilterGroupAction;
       delete: UniversalDeleteViewFilterGroupAction;
     };
     flatActions: {
@@ -316,7 +336,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatEntityMaps<FlatIndexMetadata>;
     universalActions: {
       create: FlatCreateIndexAction;
-      update: FlatUpdateIndexAction;
+      update: UniversalUpdateIndexAction;
       delete: UniversalDeleteIndexAction;
     };
     flatActions: {
@@ -332,7 +352,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatEntityMaps<FlatLogicFunction>;
     universalActions: {
       create: FlatCreateLogicFunctionAction;
-      update: FlatUpdateLogicFunctionAction;
+      update: UniversalUpdateLogicFunctionAction;
       delete: UniversalDeleteLogicFunctionAction;
     };
     flatActions: {
@@ -348,7 +368,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatViewFilterMaps;
     universalActions: {
       create: FlatCreateViewFilterAction;
-      update: FlatUpdateViewFilterAction;
+      update: UniversalUpdateViewFilterAction;
       delete: UniversalDeleteViewFilterAction;
     };
     flatActions: {
@@ -364,7 +384,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatEntityMaps<FlatRole>;
     universalActions: {
       create: FlatCreateRoleAction;
-      update: FlatUpdateRoleAction;
+      update: UniversalUpdateRoleAction;
       delete: UniversalDeleteRoleAction;
     };
     flatActions: {
@@ -380,7 +400,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatRoleTargetMaps;
     universalActions: {
       create: FlatCreateRoleTargetAction;
-      update: FlatUpdateRoleTargetAction;
+      update: UniversalUpdateRoleTargetAction;
       delete: UniversalDeleteRoleTargetAction;
     };
     flatActions: {
@@ -396,7 +416,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatAgentMaps;
     universalActions: {
       create: FlatCreateAgentAction;
-      update: FlatUpdateAgentAction;
+      update: UniversalUpdateAgentAction;
       delete: UniversalDeleteAgentAction;
     };
     flatActions: {
@@ -412,7 +432,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatSkillMaps;
     universalActions: {
       create: FlatCreateSkillAction;
-      update: FlatUpdateSkillAction;
+      update: UniversalUpdateSkillAction;
       delete: UniversalDeleteSkillAction;
     };
     flatActions: {
@@ -428,7 +448,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatCommandMenuItemMaps;
     universalActions: {
       create: FlatCreateCommandMenuItemAction;
-      update: FlatUpdateCommandMenuItemAction;
+      update: UniversalUpdateCommandMenuItemAction;
       delete: UniversalDeleteCommandMenuItemAction;
     };
     flatActions: {
@@ -444,7 +464,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatNavigationMenuItemMaps;
     universalActions: {
       create: FlatCreateNavigationMenuItemAction;
-      update: FlatUpdateNavigationMenuItemAction;
+      update: UniversalUpdateNavigationMenuItemAction;
       delete: UniversalDeleteNavigationMenuItemAction;
     };
     flatActions: {
@@ -460,7 +480,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatPageLayoutMaps;
     universalActions: {
       create: FlatCreatePageLayoutAction;
-      update: FlatUpdatePageLayoutAction;
+      update: UniversalUpdatePageLayoutAction;
       delete: UniversalDeletePageLayoutAction;
     };
     flatActions: {
@@ -476,7 +496,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatPageLayoutWidgetMaps;
     universalActions: {
       create: FlatCreatePageLayoutWidgetAction;
-      update: FlatUpdatePageLayoutWidgetAction;
+      update: UniversalUpdatePageLayoutWidgetAction;
       delete: UniversalDeletePageLayoutWidgetAction;
     };
     flatActions: {
@@ -492,7 +512,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatPageLayoutTabMaps;
     universalActions: {
       create: FlatCreatePageLayoutTabAction;
-      update: FlatUpdatePageLayoutTabAction;
+      update: UniversalUpdatePageLayoutTabAction;
       delete: UniversalDeletePageLayoutTabAction;
     };
     flatActions: {
@@ -508,7 +528,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatFrontComponentMaps;
     universalActions: {
       create: FlatCreateFrontComponentAction;
-      update: FlatUpdateFrontComponentAction;
+      update: UniversalUpdateFrontComponentAction;
       delete: UniversalDeleteFrontComponentAction;
     };
     flatActions: {
@@ -524,7 +544,7 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntityMaps: FlatWebhookMaps;
     universalActions: {
       create: FlatCreateWebhookAction;
-      update: FlatUpdateWebhookAction;
+      update: UniversalUpdateWebhookAction;
       delete: UniversalDeleteWebhookAction;
     };
     flatActions: {
