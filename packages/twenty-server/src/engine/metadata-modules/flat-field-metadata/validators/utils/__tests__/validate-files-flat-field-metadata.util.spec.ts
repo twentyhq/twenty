@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { validateFilesFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-files-flat-field-metadata.util';
+import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 const createFlatEntityToValidate = (
@@ -23,11 +23,16 @@ const callValidator = (
     flatEntityToValidate,
   } as Parameters<typeof validateFilesFlatFieldMetadata>[0]);
 
+const stripUserFriendlyMessage = (
+  errors: FlatFieldMetadataValidationError[],
+) =>
+  errors.map(({ userFriendlyMessage: _, ...rest }) => rest);
+
 describe('validateFilesFlatFieldMetadata', () => {
   it('should return no errors for a valid files field', () => {
     const errors = callValidator(createFlatEntityToValidate());
 
-    expect(errors).toHaveLength(0);
+    expect(errors).toMatchInlineSnapshot('[]');
   });
 
   it('should return error when isUnique is true', () => {
@@ -35,11 +40,14 @@ describe('validateFilesFlatFieldMetadata', () => {
       createFlatEntityToValidate({ isUnique: true }),
     );
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
-    expect(errors[0].message).toContain(
-      'Files field is not supported for unique fields',
-    );
+    expect(stripUserFriendlyMessage(errors)).toMatchInlineSnapshot(`
+[
+  {
+    "code": "INVALID_FIELD_INPUT",
+    "message": "Files field is not supported for unique fields",
+  },
+]
+`);
   });
 
   it('should return error when universalSettings is undefined', () => {
@@ -47,11 +55,14 @@ describe('validateFilesFlatFieldMetadata', () => {
       createFlatEntityToValidate({ universalSettings: undefined }),
     );
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
-    expect(errors[0].message).toContain(
-      'maxNumberOfValues must be defined in universalSettings',
-    );
+    expect(stripUserFriendlyMessage(errors)).toMatchInlineSnapshot(`
+[
+  {
+    "code": "INVALID_FIELD_INPUT",
+    "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+  },
+]
+`);
   });
 
   it('should return error when maxNumberOfValues is 0', () => {
@@ -61,8 +72,14 @@ describe('validateFilesFlatFieldMetadata', () => {
       }),
     );
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
+    expect(stripUserFriendlyMessage(errors)).toMatchInlineSnapshot(`
+[
+  {
+    "code": "INVALID_FIELD_INPUT",
+    "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+  },
+]
+`);
   });
 
   it('should return error when maxNumberOfValues exceeds max (11)', () => {
@@ -72,7 +89,13 @@ describe('validateFilesFlatFieldMetadata', () => {
       }),
     );
 
-    expect(errors).toHaveLength(1);
-    expect(errors[0].code).toBe(FieldMetadataExceptionCode.INVALID_FIELD_INPUT);
+    expect(stripUserFriendlyMessage(errors)).toMatchInlineSnapshot(`
+[
+  {
+    "code": "INVALID_FIELD_INPUT",
+    "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+  },
+]
+`);
   });
 });
