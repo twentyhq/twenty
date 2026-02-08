@@ -13,5 +13,7 @@ export const PAGE_LAYOUT_TAB_FRAGMENT = gql`
       ...PageLayoutWidgetFragment
     }
     pageLayoutId
+    createdAt
+    updatedAt
   }
 `;

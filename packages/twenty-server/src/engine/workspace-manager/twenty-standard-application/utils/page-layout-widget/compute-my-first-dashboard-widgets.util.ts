@@ -222,6 +222,7 @@ const createWelcomeRichText = ({
       configuration,
       universalConfiguration: configuration,
       objectMetadataId: null,
+      conditionalDisplay: null,
     },
   });
 };
@@ -285,6 +286,7 @@ const createDealsByCompany = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -361,6 +363,7 @@ const createPipelineValueByStage = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -426,6 +429,7 @@ const createRevenueTimeline = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -506,6 +510,7 @@ const createOpportunitiesByOwner = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -540,6 +545,7 @@ const createStockMarketIframe = ({
       configuration,
       universalConfiguration: configuration,
       objectMetadataId: null,
+      conditionalDisplay: null,
     },
   });
 };
@@ -605,6 +611,7 @@ const createDealsCreatedThisMonth = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
@@ -670,6 +677,7 @@ const createDealValueCreatedThisMonth = ({
         firstDayOfTheWeek: CalendarStartDay.SUNDAY,
       },
       objectMetadataId: opportunityObjectId,
+      conditionalDisplay: null,
     },
   });
 };
