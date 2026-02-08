@@ -158,7 +158,7 @@ export class TimelineMessagingResolver {
     return timelineThreads;
   }
 
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard, SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
   @Mutation(() => Boolean)
   async dismissReconnectAccountBanner(
     @AuthUser() user: UserEntity,
