@@ -8,6 +8,12 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import {
+  validateEmailValueOrThrow
+} from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-email-value-or-throw.util';
+import {
+  validateAdditionalEmailArrayOrThrow
+} from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-additional-email-array-or-throw.util';
 
 export const validateEmailsFieldOrThrow = (
   value: unknown,
@@ -23,10 +29,12 @@ export const validateEmailsFieldOrThrow = (
   for (const [subField, subFieldValue] of Object.entries(preValidatedValue)) {
     switch (subField) {
       case 'primaryEmail':
-        validateTextFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        if (typeof subFieldValue === 'string' && subFieldValue) {
+          validateEmailValueOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        }
         break;
       case 'additionalEmails':
-        validateArrayFieldOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        validateAdditionalEmailArrayOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
       default:
         throw new CommonQueryRunnerException(

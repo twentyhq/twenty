@@ -83,5 +83,26 @@ describe('validateEmailsFieldOrThrow', () => {
         validateEmailsFieldOrThrow(emailsValue, 'testField'),
       ).toThrow(CommonQueryRunnerException);
     });
+
+    it('should throw when primaryEmail has uppercase letters', () => {
+      const emailsValue = {
+        primaryEmail: 'PRIMARY@example.com',
+        additionalEmails: [],
+      };
+
+      expect(() =>
+        validateEmailsFieldOrThrow(emailsValue, 'testField'),
+      ).toThrow(CommonQueryRunnerException);
+    });
+
+    it('should throw when additionalEmails has string with uppercase letters', () => {
+      const emailsValue = {
+        additionalEmails: ['ADDITIONAL@example.com'],
+      };
+
+      expect(() =>
+        validateEmailsFieldOrThrow(emailsValue, 'testField'),
+      ).toThrow(CommonQueryRunnerException);
+    });
   });
 });

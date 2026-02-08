@@ -1,0 +1,31 @@
+import { isNull } from '@sniptt/guards';
+import { inspect } from 'util';
+import {
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { msg } from '@lingui/core/macro';
+import {
+  validateEmailValueOrThrow
+} from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-email-value-or-throw.util';
+
+export const validateAdditionalEmailArrayOrThrow = (
+  value: unknown,
+  fieldName: string,
+): string | string[] | null => {
+  if (isNull(value)) return null;
+
+  if (typeof value === 'string') {validateEmailValueOrThrow(value, fieldName)}
+
+  if (!Array.isArray(value) || value.some((item) => !validateEmailValueOrThrow(item, fieldName))) {
+    const inspectedValue = inspect(value);
+
+    throw new CommonQueryRunnerException(
+      `Invalid value ${inspectedValue} for field "${fieldName} - Array values need to be string"`,
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      { userFriendlyMessage: msg`Invalid value: "${inspectedValue}"` },
+    );
+  }
+
+  return value;
+};
