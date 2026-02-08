@@ -5,7 +5,7 @@ import {
 } from '@nestjs/terminus';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -34,7 +34,7 @@ export class BillingHealthIndicator {
           Promise.all([
             this.workspaceRepository.findOne({
               where: {
-                deletedAt: undefined,
+                deletedAt: IsNull(),
               },
               order: {
                 createdAt: 'DESC',
@@ -42,12 +42,12 @@ export class BillingHealthIndicator {
             }),
             this.workspaceRepository.count({
               where: {
-                deletedAt: undefined,
+                deletedAt: IsNull(),
               },
             }),
             this.billingSubscriptionRepository.count({
               where: {
-                deletedAt: undefined,
+                deletedAt: IsNull(),
               },
             }),
           ]),
@@ -70,6 +70,7 @@ export class BillingHealthIndicator {
             {
               where: {
                 workspaceId: lastWorkspace.id,
+                deletedAt: IsNull(),
               },
             },
           );
