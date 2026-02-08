@@ -14,14 +14,11 @@ const StyledContainer = styled.div`
 
 const StyledTrigger = styled.div<{ hasUsage: boolean }>`
   align-items: center;
-  background: transparent;
-  border: 1px solid ${({ theme }) => theme.background.transparent.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: ${({ hasUsage }) => (hasUsage ? 'pointer' : 'default')};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
   height: 24px;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
+  min-width: 24px;
   transition: background 0.1s ease;
 
   &:hover {
@@ -83,8 +80,8 @@ const StyledFooter = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: 0 0 ${({ theme }) => theme.border.radius.md}
-    ${({ theme }) => theme.border.radius.md};
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.md};
+  border-bottom-right-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(3)};
@@ -114,7 +111,6 @@ export const AIChatContextUsageButton = () => {
       <StyledContainer>
         <StyledTrigger hasUsage={false}>
           <ContextUsageProgressRing percentage={0} />
-          <StyledPercentage>0%</StyledPercentage>
         </StyledTrigger>
       </StyledContainer>
     );
@@ -137,7 +133,6 @@ export const AIChatContextUsageButton = () => {
     >
       <StyledTrigger hasUsage={true}>
         <ContextUsageProgressRing percentage={percentage} />
-        <StyledPercentage>{formattedPercentage}%</StyledPercentage>
       </StyledTrigger>
 
       {isHovered && (

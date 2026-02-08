@@ -1,10 +1,10 @@
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
-import { IconHistory, IconMessageCirclePlus } from 'twenty-ui/display';
+import { IconHistory } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
-import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -25,7 +25,6 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -46,6 +45,44 @@ const StyledInputArea = styled.div`
   background: ${({ theme }) => theme.background.primary};
 `;
 
+const StyledInputBox = styled.div`
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  min-height: 140px;
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus-within {
+    border-color: ${({ theme }) => theme.color.blue};
+    box-shadow: 0px 0px 0px 3px ${({ theme }) => theme.color.transparent.blue2};
+  }
+
+  & textarea {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0;
+    box-shadow: none !important;
+    padding: 0;
+  }
+
+  & textarea:focus {
+    border: none !important;
+    box-shadow: none !important;
+  }
+`;
+
+const StyledTextAreaWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+`;
+
 const StyledScrollWrapper = styled(ScrollWrapper)`
   display: flex;
   flex: 1;
@@ -59,7 +96,15 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 const StyledButtonsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: flex-end;
+
+  & > *:not(:last-child) {
+    margin-right: ${({ theme }) => theme.spacing(2)};
+  }
+
+  & > *:nth-child(2) {
+    margin-right: ${({ theme }) => theme.spacing(1)};
+  }
 `;
 
 export const AIChatTab = () => {
@@ -72,7 +117,6 @@ export const AIChatTab = () => {
     useRecoilState(agentChatInputState);
 
   const { uploadFiles } = useAIChatFileUpload();
-  const { createChatThread } = useCreateNewAIChatThread();
   const { navigateCommandMenu } = useCommandMenu();
 
   return (
@@ -125,37 +169,36 @@ export const AIChatTab = () => {
 
           <StyledInputArea>
             <AgentChatContextPreview />
-            <TextArea
-              textAreaId={AI_CHAT_INPUT_ID}
-              placeholder={t`Enter a question...`}
-              value={agentChatInput}
-              onChange={(value) => setAgentChatInput(value)}
-              minRows={1}
-              maxRows={20}
-            />
-            <StyledButtonsContainer>
-              <Button
-                variant="secondary"
-                size="small"
-                Icon={IconHistory}
-                onClick={() =>
-                  navigateCommandMenu({
-                    page: CommandMenuPages.ViewPreviousAIChats,
-                    pageTitle: t`View Previous AI Chats`,
-                    pageIcon: IconHistory,
-                  })
-                }
-              />
-              <Button
-                variant="secondary"
-                size="small"
-                Icon={IconMessageCirclePlus}
-                onClick={() => createChatThread()}
-              />
-              <AgentChatFileUploadButton />
-              <AIChatContextUsageButton />
-              <SendMessageButton />
-            </StyledButtonsContainer>
+            <StyledInputBox>
+              <StyledTextAreaWrapper>
+                <TextArea
+                  textAreaId={AI_CHAT_INPUT_ID}
+                  placeholder={t`Ask, search or make anything...`}
+                  value={agentChatInput}
+                  onChange={(value) => setAgentChatInput(value)}
+                  minRows={3}
+                  maxRows={20}
+                />
+              </StyledTextAreaWrapper>
+              <StyledButtonsContainer>
+                <AIChatContextUsageButton />
+                <IconButton
+                  Icon={IconHistory}
+                  variant="tertiary"
+                  size="small"
+                  onClick={() =>
+                    navigateCommandMenu({
+                      page: CommandMenuPages.ViewPreviousAIChats,
+                      pageTitle: t`View Previous AI Chats`,
+                      pageIcon: IconHistory,
+                    })
+                  }
+                  ariaLabel={t`View Previous AI Chats`}
+                />
+                <AgentChatFileUploadButton />
+                <SendMessageButton />
+              </StyledButtonsContainer>
+            </StyledInputBox>
           </StyledInputArea>
         </>
       )}
