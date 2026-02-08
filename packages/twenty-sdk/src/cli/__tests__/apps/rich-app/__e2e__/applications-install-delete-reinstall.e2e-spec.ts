@@ -8,24 +8,23 @@ import { inspect } from 'util';
 
 inspect.defaultOptions.depth = 10;
 
-xdescribe('Application: install delete and reinstall rich-app', () => {
+describe('Application: install delete and reinstall rich-app', () => {
   const applicationName = 'rich-app';
   const deleteCommand = new AppUninstallCommand();
   const appPath = getTestedApplicationPath(applicationName);
 
-  // TODO @charles: Re-enable e2e tests after fixing authentication issues
-  // beforeAll(async () => {
-  //   expect(existsSync(appPath)).toBe(true);
-  // });
+  beforeAll(async () => {
+    expect(existsSync(appPath)).toBe(true);
+  });
 
-  // afterAll(async () => {
-  //   const result = await deleteCommand.execute({
-  //     appPath,
-  //     askForConfirmation: false,
-  //   });
+  afterAll(async () => {
+    const result = await deleteCommand.execute({
+      appPath,
+      askForConfirmation: false,
+    });
 
-  //   expect(result.success).toBe(true);
-  // });
+    expect(result.success).toBe(true);
+  });
 
   it(`should successfully install ${applicationName} application`, async () => {
     await runAppDev({ appPath });

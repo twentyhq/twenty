@@ -37,7 +37,12 @@ export class FileStorageService {
     fileFolder,
     resourcePath,
   }: ResourceIdentifier): string {
-    return `${workspaceId}/${applicationUniversalIdentifier}/${fileFolder}/${resourcePath}`;
+    return join(
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder,
+      resourcePath,
+    );
   }
 
   /**
@@ -263,11 +268,26 @@ export class FileStorageService {
     return driver.delete(params);
   }
 
-  delete_v2(params: ResourceIdentifier): Promise<void> {
+  async delete_v2(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const onStoragePath = this.buildOnStoragePath(params);
 
-    return driver.delete({ folderPath: onStoragePath });
+    const deleteResult = driver.delete({ folderPath: onStoragePath });
+
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: params.applicationUniversalIdentifier,
+        workspaceId: params.workspaceId,
+      },
+    });
+
+    await this.fileRepository.delete({
+      path: Like(`${join(params.fileFolder, params.resourcePath)}%`),
+      applicationId: application.id,
+      workspaceId: params.workspaceId,
+    });
+
+    return deleteResult;
   }
 
   async deleteByFileId({

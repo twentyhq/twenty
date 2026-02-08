@@ -198,6 +198,7 @@ export class LogicFunctionResolver {
     @Args('input') { id, payload, forceRebuild }: ExecuteOneLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionExecutionResultDTO> {
+    // TODO: remove forceRebuild parameter and add a column called shouldRebuild or isBuiltUpToDate
     try {
       if (forceRebuild) {
         const { flatLogicFunction, applicationUniversalIdentifier } =

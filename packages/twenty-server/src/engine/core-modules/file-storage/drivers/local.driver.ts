@@ -152,7 +152,7 @@ export class LocalDriver implements StorageDriver {
       params.filename || '',
     );
 
-    await fs.rm(filePath, { recursive: true });
+    await fs.rm(filePath, { recursive: true, force: true });
   }
 
   async move(params: {

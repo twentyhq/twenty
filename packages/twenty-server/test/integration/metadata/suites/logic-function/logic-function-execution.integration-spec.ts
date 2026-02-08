@@ -79,6 +79,7 @@ describe('Logic Function Execution', () => {
       input: {
         id: functionId,
         payload: { a: 'hello', b: 42 },
+        forceRebuild: true,
       },
       expectToFail: false,
     });
@@ -129,6 +130,7 @@ describe('Logic Function Execution', () => {
             { category: 'fruit', name: 'banana' },
           ],
         },
+        forceRebuild: true,
       },
       expectToFail: false,
     });
@@ -185,6 +187,7 @@ describe('Logic Function Execution', () => {
       input: {
         id: functionId,
         payload: { shouldFail: false },
+        forceRebuild: true,
       },
       expectToFail: false,
     });
@@ -201,6 +204,7 @@ describe('Logic Function Execution', () => {
       input: {
         id: functionId,
         payload: { shouldFail: true },
+        forceRebuild: true,
       },
       expectToFail: false, // The GraphQL call succeeds, but the function execution fails
     });

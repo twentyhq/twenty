@@ -457,6 +457,17 @@ export class ApplicationService {
       throw new Error(`Application does not exist`);
     }
 
+    await Promise.all(
+      Object.values(FileFolder).map((fileFolder) => {
+        this.fileStorageService.delete_v2({
+          workspaceId,
+          applicationUniversalIdentifier: universalIdentifier,
+          fileFolder,
+          resourcePath: '',
+        });
+      }),
+    );
+
     await this.applicationRepository.delete({
       universalIdentifier,
       workspaceId,

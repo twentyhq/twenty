@@ -996,6 +996,9 @@ export class ApplicationSyncService {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatIndexMaps: existingFlatIndexMetadataMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatFrontComponentMaps: existingFlatFrontComponentMaps,
+      flatLogicFunctionMaps: existingFlatLogicFunctionMaps,
+      flatRoleMaps: existingFlatRoleMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -1003,6 +1006,9 @@ export class ApplicationSyncService {
           'flatObjectMetadataMaps',
           'flatIndexMaps',
           'flatFieldMetadataMaps',
+          'flatFrontComponentMaps',
+          'flatLogicFunctionMaps',
+          'flatRoleMaps',
         ],
       },
     );
@@ -1043,6 +1049,23 @@ export class ApplicationSyncService {
         applicationId: application.id,
       });
 
+    const flatFrontComponentMapsByApplicationId =
+      findFlatEntitiesByApplicationId({
+        flatEntityMaps: existingFlatFrontComponentMaps,
+        applicationId: application.id,
+      });
+
+    const flatLogicFunctionMapsByApplicationId =
+      findFlatEntitiesByApplicationId({
+        flatEntityMaps: existingFlatLogicFunctionMaps,
+        applicationId: application.id,
+      });
+
+    const flatRoleMapsByApplicationId = findFlatEntitiesByApplicationId({
+      flatEntityMaps: existingFlatRoleMaps,
+      applicationId: application.id,
+    });
+
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
         allFlatEntityOperationByMetadataName: {
@@ -1059,6 +1082,21 @@ export class ApplicationSyncService {
           fieldMetadata: {
             flatEntityToCreate: [],
             flatEntityToDelete: flatFieldMetadataMapsByApplicationId,
+            flatEntityToUpdate: [],
+          },
+          frontComponent: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatFrontComponentMapsByApplicationId,
+            flatEntityToUpdate: [],
+          },
+          logicFunction: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatLogicFunctionMapsByApplicationId,
+            flatEntityToUpdate: [],
+          },
+          role: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: flatRoleMapsByApplicationId,
             flatEntityToUpdate: [],
           },
         },
