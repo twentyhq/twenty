@@ -22,17 +22,27 @@ export class CloudflareSecretMatchGuard implements CanActivate {
         'CLOUDFLARE_WEBHOOK_SECRET',
       );
 
-      if (
-        !cloudflareWebhookSecret ||
-        (cloudflareWebhookSecret &&
-          // @ts-expect-error legacy noImplicitAny
-          (typeof request.headers['cf-webhook-auth'] === 'string' ||
-            timingSafeEqual(
-              // @ts-expect-error legacy noImplicitAny
-              Buffer.from(request.headers['cf-webhook-auth']),
-              Buffer.from(cloudflareWebhookSecret),
-            )))
-      ) {
+      // If no secret is configured, allow the request (feature not set up)
+      if (!cloudflareWebhookSecret) {
+        return true;
+      }
+
+      const headerValue = (request.headers as Record<string, unknown>)[
+        'cf-webhook-auth'
+      ];
+
+      if (typeof headerValue !== 'string' || headerValue.length === 0) {
+        return false;
+      }
+
+      const headerBuffer = Buffer.from(headerValue);
+      const secretBuffer = Buffer.from(cloudflareWebhookSecret);
+
+      if (headerBuffer.length !== secretBuffer.length) {
+        return false;
+      }
+
+      if (timingSafeEqual(headerBuffer, secretBuffer)) {
         return true;
       }
 
