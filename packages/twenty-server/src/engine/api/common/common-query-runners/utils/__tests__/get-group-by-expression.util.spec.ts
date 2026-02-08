@@ -3,8 +3,8 @@ import {
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 
-import { type GroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { getGroupByExpression } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/get-group-by-expression.util';
+import { type GroupByDateField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import { getGroupByExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-expression.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const buildDateTimeFieldMetadata = (): FlatFieldMetadata => {
