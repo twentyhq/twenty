@@ -238,7 +238,6 @@ export class ConfigVariables {
   })
   CALENDAR_PROVIDER_MICROSOFT_ENABLED = false;
 
-
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the access token is valid',
