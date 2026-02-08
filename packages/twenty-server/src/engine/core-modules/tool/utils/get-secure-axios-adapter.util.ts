@@ -17,7 +17,7 @@ const defaultDependencies: SecureAdapterDependencies = {
   httpAdapter: axios.getAdapter('http'),
 };
 
-export const getSecureAdapter = (
+export const getSecureAxiosAdapter = (
   dependencies: SecureAdapterDependencies = defaultDependencies,
 ): AxiosAdapter => {
   const { dnsLookup, httpAdapter } = dependencies;

@@ -118,7 +118,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     },
   )
   @JoinColumn({ name: 'kanbanAggregateOperationFieldMetadataId' })
-  kanbanAggregateOperationFieldMetadata: Relation<FieldMetadataEntity>;
+  kanbanAggregateOperationFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({
     type: 'enum',
@@ -140,7 +140,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     },
   )
   @JoinColumn({ name: 'calendarFieldMetadataId' })
-  calendarFieldMetadata: Relation<FieldMetadataEntity>;
+  calendarFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   mainGroupByFieldMetadataId: string | null;
@@ -154,7 +154,7 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
     },
   )
   @JoinColumn({ name: 'mainGroupByFieldMetadataId' })
-  mainGroupByFieldMetadata: Relation<FieldMetadataEntity>;
+  mainGroupByFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: false, default: false, type: 'boolean' })
   shouldHideEmptyGroups: boolean;

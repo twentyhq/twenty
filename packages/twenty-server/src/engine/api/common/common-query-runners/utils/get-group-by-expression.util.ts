@@ -1,5 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from 'twenty-shared/constants';
+import {
+  GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE,
+  IANA_TIME_ZONES,
+} from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
@@ -11,9 +14,11 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
-import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
-import { isGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-relation-field.util';
+import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import { isGroupByDateField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-date-field.util';
+import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
+
+const VALID_IANA_TIMEZONES = new Set(IANA_TIME_ZONES);
 
 export const getGroupByExpression = ({
   groupByField,
@@ -45,6 +50,18 @@ export const getGroupByExpression = ({
     throw new CommonQueryRunnerException(
       'Time zone should be specified for a group by date on Day, Week, Month, Quarter or Year',
       CommonQueryRunnerExceptionCode.MISSING_TIMEZONE_FOR_DATE_GROUP_BY,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  if (
+    shouldUseTimeZone &&
+    !timeZoneIsNotProvided &&
+    !VALID_IANA_TIMEZONES.has(groupByField.timeZone!)
+  ) {
+    throw new CommonQueryRunnerException(
+      `Invalid timezone: ${groupByField.timeZone}`,
+      CommonQueryRunnerExceptionCode.INVALID_TIMEZONE,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
   }

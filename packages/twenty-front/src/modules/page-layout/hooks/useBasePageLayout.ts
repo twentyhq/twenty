@@ -17,9 +17,12 @@ import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT } from '@/page-layout/constants/Defaul
 import { DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowRunPageLayoutId';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT } from '@/page-layout/constants/DefaultWorkflowVersionPageLayout';
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowVersionPageLayoutId';
+import { recordPageLayoutFromIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutFromIdFamilySelector';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useQuery } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 const getDefaultLayoutById = (layoutId: string): PageLayout => {
   switch (layoutId) {
@@ -61,18 +64,30 @@ export const useBasePageLayout = (
 ): PageLayout | undefined => {
   const isDefaultLayout = isDefaultLayoutId(pageLayoutId);
 
+  const cachedRecordPageLayout = useRecoilValue(
+    recordPageLayoutFromIdFamilySelector({ pageLayoutId }),
+  );
+
+  const shouldSkipQuery = isDefaultLayout || isDefined(cachedRecordPageLayout);
+
   const { data } = useQuery(FIND_ONE_PAGE_LAYOUT, {
     variables: {
       id: pageLayoutId,
     },
-    skip: isDefaultLayout,
+    skip: shouldSkipQuery,
   });
 
-  const basePageLayout: PageLayout | undefined = isDefaultLayout
-    ? getDefaultLayoutById(pageLayoutId)
-    : data?.getPageLayout
-      ? transformPageLayout(data.getPageLayout)
-      : undefined;
+  if (isDefaultLayout) {
+    return getDefaultLayoutById(pageLayoutId);
+  }
 
-  return basePageLayout;
+  if (isDefined(cachedRecordPageLayout)) {
+    return cachedRecordPageLayout;
+  }
+
+  if (isDefined(data?.getPageLayout)) {
+    return transformPageLayout(data.getPageLayout);
+  }
+
+  return undefined;
 };

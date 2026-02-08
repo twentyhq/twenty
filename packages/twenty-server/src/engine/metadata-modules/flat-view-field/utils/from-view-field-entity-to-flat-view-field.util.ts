@@ -58,11 +58,8 @@ export const fromViewFieldEntityToFlatViewField = ({
     updatedAt: viewFieldEntity.updatedAt.toISOString(),
     deletedAt: viewFieldEntity.deletedAt?.toISOString() ?? null,
     universalIdentifier: viewFieldEntityWithoutRelations.universalIdentifier,
-    __universal: {
-      universalIdentifier: viewFieldEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      fieldMetadataUniversalIdentifier,
-      viewUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
+    fieldMetadataUniversalIdentifier,
+    viewUniversalIdentifier,
   };
 };

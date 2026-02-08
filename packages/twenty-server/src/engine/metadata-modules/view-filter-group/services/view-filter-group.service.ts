@@ -45,11 +45,24 @@ export class ViewFilterGroupService {
         },
       );
 
+    const {
+      flatViewMaps: existingFlatViewMaps,
+      flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewMaps', 'flatViewFilterGroupMaps'],
+        },
+      );
+
     const flatViewFilterGroupToCreate =
       fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate({
         createViewFilterGroupInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatViewMaps: existingFlatViewMaps,
+        flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
       });
 
     const buildAndRunResult =

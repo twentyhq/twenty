@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/flat-navigation-menu-item-editable-properties.constant';
 import { type FlatNavigationMenuItemMaps } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item-maps.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
@@ -35,7 +36,7 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
 
     const { id: _id, ...updates } = updateNavigationMenuItemInput;
 
-    return {
+    const flatNavigationMenuItemToUpdate = {
       ...mergeUpdateInExistingRecord({
         existing: existingFlatNavigationMenuItem,
         properties: [...FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES],
@@ -43,4 +44,20 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
       }),
       updatedAt: new Date().toISOString(),
     };
+
+    if (updates.folderId !== undefined) {
+      const { folderUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'navigationMenuItem',
+          foreignKeyValues: {
+            folderId: flatNavigationMenuItemToUpdate.folderId,
+          },
+          flatEntityMaps: { flatNavigationMenuItemMaps },
+        });
+
+      flatNavigationMenuItemToUpdate.folderUniversalIdentifier =
+        folderUniversalIdentifier;
+    }
+
+    return flatNavigationMenuItemToUpdate;
   };

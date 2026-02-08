@@ -1,4 +1,3 @@
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -17,7 +16,6 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
     MessagingImportManagerModule,
     TypeOrmModule.forFeature([FileEntity]),
     FileModule,
-    HttpModule,
     JwtModule,
   ],
   providers: [

@@ -1,7 +1,5 @@
-/**
- * Standard IANA time zones.
- * @see https://www.iana.org/time-zones
- */
+// Standard IANA time zones
+// https://www.iana.org/time-zones
 export const IANA_TIME_ZONES = [
   'Africa/Abidjan',
   'Africa/Accra',
