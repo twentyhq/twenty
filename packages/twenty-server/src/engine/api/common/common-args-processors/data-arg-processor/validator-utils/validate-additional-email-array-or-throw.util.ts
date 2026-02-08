@@ -21,7 +21,7 @@ export const validateAdditionalEmailArrayOrThrow = (
 
   if (
     !Array.isArray(value) ||
-    value.forEach((item) => validateEmailValueOrThrow(item, fieldName) !== null)
+    value.some((item) => validateEmailValueOrThrow(item, fieldName) === null)
   ) {
     const inspectedValue = inspect(value);
 
