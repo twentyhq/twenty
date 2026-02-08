@@ -251,6 +251,42 @@ export default [
     },
   },
 
+  // Security: Restrict unsafe HTTP clients
+  {
+    files: ['**/*.ts'],
+    // Exclude the files that implement the security mechanism
+    ignores: [
+      '**/secure-http-client.service.ts',
+      '**/get-secure-axios-adapter.util.ts',
+      '**/*.spec.ts',
+    ],
+    rules: {
+      // Disable the base rule to avoid conflicts if it was enabled elsewhere
+      'no-restricted-imports': 'off',
+
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'axios',
+              // Allow importing types (like AxiosInstance, AxiosError)
+              allowTypeImports: true,
+              message:
+                'Direct use of axios is unsafe against SSRF. Please inject SecureHttpClientService and use .getHttpClient().',
+            },
+            {
+              name: '@nestjs/axios',
+              importNames: ['HttpService'],
+              message:
+                'HttpService is not SSRF-safe by default. Please inject SecureHttpClientService instead.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // Test files
   {
     files: [

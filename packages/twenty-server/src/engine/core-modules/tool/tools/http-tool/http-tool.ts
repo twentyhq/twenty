@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import axios, { type AxiosRequestConfig } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 import { parseDataFromContentType } from 'twenty-shared/workflow';

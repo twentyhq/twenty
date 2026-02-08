@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
@@ -33,7 +34,7 @@ import {
   type Tool,
   type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
-import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
+import { getSecureAxiosAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
@@ -277,7 +278,7 @@ export class CodeInterpreterTool implements Tool {
         // Allow requests to the server's own URL (for internal file downloads)
         // but block all other private/internal IPs to prevent SSRF attacks
         const isInternalFileUrl = file.url.startsWith(serverUrl);
-        const adapter = isInternalFileUrl ? undefined : getSecureAdapter();
+        const adapter = isInternalFileUrl ? undefined : getSecureAxiosAdapter();
 
         const response = await this.httpService.axiosRef.get(file.url, {
           responseType: 'arraybuffer',

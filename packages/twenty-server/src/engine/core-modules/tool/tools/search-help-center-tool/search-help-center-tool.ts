@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import axios from 'axios';
 
+import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
 import { SearchHelpCenterInputZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -17,7 +19,10 @@ export class SearchHelpCenterTool implements Tool {
     'Search Twenty documentation and help center to find information about features, setup, usage, and troubleshooting.';
   inputSchema = SearchHelpCenterInputZodSchema;
 
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+  constructor(
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly secureHttpClientService: SecureHttpClientService,
+  ) {}
 
   async execute(
     parameters: ToolInput,
@@ -41,11 +46,9 @@ export class SearchHelpCenterTool implements Tool {
         ...(useDirectApi && { Authorization: `Bearer ${MINTLIFY_API_KEY}` }),
       };
 
-      const response = await axios.post(
-        endpoint,
-        { query, pageSize: 10 },
-        { headers },
-      );
+      const response = await this.secureHttpClientService
+        .getHttpClient()
+        .post(endpoint, { query, pageSize: 10 }, { headers });
 
       const results = response.data;
 
