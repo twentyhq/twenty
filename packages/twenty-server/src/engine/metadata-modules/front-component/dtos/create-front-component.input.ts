@@ -42,6 +42,6 @@ export class CreateFrontComponentInput {
 
   @IsString()
   @IsNotEmpty()
-  @HideField()
+  @Field()
   builtComponentChecksum: string;
 }
