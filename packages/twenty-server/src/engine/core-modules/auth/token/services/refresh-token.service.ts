@@ -42,6 +42,13 @@ export class RefreshTokenService {
     const jwtPayload =
       this.jwtWrapperService.decode<RefreshTokenJwtPayload>(refreshToken);
 
+    if (jwtPayload.type !== JwtTokenTypeEnum.REFRESH) {
+      throw new AuthException(
+        'Expected a refresh token',
+        AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+      );
+    }
+
     if (!(jwtPayload.jti && jwtPayload.sub)) {
       throw new AuthException(
         'This refresh token is malformed',
