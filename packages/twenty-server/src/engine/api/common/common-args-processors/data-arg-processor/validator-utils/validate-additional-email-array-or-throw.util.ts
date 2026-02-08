@@ -16,12 +16,12 @@ export const validateAdditionalEmailArrayOrThrow = (
   if (isNull(value)) return null;
 
   if (typeof value === 'string') {
-    validateEmailValueOrThrow(value, fieldName);
+    return validateEmailValueOrThrow(value, fieldName);
   }
 
   if (
     !Array.isArray(value) ||
-    value.some((item) => !validateEmailValueOrThrow(item, fieldName))
+    value.forEach((item) => validateEmailValueOrThrow(item, fieldName) !== null)
   ) {
     const inspectedValue = inspect(value);
 

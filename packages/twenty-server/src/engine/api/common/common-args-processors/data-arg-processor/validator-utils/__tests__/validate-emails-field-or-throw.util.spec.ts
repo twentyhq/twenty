@@ -104,5 +104,24 @@ describe('validateEmailsFieldOrThrow', () => {
         validateEmailsFieldOrThrow(emailsValue, 'testField'),
       ).toThrow(CommonQueryRunnerException);
     });
+
+    it('should throw when primaryEmail is invalid but additionalEmails are valid', () => {
+      const emailsValue = {
+        primaryEmail: 'Primary@example.com',
+        additionalEmails: ['additional@example.com']
+      };
+
+      expect(() =>
+      validateEmailsFieldOrThrow(emailsValue, 'testField'),).toThrow(CommonQueryRunnerException);
+    })
+
+    it('should throw when one of additionalEmails is invalid', () => {
+      const emailsValue = {
+        additionalEmails: ['Additional1@example.com', 'additional2@example.com']
+      };
+
+      expect(() =>
+      validateEmailsFieldOrThrow(emailsValue, 'testField'),).toThrow(CommonQueryRunnerException);
+    })
   });
 });
