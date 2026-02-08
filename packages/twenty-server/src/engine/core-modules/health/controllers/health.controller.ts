@@ -15,6 +15,7 @@ import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { BillingHealthIndicator } from 'src/engine/core-modules/health/indicators/billing.health';
 
 @Controller('healthz')
 export class HealthController {
@@ -25,6 +26,7 @@ export class HealthController {
     private readonly workerHealth: WorkerHealthIndicator,
     private readonly connectedAccountHealth: ConnectedAccountHealth,
     private readonly appHealth: AppHealthIndicator,
+    private readonly billingHealth: BillingHealthIndicator,
   ) {}
 
   @Get()
@@ -45,6 +47,7 @@ export class HealthController {
       [HealthIndicatorId.connectedAccount]: () =>
         this.connectedAccountHealth.isHealthy(),
       [HealthIndicatorId.app]: () => this.appHealth.isHealthy(),
+      [HealthIndicatorId.billing]: () => this.billingHealth.isHealthy(),
     };
 
     if (!(indicatorId in checks)) {

@@ -7,6 +7,7 @@ import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicator
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
+import { BillingHealthIndicator } from 'src/engine/core-modules/health/indicators/billing.health';
 
 describe('HealthController', () => {
   let healthController: HealthController;
@@ -37,6 +38,10 @@ describe('HealthController', () => {
         },
         {
           provide: AppHealthIndicator,
+          useValue: { isHealthy: jest.fn() },
+        },
+        {
+          provide: BillingHealthIndicator,
           useValue: { isHealthy: jest.fn() },
         },
       ],
