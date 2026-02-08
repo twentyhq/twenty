@@ -1,8 +1,9 @@
 import { Readable } from 'stream';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
-import { ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/drivers/validated-storage.driver';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+
+import { ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/drivers/validated-storage.driver';
 
 const createMockDriver = (): jest.Mocked<StorageDriver> => ({
   readFile: jest.fn().mockResolvedValue(Readable.from([])),

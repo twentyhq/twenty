@@ -1,4 +1,5 @@
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+
 import { assertStoragePathIsSafe } from 'src/engine/core-modules/file-storage/utils/assert-storage-path-is-safe.util';
 
 describe('assertStoragePathIsSafe', () => {
@@ -58,9 +59,7 @@ describe('assertStoragePathIsSafe', () => {
   });
 
   it('should handle normalized traversal attempts', () => {
-    expect(() =>
-      assertStoragePathIsSafe('folder/../../../etc/passwd'),
-    ).toThrow(
+    expect(() => assertStoragePathIsSafe('folder/../../../etc/passwd')).toThrow(
       expect.objectContaining({
         code: FileStorageExceptionCode.ACCESS_DENIED,
       }),
