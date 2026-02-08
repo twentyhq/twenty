@@ -1,21 +1,21 @@
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
-
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
 
 describe('Front component creation should succeed', () => {
   let createdFrontComponentId: string | undefined;
+  let cleanupBuiltFile: (() => void) | undefined;
 
-  beforeAll(() => {
-    const fileStorageService = global.app.get(FileStorageService);
+  beforeAll(async () => {
+    const { cleanup } = await seedBuiltFrontComponentFile({
+      builtComponentPath: 'src/front-components/index.mjs',
+    });
 
-    jest
-      .spyOn(fileStorageService, 'checkFileExists_v2')
-      .mockResolvedValue(true);
+    cleanupBuiltFile = cleanup;
   });
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    cleanupBuiltFile?.();
   });
 
   afterEach(async () => {

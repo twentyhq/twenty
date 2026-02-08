@@ -3,32 +3,33 @@ import { createCommandMenuItem } from 'test/integration/metadata/suites/command-
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
+import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 
 describe('CommandMenuItem creation should succeed', () => {
   let createdCommandMenuItemId: string;
   let createdFrontComponentId: string | undefined;
+  let cleanupBuiltFile: (() => void) | undefined;
   let companyObjectMetadataId: string;
   let personObjectMetadataId: string;
 
   beforeAll(async () => {
-    const fileStorageService = global.app.get(FileStorageService);
-
-    jest
-      .spyOn(fileStorageService, 'checkFileExists_v2')
-      .mockResolvedValue(true);
-
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
       value: true,
       expectToFail: false,
     });
+
+    const { cleanup } = await seedBuiltFrontComponentFile({
+      builtComponentPath: 'src/front-components/index.mjs',
+    });
+
+    cleanupBuiltFile = cleanup;
 
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
@@ -59,7 +60,7 @@ describe('CommandMenuItem creation should succeed', () => {
   });
 
   afterAll(async () => {
-    jest.restoreAllMocks();
+    cleanupBuiltFile?.();
 
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,

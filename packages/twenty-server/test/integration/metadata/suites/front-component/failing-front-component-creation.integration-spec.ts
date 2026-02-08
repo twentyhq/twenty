@@ -1,11 +1,11 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
+import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 
 type TestContext = {
@@ -40,16 +40,18 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
 ];
 
 describe('Front component creation should fail', () => {
-  beforeAll(() => {
-    const fileStorageService = global.app.get(FileStorageService);
+  let cleanupBuiltFile: (() => void) | undefined;
 
-    jest
-      .spyOn(fileStorageService, 'checkFileExists_v2')
-      .mockResolvedValue(true);
+  beforeAll(async () => {
+    const { cleanup } = await seedBuiltFrontComponentFile({
+      builtComponentPath: 'src/front-components/index.mjs',
+    });
+
+    cleanupBuiltFile = cleanup;
   });
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    cleanupBuiltFile?.();
   });
 
   it.each(eachTestingContextFilter(FAILING_TEST_CASES))(
