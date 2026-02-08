@@ -1,13 +1,13 @@
-import { isNull } from '@sniptt/guards';
 import { inspect } from 'util';
+
+import { isNull } from '@sniptt/guards';
+import { msg } from '@lingui/core/macro';
+
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { msg } from '@lingui/core/macro';
-import {
-  validateEmailValueOrThrow
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-email-value-or-throw.util';
+import { validateEmailValueOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-email-value-or-throw.util';
 
 export const validateAdditionalEmailArrayOrThrow = (
   value: unknown,
@@ -15,9 +15,14 @@ export const validateAdditionalEmailArrayOrThrow = (
 ): string | string[] | null => {
   if (isNull(value)) return null;
 
-  if (typeof value === 'string') {validateEmailValueOrThrow(value, fieldName)}
+  if (typeof value === 'string') {
+    validateEmailValueOrThrow(value, fieldName);
+  }
 
-  if (!Array.isArray(value) || value.some((item) => !validateEmailValueOrThrow(item, fieldName))) {
+  if (
+    !Array.isArray(value) ||
+    value.some((item) => !validateEmailValueOrThrow(item, fieldName))
+  ) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(

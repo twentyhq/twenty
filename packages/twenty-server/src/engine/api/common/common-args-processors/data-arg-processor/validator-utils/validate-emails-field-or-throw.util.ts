@@ -1,19 +1,13 @@
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 
-import { validateArrayFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-array-field-or-throw.util';
 import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
-import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import {
-  validateEmailValueOrThrow
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-email-value-or-throw.util';
-import {
-  validateAdditionalEmailArrayOrThrow
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-additional-email-array-or-throw.util';
+import { validateEmailValueOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-email-value-or-throw.util';
+import { validateAdditionalEmailArrayOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-additional-email-array-or-throw.util';
 
 export const validateEmailsFieldOrThrow = (
   value: unknown,
@@ -34,7 +28,10 @@ export const validateEmailsFieldOrThrow = (
         }
         break;
       case 'additionalEmails':
-        validateAdditionalEmailArrayOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        validateAdditionalEmailArrayOrThrow(
+          subFieldValue,
+          `${fieldName}.${subField}`,
+        );
         break;
       default:
         throw new CommonQueryRunnerException(
