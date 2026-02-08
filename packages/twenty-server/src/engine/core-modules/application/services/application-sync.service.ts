@@ -761,11 +761,11 @@ export class ApplicationSyncService {
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
   }) {
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -782,12 +782,52 @@ export class ApplicationSyncService {
         );
       }
 
-      await this.syncObjectFieldsWithoutRelations({
-        objectId: targetObjectMetadata.id,
-        fieldsToSync: [fieldToSync],
-        workspaceId,
-        ownerFlatApplication,
-      });
+      if (!this.isFieldTypeRelation(fieldToSync.type)) {
+        const existingField = findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatFieldMetadataMaps,
+          universalIdentifier: fieldToSync.universalIdentifier,
+        });
+
+        if (isDefined(existingField)) {
+          await this.fieldMetadataService.updateOneField({
+            updateFieldInput: {
+              id: existingField.id,
+              label: fieldToSync.label,
+              description: fieldToSync.description ?? undefined,
+              icon: fieldToSync.icon ?? undefined,
+              defaultValue: fieldToSync.defaultValue ?? undefined,
+              options: fieldToSync.options ?? undefined,
+              settings: fieldToSync.settings ?? undefined,
+              isNullable: fieldToSync.isNullable ?? true,
+            },
+            workspaceId,
+            ownerFlatApplication,
+          });
+        } else {
+          const createFieldInput: CreateFieldInput = {
+            name: computeMetadataNameFromLabelOrThrow(fieldToSync.label),
+            type: fieldToSync.type,
+            label: fieldToSync.label,
+            description: fieldToSync.description ?? undefined,
+            icon: fieldToSync.icon ?? undefined,
+            defaultValue: fieldToSync.defaultValue ?? undefined,
+            options: fieldToSync.options ?? undefined,
+            settings: fieldToSync.settings ?? undefined,
+            isNullable: fieldToSync.isNullable ?? true,
+            objectMetadataId: targetObjectMetadata.id,
+            universalIdentifier: fieldToSync.universalIdentifier,
+            applicationId: ownerFlatApplication.id,
+            isCustom: true,
+            workspaceId,
+          };
+
+          await this.fieldMetadataService.createOneField({
+            createFieldInput,
+            workspaceId,
+            ownerFlatApplication,
+          });
+        }
+      }
 
       await this.syncObjectFieldsRelationOnly({
         objectId: targetObjectMetadata.id,
