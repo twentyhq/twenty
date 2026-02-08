@@ -1,10 +1,10 @@
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
-  IconCalendarRepeat,
   type IconComponent,
   IconLayoutDashboard,
   IconPlus,
+  IconSettingsAutomation,
 } from 'twenty-ui/display';
 
 export type SuggestedPrompt = {
@@ -28,7 +28,7 @@ export const DEFAULT_SUGGESTED_PROMPTS: SuggestedPrompt[] = [
   {
     id: 'workflow',
     label: msg`Create a workflow`,
-    Icon: IconCalendarRepeat,
+    Icon: IconSettingsAutomation,
     prefillPrompts: [
       msg`When a deal's stage changes to Closed Won, create a task assigned to the deal owner, due 7 days after the close date, with title "Post-sale check-in" and the company name in the description.`,
       msg`When a new lead is created with source "Website", assign it to the sales rep whose territory (by region/country) matches the lead's address; if no match, assign to the team lead.`,
