@@ -277,12 +277,13 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
-    description: 'Cooldown period for refreshing tokens',
+    description:
+      'Grace period allowing concurrent refresh token use (e.g. two tabs refreshing simultaneously). Reuse after this window triggers suspicious activity detection.',
     type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_COOL_DOWN = '1m';
+  REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
