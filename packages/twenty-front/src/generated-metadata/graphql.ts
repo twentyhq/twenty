@@ -975,6 +975,7 @@ export type CreateFieldInput = {
 };
 
 export type CreateFrontComponentInput = {
+  builtComponentChecksum: Scalars['String'];
   builtComponentPath: Scalars['String'];
   componentName: Scalars['String'];
   description?: InputMaybe<Scalars['String']>;
