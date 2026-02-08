@@ -11,6 +11,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { validateIanaTimeZone } from 'src/engine/core-modules/sql-sanitization/utils/validate-iana-time-zone.util';
 import { type GroupByField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/types/group-by-field.types';
 import { isGroupByDateField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-date-field.util';
 import { isGroupByRelationField } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/is-group-by-relation-field.util';
@@ -47,6 +48,10 @@ export const getGroupByExpression = ({
       CommonQueryRunnerExceptionCode.MISSING_TIMEZONE_FOR_DATE_GROUP_BY,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
+  }
+
+  if (shouldUseTimeZone && !timeZoneIsNotProvided) {
+    validateIanaTimeZone(groupByField.timeZone!);
   }
 
   const timeZoneAsDateTruncParameter = shouldUseTimeZone
