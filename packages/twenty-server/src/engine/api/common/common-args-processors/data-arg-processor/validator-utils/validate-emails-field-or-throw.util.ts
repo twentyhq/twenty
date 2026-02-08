@@ -23,7 +23,7 @@ export const validateEmailsFieldOrThrow = (
   for (const [subField, subFieldValue] of Object.entries(preValidatedValue)) {
     switch (subField) {
       case 'primaryEmail':
-          validateEmailValueOrThrow(subFieldValue, `${fieldName}.${subField}`);
+        validateEmailValueOrThrow(subFieldValue, `${fieldName}.${subField}`);
         break;
       case 'additionalEmails':
         validateAdditionalEmailArrayOrThrow(
