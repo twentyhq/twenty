@@ -73,49 +73,51 @@ export class TransformAllEmailsToLowercaseCommand extends ActiveOrSuspendedWorks
         );
 
         // Update all columns (fields) of email type
-        for (const field of objectEmailFields) {
-          const fieldName = field.name;
-          const tableName = objectMetadata.isCustom
-            ? `_${objectMetadata.nameSingular}`
-            : objectMetadata.nameSingular;
+        if (objectEmailFields.length > 0) {
+          for (const field of objectEmailFields) {
+            const fieldName = field.name;
+            const tableName = objectMetadata.isCustom
+              ? `_${objectMetadata.nameSingular}`
+              : objectMetadata.nameSingular;
 
-          try {
-            await queryRunner.query(
-              `UPDATE "${schemaName}"."${tableName}"
-               SET "${fieldName}PrimaryEmail" = LOWER("${fieldName}PrimaryEmail")
-               WHERE "${fieldName}PrimaryEmail" IS NOT NULL
-                 AND "${fieldName}PrimaryEmail" != LOWER("${fieldName}PrimaryEmail");`,
-            );
-            this.logger.log(
-              `Transformed ${fieldName} primary emails for ${tableName}`,
-            );
-          } catch (error) {
-            this.logger.error(
-              `Error transforming "${fieldName}" primary emails for "${tableName}" in workspace ${workspaceId}`,
-              error,
-            );
+            try {
+              await queryRunner.query(
+                `UPDATE "${schemaName}"."${tableName}"
+                 SET "${fieldName}PrimaryEmail" = LOWER("${fieldName}PrimaryEmail")
+                 WHERE "${fieldName}PrimaryEmail" IS NOT NULL
+                   AND "${fieldName}PrimaryEmail" != LOWER("${fieldName}PrimaryEmail");`,
+              );
+              this.logger.log(
+                `Transformed ${fieldName} primary emails for ${tableName}`,
+              );
+            } catch (error) {
+              this.logger.error(
+                `Error transforming "${fieldName}" primary emails for "${tableName}" in workspace ${workspaceId}`,
+                error,
+              );
 
-            throw error;
-          }
+              throw error;
+            }
 
-          try {
-            await queryRunner.query(
-              `UPDATE "${schemaName}"."${tableName}"
-               SET "${fieldName}AdditionalEmails" = (SELECT jsonb_agg(LOWER(elem))
-                                                     FROM jsonb_array_elements_text("${fieldName}AdditionalEmails") AS elem)
-               WHERE "${fieldName}AdditionalEmails" IS NOT NULL
-                 AND "${fieldName}AdditionalEmails" != '[]'::jsonb; `,
-            );
-            this.logger.log(
-              `Transformed ${fieldName} additional emails for ${tableName}`,
-            );
-          } catch (error) {
-            this.logger.error(
-              `Error transforming "${fieldName}" additional emails for "${tableName}" in workspace ${workspaceId}`,
-              error,
-            );
+            try {
+              await queryRunner.query(
+                `UPDATE "${schemaName}"."${tableName}"
+                 SET "${fieldName}AdditionalEmails" = (SELECT jsonb_agg(LOWER(elem))
+                                                       FROM jsonb_array_elements_text("${fieldName}AdditionalEmails") AS elem)
+                 WHERE "${fieldName}AdditionalEmails" IS NOT NULL
+                   AND "${fieldName}AdditionalEmails" != '[]'::jsonb; `,
+              );
+              this.logger.log(
+                `Transformed ${fieldName} additional emails for ${tableName}`,
+              );
+            } catch (error) {
+              this.logger.error(
+                `Error transforming "${fieldName}" additional emails for "${tableName}" in workspace ${workspaceId}`,
+                error,
+              );
 
-            throw error;
+              throw error;
+            }
           }
         }
       }
