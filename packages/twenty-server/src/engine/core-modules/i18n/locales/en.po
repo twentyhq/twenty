@@ -1096,6 +1096,11 @@ msgstr "Expected the same constraint fields to be used consistently across all o
 msgid "Failed to create evaluation. Please try again."
 msgstr "Failed to create evaluation. Please try again."
 
+#. js-lingui-id: RjuW0j
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Failed to create front component."
+msgstr "Failed to create front component."
+
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to create function."
@@ -1411,6 +1416,11 @@ msgstr "Form action must have at least one field"
 msgid "Friday"
 msgstr "Friday"
 
+#. js-lingui-id: Wed+Kp
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component is not ready."
+msgstr "Front component is not ready."
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1427,6 +1437,7 @@ msgstr "Front component not found"
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
 msgstr "Front component not found."
 

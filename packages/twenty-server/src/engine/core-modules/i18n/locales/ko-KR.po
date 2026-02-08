@@ -1101,6 +1101,11 @@ msgstr "{connectFieldName}의 모든 작업에서 동일한 제약 필드를 일
 msgid "Failed to create evaluation. Please try again."
 msgstr "평가 생성에 실패하였습니다. 다시 시도해주세요."
 
+#. js-lingui-id: RjuW0j
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Failed to create front component."
+msgstr ""
+
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to create function."
@@ -1416,6 +1421,11 @@ msgstr "폼 작업에는 적어도 하나의 필드가 있어야 합니다"
 msgid "Friday"
 msgstr "금요일"
 
+#. js-lingui-id: Wed+Kp
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component is not ready."
+msgstr ""
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1432,6 +1442,7 @@ msgstr ""
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
 msgstr ""
 
