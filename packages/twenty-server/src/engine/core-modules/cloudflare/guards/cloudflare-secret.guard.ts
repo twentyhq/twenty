@@ -4,6 +4,7 @@ import {
   type CanActivate,
   type ExecutionContext,
   Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common';
 
 import { timingSafeEqual } from 'crypto';
@@ -15,21 +16,20 @@ export class CloudflareSecretMatchGuard implements CanActivate {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   canActivate(context: ExecutionContext): boolean {
-    try {
-      const request = context.switchToHttp().getRequest<Request>();
+    const cloudflareWebhookSecret = this.twentyConfigService.get(
+      'CLOUDFLARE_WEBHOOK_SECRET',
+    );
 
-      const cloudflareWebhookSecret = this.twentyConfigService.get(
-        'CLOUDFLARE_WEBHOOK_SECRET',
+    if (!cloudflareWebhookSecret) {
+      throw new InternalServerErrorException(
+        'CLOUDFLARE_WEBHOOK_SECRET is not configured',
       );
+    }
 
-      // If no secret is configured, allow the request (feature not set up)
-      if (!cloudflareWebhookSecret) {
-        return true;
-      }
+    try {
+      const request = context.switchToHttp().getRequest();
 
-      const headerValue = (request.headers as Record<string, unknown>)[
-        'cf-webhook-auth'
-      ];
+      const headerValue = request.headers['cf-webhook-auth'];
 
       if (typeof headerValue !== 'string' || headerValue.length === 0) {
         return false;

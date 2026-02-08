@@ -31,14 +31,16 @@ describe('CloudflareSecretMatchGuard.canActivate', () => {
     expect(guard.canActivate(context)).toBe(true);
   });
 
-  it('should return true when env is not set', () => {
+  it('should throw InternalServerErrorException when env is not set', () => {
     jest.spyOn(twentyConfigService, 'get').mockReturnValue(undefined);
 
     const context = buildMockContext({
       'cf-webhook-auth': 'any-value',
     });
 
-    expect(guard.canActivate(context)).toBe(true);
+    expect(() => guard.canActivate(context)).toThrow(
+      'CLOUDFLARE_WEBHOOK_SECRET is not configured',
+    );
   });
 
   it('should return false when the header is missing', () => {
