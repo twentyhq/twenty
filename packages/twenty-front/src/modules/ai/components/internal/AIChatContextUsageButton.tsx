@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -122,7 +123,7 @@ const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
     (lastMessage.cachedInputTokens / lastMessage.inputTokens) * 100,
   );
 
-  return ` (${cachedPercent}% cached)`;
+  return ` (${t`${cachedPercent}% cached`})`;
 };
 
 export const AIChatContextUsageButton = () => {

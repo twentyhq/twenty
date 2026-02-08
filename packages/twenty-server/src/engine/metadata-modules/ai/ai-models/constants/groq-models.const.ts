@@ -13,4 +13,3 @@ export const GROQ_MODELS: AIModelConfig[] = [
     maxOutputTokens: 16384,
   },
 ];
-

@@ -12,4 +12,3 @@ export const GET_AI_SYSTEM_PROMPT_PREVIEW = gql`
     }
   }
 `;
-

@@ -2,21 +2,21 @@ import { Injectable } from '@nestjs/common';
 
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import {
-    type ToolIndexEntry,
-    ToolRegistryService,
+  type ToolIndexEntry,
+  type ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
-    EXECUTE_TOOL_TOOL_NAME,
-    LEARN_TOOLS_TOOL_NAME,
-    LOAD_SKILL_TOOL_NAME,
+  EXECUTE_TOOL_TOOL_NAME,
+  LEARN_TOOLS_TOOL_NAME,
+  LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import {
-    AgentActorContextService,
-    type UserContext,
+  type AgentActorContextService,
+  type UserContext,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
-import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { type SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type SystemPromptSection = {
   title: string;
@@ -30,8 +30,7 @@ export type SystemPromptPreview = {
 };
 
 // ~4 characters per token for mixed English/code content
-const estimateTokenCount = (text: string): number =>
-  Math.ceil(text.length / 4);
+const estimateTokenCount = (text: string): number => Math.ceil(text.length / 4);
 
 @Injectable()
 export class SystemPromptBuilderService {
@@ -79,8 +78,9 @@ export class SystemPromptBuilderService {
     });
 
     if (workspaceInstructions) {
-      const workspaceSection =
-        this.buildWorkspaceInstructionsSection(workspaceInstructions);
+      const workspaceSection = this.buildWorkspaceInstructionsSection(
+        workspaceInstructions,
+      );
 
       sections.push({
         title: 'Workspace Instructions',
@@ -332,4 +332,3 @@ ${tools
     }
   }
 }
-

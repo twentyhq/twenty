@@ -153,8 +153,11 @@ export const SettingsAIPrompts = () => {
     return t`~${count} tokens`;
   };
 
+  const totalTokenCount = isDefined(preview)
+    ? formatTokenCount(preview.estimatedTokenCount)
+    : '';
   const totalTokensDescription = isDefined(preview)
-    ? t`Full AI prompt sent with each request — ${formatTokenCount(preview.estimatedTokenCount)} total`
+    ? t`Full AI prompt sent with each request — ${totalTokenCount} total`
     : t`Full AI prompt sent with each request`;
 
   return (

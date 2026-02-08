@@ -18,7 +18,7 @@ import { type ExecuteToolResult } from 'src/engine/core-modules/tool-provider/to
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { type WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export type ToolIndexEntry = {
   name: string;
@@ -81,8 +81,9 @@ const PROVIDER_TO_INDEX_CATEGORY: Record<
 @Injectable()
 export class ToolRegistryService {
   private readonly logger = new Logger(ToolRegistryService.name);
-  private readonly memoizer =
-    new PromiseMemoizer<CachedToolGeneration>(MEMOIZER_TTL_MS);
+  private readonly memoizer = new PromiseMemoizer<CachedToolGeneration>(
+    MEMOIZER_TTL_MS,
+  );
 
   constructor(
     @Inject(TOOL_PROVIDERS)
@@ -237,9 +238,7 @@ export class ToolRegistryService {
     const { tools } = await this.getCachedGeneration(fullContext);
 
     return Object.fromEntries(
-      names
-        .filter((name) => name in tools)
-        .map((name) => [name, tools[name]]),
+      names.filter((name) => name in tools).map((name) => [name, tools[name]]),
     );
   }
 

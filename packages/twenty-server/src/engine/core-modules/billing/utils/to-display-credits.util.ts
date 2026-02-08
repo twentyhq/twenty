@@ -7,4 +7,3 @@ export const INTERNAL_CREDITS_PER_DISPLAY_CREDIT = 1000;
 // Rounds to 1 decimal place for clean display (e.g. 7500 → 7.5).
 export const toDisplayCredits = (internalCredits: number): number =>
   Math.round((internalCredits / INTERNAL_CREDITS_PER_DISPLAY_CREDIT) * 10) / 10;
-

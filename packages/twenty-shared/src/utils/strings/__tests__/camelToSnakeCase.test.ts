@@ -23,4 +23,3 @@ describe('camelToSnakeCase', () => {
     expect(camelToSnakeCase('company')).toBe('company');
   });
 });
-

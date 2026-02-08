@@ -20,4 +20,3 @@ export class AISystemPromptPreviewDTO {
   @Field(() => Int)
   estimatedTokenCount: number;
 }
-
