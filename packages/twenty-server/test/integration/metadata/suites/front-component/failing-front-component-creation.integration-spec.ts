@@ -5,6 +5,7 @@ import {
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
 
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
 
 type TestContext = {
@@ -39,6 +40,18 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
 ];
 
 describe('Front component creation should fail', () => {
+  beforeAll(() => {
+    const fileStorageService = global.app.get(FileStorageService);
+
+    jest
+      .spyOn(fileStorageService, 'checkFileExists_v2')
+      .mockResolvedValue(true);
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
   it.each(eachTestingContextFilter(FAILING_TEST_CASES))(
     '$title',
     async ({ context }) => {

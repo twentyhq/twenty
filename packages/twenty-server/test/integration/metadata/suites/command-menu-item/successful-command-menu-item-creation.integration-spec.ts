@@ -8,6 +8,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 
 describe('CommandMenuItem creation should succeed', () => {
@@ -17,6 +18,12 @@ describe('CommandMenuItem creation should succeed', () => {
   let personObjectMetadataId: string;
 
   beforeAll(async () => {
+    const fileStorageService = global.app.get(FileStorageService);
+
+    jest
+      .spyOn(fileStorageService, 'checkFileExists_v2')
+      .mockResolvedValue(true);
+
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
       value: true,
@@ -52,6 +59,8 @@ describe('CommandMenuItem creation should succeed', () => {
   });
 
   afterAll(async () => {
+    jest.restoreAllMocks();
+
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
       value: false,

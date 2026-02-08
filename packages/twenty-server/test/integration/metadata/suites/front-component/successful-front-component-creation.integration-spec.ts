@@ -1,8 +1,22 @@
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+
 describe('Front component creation should succeed', () => {
   let createdFrontComponentId: string | undefined;
+
+  beforeAll(() => {
+    const fileStorageService = global.app.get(FileStorageService);
+
+    jest
+      .spyOn(fileStorageService, 'checkFileExists_v2')
+      .mockResolvedValue(true);
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
 
   afterEach(async () => {
     if (createdFrontComponentId) {
