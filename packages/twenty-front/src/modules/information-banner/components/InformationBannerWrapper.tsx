@@ -11,6 +11,8 @@ import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { PermissionFlagType } from '~/generated/graphql';
 
 const StyledInformationBannerWrapper = styled.div`
   position: relative;
@@ -22,6 +24,9 @@ const StyledInformationBannerWrapper = styled.div`
 
 export const InformationBannerWrapper = () => {
   const subscriptionStatus = useSubscriptionStatus();
+  const permissionMap = usePermissionFlagMap();
+  const isAccountSyncEnabled =
+    permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
@@ -44,7 +49,9 @@ export const InformationBannerWrapper = () => {
   return (
     <StyledInformationBannerWrapper>
       <InformationBannerReconnectAccountInsufficientPermissions />
-      <InformationBannerReconnectAccountEmailAliases />
+      {isAccountSyncEnabled && (
+        <InformationBannerReconnectAccountEmailAliases />
+      )}
       {displayBillingSubscriptionPausedBanner && (
         <InformationBannerBillingSubscriptionPaused /> // TODO: remove this once paused subscriptions are deprecated
       )}
