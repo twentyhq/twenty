@@ -42,7 +42,7 @@ export class FileStorageService {
       applicationUniversalIdentifier,
       fileFolder,
       resourcePath,
-    );
+    ).replace(/\/+/g, '/');
   }
 
   /**
@@ -281,8 +281,13 @@ export class FileStorageService {
       },
     });
 
+    const basePath = `${join(params.fileFolder, params.resourcePath)}`.replace(
+      /\/+/g,
+      '/',
+    );
+
     await this.fileRepository.delete({
-      path: Like(`${join(params.fileFolder, params.resourcePath)}%`),
+      path: Like(`${basePath}%`),
       applicationId: application.id,
       workspaceId: params.workspaceId,
     });

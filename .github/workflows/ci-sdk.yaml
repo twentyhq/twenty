@@ -83,6 +83,8 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Build
+        run: npx nx build twenty-sdk
       - name: Server / Append billing config to .env.test
         working-directory: packages/twenty-server
         run: |

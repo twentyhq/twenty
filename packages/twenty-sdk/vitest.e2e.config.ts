@@ -24,7 +24,7 @@ export default defineConfig({
     sequence: {
       concurrent: false,
     },
-    setupFiles: ['src/cli/__tests__/e2e/setupTest.ts'],
+    setupFiles: ['src/cli/__tests__/constants/setupTest.ts'],
     globalSetup: undefined,
     onConsoleLog: () => true,
   },
