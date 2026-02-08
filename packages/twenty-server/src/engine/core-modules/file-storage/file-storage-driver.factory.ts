@@ -7,6 +7,7 @@ import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfac
 
 import { LocalDriver } from 'src/engine/core-modules/file-storage/drivers/local.driver';
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
+import { ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/drivers/validated-storage.driver';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -40,14 +41,16 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
 
   protected createDriver(): StorageDriver {
     const storageType = this.twentyConfigService.get('STORAGE_TYPE');
+    let rawDriver: StorageDriver;
 
     switch (storageType) {
       case StorageDriverType.LOCAL: {
         const storagePath = this.twentyConfigService.get('STORAGE_LOCAL_PATH');
 
-        return new LocalDriver({
+        rawDriver = new LocalDriver({
           storagePath: resolveAbsolutePath(storagePath),
         });
+        break;
       }
 
       case StorageDriverType.S_3: {
@@ -61,7 +64,7 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
           'STORAGE_S3_SECRET_ACCESS_KEY',
         );
 
-        return new S3Driver({
+        rawDriver = new S3Driver({
           bucketName: bucketName ?? '',
           endpoint: endpoint,
           credentials: accessKeyId
@@ -70,10 +73,13 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
           forcePathStyle: true,
           region: region ?? '',
         });
+        break;
       }
 
       default:
         throw new Error(`Invalid storage driver type: ${storageType}`);
     }
+
+    return new ValidatedStorageDriver(rawDriver);
   }
 }

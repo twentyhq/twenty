@@ -47,14 +47,14 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     inMemoryLayerFolderPath: string;
   }) {
     await Promise.all([
-      this.fileStorageService.downloadFile_v2({
+      this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Dependencies,
         resourcePath: 'package.json',
         localPath: join(inMemoryLayerFolderPath, 'package.json'),
       }),
-      this.fileStorageService.downloadFile_v2({
+      this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Dependencies,
@@ -122,7 +122,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
 
       const baseFolderPath = dirname(flatLogicFunction.builtHandlerPath);
 
-      await this.fileStorageService.downloadFolder_v2({
+      await this.fileStorageService.downloadFolder({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,

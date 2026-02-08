@@ -281,13 +281,13 @@ export class LogicFunctionExecutorService
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<boolean> {
-    const packageJsonExists = await this.fileStorageService.checkFileExists_v2({
+    const packageJsonExists = await this.fileStorageService.checkFileExists({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Dependencies,
       resourcePath: 'package.json',
     });
-    const yarnLockExists = await this.fileStorageService.checkFileExists_v2({
+    const yarnLockExists = await this.fileStorageService.checkFileExists({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Dependencies,
