@@ -4,7 +4,7 @@ import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessio
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import deepEqual from 'deep-equal';
-import { BillingPlanKey } from '~/generated/graphql';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 // Initialize state that are hydrated from query parameters
 // We used to use recoil-sync to do this, but it was causing issues with Firefox
@@ -58,13 +58,12 @@ export const useInitializeQueryParamState = () => {
                     ? BillingPlanKey.PRO
                     : BillingPlanKey.ENTERPRISE;
 
-                const updatedBillingCheckoutSession: BillingCheckoutSession = {
-                  plan: changedPlan,
-                  interval: billingCheckoutSession.interval,
-                  requirePaymentMethod:
-                    billingCheckoutSession.requirePaymentMethod,
-                };
-                set(billingCheckoutSessionState, updatedBillingCheckoutSession);
+                if (billingCheckoutSession.plan !== changedPlan) {
+                  set(billingCheckoutSessionState, (prev) => ({
+                    ...prev,
+                    plan: changedPlan,
+                  }));
+                }
               }
             } catch (error) {
               // eslint-disable-next-line no-console

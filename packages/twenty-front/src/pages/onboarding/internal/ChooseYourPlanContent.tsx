@@ -265,7 +265,9 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
         </ClickToActionLink>
         <span />
         {currentPlanKey === BillingPlanKey.PRO ? (
-          <ClickToActionLink href={AppPath.PlanRequired.concat('?plan=enterprise')}>
+          <ClickToActionLink
+            href={AppPath.PlanRequired.concat('?plan=enterprise')}
+          >
             <Trans>Organization plan</Trans>
           </ClickToActionLink>
         ) : (
