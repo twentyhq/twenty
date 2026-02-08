@@ -1,9 +1,10 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type AllStandardObjectViewFilterName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-view-filter-name.type';
@@ -52,11 +53,24 @@ export const createStandardViewFilterFlatMetadata = <
   twentyStandardApplicationId,
   now,
 }: CreateStandardViewFilterArgs<O, V>): FlatViewFilter => {
-  // @ts-expect-error ignore
-  const viewFilterDefinition = STANDARD_OBJECTS[objectName].views[viewName]
-    .viewFilters[viewFilterName] as {
-    universalIdentifier: string;
+  const objectDefinition = STANDARD_OBJECTS[objectName] as {
+    fields: Record<
+      AllStandardObjectFieldName<O>,
+      { universalIdentifier: string }
+    >;
+    views: Record<
+      V,
+      {
+        universalIdentifier: string;
+        viewFields: Record<string, { universalIdentifier: string }>;
+        viewFilters: Record<string, { universalIdentifier: string }>;
+      }
+    >;
   };
+
+  const viewDefinition = objectDefinition.views[viewName];
+  const viewFilterDefinition = viewDefinition.viewFilters[viewFilterName];
+  const fieldDefinition = objectDefinition.fields[fieldName];
 
   if (!isDefined(viewFilterDefinition)) {
     throw new Error(
@@ -68,15 +82,20 @@ export const createStandardViewFilterFlatMetadata = <
     id: v4(),
     universalIdentifier: viewFilterDefinition.universalIdentifier,
     applicationId: twentyStandardApplicationId,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
     workspaceId,
     viewId:
       standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
+    viewUniversalIdentifier: viewDefinition.universalIdentifier,
     fieldMetadataId:
       standardObjectMetadataRelatedEntityIds[objectName].fields[fieldName].id,
+    fieldMetadataUniversalIdentifier: fieldDefinition.universalIdentifier,
+    viewFilterGroupId,
+    viewFilterGroupUniversalIdentifier: null,
     operand,
     value,
     subFieldName,
-    viewFilterGroupId,
     positionInViewFilterGroup,
     createdAt: now,
     updatedAt: now,

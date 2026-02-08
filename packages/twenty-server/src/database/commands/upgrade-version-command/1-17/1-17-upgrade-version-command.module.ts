@@ -3,9 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
 import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files.command';
+import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-fix-morph-relation-field-names.command';
 import { IdentifyWebhookMetadataCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-identify-webhook-metadata.command';
 import { MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-make-webhook-universal-identifier-and-application-id-not-nullable-migration.command';
 import { MigrateAttachmentToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-attachment-to-morph-relations.command';
+import { MigrateFavoritesToNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-favorites-to-navigation-menu-items.command';
 import { MigrateNoteTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-note-target-to-morph-relations.command';
 import { MigrateSendEmailRecipientsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-send-email-recipients.command';
 import { MigrateTaskTargetToMorphRelationsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-migrate-task-target-to-morph-relations.command';
@@ -18,6 +20,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -31,6 +34,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
@@ -58,12 +62,16 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     FieldMetadataModule,
     ObjectMetadataModule,
     ApplicationModule,
+    UserWorkspaceModule,
+    WorkspaceMigrationModule,
     LogicFunctionModule,
     RecordPositionModule,
     GlobalWorkspaceDataSourceModule,
   ],
   providers: [
+    FixMorphRelationFieldNamesCommand,
     MigrateAttachmentToMorphRelationsCommand,
+    MigrateFavoritesToNavigationMenuItemsCommand,
     MigrateNoteTargetToMorphRelationsCommand,
     MigrateTaskTargetToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,
@@ -76,7 +84,9 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     UpdateFileTableMigrationCommand,
   ],
   exports: [
+    FixMorphRelationFieldNamesCommand,
     MigrateAttachmentToMorphRelationsCommand,
+    MigrateFavoritesToNavigationMenuItemsCommand,
     MigrateNoteTargetToMorphRelationsCommand,
     MigrateTaskTargetToMorphRelationsCommand,
     IdentifyWebhookMetadataCommand,

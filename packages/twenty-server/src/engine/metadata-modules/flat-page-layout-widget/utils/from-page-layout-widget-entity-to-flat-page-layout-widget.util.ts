@@ -6,7 +6,6 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { getMetadataEntityRelationProperties } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-entity-relation-properties.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 
 type FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs =
@@ -19,7 +18,6 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
   applicationIdToUniversalIdentifierMap,
   pageLayoutTabIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
-  fieldMetadataIdToUniversalIdentifierMap,
 }: FromPageLayoutWidgetEntityToFlatPageLayoutWidgetArgs): FlatPageLayoutWidget => {
   const pageLayoutWidgetEntityWithoutRelations = removePropertiesFromRecord(
     pageLayoutWidgetEntity,
@@ -66,11 +64,12 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     }
   }
 
-  const configurationWithUniversalIdentifiers =
-    fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-      configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
-      fieldMetadataIdToUniversalIdentifierMap,
-    });
+  // TODO uncomment once page layout widget has been migrated
+  // const configurationWithUniversalIdentifiers =
+  //   fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+  //     configuration: pageLayoutWidgetEntityWithoutRelations.configuration,
+  //     fieldMetadataIdToUniversalIdentifierMap,
+  //   });
 
   return {
     ...pageLayoutWidgetEntityWithoutRelations,
@@ -80,12 +79,9 @@ export const fromPageLayoutWidgetEntityToFlatPageLayoutWidget = ({
     universalIdentifier:
       pageLayoutWidgetEntityWithoutRelations.universalIdentifier,
     applicationId: pageLayoutWidgetEntityWithoutRelations.applicationId,
-    __universal: {
-      universalIdentifier: pageLayoutWidgetEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      pageLayoutTabUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      universalConfiguration: configurationWithUniversalIdentifiers,
-    },
+    applicationUniversalIdentifier,
+    pageLayoutTabUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    // universalConfiguration: configurationWithUniversalIdentifiers,
   };
 };

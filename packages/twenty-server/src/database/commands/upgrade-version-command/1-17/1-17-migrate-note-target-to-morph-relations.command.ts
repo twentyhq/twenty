@@ -18,8 +18,8 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -152,6 +152,7 @@ export class MigrateNoteTargetToMorphRelationsCommand extends ActiveOrSuspendedW
 
       const fieldMigrations = noteTargetRelationFields.map((field) => {
         const newFieldName = `target${capitalize(field.name)}`;
+        const newFieldLabel = 'Target';
         const relationSettings: RelationFieldMetadataSettings = field.settings;
         const oldJoinColumnName =
           relationSettings?.joinColumnName ??
@@ -163,6 +164,7 @@ export class MigrateNoteTargetToMorphRelationsCommand extends ActiveOrSuspendedW
         return {
           field,
           newFieldName,
+          newFieldLabel,
           oldJoinColumnName,
           newJoinColumnName,
         };
@@ -204,6 +206,7 @@ export class MigrateNoteTargetToMorphRelationsCommand extends ActiveOrSuspendedW
       for (const {
         field: fieldToMigrate,
         newFieldName,
+        newFieldLabel,
         newJoinColumnName,
       } of fieldMigrations) {
         const settings = {
@@ -214,7 +217,7 @@ export class MigrateNoteTargetToMorphRelationsCommand extends ActiveOrSuspendedW
         try {
           const result = await queryRunner.query(
             `UPDATE core."fieldMetadata"
-           SET name = $1, type = $5, "morphId" = $3, settings = $4
+           SET name = $1, type = $5, "morphId" = $3, settings = $4, "isActive" = true, label = $6
            WHERE id = $2`,
             [
               newFieldName,
@@ -222,6 +225,7 @@ export class MigrateNoteTargetToMorphRelationsCommand extends ActiveOrSuspendedW
               morphId,
               settings,
               FieldMetadataType.MORPH_RELATION,
+              newFieldLabel,
             ],
           );
 
@@ -229,7 +233,7 @@ export class MigrateNoteTargetToMorphRelationsCommand extends ActiveOrSuspendedW
 
           if (rowsUpdated > 0) {
             this.logger.log(
-              `Updated fieldMetadata: ${fieldToMigrate.name} → ${newFieldName} (type: MORPH_RELATION)`,
+              `Updated fieldMetadata: ${fieldToMigrate.name} → ${newFieldName} (label: ${newFieldLabel}, type: MORPH_RELATION)`,
             );
           }
         } catch (error) {

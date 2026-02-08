@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { CreateRoleTargetInput } from 'src/engine/metadata-modules/role-target/types/create-role-target.input';
 import { fromCreateRoleTargetInputToFlatRoleTargetToCreate } from 'src/engine/metadata-modules/role-target/utils/from-create-role-target-input-to-flat-role-target-to-create.util';
@@ -56,11 +56,15 @@ export class RoleTargetService {
       return [];
     }
 
-    const { flatRoleTargetMaps } =
+    const { flatRoleTargetMaps, flatApplicationMaps, flatRoleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleTargetMaps'],
+          flatMapsKeys: [
+            'flatRoleTargetMaps',
+            'flatApplicationMaps',
+            'flatRoleMaps',
+          ],
         },
       );
 
@@ -75,16 +79,17 @@ export class RoleTargetService {
     const allFlatRoleTargetsToDelete: FlatRoleTarget[] = [];
 
     for (const createRoleTargetInput of createRoleTargetInputs) {
+      const flatApplication = isDefined(createRoleTargetInput.applicationId)
+        ? flatApplicationMaps.byId[createRoleTargetInput.applicationId]
+        : undefined;
+
       const { flatRoleTargetToCreate, flatRoleTargetsToDelete } =
         fromCreateRoleTargetInputToFlatRoleTargetToCreate({
-          createRoleTargetInput: {
-            ...createRoleTargetInput,
-            applicationId:
-              createRoleTargetInput.applicationId ??
-              workspaceCustomFlatApplication.id,
-          },
+          createRoleTargetInput,
           flatRoleTargetMaps,
+          flatRoleMaps,
           workspaceId,
+          flatApplication: flatApplication ?? workspaceCustomFlatApplication,
         });
 
       allFlatRoleTargetsToCreate.push(flatRoleTargetToCreate);

@@ -6,10 +6,14 @@ export const PAGE_LAYOUT_TAB_FRAGMENT = gql`
   fragment PageLayoutTabFragment on PageLayoutTab {
     id
     title
+    icon
     position
+    layoutMode
     widgets {
       ...PageLayoutWidgetFragment
     }
     pageLayoutId
+    createdAt
+    updatedAt
   }
 `;

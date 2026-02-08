@@ -277,6 +277,28 @@ export class FilesFieldSync {
     }
   }
 
+  private validateFileFieldUniversalIdentifier(
+    fileId: string,
+    fileEntity: FileEntity,
+    fileIdToFieldUniversalIdentifier: Map<string, string>,
+  ): void {
+    const expectedUniversalIdentifier =
+      fileIdToFieldUniversalIdentifier.get(fileId);
+
+    if (
+      isDefined(expectedUniversalIdentifier) &&
+      !fileEntity.path.includes(expectedUniversalIdentifier)
+    ) {
+      throw new TwentyORMException(
+        `File ${fileId} was not uploaded for this field`,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`File ${fileId} was not uploaded for this field. Please re-upload the file.`,
+        },
+      );
+    }
+  }
+
   private validateAndComputeFilesFieldDiff(
     entity: Record<string, unknown>,
     filesField: FlatFieldMetadata,
@@ -358,7 +380,6 @@ export class FilesFieldSync {
       toUpdate: Set<string>;
       toRemove: Set<string>;
     };
-    fileIdToApplicationId: Map<string, string>;
   }> {
     if (Object.keys(filesFieldDiffByEntityIndex).length === 0) {
       return {
@@ -368,7 +389,6 @@ export class FilesFieldSync {
           toUpdate: new Set<string>(),
           toRemove: new Set<string>(),
         },
-        fileIdToApplicationId: new Map(),
       };
     }
 
@@ -377,12 +397,11 @@ export class FilesFieldSync {
       this.internalContext,
     );
 
-    const { toAdd, toUpdate, toRemove, fileIdToApplicationId } =
-      await this.validateAndEnrichFileDiffs(
-        filesFieldDiffByEntityIndex,
-        workspaceId,
-        objectMetadata.id,
-      );
+    const { toAdd, toUpdate, toRemove } = await this.validateAndEnrichFileDiffs(
+      filesFieldDiffByEntityIndex,
+      workspaceId,
+      objectMetadata.id,
+    );
 
     const updatedEntities = this.updateEntitiesWithEnrichedFilesFieldValues(
       entities,
@@ -392,7 +411,6 @@ export class FilesFieldSync {
     return {
       entities: updatedEntities,
       fileIds: { toAdd, toUpdate, toRemove },
-      fileIdToApplicationId,
     };
   }
 
@@ -404,7 +422,6 @@ export class FilesFieldSync {
     toAdd: Set<string>;
     toUpdate: Set<string>;
     toRemove: Set<string>;
-    fileIdToApplicationId: Map<string, string>;
   }> {
     const allFileIds = {
       toAdd: new Set<string>(),
@@ -412,28 +429,39 @@ export class FilesFieldSync {
       toRemove: new Set<string>(),
     };
 
-    const fileIdToApplicationId = new Map<string, string>();
     const allFileIdsToFetch = new Set<string>();
 
     const filesFields = this.getFilesFields(objectMetadataId);
-    const fieldNameToApplicationId = new Map(
-      filesFields.map((field) => [field.name, field.applicationId]),
+    const fieldNameToUniversalIdentifier = new Map(
+      filesFields.map((field) => [field.name, field.universalIdentifier]),
     );
+
+    const fileIdToFieldUniversalIdentifier = new Map<string, string>();
 
     for (const entityDiffs of Object.values(filesFieldDiffByEntityIndex)) {
       for (const [fieldName, diff] of Object.entries(entityDiffs)) {
-        const fieldApplicationId = fieldNameToApplicationId.get(fieldName);
+        const fieldUniversalIdentifier =
+          fieldNameToUniversalIdentifier.get(fieldName);
 
         diff.toAdd.forEach((file) => {
           allFileIds.toAdd.add(file.fileId);
           allFileIdsToFetch.add(file.fileId);
-          if (fieldApplicationId) {
-            fileIdToApplicationId.set(file.fileId, fieldApplicationId);
+          if (isDefined(fieldUniversalIdentifier)) {
+            fileIdToFieldUniversalIdentifier.set(
+              file.fileId,
+              fieldUniversalIdentifier,
+            );
           }
         });
         diff.toUpdate.forEach((file) => {
           allFileIds.toUpdate.add(file.fileId);
           allFileIdsToFetch.add(file.fileId);
+          if (isDefined(fieldUniversalIdentifier)) {
+            fileIdToFieldUniversalIdentifier.set(
+              file.fileId,
+              fieldUniversalIdentifier,
+            );
+          }
         });
         diff.toRemove.forEach((file) => {
           allFileIds.toRemove.add(file.fileId);
@@ -442,7 +470,7 @@ export class FilesFieldSync {
     }
 
     if (allFileIdsToFetch.size === 0 && allFileIds.toRemove.size === 0) {
-      return { ...allFileIds, fileIdToApplicationId };
+      return allFileIds;
     }
 
     const existingFiles = await this.fileRepository.find({
@@ -469,6 +497,12 @@ export class FilesFieldSync {
             );
           }
 
+          this.validateFileFieldUniversalIdentifier(
+            file.fileId,
+            fileEntity,
+            fileIdToFieldUniversalIdentifier,
+          );
+
           if (!fileEntity.settings?.isTemporaryFile) {
             const fileId = file.fileId;
 
@@ -494,6 +528,12 @@ export class FilesFieldSync {
             );
           }
 
+          this.validateFileFieldUniversalIdentifier(
+            file.fileId,
+            fileEntity,
+            fileIdToFieldUniversalIdentifier,
+          );
+
           if (fileEntity.settings?.isTemporaryFile) {
             throw new TwentyORMException(
               `File ${file.fileId} to update should not be a temporary file`,
@@ -507,50 +547,24 @@ export class FilesFieldSync {
       }
     }
 
-    return { ...allFileIds, fileIdToApplicationId };
+    return allFileIds;
   }
 
-  async updateFileEntityRecords(
-    fileIds: {
-      toAdd: Set<string>;
-      toUpdate: Set<string>;
-      toRemove: Set<string>;
-    },
-    fileIdToApplicationId: Map<string, string>,
-  ): Promise<void> {
+  async updateFileEntityRecords(fileIds: {
+    toAdd: Set<string>;
+    toUpdate: Set<string>;
+    toRemove: Set<string>;
+  }): Promise<void> {
     if (fileIds.toAdd.size > 0) {
-      const fileIdsByApplicationId = Array.from(fileIds.toAdd).reduce(
-        (acc, fileId) => {
-          const applicationId = fileIdToApplicationId.get(fileId);
-
-          if (!applicationId) {
-            throw new TwentyORMException(
-              `Application ID not found for file ${fileId}`,
-              TwentyORMExceptionCode.INVALID_INPUT,
-            );
-          }
-
-          acc[applicationId] = [...(acc[applicationId] || []), fileId];
-
-          return acc;
-        },
-        {} as Record<string, string[]>,
-      );
-
-      for (const [applicationId, fileIds] of Object.entries(
-        fileIdsByApplicationId,
-      )) {
-        await this.fileRepository.update(
-          { id: In(fileIds) },
-          {
-            settings: {
-              isTemporaryFile: false,
-              toDelete: false,
-            },
-            applicationId,
+      await this.fileRepository.update(
+        { id: In([...fileIds.toAdd]) },
+        {
+          settings: {
+            isTemporaryFile: false,
+            toDelete: false,
           },
-        );
-      }
+        },
+      );
     }
 
     if (fileIds.toRemove.size > 0) {
