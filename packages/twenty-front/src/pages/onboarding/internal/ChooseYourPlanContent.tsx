@@ -17,11 +17,7 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
-import {
-  CAL_LINK,
-  ClickToActionLink,
-  TWENTY_PRICING_LINK,
-} from 'twenty-ui/navigation';
+import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
 import { type Billing } from '~/generated/graphql';
 
@@ -260,10 +256,6 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
           <Trans>Log out</Trans>
         </ClickToActionLink>
         <span />
-        <ClickToActionLink href={TWENTY_PRICING_LINK}>
-          <Trans>Change Plan</Trans>
-        </ClickToActionLink>
-        <span />
         <ClickToActionLink
           href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
           target={calendarBookingPageId ? '_self' : '_blank'}
@@ -271,6 +263,16 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
         >
           <Trans>Book a Call</Trans>
         </ClickToActionLink>
+        <span />
+        {currentPlanKey === BillingPlanKey.PRO ? (
+          <ClickToActionLink href={AppPath.PlanRequired.concat('?plan=enterprise')}>
+            <Trans>Organization plan</Trans>
+          </ClickToActionLink>
+        ) : (
+          <ClickToActionLink href={AppPath.PlanRequired.concat('?plan=pro')}>
+            <Trans>Pro plan</Trans>
+          </ClickToActionLink>
+        )}
       </StyledLinkGroup>
     </>
   );
