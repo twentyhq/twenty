@@ -119,6 +119,8 @@ export class TransformAllEmailsToLowercaseCommand extends ActiveOrSuspendedWorks
           }
         }
       }
+      await queryRunner.commitTransaction();
+      this.logger.log(`✅ Successfully transformed all emails to lowercase`);
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
