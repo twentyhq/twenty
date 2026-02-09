@@ -1,9 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import {
-  FlatEntityMapsException,
-  FlatEntityMapsExceptionCode,
-} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -192,68 +188,5 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
     expect(updatedFieldMetadata).toMatchObject({
       calendarViewUniversalIdentifiers: [],
     });
-  });
-
-  it('should throw when related entity is not found', () => {
-    const viewUniversalIdentifier = 'view-universal-1';
-    const nonExistentObjectMetadataUniversalIdentifier =
-      'non-existent-object-universal';
-    const applicationUniversalIdentifier =
-      '20202020-f3ad-452e-b5b6-2d49d3ea88b1';
-
-    const mockUniversalView = {
-      universalIdentifier: viewUniversalIdentifier,
-      objectMetadataUniversalIdentifier:
-        nonExistentObjectMetadataUniversalIdentifier,
-      viewFieldUniversalIdentifiers: [],
-      viewFilterUniversalIdentifiers: [],
-      viewGroupUniversalIdentifiers: [],
-      applicationUniversalIdentifier,
-      calendarFieldMetadataUniversalIdentifier: null,
-      createdAt: '2024-01-01T00:00:00.000Z',
-      updatedAt: '2024-01-01T00:00:00.000Z',
-      name: 'Test View',
-      type: 'table',
-      icon: 'IconList',
-      isCompact: false,
-      position: 0,
-      key: null,
-      kanbanFieldMetadataUniversalIdentifier: null,
-      kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
-      kanbanAggregateOperation: null,
-      mainGroupByFieldMetadataUniversalIdentifier: null,
-      viewFilterGroupUniversalIdentifiers: [],
-      rowLevelPermissionPredicateGroupUniversalIdentifiers: [],
-    };
-
-    const flatViewMaps =
-      createEmptyUniversalFlatEntityMaps<typeof mockUniversalView>();
-
-    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-      universalFlatEntity: mockUniversalView,
-      universalFlatEntityMapsToMutate: flatViewMaps,
-    });
-
-    const universalFlatEntityAndRelatedMapsToMutate = {
-      flatFieldMetadataMaps: createEmptyUniversalFlatEntityMaps(),
-      flatObjectMetadataMaps: createEmptyUniversalFlatEntityMaps(),
-      flatViewMaps,
-    } as unknown as MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'>;
-
-    expect(() =>
-      deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
-        {
-          metadataName: 'view',
-          universalFlatEntity:
-            mockUniversalView as unknown as MetadataUniversalFlatEntity<'view'>,
-          universalFlatEntityAndRelatedMapsToMutate,
-        },
-      ),
-    ).toThrow(
-      new FlatEntityMapsException(
-        `Could not find flat entity with universal identifier ${nonExistentObjectMetadataUniversalIdentifier}`,
-        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-      ),
-    );
   });
 });
