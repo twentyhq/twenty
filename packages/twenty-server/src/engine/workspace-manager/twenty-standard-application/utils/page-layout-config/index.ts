@@ -7,4 +7,12 @@ export { STANDARD_TASK_PAGE_LAYOUT_CONFIG } from './standard-task-page-layout.co
 export { STANDARD_WORKFLOW_PAGE_LAYOUT_CONFIG } from './standard-workflow-page-layout.config';
 export { STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG } from './standard-workflow-run-page-layout.config';
 export { STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG } from './standard-workflow-version-page-layout.config';
-export { type StandardPageLayoutConfig } from './standard-page-layout-config.type';
+export {
+  type StandardPageLayoutConfig,
+  type StandardPageLayoutTabConfig,
+  type StandardPageLayoutWidgetConfig,
+  type StandardRecordPageLayoutConfig,
+  type StandardRecordPageLayouts,
+  type StandardRecordPageTabConfig,
+  type StandardRecordPageWidgetConfig,
+} from './standard-page-layout-config.type';

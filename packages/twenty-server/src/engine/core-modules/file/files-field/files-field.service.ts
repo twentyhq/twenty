@@ -80,7 +80,7 @@ export class FilesFieldService {
       },
     });
 
-    return await this.fileStorageService.writeFile_v2({
+    return await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
       resourcePath: `${fieldMetadata.universalIdentifier}/${name}`,
       mimeType,
@@ -153,7 +153,7 @@ export class FilesFieldService {
       },
     });
 
-    return await this.fileStorageService.readFile_v2({
+    return await this.fileStorageService.readFile({
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,

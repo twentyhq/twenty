@@ -175,6 +175,11 @@ msgstr "Une erreur de tri de vue s'est produite."
 msgid "A webhook with this configuration already exists."
 msgstr ""
 
+#. js-lingui-id: qjrxU8
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "Access denied."
+msgstr ""
+
 #. js-lingui-id: Bk+qoW
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
@@ -834,6 +839,16 @@ msgstr ""
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
 msgstr "Des permissions de champ contradictoires ont été détectées sur un champ de relation ({fieldName})."
 
+#. js-lingui-id: KYkpUZ
+#: src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util.ts
+msgid "Could not find {metadataName}"
+msgstr ""
+
+#. js-lingui-id: Fep47m
+#: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
+msgid "Could not find {targetMetadataName} for given {foreignKey}"
+msgstr ""
+
 #. js-lingui-id: LZf/L8
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
@@ -1089,6 +1104,11 @@ msgstr "Il est attendu que les mêmes champs de contrainte soient utilisés de m
 #. js-lingui-id: E7Dsiq
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
+msgstr ""
+
+#. js-lingui-id: RjuW0j
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Failed to create front component."
 msgstr ""
 
 #. js-lingui-id: M1ZSSL
@@ -1406,6 +1426,11 @@ msgstr "L'action du formulaire doit avoir au moins un champ"
 msgid "Friday"
 msgstr "Vendredi"
 
+#. js-lingui-id: Wed+Kp
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component is not ready."
+msgstr ""
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1422,6 +1447,7 @@ msgstr ""
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
 msgstr ""
 

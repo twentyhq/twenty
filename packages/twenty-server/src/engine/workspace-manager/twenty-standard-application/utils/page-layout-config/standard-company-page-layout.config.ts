@@ -84,11 +84,10 @@ const COMPANY_PAGE_TABS = {
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_COMPANY_PAGE_LAYOUT_CONFIG = {
-  layoutName: 'companyRecordPage',
   name: 'Default Company Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
   universalIdentifier: '20202020-a101-4001-8001-c0aba11c0001',
-  defaultTabUniversalIdentifier: COMPANY_PAGE_TABS.home.universalIdentifier,
+  defaultTabUniversalIdentifier: null,
   tabs: COMPANY_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

@@ -5,7 +5,7 @@ import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { STANDARD_RECORD_PAGE_LAYOUTS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant';
-import { type StandardRecordPageLayoutDefinition } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.types';
+import { type StandardRecordPageLayoutConfig } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
 import { computeMyFirstDashboardWidgets } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-widget/compute-my-first-dashboard-widgets.util';
 import {
   type CreateStandardPageLayoutWidgetArgs,
@@ -31,6 +31,9 @@ const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.EMAILS,
   WidgetType.CALENDAR,
   WidgetType.FIELD_RICH_TEXT,
+  WidgetType.WORKFLOW,
+  WidgetType.WORKFLOW_VERSION,
+  WidgetType.WORKFLOW_RUN,
 ];
 
 const computeRecordPageWidgets = ({
@@ -45,7 +48,7 @@ const computeRecordPageWidgets = ({
   for (const layoutName of Object.keys(STANDARD_RECORD_PAGE_LAYOUTS)) {
     const layout = STANDARD_RECORD_PAGE_LAYOUTS[
       layoutName as keyof typeof STANDARD_RECORD_PAGE_LAYOUTS
-    ] as StandardRecordPageLayoutDefinition;
+    ] as StandardRecordPageLayoutConfig;
 
     let layoutObjectMetadataId: string | null = null;
 
@@ -99,6 +102,7 @@ const computeRecordPageWidgets = ({
                 configurationType: WidgetConfigurationType.FIELDS,
               },
               objectMetadataId,
+              conditionalDisplay: widget.conditionalDisplay ?? null,
             },
           }),
         );

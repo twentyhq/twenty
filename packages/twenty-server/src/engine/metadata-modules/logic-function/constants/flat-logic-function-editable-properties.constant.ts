@@ -5,9 +5,11 @@ export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'description',
   'timeoutSeconds',
   'checksum',
-  'code',
   'sourceHandlerPath',
   'handlerName',
   'toolInputSchema',
   'isTool',
+  'cronTriggerSettings',
+  'databaseEventTriggerSettings',
+  'httpRouteTriggerSettings',
 ] as const satisfies (keyof FlatLogicFunction)[];

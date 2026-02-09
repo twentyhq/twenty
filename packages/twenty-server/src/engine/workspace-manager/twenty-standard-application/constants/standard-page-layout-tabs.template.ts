@@ -1,12 +1,21 @@
 import {
   PageLayoutTabLayoutMode,
   type PageLayoutWidgetCanvasPosition,
+  type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition,
   type PageLayoutWidgetVerticalListPosition,
 } from 'twenty-shared/types';
 
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type GridPosition } from 'src/engine/metadata-modules/page-layout-widget/types/grid-position.type';
+
+export const CONDITIONAL_DISPLAY_DEVICE_MOBILE = {
+  and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+} as const satisfies PageLayoutWidgetConditionalDisplay;
+
+export const CONDITIONAL_DISPLAY_DEVICE_DESKTOP = {
+  and: [{ '===': [{ var: 'device' }, 'DESKTOP'] }],
+} as const satisfies PageLayoutWidgetConditionalDisplay;
 
 export const GRID_POSITIONS = {
   FULL_WIDTH: {
@@ -69,61 +78,61 @@ export const CANVAS_LAYOUT_POSITIONS = {
 export const TAB_PROPS = {
   home: {
     title: 'Home',
-    position: 100,
+    position: 10,
     icon: 'IconHome',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   timeline: {
     title: 'Timeline',
-    position: 200,
+    position: 20,
     icon: 'IconTimelineEvent',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   tasks: {
     title: 'Tasks',
-    position: 300,
+    position: 30,
     icon: 'IconCheckbox',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   notes: {
     title: 'Notes',
-    position: 400,
+    position: 40,
     icon: 'IconNotes',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   files: {
     title: 'Files',
-    position: 500,
+    position: 50,
     icon: 'IconPaperclip',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   emails: {
     title: 'Emails',
-    position: 600,
+    position: 60,
     icon: 'IconMail',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   calendar: {
     title: 'Calendar',
-    position: 700,
+    position: 70,
     icon: 'IconCalendarEvent',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   note: {
     title: 'Note',
-    position: 150,
+    position: 15,
     icon: 'IconNotes',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   flow: {
     title: 'Flow',
-    position: 100,
+    position: 10,
     icon: 'IconSettings',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
   flowSecondary: {
     title: 'Flow',
-    position: 200,
+    position: 20,
     icon: 'IconSettings',
     layoutMode: PageLayoutTabLayoutMode.CANVAS,
   },
@@ -172,8 +181,14 @@ export const WIDGET_PROPS = {
     gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
-  richText: {
+  noteRichText: {
     title: 'Note',
+    type: WidgetType.FIELD_RICH_TEXT,
+    gridPosition: GRID_POSITIONS.RICH_TEXT,
+    position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
+  },
+  taskRichText: {
+    title: 'Task',
     type: WidgetType.FIELD_RICH_TEXT,
     gridPosition: GRID_POSITIONS.RICH_TEXT,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
