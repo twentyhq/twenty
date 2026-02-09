@@ -5,7 +5,6 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
-import { type ToolType } from 'src/engine/core-modules/tool/enums/tool-type.enum';
 import { type FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -28,7 +27,7 @@ export type ToolProviderContext = {
 // Options for tool retrieval
 export type ToolRetrievalOptions = {
   categories?: ToolCategory[];
-  excludeTools?: ToolType[];
+  excludeTools?: string[];
   wrapWithErrorContext?: boolean;
 };
 

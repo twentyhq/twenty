@@ -240,12 +240,11 @@ export class ToolExecutorService {
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<unknown> {
-    const result =
-      await this.logicFunctionExecutorService.execute({
-        logicFunctionId: ref.logicFunctionId,
-        workspaceId: context.workspaceId,
-        payload: args,
-      });
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: ref.logicFunctionId,
+      workspaceId: context.workspaceId,
+      payload: args,
+    });
 
     if (result.error) {
       return {
