@@ -57,11 +57,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
         workspaceId: workspaceId,
         value: true,

@@ -1,6 +1,6 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -91,10 +91,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             objectMetadataNameSingular,
           );
         const isFeatureFlagEnabled =
-          (objectMetadataNameSingular === 'timelineActivity' &&
-            existingFeatureFlagsMap[
-              FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED
-            ]) ||
+          objectMetadataNameSingular === 'timelineActivity' ||
           (objectMetadataNameSingular === 'attachment' &&
             existingFeatureFlagsMap[FeatureFlagKey.IS_ATTACHMENT_MIGRATED]) ||
           (objectMetadataNameSingular === 'noteTarget' &&
