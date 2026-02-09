@@ -8,6 +8,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
@@ -443,5 +444,111 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
       rowLevelPermissionPredicateGroupId: groupId,
       positionInRowLevelPermissionPredicateGroup: 0,
     });
+  });
+
+  it('should create groups and predicates referencing those groups in a single call', async () => {
+    const groupId = v4();
+
+    const input: UpsertRowLevelPermissionPredicatesInput = {
+      roleId: createdRoleId,
+      objectMetadataId: companyObjectMetadataId,
+      predicates: [
+        {
+          fieldMetadataId: companyNameFieldMetadataId,
+          operand: RowLevelPermissionPredicateOperand.CONTAINS,
+          rowLevelPermissionPredicateGroupId: groupId,
+          positionInRowLevelPermissionPredicateGroup: 0,
+        },
+      ],
+      predicateGroups: [
+        {
+          id: groupId,
+          objectMetadataId: companyObjectMetadataId,
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+        },
+      ],
+    };
+
+    const { data } = await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input,
+    });
+
+    expect(data.upsertRowLevelPermissionPredicates.predicates).toHaveLength(1);
+    expect(
+      data.upsertRowLevelPermissionPredicates.predicateGroups,
+    ).toHaveLength(1);
+    expect(
+      data.upsertRowLevelPermissionPredicates.predicateGroups[0],
+    ).toMatchObject({
+      id: groupId,
+      objectMetadataId: companyObjectMetadataId,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+    });
+    expect(data.upsertRowLevelPermissionPredicates.predicates[0]).toMatchObject(
+      {
+        fieldMetadataId: companyNameFieldMetadataId,
+        rowLevelPermissionPredicateGroupId: groupId,
+        positionInRowLevelPermissionPredicateGroup: 0,
+      },
+    );
+  });
+
+  it('should create nested parent-child groups in a single call', async () => {
+    const parentGroupId = v4();
+    const childGroupId = v4();
+
+    const input: UpsertRowLevelPermissionPredicatesInput = {
+      roleId: createdRoleId,
+      objectMetadataId: companyObjectMetadataId,
+      predicates: [],
+      predicateGroups: [
+        {
+          id: parentGroupId,
+          objectMetadataId: companyObjectMetadataId,
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          parentRowLevelPermissionPredicateGroupId: null,
+        },
+        {
+          id: childGroupId,
+          objectMetadataId: companyObjectMetadataId,
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+          parentRowLevelPermissionPredicateGroupId: parentGroupId,
+        },
+      ],
+    };
+
+    const { data } = await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input,
+    });
+
+    expect(
+      data.upsertRowLevelPermissionPredicates.predicateGroups,
+    ).toHaveLength(2);
+
+    const parentGroup =
+      data.upsertRowLevelPermissionPredicates.predicateGroups.find(
+        (group: { id: string }) => group.id === parentGroupId,
+      );
+
+    const childGroup =
+      data.upsertRowLevelPermissionPredicates.predicateGroups.find(
+        (group: { id: string }) => group.id === childGroupId,
+      );
+
+    expect(parentGroup).toBeDefined();
+    expect(parentGroup?.parentRowLevelPermissionPredicateGroupId).toBeNull();
+    expect(parentGroup?.logicalOperator).toBe(
+      RowLevelPermissionPredicateGroupLogicalOperator.AND,
+    );
+
+    expect(childGroup).toBeDefined();
+    expect(childGroup?.parentRowLevelPermissionPredicateGroupId).toBe(
+      parentGroupId,
+    );
+    expect(childGroup?.logicalOperator).toBe(
+      RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    );
   });
 });
