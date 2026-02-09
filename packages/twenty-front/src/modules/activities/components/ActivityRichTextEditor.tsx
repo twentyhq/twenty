@@ -41,6 +41,7 @@ import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -141,10 +142,13 @@ export const ActivityRichTextEditor = ({
       try {
         const blocks = JSON.parse(blocknoteString);
         const enrichedBlocks = blocks.map((block: Record<string, unknown>) => {
-          const blockProps = block.props as Record<string, unknown>;
-          const url = blockProps?.url as string;
+          const blockProps = block.props as Record<string, string>;
+          const url = blockProps?.url;
 
-          if (isDefined(url) && !blockProps?.attachmentFileId) {
+          if (
+            isDefined(url) &&
+            !isNonEmptyString(blockProps?.attachmentFileId)
+          ) {
             const fileId = urlToFileIdMap.get(url);
             if (isDefined(fileId)) {
               return {
