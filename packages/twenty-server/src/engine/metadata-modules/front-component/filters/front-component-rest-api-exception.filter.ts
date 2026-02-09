@@ -32,6 +32,7 @@ export class FrontComponentRestApiExceptionFilter implements ExceptionFilter {
           response,
           404,
         );
+      case FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED:
       case FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT:
         return this.httpExceptionHandlerService.handleError(
           exception,
@@ -39,7 +40,11 @@ export class FrontComponentRestApiExceptionFilter implements ExceptionFilter {
           400,
         );
       case FrontComponentExceptionCode.FRONT_COMPONENT_ALREADY_EXISTS:
-      case FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          409,
+        );
       default:
         return this.httpExceptionHandlerService.handleError(
           exception,

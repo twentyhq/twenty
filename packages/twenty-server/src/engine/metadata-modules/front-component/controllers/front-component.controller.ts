@@ -7,6 +7,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { pipeline } from 'stream/promises';
+
 import { Response } from 'express';
 
 import {
@@ -47,21 +49,19 @@ export class FrontComponentController {
 
       res.setHeader('Content-Type', 'application/javascript');
 
-      fileStream.on('error', () => {
-        throw new FrontComponentException(
-          'Error streaming front component',
-          FrontComponentExceptionCode.FRONT_COMPONENT_NOT_READY,
-        );
-      });
-
-      fileStream.pipe(res);
+      await pipeline(fileStream, res);
     } catch (error) {
+      // Mid-stream error: client already received partial data, nothing to do
+      if (res.headersSent) {
+        return;
+      }
+
       if (
         error instanceof FileStorageException &&
         error.code === FileStorageExceptionCode.FILE_NOT_FOUND
       ) {
         throw new FrontComponentException(
-          'Front component not found',
+          'Front component built file not found',
           FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
         );
       }
