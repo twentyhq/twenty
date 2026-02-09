@@ -351,7 +351,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
         targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
         targetFlatFieldMetadataType: FieldMetadataType.RELATION,
         sourceFlatObjectMetadataJoinColumnName: 'petId',
-        workspaceId: mockWorkspaceId,
         flatApplication: MOCK_FLAT_APPLICATION,
         createFieldInput: {
           name: 'pets',
@@ -359,7 +358,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           description: 'Company pets',
           icon: 'IconCat',
           type: FieldMetadataType.RELATION,
-          objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
           isCustom: true,
           isSystem: false,
           isUnique: false,
