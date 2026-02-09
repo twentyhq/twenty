@@ -268,6 +268,26 @@ export class FileStorageService {
     return driver.delete(params);
   }
 
+  async deleteApplicationFiles({
+    applicationUniversalIdentifier,
+    workspaceId,
+  }: {
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }) {
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId: workspaceId,
+      },
+    });
+
+    await this.fileRepository.delete({
+      applicationId: application.id,
+      workspaceId,
+    });
+  }
+
   async delete_v2(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const onStoragePath = this.buildOnStoragePath(params);

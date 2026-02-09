@@ -51,9 +51,6 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest-8-cores
     needs: [changed-files-check, sdk-test]
-    strategy:
-      matrix:
-        task: [test:integration, test:e2e]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     services:
       postgres:
@@ -97,11 +94,16 @@ jobs:
       - name: Server / Create Test DB
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-      - name: SDK / Run ${{ matrix.task }} Tests
+      - name: SDK / Run integration tests
         uses: ./.github/actions/nx-affected
         with:
           tag: scope:sdk
-          tasks: ${{ matrix.task }}
+          tasks: test:integration
+      - name: SDK / Run e2e Tests
+        uses: ./.github/actions/nx-affected
+        with:
+          tag: scope:sdk
+          tasks: test:e2e
   ci-sdk-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5

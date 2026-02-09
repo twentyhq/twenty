@@ -457,14 +457,10 @@ export class ApplicationService {
       throw new Error(`Application does not exist`);
     }
 
-    for (const ff of Object.values(FileFolder)) {
-      await this.fileStorageService.delete_v2({
-        workspaceId,
-        applicationUniversalIdentifier: universalIdentifier,
-        fileFolder: ff,
-        resourcePath: '',
-      });
-    }
+    await this.fileStorageService.deleteApplicationFiles({
+      workspaceId,
+      applicationUniversalIdentifier: universalIdentifier,
+    });
 
     await this.applicationRepository.delete({
       universalIdentifier,
