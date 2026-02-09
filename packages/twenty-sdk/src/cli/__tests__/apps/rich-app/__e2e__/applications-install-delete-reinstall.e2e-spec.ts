@@ -32,6 +32,7 @@ describe('Application: install delete and reinstall rich-app', () => {
       console.log(result.output.slice(undefined, 10_000));
     }
 
+    expect(result.success).toBe(true);
     expect(existsSync(join(appPath, OUTPUT_DIR, 'manifest.json'))).toBe(true);
   });
 
@@ -49,8 +50,9 @@ describe('Application: install delete and reinstall rich-app', () => {
   });
 
   it(`should successfully re-install ${applicationName} application`, async () => {
-    await runAppDev({ appPath });
+    const result = await runAppDev({ appPath });
 
+    expect(result.success).toBe(true);
     expect(existsSync(join(appPath, OUTPUT_DIR, 'manifest.json'))).toBe(true);
   });
 });
