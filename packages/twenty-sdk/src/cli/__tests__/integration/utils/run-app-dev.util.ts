@@ -11,7 +11,7 @@ export type RunAppDevOptions = {
 export const runAppDev = (
   options: RunAppDevOptions,
 ): Promise<RunCliCommandResult> => {
-  const { appPath, timeout = 30000 } = options;
+  const { appPath, timeout = 60_000 } = options;
 
   return runCliCommand({
     command: 'app:dev',

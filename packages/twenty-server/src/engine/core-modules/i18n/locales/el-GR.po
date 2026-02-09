@@ -175,6 +175,11 @@ msgstr "Παρουσιάστηκε σφάλμα ταξινόμησης προβ�
 msgid "A webhook with this configuration already exists."
 msgstr ""
 
+#. js-lingui-id: qjrxU8
+#: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
+msgid "Access denied."
+msgstr ""
+
 #. js-lingui-id: Bk+qoW
 #: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."

@@ -177,6 +177,11 @@ msgstr "{aggregateLabel} för {fieldLabel}"
 msgid "{appName} wants to access your account"
 msgstr "{appName} vill få åtkomst till ditt konto"
 
+#. js-lingui-id: SU5Crx
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "{cachedPercent}% cached"
+msgstr ""
+
 #. js-lingui-id: zi5SHH
 #: src/modules/object-record/record-index/components/RecordIndexPageHeader.tsx
 msgid "{contextStoreNumberOfSelectedRecords} selected"
@@ -269,11 +274,6 @@ msgstr "{headersCount} HTTP-huvuden mottagna"
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
 msgstr "{hours, plural, one {{hours} timme} other {{hours} timmar}}"
 
-#. js-lingui-id: jz0Rnl
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-msgid "{inputCredits} credits"
-msgstr "{inputCredits} krediter"
-
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -314,11 +314,6 @@ msgstr "{num, selectordinal, one {{num}:a} other {{num}e}}"
 #: src/modules/object-record/record-show/hooks/useRecordShowPagePagination.ts
 msgid "{objectLabelPlural} ({totalCount})"
 msgstr "{objectLabelPlural} ({totalCount})"
-
-#. js-lingui-id: h4Zpx/
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-msgid "{outputCredits} credits"
-msgstr "{outputCredits} krediter"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -428,6 +423,16 @@ msgstr "{workspaceMemberName} kommer att tas bort från följande roll:"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "••••••••"
 msgstr "••••••••"
+
+#. js-lingui-id: PxSAUc
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "~{count} tokens"
+msgstr ""
+
+#. js-lingui-id: hVFr+7
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "~{kTokens}k tokens"
+msgstr ""
 
 #. js-lingui-id: Cx0xl3
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
@@ -806,6 +811,11 @@ msgstr "Lägg Till Block"
 msgid "Add CC"
 msgstr ""
 
+#. js-lingui-id: GuJvBr
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Add custom instructions specific to your workspace (appended to system prompt)"
+msgstr ""
+
 #. js-lingui-id: 3O3+7h
 #: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
@@ -1042,6 +1052,11 @@ msgstr "Tillagd {beautifyPastDateRelative}"
 msgid "Added to blocklist"
 msgstr "Tillagd i blocklistan"
 
+#. js-lingui-id: y5mJau
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Additional Instructions"
+msgstr ""
+
 #. js-lingui-id: hW/fMg
 #: src/modules/ui/field/input/components/AddressInput.tsx
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -1194,6 +1209,7 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -2771,6 +2787,11 @@ msgstr "Konfigurationsvariabler"
 msgid "Configuration"
 msgstr "Konfiguration"
 
+#. js-lingui-id: iAL9tI
+#: src/pages/settings/ai/SettingsAI.tsx
+msgid "Configure"
+msgstr ""
+
 #. js-lingui-id: 9px+al
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "Configure AI models for routing and planning"
@@ -3032,6 +3053,11 @@ msgstr "Fortsätt utan synkronisering"
 msgid "Control which types of entities this role can be assigned to"
 msgstr "Kontrollera vilka typer av enheter den här rollen kan tilldelas"
 
+#. js-lingui-id: YyNOE7
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "Conversation"
+msgstr ""
+
 #. js-lingui-id: HRGl1X
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -3128,6 +3154,7 @@ msgstr "Kärnschema"
 
 #. js-lingui-id: I99Miw
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Cost"
 msgstr "Kostnad"
 
@@ -3388,6 +3415,12 @@ msgstr "Kreditplan"
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credit Usage"
 msgstr "Kreditanvändning"
+
+#. js-lingui-id: UQ4Hjl
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "credits"
+msgstr ""
 
 #. js-lingui-id: hdSacI
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -4387,6 +4420,11 @@ msgstr "Dutch"
 #: src/modules/settings/developers/components/ApiKeyNameInput.tsx
 msgid "E.g. backoffice integration"
 msgstr "T.ex. bakre kontor integration"
+
+#. js-lingui-id: p5P8NB
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "E.g., \"We are a B2B SaaS company. Always use formal language...\""
+msgstr ""
 
 #. js-lingui-id: GhTFTJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -5605,6 +5643,11 @@ msgstr "Det gick inte att återsöka jobben. Försök igen senare."
 msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
+#. js-lingui-id: 9ryUyP
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Failed to save workspace instructions"
+msgstr ""
+
 #. js-lingui-id: YMSYb+
 #: src/pages/settings/ai/components/SettingsAIRouterSettings.tsx
 msgid "Failed to update fast model"
@@ -6673,6 +6716,11 @@ msgstr "Indexer"
 msgid "Info"
 msgstr "Info"
 
+#. js-lingui-id: iaXnN5
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Information about the current user (auto-generated and included in each request)"
+msgstr ""
+
 #. js-lingui-id: 623chP
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Infos"
@@ -6684,7 +6732,6 @@ msgstr "Information"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 #: src/modules/command-menu/pages/workflow/step/view-run/components/CommandMenuWorkflowRunViewStepContent.tsx
 #: src/modules/ai/components/ToolStepRenderer.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Input"
 msgstr "Inmatning"
 
@@ -6704,6 +6751,12 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 msgid "Input settings"
 msgstr "Inmatningsinställningar"
+
+#. js-lingui-id: cjbZw+
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "Input tokens"
+msgstr ""
 
 #. js-lingui-id: T8avpe
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
@@ -7200,6 +7253,11 @@ msgstr "Senaste 4 timmarna (äldst → nyast)"
 msgid "Last 7 Days (oldest → newest)"
 msgstr "Senaste 7 dagarna (äldst → nyast)"
 
+#. js-lingui-id: c5zxSg
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "Last message"
+msgstr ""
+
 #. js-lingui-id: P4FGJG
 #: src/modules/activities/emails/components/EmailThreadHeader.tsx
 msgid "Last message {lastMessageSentAtFormatted}"
@@ -7457,6 +7515,11 @@ msgstr "Laddar tråd"
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
 msgid "Loading..."
 msgstr "Laddar..."
+
+#. js-lingui-id: 8NbHF7
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Locale"
+msgstr ""
 
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -9146,7 +9209,6 @@ msgstr "Avbrott"
 #: src/modules/ai/components/ToolStepRenderer.tsx
 #: src/modules/ai/components/TerminalOutput.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Output"
 msgstr "Utdata"
 
@@ -9154,6 +9216,12 @@ msgstr "Utdata"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Output Field {fieldNumber}"
 msgstr "Utdatafält {fieldNumber}"
+
+#. js-lingui-id: i1+tKD
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "Output tokens"
+msgstr ""
 
 #. js-lingui-id: in6CUw
 #: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
@@ -9795,6 +9863,11 @@ msgstr "Läs ändringsloggen"
 #: src/pages/settings/applications/tabs/SettingsApplicationsCreateTab.tsx
 msgid "Read documentation"
 msgstr "Läs dokumentationen"
+
+#. js-lingui-id: tCXcL7
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Read-only — managed by Twenty"
+msgstr ""
 
 #. js-lingui-id: BT7pY+
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -11780,10 +11853,21 @@ msgid "System objects"
 msgstr ""
 
 #. js-lingui-id: FHPe8O
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "System Prompt"
 msgstr "Systemuppmaning"
+
+#. js-lingui-id: BXGTWI
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "System Prompt ({totalTokenCount})"
+msgstr ""
 
 #. js-lingui-id: k+7QWO
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -12296,6 +12380,11 @@ msgstr "Tidsstämpel"
 msgid "Timestamp and participants will be shared with your team."
 msgstr "Tidsstämpel och deltagare kommer att delas med ditt team."
 
+#. js-lingui-id: 40Gx0U
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Timezone"
+msgstr ""
+
 #. js-lingui-id: y3HaQk
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Timing"
@@ -12333,6 +12422,11 @@ msgstr "Växla alla objektbehörigheter"
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 msgid "Toggle all settings permissions"
 msgstr "Växla alla inställningsrättigheter"
+
+#. js-lingui-id: WOr+hW
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+msgid "tokens"
+msgstr ""
 
 #. js-lingui-id: oK9ArN
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -12387,13 +12481,9 @@ msgstr ""
 
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
+#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
 msgid "Total cost"
 msgstr "Totalkostnad"
-
-#. js-lingui-id: ovXf5m
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-msgid "Total credits"
-msgstr "Totala krediter"
 
 #. js-lingui-id: v7vAuj
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -12926,6 +13016,7 @@ msgstr ""
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -12938,6 +13029,11 @@ msgstr ""
 msgid "User"
 msgstr "Användare"
 
+#. js-lingui-id: zw/lpB
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "User Context"
+msgstr ""
+
 #. js-lingui-id: RNv3YS
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Impersonation"
@@ -12947,6 +13043,11 @@ msgstr "Användarimitation"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "User Info"
 msgstr "Användarinfo"
+
+#. js-lingui-id: J5T9NW
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "User Information"
+msgstr ""
 
 #. js-lingui-id: IjyOjp
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
@@ -13084,6 +13185,11 @@ msgstr ""
 msgid "View all evaluations"
 msgstr ""
 
+#. js-lingui-id: 3JjgWt
+#: src/pages/settings/ai/SettingsAI.tsx
+msgid "View and customize AI instructions"
+msgstr ""
+
 #. js-lingui-id: XVf/G7
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "View and filter events, page views, object changes"
@@ -13149,6 +13255,11 @@ msgstr ""
 #. js-lingui-id: mzftV9
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "View Role"
+msgstr ""
+
+#. js-lingui-id: FNDoRH
+#: src/pages/settings/ai/SettingsAI.tsx
+msgid "View the AI system prompt and add custom instructions"
 msgstr ""
 
 #. js-lingui-id: bJAIqT
@@ -13453,6 +13564,7 @@ msgstr "Arbetsflöden"
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
@@ -13495,6 +13607,12 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Workspace Info"
 msgstr "Arbetsytans info"
+
+#. js-lingui-id: BYrMT0
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAIPrompts.tsx
+msgid "Workspace Instructions"
+msgstr ""
 
 #. js-lingui-id: Y0Fj4S
 #: src/pages/onboarding/CreateWorkspace.tsx

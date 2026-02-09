@@ -1,7 +1,11 @@
 import gql from 'graphql-tag';
 
-export type ExecuteLogicFunctionFactoryInput = {
-  id: string;
+import { type ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
+
+export type ExecuteLogicFunctionFactoryInput = Omit<
+  ExecuteOneLogicFunctionInput,
+  'payload'
+> & {
   payload: Record<string, unknown>;
 };
 

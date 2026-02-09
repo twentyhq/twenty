@@ -1,10 +1,9 @@
 import { defineField, FieldType } from '@/sdk';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '@/cli/__tests__/apps/rich-app/src/objects/postCard.object';
-import { POST_CARD_EXTENSION_CATEGORY_FIELD_ID } from '@/cli/__tests__/apps/rich-app/src/fields/postCardNumber.field';
 
 export default defineField({
   objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-  universalIdentifier: POST_CARD_EXTENSION_CATEGORY_FIELD_ID,
+  universalIdentifier: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
   type: FieldType.SELECT,
   name: 'category',
   label: 'Category',

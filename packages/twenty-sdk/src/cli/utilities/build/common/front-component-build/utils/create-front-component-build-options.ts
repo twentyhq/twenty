@@ -3,7 +3,7 @@ import type * as esbuild from 'esbuild';
 import { FRONT_COMPONENT_EXTERNAL_MODULES } from '../constants/front-component-external-modules';
 import { getFrontComponentBuildPlugins } from './get-front-component-build-plugins';
 
-type FrontComponentBuildOptions = {
+export type FrontComponentBuildOptions = {
   entryPoints: esbuild.BuildOptions['entryPoints'];
   outdir: string;
   tsconfigPath?: string;
