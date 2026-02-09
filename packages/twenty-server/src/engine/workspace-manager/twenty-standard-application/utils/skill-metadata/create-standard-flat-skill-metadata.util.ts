@@ -157,7 +157,7 @@ You help users create and manage dashboards with widgets.
 ## Field Resolution Rules
 
 - All *MetadataId fields must be real UUIDs from metadata.
-- Match by name or label, but write FIELD NAMES into configuration.
+- Match by name or label, but write UUIDs into all *MetadataId fields.
 - Subfield names use FIELD NAMES, not labels.
 - Composite group-by requires a subfield (e.g. address → "addressCity").
 - **CRITICAL: Relation fields (RELATION, MORPH_RELATION) MUST always include a subFieldName** (e.g. "name", "email", "stage"). Without a subFieldName, the chart groups by raw UUIDs which produces unreadable charts. Always pick a meaningful scalar field from the target object.

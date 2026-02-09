@@ -122,9 +122,6 @@ export class PageLayoutWidgetService {
     }
   }
 
-  // Only fetches metadata maps and validates when dealing with GRAPH widgets
-  // or chart configuration types. IFRAME, STANDALONE_RICH_TEXT, etc. are
-  // validated by the migration system which already has proper error handling.
   private async validateChartFieldReferencesIfApplicable({
     configuration,
     objectMetadataId,
@@ -302,8 +299,6 @@ export class PageLayoutWidgetService {
       existingFlatPageLayoutWidgetMaps,
     );
 
-    // Only enrich when configuration is explicitly provided and defined
-    // Preserve null semantics: null = "set to null", undefined = "no change"
     const isConfigurationBeingUpdated = Object.prototype.hasOwnProperty.call(
       updateData,
       'configuration',
@@ -319,24 +314,25 @@ export class PageLayoutWidgetService {
           }
         : updateData;
 
-    // Chart field validation when config-related fields change
     const shouldValidateChartFields =
       isConfigurationBeingUpdated ||
       Object.prototype.hasOwnProperty.call(updateData, 'objectMetadataId') ||
       Object.prototype.hasOwnProperty.call(updateData, 'type');
 
     if (shouldValidateChartFields) {
+      const isObjectMetadataIdBeingUpdated =
+        Object.prototype.hasOwnProperty.call(updateData, 'objectMetadataId');
       const effectiveConfiguration = isConfigurationBeingUpdated
         ? processedUpdateData.configuration
         : existingWidget.configuration;
       const effectiveObjectMetadataId =
-        processedUpdateData.objectMetadataId ?? existingWidget.objectMetadataId;
+        isObjectMetadataIdBeingUpdated &&
+        isDefined(processedUpdateData.objectMetadataId)
+          ? processedUpdateData.objectMetadataId
+          : existingWidget.objectMetadataId;
       const effectiveWidgetType =
         processedUpdateData.type ?? existingWidget.type;
 
-      // Only run chart validation when we have a defined configuration
-      // null/undefined/malformed configs flow through to migration validation
-      // which already surfaces proper error codes
       if (isDefined(effectiveConfiguration)) {
         await this.validateChartFieldReferencesIfApplicable({
           configuration: effectiveConfiguration,
