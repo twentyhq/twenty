@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
+import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
 import { SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 
@@ -69,6 +70,10 @@ describe('MessagingSendMessageService - Gmail HTML Support', () => {
         },
         {
           provide: ImapClientProvider,
+          useValue: {},
+        },
+        {
+          provide: ImapFindDraftsFolderService,
           useValue: {},
         },
       ],
