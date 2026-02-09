@@ -7,7 +7,6 @@ import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/setti
 import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
@@ -17,7 +16,7 @@ import { Button } from 'twenty-ui/input';
 import {
   type BillingEntitlement,
   BillingEntitlementKey,
-  useFindOneAgentQuery
+  useFindOneAgentQuery,
 } from '~/generated-metadata/graphql';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
@@ -46,8 +45,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const objectMetadata = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });
-
-  const featureFlagsMap = useFeatureFlagsMap();
 
   const workspaceBillingEntitlements = currentWorkspace?.billingEntitlements;
 

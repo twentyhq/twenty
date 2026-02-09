@@ -1,8 +1,8 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import {
-    type EntityTarget,
-    type ObjectLiteral,
-    SelectQueryBuilder,
+  type EntityTarget,
+  type ObjectLiteral,
+  SelectQueryBuilder,
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -11,13 +11,13 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
-    PermissionsException,
-    PermissionsExceptionCode,
+  PermissionsException,
+  PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
-    TwentyORMException,
-    TwentyORMExceptionCode,
+  TwentyORMException,
+  TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-delete-query-builder';
