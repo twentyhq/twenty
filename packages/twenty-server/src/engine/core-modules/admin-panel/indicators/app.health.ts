@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
+import { HealthStateManager } from 'src/engine/core-modules/admin-panel/utils/health-state-manager.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()

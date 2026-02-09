@@ -29,19 +29,13 @@ export class EventStreamService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.metricsService.createObservableGauge(
-      'twenty_event_streams_live_total',
-      { description: 'Current number of live event streams' },
-      async (observableResult) => {
-        try {
-          const count = await this.getTotalActiveStreamCount();
-
-          observableResult.observe(count);
-        } catch (error) {
-          this.logger.error('Failed to collect event streams metrics', error);
-        }
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_event_streams_live_total',
+      options: { description: 'Current number of live event streams' },
+      callback: async () => {
+        return this.getTotalActiveStreamCount();
       },
-    );
+    });
   }
 
   async getTotalActiveStreamCount(): Promise<number> {

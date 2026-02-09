@@ -6,10 +6,10 @@ import {
 
 import { Queue } from 'bullmq';
 
-import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
-import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/health/constants/metrics-failure-rate-threshold.const';
-import { type WorkerQueueHealth } from 'src/engine/core-modules/health/types/worker-queue-health.type';
-import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
+import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
+import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/admin-panel/constants/metrics-failure-rate-threshold.const';
+import { type WorkerQueueHealth } from 'src/engine/core-modules/admin-panel/types/worker-queue-health.type';
+import { withHealthCheckTimeout } from 'src/engine/core-modules/admin-panel/utils/health-check-timeout.util';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 

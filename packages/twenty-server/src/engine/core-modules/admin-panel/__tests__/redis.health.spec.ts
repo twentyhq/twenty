@@ -3,9 +3,9 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type Redis } from 'ioredis';
 
-import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
-import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
-import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
+import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
+import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/admin-panel/constants/health-indicators-timeout.conts';
+import { RedisHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/redis.health';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 describe('RedisHealthIndicator', () => {

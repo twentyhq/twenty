@@ -1,4 +1,4 @@
-import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
 
 type HealthIndicatorInfo = {
   id: HealthIndicatorId;

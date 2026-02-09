@@ -4,9 +4,9 @@ import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { type DataSource } from 'typeorm';
 
-import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
-import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
-import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
+import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
+import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/admin-panel/constants/health-indicators-timeout.conts';
+import { DatabaseHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/database.health';
 
 describe('DatabaseHealthIndicator', () => {
   let service: DatabaseHealthIndicator;

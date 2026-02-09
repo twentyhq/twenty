@@ -1,4 +1,4 @@
-import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/health/constants/health-indicators-timeout.conts';
+import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/admin-panel/constants/health-indicators-timeout.conts';
 
 export const withHealthCheckTimeout = async <T>(
   promise: Promise<T>,

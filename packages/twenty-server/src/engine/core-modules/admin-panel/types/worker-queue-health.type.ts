@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { WorkerQueueMetrics } from 'src/engine/core-modules/health/types/worker-queue-metrics.type';
+import { WorkerQueueMetrics } from 'src/engine/core-modules/admin-panel/types/worker-queue-metrics.type';
 
 @ObjectType()
 export class WorkerQueueHealth {

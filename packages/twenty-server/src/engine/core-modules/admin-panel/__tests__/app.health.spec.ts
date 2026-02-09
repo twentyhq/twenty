@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
+import { AppHealthIndicator } from 'src/engine/core-modules/admin-panel/indicators/app.health';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 describe('AppHealthIndicator', () => {
