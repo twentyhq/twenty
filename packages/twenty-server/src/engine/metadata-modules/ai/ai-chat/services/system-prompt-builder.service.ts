@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
-import {
-  type ToolIndexEntry,
-  ToolRegistryService,
-} from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import {
   EXECUTE_TOOL_TOOL_NAME,
   LEARN_TOOLS_TOOL_NAME,
@@ -132,7 +131,7 @@ export class SystemPromptBuilderService {
   }
 
   buildFullPrompt(
-    toolCatalog: ToolIndexEntry[],
+    toolCatalog: ToolDescriptor[],
     skillCatalog: FlatSkill[],
     preloadedTools: string[],
     contextString?: string,
@@ -243,12 +242,12 @@ ${skillsList}`;
   }
 
   buildToolCatalogSection(
-    toolCatalog: ToolIndexEntry[],
+    toolCatalog: ToolDescriptor[],
     preloadedTools: string[],
   ): string {
     const preloadedSet = new Set(preloadedTools);
 
-    const toolsByCategory = new Map<string, ToolIndexEntry[]>();
+    const toolsByCategory = new Map<string, ToolDescriptor[]>();
 
     for (const tool of toolCatalog) {
       const category = tool.category;
@@ -273,13 +272,13 @@ ${preloadedTools.length > 0 ? preloadedTools.map((toolName) => `- \`${toolName}\
 ### Tool Catalog by Category`);
 
     const categoryOrder = [
-      'DATABASE',
-      'ACTION',
-      'WORKFLOW',
-      'DASHBOARD',
-      'METADATA',
-      'VIEW',
-      'LOGIC_FUNCTION',
+      ToolCategory.DATABASE_CRUD,
+      ToolCategory.ACTION,
+      ToolCategory.WORKFLOW,
+      ToolCategory.DASHBOARD,
+      ToolCategory.METADATA,
+      ToolCategory.VIEW,
+      ToolCategory.LOGIC_FUNCTION,
     ];
 
     for (const category of categoryOrder) {
@@ -313,19 +312,19 @@ ${tools
 
   private getCategoryLabel(category: string): string {
     switch (category) {
-      case 'DATABASE':
+      case ToolCategory.DATABASE_CRUD:
         return 'Database Tools (CRUD operations)';
-      case 'ACTION':
+      case ToolCategory.ACTION:
         return 'Action Tools (HTTP, Email, etc.)';
-      case 'WORKFLOW':
+      case ToolCategory.WORKFLOW:
         return 'Workflow Tools (create/manage workflows)';
-      case 'METADATA':
+      case ToolCategory.METADATA:
         return 'Metadata Tools (schema management)';
-      case 'VIEW':
+      case ToolCategory.VIEW:
         return 'View Tools (query views)';
-      case 'DASHBOARD':
+      case ToolCategory.DASHBOARD:
         return 'Dashboard Tools (create/manage dashboards)';
-      case 'LOGIC_FUNCTION':
+      case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
       default:
         return category;
