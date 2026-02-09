@@ -108,7 +108,9 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       ...getDefaultFlatFieldMetadata({
         createFieldInput: {
           ...createFieldInput,
-          universalIdentifier: sourceFieldUniversalIdentifier,
+          universalIdentifier:
+            createFieldInput.universalIdentifier ??
+            sourceFieldUniversalIdentifier,
         },
         flatApplication,
         objectMetadataUniversalIdentifier:
