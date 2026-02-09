@@ -18,8 +18,14 @@ export const StringFilterType = new GraphQLInputObjectType({
     lte: { type: GraphQLString },
     neq: { type: GraphQLString },
     startsWith: { type: GraphQLString },
-    like: { type: GraphQLString },
-    ilike: { type: GraphQLString },
+    like: {
+      type: GraphQLString,
+      description: 'Pattern match with % wildcard',
+    },
+    ilike: {
+      type: GraphQLString,
+      description: 'Case-insensitive match with % wildcard',
+    },
     regex: { type: GraphQLString },
     iregex: { type: GraphQLString },
     is: { type: FilterIs },

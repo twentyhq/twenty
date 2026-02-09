@@ -111,12 +111,12 @@ export const computeWhereConditionParts = ({
     case 'startsWith':
       return {
         sql: `${fieldReference}::text LIKE :${key}${uuid}`,
-        params: { [`${key}${uuid}`]: `${value}` },
+        params: { [`${key}${uuid}`]: `${value}%` },
       };
     case 'endsWith':
       return {
         sql: `${fieldReference}::text LIKE :${key}${uuid}`,
-        params: { [`${key}${uuid}`]: `${value}` },
+        params: { [`${key}${uuid}`]: `%${value}` },
       };
     case 'contains':
       return {
