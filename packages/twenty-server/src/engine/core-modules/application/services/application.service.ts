@@ -359,7 +359,7 @@ export class ApplicationService {
       defaultPackageFields.yarnLockContent,
     );
 
-    const packageJsonFile = await this.fileStorageService.writeFile_v2({
+    const packageJsonFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.packageJsonContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
@@ -370,7 +370,7 @@ export class ApplicationService {
       queryRunner,
     });
 
-    const yarnLockFile = await this.fileStorageService.writeFile_v2({
+    const yarnLockFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.yarnLockContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
@@ -420,7 +420,7 @@ export class ApplicationService {
       yarnLockContent,
     );
 
-    const packageJsonFile = await this.fileStorageService.writeFile_v2({
+    const packageJsonFile = await this.fileStorageService.writeFile({
       sourceFile: packageJsonContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
@@ -430,7 +430,7 @@ export class ApplicationService {
       settings: { isTemporaryFile: false, toDelete: false },
     });
 
-    const yarnLockFile = await this.fileStorageService.writeFile_v2({
+    const yarnLockFile = await this.fileStorageService.writeFile({
       sourceFile: yarnLockContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,

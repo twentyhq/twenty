@@ -40,13 +40,13 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
     const [sourceExists, builtExists] = await Promise.all([
-      this.fileStorageService.checkFileExists_v2({
+      this.fileStorageService.checkFileExists({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
         resourcePath: logicFunction.sourceHandlerPath,
       }),
-      this.fileStorageService.checkFileExists_v2({
+      this.fileStorageService.checkFileExists({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,

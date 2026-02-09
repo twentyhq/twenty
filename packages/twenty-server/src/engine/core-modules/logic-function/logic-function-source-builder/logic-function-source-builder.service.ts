@@ -128,7 +128,7 @@ export class LogicFunctionSourceBuilderService {
     const sourceFile = sourceFiles[0];
     const builtFile = builtFiles[0];
 
-    await this.fileStorageService.writeFile_v2({
+    await this.fileStorageService.writeFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
@@ -141,7 +141,7 @@ export class LogicFunctionSourceBuilderService {
       },
     });
 
-    await this.fileStorageService.writeFile_v2({
+    await this.fileStorageService.writeFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
@@ -181,7 +181,7 @@ export class LogicFunctionSourceBuilderService {
 
       const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
 
-      await this.fileStorageService.uploadFolder_v2({
+      await this.fileStorageService.uploadFolder({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
@@ -206,7 +206,7 @@ export class LogicFunctionSourceBuilderService {
 
       const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
 
-      await this.fileStorageService.downloadFolder_v2({
+      await this.fileStorageService.downloadFolder({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
@@ -231,7 +231,7 @@ export class LogicFunctionSourceBuilderService {
 
       const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
 
-      await this.fileStorageService.writeFile_v2({
+      await this.fileStorageService.writeFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
@@ -260,7 +260,7 @@ export class LogicFunctionSourceBuilderService {
     const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
 
     try {
-      return await this.fileStorageService.readFolder_v2({
+      return await this.fileStorageService.readFolder({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
@@ -297,7 +297,7 @@ export class LogicFunctionSourceBuilderService {
     const toBuiltBaseFolderPath =
       getLogicFunctionBaseFolderPath(toBuiltHandlerPath);
 
-    await this.fileStorageService.copy_v2({
+    await this.fileStorageService.copy({
       from: {
         workspaceId,
         applicationUniversalIdentifier,
@@ -312,7 +312,7 @@ export class LogicFunctionSourceBuilderService {
       },
     });
 
-    await this.fileStorageService.copy_v2({
+    await this.fileStorageService.copy({
       from: {
         workspaceId,
         applicationUniversalIdentifier,

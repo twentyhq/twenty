@@ -150,14 +150,14 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     inMemoryLayerFolderPath: string;
   }) {
     await Promise.all([
-      this.fileStorageService.downloadFile_v2({
+      this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Dependencies,
         resourcePath: 'package.json',
         localPath: join(inMemoryLayerFolderPath, 'package.json'),
       }),
-      this.fileStorageService.downloadFile_v2({
+      this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Dependencies,
@@ -368,7 +368,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     const compiledCode = (
       await streamToBuffer(
-        await this.fileStorageService.readFile_v2({
+        await this.fileStorageService.readFile({
           workspaceId: flatLogicFunction.workspaceId,
           applicationUniversalIdentifier,
           fileFolder: FileFolder.BuiltLogicFunction,

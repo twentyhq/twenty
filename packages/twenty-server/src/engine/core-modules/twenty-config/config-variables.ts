@@ -239,17 +239,6 @@ export class ConfigVariables {
   CALENDAR_PROVIDER_MICROSOFT_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
-    isSensitive: true,
-    description:
-      'Legacy variable to be deprecated when all API Keys expire. Replaced by APP_KEY',
-    type: ConfigVariableType.STRING,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  ACCESS_TOKEN_SECRET: string;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the access token is valid',
     type: ConfigVariableType.STRING,
@@ -277,12 +266,13 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
-    description: 'Cooldown period for refreshing tokens',
+    description:
+      'Grace period allowing concurrent refresh token use (e.g. two tabs refreshing simultaneously). Reuse after this window triggers suspicious activity detection.',
     type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_COOL_DOWN = '1m';
+  REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,

@@ -18,6 +18,7 @@ export enum CommonQueryRunnerExceptionCode {
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   TOO_COMPLEX_QUERY = 'TOO_COMPLEX_QUERY',
   MISSING_TIMEZONE_FOR_DATE_GROUP_BY = 'MISSING_TIMEZONE_FOR_DATE_GROUP_BY',
+  INVALID_TIMEZONE = 'INVALID_TIMEZONE',
 }
 
 export class CommonQueryRunnerException extends CustomException<CommonQueryRunnerExceptionCode> {
