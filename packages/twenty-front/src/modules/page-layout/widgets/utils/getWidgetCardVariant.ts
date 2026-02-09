@@ -1,5 +1,4 @@
-import { type PageLayoutTabLayoutMode } from '@/page-layout/types/PageLayoutTabLayoutMode';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated/graphql';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 
 type GetWidgetCardVariantParams = {
@@ -21,7 +20,7 @@ export const getWidgetCardVariant = ({
     return 'dashboard';
   }
 
-  if (layoutMode === 'canvas') {
+  if (layoutMode === PageLayoutTabLayoutMode.CANVAS) {
     return 'canvas';
   }
 
