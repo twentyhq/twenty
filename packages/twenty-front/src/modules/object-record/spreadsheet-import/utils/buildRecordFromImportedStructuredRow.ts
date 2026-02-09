@@ -12,6 +12,7 @@ import {
   assertUnreachable,
   isDefined,
   isEmptyObject,
+  lowercaseUrlOriginAndRemoveTrailingSlash,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -51,6 +52,9 @@ const buildRelationConnectFieldRecord = (
   fieldMetadataItem: FieldMetadataItem,
   importedStructuredRow: ImportedStructuredRow,
   spreadsheetImportFields: SpreadsheetImportFields,
+  compositeFieldTransformConfigs: Partial<
+    Record<FieldMetadataType, Record<string, ((value: any) => any) | undefined>>
+  >,
 ) => {
   if (fieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE)
     return undefined;
@@ -73,13 +77,19 @@ const buildRelationConnectFieldRecord = (
         isCompositeFieldType(uniqueFieldMetadataItem.type) &&
         isDefined(field.compositeSubFieldKey)
       ) {
+        const rawValue = importedStructuredRow[field.key];
+        const transformConfig =
+          compositeFieldTransformConfigs[uniqueFieldMetadataItem.type];
+        const transform = transformConfig?.[field.compositeSubFieldKey];
+        const value = transform ? transform(rawValue) : rawValue;
+
         return {
           ...acc,
           [uniqueFieldMetadataItem.name]: {
             ...(isDefined(acc?.[uniqueFieldMetadataItem.name])
               ? acc[uniqueFieldMetadataItem.name]
               : {}),
-            [field.compositeSubFieldKey]: importedStructuredRow[field.key],
+            [field.compositeSubFieldKey]: value,
           },
         };
       }
@@ -175,7 +185,7 @@ export const buildRecordFromImportedStructuredRow = ({
     },
     [FieldMetadataType.LINKS]: {
       primaryLinkLabel: castToString,
-      primaryLinkUrl: castToString,
+      primaryLinkUrl: lowercaseUrlOriginAndRemoveTrailingSlash,
       secondaryLinks: linkArrayJSONSchema.parse,
     },
 
@@ -306,6 +316,7 @@ export const buildRecordFromImportedStructuredRow = ({
           field,
           importedStructuredRow,
           spreadsheetImportFields,
+          COMPOSITE_FIELD_TRANSFORM_CONFIGS,
         );
         if (isDefined(relationConnectFieldValue)) {
           recordToBuild[field.name] = relationConnectFieldValue;

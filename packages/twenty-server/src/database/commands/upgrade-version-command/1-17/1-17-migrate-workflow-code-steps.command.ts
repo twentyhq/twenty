@@ -245,13 +245,13 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     await fs.mkdir(builtTempDir, { recursive: true });
     await fs.mkdir(sourceTempDir, { recursive: true });
 
-    const builtSources = await this.fileStorageService.readFolder(
+    const builtSources = await this.fileStorageService.readFolderLegacy(
       oldPaths.built,
     );
 
     await this.writeSourcesToLocalFolder(builtSources as Sources, builtTempDir);
 
-    const sourceSources = await this.fileStorageService.readFolder(
+    const sourceSources = await this.fileStorageService.readFolderLegacy(
       oldPaths.source,
     );
     const flattened =
@@ -272,7 +272,7 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     const builtTempDir = join(tempRoot, 'built');
     const sourceTempDir = join(tempRoot, 'source');
 
-    await this.fileStorageService.uploadFolder_v2({
+    await this.fileStorageService.uploadFolder({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
@@ -280,7 +280,7 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       localPath: builtTempDir,
     });
 
-    await this.fileStorageService.uploadFolder_v2({
+    await this.fileStorageService.uploadFolder({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,

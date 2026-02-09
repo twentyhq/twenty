@@ -78,7 +78,7 @@ describe('FileStorageDriverFactory', () => {
   });
 
   describe('createDriver', () => {
-    it('should create LocalDriver for local storage', () => {
+    it('should create ValidatedStorageDriver wrapping LocalDriver for local storage', () => {
       const storagePath = '/tmp/storage';
 
       jest
@@ -93,10 +93,10 @@ describe('FileStorageDriverFactory', () => {
       const driver = factory['createDriver']();
 
       expect(driver).toBeDefined();
-      expect(driver.constructor.name).toBe('LocalDriver');
+      expect(driver.constructor.name).toBe('ValidatedStorageDriver');
     });
 
-    it('should create S3Driver for S3 storage with access keys', () => {
+    it('should create ValidatedStorageDriver wrapping S3Driver for S3 storage with access keys', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
@@ -121,10 +121,10 @@ describe('FileStorageDriverFactory', () => {
       const driver = factory['createDriver']();
 
       expect(driver).toBeDefined();
-      expect(driver.constructor.name).toBe('S3Driver');
+      expect(driver.constructor.name).toBe('ValidatedStorageDriver');
     });
 
-    it('should create S3Driver for S3 storage without access keys (using provider chain)', () => {
+    it('should create ValidatedStorageDriver wrapping S3Driver for S3 storage without access keys (using provider chain)', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
@@ -149,7 +149,7 @@ describe('FileStorageDriverFactory', () => {
       const driver = factory['createDriver']();
 
       expect(driver).toBeDefined();
-      expect(driver.constructor.name).toBe('S3Driver');
+      expect(driver.constructor.name).toBe('ValidatedStorageDriver');
     });
 
     it('should throw error for invalid storage driver type', () => {
@@ -177,7 +177,7 @@ describe('FileStorageDriverFactory', () => {
       const driver = factory.getCurrentDriver();
 
       expect(driver).toBeDefined();
-      expect(driver.constructor.name).toBe('LocalDriver');
+      expect(driver.constructor.name).toBe('ValidatedStorageDriver');
     });
 
     it('should reuse driver when config key unchanged', () => {
@@ -224,8 +224,8 @@ describe('FileStorageDriverFactory', () => {
       const driver2 = factory.getCurrentDriver();
 
       expect(driver1).not.toBe(driver2);
-      expect(driver1.constructor.name).toBe('LocalDriver');
-      expect(driver2.constructor.name).toBe('LocalDriver');
+      expect(driver1.constructor.name).toBe('ValidatedStorageDriver');
+      expect(driver2.constructor.name).toBe('ValidatedStorageDriver');
     });
 
     it('should create new driver when switching from local to S3', () => {
@@ -265,8 +265,8 @@ describe('FileStorageDriverFactory', () => {
       const driver2 = factory.getCurrentDriver();
 
       expect(driver1).not.toBe(driver2);
-      expect(driver1.constructor.name).toBe('LocalDriver');
-      expect(driver2.constructor.name).toBe('S3Driver');
+      expect(driver1.constructor.name).toBe('ValidatedStorageDriver');
+      expect(driver2.constructor.name).toBe('ValidatedStorageDriver');
     });
 
     it('should throw error for unsupported storage type', () => {

@@ -139,7 +139,7 @@ export class ApplicationSyncService {
     const packageJson = JSON.parse(
       (
         await streamToBuffer(
-          await this.fileStorageService.readFile_v2({
+          await this.fileStorageService.readFile({
             applicationUniversalIdentifier:
               manifest.application.universalIdentifier,
             fileFolder: FileFolder.Source,
@@ -187,7 +187,7 @@ export class ApplicationSyncService {
     ) {
       const yarnLockContent = (
         await streamToBuffer(
-          await this.fileStorageService.readFile_v2({
+          await this.fileStorageService.readFile({
             applicationUniversalIdentifier:
               manifest.application.universalIdentifier,
             fileFolder: FileFolder.Source,
