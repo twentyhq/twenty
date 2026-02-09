@@ -9,6 +9,7 @@ import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
 
 export type MetadataManyToOneRelationConfiguration<
   TSourceMetadataName extends AllMetadataName,
@@ -62,7 +63,13 @@ type MetadataRelationsProperties = {
         MetadataEntity<TSourceMetadataName>
       >]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
     };
-  };
+  } & ([
+    AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TSourceMetadataName>,
+  ] extends [never]
+    ? {}
+    : {
+        serializedRelations: Partial<Record<AllMetadataName, true>>;
+      });
 };
 
 export const ALL_METADATA_RELATIONS = {
@@ -156,6 +163,9 @@ export const ALL_METADATA_RELATIONS = {
       kanbanAggregateOperationViews: { metadataName: 'view' },
       calendarViews: { metadataName: 'view' },
       mainGroupByFieldMetadataViews: { metadataName: 'view' },
+    },
+    serializedRelations: {
+      fieldMetadata: true,
     },
   },
   objectMetadata: {
@@ -379,6 +389,9 @@ export const ALL_METADATA_RELATIONS = {
       application: null,
     },
     oneToMany: {},
+    serializedRelations: {
+      fieldMetadata: true,
+    },
   },
   rowLevelPermissionPredicate: {
     manyToOne: {
