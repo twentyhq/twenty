@@ -51,6 +51,12 @@ const render: WorkerExports['render'] = async (
     headers: { Authorization: `Bearer ${renderContext.authToken}` },
   });
 
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch front component from ${renderContext.componentUrl}: ${response.status} ${response.statusText}`,
+    );
+  }
+
   const responseText = await response.text();
 
   const blob = new Blob([responseText], {
