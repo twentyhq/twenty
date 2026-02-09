@@ -19,7 +19,7 @@ export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   workspaceId,
   ownerFlatApplication,
 }: FromCreateLogicFunctionInputToFlatLogicFunctionArgs): FlatLogicFunction => {
-  const id = rawCreateLogicFunctionInput.id;
+  const id = rawCreateLogicFunctionInput.id ?? v4();
   const currentDate = new Date();
 
   const sourceHandlerPath = rawCreateLogicFunctionInput.sourceHandlerPath;
