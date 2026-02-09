@@ -1,13 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { buildFieldsByObjectIdMap } from 'src/engine/metadata-modules/page-layout-widget/utils/build-fields-by-object-id-map.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { getFieldById } from 'src/engine/metadata-modules/page-layout-widget/utils/get-field-by-id.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   type DashboardToolContext,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { buildFieldsByObjectIdMap } from 'src/modules/dashboard/tools/utils/build-fields-by-object-id-map.util';
 import { buildResolvedGroupBy } from 'src/modules/dashboard/tools/utils/build-resolved-group-by.util';
 
 const getDashboardSchema = z.object({
@@ -56,16 +57,6 @@ export const createGetDashboardTool = (
 
       const fieldsByObjectId = buildFieldsByObjectIdMap(allFields);
 
-      const getFieldById = (fieldId?: string | null) => {
-        if (!isDefined(fieldId)) return null;
-        const identifier =
-          flatFieldMetadataMaps.universalIdentifierById[fieldId];
-
-        if (!isDefined(identifier)) return null;
-
-        return flatFieldMetadataMaps.byUniversalIdentifier[identifier] ?? null;
-      };
-
       const buildResolvedGroupByForConfiguration = ({
         fieldId,
         subFieldName,
@@ -76,7 +67,7 @@ export const createGetDashboardTool = (
         buildResolvedGroupBy({
           fieldId,
           subFieldName,
-          getFieldById,
+          flatFieldMetadataMaps,
           fieldsByObjectId,
           allFields,
         });
@@ -145,6 +136,7 @@ export const createGetDashboardTool = (
               if (isDefined(configuration.aggregateFieldMetadataId)) {
                 const aggregateField = getFieldById(
                   configuration.aggregateFieldMetadataId,
+                  flatFieldMetadataMaps,
                 );
 
                 if (isDefined(aggregateField)) {

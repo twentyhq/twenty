@@ -2,8 +2,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { getFieldById } from 'src/engine/metadata-modules/page-layout-widget/utils/get-field-by-id.util';
 import { resolveMorphTargetObjectId } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-morph-target-object-id.util';
 import { humanizeSubFieldLabel } from 'src/modules/dashboard/tools/utils/humanize-sub-field-label.util';
 
@@ -18,17 +20,17 @@ type ResolvedGroupBy = {
 export const buildResolvedGroupBy = ({
   fieldId,
   subFieldName,
-  getFieldById,
+  flatFieldMetadataMaps,
   fieldsByObjectId,
   allFields,
 }: {
   fieldId?: string | null;
   subFieldName?: string | null;
-  getFieldById: (fieldId?: string | null) => FlatFieldMetadata | null;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   fieldsByObjectId: Map<string, FlatFieldMetadata[]>;
   allFields: FlatFieldMetadata[];
 }) => {
-  const field = getFieldById(fieldId);
+  const field = getFieldById(fieldId, flatFieldMetadataMaps);
 
   if (!isDefined(field)) return null;
 
