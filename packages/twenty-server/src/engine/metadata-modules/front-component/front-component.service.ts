@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { type Readable } from 'stream';
+
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -27,6 +31,7 @@ export class FrontComponentService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly fileStorageService: FileStorageService,
   ) {}
 
   async findAll(workspaceId: string): Promise<FrontComponentDTO[]> {
@@ -281,5 +286,32 @@ export class FrontComponentService {
     }
 
     return frontComponent;
+  }
+
+  async getBuiltComponentStream({
+    frontComponentId,
+    workspaceId,
+  }: {
+    frontComponentId: string;
+    workspaceId: string;
+  }): Promise<Readable> {
+    const frontComponent = await this.findByIdOrThrow(
+      frontComponentId,
+      workspaceId,
+    );
+
+    const application = await this.applicationService.findOneApplicationOrThrow(
+      {
+        id: frontComponent.applicationId,
+        workspaceId,
+      },
+    );
+
+    return this.fileStorageService.readFile({
+      workspaceId,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      fileFolder: FileFolder.BuiltFrontComponent,
+      resourcePath: frontComponent.builtComponentPath,
+    });
   }
 }

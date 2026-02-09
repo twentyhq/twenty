@@ -7,8 +7,8 @@ import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application-l
 // To regenerate: use logicFunctionCreateHash from logic-function-create-hash.utils.
 // package.json: hash(JSON.stringify(JSON.parse(content))). yarn.lock: hash(content).
 // Both use first 32 chars of SHA512 hex digest.
-const DEFAULT_PACKAGE_JSON_CHECKSUM = '84772134573e316a4eb1f9dc2e58706a';
-const DEFAULT_YARN_LOCK_CHECKSUM = '8d837b7503cf8eff21c6446a126588d4';
+const DEFAULT_PACKAGE_JSON_CHECKSUM = '1eee7f7ff908b69946b4c21ac46c5501';
+const DEFAULT_YARN_LOCK_CHECKSUM = '2b6e84fc87db6467d936669815d064da';
 
 export type DefaultApplicationPackageFields = {
   packageJsonChecksum: string;

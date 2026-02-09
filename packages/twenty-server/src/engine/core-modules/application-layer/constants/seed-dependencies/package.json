@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@types/bcrypt": "^5.0.2",
+    "@types/bcrypt": "^6.0.0",
     "@types/deep-equal": "^1.0.4",
     "@types/lodash.camelcase": "^4.3.9",
     "@types/lodash.compact": "^3.0.9",
@@ -18,7 +18,7 @@
     "@types/uuid": "^10.0.0",
     "archiver": "^7.0.1",
     "axios": "^1.12.0",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "body-parser": "^1.20.4",
     "deep-equal": "^2.2.3",
     "jsonwebtoken": "^9.0.2",
@@ -38,7 +38,7 @@
     "lodash.snakecase": "^4.1.1",
     "lodash.upperfirst": "^4.3.1",
     "nodemailer": "^7.0.11",
-    "sharp": "^0.33.5",
+    "sharp": "^0.34.5",
     "uuid": "^10.0.0",
     "winston": "^3.14.2"
   }

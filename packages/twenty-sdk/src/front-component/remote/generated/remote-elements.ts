@@ -13,6 +13,7 @@ import {
   RemoteFragmentElement,
   type RemoteEvent,
 } from '@remote-dom/core/elements';
+import { type SerializedEventData } from '../../../sdk/front-component-common/SerializedEventData';
 
 export type HtmlCommonProperties = {
   id?: string;
@@ -26,26 +27,26 @@ export type HtmlCommonProperties = {
   'data-testid'?: string;
 };
 export type HtmlCommonEvents = {
-  click(event: RemoteEvent): void;
-  dblclick(event: RemoteEvent): void;
-  mousedown(event: RemoteEvent): void;
-  mouseup(event: RemoteEvent): void;
-  mouseover(event: RemoteEvent): void;
-  mouseout(event: RemoteEvent): void;
-  mouseenter(event: RemoteEvent): void;
-  mouseleave(event: RemoteEvent): void;
-  keydown(event: RemoteEvent): void;
-  keyup(event: RemoteEvent): void;
-  keypress(event: RemoteEvent): void;
-  focus(event: RemoteEvent): void;
-  blur(event: RemoteEvent): void;
-  change(event: RemoteEvent): void;
-  input(event: RemoteEvent): void;
-  submit(event: RemoteEvent): void;
-  scroll(event: RemoteEvent): void;
-  wheel(event: RemoteEvent): void;
-  contextmenu(event: RemoteEvent): void;
-  drag(event: RemoteEvent): void;
+  click(event: RemoteEvent<SerializedEventData>): void;
+  dblclick(event: RemoteEvent<SerializedEventData>): void;
+  mousedown(event: RemoteEvent<SerializedEventData>): void;
+  mouseup(event: RemoteEvent<SerializedEventData>): void;
+  mouseover(event: RemoteEvent<SerializedEventData>): void;
+  mouseout(event: RemoteEvent<SerializedEventData>): void;
+  mouseenter(event: RemoteEvent<SerializedEventData>): void;
+  mouseleave(event: RemoteEvent<SerializedEventData>): void;
+  keydown(event: RemoteEvent<SerializedEventData>): void;
+  keyup(event: RemoteEvent<SerializedEventData>): void;
+  keypress(event: RemoteEvent<SerializedEventData>): void;
+  focus(event: RemoteEvent<SerializedEventData>): void;
+  blur(event: RemoteEvent<SerializedEventData>): void;
+  change(event: RemoteEvent<SerializedEventData>): void;
+  input(event: RemoteEvent<SerializedEventData>): void;
+  submit(event: RemoteEvent<SerializedEventData>): void;
+  scroll(event: RemoteEvent<SerializedEventData>): void;
+  wheel(event: RemoteEvent<SerializedEventData>): void;
+  contextmenu(event: RemoteEvent<SerializedEventData>): void;
+  drag(event: RemoteEvent<SerializedEventData>): void;
 };
 
 const HTML_COMMON_EVENTS_ARRAY = [

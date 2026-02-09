@@ -23,11 +23,21 @@ export const getSecureAxiosAdapter = (
   const { dnsLookup, httpAdapter } = dependencies;
 
   return async (config: InternalAxiosRequestConfig) => {
-    if (!config.url) {
+    // Resolve full URL by combining baseURL and url, matching what the
+    // default axios HTTP adapter does internally. Without this, requests
+    // that rely on baseURL (e.g. captcha drivers) would fail the check
+    // below because config.url can be an empty string.
+    const resolvedUrl = config.url
+      ? config.baseURL
+        ? new URL(config.url, config.baseURL).toString()
+        : config.url
+      : config.baseURL;
+
+    if (!resolvedUrl) {
       throw new Error('URL is required');
     }
 
-    const url = new URL(config.url);
+    const url = new URL(resolvedUrl);
 
     if (!['http:', 'https:'].includes(url.protocol)) {
       throw new Error('URL should use http/https protocol');

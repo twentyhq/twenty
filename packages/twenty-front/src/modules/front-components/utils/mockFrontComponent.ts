@@ -20,6 +20,7 @@ var TestComponent = () => {
     }
   );
 };
+
 var test_component_front_component_default = globalThis.jsx(TestComponent, {});
 export {
   test_component_front_component_default as default
