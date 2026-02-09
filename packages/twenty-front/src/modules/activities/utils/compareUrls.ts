@@ -13,7 +13,6 @@ export const compareUrls = (
       getAttachmentPath(secondAttachmentUrl)
     );
   } catch {
-    // If URL parsing fails, fall back to simple string comparison
     return firstAttachmentUrl === secondAttachmentUrl;
   }
 };

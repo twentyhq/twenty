@@ -65,7 +65,6 @@ export const FileBlock = createReactBlockSpec(
         if (isUndefinedOrNull(file)) {
           return '';
         }
-        // uploadFile now returns just the URL string
         const fileUrl = (await editor.uploadFile?.(file)) as string;
 
         if (!isNonEmptyString(fileUrl)) {
@@ -80,7 +79,6 @@ export const FileBlock = createReactBlockSpec(
             name: file.name,
           },
         });
-        // Note: attachmentFileId will be added by enrichBlocknoteWithFileIds
       };
       const handleUploadFileClick = () => {
         inputFileRef?.current?.click?.();
