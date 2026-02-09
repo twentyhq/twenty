@@ -9,7 +9,6 @@ import {
   UpgradeCommandRunner,
   type VersionCommands,
 } from 'src/database/commands/command-runners/upgrade.command-runner';
-import { AddFileEntityUniqueConstraintCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-add-file-entity-unique-constraint.command';
 import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
 import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files.command';
 import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-fix-morph-relation-field-names.command';
@@ -41,7 +40,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly dataSourceService: DataSourceService,
 
     // 1.17 Commands
-    protected readonly addFileEntityUniqueConstraintCommand: AddFileEntityUniqueConstraintCommand,
     protected readonly backfillApplicationPackageFilesCommand: BackfillApplicationPackageFilesCommand,
     protected readonly deleteFileRecordsCommand: DeleteFileRecordsCommand,
     protected readonly migrateAttachmentToMorphRelationsCommand: MigrateAttachmentToMorphRelationsCommand,
@@ -76,7 +74,6 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.deleteFileRecordsCommand,
       this.backfillApplicationPackageFilesCommand,
       this.updateFileTableMigrationCommand,
-      this.addFileEntityUniqueConstraintCommand,
       this.fixMorphRelationFieldNamesCommand,
     ];
 

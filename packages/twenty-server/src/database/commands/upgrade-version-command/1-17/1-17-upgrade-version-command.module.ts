@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AddFileEntityUniqueConstraintCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-add-file-entity-unique-constraint.command';
 import { BackfillApplicationPackageFilesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-backfill-application-package-files.command';
 import { DeleteFileRecordsCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-delete-all-files.command';
 import { FixMorphRelationFieldNamesCommand } from 'src/database/commands/upgrade-version-command/1-17/1-17-fix-morph-relation-field-names.command';
@@ -70,7 +69,6 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     GlobalWorkspaceDataSourceModule,
   ],
   providers: [
-    AddFileEntityUniqueConstraintCommand,
     FixMorphRelationFieldNamesCommand,
     MigrateAttachmentToMorphRelationsCommand,
     MigrateFavoritesToNavigationMenuItemsCommand,
@@ -86,7 +84,6 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
     UpdateFileTableMigrationCommand,
   ],
   exports: [
-    AddFileEntityUniqueConstraintCommand,
     FixMorphRelationFieldNamesCommand,
     MigrateAttachmentToMorphRelationsCommand,
     MigrateFavoritesToNavigationMenuItemsCommand,
