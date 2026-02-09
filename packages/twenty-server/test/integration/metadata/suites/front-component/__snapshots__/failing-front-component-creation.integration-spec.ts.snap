@@ -15,7 +15,6 @@ exports[`Front component creation should fail when name is empty 1`] = `
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "",
             "universalIdentifier": Any<String>,
           },
@@ -52,7 +51,6 @@ exports[`Front component creation should fail when name is whitespace-only 1`] =
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "",
             "universalIdentifier": Any<String>,
           },

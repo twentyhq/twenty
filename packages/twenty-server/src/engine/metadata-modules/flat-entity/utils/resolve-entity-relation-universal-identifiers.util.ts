@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   ALL_METADATA_RELATIONS,
-  type ManyToOneRelationValue,
+  type MetadataManyToOneRelationConfiguration,
 } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-relations.constant';
 import {
   FlatEntityMapsException,
@@ -76,7 +76,9 @@ export const resolveEntityRelationUniversalIdentifiers = <
   const relations = ALL_METADATA_RELATIONS[metadataName].manyToOne;
   const result: Record<string, string | null> = {};
 
-  for (const relation of Object.values(relations) as ManyToOneRelationValue<
+  for (const relation of Object.values(
+    relations,
+  ) as MetadataManyToOneRelationConfiguration<
     T,
     ExtractEntityManyToOneEntityRelationProperties<MetadataEntity<T>>
   >[]) {

@@ -7,31 +7,29 @@ import { v4 } from 'uuid';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
-import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { ViewOpenRecordIn } from 'src/engine/metadata-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/metadata-modules/view/enums/view-type.enum';
 import { ViewVisibility } from 'src/engine/metadata-modules/view/enums/view-visibility.enum';
+import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
+import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,
-  workspaceId,
   createdByUserWorkspaceId,
   flatApplication,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
 }: {
   createViewInput: CreateViewInput;
-  workspaceId: string;
   createdByUserWorkspaceId?: string;
   flatApplication: FlatApplication;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
 }): {
-  flatViewToCreate: FlatView;
-  flatViewGroupsToCreate: FlatViewGroup[];
+  flatViewToCreate: UniversalFlatView & { id: string };
+  flatViewGroupsToCreate: UniversalFlatViewGroup[];
 } => {
   const { objectMetadataId, ...createViewInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -59,29 +57,25 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     flatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
   });
 
-  const flatViewToCreate = {
+  const mainGroupByFieldMetadataId =
+    createViewInput.mainGroupByFieldMetadataId ?? null;
+
+  const flatViewToCreate: UniversalFlatView & { id: string } = {
     id: viewId,
-    objectMetadataId,
     objectMetadataUniversalIdentifier,
-    workspaceId,
     name: createViewInput.name,
-    createdAt: createdAt,
+    createdAt,
     updatedAt: createdAt,
     deletedAt: null,
     isCustom: true,
     anyFieldFilterValue: createViewInput.anyFieldFilterValue ?? null,
-    calendarFieldMetadataId: createViewInput.calendarFieldMetadataId ?? null,
     calendarFieldMetadataUniversalIdentifier,
     calendarLayout: createViewInput.calendarLayout ?? null,
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? false,
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
-    kanbanAggregateOperationFieldMetadataId:
-      createViewInput.kanbanAggregateOperationFieldMetadataId ?? null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
-    mainGroupByFieldMetadataId:
-      createViewInput.mainGroupByFieldMetadataId ?? null,
     mainGroupByFieldMetadataUniversalIdentifier,
     key: createViewInput.key ?? null,
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
@@ -90,25 +84,19 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
     visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
-    viewFieldIds: [],
     viewFieldUniversalIdentifiers: [],
-    viewFilterIds: [],
     viewFilterUniversalIdentifiers: [],
-    viewGroupIds: [],
     viewGroupUniversalIdentifiers: [],
-    viewFilterGroupIds: [],
     viewFilterGroupUniversalIdentifiers: [],
-    applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 
-  let flatViewGroupsToCreate: FlatViewGroup[] = [];
+  let flatViewGroupsToCreate: UniversalFlatViewGroup[] = [];
 
-  if (isDefined(flatViewToCreate.mainGroupByFieldMetadataId)) {
+  if (isDefined(mainGroupByFieldMetadataId)) {
     flatViewGroupsToCreate = computeFlatViewGroupsOnViewCreate({
-      flatViewToCreateId: flatViewToCreate.id,
       flatViewToCreateUniversalIdentifier: flatViewToCreate.universalIdentifier,
-      mainGroupByFieldMetadataId: flatViewToCreate.mainGroupByFieldMetadataId,
+      mainGroupByFieldMetadataId,
       flatFieldMetadataMaps,
     });
   }

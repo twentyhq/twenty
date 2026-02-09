@@ -1,5 +1,17 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`CommandMenuItem creation should fail when creating with both workflowVersionId and frontComponentId 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "WORKFLOW_OR_FRONT_COMPONENT_REQUIRED",
+    "userFriendlyMessage": "Either workflow version or front component is required.",
+  },
+  "message": "Exactly one of workflowVersionId or frontComponentId is required",
+  "name": "UserInputError",
+}
+`;
+
 exports[`CommandMenuItem creation should fail when creating with empty label 1`] = `
 {
   "extensions": {
@@ -15,7 +27,6 @@ exports[`CommandMenuItem creation should fail when creating with empty label 1`]
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "commandMenuItem",
@@ -33,32 +44,6 @@ exports[`CommandMenuItem creation should fail when creating with empty label 1`]
   },
   "message": "Multiple validation errors occurred while creating command menu item",
   "name": "GraphQLError",
-}
-`;
-
-exports[`CommandMenuItem creation should fail when creating with missing label 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Field "label" of required type "String!" was not provided.",
-  "name": "GraphQLError",
-}
-`;
-
-exports[`CommandMenuItem creation should fail when creating with missing workflowVersionId 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "WORKFLOW_OR_FRONT_COMPONENT_REQUIRED",
-    "userFriendlyMessage": "Either workflow version or front component is required.",
-  },
-  "message": "Exactly one of workflowVersionId or frontComponentId is required",
-  "name": "UserInputError",
 }
 `;
 
@@ -92,7 +77,21 @@ exports[`CommandMenuItem creation should fail when creating with invalid workflo
 }
 `;
 
-exports[`CommandMenuItem creation should fail when creating with both workflowVersionId and frontComponentId 1`] = `
+exports[`CommandMenuItem creation should fail when creating with missing label 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "label" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`CommandMenuItem creation should fail when creating with missing workflowVersionId 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",

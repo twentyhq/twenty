@@ -4,12 +4,12 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFlatRoleTargetAssignationAvailability } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util';
 import { validateFlatRoleTargetTargetsOnlyOneEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util';
 
@@ -21,28 +21,27 @@ export class FlatRoleTargetValidatorService {
       flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
       flatRoleMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
   >): FailedFlatEntityValidation<'roleTarget', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatRoleTargetToValidate.id,
         universalIdentifier: flatRoleTargetToValidate.universalIdentifier,
       },
       metadataName: 'roleTarget',
       type: 'create',
     });
 
-    const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatRoleTargetToValidate.id,
+    const existingRoleTarget = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatRoleTargetToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatRoleTargetMaps,
     });
 
     if (isDefined(existingRoleTarget)) {
       validationResult.errors.push({
         code: RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA,
-        message: t`Role target with this id already exists`,
-        userFriendlyMessage: msg`Role target with this id already exists`,
+        message: t`Role target with this universal identifier already exists`,
+        userFriendlyMessage: msg`Role target already exists`,
       });
     }
 
@@ -52,8 +51,8 @@ export class FlatRoleTargetValidatorService {
       }),
     );
 
-    const referencedRole = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatRoleTargetToValidate.roleId,
+    const referencedRole = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatRoleTargetToValidate.roleUniversalIdentifier,
       flatEntityMaps: flatRoleMaps,
     });
 
@@ -80,20 +79,19 @@ export class FlatRoleTargetValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
   >): FailedFlatEntityValidation<'roleTarget', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatRoleTargetToValidate.id,
         universalIdentifier: flatRoleTargetToValidate.universalIdentifier,
       },
       metadataName: 'roleTarget',
       type: 'delete',
     });
 
-    const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatRoleTargetToValidate.id,
+    const existingRoleTarget = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatRoleTargetToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatRoleTargetMaps,
     });
 
@@ -111,7 +109,7 @@ export class FlatRoleTargetValidatorService {
   }
 
   validateFlatRoleTargetUpdate({
-    flatEntityId,
+    universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleTargetMaps: optimisticFlatRoleTargetMaps,
@@ -120,15 +118,14 @@ export class FlatRoleTargetValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.roleTarget
   >): FailedFlatEntityValidation<'roleTarget', 'update'> {
-    const existingRoleTarget = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const existingRoleTarget = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatRoleTargetMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: existingRoleTarget?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'roleTarget',
       type: 'update',
@@ -155,8 +152,8 @@ export class FlatRoleTargetValidatorService {
       }),
     );
 
-    const referencedRole = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: updatedFlatRoleTarget.roleId,
+    const referencedRole = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: updatedFlatRoleTarget.roleUniversalIdentifier,
       flatEntityMaps: flatRoleMaps,
     });
 

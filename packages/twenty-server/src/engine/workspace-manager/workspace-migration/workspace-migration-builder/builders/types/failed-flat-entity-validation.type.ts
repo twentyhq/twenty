@@ -18,6 +18,5 @@ export type FailedFlatEntityValidation<
   type: TAcionType;
   metadataName: TMetadataName;
   errors: FlatEntityValidationError[];
-  flatEntityMinimalInformation: Pick<MetadataFlatEntity<TMetadataName>, 'id'> &
-    Partial<Omit<MetadataFlatEntity<TMetadataName>, 'id'>>;
+  flatEntityMinimalInformation: Partial<MetadataFlatEntity<TMetadataName>>;
 };

@@ -93,10 +93,28 @@ export const createStandardViewFlatMetadata = <
       ].id
     : null;
 
+  const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
+    kanbanAggregateOperationFieldName
+      ? // @ts-expect-error ignore
+        STANDARD_OBJECTS[objectName].fields[kanbanAggregateOperationFieldName]
+          .universalIdentifier
+      : null;
+
+  const mainGroupByFieldMetadataUniversalIdentifier = mainGroupByFieldName
+    ? // @ts-expect-error ignore
+      STANDARD_OBJECTS[objectName].fields[mainGroupByFieldName]
+        .universalIdentifier
+    : null;
+
+  const calendarFieldMetadataUniversalIdentifier = calendarFieldName
+    ? // @ts-expect-error ignore
+      STANDARD_OBJECTS[objectName].fields[calendarFieldName].universalIdentifier
+    : null;
+
   return {
-    calendarFieldMetadataUniversalIdentifier: null,
-    kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
-    mainGroupByFieldMetadataUniversalIdentifier: null,
+    calendarFieldMetadataUniversalIdentifier,
+    kanbanAggregateOperationFieldMetadataUniversalIdentifier,
+    mainGroupByFieldMetadataUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     id: standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
     universalIdentifier: viewDefinition.universalIdentifier,

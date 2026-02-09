@@ -1,7 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 describe('getMorphNameFromMorphFieldMetadataName', () => {
   const createMorphRelationFlatFieldMetadataMock = (
@@ -12,8 +12,8 @@ describe('getMorphNameFromMorphFieldMetadataName', () => {
       name,
       type: FieldMetadataType.MORPH_RELATION,
       label: name,
-      settings: { relationType },
-    }) as unknown as FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+      universalSettings: { relationType },
+    }) as unknown as UniversalFlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
 
   it('should extract base morph field name for MANY_TO_ONE (removes singular suffix)', () => {
     const morphRelationFlatFieldMetadata =
