@@ -17,8 +17,7 @@ import { Button } from 'twenty-ui/input';
 import {
   type BillingEntitlement,
   BillingEntitlementKey,
-  FeatureFlagKey,
-  useFindOneAgentQuery,
+  useFindOneAgentQuery
 } from '~/generated-metadata/graphql';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
@@ -58,9 +57,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
         entitlement.key === BillingEntitlementKey.RLS &&
         entitlement.value === true,
     ) ?? false;
-
-  const isRowLevelPermissionPredicatesEnabled =
-    featureFlagsMap[FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED];
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 
@@ -164,13 +160,11 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
         />
-        {isRowLevelPermissionPredicatesEnabled && (
-          <SettingsRolePermissionsObjectLevelRecordLevelSection
-            objectMetadataItem={objectMetadataItem}
-            roleId={roleId}
-            hasOrganizationPlan={isRLSBillingEntitlementEnabled}
-          />
-        )}
+        <SettingsRolePermissionsObjectLevelRecordLevelSection
+          objectMetadataItem={objectMetadataItem}
+          roleId={roleId}
+          hasOrganizationPlan={isRLSBillingEntitlementEnabled}
+        />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
