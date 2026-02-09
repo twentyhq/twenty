@@ -1,9 +1,9 @@
-import { runAppDev } from '@/cli/__tests__/integration/utils/run-app-dev.util';
 import { OUTPUT_DIR } from 'twenty-shared/application';
 import { AppUninstallCommand } from '@/cli/commands/app/app-uninstall';
 import { existsSync } from 'fs';
 import { join, resolve } from 'path';
 import { inspect } from 'util';
+import { runCliCommand } from '@/cli/__tests__/integration/utils/run-cli-command.util';
 
 inspect.defaultOptions.depth = 10;
 
@@ -26,33 +26,30 @@ describe('Application: install delete and reinstall rich-app', () => {
   });
 
   it(`should successfully install ${applicationName} application`, async () => {
-    const result = await runAppDev({ appPath });
+    await runCliCommand({
+      command: 'app:dev',
+      args: [appPath],
+      waitForOutput: ['✓ Synced'],
+    });
 
-    if (result.success === false) {
-      console.log(result.output.slice(undefined, 10_000));
-    }
-
-    expect(result.success).toBe(true);
     expect(existsSync(join(appPath, OUTPUT_DIR, 'manifest.json'))).toBe(true);
   });
 
   it(`should successfully delete ${applicationName} application`, async () => {
-    const result = await uninstallCommand.execute({
-      appPath,
-      askForConfirmation: false,
+    await runCliCommand({
+      command: 'app:uninstall',
+      args: [appPath, '-y'],
+      waitForOutput: ['Application uninstalled successfully'],
     });
-
-    if (result.success === false) {
-      console.log(result);
-    }
-
-    expect(result.success).toBe(true);
   });
 
   it(`should successfully re-install ${applicationName} application`, async () => {
-    const result = await runAppDev({ appPath });
+    await runCliCommand({
+      command: 'app:dev',
+      args: [appPath],
+      waitForOutput: ['✓ Synced'],
+    });
 
-    expect(result.success).toBe(true);
     expect(existsSync(join(appPath, OUTPUT_DIR, 'manifest.json'))).toBe(true);
   });
 });
