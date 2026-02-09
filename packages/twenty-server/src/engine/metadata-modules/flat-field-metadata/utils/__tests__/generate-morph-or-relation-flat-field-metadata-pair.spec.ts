@@ -349,4 +349,52 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
       },
     );
   });
+
+  describe('Universal identifier behaviour', () => {
+    it('should keep the source field universalIdentifier from createFieldInput', () => {
+      const sourceUniversalIdentifier = '11111111-2222-3333-4444-555555555555';
+
+      const input: GenerateMorphOrRelationFlatFieldMetadataPairTestInput = {
+        sourceFlatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
+        targetFlatObjectMetadata: PET_FLAT_OBJECT_MOCK,
+        targetFlatFieldMetadataType: FieldMetadataType.RELATION,
+        sourceFlatObjectMetadataJoinColumnName: 'petId',
+        workspaceId: mockWorkspaceId,
+        flatApplication: MOCK_FLAT_APPLICATION,
+        createFieldInput: {
+          name: 'pets',
+          label: 'Pets',
+          description: 'Company pets',
+          icon: 'IconCat',
+          type: FieldMetadataType.RELATION,
+          objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+          isCustom: true,
+          isSystem: false,
+          isUnique: false,
+          universalIdentifier: sourceUniversalIdentifier,
+          relationCreationPayload: {
+            type: RelationType.ONE_TO_MANY,
+            targetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+            targetFieldLabel: 'Company',
+            targetFieldIcon: 'IconBuildingSkyscraper',
+          },
+        },
+      };
+
+      const result: SourceTargetMorphOrRelationFlatFieldAndFlatIndex =
+        generateMorphOrRelationFlatFieldMetadataPair(input);
+
+      const [sourceFieldMetadata, targetFieldMetadata] =
+        result.flatFieldMetadatas;
+
+      expect(sourceFieldMetadata.universalIdentifier).toBe(
+        sourceUniversalIdentifier,
+      );
+
+      expect(targetFieldMetadata.universalIdentifier).toBeDefined();
+      expect(targetFieldMetadata.universalIdentifier).not.toBe(
+        sourceUniversalIdentifier,
+      );
+    });
+  });
 });
