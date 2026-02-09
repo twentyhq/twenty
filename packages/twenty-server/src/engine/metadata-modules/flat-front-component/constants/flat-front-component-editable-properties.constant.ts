@@ -2,4 +2,9 @@ import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-
 
 export const FLAT_FRONT_COMPONENT_EDITABLE_PROPERTIES = [
   'name',
+  'description',
+  'builtComponentChecksum',
+  'sourceComponentPath',
+  'builtComponentPath',
+  'componentName',
 ] as const satisfies (keyof FlatFrontComponent)[];

@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, HideField, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
@@ -17,6 +17,16 @@ export class UpdateFrontComponentInputUpdates {
   @IsString()
   @Field({ nullable: true })
   name?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  @HideField()
+  builtComponentChecksum?: string;
 }
 
 @InputType()
