@@ -58,10 +58,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = ({
         updatedAt: indexFieldMetadata.updatedAt.toISOString(),
       }),
     ),
-    __universal: {
-      universalIdentifier: indexMetadataEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-    },
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
   };
 };

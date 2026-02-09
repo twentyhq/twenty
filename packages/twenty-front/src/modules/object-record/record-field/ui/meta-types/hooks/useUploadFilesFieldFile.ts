@@ -15,10 +15,10 @@ export const useUploadFilesFieldFile = () => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { t } = useLingui();
 
-  const uploadFile = async (file: File) => {
+  const uploadFile = async (file: File, fieldMetadataId: string) => {
     try {
       const result = await uploadFilesFieldFile({
-        variables: { file },
+        variables: { file, fieldMetadataId },
       });
 
       const uploadedFile = result?.data?.uploadFilesFieldFile;

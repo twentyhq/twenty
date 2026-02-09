@@ -4,6 +4,7 @@ import { parse } from 'path';
 
 import {
   FieldManifest,
+  FrontComponentManifest,
   LogicFunctionManifest,
   Manifest,
   ObjectFieldManifest,
@@ -34,7 +35,9 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -64,6 +67,7 @@ export class ApplicationSyncService {
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly permissionService: PermissionFlagService,
     private readonly fileStorageService: FileStorageService,
+    private readonly frontComponentService: FrontComponentService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -103,6 +107,14 @@ export class ApplicationSyncService {
       await this.syncLogicFunctions({
         logicFunctionsToSync: manifest.logicFunctions,
         code: manifest.sources,
+        workspaceId,
+        ownerFlatApplication,
+      });
+    }
+
+    if ((manifest.frontComponents ?? []).length > 0) {
+      await this.syncFrontComponents({
+        frontComponentsToSync: manifest.frontComponents,
         workspaceId,
         ownerFlatApplication,
       });
@@ -942,6 +954,103 @@ export class ApplicationSyncService {
           toolInputSchema: logicFunctionToCreate.toolInputSchema,
           isTool: logicFunctionToCreate.isTool,
         },
+        workspaceId,
+        ownerFlatApplication,
+      });
+    }
+  }
+
+  private async syncFrontComponents({
+    frontComponentsToSync,
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    frontComponentsToSync: FrontComponentManifest[];
+    workspaceId: string;
+    ownerFlatApplication: FlatApplication;
+  }) {
+    const { flatFrontComponentMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFrontComponentMaps'],
+        },
+      );
+
+    const applicationFrontComponents = Object.values(
+      flatFrontComponentMaps.byUniversalIdentifier,
+    ).filter(
+      (frontComponent) =>
+        isDefined(frontComponent) &&
+        frontComponent.applicationId === ownerFlatApplication.id,
+    ) as FlatFrontComponent[];
+
+    const frontComponentsToSyncUniversalIdentifiers = frontComponentsToSync.map(
+      (frontComponent) => frontComponent.universalIdentifier,
+    );
+
+    const applicationFrontComponentsUniversalIdentifiers =
+      applicationFrontComponents.map(
+        (frontComponent) => frontComponent.universalIdentifier,
+      );
+
+    const frontComponentsToDelete = applicationFrontComponents.filter(
+      (frontComponent) =>
+        isDefined(frontComponent.universalIdentifier) &&
+        !frontComponentsToSyncUniversalIdentifiers.includes(
+          frontComponent.universalIdentifier,
+        ),
+    );
+
+    const frontComponentsToUpdate = applicationFrontComponents.filter(
+      (frontComponent) =>
+        isDefined(frontComponent.universalIdentifier) &&
+        frontComponentsToSyncUniversalIdentifiers.includes(
+          frontComponent.universalIdentifier,
+        ),
+    );
+
+    const frontComponentsToCreate = frontComponentsToSync.filter(
+      (frontComponentToSync) =>
+        !applicationFrontComponentsUniversalIdentifiers.includes(
+          frontComponentToSync.universalIdentifier,
+        ),
+    );
+
+    for (const frontComponentToDelete of frontComponentsToDelete) {
+      await this.frontComponentService.destroyOne({
+        id: frontComponentToDelete.id,
+        workspaceId,
+        isSystemBuild: true,
+        ownerFlatApplication,
+      });
+    }
+
+    for (const frontComponentToUpdate of frontComponentsToUpdate) {
+      const frontComponentToSync = frontComponentsToSync.find(
+        (frontComponent) =>
+          frontComponent.universalIdentifier ===
+          frontComponentToUpdate.universalIdentifier,
+      );
+
+      if (!frontComponentToSync) {
+        throw new ApplicationException(
+          `Failed to find frontComponent to sync with universalIdentifier ${frontComponentToUpdate.universalIdentifier}`,
+          ApplicationExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+        );
+      }
+
+      await this.frontComponentService.updateOne({
+        id: frontComponentToUpdate.id,
+        update: frontComponentToSync,
+        workspaceId,
+        ownerFlatApplication,
+      });
+    }
+
+    for (const frontComponentToCreate of frontComponentsToCreate) {
+      await this.frontComponentService.createOne({
+        input: frontComponentToCreate,
         workspaceId,
         ownerFlatApplication,
       });

@@ -93,12 +93,10 @@ export class FlatSkillValidatorService {
 
     if (
       !buildOptions.isSystemBuild &&
-      // TODO refactor once skill has been migrated to universal pattern
-      isDefined(existingSkill.__universal) &&
       belongsToTwentyStandardApp({
         universalIdentifier: existingSkill.universalIdentifier,
         applicationUniversalIdentifier:
-          existingSkill.__universal.applicationUniversalIdentifier,
+          existingSkill.applicationUniversalIdentifier,
       })
     ) {
       validationResult.errors.push({
@@ -151,14 +149,11 @@ export class FlatSkillValidatorService {
       (key) => key !== 'isActive',
     );
 
-    // TODO refactor once skill has been migrated to universal pattern
-    const isTwentyStandardSkill =
-      isDefined(fromFlatSkill.__universal) &&
-      belongsToTwentyStandardApp({
-        universalIdentifier: fromFlatSkill.universalIdentifier,
-        applicationUniversalIdentifier:
-          fromFlatSkill.__universal.applicationUniversalIdentifier,
-      });
+    const isTwentyStandardSkill = belongsToTwentyStandardApp({
+      universalIdentifier: fromFlatSkill.universalIdentifier,
+      applicationUniversalIdentifier:
+        fromFlatSkill.applicationUniversalIdentifier,
+    });
 
     if (
       !buildOptions.isSystemBuild &&

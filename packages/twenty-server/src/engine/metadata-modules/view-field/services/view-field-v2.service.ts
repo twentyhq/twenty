@@ -76,12 +76,22 @@ export class ViewFieldV2Service {
         },
       );
 
+    const { flatFieldMetadataMaps, flatViewMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatFieldMetadataMaps', 'flatViewMaps'],
+        },
+      );
+
     const flatViewFieldsToCreate = createViewFieldInputs.map(
       (createViewFieldInput) =>
         fromCreateViewFieldInputToFlatViewFieldToCreate({
           createViewFieldInput,
           workspaceId,
-          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+          flatApplication: workspaceCustomFlatApplication,
+          flatFieldMetadataMaps,
+          flatViewMaps,
         }),
     );
 

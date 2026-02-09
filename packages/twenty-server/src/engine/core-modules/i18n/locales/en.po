@@ -829,6 +829,16 @@ msgstr "Content cannot be empty"
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
 msgstr "Contradicting field permissions have been detected on a relation field ({fieldName})."
 
+#. js-lingui-id: KYkpUZ
+#: src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util.ts
+msgid "Could not find {metadataName}"
+msgstr "Could not find {metadataName}"
+
+#. js-lingui-id: Fep47m
+#: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
+msgid "Could not find {targetMetadataName} for given {foreignKey}"
+msgstr "Could not find {targetMetadataName} for given {foreignKey}"
+
 #. js-lingui-id: LZf/L8
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
 #: src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util.ts
@@ -1085,6 +1095,11 @@ msgstr "Expected the same constraint fields to be used consistently across all o
 #: src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts
 msgid "Failed to create evaluation. Please try again."
 msgstr "Failed to create evaluation. Please try again."
+
+#. js-lingui-id: RjuW0j
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Failed to create front component."
+msgstr "Failed to create front component."
 
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -1347,6 +1362,11 @@ msgstr "File {fileId} is already associated with a permanent files field. Please
 msgid "File {fileId} is not associated with a files field. It can't be downloaded."
 msgstr "File {fileId} is not associated with a files field. It can't be downloaded."
 
+#. js-lingui-id: v+527c
+#: src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync.ts
+msgid "File {fileId} was not uploaded for this field. Please re-upload the file."
+msgstr "File {fileId} was not uploaded for this field. Please re-upload the file."
+
 #. js-lingui-id: weWV3g
 #: src/engine/core-modules/tool/tools/send-email-tool/exceptions/send-email-tool.exception.ts
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
@@ -1396,6 +1416,11 @@ msgstr "Form action must have at least one field"
 msgid "Friday"
 msgstr "Friday"
 
+#. js-lingui-id: Wed+Kp
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component is not ready."
+msgstr "Front component is not ready."
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1412,6 +1437,7 @@ msgstr "Front component not found"
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
 msgstr "Front component not found."
 

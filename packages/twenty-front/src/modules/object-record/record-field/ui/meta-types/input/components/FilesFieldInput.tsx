@@ -61,9 +61,13 @@ export const FilesFieldInput = () => {
       const nextValue = parseFilesArrayToFilesValue(updatedFiles);
       if (isDefined(nextValue)) {
         setDraftValue(nextValue);
+
+        if (nextValue.length === 0) {
+          onEnter?.({ newValue: nextValue });
+        }
       }
     },
-    [parseFilesArrayToFilesValue, setDraftValue],
+    [parseFilesArrayToFilesValue, setDraftValue, onEnter],
   );
 
   const handleUploadClick = useCallback(() => {
@@ -89,6 +93,7 @@ export const FilesFieldInput = () => {
         try {
           const uploadedFiles = await uploadMultipleFiles(
             selectedFiles,
+            fieldDefinition.fieldMetadataId,
             uploadFile,
           );
 
@@ -113,6 +118,7 @@ export const FilesFieldInput = () => {
     handleChange,
     onEnter,
     parseFilesArrayToFilesValue,
+    fieldDefinition,
   ]);
 
   const setIsFieldInError = useSetRecoilComponentState(

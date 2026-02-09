@@ -32,4 +32,5 @@ export enum MetricsKeys {
   CommonApiQueryRateLimited = 'common-api-query/rate-limited',
   JobCompleted = 'job/completed',
   JobFailed = 'job/failed',
+  JobWaiting = 'job/waiting',
 }

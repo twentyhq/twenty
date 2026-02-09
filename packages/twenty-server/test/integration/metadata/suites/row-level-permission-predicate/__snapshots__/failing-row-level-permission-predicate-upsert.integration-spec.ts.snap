@@ -3,36 +3,12 @@
 exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId in predicate does not exist 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "rowLevelPermissionPredicate": [
-        {
-          "errors": [
-            {
-              "code": "FIELD_METADATA_NOT_FOUND",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "rowLevelPermissionPredicate",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 rowLevelPermissionPredicate",
-    "summary": {
-      "rowLevelPermissionPredicate": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Validation errors occurred while upserting row level permission predicates",
-  "name": "GraphQLError",
+  "message": "Could not find fieldMetadata for given fieldMetadataId",
+  "name": "NotFoundError",
 }
 `;
 
@@ -54,36 +30,12 @@ exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId 
 exports[`Row Level Permission Predicate upsert should fail when objectMetadataId in predicate group does not exist 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "rowLevelPermissionPredicateGroup": [
-        {
-          "errors": [
-            {
-              "code": "OBJECT_METADATA_NOT_FOUND",
-              "message": "Object metadata not found",
-              "userFriendlyMessage": "Object metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "rowLevelPermissionPredicateGroup",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 rowLevelPermissionPredicateGroup",
-    "summary": {
-      "rowLevelPermissionPredicateGroup": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Validation errors occurred while upserting row level permission predicates",
-  "name": "GraphQLError",
+  "message": "Could not find objectMetadata for given objectMetadataId",
+  "name": "NotFoundError",
 }
 `;
 
@@ -120,36 +72,12 @@ exports[`Row Level Permission Predicate upsert should fail when objectMetadataId
 exports[`Row Level Permission Predicate upsert should fail when parentRowLevelPermissionPredicateGroupId in group does not exist 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "rowLevelPermissionPredicateGroup": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_DATA",
-              "message": "Parent row level permission predicate group not found",
-              "userFriendlyMessage": "Parent row level permission predicate group not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "rowLevelPermissionPredicateGroup",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 rowLevelPermissionPredicateGroup",
-    "summary": {
-      "rowLevelPermissionPredicateGroup": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Validation errors occurred while upserting row level permission predicates",
-  "name": "GraphQLError",
+  "message": "Could not find rowLevelPermissionPredicateGroup for given parentRowLevelPermissionPredicateGroupId",
+  "name": "NotFoundError",
 }
 `;
 
@@ -171,35 +99,11 @@ exports[`Row Level Permission Predicate upsert should fail when roleId is not a 
 exports[`Row Level Permission Predicate upsert should fail when rowLevelPermissionPredicateGroupId in predicate does not exist 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "rowLevelPermissionPredicate": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
-              "message": "Row level permission predicate group not found",
-              "userFriendlyMessage": "Row level permission predicate group not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "rowLevelPermissionPredicate",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 rowLevelPermissionPredicate",
-    "summary": {
-      "rowLevelPermissionPredicate": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Validation errors occurred while upserting row level permission predicates",
-  "name": "GraphQLError",
+  "message": "Could not find rowLevelPermissionPredicateGroup for given rowLevelPermissionPredicateGroupId",
+  "name": "NotFoundError",
 }
 `;

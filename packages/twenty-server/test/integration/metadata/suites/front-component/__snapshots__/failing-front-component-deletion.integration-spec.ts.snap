@@ -7,7 +7,7 @@ exports[`Front component deletion should fail when front component does not exis
     "subCode": "FRONT_COMPONENT_NOT_FOUND",
     "userFriendlyMessage": "Front component not found.",
   },
-  "message": "Front component not found",
+  "message": "Front component to destroy not found",
   "name": "NotFoundError",
 }
 `;

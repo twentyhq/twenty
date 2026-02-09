@@ -88,6 +88,14 @@ export class CommandMenuItemService {
     input: CreateCommandMenuItemInput,
     workspaceId: string,
   ): Promise<CommandMenuItemDTO> {
+    const { flatObjectMetadataMaps, flatFrontComponentMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFrontComponentMaps'],
+        },
+      );
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -97,7 +105,9 @@ export class CommandMenuItemService {
       fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate({
         createCommandMenuItemInput: input,
         workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatObjectMetadataMaps,
+        flatFrontComponentMaps,
       });
 
     const validateAndBuildResult =
@@ -149,11 +159,14 @@ export class CommandMenuItemService {
         { workspaceId },
       );
 
-    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+    const {
+      flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatCommandMenuItemMaps'],
+          flatMapsKeys: ['flatCommandMenuItemMaps', 'flatObjectMetadataMaps'],
         },
       );
 
@@ -161,6 +174,7 @@ export class CommandMenuItemService {
       fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow({
         flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
         updateCommandMenuItemInput: input,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =

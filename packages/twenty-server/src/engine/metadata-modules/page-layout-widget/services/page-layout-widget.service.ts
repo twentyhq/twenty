@@ -248,11 +248,21 @@ export class PageLayoutWidgetService {
         { workspaceId },
       );
 
+    const { flatPageLayoutTabMaps, flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatPageLayoutTabMaps', 'flatObjectMetadataMaps'],
+        },
+      );
+
     const flatPageLayoutWidgetToCreate =
       fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
         createPageLayoutWidgetInput: createInput,
         workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatPageLayoutTabMaps,
+        flatObjectMetadataMaps,
       });
 
     await this.validateAndRunWidgetMigration({
@@ -298,6 +308,14 @@ export class PageLayoutWidgetService {
       id,
       existingFlatPageLayoutWidgetMaps,
     );
+
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const isConfigurationBeingUpdated = Object.prototype.hasOwnProperty.call(
       updateData,
@@ -354,6 +372,7 @@ export class PageLayoutWidgetService {
       fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow({
         updatePageLayoutWidgetInput,
         flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     await this.validateAndRunWidgetMigration({

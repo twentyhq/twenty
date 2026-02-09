@@ -3,32 +3,15 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-sdk/src",
   "projectType": "library",
-  "tags": [
-    "scope:sdk",
-    "scope:shared"
-  ],
+  "tags": ["scope:sdk", "scope:shared"],
   "targets": {
     "build": {
-      "dependsOn": [
-        "generateBarrels",
-        "^build"
-      ],
-      "outputs": [
-        "{projectRoot}/dist",
-        "{projectRoot}/front-component/package.json",
-        "{projectRoot}/front-component/dist",
-        "{projectRoot}/front-component-constants/package.json",
-        "{projectRoot}/front-component-constants/dist",
-        "{projectRoot}/ui/package.json",
-        "{projectRoot}/ui/dist"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/dist"]
     },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "generateBarrels",
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-sdk",
         "command": "npx rimraf dist && npx vite build --watch"
@@ -36,43 +19,21 @@
     },
     "start": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-sdk",
         "command": "node dist/cli.cjs"
       }
     },
-    "generateBarrels": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": [
-        "production",
-        "{projectRoot}/scripts/generateBarrels.ts"
-      ],
-      "outputs": [
-        "{projectRoot}/src/index.ts",
-        "{projectRoot}/src/*/index.ts",
-        "{projectRoot}/package.json"
-      ],
-      "options": {
-        "command": "tsx {projectRoot}/scripts/generateBarrels.ts"
-      }
-    },
     "typecheck": {},
     "lint": {
       "options": {
-        "lintFilePatterns": [
-          "{projectRoot}/src/**/*.{ts,json}"
-        ],
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
         "maxWarnings": 0
       },
       "configurations": {
         "ci": {
-          "lintFilePatterns": [
-            "{projectRoot}/src/**/*.{ts,json}"
-          ],
+          "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
           "maxWarnings": 0
         },
         "fix": {}
@@ -80,9 +41,7 @@
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "config": "{projectRoot}/vitest.config.ts"
       },
@@ -146,9 +105,7 @@
     "storybook:prebuild": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": [
-        "generateRemoteDomElements"
-      ],
+      "dependsOn": ["generateRemoteDomElements"],
       "inputs": [
         "{projectRoot}/src/front-component/__stories__/mocks/**/*",
         "{projectRoot}/src/front-component/__stories__/utils/**/*",
@@ -156,25 +113,19 @@
         "{projectRoot}/src/front-component-constants/**/*",
         "{projectRoot}/src/sdk/**/*"
       ],
-      "outputs": [
-        "{projectRoot}/src/front-component/__stories__/built/*"
-      ],
+      "outputs": ["{projectRoot}/src/front-component/__stories__/built/*"],
       "options": {
         "command": "tsx {projectRoot}/src/front-component/__stories__/utils/buildMockComponents.ts"
       }
     },
     "storybook:build": {
-      "dependsOn": [
-        "storybook:prebuild"
-      ],
+      "dependsOn": ["storybook:prebuild"],
       "configurations": {
         "test": {}
       }
     },
     "storybook:serve:dev": {
-      "dependsOn": [
-        "storybook:prebuild"
-      ],
+      "dependsOn": ["storybook:prebuild"],
       "options": {
         "port": 6008
       }
@@ -189,17 +140,13 @@
       }
     },
     "storybook:test": {
-      "dependsOn": [
-        "storybook:prebuild"
-      ],
+      "dependsOn": ["storybook:prebuild"],
       "options": {
         "command": "vitest run --coverage --config vitest.storybook.config.ts --shard={args.shard}"
       }
     },
     "storybook:test:no-coverage": {
-      "dependsOn": [
-        "storybook:prebuild"
-      ],
+      "dependsOn": ["storybook:prebuild"],
       "options": {
         "command": "vitest run --config vitest.storybook.config.ts --shard={args.shard}"
       }

@@ -4,7 +4,13 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 
 type FlatIndexMetadataOverrides = Required<
-  Pick<FlatIndexMetadata, 'universalIdentifier' | 'objectMetadataId'>
+  Pick<
+    FlatIndexMetadata,
+    | 'universalIdentifier'
+    | 'objectMetadataId'
+    | 'objectMetadataUniversalIdentifier'
+    | 'applicationUniversalIdentifier'
+  >
 > &
   Partial<FlatIndexMetadata>;
 export const getFlatIndexMetadataMock = (

@@ -4,9 +4,9 @@ import * as https from 'https';
 import { AxiosHeaders, type InternalAxiosRequestConfig } from 'axios';
 
 import { type SecureAdapterDependencies } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.types';
-import { getSecureAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
+import { getSecureAxiosAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
 
-describe('getSecureAdapter', () => {
+describe('getSecureAxiosAdapter', () => {
   let mockDnsLookup: jest.Mock;
   let mockHttpAdapter: jest.Mock;
   let dependencies: SecureAdapterDependencies;
@@ -22,14 +22,14 @@ describe('getSecureAdapter', () => {
 
   describe('URL validation', () => {
     it('should throw if URL is not provided', async () => {
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = { url: undefined } as InternalAxiosRequestConfig;
 
       await expect(adapter(config)).rejects.toThrow('URL is required');
     });
 
     it('should throw for non-http/https protocols', async () => {
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'file:///etc/passwd',
       } as InternalAxiosRequestConfig;
@@ -40,7 +40,7 @@ describe('getSecureAdapter', () => {
     });
 
     it('should throw for ftp protocol', async () => {
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'ftp://example.com/file',
       } as InternalAxiosRequestConfig;
@@ -56,7 +56,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'http://example.com',
         headers: new AxiosHeaders(),
@@ -73,7 +73,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com',
         headers: new AxiosHeaders(),
@@ -89,7 +89,7 @@ describe('getSecureAdapter', () => {
     it('should block requests to 127.0.0.1', async () => {
       mockDnsLookup.mockResolvedValue({ address: '127.0.0.1', family: 4 });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'http://localhost',
         headers: new AxiosHeaders(),
@@ -103,7 +103,7 @@ describe('getSecureAdapter', () => {
     it('should block requests to 10.x.x.x range', async () => {
       mockDnsLookup.mockResolvedValue({ address: '10.0.0.1', family: 4 });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'http://internal.example.com',
         headers: new AxiosHeaders(),
@@ -117,7 +117,7 @@ describe('getSecureAdapter', () => {
     it('should block requests to 192.168.x.x range', async () => {
       mockDnsLookup.mockResolvedValue({ address: '192.168.1.1', family: 4 });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'http://router.local',
         headers: new AxiosHeaders(),
@@ -131,7 +131,7 @@ describe('getSecureAdapter', () => {
     it('should block requests to 172.16-31.x.x range', async () => {
       mockDnsLookup.mockResolvedValue({ address: '172.16.0.1', family: 4 });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'http://internal.corp',
         headers: new AxiosHeaders(),
@@ -148,7 +148,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'http://metadata.google.internal',
         headers: new AxiosHeaders(),
@@ -167,7 +167,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com/api/data',
         headers: new AxiosHeaders(),
@@ -188,7 +188,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com/api/data',
         headers: new AxiosHeaders(),
@@ -206,7 +206,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'http://example.com/api/data',
         headers: new AxiosHeaders(),
@@ -224,7 +224,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com/api/data',
         headers: new AxiosHeaders(),
@@ -261,7 +261,7 @@ describe('getSecureAdapter', () => {
         family: 6,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com/api/data',
         headers: new AxiosHeaders(),
@@ -295,7 +295,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com/api?foo=bar&baz=qux',
         headers: new AxiosHeaders(),
@@ -316,7 +316,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com:8443/api',
         headers: new AxiosHeaders(),
@@ -336,7 +336,7 @@ describe('getSecureAdapter', () => {
     it('should allow requests to public IP addresses', async () => {
       mockDnsLookup.mockResolvedValue({ address: '8.8.8.8', family: 4 });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://dns.google',
         headers: new AxiosHeaders(),
@@ -353,7 +353,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com',
         headers: new AxiosHeaders(),
@@ -372,7 +372,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://user:pass@example.com/api',
         headers: new AxiosHeaders(),
@@ -393,7 +393,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com/page#section',
         headers: new AxiosHeaders(),
@@ -410,7 +410,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com',
         headers: undefined,
@@ -428,7 +428,7 @@ describe('getSecureAdapter', () => {
         family: 4,
       });
 
-      const adapter = getSecureAdapter(dependencies);
+      const adapter = getSecureAxiosAdapter(dependencies);
       const config = {
         url: 'https://example.com',
         headers: { 'Content-Type': 'application/json' },
