@@ -9,7 +9,10 @@ import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import { getToolDisplayMessage } from '@/ai/utils/getWebSearchToolDisplayMessage';
+import {
+  getToolDisplayMessage,
+  resolveToolInput,
+} from '@/ai/utils/getToolDisplayMessage';
 import { useLingui } from '@lingui/react/macro';
 import { type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -134,19 +137,8 @@ export const ToolStepRenderer = ({ toolPart }: { toolPart: ToolUIPart }) => {
   const { input, output, type, errorText } = toolPart;
   const rawToolName = type.split('-')[1];
 
-  const toolInput =
-    isDefined(input) && typeof input === 'object' && 'input' in input
-      ? input.input
-      : input;
-
-  // For execute_tool, show the underlying tool name instead of "execute_tool"
-  const toolName =
-    rawToolName === 'execute_tool' &&
-    isDefined(toolInput) &&
-    typeof toolInput === 'object' &&
-    'toolName' in toolInput
-      ? String(toolInput.toolName)
-      : rawToolName;
+  const { resolvedInput: toolInput, resolvedToolName: toolName } =
+    resolveToolInput(input, rawToolName);
 
   const hasError = isDefined(errorText);
   const isExpandable = isDefined(output) || hasError;

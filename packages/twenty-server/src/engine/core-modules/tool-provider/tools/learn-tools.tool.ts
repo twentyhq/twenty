@@ -5,7 +5,7 @@ import {
   type ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 
-export const LEARN_TOOLS_TOOL_NAME = 'learn_tools' as const;
+export const LEARN_TOOLS_TOOL_NAME = 'learn_tools';
 
 const learnToolsAspectSchema = z.enum(['description', 'schema']);
 

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import {
   type ToolIndexEntry,
-  type ToolRegistryService,
+  ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   EXECUTE_TOOL_TOOL_NAME,
@@ -11,12 +11,12 @@ import {
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import {
-  type AgentActorContextService,
+  AgentActorContextService,
   type UserContext,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
-import { type SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type SystemPromptSection = {
   title: string;

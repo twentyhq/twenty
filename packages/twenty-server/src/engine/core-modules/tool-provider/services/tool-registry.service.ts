@@ -64,7 +64,7 @@ type CachedToolGeneration = {
 
 const MEMOIZER_TTL_MS = 60_000;
 
-const PROVIDER_TO_INDEX_CATEGORY: Record<
+const TOOL_CATEGORY_TO_INDEX_CATEGORY: Record<
   ToolCategory,
   ToolIndexEntry['category']
 > = {
@@ -99,8 +99,7 @@ export class ToolRegistryService {
         context.workspaceId,
       )) ?? 0;
 
-    const cacheKey =
-      `tools-${context.workspaceId}-v${metadataVersion}-${context.roleId}-${context.userId ?? 'system'}` as const;
+    const cacheKey = `tools-${context.workspaceId}-v${metadataVersion}-${context.roleId}-${context.userId ?? 'system'}`;
 
     const result = await this.memoizer.memoizePromiseAndExecute(
       cacheKey,
@@ -352,7 +351,7 @@ export class ToolRegistryService {
 
     if (categories) {
       const indexCategories = new Set(
-        categories.map((category) => PROVIDER_TO_INDEX_CATEGORY[category]),
+        categories.map((category) => TOOL_CATEGORY_TO_INDEX_CATEGORY[category]),
       );
       const allowedNames = new Set(
         index
@@ -417,7 +416,7 @@ export class ToolRegistryService {
       return {
         name,
         description: tool.description ?? '',
-        category: PROVIDER_TO_INDEX_CATEGORY[category],
+        category: TOOL_CATEGORY_TO_INDEX_CATEGORY[category],
         inputSchema,
       };
     });

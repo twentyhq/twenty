@@ -2,32 +2,30 @@ import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
+import { generateRecordFilterSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-filter.zod-schema';
 import { generateRecordPropertiesZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-properties.zod-schema';
 
 export const generateUpdateManyRecordInputSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
 ) => {
-  const recordPropertiesSchema = generateRecordPropertiesZodSchema(
+  const { filterSchema } = generateRecordFilterSchema(
     objectMetadata,
-    false,
     restrictedFields,
   );
 
-  const recordUpdateSchema = recordPropertiesSchema.partial().extend({
-    id: z.string().uuid({
-      message:
-        'The unique identifier (UUID) of the record to update. This is required to identify which record should be modified.',
-    }),
-  });
+  const dataSchema = generateRecordPropertiesZodSchema(
+    objectMetadata,
+    false,
+    restrictedFields,
+  ).partial();
 
   return z.object({
-    records: z
-      .array(recordUpdateSchema)
-      .min(1)
-      .max(20)
-      .describe(
-        'Array of record updates. Each entry must include an "id" field and the fields to update. Maximum 20 records per call.',
-      ),
+    filter: filterSchema.describe(
+      'Filter to select which records to update. Supports field-level filters and logical operators (or, and, not). WARNING: A broad filter may update many records at once. Always verify the filter scope with a find query first.',
+    ),
+    data: dataSchema.describe(
+      'The field values to apply to all matching records. Only include fields you want to change.',
+    ),
   });
 };

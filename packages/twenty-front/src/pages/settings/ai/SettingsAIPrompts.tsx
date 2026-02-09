@@ -61,7 +61,6 @@ export const SettingsAIPrompts = () => {
     }
   };
 
-  // Initialize workspace instructions when workspace data loads
   if (
     currentWorkspace?.aiAdditionalInstructions !== undefined &&
     originalInstructions === '' &&
@@ -136,7 +135,6 @@ export const SettingsAIPrompts = () => {
 
   const userContextPreview = buildUserContextPreview();
 
-  // Separate prompt sections from user-editable ones
   const promptSections = sections.filter(
     (section) =>
       section.title !== 'Workspace Instructions' &&
@@ -156,13 +154,13 @@ export const SettingsAIPrompts = () => {
   const totalTokenCount = isDefined(preview)
     ? formatTokenCount(preview.estimatedTokenCount)
     : '';
-  const totalTokensDescription = isDefined(preview)
-    ? t`Full AI prompt sent with each request — ${totalTokenCount} total`
-    : t`Full AI prompt sent with each request`;
+  const pageTitle = isDefined(preview)
+    ? t`System Prompt (${totalTokenCount})`
+    : t`System Prompt`;
 
   return (
     <SubMenuTopBarContainer
-      title={t`System Prompt`}
+      title={pageTitle}
       links={[
         {
           children: t`Workspace`,
@@ -177,11 +175,7 @@ export const SettingsAIPrompts = () => {
           <Section key={section.title}>
             <H2Title
               title={section.title}
-              description={
-                section === promptSections[0]
-                  ? totalTokensDescription
-                  : t`Read-only — managed by Twenty`
-              }
+              description={t`Read-only — managed by Twenty`}
               adornment={
                 <StyledTokenBadge>
                   {formatTokenCount(section.estimatedTokenCount)}

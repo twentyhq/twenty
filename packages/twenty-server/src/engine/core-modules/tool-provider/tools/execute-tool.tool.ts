@@ -6,7 +6,7 @@ import {
   type ToolRegistryService,
 } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 
-export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool' as const;
+export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 
 export const executeToolInputSchema = z.object({
   toolName: z.string().describe('Exact name of the tool to execute.'),

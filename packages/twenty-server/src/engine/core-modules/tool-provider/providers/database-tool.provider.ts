@@ -21,9 +21,11 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
+import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { createDirectRecordToolsFactory } from 'src/engine/core-modules/record-crud/tool-factory/direct-record-tools.factory';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
@@ -43,7 +45,9 @@ export class DatabaseToolProvider implements ToolProvider {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly createRecordService: CreateRecordService,
+    private readonly createManyRecordsService: CreateManyRecordsService,
     private readonly updateRecordService: UpdateRecordService,
+    private readonly updateManyRecordsService: UpdateManyRecordsService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly findRecordsService: FindRecordsService,
     @InjectRepository(UserEntity)
@@ -132,7 +136,9 @@ export class DatabaseToolProvider implements ToolProvider {
 
     const factory = createDirectRecordToolsFactory({
       createRecordService: this.createRecordService,
+      createManyRecordsService: this.createManyRecordsService,
       updateRecordService: this.updateRecordService,
+      updateManyRecordsService: this.updateManyRecordsService,
       deleteRecordService: this.deleteRecordService,
       findRecordsService: this.findRecordsService,
     });

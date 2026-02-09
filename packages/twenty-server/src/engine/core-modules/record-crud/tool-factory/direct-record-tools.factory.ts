@@ -1,17 +1,19 @@
 import { type ToolSet } from 'ai';
 import { camelToSnakeCase } from 'twenty-shared/utils';
 
+import { type CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { type CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { type DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { type FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { type UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { type UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
+import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
-import { SoftDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/soft-delete-tool.zod-schema';
 import {
   type ObjectWithPermission,
   type ToolGeneratorContext,
@@ -20,7 +22,9 @@ import {
 // Dependencies required by the direct record tools factory
 export type DirectRecordToolsDeps = {
   createRecordService: CreateRecordService;
+  createManyRecordsService: CreateManyRecordsService;
   updateRecordService: UpdateRecordService;
+  updateManyRecordsService: UpdateManyRecordsService;
   deleteRecordService: DeleteRecordService;
   findRecordsService: FindRecordsService;
 };
@@ -113,37 +117,19 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
       const createManyKey = `create_many_${camelToSnakeCase(objectMetadata.namePlural)}`;
 
       tools[createManyKey] = {
-        description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the results for each record creation.`,
+        description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
         inputSchema: generateCreateManyRecordInputSchema(
           objectMetadata,
           restrictedFields,
         ),
         execute: async (parameters) => {
-          const results = await Promise.all(
-            parameters.records.map((record: Record<string, unknown>) =>
-              deps.createRecordService.execute({
-                objectName: objectMetadata.nameSingular,
-                objectRecord: record,
-                authContext,
-                rolePermissionConfig: context.rolePermissionConfig,
-                createdBy: context.actorContext,
-              }),
-            ),
-          );
-
-          const successCount = results.filter(
-            (result) => result.success,
-          ).length;
-          const failureCount = results.length - successCount;
-
-          return {
-            success: failureCount === 0,
-            message: `Created ${successCount} of ${results.length} ${objectMetadata.labelPlural} records${failureCount > 0 ? ` (${failureCount} failed)` : ''}`,
-            result: results.map((result) => result.result),
-            recordReferences: results.flatMap(
-              (result) => result.recordReferences ?? [],
-            ),
-          };
+          return deps.createManyRecordsService.execute({
+            objectName: objectMetadata.nameSingular,
+            objectRecords: parameters.records,
+            authContext,
+            rolePermissionConfig: context.rolePermissionConfig,
+            createdBy: context.actorContext,
+          });
         },
       };
     }
@@ -177,53 +163,27 @@ export const createDirectRecordToolsFactory = (deps: DirectRecordToolsDeps) => {
       const updateManyKey = `update_many_${camelToSnakeCase(objectMetadata.namePlural)}`;
 
       tools[updateManyKey] = {
-        description: `Update multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of record updates, each containing the record ID and the fields to change. Maximum 20 records per call. Returns the results for each record update.`,
+        description: `Update multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. All matching records will receive the same field values. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first. Returns the updated records.`,
         inputSchema: generateUpdateManyRecordInputSchema(
           objectMetadata,
           restrictedFields,
         ),
         execute: async (parameters) => {
-          const results = await Promise.all(
-            parameters.records.map((record: Record<string, unknown>) => {
-              const { id, ...allFields } = record;
-
-              const objectRecord = Object.fromEntries(
-                Object.entries(allFields).filter(
-                  ([, value]) => value !== undefined,
-                ),
-              );
-
-              return deps.updateRecordService.execute({
-                objectName: objectMetadata.nameSingular,
-                objectRecordId: id as string,
-                objectRecord,
-                authContext,
-                rolePermissionConfig: context.rolePermissionConfig,
-              });
-            }),
-          );
-
-          const successCount = results.filter(
-            (result) => result.success,
-          ).length;
-          const failureCount = results.length - successCount;
-
-          return {
-            success: failureCount === 0,
-            message: `Updated ${successCount} of ${results.length} ${objectMetadata.labelPlural} records${failureCount > 0 ? ` (${failureCount} failed)` : ''}`,
-            result: results.map((result) => result.result),
-            recordReferences: results.flatMap(
-              (result) => result.recordReferences ?? [],
-            ),
-          };
+          return deps.updateManyRecordsService.execute({
+            objectName: objectMetadata.nameSingular,
+            filter: parameters.filter,
+            data: parameters.data,
+            authContext,
+            rolePermissionConfig: context.rolePermissionConfig,
+          });
         },
       };
     }
 
     if (canDelete) {
-      tools[`soft_delete_${camelToSnakeCase(objectMetadata.nameSingular)}`] = {
-        description: `Soft delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record remains in the database but is hidden from normal queries. This is reversible and preserves all data. Use this for temporary removal.`,
-        inputSchema: SoftDeleteToolInputSchema,
+      tools[`delete_${camelToSnakeCase(objectMetadata.nameSingular)}`] = {
+        description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
+        inputSchema: DeleteToolInputSchema,
         execute: async (parameters) => {
           return deps.deleteRecordService.execute({
             objectName: objectMetadata.nameSingular,

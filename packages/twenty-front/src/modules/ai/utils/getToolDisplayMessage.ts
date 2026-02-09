@@ -41,8 +41,7 @@ const extractLoadingMessage = (input: ToolInput): string => {
   return 'Processing...';
 };
 
-// For execute_tool, unwrap the inner arguments so display logic sees the real tool's input
-const resolveToolInput = (
+export const resolveToolInput = (
   input: ToolInput,
   toolName: string,
 ): { resolvedInput: ToolInput; resolvedToolName: string } => {
