@@ -357,11 +357,9 @@ export class PageLayoutWidgetService {
       const effectiveConfiguration = isConfigurationBeingUpdated
         ? processedUpdateData.configuration
         : existingWidget.configuration;
-      const effectiveObjectMetadataId =
-        isObjectMetadataIdBeingUpdated &&
-        isDefined(processedUpdateData.objectMetadataId)
-          ? processedUpdateData.objectMetadataId
-          : existingWidget.objectMetadataId;
+      const effectiveObjectMetadataId = isObjectMetadataIdBeingUpdated
+        ? processedUpdateData.objectMetadataId
+        : existingWidget.objectMetadataId;
       const effectiveWidgetType =
         processedUpdateData.type ?? existingWidget.type;
 
