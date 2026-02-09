@@ -19,7 +19,11 @@ export const handler = async (event) => {
 
     const mainFile = await import(mainPath);
 
-    return await mainFile[handlerName](params);
+    const handlerFn = handlerName
+      .split('.')
+      .reduce((obj, key) => obj[key], mainFile);
+
+    return await handlerFn(params);
   } finally {
     await fs.rm(mainPath, { force: true });
     // eslint-disable-next-line no-undef

@@ -945,6 +945,14 @@ export type CreateCommandMenuItemInput = {
   workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
+export type CreateDefaultLogicFunctionInput = {
+  description?: InputMaybe<Scalars['String']>;
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -982,18 +990,6 @@ export type CreateFrontComponentInput = {
   id?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
   sourceComponentPath: Scalars['String'];
-};
-
-export type CreateLogicFunctionInput = {
-  builtHandlerPath?: InputMaybe<Scalars['String']>;
-  code?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CreateNavigationMenuItemInput = {
@@ -1713,11 +1709,6 @@ export type GetAuthorizationUrlForSsoOutput = {
   type: Scalars['String'];
 };
 
-export type GetLogicFunctionSourceCodeInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
-};
-
 /** Order by options for graph widgets */
 export enum GraphOrderBy {
   FIELD_ASC = 'FIELD_ASC',
@@ -2109,6 +2100,7 @@ export type Mutation = {
   createCoreViewGroup: CoreViewGroup;
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
+  createDefaultLogicFunction: LogicFunction;
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
@@ -2122,7 +2114,6 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneApplication: Application;
   createOneField: Field;
-  createOneLogicFunction: LogicFunction;
   createOneObject: Object;
   createOneRole: Role;
   createPageLayout: PageLayout;
@@ -2384,6 +2375,11 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateDefaultLogicFunctionArgs = {
+  input: CreateDefaultLogicFunctionInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -2450,11 +2446,6 @@ export type MutationCreateOneApplicationArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
-};
-
-
-export type MutationCreateOneLogicFunctionArgs = {
-  input: CreateLogicFunctionInput;
 };
 
 
@@ -3913,7 +3904,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 
 export type QueryGetLogicFunctionSourceCodeArgs = {
-  input: GetLogicFunctionSourceCodeInput;
+  input: LogicFunctionIdInput;
 };
 
 
@@ -6015,7 +6006,7 @@ export type UpdateLogicFunctionSourceMutationVariables = Exact<{
 export type UpdateLogicFunctionSourceMutation = { __typename?: 'Mutation', updateLogicFunctionSource: boolean };
 
 export type GetLogicFunctionSourceCodeQueryVariables = Exact<{
-  input: GetLogicFunctionSourceCodeInput;
+  input: LogicFunctionIdInput;
 }>;
 
 
@@ -6413,12 +6404,12 @@ export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', upda
 
 export type LogicFunctionFieldsFragment = { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string };
 
-export type CreateOneLogicFunctionItemMutationVariables = Exact<{
-  input: CreateLogicFunctionInput;
+export type CreateDefaultLogicFunctionItemMutationVariables = Exact<{
+  input: CreateDefaultLogicFunctionInput;
 }>;
 
 
-export type CreateOneLogicFunctionItemMutation = { __typename?: 'Mutation', createOneLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
+export type CreateDefaultLogicFunctionItemMutation = { __typename?: 'Mutation', createDefaultLogicFunction: { __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, builtHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type DeleteOneLogicFunctionMutationVariables = Exact<{
   input: LogicFunctionIdInput;
@@ -10447,7 +10438,7 @@ export type UpdateLogicFunctionSourceMutationHookResult = ReturnType<typeof useU
 export type UpdateLogicFunctionSourceMutationResult = Apollo.MutationResult<UpdateLogicFunctionSourceMutation>;
 export type UpdateLogicFunctionSourceMutationOptions = Apollo.BaseMutationOptions<UpdateLogicFunctionSourceMutation, UpdateLogicFunctionSourceMutationVariables>;
 export const GetLogicFunctionSourceCodeDocument = gql`
-    query GetLogicFunctionSourceCode($input: GetLogicFunctionSourceCodeInput!) {
+    query GetLogicFunctionSourceCode($input: LogicFunctionIdInput!) {
   getLogicFunctionSourceCode(input: $input)
 }
     `;
@@ -12659,39 +12650,39 @@ export function useUpdateLabPublicFeatureFlagMutation(baseOptions?: Apollo.Mutat
 export type UpdateLabPublicFeatureFlagMutationHookResult = ReturnType<typeof useUpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationResult = Apollo.MutationResult<UpdateLabPublicFeatureFlagMutation>;
 export type UpdateLabPublicFeatureFlagMutationOptions = Apollo.BaseMutationOptions<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
-export const CreateOneLogicFunctionItemDocument = gql`
-    mutation CreateOneLogicFunctionItem($input: CreateLogicFunctionInput!) {
-  createOneLogicFunction(input: $input) {
+export const CreateDefaultLogicFunctionItemDocument = gql`
+    mutation CreateDefaultLogicFunctionItem($input: CreateDefaultLogicFunctionInput!) {
+  createDefaultLogicFunction(input: $input) {
     ...LogicFunctionFields
   }
 }
     ${LogicFunctionFieldsFragmentDoc}`;
-export type CreateOneLogicFunctionItemMutationFn = Apollo.MutationFunction<CreateOneLogicFunctionItemMutation, CreateOneLogicFunctionItemMutationVariables>;
+export type CreateDefaultLogicFunctionItemMutationFn = Apollo.MutationFunction<CreateDefaultLogicFunctionItemMutation, CreateDefaultLogicFunctionItemMutationVariables>;
 
 /**
- * __useCreateOneLogicFunctionItemMutation__
+ * __useCreateDefaultLogicFunctionItemMutation__
  *
- * To run a mutation, you first call `useCreateOneLogicFunctionItemMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateOneLogicFunctionItemMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateDefaultLogicFunctionItemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDefaultLogicFunctionItemMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createOneLogicFunctionItemMutation, { data, loading, error }] = useCreateOneLogicFunctionItemMutation({
+ * const [createDefaultLogicFunctionItemMutation, { data, loading, error }] = useCreateDefaultLogicFunctionItemMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateOneLogicFunctionItemMutation(baseOptions?: Apollo.MutationHookOptions<CreateOneLogicFunctionItemMutation, CreateOneLogicFunctionItemMutationVariables>) {
+export function useCreateDefaultLogicFunctionItemMutation(baseOptions?: Apollo.MutationHookOptions<CreateDefaultLogicFunctionItemMutation, CreateDefaultLogicFunctionItemMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateOneLogicFunctionItemMutation, CreateOneLogicFunctionItemMutationVariables>(CreateOneLogicFunctionItemDocument, options);
+        return Apollo.useMutation<CreateDefaultLogicFunctionItemMutation, CreateDefaultLogicFunctionItemMutationVariables>(CreateDefaultLogicFunctionItemDocument, options);
       }
-export type CreateOneLogicFunctionItemMutationHookResult = ReturnType<typeof useCreateOneLogicFunctionItemMutation>;
-export type CreateOneLogicFunctionItemMutationResult = Apollo.MutationResult<CreateOneLogicFunctionItemMutation>;
-export type CreateOneLogicFunctionItemMutationOptions = Apollo.BaseMutationOptions<CreateOneLogicFunctionItemMutation, CreateOneLogicFunctionItemMutationVariables>;
+export type CreateDefaultLogicFunctionItemMutationHookResult = ReturnType<typeof useCreateDefaultLogicFunctionItemMutation>;
+export type CreateDefaultLogicFunctionItemMutationResult = Apollo.MutationResult<CreateDefaultLogicFunctionItemMutation>;
+export type CreateDefaultLogicFunctionItemMutationOptions = Apollo.BaseMutationOptions<CreateDefaultLogicFunctionItemMutation, CreateDefaultLogicFunctionItemMutationVariables>;
 export const DeleteOneLogicFunctionDocument = gql`
     mutation DeleteOneLogicFunction($input: LogicFunctionIdInput!) {
   deleteOneLogicFunction(input: $input) {

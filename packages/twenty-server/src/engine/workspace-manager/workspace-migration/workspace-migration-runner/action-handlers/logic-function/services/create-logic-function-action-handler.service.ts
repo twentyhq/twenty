@@ -39,24 +39,16 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
-    const [sourceExists, builtExists] = await Promise.all([
-      this.fileStorageService.checkFileExists({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: logicFunction.sourceHandlerPath,
-      }),
-      this.fileStorageService.checkFileExists({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: logicFunction.builtHandlerPath,
-      }),
-    ]);
+    const builtExists = await this.fileStorageService.checkFileExists({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: logicFunction.builtHandlerPath,
+    });
 
-    if (!sourceExists || !builtExists) {
+    if (!builtExists) {
       throw new LogicFunctionException(
-        `Logic function source or built file missing before create (source: ${sourceExists}, built: ${builtExists})`,
+        'Logic function built file missing before create',
         LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
       );
     }

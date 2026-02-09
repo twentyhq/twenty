@@ -8,7 +8,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -42,7 +42,7 @@ export type ObjectMetadataInfo = {
 export class WorkflowCommonWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly logicFunctionService: LogicFunctionService,
+    private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -322,7 +322,7 @@ export class WorkflowCommonWorkspaceService {
     for (const workflowVersion of workflowVersions) {
       for (const step of workflowVersion.steps ?? []) {
         if (step.type === WorkflowActionType.CODE) {
-          await this.logicFunctionService.destroyOne({
+          await this.logicFunctionMetadataService.destroyOne({
             id: step.settings.input.logicFunctionId,
             workspaceId,
           });

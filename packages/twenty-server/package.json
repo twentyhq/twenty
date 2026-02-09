@@ -181,7 +181,7 @@
   "devDependencies": {
     "@faker-js/faker": "^9.8.0",
     "@lingui/cli": "^5.1.2",
-    "@nestjs/cli": "11.0.10",
+    "@nestjs/cli": "^11.0.16",
     "@nestjs/devtools-integration": "^0.2.1",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.9",
