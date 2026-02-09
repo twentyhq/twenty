@@ -17,7 +17,10 @@ setup_and_migrate_db() {
         yarn database:migrate:prod
     fi
 
+    yarn command:prod cache:flush
     yarn command:prod upgrade
+    yarn command:prod cache:flush
+
     echo "Successfully migrated DB!"
 }
 
