@@ -1,13 +1,13 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-
-import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
   buildChartTestConfigs,
   type ChartTestConfigMap,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 const NUMERIC_FIELD_METADATA_TYPES = new Set<FieldMetadataType>([
   FieldMetadataType.NUMBER,
@@ -28,8 +28,9 @@ export type RuntimeChartTestMetadata = {
   selectedFieldMetadata: SelectedChartFieldMetadata;
 };
 
-const describeField = (field: Pick<FieldMetadataDTO, 'name' | 'type'>): string =>
-  `${field.name}:${field.type}`;
+const describeField = (
+  field: Pick<FieldMetadataDTO, 'name' | 'type'>,
+): string => `${field.name}:${field.type}`;
 
 const sortFieldsByNameAndId = (
   fields: FieldMetadataDTO[],

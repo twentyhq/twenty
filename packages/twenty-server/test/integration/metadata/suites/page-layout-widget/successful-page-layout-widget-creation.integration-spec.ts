@@ -104,7 +104,8 @@ type GraphTestCase = {
 
 const GRAPH_TEST_CASES: GraphTestCase[] = [
   {
-    title: 'create a page layout widget with AGGREGATE_CHART full configuration',
+    title:
+      'create a page layout widget with AGGREGATE_CHART full configuration',
     widgetTitle: 'Number Chart Widget',
     configKey: 'aggregateChart',
   },
@@ -260,7 +261,9 @@ describe('Page layout widget creation should succeed', () => {
         createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
 
         expect(data.createPageLayoutWidget).toMatchSnapshot(
-          extractRecordIdsAndDatesAsExpectAny({ ...data.createPageLayoutWidget }),
+          extractRecordIdsAndDatesAsExpectAny({
+            ...data.createPageLayoutWidget,
+          }),
         );
       });
     }
