@@ -26,7 +26,11 @@ describe('Application: install delete and reinstall rich-app', () => {
   });
 
   it(`should successfully install ${applicationName} application`, async () => {
-    await runAppDev({ appPath });
+    const result = await runAppDev({ appPath });
+
+    if (result.success === false) {
+      console.log(result.output.slice(undefined, 10_000));
+    }
 
     expect(existsSync(join(appPath, OUTPUT_DIR, 'manifest.json'))).toBe(true);
   });

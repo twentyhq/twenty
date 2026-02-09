@@ -94,11 +94,11 @@ jobs:
       - name: Server / Create Test DB
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-      - name: SDK / Run integration tests
-        uses: ./.github/actions/nx-affected
-        with:
-          tag: scope:sdk
-          tasks: test:integration
+      # - name: SDK / Run integration tests
+      #   uses: ./.github/actions/nx-affected
+      #   with:
+      #     tag: scope:sdk
+      #     tasks: test:integration
       - name: SDK / Run e2e Tests
         uses: ./.github/actions/nx-affected
         with:

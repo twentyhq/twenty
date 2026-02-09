@@ -19,7 +19,9 @@ export class ConfigService {
   private static activeWorkspace = DEFAULT_WORKSPACE_NAME;
 
   constructor() {
-    this.configPath = path.join(os.homedir(), '.twenty', 'config.json');
+    this.configPath =
+      process.env.TWENTY_CONFIG_PATH ??
+      path.join(os.homedir(), '.twenty', 'config.json');
   }
 
   static setActiveWorkspace(name?: string) {
