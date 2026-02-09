@@ -296,6 +296,10 @@ export class WorkspaceEntity {
   @Column({ type: 'varchar', nullable: false, default: DEFAULT_SMART_MODEL })
   smartModel: ModelId;
 
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
+  aiAdditionalInstructions: string | null;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;
 

@@ -11,7 +11,13 @@ import {
   Min,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
-import { Sources } from 'twenty-shared/types';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'twenty-shared/application';
+
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @InputType()
 export class CreateLogicFunctionInput {
@@ -33,36 +39,28 @@ export class CreateLogicFunctionInput {
   timeoutSeconds?: number;
 
   @HideField()
-  applicationId?: string;
+  applicationId: string;
 
   @HideField()
   universalIdentifier?: string;
 
   @HideField()
-  id?: string;
+  id: string;
 
   @HideField()
-  checksum?: string;
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  code?: Sources;
+  checksum: string;
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  handlerName?: string;
+  @Field({ nullable: false })
+  handlerName: string;
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  sourceHandlerPath?: string;
+  @Field({ nullable: false })
+  sourceHandlerPath: string;
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  builtHandlerPath?: string;
+  @Field({ nullable: false })
+  builtHandlerPath: string;
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
@@ -73,4 +71,19 @@ export class CreateLogicFunctionInput {
   @Field({ nullable: true })
   @IsOptional()
   isTool?: boolean;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  cronTriggerSettings?: JsonbProperty<CronTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  httpRouteTriggerSettings?: JsonbProperty<HttpRouteTriggerSettings>;
 }

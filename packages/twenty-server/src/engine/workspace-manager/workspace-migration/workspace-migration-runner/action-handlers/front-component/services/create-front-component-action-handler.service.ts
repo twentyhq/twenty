@@ -68,7 +68,7 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
     applicationUniversalIdentifier: string;
     builtComponentPath: string;
   }): Promise<void> {
-    const builtExists = await this.fileStorageService.checkFileExists_v2({
+    const builtExists = await this.fileStorageService.checkFileExists({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltFrontComponent,

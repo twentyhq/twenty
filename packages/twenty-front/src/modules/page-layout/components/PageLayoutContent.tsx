@@ -8,7 +8,7 @@ import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/u
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated/graphql';
 
 export const PageLayoutContent = () => {
   const isPageLayoutInEditMode = useRecoilComponentValue(
@@ -28,8 +28,8 @@ export const PageLayoutContent = () => {
   const isRecordPageLayout =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE;
 
-  const isCanvasLayout = layoutMode === 'canvas';
-  const isVerticalList = layoutMode === 'vertical-list';
+  const isCanvasLayout = layoutMode === PageLayoutTabLayoutMode.CANVAS;
+  const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
 
   if (isCanvasLayout) {
     return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;

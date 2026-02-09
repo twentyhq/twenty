@@ -1,12 +1,9 @@
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
 export { componentRegistry } from './host/generated/host-component-registry';
 export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
+export { FrontComponentHostCommunicationApiEffect } from './remote/components/FrontComponentHostCommunicationApiEffect';
 export { FrontComponentUpdateContextEffect } from './remote/components/FrontComponentUpdateContextEffect';
 export { FrontComponentWorkerEffect } from './remote/components/FrontComponentWorkerEffect';
-export {
-  FrontComponentExecutionContextStore,
-  frontComponentExecutionContextStore,
-} from './remote/context/FrontComponentExecutionContextStore';
 export {
   HtmlA,
   HtmlArticle,
@@ -93,8 +90,8 @@ export {
   HtmlTdElement,
   HtmlTextareaElement,
   HtmlTfootElement,
-  HtmlThElement,
   HtmlTheadElement,
+  HtmlThElement,
   HtmlTrElement,
   HtmlUlElement,
   RemoteFragmentElement,
@@ -119,6 +116,7 @@ export type {
 } from './remote/generated/remote-elements';
 export { createRemoteWorker } from './remote/worker/createRemoteWorker';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
+export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
 export type { PropertySchema } from './types/PropertySchema';
 export type { WorkerExports } from './types/WorkerExports';

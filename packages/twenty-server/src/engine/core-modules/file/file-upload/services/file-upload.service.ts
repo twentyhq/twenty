@@ -40,7 +40,7 @@ export class FileUploadService {
     mimeType: string | undefined;
     folder: string;
   }) {
-    await this.fileStorage.writeFile({
+    await this.fileStorage.writeFileLegacy({
       file,
       name: filename,
       mimeType,

@@ -1,7 +1,7 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { PageLayoutType } from '~/generated/graphql';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
+import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated/graphql';
 
 describe('getTabsByDisplayMode', () => {
   const createMockTab = (id: string): PageLayoutTab => ({
@@ -320,7 +320,7 @@ describe('getTabsByDisplayMode', () => {
     it('should handle tabs with additional properties', () => {
       const tabWithExtraProps: PageLayoutTab = {
         ...createMockTab('tab-1'),
-        layoutMode: 'grid' as const,
+        layoutMode: PageLayoutTabLayoutMode.GRID as const,
       };
       const pageLayout = createMockPageLayout([tabWithExtraProps]);
 
@@ -332,7 +332,9 @@ describe('getTabsByDisplayMode', () => {
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
-      expect(result.tabsToRenderInTabList[0]?.layoutMode).toBe('grid');
+      expect(result.tabsToRenderInTabList[0]?.layoutMode).toBe(
+        PageLayoutTabLayoutMode.GRID,
+      );
     });
   });
 
