@@ -52,6 +52,9 @@ const buildRelationConnectFieldRecord = (
   fieldMetadataItem: FieldMetadataItem,
   importedStructuredRow: ImportedStructuredRow,
   spreadsheetImportFields: SpreadsheetImportFields,
+  compositeFieldTransformConfigs: Partial<
+    Record<FieldMetadataType, Record<string, ((value: any) => any) | undefined>>
+  >,
 ) => {
   if (fieldMetadataItem.relation?.type !== RelationType.MANY_TO_ONE)
     return undefined;
@@ -75,13 +78,10 @@ const buildRelationConnectFieldRecord = (
         isDefined(field.compositeSubFieldKey)
       ) {
         const rawValue = importedStructuredRow[field.key];
-        const isLinkUrlField =
-          uniqueFieldMetadataItem.type === FieldMetadataType.LINKS &&
-          field.compositeSubFieldKey === 'primaryLinkUrl' &&
-          typeof rawValue === 'string';
-        const value = isLinkUrlField
-          ? lowercaseUrlOriginAndRemoveTrailingSlash(rawValue)
-          : rawValue;
+        const transformConfig =
+          compositeFieldTransformConfigs[uniqueFieldMetadataItem.type];
+        const transform = transformConfig?.[field.compositeSubFieldKey];
+        const value = transform ? transform(rawValue) : rawValue;
 
         return {
           ...acc,
@@ -185,7 +185,7 @@ export const buildRecordFromImportedStructuredRow = ({
     },
     [FieldMetadataType.LINKS]: {
       primaryLinkLabel: castToString,
-      primaryLinkUrl: castToString,
+      primaryLinkUrl: lowercaseUrlOriginAndRemoveTrailingSlash,
       secondaryLinks: linkArrayJSONSchema.parse,
     },
 
@@ -316,6 +316,7 @@ export const buildRecordFromImportedStructuredRow = ({
           field,
           importedStructuredRow,
           spreadsheetImportFields,
+          COMPOSITE_FIELD_TRANSFORM_CONFIGS,
         );
         if (isDefined(relationConnectFieldValue)) {
           recordToBuild[field.name] = relationConnectFieldValue;
