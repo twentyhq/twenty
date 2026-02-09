@@ -9,7 +9,7 @@ import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
-import { AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
+import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
 
 export type MetadataManyToOneRelationConfiguration<
   TSourceMetadataName extends AllMetadataName,
@@ -66,7 +66,8 @@ type MetadataRelationsProperties = {
   } & ([
     AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TSourceMetadataName>,
   ] extends [never]
-    ? {}
+    ? // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      {}
     : {
         serializedRelations: Partial<Record<AllMetadataName, true>>;
       });
