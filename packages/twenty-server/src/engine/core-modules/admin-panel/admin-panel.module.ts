@@ -7,6 +7,7 @@ import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admi
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -38,6 +39,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     AdminPanelService,
     AdminPanelHealthService,
     AdminPanelQueueService,
+    SecureHttpClientService,
   ],
   exports: [AdminPanelService],
 })

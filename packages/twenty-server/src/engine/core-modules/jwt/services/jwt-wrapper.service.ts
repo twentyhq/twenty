@@ -47,11 +47,7 @@ export class JwtWrapperService {
     return this.jwtService.decode(payload, options);
   }
 
-  verifyJwtToken(
-    token: string,
-    options?: JwtVerifyOptions,
-    isLegacyApiKey = false,
-  ) {
+  verifyJwtToken(token: string, options?: JwtVerifyOptions) {
     const payload = this.decode<JwtPayload>(token, {
       json: true,
     });
@@ -77,25 +73,11 @@ export class JwtWrapperService {
     }
 
     try {
-      // Supporting old API KEY tokens
-      if (
-        !payload.type &&
-        !('workspaceId' in payload) &&
-        type === JwtTokenTypeEnum.API_KEY
-      ) {
-        return this.jwtService.verify(token, {
-          ...options,
-          secret: this.generateAppSecretLegacy(),
-        });
-      }
-
-      // This is due to an unfortunate mistake in the secret generation of API_KEY
-      // tokens. We used to sign with ACCESS Jwt Token Type instead of API_KEY.
-      // Now we need to check both cases not to break the existing api keys
-      // See this PR for context -> https://github.com/twentyhq/twenty/pull/16504
-      // This code block can be deleted, but all api keys created before
-      // 12/12/2025 will be broken
-      if (type === JwtTokenTypeEnum.API_KEY && !isLegacyApiKey) {
+      // API_KEY tokens created before 12/12/2025 were accidentally signed
+      // with ACCESS type instead of API_KEY. Try the correct secret first,
+      // fall back to the old one for backward compatibility.
+      // See https://github.com/twentyhq/twenty/pull/16504
+      if (type === JwtTokenTypeEnum.API_KEY) {
         try {
           return this.jwtService.verify(token, {
             ...options,
@@ -146,18 +128,6 @@ export class JwtWrapperService {
     return createHash('sha256')
       .update(`${appSecret}${appSecretBody}${type}`)
       .digest('hex');
-  }
-
-  generateAppSecretLegacy(): string {
-    const accessTokenSecret = this.twentyConfigService.get(
-      'ACCESS_TOKEN_SECRET',
-    );
-
-    if (!accessTokenSecret) {
-      throw new Error('ACCESS_TOKEN_SECRET is not set');
-    }
-
-    return accessTokenSecret;
   }
 
   extractJwtFromRequest(): JwtFromRequestFunction {

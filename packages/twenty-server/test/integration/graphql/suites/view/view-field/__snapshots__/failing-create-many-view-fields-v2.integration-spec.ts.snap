@@ -3,78 +3,11 @@
 exports[`View Field Resolver - Failing Create Many Operations - v2 should accumulate multiple validation errors when some inputs are invalid 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "viewField": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-            "viewId": Any<String>,
-          },
-          "metadataName": "viewField",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-            "viewId": Any<String>,
-          },
-          "metadataName": "viewField",
-          "status": "fail",
-          "type": "create",
-        },
-        {
-          "errors": [
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "Field metadata not found",
-              "userFriendlyMessage": "Field metadata not found",
-            },
-            {
-              "code": "INVALID_VIEW_DATA",
-              "message": "View not found",
-              "userFriendlyMessage": "View not found",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-            "viewId": Any<String>,
-          },
-          "metadataName": "viewField",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 3 viewFields",
-    "summary": {
-      "totalErrors": 3,
-      "viewField": 3,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Multiple validation errors occurred while creating view fields",
-  "name": "GraphQLError",
+  "message": "Could not find fieldMetadata for given fieldMetadataId",
+  "name": "NotFoundError",
 }
 `;

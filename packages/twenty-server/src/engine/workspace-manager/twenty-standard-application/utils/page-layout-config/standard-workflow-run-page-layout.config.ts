@@ -34,7 +34,6 @@ const WORKFLOW_RUN_PAGE_TABS = {
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG = {
-  layoutName: 'workflowRunRecordPage',
   name: 'Default Workflow Run Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,

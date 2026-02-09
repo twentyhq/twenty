@@ -16,13 +16,13 @@ import {
   IsUUID,
 } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
-
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
-} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+} from 'twenty-shared/application';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('LogicFunction')
 @Authorize({

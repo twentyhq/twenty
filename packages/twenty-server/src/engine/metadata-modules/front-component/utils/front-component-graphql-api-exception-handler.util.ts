@@ -2,6 +2,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   ConflictError,
+  ForbiddenError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -19,6 +20,10 @@ export const frontComponentGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error);
       case FrontComponentExceptionCode.FRONT_COMPONENT_ALREADY_EXISTS:
         throw new ConflictError(error);
+      case FrontComponentExceptionCode.FRONT_COMPONENT_NOT_READY:
+        throw new ForbiddenError(error);
+      case FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED:
+        throw error;
       default: {
         return assertUnreachable(error.code);
       }

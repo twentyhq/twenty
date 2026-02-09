@@ -32,6 +32,8 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
     [P in AllMetadataName]?: FlatEntityToCreateDeleteUpdate<P>;
   };
   isSystemBuild?: boolean;
+  // TODO remove once application synchronization do not consume services atomically anymore
+  // Should always be the universal workspace custom app id
   applicationUniversalIdentifier: string;
 };
 

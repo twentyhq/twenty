@@ -10,6 +10,9 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
+import { recordPageLayoutsState } from '@/page-layout/states/recordPageLayoutsState';
+import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -27,6 +30,7 @@ import {
   useGetCurrentUserQuery,
   useGetManyLogicFunctionsQuery,
 } from '~/generated-metadata/graphql';
+import { useFindAllRecordPageLayoutsQuery } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -81,6 +85,20 @@ export const MetadataProviderEffect = () => {
     [],
   );
 
+  const setRecordPageLayouts = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (recordPageLayouts: PageLayout[]) => {
+        const existingRecordPageLayouts = snapshot
+          .getLoadable(recordPageLayoutsState)
+          .getValue();
+
+        if (!isDeeplyEqual(existingRecordPageLayouts, recordPageLayouts)) {
+          set(recordPageLayoutsState, recordPageLayouts);
+        }
+      },
+    [],
+  );
+
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
@@ -106,6 +124,12 @@ export const MetadataProviderEffect = () => {
     useFindAllCoreViewsQuery({
       skip: shouldSkip,
     });
+
+  const { data: queryDataRecordPageLayouts } = useFindAllRecordPageLayoutsQuery(
+    {
+      skip: shouldSkip,
+    },
+  );
 
   const { data: logicFunctionsData } = useGetManyLogicFunctionsQuery({
     skip: !isLoggedIn,
@@ -221,6 +245,15 @@ export const MetadataProviderEffect = () => {
 
     setCoreViews(queryDataCoreViews.getCoreViews);
   }, [queryDataCoreViews?.getCoreViews, setCoreViews, queryLoadingCoreViews]);
+
+  useEffect(() => {
+    if (!isDefined(queryDataRecordPageLayouts?.getPageLayouts)) return;
+
+    const transformedPageLayouts =
+      queryDataRecordPageLayouts.getPageLayouts.map(transformPageLayout);
+
+    setRecordPageLayouts(transformedPageLayouts);
+  }, [queryDataRecordPageLayouts?.getPageLayouts, setRecordPageLayouts]);
 
   useEffect(() => {
     if (localIsCurrentUserLoaded && localAreViewsLoaded) {

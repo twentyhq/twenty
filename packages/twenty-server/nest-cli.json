@@ -17,23 +17,15 @@
     "watchAssets": true,
     "assets": [
       {
-        "include": "modules/workflow/workflow-builder/workflow-version-step/code-step/constants/seed-project/**",
+        "include": "engine/core-modules/logic-function/logic-function-resource/constants/seed-project/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function/logic-function-source-builder/constants/seed-project/**",
+        "include": "engine/core-modules/application-layer/constants/seed-dependencies/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/*/package.json",
-        "outDir": "dist/assets"
-      },
-      {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/*/yarn.lock",
-        "outDir": "dist/assets"
-      },
-      {
-        "include": "engine/core-modules/logic-function/logic-function-drivers/layers/engine/**",
+        "include": "engine/core-modules/application-layer/constants/yarn-engine/**",
         "outDir": "dist/assets"
       },
       {
@@ -46,10 +38,6 @@
       },
       {
         "include": "engine/workspace-manager/dev-seeder/data/sample-files/**",
-        "outDir": "dist/assets"
-      },
-      {
-        "include": "engine/core-modules/application/constants/default-package-files/**",
         "outDir": "dist/assets"
       }
     ]

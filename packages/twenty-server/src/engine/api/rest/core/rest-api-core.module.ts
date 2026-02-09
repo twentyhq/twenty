@@ -1,4 +1,3 @@
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
@@ -22,6 +21,7 @@ import { restToCommonArgsHandlers } from 'src/engine/api/rest/core/rest-to-commo
 import { RestApiCoreService } from 'src/engine/api/rest/core/services/rest-api-core.service';
 import { RestApiService } from 'src/engine/api/rest/rest-api.service';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -58,7 +58,6 @@ const restApiCoreResolvers = [
     AuthModule,
     ApiKeyModule,
     UserRoleModule,
-    HttpModule,
     TwentyORMModule,
     RecordTransformerModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -72,6 +71,7 @@ const restApiCoreResolvers = [
   providers: [
     RestApiService,
     RestApiCoreService,
+    SecureHttpClientService,
     ...restApiCoreResolvers,
     ...restToCommonArgsHandlers,
   ],

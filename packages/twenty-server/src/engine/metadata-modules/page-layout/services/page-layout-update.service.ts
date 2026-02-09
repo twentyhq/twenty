@@ -6,8 +6,10 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -109,14 +111,28 @@ export class PageLayoutUpdateService {
         flatPageLayoutTabMaps,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
+
+    const { flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
 
     const { widgetsToCreate, widgetsToUpdate, widgetsToDelete } =
       this.computeWidgetOperationsForAllTabs({
         tabs,
         flatPageLayoutWidgetMaps,
+        flatPageLayoutTabMaps,
+        flatObjectMetadataMaps,
         workspaceId,
         workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const validateAndBuildResult =
@@ -196,12 +212,14 @@ export class PageLayoutUpdateService {
     flatPageLayoutTabMaps,
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     existingPageLayout: FlatPageLayout;
     tabs: UpdatePageLayoutTabWithWidgetsInput[];
     flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
     workspaceId: string;
     workspaceCustomApplicationId: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
   }): {
     tabsToCreate: FlatPageLayoutTab[];
     tabsToUpdate: FlatPageLayoutTab[];
@@ -238,13 +256,17 @@ export class PageLayoutUpdateService {
           title: tabInput.title,
           position: tabInput.position,
           pageLayoutId: existingPageLayout.id,
+          pageLayoutUniversalIdentifier: existingPageLayout.universalIdentifier,
           workspaceId,
           createdAt: now.toISOString(),
           updatedAt: now.toISOString(),
           deletedAt: null,
           universalIdentifier: tabId,
           applicationId: workspaceCustomApplicationId,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
           widgetIds: [],
+          widgetUniversalIdentifiers: [],
           icon: null,
           layoutMode: PageLayoutTabLayoutMode.GRID,
         };
@@ -316,13 +338,19 @@ export class PageLayoutUpdateService {
   private computeWidgetOperationsForAllTabs({
     tabs,
     flatPageLayoutWidgetMaps,
+    flatPageLayoutTabMaps,
+    flatObjectMetadataMaps,
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     tabs: UpdatePageLayoutTabWithWidgetsInput[];
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
+    flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
+    flatObjectMetadataMaps: MetadataFlatEntityMaps<'objectMetadata'>;
     workspaceId: string;
     workspaceCustomApplicationId: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
   }): {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
@@ -337,8 +365,11 @@ export class PageLayoutUpdateService {
           tabId: tabInput.id,
           widgets: tabInput.widgets,
           flatPageLayoutWidgetMaps,
+          flatPageLayoutTabMaps,
+          flatObjectMetadataMaps,
           workspaceId,
           workspaceCustomApplicationId,
+          workspaceCustomApplicationUniversalIdentifier,
         });
 
       allWidgetsToCreate.push(...widgetsToCreate);
@@ -356,14 +387,20 @@ export class PageLayoutUpdateService {
     tabId,
     widgets,
     flatPageLayoutWidgetMaps,
+    flatPageLayoutTabMaps,
+    flatObjectMetadataMaps,
     workspaceId,
     workspaceCustomApplicationId,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     tabId: string;
     widgets: UpdatePageLayoutWidgetWithIdInput[];
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
+    flatPageLayoutTabMaps: FlatPageLayoutTabMaps;
+    flatObjectMetadataMaps: MetadataFlatEntityMaps<'objectMetadata'>;
     workspaceId: string;
     workspaceCustomApplicationId: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
   }): {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
@@ -394,12 +431,29 @@ export class PageLayoutUpdateService {
       (widgetInput) => {
         const widgetId = widgetInput.id ?? v4();
 
+        const {
+          pageLayoutTabUniversalIdentifier,
+          objectMetadataUniversalIdentifier,
+        } = resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            pageLayoutTabId: widgetInput.pageLayoutTabId,
+            objectMetadataId: widgetInput.objectMetadataId,
+          },
+          flatEntityMaps: {
+            flatPageLayoutTabMaps,
+            flatObjectMetadataMaps,
+          },
+        });
+
         return {
           id: widgetId,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
+          pageLayoutTabUniversalIdentifier,
           title: widgetInput.title,
           type: widgetInput.type,
           objectMetadataId: widgetInput.objectMetadataId ?? null,
+          objectMetadataUniversalIdentifier,
           gridPosition: widgetInput.gridPosition,
           position: widgetInput.position ?? null,
           configuration: widgetInput.configuration ?? null,
@@ -409,6 +463,8 @@ export class PageLayoutUpdateService {
           deletedAt: null,
           universalIdentifier: widgetId,
           applicationId: workspaceCustomApplicationId,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
           conditionalDisplay: null,
         };
       },

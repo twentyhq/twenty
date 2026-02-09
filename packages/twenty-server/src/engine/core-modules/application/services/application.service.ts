@@ -10,8 +10,8 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
-import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application-layer/utils/get-default-application-package-fields.util';
+import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application-layer/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
@@ -359,7 +359,7 @@ export class ApplicationService {
       defaultPackageFields.yarnLockContent,
     );
 
-    const packageJsonFile = await this.fileStorageService.writeFile_v2({
+    const packageJsonFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.packageJsonContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
@@ -370,7 +370,7 @@ export class ApplicationService {
       queryRunner,
     });
 
-    const yarnLockFile = await this.fileStorageService.writeFile_v2({
+    const yarnLockFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.yarnLockContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
@@ -403,51 +403,6 @@ export class ApplicationService {
         workspaceId: application.workspaceId,
       });
     }
-  }
-
-  async uploadPackageFilesFromContent(
-    application: Pick<
-      ApplicationEntity,
-      'id' | 'universalIdentifier' | 'workspaceId'
-    >,
-    packageJsonContent: string,
-    yarnLockContent: string,
-  ): Promise<void> {
-    const packageJsonChecksum = logicFunctionCreateHash(packageJsonContent);
-    const yarnLockChecksum = logicFunctionCreateHash(yarnLockContent);
-    const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
-      packageJsonContent,
-      yarnLockContent,
-    );
-
-    const packageJsonFile = await this.fileStorageService.writeFile_v2({
-      sourceFile: packageJsonContent,
-      mimeType: undefined,
-      fileFolder: FileFolder.Dependencies,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId: application.workspaceId,
-      resourcePath: 'package.json',
-      settings: { isTemporaryFile: false, toDelete: false },
-    });
-
-    const yarnLockFile = await this.fileStorageService.writeFile_v2({
-      sourceFile: yarnLockContent,
-      mimeType: undefined,
-      fileFolder: FileFolder.Dependencies,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId: application.workspaceId,
-      resourcePath: 'yarn.lock',
-      settings: { isTemporaryFile: false, toDelete: false },
-    });
-
-    await this.update(application.id, {
-      packageJsonFileId: packageJsonFile.id,
-      yarnLockFileId: yarnLockFile.id,
-      packageJsonChecksum,
-      yarnLockChecksum,
-      availablePackages,
-      workspaceId: application.workspaceId,
-    });
   }
 
   async create(
@@ -501,6 +456,11 @@ export class ApplicationService {
     if (!isDefined(application)) {
       throw new Error(`Application does not exist`);
     }
+
+    await this.fileStorageService.deleteApplicationFiles({
+      workspaceId,
+      applicationUniversalIdentifier: universalIdentifier,
+    });
 
     await this.applicationRepository.delete({
       universalIdentifier,

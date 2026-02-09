@@ -8,11 +8,11 @@ import {
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
 import { wrapJsonSchemaForExecution } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 @Injectable()
 export class LogicFunctionToolProvider implements ToolProvider {
@@ -62,12 +62,11 @@ export class LogicFunctionToolProvider implements ToolProvider {
         execute: async (parameters: Record<string, unknown>) => {
           const { loadingMessage: _, ...actualParams } = parameters;
 
-          const result =
-            await this.logicFunctionExecutorService.executeOneLogicFunction({
-              id: logicFunction.id,
-              workspaceId: context.workspaceId,
-              payload: actualParams,
-            });
+          const result = await this.logicFunctionExecutorService.execute({
+            logicFunctionId: logicFunction.id,
+            workspaceId: context.workspaceId,
+            payload: actualParams,
+          });
 
           if (result.error) {
             return {
