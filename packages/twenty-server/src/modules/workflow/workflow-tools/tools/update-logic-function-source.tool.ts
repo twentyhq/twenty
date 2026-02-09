@@ -30,7 +30,7 @@ const updateLogicFunctionSourceSchema = z.object({
 });
 
 export const createUpdateLogicFunctionSourceTool = (
-  deps: Pick<WorkflowToolDependencies, 'codeStepBuildService'>,
+  deps: Pick<WorkflowToolDependencies, 'logicFunctionService'>,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_logic_function_source' as const,
@@ -63,10 +63,10 @@ To find the logicFunctionId, look at the code step's settings.input.logicFunctio
       const { logicFunctionId, code } = parameters;
       const { workspaceId } = context;
 
-      await deps.codeStepBuildService.updateCodeStepSourceFiles({
-        logicFunctionId,
-        workspaceId,
+      await deps.logicFunctionService.updateLogicFunctionSource({
+        id: logicFunctionId,
         code,
+        workspaceId,
       });
 
       return {

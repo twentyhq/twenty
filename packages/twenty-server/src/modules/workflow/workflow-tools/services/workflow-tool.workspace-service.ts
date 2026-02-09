@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
-import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
@@ -41,7 +41,7 @@ export class WorkflowToolWorkspaceService {
     workflowSchemaService: WorkflowSchemaWorkspaceService,
     globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     recordPositionService: RecordPositionService,
-    codeStepBuildService: CodeStepBuildService,
+    logicFunctionService: LogicFunctionService,
   ) {
     this.deps = {
       workflowVersionStepService,
@@ -52,7 +52,7 @@ export class WorkflowToolWorkspaceService {
       workflowSchemaService,
       globalWorkspaceOrmManager,
       recordPositionService,
-      codeStepBuildService,
+      logicFunctionService,
     };
   }
 

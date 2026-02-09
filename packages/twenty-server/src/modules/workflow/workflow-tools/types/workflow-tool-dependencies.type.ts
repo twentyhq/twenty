@@ -1,7 +1,7 @@
 import type { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import type { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import type { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import type { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
-import type { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import type { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
 import type { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import type { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
@@ -17,7 +17,7 @@ export type WorkflowToolDependencies = {
   workflowSchemaService: WorkflowSchemaWorkspaceService;
   globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   recordPositionService: RecordPositionService;
-  codeStepBuildService: CodeStepBuildService;
+  logicFunctionService: LogicFunctionService;
 };
 
 export type WorkflowToolContext = {
