@@ -67,7 +67,7 @@ export class TimelineActivityService {
     const payloadsByObjectSingularName = timelineActivitiesPayloads.reduce(
       (acc, payload) => {
         const computedObjectSingularName =
-          payload.overrideObjectSingularName ?? objectSingularName;
+          payload.objectSingularName ?? objectSingularName;
 
         acc[computedObjectSingularName] = [
           ...(acc[computedObjectSingularName] || []),
@@ -248,7 +248,7 @@ export class TimelineActivityService {
             linkedRecordId: activityId,
             linkedObjectMetadataId: objectMetadata.id,
             properties: event.properties,
-            overrideObjectSingularName: objectMetadata.nameSingular,
+            objectSingularName: objectMetadata.nameSingular,
           } satisfies TimelineActivityPayload;
         });
       })
@@ -359,7 +359,7 @@ export class TimelineActivityService {
 
         return {
           name: `linked-${activityType}.${action}`,
-          overrideObjectSingularName: objectSingularName,
+          objectSingularName,
           recordId,
           linkedRecordCachedName: activity.title,
           linkedRecordId: activity.id,
