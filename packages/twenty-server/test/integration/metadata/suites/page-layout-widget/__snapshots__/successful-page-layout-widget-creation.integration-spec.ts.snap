@@ -466,8 +466,8 @@ exports[`Page layout widget creation should succeed should create a page layout 
 {
   "configuration": {
     "body": {
-      "blocknote": "[{"id":"fae3516e-fc42-408b-9bb1-28a7e39d25c5","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"Simple text","styles":{}}],"children":[]}]",
-      "markdown": "Simple text",
+      "blocknote": "{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Simple text"}]}]}",
+      "markdown": "{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Simple text"}]}]}",
     },
     "configurationType": "STANDALONE_RICH_TEXT",
   },

@@ -35,7 +35,9 @@ export const TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL: StandaloneRichTextConfigu
   {
     configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
     body: {
-      markdown: 'Simple text',
+      blocknote:
+        '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Simple text"}]}]}',
+      markdown: null,
     },
   };
 
