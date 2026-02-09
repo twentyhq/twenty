@@ -7,9 +7,6 @@ export type PageLayoutTab = Omit<
   'widgets' | 'layoutMode'
 > & {
   widgets: PageLayoutWidget[];
-  /**
-   * Only available behind IS_RECORD_PAGE_LAYOUT_ENABLED for now.
-   */
   layoutMode?: PageLayoutTabLayoutMode;
   icon?: string | null;
 };
