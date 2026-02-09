@@ -1,7 +1,7 @@
-import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES = [
   'position',
   'folderId',
   'name',
-] as const satisfies (keyof FlatNavigationMenuItem)[];
+] as const satisfies MetadataEntityPropertyName<'navigationMenuItem'>[];

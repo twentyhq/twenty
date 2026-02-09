@@ -14,8 +14,9 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { extractJunctionTargetSettingsFromSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/extract-junction-target-settings-from-settings.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateMorphRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> & {
@@ -24,7 +25,6 @@ type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   existingFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   sourceFlatObjectMetadata: FlatObjectMetadata;
-  workspaceId: string;
   flatApplication: FlatApplication;
 };
 export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
@@ -32,12 +32,11 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   existingFlatObjectMetadataMaps,
   existingFlatFieldMetadataMaps,
   sourceFlatObjectMetadata,
-  workspaceId,
   flatApplication,
 }: FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs): Promise<
   FieldInputTranspilationResult<{
-    flatFieldMetadatas: FlatFieldMetadata[];
-    indexMetadatas: FlatIndexMetadata[];
+    flatFieldMetadatas: UniversalFlatFieldMetadata[];
+    indexMetadatas: UniversalFlatIndexMetadata[];
   }>
 > => {
   const rawMorphCreationPayload =
@@ -64,7 +63,8 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     await validateMorphRelationCreationPayload({
       existingFlatObjectMetadataMaps,
       morphRelationCreationPayload: rawMorphCreationPayload,
-      objectMetadataId: sourceFlatObjectMetadata.id,
+      objectMetadataUniversalIdentifier:
+        sourceFlatObjectMetadata.universalIdentifier,
     });
 
   if (morphRelationCreationPayloadValidation.status === 'fail') {
@@ -108,7 +108,6 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
           sourceFlatObjectMetadata,
           targetFlatObjectMetadata,
           targetFlatFieldMetadataType: FieldMetadataType.RELATION,
-          workspaceId,
           morphId,
           flatApplication,
           junctionTargetFlatFieldMetadata,

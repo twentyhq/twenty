@@ -9,8 +9,9 @@ import { type ExtractEntityOneToManyEntityRelationProperties } from 'src/engine/
 import { type FromMetadataEntityToMetadataName } from 'src/engine/metadata-modules/flat-entity/types/from-metadata-entity-to-metadata-name.type';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type AllJsonbPropertiesWithSerializedPropertiesForMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
 
-export type ManyToOneRelationValue<
+export type MetadataManyToOneRelationConfiguration<
   TSourceMetadataName extends AllMetadataName,
   TRelationProperty extends ExtractEntityManyToOneEntityRelationProperties<
     MetadataEntity<TSourceMetadataName>
@@ -24,7 +25,6 @@ export type ManyToOneRelationValue<
         flatEntityForeignKeyAggregator:
           | keyof AddSuffixToEntityOneToManyProperties<TTargetEntity, 'ids'>
           | null;
-        // Note: In the best of the world should not be nullable, entities should always declare inverside keys
         foreignKey: ExtractPropertiesThatEndsWithId<
           MetadataEntity<TSourceMetadataName>,
           'id' | 'workspaceId'
@@ -33,35 +33,44 @@ export type ManyToOneRelationValue<
           ? true
           : false;
       }
-    : null;
+    : // Note: In the best of the world should not be nullable, entities should always declare inverside keys
+      null;
 
 type OneToManyRelationValue<
   TSourceMetadataName extends AllMetadataName,
   TRelationProperty extends ExtractEntityOneToManyEntityRelationProperties<
     MetadataEntity<TSourceMetadataName>
   >,
-> =
-  MetadataEntity<TSourceMetadataName>[TRelationProperty] extends Relation<
-    (infer TTargetEntity extends SyncableEntity)[]
-  >
-    ? {
-        metadataName: FromMetadataEntityToMetadataName<TTargetEntity>;
-      }
-    : null;
+> = MetadataEntity<TSourceMetadataName>[TRelationProperty] extends (infer TTargetEntity extends
+  SyncableEntity)[]
+  ? {
+      metadataName: FromMetadataEntityToMetadataName<TTargetEntity>;
+    }
+  : null;
 
 type MetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
     manyToOne: {
       [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
         MetadataEntity<TSourceMetadataName>
-      >]: ManyToOneRelationValue<TSourceMetadataName, TRelationProperty>;
+      >]: MetadataManyToOneRelationConfiguration<
+        TSourceMetadataName,
+        TRelationProperty
+      >;
     };
     oneToMany: {
       [TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
         MetadataEntity<TSourceMetadataName>
       >]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
     };
-  };
+  } & ([
+    AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TSourceMetadataName>,
+  ] extends [never]
+    ? // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      {}
+    : {
+        serializedRelations: Partial<Record<AllMetadataName, true>>;
+      });
 };
 
 export const ALL_METADATA_RELATIONS = {
@@ -155,6 +164,9 @@ export const ALL_METADATA_RELATIONS = {
       kanbanAggregateOperationViews: { metadataName: 'view' },
       calendarViews: { metadataName: 'view' },
       mainGroupByFieldMetadataViews: { metadataName: 'view' },
+    },
+    serializedRelations: {
+      fieldMetadata: true,
     },
   },
   objectMetadata: {
@@ -378,6 +390,9 @@ export const ALL_METADATA_RELATIONS = {
       application: null,
     },
     oneToMany: {},
+    serializedRelations: {
+      fieldMetadata: true,
+    },
   },
   rowLevelPermissionPredicate: {
     manyToOne: {

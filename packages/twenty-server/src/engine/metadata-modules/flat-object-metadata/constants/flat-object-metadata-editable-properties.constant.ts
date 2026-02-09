@@ -1,4 +1,4 @@
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
   custom: [
@@ -15,5 +15,5 @@ export const FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES = {
   standard: ['description', 'icon', 'isActive', 'labelPlural', 'labelSingular'],
 } as const satisfies Record<
   'standard' | 'custom',
-  (keyof FlatObjectMetadata)[]
+  MetadataEntityPropertyName<'objectMetadata'>[]
 >;

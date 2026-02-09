@@ -77,8 +77,9 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
       createIdToUniversalIdentifierMap(pageLayoutTabs);
     const objectMetadataIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(objectMetadatas);
-    const fieldMetadataIdToUniversalIdentifierMap =
-      createIdToUniversalIdentifierMap(fieldMetadatas);
+    const fieldMetadataUniversalIdentifierById = Object.fromEntries(
+      createIdToUniversalIdentifierMap(fieldMetadatas),
+    );
 
     const flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();
 
@@ -89,7 +90,7 @@ export class WorkspaceFlatPageLayoutWidgetMapCacheService extends WorkspaceCache
           applicationIdToUniversalIdentifierMap,
           pageLayoutTabIdToUniversalIdentifierMap,
           objectMetadataIdToUniversalIdentifierMap,
-          fieldMetadataIdToUniversalIdentifierMap,
+          fieldMetadataUniversalIdentifierById,
         });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({

@@ -1,4 +1,4 @@
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_FIELD_METADATA_MORPH_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_RELATION_UPDATE_CONSTANT =
   {
@@ -22,5 +22,5 @@ export const FLAT_FIELD_METADATA_MORPH_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_M
     ],
   } as const satisfies Record<
     'standard' | 'custom',
-    (keyof FlatFieldMetadata)[]
+    MetadataEntityPropertyName<'fieldMetadata'>[]
   >;

@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { FlatUpdateFrontComponentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
+import { UniversalUpdateFrontComponentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatFrontComponentValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service';
 
 @Injectable()
@@ -20,8 +20,10 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.frontComponent>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.frontComponent
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.frontComponent,
     'create'
   > {
@@ -50,8 +52,10 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.frontComponent>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.frontComponent
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.frontComponent,
     'delete'
   > {
@@ -83,7 +87,7 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.frontComponent
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.frontComponent,
     'update'
   > {
@@ -99,12 +103,12 @@ export class WorkspaceMigrationFrontComponentActionsBuilderService extends Works
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateFrontComponentAction: FlatUpdateFrontComponentAction = {
+    const updateFrontComponentAction: UniversalUpdateFrontComponentAction = {
       type: 'update',
       metadataName: 'frontComponent',
-      entityId: flatEntityId,
+      universalIdentifier,
       update: flatEntityUpdate,
     };
 

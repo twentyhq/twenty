@@ -10,15 +10,14 @@ exports[`View Field Resolver - Failing Create Operation - v2 Should fail to crea
           "errors": [
             {
               "code": "INVALID_VIEW_DATA",
-              "message": "View field with same fieldmetadataId and viewId already exists",
+              "message": "View field with same fieldMetadataUniversalIdentifier and viewUniversalIdentifier already exists",
               "userFriendlyMessage": "View field already exists",
             },
           ],
           "flatEntityMinimalInformation": {
-            "fieldMetadataId": Any<String>,
-            "id": Any<String>,
+            "fieldMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
-            "viewId": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
           },
           "metadataName": "viewField",
           "status": "fail",

@@ -14,11 +14,12 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { recomputeIndexOnFlatFieldMetadataNameUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-index-on-flat-field-metadata-name-update.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 export type FieldMetadataUpdateIndexSideEffect = {
-  flatIndexMetadatasToUpdate: FlatIndexMetadata[];
-  flatIndexMetadatasToDelete: FlatIndexMetadata[];
-  flatIndexMetadatasToCreate: FlatIndexMetadata[];
+  flatIndexMetadatasToUpdate: UniversalFlatIndexMetadata[];
+  flatIndexMetadatasToDelete: UniversalFlatIndexMetadata[];
+  flatIndexMetadatasToCreate: UniversalFlatIndexMetadata[];
 };
 
 type FromToFlatFieldMetadataAndFlatEntityMaps = FromTo<
@@ -110,7 +111,6 @@ const handleNoExistingIndexes = ({
   const newIndex = generateIndexForFlatFieldMetadata({
     flatFieldMetadata: toFlatFieldMetadata,
     flatObjectMetadata,
-    workspaceId: flatObjectMetadata.workspaceId,
   });
 
   return {
@@ -146,7 +146,6 @@ const handleExistingIndexes = ({
         isUnique: true,
       },
       flatObjectMetadata,
-      workspaceId: flatObjectMetadata.workspaceId,
     });
 
     const uniqueIndexToDelete = relatedIndexes.find(

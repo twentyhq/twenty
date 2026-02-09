@@ -1,68 +1,72 @@
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
 import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util';
 import { validateFlatObjectMetadataNames } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;
-  existingObjectMetadataId?: string;
-  objectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  existingObjectMetadataUniversalIdentifier?: string;
+  universalFlatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
 };
 
 export const doesOtherObjectWithSameNameExists = ({
-  objectMetadataMaps,
+  universalFlatObjectMetadataMaps,
   objectMetadataNamePlural,
   objectMetadataNameSingular,
-  existingObjectMetadataId,
+  existingObjectMetadataUniversalIdentifier,
 }: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams) =>
-  Object.values(objectMetadataMaps.byUniversalIdentifier)
+  Object.values(universalFlatObjectMetadataMaps.byUniversalIdentifier)
     .filter(isDefined)
     .some(
-      (objectMetadata) =>
-        (objectMetadata.nameSingular === objectMetadataNameSingular ||
-          objectMetadata.namePlural === objectMetadataNamePlural ||
-          objectMetadata.nameSingular === objectMetadataNamePlural ||
-          objectMetadata.namePlural === objectMetadataNameSingular) &&
-        objectMetadata.id !== existingObjectMetadataId,
+      (universalFlatObjectMetadata) =>
+        (universalFlatObjectMetadata.nameSingular ===
+          objectMetadataNameSingular ||
+          universalFlatObjectMetadata.namePlural === objectMetadataNamePlural ||
+          universalFlatObjectMetadata.nameSingular ===
+            objectMetadataNamePlural ||
+          universalFlatObjectMetadata.namePlural ===
+            objectMetadataNameSingular) &&
+        universalFlatObjectMetadata.universalIdentifier !==
+          existingObjectMetadataUniversalIdentifier,
     );
 
 export const validateFlatObjectMetadataNameAndLabels = ({
-  optimisticFlatObjectMetadataMaps,
-  flatObjectMetadataToValidate,
+  optimisticUniversalFlatObjectMetadataMaps,
+  universalFlatObjectMetadataToValidate,
   buildOptions,
 }: {
-  flatObjectMetadataToValidate: FlatObjectMetadata;
-  optimisticFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  universalFlatObjectMetadataToValidate: UniversalFlatObjectMetadata;
+  optimisticUniversalFlatObjectMetadataMaps: UniversalFlatEntityMaps<UniversalFlatObjectMetadata>;
   buildOptions: WorkspaceMigrationBuilderOptions;
 }): FlatObjectMetadataValidationError[] => {
   const errors: FlatObjectMetadataValidationError[] = [];
 
   errors.push(
     ...validateFlatObjectMetadataNames({
-      namePlural: flatObjectMetadataToValidate.namePlural,
-      nameSingular: flatObjectMetadataToValidate.nameSingular,
+      namePlural: universalFlatObjectMetadataToValidate.namePlural,
+      nameSingular: universalFlatObjectMetadataToValidate.nameSingular,
     }),
   );
 
   errors.push(
     ...validateFlatObjectMetadataLabel({
-      labelPlural: flatObjectMetadataToValidate.labelPlural,
-      labelSingular: flatObjectMetadataToValidate.labelSingular,
+      labelPlural: universalFlatObjectMetadataToValidate.labelPlural,
+      labelSingular: universalFlatObjectMetadataToValidate.labelSingular,
     }),
   );
 
   if (
-    flatObjectMetadataToValidate.isLabelSyncedWithName &&
+    universalFlatObjectMetadataToValidate.isLabelSyncedWithName &&
     !areFlatObjectMetadataNamesSyncedWithLabels({
-      flatObjectdMetadata: flatObjectMetadataToValidate,
+      flatObjectdMetadata: universalFlatObjectMetadataToValidate,
       isSystemBuild: buildOptions.isSystemBuild,
     })
   ) {
@@ -75,10 +79,14 @@ export const validateFlatObjectMetadataNameAndLabels = ({
 
   if (
     doesOtherObjectWithSameNameExists({
-      objectMetadataNamePlural: flatObjectMetadataToValidate.namePlural,
-      objectMetadataNameSingular: flatObjectMetadataToValidate.nameSingular,
-      objectMetadataMaps: optimisticFlatObjectMetadataMaps,
-      existingObjectMetadataId: flatObjectMetadataToValidate.id,
+      objectMetadataNamePlural:
+        universalFlatObjectMetadataToValidate.namePlural,
+      objectMetadataNameSingular:
+        universalFlatObjectMetadataToValidate.nameSingular,
+      universalFlatObjectMetadataMaps:
+        optimisticUniversalFlatObjectMetadataMaps,
+      existingObjectMetadataUniversalIdentifier:
+        universalFlatObjectMetadataToValidate.universalIdentifier,
     })
   ) {
     errors.push({

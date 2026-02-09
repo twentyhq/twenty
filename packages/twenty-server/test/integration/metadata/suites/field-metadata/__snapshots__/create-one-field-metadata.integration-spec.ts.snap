@@ -16,9 +16,8 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "testField",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
