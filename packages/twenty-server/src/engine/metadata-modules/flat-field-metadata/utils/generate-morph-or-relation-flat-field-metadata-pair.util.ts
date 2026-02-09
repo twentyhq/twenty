@@ -65,7 +65,6 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
   flatFieldMetadatas: UniversalFlatFieldMetadata[];
-  // TODO
   indexMetadatas: UniversalFlatIndexMetadata[];
 };
 
@@ -182,7 +181,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     relationTargetObjectMetadataUniversalIdentifier:
       sourceFlatObjectMetadata.universalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier:
-      sourceFieldUniversalIdentifier,
+      sourceFlatFieldMetadata.universalIdentifier,
   };
 
   const indexMetadata: UniversalFlatIndexMetadata =

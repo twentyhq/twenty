@@ -1,7 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
-import { type PageLayoutTabLayoutMode } from '@/page-layout/types/PageLayoutTabLayoutMode';
 import { assertPageLayoutTabHasDefinedLayoutModeOrThrow } from '@/page-layout/utils/assertPageLayoutTabHasDefinedLayoutModeOrThrow';
-import { PageLayoutType } from '~/generated/graphql';
+import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated/graphql';
 
 type GetTabLayoutModeParams = {
   tab: PageLayoutTab | undefined;
@@ -18,5 +17,5 @@ export const getTabLayoutMode = ({
     return tab.layoutMode;
   }
 
-  return 'grid';
+  return PageLayoutTabLayoutMode.GRID;
 };

@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
@@ -13,10 +13,12 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 
 @Command({
   name: 'upgrade:delete-file-records',
-  description: 'Delete all file records from FileRepository for workspace',
+  description:
+    'Delete all file records and add unique constraint on file entity',
 })
 export class DeleteFileRecordsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   protected readonly logger = new Logger(DeleteFileRecordsCommand.name);
+  private hasAddedConstraint = false;
 
   constructor(
     @InjectRepository(WorkspaceEntity)
@@ -25,11 +27,18 @@ export class DeleteFileRecordsCommand extends ActiveOrSuspendedWorkspacesMigrati
     private readonly fileRepository: Repository<FileEntity>,
     protected readonly twentyORMGlobalManager: GlobalWorkspaceOrmManager,
     protected readonly dataSourceService: DataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager, dataSourceService);
   }
 
-  override async runOnWorkspace({
+  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    await this.deleteFileRecords(args);
+    await this.addFileEntityUniqueConstraint(args);
+  }
+
+  private async deleteFileRecords({
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
@@ -73,6 +82,40 @@ export class DeleteFileRecordsCommand extends ActiveOrSuspendedWorkspacesMigrati
       );
 
       throw error;
+    }
+  }
+
+  private async addFileEntityUniqueConstraint({
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    if (this.hasAddedConstraint) {
+      return;
+    }
+
+    if (options.dryRun) {
+      return;
+    }
+
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.query(
+        `ALTER TABLE "core"."file" ADD CONSTRAINT "IDX_APPLICATION_PATH_WORKSPACE_ID_APPLICATION_ID_UNIQUE" UNIQUE ("workspaceId", "applicationId", "path")`,
+      );
+
+      await queryRunner.commitTransaction();
+      this.logger.log('Successfully added file entity unique constraint');
+      this.hasAddedConstraint = true;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error(
+        `Rolling back addFileEntityUniqueConstraint: ${error.message}`,
+      );
+    } finally {
+      await queryRunner.release();
     }
   }
 }

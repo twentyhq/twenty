@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
-import { ToolGeneratorModule } from 'src/engine/core-modules/tool-generator/tool-generator.module';
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
+import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
 import { WorkflowVersionEdgeModule } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.module';
 import { WorkflowVersionStepModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.module';
@@ -22,7 +22,7 @@ import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace
     WorkflowTriggerModule,
     WorkflowSchemaModule,
     RecordPositionModule,
-    ToolGeneratorModule,
+    LogicFunctionModule,
   ],
   providers: [
     WorkflowToolWorkspaceService,

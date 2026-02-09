@@ -114,6 +114,7 @@ export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';
+export type { NavigateOptions } from './NavigateOptions';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';

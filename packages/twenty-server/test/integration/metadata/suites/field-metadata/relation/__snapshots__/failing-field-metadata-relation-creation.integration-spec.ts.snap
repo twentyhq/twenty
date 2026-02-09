@@ -212,7 +212,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
           "errors": [
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
-              "message": "Relation creation payload is invalid",
+              "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
               "userFriendlyMessage": "Invalid relation creation payload",
               "value": {
                 "targetFieldIcon": "IconBuildingSkyscraper",
@@ -292,7 +292,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
           "errors": [
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
-              "message": "Relation creation payload is invalid",
+              "message": "Relation creation payload is invalid: type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY",
               "userFriendlyMessage": "Invalid relation creation payload",
               "value": {
                 "targetFieldIcon": "IconBuildingSkyscraper",
@@ -332,7 +332,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
           "errors": [
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
-              "message": "Relation creation payload is invalid",
+              "message": "Relation creation payload is invalid: type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY",
               "userFriendlyMessage": "Invalid relation creation payload",
               "value": {
                 "targetFieldIcon": "IconBuildingSkyscraper",
@@ -445,7 +445,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
           "errors": [
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
-              "message": "Relation creation payload is invalid",
+              "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
               "userFriendlyMessage": "Invalid relation creation payload",
               "value": {
                 "targetFieldIcon": "IconBuildingSkyscraper",
@@ -485,7 +485,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
           "errors": [
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
-              "message": "Relation creation payload is invalid",
+              "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
               "userFriendlyMessage": "Invalid relation creation payload",
               "value": {
                 "targetFieldIcon": "IconBuildingSkyscraper",
@@ -599,7 +599,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
           "errors": [
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
-              "message": "Relation creation payload is invalid",
+              "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
               "userFriendlyMessage": "Invalid relation creation payload",
               "value": {
                 "targetFieldIcon": "IconBuildingSkyscraper",
@@ -947,7 +947,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
+                "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -1031,7 +1031,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
+                "message": "Relation creation payload is invalid: type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -1073,7 +1073,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
+                "message": "Relation creation payload is invalid: type must be one of the following values: MANY_TO_ONE, ONE_TO_MANY",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -1190,7 +1190,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
+                "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -1232,7 +1232,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
+                "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",
@@ -1350,7 +1350,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
             "errors": [
               {
                 "code": "FIELD_METADATA_RELATION_MALFORMED",
-                "message": "Relation creation payload is invalid",
+                "message": "Relation creation payload is invalid: targetObjectMetadataId must be a UUID",
                 "userFriendlyMessage": "Invalid relation creation payload",
                 "value": {
                   "targetFieldIcon": "IconBuildingSkyscraper",

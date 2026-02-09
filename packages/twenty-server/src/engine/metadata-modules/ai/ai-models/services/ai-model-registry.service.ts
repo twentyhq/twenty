@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { anthropic } from '@ai-sdk/anthropic';
+import { groq } from '@ai-sdk/groq';
 import { createOpenAI, openai } from '@ai-sdk/openai';
 import { xai } from '@ai-sdk/xai';
 import { type LanguageModel } from 'ai';
@@ -18,6 +19,7 @@ import {
   type AIModelConfig,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models.const';
 import { ANTHROPIC_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/anthropic-models.const';
+import { GROQ_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/groq-models.const';
 import { OPENAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/openai-models.const';
 import { XAI_MODELS } from 'src/engine/metadata-modules/ai/ai-models/constants/xai-models.const';
 
@@ -55,6 +57,12 @@ export class AiModelRegistryService {
 
     if (xaiApiKey) {
       this.registerXaiModels();
+    }
+
+    const groqApiKey = this.twentyConfigService.get('GROQ_API_KEY');
+
+    if (groqApiKey) {
+      this.registerGroqModels();
     }
 
     const openaiCompatibleBaseUrl = this.twentyConfigService.get(
@@ -100,6 +108,17 @@ export class AiModelRegistryService {
         modelId: modelConfig.modelId,
         provider: ModelProvider.XAI,
         model: xai(modelConfig.modelId),
+        doesSupportThinking: modelConfig.doesSupportThinking,
+      });
+    });
+  }
+
+  private registerGroqModels(): void {
+    GROQ_MODELS.forEach((modelConfig) => {
+      this.modelRegistry.set(modelConfig.modelId, {
+        modelId: modelConfig.modelId,
+        provider: ModelProvider.GROQ,
+        model: groq(modelConfig.modelId),
         doesSupportThinking: modelConfig.doesSupportThinking,
       });
     });
@@ -170,7 +189,7 @@ export class AiModelRegistryService {
 
     if (!model) {
       throw new AgentException(
-        'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
+        'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, XAI_API_KEY, or GROQ_API_KEY).',
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
@@ -192,7 +211,7 @@ export class AiModelRegistryService {
 
     if (!model) {
       throw new AgentException(
-        'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY).',
+        'No AI models are available. Please configure at least one AI provider API key (OPENAI_API_KEY, ANTHROPIC_API_KEY, XAI_API_KEY, or GROQ_API_KEY).',
         AgentExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
@@ -289,6 +308,9 @@ export class AiModelRegistryService {
         break;
       case ModelProvider.XAI:
         apiKey = this.twentyConfigService.get('XAI_API_KEY');
+        break;
+      case ModelProvider.GROQ:
+        apiKey = this.twentyConfigService.get('GROQ_API_KEY');
         break;
       case ModelProvider.OPENAI_COMPATIBLE:
         apiKey = this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY');
