@@ -2,18 +2,20 @@ import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { HealthController } from 'src/engine/core-modules/health/controllers/health.controller';
+import { HealthzSecretGuard } from 'src/engine/core-modules/health/guards/healthz-secret.guard';
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
+import { BillingHealthIndicator } from 'src/engine/core-modules/health/indicators/billing.health';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { BillingHealthIndicator } from 'src/engine/core-modules/health/indicators/billing.health';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 import { ConnectedAccountHealth } from './indicators/connected-account.health';
 import { DatabaseHealthIndicator } from './indicators/database.health';
 import { RedisHealthIndicator } from './indicators/redis.health';
 import { WorkerHealthIndicator } from './indicators/worker.health';
+
 @Module({
   imports: [
     TerminusModule,
@@ -29,6 +31,7 @@ import { WorkerHealthIndicator } from './indicators/worker.health';
     ConnectedAccountHealth,
     AppHealthIndicator,
     BillingHealthIndicator,
+    HealthzSecretGuard,
   ],
   exports: [
     DatabaseHealthIndicator,

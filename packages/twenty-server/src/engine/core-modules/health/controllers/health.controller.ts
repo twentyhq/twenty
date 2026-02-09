@@ -8,14 +8,15 @@ import {
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 
 import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { HealthzSecretGuard } from 'src/engine/core-modules/health/guards/healthz-secret.guard';
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
+import { BillingHealthIndicator } from 'src/engine/core-modules/health/indicators/billing.health';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { BillingHealthIndicator } from 'src/engine/core-modules/health/indicators/billing.health';
 
 @Controller('healthz')
 export class HealthController {
@@ -37,7 +38,7 @@ export class HealthController {
   }
 
   @Get(':indicatorId')
-  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard, HealthzSecretGuard)
   @HealthCheck()
   checkService(@Param('indicatorId') indicatorId: HealthIndicatorId) {
     const checks = {

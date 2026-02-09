@@ -7,15 +7,15 @@ import {
   IsUrl,
   ValidateIf,
   type ValidationError,
-  validateSync,
+  validateSync
 } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
+import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function/logic-function-executor/interfaces/logic-function-executor.interface';
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
-import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function/logic-function-executor/interfaces/logic-function-executor.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
@@ -1407,6 +1407,16 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   HEALTH_METRICS_TIME_WINDOW_IN_MINUTES = 5;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.OTHER,
+    isSensitive: true,
+    description:
+      'Secret that must be passed in the X-Healthz-Secret header to access detailed health check indicator endpoints',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  HEALTHZ_SECRET: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.OTHER,

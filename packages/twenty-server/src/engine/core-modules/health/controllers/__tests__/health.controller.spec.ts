@@ -3,11 +3,12 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { HealthController } from 'src/engine/core-modules/health/controllers/health.controller';
 import { AppHealthIndicator } from 'src/engine/core-modules/health/indicators/app.health';
+import { BillingHealthIndicator } from 'src/engine/core-modules/health/indicators/billing.health';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/health/indicators/connected-account.health';
 import { DatabaseHealthIndicator } from 'src/engine/core-modules/health/indicators/database.health';
 import { RedisHealthIndicator } from 'src/engine/core-modules/health/indicators/redis.health';
 import { WorkerHealthIndicator } from 'src/engine/core-modules/health/indicators/worker.health';
-import { BillingHealthIndicator } from 'src/engine/core-modules/health/indicators/billing.health';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('HealthController', () => {
   let healthController: HealthController;
@@ -43,6 +44,10 @@ describe('HealthController', () => {
         {
           provide: BillingHealthIndicator,
           useValue: { isHealthy: jest.fn() },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: { get: jest.fn() },
         },
       ],
     }).compile();

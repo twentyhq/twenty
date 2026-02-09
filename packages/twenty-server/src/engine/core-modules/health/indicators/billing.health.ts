@@ -7,11 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
 
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
 import { HealthStateManager } from 'src/engine/core-modules/health/utils/health-state-manager.util';
 import { withHealthCheckTimeout } from 'src/engine/core-modules/health/utils/health-check-timeout.util';
-import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/health/constants/health-error-messages.constants';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class BillingHealthIndicator {
@@ -19,6 +20,7 @@ export class BillingHealthIndicator {
 
   constructor(
     private readonly healthIndicatorService: HealthIndicatorService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(BillingSubscriptionEntity)
@@ -27,6 +29,18 @@ export class BillingHealthIndicator {
 
   async isHealthy(): Promise<HealthIndicatorResult> {
     const indicator = this.healthIndicatorService.check('billing');
+
+    const isBillingEnabled =
+      this.twentyConfigService.get('IS_BILLING_ENABLED');
+
+    if (!isBillingEnabled) {
+      return indicator.up({
+        details: {
+          status: 'disabled',
+          message: 'Billing is not enabled on this instance',
+        },
+      });
+    }
 
     try {
       const [lastWorkspace, totalWorkspaces, totalSubscriptions] =
