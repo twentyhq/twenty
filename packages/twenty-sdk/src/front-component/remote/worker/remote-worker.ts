@@ -65,11 +65,15 @@ const render: WorkerExports['render'] = async (
 
   const importUrl = URL.createObjectURL(blob);
 
-  /* @vite-ignore */
-  const componentModule = await import(importUrl);
+  try {
+    /* @vite-ignore */
+    const componentModule = await import(importUrl);
 
-  const reactRoot = createRoot(root);
-  reactRoot.render(componentModule.default);
+    const reactRoot = createRoot(root);
+    reactRoot.render(componentModule.default);
+  } finally {
+    URL.revokeObjectURL(importUrl);
+  }
 };
 
 const initializeHostCommunicationApi: WorkerExports['initializeHostCommunicationApi'] =
