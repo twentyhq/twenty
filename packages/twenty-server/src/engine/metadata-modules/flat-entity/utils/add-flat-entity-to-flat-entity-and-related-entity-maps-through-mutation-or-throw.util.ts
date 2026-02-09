@@ -39,12 +39,11 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
     );
 
     const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
-    const selfFlatEntityMaps = flatEntityAndRelatedMapsToMutate[
-      flatEntityMapsKey
-    ];
+    const selfFlatEntityMaps =
+      flatEntityAndRelatedMapsToMutate[flatEntityMapsKey];
 
     selfFlatEntityMaps.universalIdentifierById[flatEntity.id] =
-    flatEntity.universalIdentifier;
+      flatEntity.universalIdentifier;
 
     const idBasedManyToOneRelations = Object.values(
       ALL_METADATA_RELATIONS[metadataName].manyToOne,

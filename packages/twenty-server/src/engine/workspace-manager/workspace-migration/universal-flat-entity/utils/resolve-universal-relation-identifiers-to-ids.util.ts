@@ -23,9 +23,7 @@ type UniversalManyToOneConfig<T extends AllMetadataName> =
   (typeof ALL_UNIVERSAL_METADATA_RELATIONS)[T]['manyToOne'];
 
 type ExtractUniversalForeignKeys<T> = {
-  [K in keyof T]: T[K] extends { universalForeignKey: infer UFK }
-    ? UFK
-    : never;
+  [K in keyof T]: T[K] extends { universalForeignKey: infer UFK } ? UFK : never;
 }[keyof T];
 
 type MetadataUniversalManyToOneJoinColumn<T extends AllMetadataName> =
@@ -84,10 +82,7 @@ export const resolveUniversalRelationIdentifiersToIds = <
   flatEntityMaps,
 }: {
   metadataName: T;
-  universalForeignKeyValues: Record<
-    TProvidedKeys,
-    string | null | undefined
-  >;
+  universalForeignKeyValues: Record<TProvidedKeys, string | null | undefined>;
   flatEntityMaps: RequiredFlatEntityMapsForUniversalForeignKeys<
     T,
     TProvidedKeys
@@ -131,10 +126,7 @@ export const resolveUniversalRelationIdentifiersToIds = <
 
     const mapsKey = getMetadataFlatEntityMapsKey(
       targetMetadataName,
-    ) as keyof RequiredFlatEntityMapsForUniversalForeignKeys<
-      T,
-      TProvidedKeys
-    >;
+    ) as keyof RequiredFlatEntityMapsForUniversalForeignKeys<T, TProvidedKeys>;
     const targetFlatEntityMaps = flatEntityMaps[mapsKey];
 
     if (isNullable && !isDefined(universalIdentifierValue)) {
