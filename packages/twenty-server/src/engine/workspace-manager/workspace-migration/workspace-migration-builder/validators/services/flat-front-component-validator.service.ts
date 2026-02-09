@@ -11,6 +11,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
 import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { isStoragePathSafe } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-storage-path-safe.util';
 
 @Injectable()
 export class FlatFrontComponentValidatorService {
@@ -34,6 +35,22 @@ export class FlatFrontComponentValidatorService {
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
         message: t`Front component name is required`,
         userFriendlyMessage: msg`Front component name is required`,
+      });
+    }
+
+    if (!isStoragePathSafe(flatFrontComponent.sourceComponentPath)) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Invalid source component path: path traversal or absolute path not allowed`,
+        userFriendlyMessage: msg`Invalid source component path: path traversal or absolute path not allowed`,
+      });
+    }
+
+    if (!isStoragePathSafe(flatFrontComponent.builtComponentPath)) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Invalid built component path: path traversal or absolute path not allowed`,
+        userFriendlyMessage: msg`Invalid built component path: path traversal or absolute path not allowed`,
       });
     }
 
