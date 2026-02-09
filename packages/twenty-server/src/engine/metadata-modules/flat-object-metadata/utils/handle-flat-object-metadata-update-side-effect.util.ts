@@ -89,16 +89,18 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
 
   if (
     toFlatObjectMetadata.isSearchable &&
-    isDefined(toFlatObjectMetadata.labelIdentifierFieldMetadataId) &&
-    fromFlatObjectMetadata.labelIdentifierFieldMetadataId !==
-      toFlatObjectMetadata.labelIdentifierFieldMetadataId
+    isDefined(
+      toFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+    ) &&
+    fromFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier !==
+      toFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier
   ) {
     const updatedSearchVectorField =
       recomputeSearchVectorFieldAfterLabelIdentifierUpdate({
         existingFlatObjectMetadata: fromFlatObjectMetadata,
         flatFieldMetadataMaps,
-        updatedLabelIdentifierFieldMetadataId:
-          toFlatObjectMetadata.labelIdentifierFieldMetadataId,
+        labelIdentifierFieldMetadataUniversalIdentifier:
+          toFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
       });
 
     if (isDefined(updatedSearchVectorField)) {
