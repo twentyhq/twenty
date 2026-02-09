@@ -61,26 +61,28 @@ const StyledInputBox = styled.div`
     border-color: ${({ theme }) => theme.color.blue};
     box-shadow: 0px 0px 0px 3px ${({ theme }) => theme.color.transparent.blue2};
   }
-
-  & textarea {
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0;
-    box-shadow: none !important;
-    padding: 0;
-  }
-
-  & textarea:focus {
-    border: none !important;
-    box-shadow: none !important;
-  }
 `;
 
 const StyledTextAreaWrapper = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   min-height: 0;
+`;
+
+const StyledChatTextArea = styled(TextArea)`
+  && {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  &&:focus {
+    border: none;
+    box-shadow: none;
+  }
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
@@ -96,15 +98,8 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 const StyledButtonsContainer = styled.div`
   display: flex;
   flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-end;
-
-  & > *:not(:last-child) {
-    margin-right: ${({ theme }) => theme.spacing(2)};
-  }
-
-  & > *:nth-child(2) {
-    margin-right: ${({ theme }) => theme.spacing(1)};
-  }
 `;
 
 export const AIChatTab = () => {
@@ -171,7 +166,7 @@ export const AIChatTab = () => {
             <AgentChatContextPreview />
             <StyledInputBox>
               <StyledTextAreaWrapper>
-                <TextArea
+                <StyledChatTextArea
                   textAreaId={AI_CHAT_INPUT_ID}
                   placeholder={t`Ask, search or make anything...`}
                   value={agentChatInput}
