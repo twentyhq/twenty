@@ -98,41 +98,6 @@ export const WorkflowEditActionEmailBase = ({
   const hasAvailableAdvancedOptions =
     !visibleAdvancedFields.cc || !visibleAdvancedFields.bcc;
 
-  const [missingScopes, setMissingScopes] = useState<{
-    extraScopes: string[];
-    provider: ConnectedAccountProvider;
-    loginHint: string;
-  } | null>(null);
-
-  const checkConnectedAccountScopes = (connectedAccountId: string | null) => {
-    const connectedAccount = accounts.find(
-      (account) => account.id === connectedAccountId,
-    );
-    if (!isDefined(connectedAccount)) {
-      setMissingScopes(null);
-
-      return;
-    }
-
-    const { hasRequiredScopes, extraScopes } = getRequiredEmailScopes(
-      connectedAccount,
-      action.type,
-    );
-
-    if (
-      connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
-      !hasRequiredScopes
-    ) {
-      setMissingScopes({
-        extraScopes,
-        provider: connectedAccount.provider,
-        loginHint: connectedAccount.handle,
-      });
-    } else {
-      setMissingScopes(null);
-    }
-  };
-
   const handleReauthorize = async () => {
     if (!isDefined(missingScopes)) {
       return;
@@ -147,7 +112,6 @@ export const WorkflowEditActionEmailBase = ({
 
   const handleConnectedAccountChange = (connectedAccountId: string | null) => {
     handleFieldChange('connectedAccountId', connectedAccountId);
-    checkConnectedAccountScopes(connectedAccountId);
   };
 
   const handleUploadAttachment = async (file: File) => {
@@ -202,6 +166,27 @@ export const WorkflowEditActionEmailBase = ({
       connectionParameters: true,
     },
   });
+
+  const selectedAccount = accounts.find(
+    (account) => account.id === formData.connectedAccountId,
+  );
+
+  const { hasRequiredScopes = true, extraScopes = [] } = isDefined(
+    selectedAccount,
+  )
+    ? getRequiredEmailScopes(selectedAccount, action.type)
+    : {};
+
+  const missingScopes =
+    isDefined(selectedAccount) &&
+    selectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+    !hasRequiredScopes
+      ? {
+          extraScopes,
+          provider: selectedAccount.provider,
+          loginHint: selectedAccount.handle,
+        }
+      : null;
 
   let emptyOption: SelectOption<string | null> = {
     label: t`None`,
