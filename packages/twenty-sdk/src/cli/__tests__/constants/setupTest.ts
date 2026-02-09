@@ -1,14 +1,13 @@
 import { testConfig } from '@/cli/__tests__/constants/testConfig';
+import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 import * as fs from 'fs-extra';
-import * as os from 'os';
 import * as path from 'path';
-import { beforeAll, afterAll } from 'vitest';
+import { beforeAll } from 'vitest';
 
-const testConfigDir = path.join(os.tmpdir(), '.twenty-sdk-test');
-const testConfigPath = path.join(testConfigDir, 'config.json');
+const testConfigPath = getConfigPath();
 
 beforeAll(async () => {
-  await fs.ensureDir(testConfigDir);
+  await fs.ensureDir(path.dirname(testConfigPath));
 
   const configFile = {
     profiles: {
@@ -17,11 +16,4 @@ beforeAll(async () => {
   };
 
   await fs.writeFile(testConfigPath, JSON.stringify(configFile, null, 2));
-
-  process.env.TWENTY_CONFIG_PATH = testConfigPath;
-});
-
-afterAll(async () => {
-  delete process.env.TWENTY_CONFIG_PATH;
-  await fs.remove(testConfigDir);
 });
