@@ -386,12 +386,6 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
           );
 
           urlToFileIdMap.set(normalizedPath, fileData.fileId);
-        } else if (isDefined(fileData?.url)) {
-          const normalizedPath = this.getAttachmentNewdRelativePath(
-            fileData.url,
-          );
-
-          urlToFileIdMap.set(normalizedPath, fileData.fileId);
         }
       }
     }
@@ -439,7 +433,7 @@ export class MigrateActivityRichTextAttachmentFileIdsCommand extends ActiveOrSus
       const newFilename = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
       const newResourcePath = `${FileFolder.FilesField}/${fileFieldMetadata.universalIdentifier}/${newFilename}`;
 
-      await this.fileStorageService.copy({
+      await this.fileStorageService.copyLegacy({
         from: {
           folderPath: `workspace-${workspaceId}/${folderPath}`,
           filename: filename,
