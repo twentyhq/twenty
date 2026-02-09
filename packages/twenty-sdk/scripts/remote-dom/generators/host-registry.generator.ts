@@ -40,9 +40,6 @@ const parseStyle = (styleString: string | undefined): React.CSSProperties | unde
   return style;
 };
 
-// Extracts only serializable properties from DOM/React events.
-// Native events contain circular references and DOM nodes that cannot
-// cross the worker boundary via postMessage.
 const serializeEvent = (event: unknown): SerializedEventData => {
   if (!event || typeof event !== 'object') {
     return { type: 'unknown' };
@@ -50,7 +47,7 @@ const serializeEvent = (event: unknown): SerializedEventData => {
 
   const domEvent = event as Record<string, unknown>;
   const serialized: SerializedEventData = {
-    type: (domEvent.type as string) ?? 'unknown',
+    type: typeof domEvent.type === 'string' ? domEvent.type : 'unknown',
   };
 
   if ('altKey' in domEvent) serialized.altKey = domEvent.altKey as boolean;

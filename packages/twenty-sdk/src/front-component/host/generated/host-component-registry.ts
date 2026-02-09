@@ -7,13 +7,13 @@
  *                              |___/
  */
 
-import React from 'react';
 import {
   RemoteFragmentRenderer,
   createRemoteComponentRenderer,
 } from '@remote-dom/react/host';
-import { type SerializedEventData } from '../../../sdk/front-component-common/SerializedEventData';
+import React from 'react';
 import { Button } from 'twenty-ui/input';
+import { type SerializedEventData } from '../../../sdk/front-component-common/SerializedEventData';
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
 const EVENT_NAME_MAP: Record<string, string> = {
@@ -75,7 +75,7 @@ const serializeEvent = (event: unknown): SerializedEventData => {
 
   const domEvent = event as Record<string, unknown>;
   const serialized: SerializedEventData = {
-    type: (domEvent.type as string) ?? 'unknown',
+    type: typeof domEvent.type === 'string' ? domEvent.type : 'unknown',
   };
 
   // Modifier keys (shared by mouse and keyboard events)
