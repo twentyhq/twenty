@@ -1101,6 +1101,11 @@ msgstr "{connectFieldName}のすべての操作で、同じ制約フィールド
 msgid "Failed to create evaluation. Please try again."
 msgstr "評価の作成に失敗しました。もう一度お試しください。"
 
+#. js-lingui-id: RjuW0j
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Failed to create front component."
+msgstr ""
+
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to create function."
@@ -1416,6 +1421,11 @@ msgstr "フォームアクションには少なくとも1つのフィールド�
 msgid "Friday"
 msgstr "金曜日"
 
+#. js-lingui-id: Wed+Kp
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component is not ready."
+msgstr ""
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1432,6 +1442,7 @@ msgstr ""
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
 msgstr ""
 

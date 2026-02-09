@@ -1101,6 +1101,11 @@ msgstr "Elvárt, hogy ugyanazokat a megszorítási mezőket következetesen hasz
 msgid "Failed to create evaluation. Please try again."
 msgstr "Nem sikerült létrehozni az értékelést. Kérjük, próbálja meg újra."
 
+#. js-lingui-id: RjuW0j
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Failed to create front component."
+msgstr ""
+
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to create function."
@@ -1416,6 +1421,11 @@ msgstr "Az űrlap műveletnek legalább egy mezővel kell rendelkeznie"
 msgid "Friday"
 msgstr "Péntek"
 
+#. js-lingui-id: Wed+Kp
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component is not ready."
+msgstr ""
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1432,6 +1442,7 @@ msgstr ""
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
 msgstr ""
 

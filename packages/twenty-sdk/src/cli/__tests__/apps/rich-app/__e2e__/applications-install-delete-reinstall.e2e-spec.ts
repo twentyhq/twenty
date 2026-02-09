@@ -1,9 +1,8 @@
-import { getTestedApplicationPath } from '@/cli/__tests__/e2e/utils/get-tested-application-path.util';
 import { runAppDev } from '@/cli/__tests__/integration/utils/run-app-dev.util';
 import { OUTPUT_DIR } from 'twenty-shared/application';
 import { AppUninstallCommand } from '@/cli/commands/app/app-uninstall';
 import { existsSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { inspect } from 'util';
 
 inspect.defaultOptions.depth = 10;
@@ -11,7 +10,7 @@ inspect.defaultOptions.depth = 10;
 describe('Application: install delete and reinstall rich-app', () => {
   const applicationName = 'rich-app';
   const deleteCommand = new AppUninstallCommand();
-  const appPath = getTestedApplicationPath(applicationName);
+  const appPath = resolve(__dirname, '../');
 
   beforeAll(async () => {
     expect(existsSync(appPath)).toBe(true);

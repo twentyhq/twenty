@@ -1101,6 +1101,11 @@ msgstr "預期在所有操作中對 {connectFieldName} 使用相同的限制條�
 msgid "Failed to create evaluation. Please try again."
 msgstr "無法創建評估。請再試一次。"
 
+#. js-lingui-id: RjuW0j
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Failed to create front component."
+msgstr ""
+
 #. js-lingui-id: M1ZSSL
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Failed to create function."
@@ -1416,6 +1421,11 @@ msgstr "表單操作必須至少有一個字段"
 msgid "Friday"
 msgstr "星期五"
 
+#. js-lingui-id: Wed+Kp
+#: src/engine/metadata-modules/front-component/front-component.exception.ts
+msgid "Front component is not ready."
+msgstr ""
+
 #. js-lingui-id: BzEbyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -1432,6 +1442,7 @@ msgstr ""
 
 #. js-lingui-id: J+VVwG
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
+#: src/engine/core-modules/application/application.exception.ts
 msgid "Front component not found."
 msgstr ""
 

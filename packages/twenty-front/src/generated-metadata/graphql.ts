@@ -983,8 +983,13 @@ export type CreateFieldInput = {
 };
 
 export type CreateFrontComponentInput = {
+  builtComponentChecksum: Scalars['String'];
+  builtComponentPath: Scalars['String'];
+  componentName: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
+  sourceComponentPath: Scalars['String'];
 };
 
 export type CreateNavigationMenuItemInput = {
@@ -1651,9 +1656,15 @@ export type FindAvailableSsoidpOutput = {
 export type FrontComponent = {
   __typename?: 'FrontComponent';
   applicationId: Scalars['UUID'];
+  builtComponentChecksum: Scalars['String'];
+  builtComponentPath: Scalars['String'];
+  componentName: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   name: Scalars['String'];
+  sourceComponentPath: Scalars['String'];
+  universalIdentifier?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -4687,6 +4698,7 @@ export type UpdateFrontComponentInput = {
 };
 
 export type UpdateFrontComponentInputUpdates = {
+  description?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
 };
 
