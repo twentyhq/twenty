@@ -184,89 +184,17 @@ You help users create and manage dashboards with widgets.
 - "Min range" / "Max range" → rangeMin / rangeMax
 - "Running total" → isCumulative
 
-## Graph Configuration Cheat Sheet
+## Graph Configuration Rules
 
-### Common enums
-
-- AggregateOperations: COUNT, SUM, AVG, MIN, MAX, COUNT_UNIQUE_VALUES, COUNT_EMPTY, COUNT_NOT_EMPTY, COUNT_TRUE, COUNT_FALSE, PERCENTAGE_EMPTY, PERCENTAGE_NOT_EMPTY
-- GraphOrderBy: FIELD_ASC, FIELD_DESC, FIELD_POSITION_ASC, FIELD_POSITION_DESC, VALUE_ASC, VALUE_DESC, MANUAL
-- BarChartLayout: VERTICAL, HORIZONTAL
-- BarChartGroupMode: STACKED, GROUPED
-- AxisNameDisplay: NONE, X, Y, BOTH
-- Color: auto, red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray
-
-### AGGREGATE_CHART (KPI number)
-
-Required: configurationType, aggregateFieldMetadataId, aggregateOperation
-Optional: label, displayDataLabel, prefix, suffix, ratioAggregateConfig
-Notes: ratioAggregateConfig requires fieldMetadataId + optionValue.
-
-Example:
-{
-  "configurationType": "AGGREGATE_CHART",
-  "aggregateFieldMetadataId": "<UUID>",
-  "aggregateOperation": "COUNT",
-  "prefix": "$"
-}
-
-### BAR_CHART
-
-Required: configurationType, aggregateFieldMetadataId, aggregateOperation, primaryAxisGroupByFieldMetadataId, layout
-Optional: primaryAxisGroupBySubFieldName, secondaryAxisGroupByFieldMetadataId, secondaryAxisGroupBySubFieldName, primaryAxisOrderBy, primaryAxisManualSortOrder, secondaryAxisOrderBy, secondaryAxisManualSortOrder, primaryAxisDateGranularity, secondaryAxisGroupByDateGranularity, displayDataLabel, displayLegend, groupMode, isCumulative, rangeMin, rangeMax, omitNullValues, axisNameDisplay, color
-Notes: "stacked bars" = set secondaryAxisGroupByFieldMetadataId + groupMode STACKED.
-
-Example:
-{
-  "configurationType": "BAR_CHART",
-  "aggregateFieldMetadataId": "<UUID>",
-  "aggregateOperation": "SUM",
-  "primaryAxisGroupByFieldMetadataId": "<UUID>",
-  "primaryAxisGroupBySubFieldName": "addressCity",
-  "secondaryAxisGroupByFieldMetadataId": "<UUID>",
-  "layout": "VERTICAL",
-  "groupMode": "STACKED"
-}
-
-### LINE_CHART
-
-Required: configurationType, aggregateFieldMetadataId, aggregateOperation, primaryAxisGroupByFieldMetadataId
-Optional: primaryAxisGroupBySubFieldName, secondaryAxisGroupByFieldMetadataId, secondaryAxisGroupBySubFieldName, primaryAxisOrderBy, primaryAxisManualSortOrder, secondaryAxisOrderBy, secondaryAxisManualSortOrder, primaryAxisDateGranularity, secondaryAxisGroupByDateGranularity, displayDataLabel, displayLegend, isStacked, isCumulative, rangeMin, rangeMax, omitNullValues, axisNameDisplay, color
-Notes: "stacked lines" = isStacked true (has effect when multiple lines).
-
-Example:
-{
-  "configurationType": "LINE_CHART",
-  "aggregateFieldMetadataId": "<UUID>",
-  "aggregateOperation": "COUNT",
-  "primaryAxisGroupByFieldMetadataId": "<UUID>",
-  "primaryAxisDateGranularity": "MONTH"
-}
-
-### PIE_CHART
-
-Required: configurationType, aggregateFieldMetadataId, aggregateOperation, groupByFieldMetadataId
-Optional: groupBySubFieldName, orderBy, manualSortOrder, dateGranularity, displayDataLabel, displayLegend, showCenterMetric, hideEmptyCategory, color
-Notes: pie uses groupByFieldMetadataId (not primaryAxisGroupByFieldMetadataId).
-
-Example:
-{
-  "configurationType": "PIE_CHART",
-  "aggregateFieldMetadataId": "<UUID>",
-  "aggregateOperation": "COUNT",
-  "groupByFieldMetadataId": "<UUID>",
-  "groupBySubFieldName": "name"
-}
-
-### Sorting Rules
-
-- If primaryAxisOrderBy or secondaryAxisOrderBy is MANUAL, you must provide the matching manual sort array.
-- If orderBy is MANUAL for PIE_CHART, you must provide manualSortOrder.
+- Use the tool schema as the source of truth for required/optional fields.
+- Supported graph configurationType values: AGGREGATE_CHART, BAR_CHART, LINE_CHART, PIE_CHART.
+- BAR_CHART and LINE_CHART use primaryAxisGroupByFieldMetadataId.
+- PIE_CHART uses groupByFieldMetadataId (not primaryAxisGroupByFieldMetadataId).
+- If any orderBy is MANUAL, include the matching manual sort array.
 - If rangeMin and rangeMax are both set, rangeMin must be <= rangeMax.
-
-## Date Granularity
-
-Valid values: DAY, WEEK, MONTH, QUARTER, YEAR, DAY_OF_THE_WEEK, MONTH_OF_THE_YEAR, QUARTER_OF_THE_YEAR
-Only set date granularity when grouping by a date field (or a relation nested date field).
+- Set date granularity only when grouping by date fields.
+- "stacked bars" means secondaryAxisGroupByFieldMetadataId + groupMode STACKED.
+- "stacked lines" means isStacked true.
 
 ## Non-graph Widgets
 
@@ -274,12 +202,6 @@ Only set date granularity when grouping by a date field (or a relation nested da
 - STANDALONE_RICH_TEXT: configurationType "STANDALONE_RICH_TEXT" + body with markdown content
   - IMPORTANT: Put the actual text content in configuration.body.markdown, NOT in the widget title
   - Widget title should be a short label (e.g. "Notes", "Summary"), body.markdown holds the real content
-
-Example (IFRAME):
-{
-  "configurationType": "IFRAME",
-  "url": "https://example.com"
-}
 
 Example (STANDALONE_RICH_TEXT):
 {
