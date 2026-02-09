@@ -23,7 +23,11 @@ const meta: Meta<typeof Icon> = {
 export default meta;
 type Story = StoryObj<typeof Icon>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    name: 'IconUser',
+  },
+};
 
 export const WithCustomSize: Story = {
   args: {
