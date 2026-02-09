@@ -493,6 +493,8 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutWidgetMaps,
         });
 
+        const updatedConfiguration = widgetInput.configuration ?? null;
+
         return {
           ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
@@ -501,8 +503,16 @@ export class PageLayoutUpdateService {
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
           position: widgetInput.position ?? null,
-          configuration: widgetInput.configuration ?? null,
+          configuration: updatedConfiguration,
           updatedAt: now.toISOString(),
+          ...(isDefined(updatedConfiguration) && {
+            universalConfiguration:
+              fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+                configuration: updatedConfiguration,
+                fieldMetadataUniversalIdentifierById:
+                  flatFieldMetadataMaps.universalIdentifierById,
+              }),
+          }),
         };
       },
     );
@@ -514,6 +524,8 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutWidgetMaps,
         });
 
+        const restoredConfiguration = widgetInput.configuration ?? null;
+
         return {
           ...existingWidget,
           pageLayoutTabId: widgetInput.pageLayoutTabId,
@@ -522,9 +534,17 @@ export class PageLayoutUpdateService {
           objectMetadataId: widgetInput.objectMetadataId ?? null,
           gridPosition: widgetInput.gridPosition,
           position: widgetInput.position ?? null,
-          configuration: widgetInput.configuration ?? null,
+          configuration: restoredConfiguration,
           deletedAt: null,
           updatedAt: now.toISOString(),
+          ...(isDefined(restoredConfiguration) && {
+            universalConfiguration:
+              fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+                configuration: restoredConfiguration,
+                fieldMetadataUniversalIdentifierById:
+                  flatFieldMetadataMaps.universalIdentifierById,
+              }),
+          }),
         };
       });
 

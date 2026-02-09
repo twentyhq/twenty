@@ -222,11 +222,14 @@ export class PageLayoutWidgetService {
     const existingFlatPageLayoutWidgetMaps =
       await this.getFlatPageLayoutWidgetMaps(workspaceId);
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -244,6 +247,7 @@ export class PageLayoutWidgetService {
         updatePageLayoutWidgetInput,
         flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       });
 
     await this.validateAndRunWidgetMigration({

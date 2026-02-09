@@ -38,6 +38,14 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
       },
     );
 
+    const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
+    const selfFlatEntityMaps = flatEntityAndRelatedMapsToMutate[
+      flatEntityMapsKey
+    ];
+
+    selfFlatEntityMaps.universalIdentifierById[flatEntity.id] =
+    flatEntity.universalIdentifier;
+
     const idBasedManyToOneRelations = Object.values(
       ALL_METADATA_RELATIONS[metadataName].manyToOne,
     ) as Array<{
@@ -88,7 +96,7 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
         )
       ) {
         throw new FlatEntityMapsException(
-          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${flatEntityForeignKeyAggregator}`,
+          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${String(flatEntityForeignKeyAggregator)}`,
           FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
         );
       }
