@@ -1,4 +1,4 @@
-import { IsSerializedRelation } from "@/types/IsSerializedRelation.type";
+import { type IsSerializedRelation } from '@/types/IsSerializedRelation.type';
 
 export type ExtractSerializedRelationProperties<T> = T extends unknown
   ? T extends object

@@ -5,7 +5,7 @@ import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/querie
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
-import { CREATE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/createOneLogicFunction';
+import { CREATE_DEFAULT_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/createDefaultLogicFunction';
 import { DELETE_ONE_LOGIC_FUNCTION } from '@/settings/logic-functions/graphql/mutations/deleteOneLogicFunction';
 import { FIND_MANY_LOGIC_FUNCTIONS } from '@/settings/logic-functions/graphql/queries/findManyLogicFunctions';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -14,8 +14,8 @@ import { getOperationName } from '@apollo/client/utilities';
 import { t } from '@lingui/core/macro';
 import { type Sources, CrudOperationType } from 'twenty-shared/types';
 import {
-  type CreateOneLogicFunctionItemMutation,
-  type CreateOneLogicFunctionItemMutationVariables,
+  type CreateDefaultLogicFunctionItemMutation,
+  type CreateDefaultLogicFunctionItemMutationVariables,
   type DeleteOneLogicFunctionMutation,
   type DeleteOneLogicFunctionMutationVariables,
 } from '~/generated-metadata/graphql';
@@ -29,10 +29,10 @@ export const usePersistLogicFunction = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [createLogicFunctionMutation] = useMutation<
-    CreateOneLogicFunctionItemMutation,
-    CreateOneLogicFunctionItemMutationVariables
-  >(CREATE_ONE_LOGIC_FUNCTION, {
+  const [createDefaultLogicFunctionMutation] = useMutation<
+    CreateDefaultLogicFunctionItemMutation,
+    CreateDefaultLogicFunctionItemMutationVariables
+  >(CREATE_DEFAULT_LOGIC_FUNCTION, {
     client: apolloMetadataClient,
   });
 
@@ -52,14 +52,14 @@ export const usePersistLogicFunction = () => {
 
   const createLogicFunction = useCallback(
     async (
-      variables: CreateOneLogicFunctionItemMutationVariables,
+      variables: CreateDefaultLogicFunctionItemMutationVariables,
     ): Promise<
       MetadataRequestResult<
-        Awaited<ReturnType<typeof createLogicFunctionMutation>>
+        Awaited<ReturnType<typeof createDefaultLogicFunctionMutation>>
       >
     > => {
       try {
-        const result = await createLogicFunctionMutation({
+        const result = await createDefaultLogicFunctionMutation({
           variables,
           awaitRefetchQueries: true,
           refetchQueries: [getOperationName(FIND_MANY_LOGIC_FUNCTIONS) ?? ''],
@@ -85,7 +85,11 @@ export const usePersistLogicFunction = () => {
         };
       }
     },
-    [createLogicFunctionMutation, handleMetadataError, enqueueErrorSnackBar],
+    [
+      createDefaultLogicFunctionMutation,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   const updateLogicFunctionSource = useCallback(
@@ -99,9 +103,6 @@ export const usePersistLogicFunction = () => {
       try {
         const result = await updateLogicFunctionSourceMutation({
           variables,
-          refetchQueries: [
-            getOperationName(GET_LOGIC_FUNCTION_SOURCE_CODE) ?? '',
-          ],
         });
 
         return {

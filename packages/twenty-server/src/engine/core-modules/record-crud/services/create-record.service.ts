@@ -74,7 +74,7 @@ export class CreateRecordService {
       return {
         success: true,
         message: `Record created successfully in ${objectName}`,
-        result: createdRecord,
+        result: params.slimResponse ? { id: createdRecord.id } : createdRecord,
         recordReferences: [
           {
             objectNameSingular: objectName,

@@ -36,6 +36,7 @@ export type CurrentWorkspace = Pick<
   | 'eventLogRetentionDays'
   | 'fastModel'
   | 'smartModel'
+  | 'aiAdditionalInstructions'
   | 'editableProfileFields'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;

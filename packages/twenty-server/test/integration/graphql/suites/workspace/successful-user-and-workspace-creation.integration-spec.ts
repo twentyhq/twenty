@@ -7,7 +7,7 @@ import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
-import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-one-logic-function.util';
+import { createDefaultLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-default-logic-function.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
@@ -190,13 +190,10 @@ describe('Successful user and workspace creation', () => {
     });
 
     // Create a logic function for workspace deletion test
-    await createOneLogicFunction({
+    await createDefaultLogicFunction({
       input: {
         name: 'test-function-for-deletion',
         description: 'A test logic function for workspace deletion test',
-        code: {
-          'src/index.ts': 'export const main = async () => { return {}; };',
-        },
       },
       token: newWorkspaceAccessToken,
       expectToFail: false,

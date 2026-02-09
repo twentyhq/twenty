@@ -168,10 +168,10 @@ export const buildManifest = async (
 
         const config: LogicFunctionManifest = {
           ...rest,
-          handlerName: 'default.handler',
+          handlerName: 'default.config.handler',
           sourceHandlerPath: relativeFilePath,
           builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
-          builtHandlerChecksum: null,
+          builtHandlerChecksum: '[default-checksum]',
         };
 
         logicFunctions.push(config);
@@ -195,7 +195,7 @@ export const buildManifest = async (
           componentName: component.name,
           sourceComponentPath: relativeFilePath,
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
-          builtComponentChecksum: null,
+          builtComponentChecksum: '',
         };
 
         frontComponents.push(config);

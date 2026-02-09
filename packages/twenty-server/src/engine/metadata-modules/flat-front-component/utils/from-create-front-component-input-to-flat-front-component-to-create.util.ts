@@ -22,14 +22,21 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
   );
 
   const id = createFrontComponentInput.id ?? v4();
+  const universalIdentifier =
+    createFrontComponentInput.universalIdentifier ?? v4();
 
   return {
     id,
-    name,
+    name: name ?? createFrontComponentInput.componentName,
+    description: createFrontComponentInput.description ?? null,
+    sourceComponentPath: createFrontComponentInput.sourceComponentPath,
+    builtComponentPath: createFrontComponentInput.builtComponentPath,
+    componentName: createFrontComponentInput.componentName,
+    builtComponentChecksum: createFrontComponentInput.builtComponentChecksum,
     workspaceId,
     createdAt: now,
     updatedAt: now,
-    universalIdentifier: id,
+    universalIdentifier,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
