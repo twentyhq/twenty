@@ -13,6 +13,7 @@ export type ToUniversalMetadataManyToOneRelationConfiguration<T> = T extends {
   metadataName: infer M extends AllMetadataName;
   foreignKey: infer FK extends string;
   flatEntityForeignKeyAggregator: infer Agg;
+  isNullable: infer N extends boolean;
 }
   ? {
       metadataName: M;
@@ -21,6 +22,7 @@ export type ToUniversalMetadataManyToOneRelationConfiguration<T> = T extends {
       universalFlatEntityForeignKeyAggregator: Agg extends string
         ? ToUniversalAggregator<Agg>
         : null;
+      isNullable: N;
     }
   : null;
 
@@ -65,12 +67,14 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'availabilityObjectMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'availabilityObjectMetadataUniversalIdentifier',
+        isNullable: true,
       },
       frontComponent: {
         metadataName: 'frontComponent',
         foreignKey: 'frontComponentId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'frontComponentUniversalIdentifier',
+        isNullable: true,
       },
     },
     oneToMany: {},
@@ -85,18 +89,21 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'targetObjectMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'targetObjectMetadataUniversalIdentifier',
+        isNullable: true,
       },
       folder: {
         metadataName: 'navigationMenuItem',
         foreignKey: 'folderId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'folderUniversalIdentifier',
+        isNullable: true,
       },
       view: {
         metadataName: 'view',
         foreignKey: 'viewId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'viewUniversalIdentifier',
+        isNullable: true,
       },
     },
     oneToMany: {},
@@ -108,6 +115,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'objectMetadataId',
         universalFlatEntityForeignKeyAggregator: 'fieldUniversalIdentifiers',
         universalForeignKey: 'objectMetadataUniversalIdentifier',
+        isNullable: false,
       },
       workspace: null,
       application: null,
@@ -116,12 +124,14 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'relationTargetFieldMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'relationTargetFieldMetadataUniversalIdentifier',
+        isNullable: true,
       },
       relationTargetObjectMetadata: {
         metadataName: 'objectMetadata',
         foreignKey: 'relationTargetObjectMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'relationTargetObjectMetadataUniversalIdentifier',
+        isNullable: true,
       },
     },
     oneToMany: {
@@ -156,6 +166,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'objectMetadataId',
         universalFlatEntityForeignKeyAggregator: 'viewUniversalIdentifiers',
         universalForeignKey: 'objectMetadataUniversalIdentifier',
+        isNullable: false,
       },
       workspace: null,
       createdBy: null,
@@ -166,6 +177,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'calendarViewUniversalIdentifiers',
         universalForeignKey: 'calendarFieldMetadataUniversalIdentifier',
+        isNullable: true,
       },
       kanbanAggregateOperationFieldMetadata: {
         metadataName: 'fieldMetadata',
@@ -174,6 +186,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
           'kanbanAggregateOperationViewUniversalIdentifiers',
         universalForeignKey:
           'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
+        isNullable: true,
       },
       mainGroupByFieldMetadata: {
         metadataName: 'fieldMetadata',
@@ -181,6 +194,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'mainGroupByFieldMetadataViewUniversalIdentifiers',
         universalForeignKey: 'mainGroupByFieldMetadataUniversalIdentifier',
+        isNullable: true,
       },
     },
     oneToMany: {
@@ -200,6 +214,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'viewFieldUniversalIdentifiers',
         universalForeignKey: 'fieldMetadataUniversalIdentifier',
+        isNullable: false,
       },
       view: {
         metadataName: 'view',
@@ -207,6 +222,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'viewFieldUniversalIdentifiers',
         universalForeignKey: 'viewUniversalIdentifier',
+        isNullable: false,
       },
       workspace: null,
       application: null,
@@ -221,6 +237,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'viewFilterUniversalIdentifiers',
         universalForeignKey: 'fieldMetadataUniversalIdentifier',
+        isNullable: false,
       },
       view: {
         metadataName: 'view',
@@ -228,6 +245,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'viewFilterUniversalIdentifiers',
         universalForeignKey: 'viewUniversalIdentifier',
+        isNullable: false,
       },
       viewFilterGroup: {
         metadataName: 'viewFilterGroup',
@@ -235,6 +253,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'viewFilterUniversalIdentifiers',
         universalForeignKey: 'viewFilterGroupUniversalIdentifier',
+        isNullable: true,
       },
       workspace: null,
       application: null,
@@ -249,6 +268,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'viewGroupUniversalIdentifiers',
         universalForeignKey: 'viewUniversalIdentifier',
+        isNullable: false,
       },
       workspace: null,
       application: null,
@@ -263,6 +283,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'indexMetadataUniversalIdentifiers',
         universalForeignKey: 'objectMetadataUniversalIdentifier',
+        isNullable: false,
       },
       workspace: null,
       application: null,
@@ -304,6 +325,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'roleTargetUniversalIdentifiers',
         universalForeignKey: 'roleUniversalIdentifier',
+        isNullable: false,
       },
       apiKey: null,
       workspace: null,
@@ -319,6 +341,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'objectMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'objectMetadataUniversalIdentifier',
+        isNullable: true,
       },
       application: null,
       defaultTabToFocusOnMobileAndSidePanel: {
@@ -327,6 +350,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey:
           'defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier',
+        isNullable: true,
       },
     },
     oneToMany: {
@@ -341,6 +365,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'pageLayoutId',
         universalFlatEntityForeignKeyAggregator: 'tabUniversalIdentifiers',
         universalForeignKey: 'pageLayoutUniversalIdentifier',
+        isNullable: false,
       },
       application: null,
     },
@@ -356,12 +381,14 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'pageLayoutTabId',
         universalFlatEntityForeignKeyAggregator: 'widgetUniversalIdentifiers',
         universalForeignKey: 'pageLayoutTabUniversalIdentifier',
+        isNullable: false,
       },
       objectMetadata: {
         metadataName: 'objectMetadata',
         foreignKey: 'objectMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'objectMetadataUniversalIdentifier',
+        isNullable: true,
       },
       application: null,
     },
@@ -375,24 +402,28 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'roleId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'roleUniversalIdentifier',
+        isNullable: false,
       },
       fieldMetadata: {
         metadataName: 'fieldMetadata',
         foreignKey: 'fieldMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'fieldMetadataUniversalIdentifier',
+        isNullable: false,
       },
       workspaceMemberFieldMetadata: {
         metadataName: 'fieldMetadata',
         foreignKey: 'workspaceMemberFieldMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'workspaceMemberFieldMetadataUniversalIdentifier',
+        isNullable: true,
       },
       objectMetadata: {
         metadataName: 'objectMetadata',
         foreignKey: 'objectMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'objectMetadataUniversalIdentifier',
+        isNullable: false,
       },
       rowLevelPermissionPredicateGroup: {
         metadataName: 'rowLevelPermissionPredicateGroup',
@@ -400,6 +431,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey:
           'rowLevelPermissionPredicateGroupUniversalIdentifier',
+        isNullable: true,
       },
       application: null,
     },
@@ -412,12 +444,14 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         foreignKey: 'objectMetadataId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'objectMetadataUniversalIdentifier',
+        isNullable: false,
       },
       role: {
         metadataName: 'role',
         foreignKey: 'roleId',
         universalFlatEntityForeignKeyAggregator: null,
         universalForeignKey: 'roleUniversalIdentifier',
+        isNullable: false,
       },
       parentRowLevelPermissionPredicateGroup: {
         metadataName: 'rowLevelPermissionPredicateGroup',
@@ -426,6 +460,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
           'childRowLevelPermissionPredicateGroupUniversalIdentifiers',
         universalForeignKey:
           'parentRowLevelPermissionPredicateGroupUniversalIdentifier',
+        isNullable: true,
       },
       workspace: null,
       application: null,
@@ -448,6 +483,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'childViewFilterGroupUniversalIdentifiers',
         universalForeignKey: 'parentViewFilterGroupUniversalIdentifier',
+        isNullable: true,
       },
       view: {
         metadataName: 'view',
@@ -455,6 +491,7 @@ export const ALL_UNIVERSAL_METADATA_RELATIONS = {
         universalFlatEntityForeignKeyAggregator:
           'viewFilterGroupUniversalIdentifiers',
         universalForeignKey: 'viewUniversalIdentifier',
+        isNullable: false,
       },
       workspace: null,
     },

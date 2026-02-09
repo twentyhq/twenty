@@ -3,11 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { FlatCreateViewAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
+import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
+import {
+  FlatCreateViewAction,
+  UniversalCreateViewAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
@@ -18,10 +23,40 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     super();
   }
 
-  override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateViewAction>,
-  ): Promise<FlatCreateViewAction> {
-    return context.action;
+  override async transpileUniversalActionToFlatAction({
+    action,
+    allFlatEntityMaps,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateViewAction>): Promise<FlatCreateViewAction> {
+    const {
+      calendarFieldMetadataId,
+      kanbanAggregateOperationFieldMetadataId,
+      mainGroupByFieldMetadataId,
+      objectMetadataId,
+    } = resolveUniversalRelationIdentifiersToIds({
+      flatEntityMaps: allFlatEntityMaps,
+      metadataName: action.metadataName,
+      universalForeignKeyValues: action.flatEntity,
+    });
+
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        calendarFieldMetadataId,
+        kanbanAggregateOperationFieldMetadataId,
+        mainGroupByFieldMetadataId,
+        objectMetadataId,
+        id: action.id ?? v4(),
+        applicationId: flatApplication.id,
+        workspaceId,
+        viewFieldIds: [],
+        viewGroupIds: [],
+        viewFilterIds: [],
+        viewFilterGroupIds: [],
+      },
+    };
   }
 
   async executeForMetadata(
