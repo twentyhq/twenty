@@ -99,7 +99,7 @@ const StyledButtonsContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(0.5)};
   justify-content: flex-end;
 `;
 
