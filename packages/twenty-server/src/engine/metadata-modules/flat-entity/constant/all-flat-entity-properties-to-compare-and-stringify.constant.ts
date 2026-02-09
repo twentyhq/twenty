@@ -75,9 +75,7 @@ export const ALL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY = {
   },
   logicFunction: {
     propertiesToCompare: [
-      ...FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES.filter(
-        (property) => property !== 'code',
-      ),
+      ...FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES,
       'deletedAt',
     ],
     propertiesToStringify: ['toolInputSchema'],

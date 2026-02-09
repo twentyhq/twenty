@@ -5,7 +5,6 @@ import { FileFolder } from 'twenty-shared/types';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -24,10 +23,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   'update',
   'logicFunction',
 ) {
-  constructor(
-    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    private readonly fileStorageService: FileStorageService,
-  ) {
+  constructor(private readonly fileStorageService: FileStorageService) {
     super();
   }
 
@@ -72,24 +68,16 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     flatLogicFunction: FlatLogicFunction;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const [sourceExists, builtExists] = await Promise.all([
-      this.fileStorageService.checkFileExists({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Source,
-        resourcePath: flatLogicFunction.sourceHandlerPath,
-      }),
-      this.fileStorageService.checkFileExists({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: flatLogicFunction.builtHandlerPath,
-      }),
-    ]);
+    const builtExists = await this.fileStorageService.checkFileExists({
+      workspaceId: flatLogicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder: FileFolder.BuiltLogicFunction,
+      resourcePath: flatLogicFunction.builtHandlerPath,
+    });
 
-    if (!sourceExists || !builtExists) {
+    if (!builtExists) {
       throw new LogicFunctionException(
-        `Logic function source or built file missing before update (source: ${sourceExists}, built: ${builtExists})`,
+        'Logic function source or built file missing before update',
         LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_READY,
       );
     }
