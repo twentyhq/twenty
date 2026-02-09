@@ -185,6 +185,12 @@ const SettingsSkillForm = lazy(() =>
   })),
 );
 
+const SettingsAIPrompts = lazy(() =>
+  import('~/pages/settings/ai/SettingsAIPrompts').then((module) => ({
+    default: module.SettingsAIPrompts,
+  })),
+);
+
 const SettingsWorkspaceMembers = lazy(() =>
   import('~/pages/settings/members/SettingsWorkspaceMembers').then(
     (module) => ({
@@ -442,6 +448,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApiWebhooks />}
         />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
+        <Route path={SettingsPath.AIPrompts} element={<SettingsAIPrompts />} />
         <Route
           path={SettingsPath.AINewAgent}
           element={<SettingsAgentForm mode="create" />}

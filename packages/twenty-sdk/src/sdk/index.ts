@@ -52,8 +52,9 @@ export { PermissionFlag } from './roles/permission-flag-type';
 
 // Front Component API exports
 export { useFrontComponentExecutionContext } from './front-component-api';
+export { navigate } from './front-component-api';
+export { useUserId } from './front-component-api';
 export type { FrontComponentExecutionContext } from './front-component-api';
-export type { FrontComponentExecutionContextStore } from './front-component-api';
 
 // Front Component Common exports
 export type { AllowedHtmlElement } from './front-component-common';

@@ -23,6 +23,8 @@ const isFieldAvailable = (field: FlatFieldMetadata, forResponse: boolean) => {
     case 'createdAt':
     case 'updatedAt':
     case 'deletedAt':
+    case 'createdBy':
+    case 'updatedBy':
       return false;
     default:
       return true;
@@ -253,7 +255,11 @@ export const generateRecordPropertiesZodSchema = (
         break;
     }
 
-    if (field.description) {
+    if (field.name === 'position') {
+      fieldSchema = fieldSchema.describe(
+        'Leave empty to place at the top of the list (recommended).',
+      );
+    } else if (field.description) {
       fieldSchema = fieldSchema.describe(field.description);
     }
 

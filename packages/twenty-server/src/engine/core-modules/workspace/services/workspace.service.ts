@@ -84,6 +84,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     defaultRoleId: PermissionFlagType.ROLES,
     fastModel: PermissionFlagType.WORKSPACE,
     smartModel: PermissionFlagType.WORKSPACE,
+    aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
   };
 
   constructor(

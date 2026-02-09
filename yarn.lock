@@ -48,6 +48,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/groq@npm:^2.0.34":
+  version: 2.0.34
+  resolution: "@ai-sdk/groq@npm:2.0.34"
+  dependencies:
+    "@ai-sdk/provider": "npm:2.0.1"
+    "@ai-sdk/provider-utils": "npm:3.0.20"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/1e1ad69db49e1b06f18f2e7181f8a094afc275bb9cd96edc614303ff0a86945ba0c25adcf3d2ccbf398eb275d9348fc6224ba8af60009a9a9e23bb25dc718a5f
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/openai-compatible@npm:1.0.30":
   version: 1.0.30
   resolution: "@ai-sdk/openai-compatible@npm:1.0.30"
@@ -56985,6 +56997,7 @@ __metadata:
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
     "@ai-sdk/anthropic": "npm:^2.0.17"
+    "@ai-sdk/groq": "npm:^2.0.34"
     "@ai-sdk/openai": "npm:^2.0.30"
     "@ai-sdk/provider-utils": "npm:^3.0.9"
     "@ai-sdk/xai": "npm:^2.0.19"

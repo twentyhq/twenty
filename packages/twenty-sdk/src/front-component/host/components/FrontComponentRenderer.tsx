@@ -1,6 +1,8 @@
 import { FrontComponentErrorEffect } from '@/front-component/remote/components/FrontComponentErrorEffect';
+import { FrontComponentHostCommunicationApiEffect } from '@/front-component/remote/components/FrontComponentHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/front-component/remote/components/FrontComponentUpdateContextEffect';
 import { type FrontComponentExecutionContext } from '@/front-component/types/FrontComponentExecutionContext';
+import { type FrontComponentHostCommunicationApi } from '@/front-component/types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '@/front-component/types/WorkerExports';
 import { type ThreadWebWorker } from '@quilted/threads';
 import {
@@ -18,6 +20,7 @@ import { componentRegistry } from '../generated/host-component-registry';
 type FrontComponentContentProps = {
   componentUrl: string;
   executionContext: FrontComponentExecutionContext;
+  frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;
   theme: ThemeType;
 };
@@ -25,25 +28,34 @@ type FrontComponentContentProps = {
 export const FrontComponentRenderer = ({
   componentUrl,
   executionContext,
+  frontComponentHostCommunicationApi,
   onError,
   theme,
 }: FrontComponentContentProps) => {
   const [receiver, setReceiver] = useState<RemoteReceiver | null>(null);
-  const [thread, setThread] = useState<ThreadWebWorker<WorkerExports> | null>(
-    null,
-  );
+  const [thread, setThread] = useState<ThreadWebWorker<
+    WorkerExports,
+    FrontComponentHostCommunicationApi
+  > | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
   const MemoizedFrontComponentWorkerEffect = useMemo(() => {
     return (
       <FrontComponentWorkerEffect
         componentUrl={componentUrl}
+        frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         setReceiver={setReceiver}
         setThread={setThread}
         setError={setError}
       />
     );
-  }, [componentUrl, setError, setReceiver, setThread]);
+  }, [
+    componentUrl,
+    frontComponentHostCommunicationApi,
+    setError,
+    setReceiver,
+    setThread,
+  ]);
 
   return (
     <>
@@ -54,10 +66,13 @@ export const FrontComponentRenderer = ({
       )}
 
       {isDefined(thread) && (
-        <FrontComponentUpdateContextEffect
-          thread={thread}
-          executionContext={executionContext}
-        />
+        <>
+          <FrontComponentHostCommunicationApiEffect thread={thread} />
+          <FrontComponentUpdateContextEffect
+            thread={thread}
+            executionContext={executionContext}
+          />
+        </>
       )}
 
       {isDefined(receiver) && (
