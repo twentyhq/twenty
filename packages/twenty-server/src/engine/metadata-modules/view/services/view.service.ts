@@ -299,6 +299,11 @@ export class ViewService {
       flatViewMaps: existingFlatViewMaps,
     });
 
+    const existingFlatView = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: flatViewFromDestroyInput.universalIdentifier,
+      flatEntityMaps: existingFlatViewMaps,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -322,11 +327,6 @@ export class ViewService {
         'Multiple validation errors occurred while destroying view',
       );
     }
-
-    const existingFlatView = findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier: flatViewFromDestroyInput.universalIdentifier,
-      flatEntityMaps: existingFlatViewMaps,
-    });
 
     return fromFlatViewToViewDto({
       ...existingFlatView,

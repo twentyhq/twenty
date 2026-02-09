@@ -313,6 +313,11 @@ export class ViewGroupService {
         flatViewGroupMaps: existingFlatViewGroupMaps,
       });
 
+    const existingFlatViewGroup = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: existingViewGroupToDelete.universalIdentifier,
+      flatEntityMaps: existingFlatViewGroupMaps,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -336,11 +341,6 @@ export class ViewGroupService {
         'Multiple validation errors occurred while destroying view group',
       );
     }
-
-    const existingFlatViewGroup = findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier: existingViewGroupToDelete.universalIdentifier,
-      flatEntityMaps: existingFlatViewGroupMaps,
-    });
 
     return fromFlatViewGroupToViewGroupDto({
       ...existingFlatViewGroup,

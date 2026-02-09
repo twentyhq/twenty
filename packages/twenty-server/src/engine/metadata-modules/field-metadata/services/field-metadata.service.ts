@@ -112,6 +112,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
+    const deletedFlatFieldMetadata = findFlatEntityByUniversalIdentifierOrThrow(
+      {
+        universalIdentifier: flatFieldMetadatasToDelete[0].universalIdentifier,
+        flatEntityMaps: existingFlatFieldMetadataMaps,
+      },
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -141,10 +148,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
     }
 
-    return findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier: flatFieldMetadatasToDelete[0].universalIdentifier,
-      flatEntityMaps: existingFlatFieldMetadataMaps,
-    });
+    return deletedFlatFieldMetadata;
   }
 
   async updateOneField({

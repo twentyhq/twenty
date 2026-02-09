@@ -297,6 +297,11 @@ export class ViewFieldV2Service {
         flatViewFieldMaps: existingFlatViewFieldMaps,
       });
 
+    const existingFlatViewField = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: existingViewFieldToDelete.universalIdentifier,
+      flatEntityMaps: existingFlatViewFieldMaps,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -320,11 +325,6 @@ export class ViewFieldV2Service {
         'Multiple validation errors occurred while deleting view field',
       );
     }
-
-    const existingFlatViewField = findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier: existingViewFieldToDelete.universalIdentifier,
-      flatEntityMaps: existingFlatViewFieldMaps,
-    });
 
     return fromFlatViewFieldToViewFieldDto({
       ...existingFlatViewField,

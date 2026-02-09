@@ -317,6 +317,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       flatIndexToDelete: Object.values(flatIndexToDeleteByUniversalIdentifier),
     };
 
+    const deletedFlatObjectMetadatas = flatObjectMetadatasToDelete.map(
+      (flatObjectMetadataToDelete) =>
+        findFlatEntityByUniversalIdentifierOrThrow({
+          universalIdentifier: flatObjectMetadataToDelete.universalIdentifier,
+          flatEntityMaps: flatObjectMetadataMaps,
+        }),
+    );
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -351,12 +359,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    return flatObjectMetadatasToDelete.map((flatObjectMetadataToDelete) =>
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier: flatObjectMetadataToDelete.universalIdentifier,
-        flatEntityMaps: flatObjectMetadataMaps,
-      }),
-    );
+    return deletedFlatObjectMetadatas;
   }
 
   async createOneObject({

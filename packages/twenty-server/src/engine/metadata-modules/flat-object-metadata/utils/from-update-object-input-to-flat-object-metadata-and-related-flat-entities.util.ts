@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_OBJECT_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-editable-properties.constant';
 import {
@@ -80,6 +81,19 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       }),
       standardOverrides,
     };
+
+    if (
+      isDefined(updatedEditableObjectProperties.labelIdentifierFieldMetadataId)
+    ) {
+      const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId:
+          updatedEditableObjectProperties.labelIdentifierFieldMetadataId,
+      });
+
+      toFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier =
+        flatFieldMetadata?.universalIdentifier;
+    }
 
     const {
       flatIndexMetadatasToUpdate,

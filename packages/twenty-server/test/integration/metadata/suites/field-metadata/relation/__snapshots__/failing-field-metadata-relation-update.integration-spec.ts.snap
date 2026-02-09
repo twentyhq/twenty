@@ -17,9 +17,8 @@ exports[`Field metadata relation update should fail relation when name is not in
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "name": "New Name",
-              "objectMetadataId": Any<String>,
+              "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
@@ -57,9 +56,8 @@ exports[`Field metadata relation update should fail relation when updating ONE_T
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "name": "staff",
-              "objectMetadataId": Any<String>,
+              "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",

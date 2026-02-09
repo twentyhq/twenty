@@ -58,7 +58,7 @@ export const computeFlatFieldToUpdateFromMorphRelationUpdatePayload = ({
   const morphNameWithoutObjectName = getMorphNameFromMorphFieldMetadataName({
     morphRelationFlatFieldMetadata: {
       name: fieldMetadataToUpdate.name,
-      settings: fieldMetadataToUpdate.settings,
+      universalSettings: fieldMetadataToUpdate.universalSettings,
     },
     nameSingular: initialFlatFieldMetadataTargetObjectMetadata.nameSingular,
     namePlural: initialFlatFieldMetadataTargetObjectMetadata.namePlural,

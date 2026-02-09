@@ -284,6 +284,11 @@ export class ViewFilterService {
         flatViewFilterMaps: existingFlatViewFilterMaps,
       });
 
+    const existingFlatViewFilter = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: existingViewFilterToDelete.universalIdentifier,
+      flatEntityMaps: existingFlatViewFilterMaps,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -307,11 +312,6 @@ export class ViewFilterService {
         'Multiple validation errors occurred while destroying view filter',
       );
     }
-
-    const existingFlatViewFilter = findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier: existingViewFilterToDelete.universalIdentifier,
-      flatEntityMaps: existingFlatViewFilterMaps,
-    });
 
     return fromFlatViewFilterToViewFilterDto({
       ...existingFlatViewFilter,

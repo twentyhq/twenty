@@ -140,6 +140,15 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     toolInputSchema: { toStringify: true, universalProperty: undefined },
     isTool: { toStringify: false, universalProperty: undefined },
     deletedAt: { toStringify: false, universalProperty: undefined },
+    cronTriggerSettings: { toStringify: true, universalProperty: undefined },
+    databaseEventTriggerSettings: {
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    httpRouteTriggerSettings: {
+      toStringify: true,
+      universalProperty: undefined,
+    },
   },
   viewFilter: {
     viewId: {
@@ -324,6 +333,14 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
   },
   frontComponent: {
     name: { toStringify: false, universalProperty: undefined },
+    description: { toStringify: false, universalProperty: undefined },
+    builtComponentChecksum: {
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    sourceComponentPath: { toStringify: false, universalProperty: undefined },
+    builtComponentPath: { toStringify: false, universalProperty: undefined },
+    componentName: { toStringify: false, universalProperty: undefined },
   },
   webhook: {
     targetUrl: { toStringify: false, universalProperty: undefined },

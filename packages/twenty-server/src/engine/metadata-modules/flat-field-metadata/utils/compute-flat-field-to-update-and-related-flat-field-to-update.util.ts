@@ -65,7 +65,7 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
     standardOverrides,
   };
 
-  if (isDefined(updatedEditableFieldProperties.settings)) {
+  if (updatedEditableFieldProperties.settings !== undefined) {
     const updatedSettings = toFlatFieldMetadata.settings;
 
     const isRelationSettings =

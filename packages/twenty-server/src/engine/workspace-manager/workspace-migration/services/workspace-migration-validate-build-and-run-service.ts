@@ -237,6 +237,10 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return validateAndBuildResult;
     }
 
+    if (validateAndBuildResult.workspaceMigration.actions.length === 0) {
+      return undefined;
+    }
+
     const workspaceMigration = isDefined(idByUniversalIdentifierByMetadataName)
       ? enrichCreateWorkspaceMigrationActionsWithIds({
           idByUniversalIdentifierByMetadataName,
