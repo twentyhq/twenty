@@ -1,25 +1,21 @@
-import { runAppDev } from '@/cli/__tests__/integration/utils/run-app-dev.util';
-import { type RunCliCommandResult } from '@/cli/__tests__/integration/utils/run-cli-command.util';
+import { runBuildPipeline } from '@/cli/__tests__/integration/utils/run-build-pipeline.util';
 import { join } from 'path';
 
-import { defineConsoleOutputTests } from './tests/console-output.tests';
-import { defineManifestTests } from './tests/manifest.tests';
 import { defineEntitiesTests } from './tests/entities.tests';
+import { defineManifestTests } from './tests/manifest.tests';
 
 const APP_PATH = join(__dirname, '../..');
 
-describe('rich-app app:dev', () => {
-  let result: RunCliCommandResult;
-
+describe('rich-app manifest build', () => {
   beforeAll(async () => {
-    result = await runAppDev({ appPath: APP_PATH });
+    const result = await runBuildPipeline(APP_PATH);
+
     if (!result.success) {
-      console.log(result.output.slice(undefined, 20_000));
+      console.log('Build errors:', result.errors);
     }
     expect(result.success).toBe(true);
   }, 60000);
 
-  defineConsoleOutputTests(() => result);
   defineManifestTests(APP_PATH);
   defineEntitiesTests(APP_PATH);
 });
