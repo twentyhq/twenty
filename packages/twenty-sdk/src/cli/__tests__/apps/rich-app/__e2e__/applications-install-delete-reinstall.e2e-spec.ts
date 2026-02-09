@@ -9,7 +9,7 @@ inspect.defaultOptions.depth = 10;
 
 describe('Application: install delete and reinstall rich-app', () => {
   const applicationName = 'rich-app';
-  const deleteCommand = new AppUninstallCommand();
+  const uninstallCommand = new AppUninstallCommand();
   const appPath = resolve(__dirname, '../');
 
   beforeAll(async () => {
@@ -17,7 +17,7 @@ describe('Application: install delete and reinstall rich-app', () => {
   });
 
   afterAll(async () => {
-    const result = await deleteCommand.execute({
+    const result = await uninstallCommand.execute({
       appPath,
       askForConfirmation: false,
     });
@@ -36,10 +36,14 @@ describe('Application: install delete and reinstall rich-app', () => {
   });
 
   it(`should successfully delete ${applicationName} application`, async () => {
-    const result = await deleteCommand.execute({
+    const result = await uninstallCommand.execute({
       appPath,
       askForConfirmation: false,
     });
+
+    if (result.success === false) {
+      console.log(result);
+    }
 
     expect(result.success).toBe(true);
   });
