@@ -36,6 +36,7 @@ import {
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class WorkspaceInvitationService {
@@ -357,6 +358,8 @@ export class WorkspaceInvitationService {
       value: true,
     });
 
+    const i18n = this.i18nService.getI18nInstance(sender.locale);
+
     const result = invitationsPr.reduce<{
       errors: string[];
       result: ReturnType<
@@ -369,7 +372,13 @@ export class WorkspaceInvitationService {
     }>(
       (acc, invitation) => {
         if (invitation.status === 'rejected') {
-          acc.errors.push(invitation.reason?.message ?? 'Unknown error');
+          const reason = invitation.reason;
+
+          if (reason instanceof CustomException && reason.userFriendlyMessage) {
+            acc.errors.push(i18n._(reason.userFriendlyMessage));
+          } else {
+            acc.errors.push(reason?.message ?? 'Unknown error');
+          }
         } else {
           acc.result.push(
             invitation.value.isPersonalInvitation

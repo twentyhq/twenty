@@ -86,7 +86,11 @@ export const WorkspaceInviteTeam = () => {
   const submit = handleSubmit(async ({ emails }) => {
     const emailsList = sanitizeEmailList(emails.split(','));
     const { data } = await sendInvitation({ emails: emailsList });
-    if (isDefined(data) && data.sendInvitations.result.length > 0) {
+    if (!isDefined(data)) {
+      return;
+    }
+
+    if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
       enqueueSuccessSnackBar({
         message: t`${invitationCount} invitations sent`,
@@ -94,10 +98,13 @@ export const WorkspaceInviteTeam = () => {
           duration: 2000,
         },
       });
+
       return;
     }
-    if (isDefined(data) && !data.sendInvitations.success) {
+
+    if (!data.sendInvitations.success) {
       enqueueErrorSnackBar({
+        message: data.sendInvitations.errors.join(', '),
         options: {
           duration: 5000,
         },
