@@ -52,8 +52,7 @@ export class BillingGaugeService implements OnModuleInit {
   }
 
   private async getSubscribedWorkspacesCount(): Promise<number> {
-    const isBillingEnabled =
-      this.twentyConfigService.get('IS_BILLING_ENABLED');
+    const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
 
     if (!isBillingEnabled) {
       return 0;
@@ -64,18 +63,14 @@ export class BillingGaugeService implements OnModuleInit {
         where: { deletedAt: IsNull() },
       });
     } catch (error) {
-      this.logger.error(
-        'Failed to count subscribed workspaces',
-        error,
-      );
+      this.logger.error('Failed to count subscribed workspaces', error);
 
       return 0;
     }
   }
 
   private async lastWorkspaceHasSubscription(): Promise<number> {
-    const isBillingEnabled =
-      this.twentyConfigService.get('IS_BILLING_ENABLED');
+    const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
 
     if (!isBillingEnabled) {
       return 1;
@@ -114,10 +109,7 @@ export class BillingGaugeService implements OnModuleInit {
 
       return 1;
     } catch (error) {
-      this.logger.error(
-        'Failed to check last workspace subscription',
-        error,
-      );
+      this.logger.error('Failed to check last workspace subscription', error);
 
       return 0;
     }
