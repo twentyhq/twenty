@@ -153,22 +153,22 @@ export const AIChatMessage = ({
           </StyledFilesContainer>
         )}
         {showError && <AIChatErrorRenderer error={error} />}
-        {message.parts.length > 0 && message.metadata?.createdAt && (
-          <StyledMessageFooter className="message-footer">
-            <span>
-              {beautifyPastDateRelativeToNow(
-                message.metadata?.createdAt,
-                localeCatalog,
-              )}
-            </span>
-            <LightCopyIconButton
-              copyText={
-                message.parts.find((part) => part.type === 'text')?.text ?? ''
-              }
-            />
-          </StyledMessageFooter>
-        )}
       </StyledMessageContainer>
+      {message.parts.length > 0 && message.metadata?.createdAt && (
+        <StyledMessageFooter className="message-footer">
+          <span>
+            {beautifyPastDateRelativeToNow(
+              message.metadata?.createdAt,
+              localeCatalog,
+            )}
+          </span>
+          <LightCopyIconButton
+            copyText={
+              message.parts.find((part) => part.type === 'text')?.text ?? ''
+            }
+          />
+        </StyledMessageFooter>
+      )}
     </StyledMessageBubble>
   );
 };
