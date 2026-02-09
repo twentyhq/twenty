@@ -64,6 +64,7 @@ export class MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationC
       this.logger.error(
         `Rolling back MakeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: ${error.message}`,
       );
+      throw error;
     } finally {
       await queryRunner.release();
     }

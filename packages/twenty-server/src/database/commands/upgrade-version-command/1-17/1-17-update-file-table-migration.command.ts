@@ -49,7 +49,22 @@ export class UpdateFileTableMigrationCommand extends ActiveOrSuspendedWorkspaces
     await queryRunner.startTransaction();
 
     try {
-      await updateFileTableQueries(queryRunner);
+      const hasNameColumn = await queryRunner.query(`
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'core'
+          AND table_name = 'file'
+          AND column_name = 'name'
+        LIMIT 1
+      `);
+
+      if (hasNameColumn.length === 0) {
+        this.logger.warn(
+          "Skipping UpdateFileTableMigrationCommand: 'name' column does not exist on 'file' table",
+        );
+      } else {
+        await updateFileTableQueries(queryRunner);
+      }
 
       await queryRunner.commitTransaction();
       this.logger.log('Successfully run UpdateFileTableMigrationCommand');
@@ -59,6 +74,7 @@ export class UpdateFileTableMigrationCommand extends ActiveOrSuspendedWorkspaces
       this.logger.error(
         `Rolling back UpdateFileTableMigrationCommand: ${error.message}`,
       );
+      throw error;
     } finally {
       await queryRunner.release();
     }
