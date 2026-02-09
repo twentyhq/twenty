@@ -10,7 +10,7 @@ export const transformEventBatchToWebhookEvents = ({
   webhooks,
 }: {
   workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
-  webhooks: WebhookEntity[];
+  webhooks: Pick<WebhookEntity, 'id' | 'targetUrl' | 'secret'>[];
 }): CallWebhookJobData[] => {
   const result: CallWebhookJobData[] = [];
 
