@@ -76,7 +76,6 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
-import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
@@ -120,12 +119,6 @@ export class WorkspaceResolver {
     assert(workspace, 'Workspace not found');
 
     return workspace;
-  }
-
-  @Query(() => String)
-  @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
-  async getAISystemPrompt(): Promise<string> {
-    return `${CHAT_SYSTEM_PROMPTS.BASE}\n\n${CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT}`;
   }
 
   @Mutation(() => WorkspaceEntity)

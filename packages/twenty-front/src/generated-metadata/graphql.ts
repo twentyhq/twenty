@@ -3668,7 +3668,6 @@ export type Query = {
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
   frontComponents: Array<FrontComponent>;
-  getAISystemPrompt: Scalars['String'];
   getAISystemPromptPreview: AiSystemPromptPreview;
   getAddressDetails: PlaceDetailsResult;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
@@ -7107,11 +7106,6 @@ export type CheckCustomDomainValidRecordsMutationVariables = Exact<{ [key: strin
 
 
 export type CheckCustomDomainValidRecordsMutation = { __typename?: 'Mutation', checkCustomDomainValidRecords?: { __typename?: 'DomainValidRecords', id: string, domain: string, records: Array<{ __typename?: 'DomainRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
-
-export type GetAiSystemPromptQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetAiSystemPromptQuery = { __typename?: 'Query', getAISystemPrompt: string };
 
 export type GetAiSystemPromptPreviewQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -15945,38 +15939,6 @@ export function useCheckCustomDomainValidRecordsMutation(baseOptions?: Apollo.Mu
 export type CheckCustomDomainValidRecordsMutationHookResult = ReturnType<typeof useCheckCustomDomainValidRecordsMutation>;
 export type CheckCustomDomainValidRecordsMutationResult = Apollo.MutationResult<CheckCustomDomainValidRecordsMutation>;
 export type CheckCustomDomainValidRecordsMutationOptions = Apollo.BaseMutationOptions<CheckCustomDomainValidRecordsMutation, CheckCustomDomainValidRecordsMutationVariables>;
-export const GetAiSystemPromptDocument = gql`
-    query GetAISystemPrompt {
-  getAISystemPrompt
-}
-    `;
-
-/**
- * __useGetAiSystemPromptQuery__
- *
- * To run a query within a React component, call `useGetAiSystemPromptQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAiSystemPromptQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAiSystemPromptQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAiSystemPromptQuery(baseOptions?: Apollo.QueryHookOptions<GetAiSystemPromptQuery, GetAiSystemPromptQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAiSystemPromptQuery, GetAiSystemPromptQueryVariables>(GetAiSystemPromptDocument, options);
-      }
-export function useGetAiSystemPromptLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAiSystemPromptQuery, GetAiSystemPromptQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAiSystemPromptQuery, GetAiSystemPromptQueryVariables>(GetAiSystemPromptDocument, options);
-        }
-export type GetAiSystemPromptQueryHookResult = ReturnType<typeof useGetAiSystemPromptQuery>;
-export type GetAiSystemPromptLazyQueryHookResult = ReturnType<typeof useGetAiSystemPromptLazyQuery>;
-export type GetAiSystemPromptQueryResult = Apollo.QueryResult<GetAiSystemPromptQuery, GetAiSystemPromptQueryVariables>;
 export const GetAiSystemPromptPreviewDocument = gql`
     query GetAISystemPromptPreview {
   getAISystemPromptPreview {
