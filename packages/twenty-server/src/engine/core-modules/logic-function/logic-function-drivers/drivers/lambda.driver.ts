@@ -19,24 +19,18 @@ import {
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
-import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
-  type LogicFunctionExecutorDriver,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
+  type LogicFunctionDriver,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { copyAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-and-build-dependencies';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
-import {
-  LambdaBuildDirectoryManager,
-  NODE_LAYER_SUBFOLDER,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
-import { type FlatLogicFunctionLayer } from 'src/engine/metadata-modules/logic-function-layer/types/flat-logic-function-layer.type';
+import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -44,7 +38,8 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application-layer/utils/copy-yarn-engine-and-build-dependencies';
+import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -57,22 +52,22 @@ type LambdaDriverExecutorPayload = {
 };
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
-  fileStorageService: FileStorageService;
+  logicFunctionResourceService: LogicFunctionResourceService;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
 }
 
-export class LambdaDriver implements LogicFunctionExecutorDriver {
+export class LambdaDriver implements LogicFunctionDriver {
   private lambdaClient: Lambda | undefined;
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
-  private readonly fileStorageService: FileStorageService;
+  private readonly logicFunctionResourceService: LogicFunctionResourceService;
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
     this.lambdaClient = undefined;
-    this.fileStorageService = options.fileStorageService;
+    this.logicFunctionResourceService = options.logicFunctionResourceService;
   }
 
   private async getLambdaClient() {
@@ -138,14 +133,18 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     );
   }
 
-  private getLayerName(flatLogicFunctionLayer: FlatLogicFunctionLayer) {
-    return flatLogicFunctionLayer.checksum;
+  private getLayerName(flatApplication: FlatApplication) {
+    return flatApplication.yarnLockChecksum ?? 'default';
   }
 
-  private async createLayerIfNotExists(
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ): Promise<string> {
-    const layerName = this.getLayerName(flatLogicFunctionLayer);
+  private async createLayerIfNotExists({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<string> {
+    const layerName = this.getLayerName(flatApplication);
 
     const listLayerParams: ListLayerVersionsCommandInput = {
       LayerName: layerName,
@@ -162,19 +161,18 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       return listLayerResult.LayerVersions[0].LayerVersionArn;
     }
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const temporaryDirManager = new TemporaryDirManager();
     const { sourceTemporaryDir, lambdaZipPath } =
-      await lambdaBuildDirectoryManager.init();
+      await temporaryDirManager.init();
 
-    const nodeDependenciesFolder = join(
-      sourceTemporaryDir,
-      NODE_LAYER_SUBFOLDER,
-    );
+    const nodeDependenciesFolder = join(sourceTemporaryDir, 'nodejs');
 
-    await copyAndBuildDependencies(
-      nodeDependenciesFolder,
-      flatLogicFunctionLayer,
-    );
+    await this.logicFunctionResourceService.copyDependenciesInMemory({
+      applicationUniversalIdentifier,
+      workspaceId: flatApplication.workspaceId,
+      inMemoryFolderPath: nodeDependenciesFolder,
+    });
+    await copyYarnEngineAndBuildDependencies(nodeDependenciesFolder);
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
@@ -193,7 +191,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     const result = await (await this.getLambdaClient()).send(command);
 
-    await lambdaBuildDirectoryManager.clean();
+    await temporaryDirManager.clean();
 
     if (!isDefined(result.LayerVersionArn)) {
       throw new Error('new layer version arn if undefined');
@@ -230,7 +228,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
   private async isAlreadyBuilt(
     flatLogicFunction: FlatLogicFunction,
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
+    flatApplication: FlatApplication,
   ) {
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
@@ -246,7 +244,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
       return false;
     }
 
-    const layerName = this.getLayerName(flatLogicFunctionLayer);
+    const layerName = this.getLayerName(flatApplication);
 
     if (layers[0].Arn?.includes(layerName)) {
       return true;
@@ -257,20 +255,28 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
     return false;
   }
 
-  private async build(
-    flatLogicFunction: FlatLogicFunction,
-    flatLogicFunctionLayer: FlatLogicFunctionLayer,
-  ) {
-    if (await this.isAlreadyBuilt(flatLogicFunction, flatLogicFunctionLayer)) {
+  private async build({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }) {
+    if (await this.isAlreadyBuilt(flatLogicFunction, flatApplication)) {
       return;
     }
 
-    const layerArn = await this.createLayerIfNotExists(flatLogicFunctionLayer);
+    const layerArn = await this.createLayerIfNotExists({
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const temporaryDirManager = new TemporaryDirManager();
 
     const { sourceTemporaryDir, lambdaZipPath } =
-      await lambdaBuildDirectoryManager.init();
+      await temporaryDirManager.init();
 
     await copyExecutor(sourceTemporaryDir);
 
@@ -292,7 +298,7 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
     await (await this.getLambdaClient()).send(command);
 
-    await lambdaBuildDirectoryManager.clean();
+    await temporaryDirManager.clean();
   }
 
   private extractLogs(logString: string): string {
@@ -312,27 +318,26 @@ export class LambdaDriver implements LogicFunctionExecutorDriver {
 
   async execute({
     flatLogicFunction,
-    flatLogicFunctionLayer,
+    flatApplication,
     applicationUniversalIdentifier,
     payload,
     env,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    await this.build(flatLogicFunction, flatLogicFunctionLayer);
+    await this.build({
+      flatLogicFunction,
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
 
     await this.waitFunctionUpdates(flatLogicFunction);
 
     const startTime = Date.now();
 
-    const compiledCode = (
-      await streamToBuffer(
-        await this.fileStorageService.readFile_v2({
-          workspaceId: flatLogicFunction.workspaceId,
-          applicationUniversalIdentifier,
-          fileFolder: FileFolder.BuiltLogicFunction,
-          resourcePath: flatLogicFunction.builtHandlerPath,
-        }),
-      )
-    ).toString('utf-8');
+    const compiledCode = await this.logicFunctionResourceService.getBuiltCode({
+      workspaceId: flatLogicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      builtHandlerPath: flatLogicFunction.builtHandlerPath,
+    });
 
     const executorPayload: LambdaDriverExecutorPayload = {
       params: payload,

@@ -1,54 +1,51 @@
 import { v4 } from 'uuid';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 type GenerateIndexForFlatFieldMetadataArgs = {
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadata;
-  workspaceId: string;
+  flatFieldMetadata: UniversalFlatFieldMetadata;
+  flatObjectMetadata: UniversalFlatObjectMetadata;
 };
 
 export const generateIndexForFlatFieldMetadata = ({
   flatFieldMetadata,
   flatObjectMetadata,
-  workspaceId,
-}: GenerateIndexForFlatFieldMetadataArgs): FlatIndexMetadata => {
-  const indexId = v4();
+}: GenerateIndexForFlatFieldMetadataArgs): UniversalFlatIndexMetadata => {
+  const indexMetadataUniversalIdentifier = v4();
   const createdAt = new Date().toISOString();
 
-  const flatIndex: FlatIndexMetadata = generateFlatIndexMetadataWithNameOrThrow(
-    {
+  const flatIndex: UniversalFlatIndexMetadata =
+    generateFlatIndexMetadataWithNameOrThrow({
       objectFlatFieldMetadatas: [flatFieldMetadata],
       flatIndex: {
         createdAt,
-        flatIndexFieldMetadatas: [
+        universalFlatIndexFieldMetadatas: [
           {
             createdAt,
-            fieldMetadataId: flatFieldMetadata.id,
-            id: v4(),
-            indexMetadataId: indexId,
+            fieldMetadataUniversalIdentifier:
+              flatFieldMetadata.universalIdentifier,
+            indexMetadataUniversalIdentifier,
             order: 0,
             updatedAt: createdAt,
           },
         ],
-        id: indexId,
         indexType: IndexType.BTREE,
         indexWhereClause: null,
         isCustom: true,
         isUnique: flatFieldMetadata.isUnique ?? false,
-        objectMetadataId: flatObjectMetadata.id,
-        universalIdentifier: indexId,
+        objectMetadataUniversalIdentifier:
+          flatObjectMetadata.universalIdentifier,
+        universalIdentifier: indexMetadataUniversalIdentifier,
         updatedAt: createdAt,
-        workspaceId,
-        applicationId: flatFieldMetadata.applicationId,
+        applicationUniversalIdentifier:
+          flatFieldMetadata.applicationUniversalIdentifier,
       },
       flatObjectMetadata,
-    },
-  );
+    });
 
   return flatIndex;
 };

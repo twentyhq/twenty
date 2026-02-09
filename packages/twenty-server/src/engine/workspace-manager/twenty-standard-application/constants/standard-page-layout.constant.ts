@@ -9,7 +9,7 @@ import {
   STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG,
   STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config';
-import { type StandardRecordPageLayouts } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.types';
+import { type StandardRecordPageLayouts } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
 
 export const STANDARD_PAGE_LAYOUTS = {
   myFirstDashboard: STANDARD_DASHBOARD_PAGE_LAYOUT_CONFIG,

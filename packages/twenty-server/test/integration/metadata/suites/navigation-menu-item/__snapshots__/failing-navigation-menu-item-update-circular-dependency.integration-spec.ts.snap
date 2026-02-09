@@ -15,7 +15,6 @@ exports[`Navigation Menu Item update should fail with circular dependency when f
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -51,7 +50,6 @@ exports[`Navigation Menu Item update should fail with circular dependency when u
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",

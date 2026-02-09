@@ -14,6 +14,7 @@ COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
+COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 
 # Install all dependencies
 RUN yarn && yarn cache clean && npx nx reset
@@ -39,6 +40,7 @@ ARG REACT_APP_SERVER_BASE_URL
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
+COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 RUN npx nx build twenty-front
 
 

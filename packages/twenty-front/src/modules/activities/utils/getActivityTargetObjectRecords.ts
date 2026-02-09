@@ -6,8 +6,8 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type Nullable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType, type Nullable } from 'twenty-shared/types';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 type GetActivityTargetObjectRecordsProps = {
   activityRecord: Note | Task;
@@ -47,41 +47,100 @@ export const getActivityTargetObjectRecords = ({
   );
 
   const activityTargetRelationFields =
-    activityTargetObjectMetadata?.fields.filter(
-      (field) =>
-        isDefined(field.relation?.targetObjectMetadata.id) &&
-        ![CoreObjectNameSingular.Note, CoreObjectNameSingular.Task].includes(
-          field.relation?.targetObjectMetadata
-            .nameSingular as CoreObjectNameSingular,
-        ),
-    ) ?? [];
+    activityTargetObjectMetadata?.fields.filter((field) => {
+      if (
+        field.type === FieldMetadataType.MORPH_RELATION &&
+        isDefined(field.morphRelations) &&
+        field.morphRelations.length > 0
+      ) {
+        return true;
+      }
+
+      const targetObjectNameSingular =
+        field.relation?.targetObjectMetadata.nameSingular;
+
+      if (!isDefined(field.relation?.targetObjectMetadata.id)) {
+        return false;
+      }
+
+      if (!isDefined(targetObjectNameSingular)) {
+        return false;
+      }
+
+      return (
+        targetObjectNameSingular !== CoreObjectNameSingular.Note &&
+        targetObjectNameSingular !== CoreObjectNameSingular.Task
+      );
+    }) ?? [];
 
   const activityTargetObjectRecords = targets
     .map<ActivityTargetWithTargetRecord | undefined>((activityTarget) => {
       if (!isDefined(activityTarget)) {
         throw new Error('Cannot find activity target');
       }
-      const matchingField = activityTargetRelationFields.find((field) =>
-        isDefined(activityTarget[field.name]),
-      );
 
-      if (!matchingField || !matchingField.relation) {
+      if (isDefined(activityTarget.deletedAt)) {
         return undefined;
       }
 
-      const correspondingObjectMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.id ===
-          matchingField.relation?.targetObjectMetadata.id,
-      );
+      let matchingFieldName: string | undefined;
+      let correspondingObjectMetadataItem: ObjectMetadataItem | undefined;
 
-      if (!correspondingObjectMetadataItem) {
+      for (const field of activityTargetRelationFields) {
+        if (
+          field.type === FieldMetadataType.MORPH_RELATION &&
+          isDefined(field.morphRelations)
+        ) {
+          const matchingMorphRelation = field.morphRelations.find(
+            (morphRelation) => {
+              const morphFieldName = computeMorphRelationFieldName({
+                fieldName: field.name,
+                relationType: morphRelation.type,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural:
+                  morphRelation.targetObjectMetadata.namePlural,
+              });
+
+              return isDefined(activityTarget[morphFieldName]);
+            },
+          );
+
+          if (isDefined(matchingMorphRelation)) {
+            matchingFieldName = computeMorphRelationFieldName({
+              fieldName: field.name,
+              relationType: matchingMorphRelation.type,
+              targetObjectMetadataNameSingular:
+                matchingMorphRelation.targetObjectMetadata.nameSingular,
+              targetObjectMetadataNamePlural:
+                matchingMorphRelation.targetObjectMetadata.namePlural,
+            });
+            correspondingObjectMetadataItem = objectMetadataItems.find(
+              (objectMetadataItem) =>
+                objectMetadataItem.id ===
+                matchingMorphRelation.targetObjectMetadata.id,
+            );
+            break;
+          }
+        } else if (isDefined(activityTarget[field.name])) {
+          matchingFieldName = field.name;
+          correspondingObjectMetadataItem = objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.id === field.relation?.targetObjectMetadata.id,
+          );
+          break;
+        }
+      }
+
+      if (
+        !isDefined(matchingFieldName) ||
+        !isDefined(correspondingObjectMetadataItem)
+      ) {
         return undefined;
       }
 
-      const targetObjectRecord = activityTarget[matchingField.name] as
-        | ObjectRecord
-        | undefined;
+      const targetObjectRecord: ObjectRecord | undefined =
+        activityTarget[matchingFieldName];
 
       if (!isDefined(targetObjectRecord)) {
         throw new Error(

@@ -80,7 +80,7 @@ export class OpenApiService {
       );
 
     const flatObjectMetadataArray = Object.values(
-      flatObjectMetadataMaps.byId,
+      flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
     flatObjectMetadataArray.sort((a, b) =>

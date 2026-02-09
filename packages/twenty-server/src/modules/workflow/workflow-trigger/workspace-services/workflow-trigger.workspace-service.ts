@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -19,6 +20,7 @@ import {
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 import { type WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
@@ -41,6 +43,7 @@ export class WorkflowTriggerWorkspaceService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly codeStepBuildService: CodeStepBuildService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly automatedTriggerWorkspaceService: AutomatedTriggerWorkspaceService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -120,6 +123,11 @@ export class WorkflowTriggerWorkspaceService {
         }
 
         assertVersionCanBeActivated(workflowVersion, workflow);
+
+        await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
+          workspaceId,
+          steps: workflowVersion.steps ?? [],
+        });
 
         await this.performActivationSteps(
           workflow,
@@ -376,7 +384,9 @@ export class WorkflowTriggerWorkspaceService {
         await this.commandMenuItemService.create(
           {
             workflowVersionId: workflowVersion.id,
-            label: workflow.name ?? 'Manual Trigger',
+            label: isNonEmptyString(workflow.name)
+              ? workflow.name
+              : 'Manual Trigger',
             icon: trigger.settings.icon,
             availabilityType,
             availabilityObjectMetadataId,

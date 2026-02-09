@@ -8,7 +8,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldActions } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report-deprioritize-search-vector-update-field-actions.util';
-import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
+import { type UniversalUpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action';
 
 describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldActions', () => {
   it('should move searchVector update actions to the end of the update list', () => {
@@ -20,39 +20,27 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
           {
             type: 'update',
             metadataName: 'fieldMetadata',
-            entityId: 'search-vector-field-1',
-            updates: [
-              {
-                property: 'label',
-                from: 'Search Vector',
-                to: 'Updated Search Vector',
-              },
-            ],
-          } satisfies UpdateFieldAction,
+            universalIdentifier: 'search-vector-field-1',
+            update: {
+              label: 'Updated Search Vector',
+            },
+          } satisfies UniversalUpdateFieldAction,
           {
             type: 'update',
             metadataName: 'fieldMetadata',
-            entityId: 'regular-field-1',
-            updates: [
-              {
-                property: 'label',
-                from: 'First Name',
-                to: 'Updated First Name',
-              },
-            ],
-          } satisfies UpdateFieldAction,
+            universalIdentifier: 'regular-field-1',
+            update: {
+              label: 'Updated First Name',
+            },
+          } satisfies UniversalUpdateFieldAction,
           {
             type: 'update',
             metadataName: 'fieldMetadata',
-            entityId: 'regular-field-2',
-            updates: [
-              {
-                property: 'label',
-                from: 'Last Name',
-                to: 'Updated Last Name',
-              },
-            ],
-          } satisfies UpdateFieldAction,
+            universalIdentifier: 'regular-field-2',
+            update: {
+              label: 'Updated Last Name',
+            },
+          } satisfies UniversalUpdateFieldAction,
         ],
         delete: [],
       },
@@ -98,11 +86,13 @@ describe('aggregateOrchestratorActionsReportDeprioritizeSearchVectorUpdateFieldA
       );
 
     const updateFieldActions = result.fieldMetadata
-      .update as UpdateFieldAction[];
+      .update as UniversalUpdateFieldAction[];
 
-    const actualEntityIds = updateFieldActions.map((action) => action.entityId);
+    const actualUniversalIdentifiers = updateFieldActions.map(
+      (action) => action.universalIdentifier,
+    );
 
-    expect(actualEntityIds).toEqual([
+    expect(actualUniversalIdentifiers).toEqual([
       'regular-field-1',
       'regular-field-2',
       'search-vector-field-1',

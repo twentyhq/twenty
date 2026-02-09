@@ -7,6 +7,7 @@ import { IsNull, Repository } from 'typeorm';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
 import { fromDeleteViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
@@ -45,11 +46,25 @@ export class ViewFilterService {
         },
       );
 
+    const { flatFieldMetadataMaps, flatViewMaps, flatViewFilterGroupMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatViewMaps',
+            'flatViewFilterGroupMaps',
+          ],
+        },
+      );
+
     const flatViewFilterToCreate =
       fromCreateViewFilterInputToFlatViewFilterToCreate({
         createViewFilterInput,
-        workspaceId,
-        workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatFieldMetadataMaps,
+        flatViewMaps,
+        flatViewFilterGroupMaps,
       });
 
     const buildAndRunResult =
@@ -64,6 +79,8 @@ export class ViewFilterService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -97,18 +114,34 @@ export class ViewFilterService {
     workspaceId: string;
     updateViewFilterInput: UpdateViewFilterInput;
   }): Promise<ViewFilterDTO> {
-    const { flatViewFilterMaps: existingFlatViewFilterMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFilterMaps'],
         },
       );
+
+    const {
+      flatViewFilterMaps: existingFlatViewFilterMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
+    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+      {
+        workspaceId,
+        flatMapsKeys: [
+          'flatViewFilterMaps',
+          'flatFieldMetadataMaps',
+          'flatViewFilterGroupMaps',
+        ],
+      },
+    );
 
     const optimisticallyUpdatedFlatViewFilter =
       fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow({
         flatViewFilterMaps: existingFlatViewFilterMaps,
         updateViewFilterInput,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+        flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
       });
 
     const validateAndBuildResult =
@@ -123,6 +156,8 @@ export class ViewFilterService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -142,8 +177,9 @@ export class ViewFilterService {
       );
 
     return fromFlatViewFilterToViewFilterDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatViewFilter.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewFilter.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewFilterMaps,
       }),
     );
@@ -156,6 +192,13 @@ export class ViewFilterService {
     deleteViewFilterInput: DeleteViewFilterInput;
     workspaceId: string;
   }): Promise<ViewFilterDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewFilterMaps: existingFlatViewFilterMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -184,6 +227,8 @@ export class ViewFilterService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -203,8 +248,9 @@ export class ViewFilterService {
       );
 
     return fromFlatViewFilterToViewFilterDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatViewFilterWithDeletedAt.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewFilterWithDeletedAt.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewFilterMaps,
       }),
     );
@@ -217,6 +263,13 @@ export class ViewFilterService {
     destroyViewFilterInput: DestroyViewFilterInput;
     workspaceId: string;
   }): Promise<ViewFilterDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewFilterMaps: existingFlatViewFilterMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -231,6 +284,11 @@ export class ViewFilterService {
         flatViewFilterMaps: existingFlatViewFilterMaps,
       });
 
+    const existingFlatViewFilter = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: existingViewFilterToDelete.universalIdentifier,
+      flatEntityMaps: existingFlatViewFilterMaps,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -243,6 +301,8 @@ export class ViewFilterService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -253,7 +313,10 @@ export class ViewFilterService {
       );
     }
 
-    return fromFlatViewFilterToViewFilterDto(existingViewFilterToDelete);
+    return fromFlatViewFilterToViewFilterDto({
+      ...existingFlatViewFilter,
+      deletedAt: new Date().toISOString(),
+    });
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {

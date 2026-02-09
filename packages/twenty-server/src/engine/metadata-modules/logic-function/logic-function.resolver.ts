@@ -7,26 +7,20 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-executor.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
-import { ExecuteLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
-import { GetLogicFunctionSourceCodeInput } from 'src/engine/metadata-modules/logic-function/dtos/get-logic-function-source-code.input';
+import { CreateDefaultLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-default-logic-function.input';
+import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionIdInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-id.input';
 import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.dto';
 import { LogicFunctionLogsInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.input';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
-import { UpdateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function.input';
+import { UpdateLogicFunctionSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-source.input';
 import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
-import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
-import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { logicFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/logic-function/utils/logic-function-graphql-api-exception-handler.utils';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -42,9 +36,7 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 export class LogicFunctionResolver {
   constructor(
     private readonly logicFunctionService: LogicFunctionService,
-    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly subscriptionService: SubscriptionService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   @Query(() => LogicFunctionDTO)
@@ -53,22 +45,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      const { flatLogicFunctionMaps } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
-          },
-        );
-
-      const flatLogicFunction = findFlatLogicFunctionOrThrow({
-        id,
-        flatLogicFunctionMaps,
-      });
-
-      return fromFlatLogicFunctionToLogicFunctionDto({
-        flatLogicFunction,
-      });
+      return await this.logicFunctionService.findOne({ id, workspaceId });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }
@@ -79,49 +56,22 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO[]> {
     try {
-      const { flatLogicFunctionMaps } =
-        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-          {
-            workspaceId,
-            flatMapsKeys: ['flatLogicFunctionMaps'],
-          },
-        );
-
-      return Object.values(flatLogicFunctionMaps.byId)
-        .filter(
-          (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
-            isDefined(flatLogicFunction) &&
-            !isDefined(flatLogicFunction.deletedAt),
-        )
-        .map((flatLogicFunction) =>
-          fromFlatLogicFunctionToLogicFunctionDto({
-            flatLogicFunction,
-          }),
-        );
+      return await this.logicFunctionService.findMany({ workspaceId });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
   @Query(() => graphqlTypeJson)
-  async getAvailablePackages(@Args('input') { id }: LogicFunctionIdInput) {
-    try {
-      return await this.logicFunctionExecutorService.getAvailablePackages(id);
-    } catch (error) {
-      return logicFunctionGraphQLApiExceptionHandler(error);
-    }
-  }
-
-  @Query(() => graphqlTypeJson, { nullable: true })
-  async getLogicFunctionSourceCode(
-    @Args('input') input: GetLogicFunctionSourceCodeInput,
+  async getAvailablePackages(
+    @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
-      return await this.logicFunctionExecutorService.getLogicFunctionSourceCode(
+      return await this.logicFunctionService.getAvailablePackages({
+        id,
         workspaceId,
-        input.id,
-      );
+      });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }
@@ -130,18 +80,11 @@ export class LogicFunctionResolver {
   @Mutation(() => LogicFunctionDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async deleteOneLogicFunction(
-    @Args('input') input: LogicFunctionIdInput,
+    @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      const flatLogicFunction = await this.logicFunctionService.destroyOne({
-        id: input.id,
-        workspaceId,
-      });
-
-      return fromFlatLogicFunctionToLogicFunctionDto({
-        flatLogicFunction,
-      });
+      return await this.logicFunctionService.deleteOne({ id, workspaceId });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }
@@ -149,41 +92,14 @@ export class LogicFunctionResolver {
 
   @Mutation(() => LogicFunctionDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
-  async updateOneLogicFunction(
-    @Args('input')
-    input: UpdateLogicFunctionInput,
+  async createDefaultLogicFunction(
+    @Args('input') input: CreateDefaultLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      const flatLogicFunction = await this.logicFunctionService.updateOne({
-        id: input.id,
-        update: input.update,
-        workspaceId,
-      });
-
-      return fromFlatLogicFunctionToLogicFunctionDto({
-        flatLogicFunction,
-      });
-    } catch (error) {
-      return logicFunctionGraphQLApiExceptionHandler(error);
-    }
-  }
-
-  @Mutation(() => LogicFunctionDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
-  async createOneLogicFunction(
-    @Args('input')
-    input: CreateLogicFunctionInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<LogicFunctionDTO> {
-    try {
-      const flatLogicFunction = await this.logicFunctionService.createOne({
+      return await this.logicFunctionService.createDefault({
         input,
         workspaceId,
-      });
-
-      return fromFlatLogicFunctionToLogicFunctionDto({
-        flatLogicFunction,
       });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
@@ -193,17 +109,50 @@ export class LogicFunctionResolver {
   @Mutation(() => LogicFunctionExecutionResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async executeOneLogicFunction(
-    @Args('input') input: ExecuteLogicFunctionInput,
+    @Args('input') { id, payload, forceRebuild }: ExecuteOneLogicFunctionInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<LogicFunctionExecutionResultDTO> {
+    try {
+      return await this.logicFunctionService.executeOne({
+        id,
+        payload,
+        forceRebuild,
+        workspaceId,
+      });
+    } catch (error) {
+      return logicFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Query(() => graphqlTypeJson, { nullable: true })
+  async getLogicFunctionSourceCode(
+    @Args('input') { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     try {
-      const { id, payload } = input;
-
-      return await this.logicFunctionExecutorService.executeOneLogicFunction({
+      return await this.logicFunctionService.getSourceCode({
         id,
         workspaceId,
-        payload,
       });
+    } catch (error) {
+      return logicFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  async updateLogicFunctionSource(
+    @Args('input') { id, code }: UpdateLogicFunctionSourceInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    try {
+      await this.logicFunctionService.updateLogicFunctionSource({
+        id,
+        code,
+        workspaceId,
+      });
+
+      return true;
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);
     }

@@ -1,114 +1,108 @@
 import { Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { NUMBER_OF_WORKFLOW_RUNS_TO_KEEP } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/number-of-workflow-runs-to-keep';
+import {
+  WorkflowCleanWorkflowRunsJob,
+  WorkflowCleanWorkflowRunsJobData,
+} from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-clean-workflow-runs.job';
+import { getRunsToCleanFindOptions } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-runs-to-clean-find-options.util';
 
 export const CLEAN_WORKFLOW_RUN_CRON_PATTERN = '0 0 * * *';
 
-const NUMBER_OF_WORKFLOW_RUNS_TO_KEEP = 1000;
-
 @Processor(MessageQueue.cronQueue)
-export class WorkflowCleanWorkflowRunsJob {
-  private readonly logger = new Logger(WorkflowCleanWorkflowRunsJob.name);
+export class WorkflowCleanWorkflowRunsCronJob {
+  private readonly logger = new Logger(WorkflowCleanWorkflowRunsCronJob.name);
 
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectMessageQueue(MessageQueue.workflowQueue)
+    private readonly messageQueueService: MessageQueueService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
   ) {}
 
-  @Process(WorkflowCleanWorkflowRunsJob.name)
+  @Process(WorkflowCleanWorkflowRunsCronJob.name)
   @SentryCronMonitor(
-    WorkflowCleanWorkflowRunsJob.name,
+    WorkflowCleanWorkflowRunsCronJob.name,
     CLEAN_WORKFLOW_RUN_CRON_PATTERN,
   )
   async handle() {
-    this.logger.log('Starting WorkflowCleanWorkflowRunsJob cron');
+    this.logger.log('Starting WorkflowCleanWorkflowRunsCronJob cron');
 
-    try {
-      const activeWorkspaces = await this.workspaceRepository.find({
-        where: {
-          activationStatus: WorkspaceActivationStatus.ACTIVE,
-        },
-      });
+    const activeWorkspaces = await this.workspaceRepository.find({
+      where: {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      },
+      select: ['id'],
+    });
 
-      for (let i = 0; i < activeWorkspaces.length; i++) {
-        const activeWorkspace = activeWorkspaces[i];
+    let enqueuedCount = 0;
 
-        this.logger.log(
-          `Processing workspace ${activeWorkspace.id} (${i + 1}/${activeWorkspaces.length})`,
+    for (const workspace of activeWorkspaces) {
+      const hasRunsToClean = await this.hasRunsToClean(workspace.id);
+
+      if (hasRunsToClean) {
+        await this.messageQueueService.add<WorkflowCleanWorkflowRunsJobData>(
+          WorkflowCleanWorkflowRunsJob.name,
+          {
+            workspaceId: workspace.id,
+          },
         );
-
-        try {
-          await this.cleanWorkflowRunsForWorkspace(activeWorkspace.id);
-        } catch (error) {
-          this.logger.error(
-            `Failed to clean workflow runs for workspace ${activeWorkspace.id}`,
-            error,
-          );
-        }
+        enqueuedCount++;
       }
-
-      this.logger.log('Completed WorkflowCleanWorkflowRunsJob cron');
-    } catch (error) {
-      this.logger.error('WorkflowCleanWorkflowRunsJob cron failed', error);
-      throw error;
     }
+
+    this.logger.log(
+      `Completed WorkflowCleanWorkflowRunsCronJob cron, enqueued ${enqueuedCount} jobs`,
+    );
   }
 
-  private async cleanWorkflowRunsForWorkspace(workspaceId: string) {
-    const schemaName = getWorkspaceSchemaName(workspaceId);
+  private async hasRunsToClean(workspaceId: string): Promise<boolean> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowRunsToDelete = await this.coreDataSource.query(
-        `
-          WITH ranked_runs AS (
-            SELECT id,
-                   ROW_NUMBER() OVER (
-                      PARTITION BY "workflowId"
-                      ORDER BY "createdAt" DESC
-                   ) AS rn,
-                   "createdAt"
-            FROM ${schemaName}."workflowRun"
-            WHERE status IN ('${WorkflowRunStatus.COMPLETED}', '${WorkflowRunStatus.FAILED}')
-          )
-          SELECT id, rn FROM ranked_runs
-          WHERE rn > ${NUMBER_OF_WORKFLOW_RUNS_TO_KEEP}
-             OR "createdAt" < NOW() - INTERVAL '14 days';
-        `,
-      );
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workflowRunRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            WorkflowRunWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
 
-      const workflowRunRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          WorkflowRunWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+        const hasOldRuns = await workflowRunRepository.exists({
+          where: getRunsToCleanFindOptions(),
+        });
 
-      for (const workflowRunToDelete of workflowRunsToDelete) {
-        await workflowRunRepository.delete(workflowRunToDelete.id);
-      }
+        if (hasOldRuns) {
+          return true;
+        }
 
-      this.logger.log(
-        `Deleted ${workflowRunsToDelete.length} workflow runs for workspace ${workspaceId}`,
-      );
-    }, authContext);
+        const totalCompletedRunsCount = await workflowRunRepository.count({
+          where: {
+            status: In([WorkflowRunStatus.COMPLETED, WorkflowRunStatus.FAILED]),
+          },
+        });
+
+        return totalCompletedRunsCount > NUMBER_OF_WORKFLOW_RUNS_TO_KEEP;
+      },
+      authContext,
+    );
   }
 }

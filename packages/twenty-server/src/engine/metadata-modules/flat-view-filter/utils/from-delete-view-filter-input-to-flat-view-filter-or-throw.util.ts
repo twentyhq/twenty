@@ -5,12 +5,13 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter-maps.type';
-import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import {
   ViewFilterException,
   ViewFilterExceptionCode,
 } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
+import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
 
 export const fromDeleteViewFilterInputToFlatViewFilterOrThrow = ({
   deleteViewFilterInput: rawDeleteViewFilterInput,
@@ -18,13 +19,16 @@ export const fromDeleteViewFilterInputToFlatViewFilterOrThrow = ({
 }: {
   deleteViewFilterInput: DeleteViewFilterInput;
   flatViewFilterMaps: FlatViewFilterMaps;
-}): FlatViewFilter => {
+}): UniversalFlatViewFilter => {
   const { id: viewFilterId } = extractAndSanitizeObjectStringFields(
     rawDeleteViewFilterInput,
     ['id'],
   );
 
-  const existingFlatViewFilterToDelete = flatViewFilterMaps.byId[viewFilterId];
+  const existingFlatViewFilterToDelete = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewFilterId,
+    flatEntityMaps: flatViewFilterMaps,
+  });
 
   if (!isDefined(existingFlatViewFilterToDelete)) {
     throw new ViewFilterException(

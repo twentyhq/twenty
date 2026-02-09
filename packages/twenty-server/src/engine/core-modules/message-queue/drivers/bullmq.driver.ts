@@ -1,4 +1,8 @@
-import { Logger, type OnModuleDestroy } from '@nestjs/common';
+import {
+  Logger,
+  type OnModuleDestroy,
+  type OnModuleInit,
+} from '@nestjs/common';
 
 import {
   type JobsOptions,
@@ -29,7 +33,9 @@ export type BullMQDriverOptions = QueueOptions;
 
 const V4_LENGTH = 36;
 
-export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
+export class BullMQDriver
+  implements MessageQueueDriver, OnModuleDestroy, OnModuleInit
+{
   private logger = new Logger(BullMQDriver.name);
   private queueMap: Record<MessageQueue, Queue> = {} as Record<
     MessageQueue,
@@ -44,6 +50,31 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     private options: BullMQDriverOptions,
     private metricsService: MetricsService,
   ) {}
+
+  onModuleInit() {
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_queue_jobs_waiting_total',
+      options: { description: 'Current number of jobs waiting in queue' },
+      callback: async () => {
+        let totalWaiting = 0;
+
+        for (const [queueName, queue] of Object.entries(this.queueMap)) {
+          try {
+            const waitingCount = await queue.count();
+
+            totalWaiting += waitingCount;
+          } catch (error) {
+            this.logger.error(
+              `Failed to collect waiting jobs metrics for queue ${queueName}`,
+              error,
+            );
+          }
+        }
+
+        return totalWaiting;
+      },
+    });
+  }
 
   register(queueName: MessageQueue): void {
     this.queueMap[queueName] = new Queue(queueName, this.options);

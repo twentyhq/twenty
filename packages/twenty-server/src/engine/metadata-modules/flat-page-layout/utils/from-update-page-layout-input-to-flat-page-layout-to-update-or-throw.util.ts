@@ -4,6 +4,9 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_PAGE_LAYOUT_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout/constants/flat-page-layout-editable-properties.constant';
 import { type FlatPageLayoutMaps } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout-maps.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
@@ -22,17 +25,20 @@ export type UpdatePageLayoutInputWithId = {
 export const fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow = ({
   updatePageLayoutInput: rawUpdatePageLayoutInput,
   flatPageLayoutMaps,
+  flatObjectMetadataMaps,
 }: {
   updatePageLayoutInput: UpdatePageLayoutInputWithId;
   flatPageLayoutMaps: FlatPageLayoutMaps;
-}): FlatPageLayout => {
+} & Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>): FlatPageLayout => {
   const { id: pageLayoutToUpdateId } = extractAndSanitizeObjectStringFields(
     rawUpdatePageLayoutInput,
     ['id'],
   );
 
-  const existingFlatPageLayoutToUpdate =
-    flatPageLayoutMaps.byId[pageLayoutToUpdateId];
+  const existingFlatPageLayoutToUpdate = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: pageLayoutToUpdateId,
+    flatEntityMaps: flatPageLayoutMaps,
+  });
 
   if (!isDefined(existingFlatPageLayoutToUpdate)) {
     throw new PageLayoutException(
@@ -46,9 +52,25 @@ export const fromUpdatePageLayoutInputToFlatPageLayoutToUpdateOrThrow = ({
     FLAT_PAGE_LAYOUT_EDITABLE_PROPERTIES,
   );
 
-  return mergeUpdateInExistingRecord({
+  const flatPageLayoutToUpdate = mergeUpdateInExistingRecord({
     existing: existingFlatPageLayoutToUpdate,
     properties: FLAT_PAGE_LAYOUT_EDITABLE_PROPERTIES,
     update: updatedEditableFieldProperties,
   });
+
+  if (updatedEditableFieldProperties.objectMetadataId !== undefined) {
+    const { objectMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'pageLayout',
+        foreignKeyValues: {
+          objectMetadataId: flatPageLayoutToUpdate.objectMetadataId,
+        },
+        flatEntityMaps: { flatObjectMetadataMaps },
+      });
+
+    flatPageLayoutToUpdate.objectMetadataUniversalIdentifier =
+      objectMetadataUniversalIdentifier;
+  }
+
+  return flatPageLayoutToUpdate;
 };

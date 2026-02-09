@@ -1,7 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 
-import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillExceptionCode } from 'src/engine/metadata-modules/skill/skill.exception';
+import { type UniversalFlatSkill } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-skill.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 export const validateSkillNameUniqueness = ({
@@ -9,7 +9,7 @@ export const validateSkillNameUniqueness = ({
   existingFlatSkills,
 }: {
   name: string;
-  existingFlatSkills: FlatSkill[];
+  existingFlatSkills: UniversalFlatSkill[];
 }): FlatEntityValidationError<SkillExceptionCode>[] => {
   const errors: FlatEntityValidationError<SkillExceptionCode>[] = [];
 

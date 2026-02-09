@@ -27,21 +27,25 @@ export class FilesFieldResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadFilesFieldFile(
     @AuthWorkspace()
-    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
+    @Args({
+      name: 'fieldMetadataId',
+      type: () => String,
+      nullable: false,
+    })
+    fieldMetadataId: string,
   ): Promise<FileDTO> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 
-    const fileEntity = await this.filesFieldService.uploadFile({
+    return await this.filesFieldService.uploadFile({
       file: buffer,
       filename,
       declaredMimeType: mimetype,
       workspaceId,
-      applicationId: workspaceCustomApplicationId,
+      fieldMetadataId,
     });
-
-    return fileEntity;
   }
 }

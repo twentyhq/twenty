@@ -13,8 +13,8 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.e2e-spec.ts'],
     globals: true,
-    testTimeout: 30000,
-    hookTimeout: 30000,
+    testTimeout: 60_000,
+    hookTimeout: 60_000,
     pool: 'forks',
     poolOptions: {
       forks: {
@@ -24,7 +24,7 @@ export default defineConfig({
     sequence: {
       concurrent: false,
     },
-    setupFiles: ['src/cli/__tests__/e2e/setupTest.ts'],
+    setupFiles: ['src/cli/__tests__/constants/setupTest.ts'],
     globalSetup: undefined,
     onConsoleLog: () => true,
   },

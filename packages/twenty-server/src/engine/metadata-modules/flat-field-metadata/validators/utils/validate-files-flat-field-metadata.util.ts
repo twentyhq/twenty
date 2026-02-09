@@ -3,25 +3,14 @@ import { FILES_FIELD_MAX_NUMBER_OF_VALUES } from 'twenty-shared/constants';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
 export const validateFilesFlatFieldMetadata = ({
   flatEntityToValidate,
-  additionalCacheDataMaps,
 }: FlatFieldMetadataTypeValidationArgs<FieldMetadataType.FILES>): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
-  const { featureFlagsMap } = additionalCacheDataMaps;
-
-  if (featureFlagsMap[FeatureFlagKey.IS_FILES_FIELD_ENABLED] !== true) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: 'Files field type is not supported',
-      userFriendlyMessage: msg`Files field type is not supported`,
-    });
-  }
 
   if (flatEntityToValidate.isUnique === true) {
     errors.push({
@@ -32,9 +21,9 @@ export const validateFilesFlatFieldMetadata = ({
   }
 
   if (
-    !isDefined(flatEntityToValidate?.settings?.maxNumberOfValues) ||
-    flatEntityToValidate.settings.maxNumberOfValues < 1 ||
-    flatEntityToValidate.settings.maxNumberOfValues >
+    !isDefined(flatEntityToValidate?.universalSettings?.maxNumberOfValues) ||
+    flatEntityToValidate.universalSettings.maxNumberOfValues < 1 ||
+    flatEntityToValidate.universalSettings.maxNumberOfValues >
       FILES_FIELD_MAX_NUMBER_OF_VALUES
   ) {
     errors.push({

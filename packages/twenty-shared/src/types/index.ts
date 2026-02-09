@@ -52,6 +52,7 @@ export type { ConfigVariableValue } from './ConfigVariableValue';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { CrudOperationType } from './CrudOperationType';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
+export { EventLogTable } from './EventLogTable';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
@@ -113,6 +114,7 @@ export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { ModifiedProperties } from './ModifiedProperties';
+export type { NavigateOptions } from './NavigateOptions';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
@@ -131,6 +133,12 @@ export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGra
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { OrderBy } from './OrderBy';
+export type {
+  PageLayoutWidgetGridPosition,
+  PageLayoutWidgetVerticalListPosition,
+  PageLayoutWidgetCanvasPosition,
+  PageLayoutWidgetPosition,
+} from './page-layout/page-layout-widget-position.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
@@ -162,6 +170,7 @@ export type {
   MultiSelectFilter,
   ArrayFilter,
   RawJsonFilter,
+  FilesFilter,
   RichTextV2LeafFilter,
   RichTextV2Filter,
   TSVectorFilter,

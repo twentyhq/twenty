@@ -1,52 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Page layout widget update should succeed should update page layout widget grid position 1`] = `
-{
-  "configuration": {
-    "configurationType": "IFRAME",
-    "url": null,
-  },
-  "createdAt": Any<String>,
-  "deletedAt": null,
-  "gridPosition": {
-    "column": 3,
-    "columnSpan": 4,
-    "row": 2,
-    "rowSpan": 2,
-  },
-  "id": Any<String>,
-  "objectMetadataId": null,
-  "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
-  "type": "IFRAME",
-  "updatedAt": Any<String>,
-}
-`;
-
-exports[`Page layout widget update should succeed should update page layout widget title 1`] = `
-{
-  "configuration": {
-    "configurationType": "IFRAME",
-    "url": null,
-  },
-  "createdAt": Any<String>,
-  "deletedAt": null,
-  "gridPosition": {
-    "column": 0,
-    "columnSpan": 1,
-    "row": 0,
-    "rowSpan": 1,
-  },
-  "id": Any<String>,
-  "objectMetadataId": null,
-  "pageLayoutTabId": Any<String>,
-  "title": "Updated Widget Title",
-  "type": "IFRAME",
-  "updatedAt": Any<String>,
-}
-`;
-
-exports[`Page layout widget update should succeed should update page layout widget to AGGREGATE_CHART configuration 1`] = `
+exports[`Page layout widget update should succeed from a GRAPH widget should update page layout widget to AGGREGATE_CHART configuration 1`] = `
 {
   "configuration": {
     "aggregateFieldMetadataId": Any<String>,
@@ -73,13 +27,13 @@ exports[`Page layout widget update should succeed should update page layout widg
   "id": Any<String>,
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
+  "title": "Original Graph Widget",
   "type": "GRAPH",
   "updatedAt": Any<String>,
 }
 `;
 
-exports[`Page layout widget update should succeed should update page layout widget to GAUGE_CHART configuration 1`] = `
+exports[`Page layout widget update should succeed from a GRAPH widget should update page layout widget to GAUGE_CHART configuration 1`] = `
 {
   "configuration": {
     "aggregateFieldMetadataId": Any<String>,
@@ -103,13 +57,13 @@ exports[`Page layout widget update should succeed should update page layout widg
   "id": Any<String>,
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
+  "title": "Original Graph Widget",
   "type": "GRAPH",
   "updatedAt": Any<String>,
 }
 `;
 
-exports[`Page layout widget update should succeed should update page layout widget to HORIZONTAL BAR_CHART configuration 1`] = `
+exports[`Page layout widget update should succeed from a GRAPH widget should update page layout widget to HORIZONTAL BAR_CHART configuration 1`] = `
 {
   "configuration": {
     "aggregateFieldMetadataId": Any<String>,
@@ -151,36 +105,13 @@ exports[`Page layout widget update should succeed should update page layout widg
   "id": Any<String>,
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
+  "title": "Original Graph Widget",
   "type": "GRAPH",
   "updatedAt": Any<String>,
 }
 `;
 
-exports[`Page layout widget update should succeed should update page layout widget to IFRAME configuration 1`] = `
-{
-  "configuration": {
-    "configurationType": "IFRAME",
-    "url": "https://app.twenty.com/analytics",
-  },
-  "createdAt": Any<String>,
-  "deletedAt": null,
-  "gridPosition": {
-    "column": 0,
-    "columnSpan": 1,
-    "row": 0,
-    "rowSpan": 1,
-  },
-  "id": Any<String>,
-  "objectMetadataId": null,
-  "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
-  "type": "IFRAME",
-  "updatedAt": Any<String>,
-}
-`;
-
-exports[`Page layout widget update should succeed should update page layout widget to LINE_CHART configuration 1`] = `
+exports[`Page layout widget update should succeed from a GRAPH widget should update page layout widget to LINE_CHART configuration 1`] = `
 {
   "configuration": {
     "aggregateFieldMetadataId": Any<String>,
@@ -221,13 +152,13 @@ exports[`Page layout widget update should succeed should update page layout widg
   "id": Any<String>,
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
+  "title": "Original Graph Widget",
   "type": "GRAPH",
   "updatedAt": Any<String>,
 }
 `;
 
-exports[`Page layout widget update should succeed should update page layout widget to PIE_CHART configuration 1`] = `
+exports[`Page layout widget update should succeed from a GRAPH widget should update page layout widget to PIE_CHART configuration 1`] = `
 {
   "configuration": {
     "aggregateFieldMetadataId": Any<String>,
@@ -258,39 +189,13 @@ exports[`Page layout widget update should succeed should update page layout widg
   "id": Any<String>,
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
+  "title": "Original Graph Widget",
   "type": "GRAPH",
   "updatedAt": Any<String>,
 }
 `;
 
-exports[`Page layout widget update should succeed should update page layout widget to STANDALONE_RICH_TEXT configuration 1`] = `
-{
-  "configuration": {
-    "body": {
-      "blocknote": "{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}",
-      "markdown": "# Hello world",
-    },
-    "configurationType": "STANDALONE_RICH_TEXT",
-  },
-  "createdAt": Any<String>,
-  "deletedAt": null,
-  "gridPosition": {
-    "column": 0,
-    "columnSpan": 1,
-    "row": 0,
-    "rowSpan": 1,
-  },
-  "id": Any<String>,
-  "objectMetadataId": null,
-  "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
-  "type": "STANDALONE_RICH_TEXT",
-  "updatedAt": Any<String>,
-}
-`;
-
-exports[`Page layout widget update should succeed should update page layout widget to VERTICAL BAR_CHART configuration 1`] = `
+exports[`Page layout widget update should succeed from a GRAPH widget should update page layout widget to VERTICAL BAR_CHART configuration 1`] = `
 {
   "configuration": {
     "aggregateFieldMetadataId": Any<String>,
@@ -332,27 +237,89 @@ exports[`Page layout widget update should succeed should update page layout widg
   "id": Any<String>,
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
-  "title": "Original Widget Title",
+  "title": "Original Graph Widget",
   "type": "GRAPH",
   "updatedAt": Any<String>,
 }
 `;
 
-exports[`Page layout widget update should succeed should update page layout widget type 1`] = `
+exports[`Page layout widget update should succeed from a STANDALONE_RICH_TEXT widget should update page layout widget to STANDALONE_RICH_TEXT configuration 1`] = `
 {
   "configuration": {
-    "aggregateFieldMetadataId": Any<String>,
-    "aggregateOperation": "COUNT",
-    "configurationType": "AGGREGATE_CHART",
-    "description": "Count of all records",
-    "displayDataLabel": true,
-    "filter": null,
-    "firstDayOfTheWeek": 1,
-    "format": "0,0",
-    "label": "Total Records",
-    "prefix": null,
-    "suffix": null,
-    "timezone": "UTC",
+    "body": {
+      "blocknote": "{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}",
+      "markdown": "# Hello world",
+    },
+    "configurationType": "STANDALONE_RICH_TEXT",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Original Rich Text Widget",
+  "type": "STANDALONE_RICH_TEXT",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget update should succeed from an IFRAME widget should update page layout widget grid position 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": "https://example.com/dashboard",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 3,
+    "columnSpan": 4,
+    "row": 2,
+    "rowSpan": 2,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Original Widget Title",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget update should succeed from an IFRAME widget should update page layout widget title 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": "https://example.com/dashboard",
+  },
+  "createdAt": Any<String>,
+  "deletedAt": null,
+  "gridPosition": {
+    "column": 0,
+    "columnSpan": 1,
+    "row": 0,
+    "rowSpan": 1,
+  },
+  "id": Any<String>,
+  "objectMetadataId": null,
+  "pageLayoutTabId": Any<String>,
+  "title": "Updated Widget Title",
+  "type": "IFRAME",
+  "updatedAt": Any<String>,
+}
+`;
+
+exports[`Page layout widget update should succeed from an IFRAME widget should update page layout widget to IFRAME configuration 1`] = `
+{
+  "configuration": {
+    "configurationType": "IFRAME",
+    "url": "https://app.twenty.com/analytics",
   },
   "createdAt": Any<String>,
   "deletedAt": null,
@@ -366,7 +333,7 @@ exports[`Page layout widget update should succeed should update page layout widg
   "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
   "title": "Original Widget Title",
-  "type": "GRAPH",
+  "type": "IFRAME",
   "updatedAt": Any<String>,
 }
 `;

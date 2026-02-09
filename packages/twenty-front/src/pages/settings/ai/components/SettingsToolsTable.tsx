@@ -5,7 +5,7 @@ import Skeleton from 'react-loading-skeleton';
 import { useRecoilValue } from 'recoil';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { usePersistLogicFunction } from '@/settings/logic-functions/hooks/usePersistLogicFunction';
+import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
 import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -131,7 +131,7 @@ export const SettingsToolsTable = () => {
       });
 
       if (result.status === 'successful' && isDefined(result.response?.data)) {
-        const newFunction = result.response.data.createOneLogicFunction;
+        const newFunction = result.response.data.createDefaultLogicFunction;
         enqueueSuccessSnackBar({ message: t`Tool created` });
 
         // Navigate to the logic function detail page

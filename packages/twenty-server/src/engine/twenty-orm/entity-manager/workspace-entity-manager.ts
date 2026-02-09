@@ -36,10 +36,11 @@ import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -1222,7 +1223,6 @@ export class WorkspaceEntityManager extends EntityManager {
 
       let filesFieldDiffByEntityIndex = null;
       let filesFieldFileIds = null;
-      let fileIdToApplicationId = new Map<string, string>();
 
       filesFieldDiffByEntityIndex =
         filesFieldSync.computeFilesFieldDiffBeforeUpsert(
@@ -1240,7 +1240,6 @@ export class WorkspaceEntityManager extends EntityManager {
         });
 
         filesFieldFileIds = result.fileIds;
-        fileIdToApplicationId = result.fileIdToApplicationId;
 
         entityWithConnectedRelations.splice(
           0,
@@ -1285,10 +1284,7 @@ export class WorkspaceEntityManager extends EntityManager {
         .finally(() => queryRunnerForEntityPersistExecutor.release());
 
       if (isDefined(filesFieldFileIds)) {
-        await filesFieldSync.updateFileEntityRecords(
-          filesFieldFileIds,
-          fileIdToApplicationId,
-        );
+        await filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
       const resultArray = Array.isArray(result) ? result : [result];
@@ -1390,8 +1386,10 @@ export class WorkspaceEntityManager extends EntityManager {
       Object.entries(restrictedFields)
         .filter(([_, fieldPermissions]) => fieldPermissions.canRead === false)
         .map(([fieldMetadataId]) => {
-          const fieldMetadata =
-            this.internalContext.flatFieldMetadataMaps.byId[fieldMetadataId];
+          const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: fieldMetadataId,
+            flatEntityMaps: this.internalContext.flatFieldMetadataMaps,
+          });
 
           if (!isDefined(fieldMetadata)) {
             throw new InternalServerError(

@@ -4,6 +4,7 @@ export enum ModelProvider {
   ANTHROPIC = 'anthropic',
   OPENAI_COMPATIBLE = 'open_ai_compatible',
   XAI = 'xai',
+  GROQ = 'groq',
 }
 
 export const DEFAULT_FAST_MODEL = 'default-fast-model' as const;
@@ -32,6 +33,8 @@ export type ModelId =
   | 'grok-3-mini'
   | 'grok-4'
   | 'grok-4-1-fast-reasoning'
+  // Groq models
+  | 'openai/gpt-oss-120b'
   | string; // Allow custom model names
 
 export type SupportedFileType =

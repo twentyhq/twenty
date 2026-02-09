@@ -7,12 +7,14 @@ import {
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FLAT_VIEW_GROUP_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-view-group/constants/flat-view-group-editable-properties.constant';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
+import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export const fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow = ({
@@ -21,15 +23,17 @@ export const fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow = ({
 }: {
   updateViewGroupInput: UpdateViewGroupInput;
   flatViewGroupMaps: FlatEntityMaps<FlatViewGroup>;
-}): FlatViewGroup => {
+}): UniversalFlatViewGroup => {
   const { id: viewGroupToUpdateId, update } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateViewGroupInput,
       ['id'],
     );
 
-  const existingFlatViewGroupToUpdate =
-    flatViewGroupMaps.byId[viewGroupToUpdateId];
+  const existingFlatViewGroupToUpdate = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: viewGroupToUpdateId,
+    flatEntityMaps: flatViewGroupMaps,
+  });
 
   if (!isDefined(existingFlatViewGroupToUpdate)) {
     throw new ViewGroupException(

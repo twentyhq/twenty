@@ -3,7 +3,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 
 export const createEmptyFlatEntityMaps = () =>
   ({
-    byId: {},
-    idByUniversalIdentifier: {},
+    byUniversalIdentifier: {},
+    universalIdentifierById: {},
     universalIdentifiersByApplicationId: {},
   }) as const satisfies FlatEntityMaps<SyncableFlatEntity>;

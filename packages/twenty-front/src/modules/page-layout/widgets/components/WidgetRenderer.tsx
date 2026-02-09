@@ -29,7 +29,11 @@ import styled from '@emotion/styled';
 import { type MouseEvent } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IconLock } from 'twenty-ui/display';
-import { PageLayoutType, WidgetType } from '~/generated/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from '~/generated/graphql';
 
 const StyledNoAccessContainer = styled.div`
   align-items: center;
@@ -87,7 +91,8 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
   const isRichTextWidget = widget.type === WidgetType.STANDALONE_RICH_TEXT;
   const hideRichTextHeader = isRichTextWidget && !isPageLayoutInEditMode;
 
-  const showHeader = layoutMode !== 'canvas' && !hideRichTextHeader;
+  const showHeader =
+    layoutMode !== PageLayoutTabLayoutMode.CANVAS && !hideRichTextHeader;
 
   const handleClick = () => {
     handleEditWidget({

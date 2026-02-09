@@ -15,9 +15,8 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "testFilesForFailure",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -53,9 +52,8 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "testFilesForFailure",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -91,9 +89,8 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "testFilesForFailure",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",

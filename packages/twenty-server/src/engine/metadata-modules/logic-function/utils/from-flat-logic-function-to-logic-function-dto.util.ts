@@ -8,6 +8,7 @@ export const fromFlatLogicFunctionToLogicFunctionDto = ({
 }): LogicFunctionDTO => {
   return {
     id: flatLogicFunction.id,
+    universalIdentifier: flatLogicFunction.universalIdentifier,
     name: flatLogicFunction.name,
     description: flatLogicFunction.description ?? undefined,
     runtime: flatLogicFunction.runtime,

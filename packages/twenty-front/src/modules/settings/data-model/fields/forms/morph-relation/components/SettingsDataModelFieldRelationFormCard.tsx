@@ -84,6 +84,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
               type: FieldMetadataType.RELATION,
               settings: {
                 relationType,
+                joinColumnName: 'previewJoinColumnId',
               },
             }}
             shrink
@@ -107,6 +108,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
               type: FieldMetadataType.RELATION,
               settings: {
                 relationType: oppositeRelationType,
+                joinColumnName: 'previewJoinColumnId',
               },
             }}
             shrink

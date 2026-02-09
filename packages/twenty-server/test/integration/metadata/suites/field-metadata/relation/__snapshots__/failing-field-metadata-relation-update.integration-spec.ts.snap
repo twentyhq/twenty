@@ -11,21 +11,14 @@ exports[`Field metadata relation update should fail relation when name is not in
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Name should be in camelCase",
-                "userFriendlyMessage": "Name should be in camelCase",
-                "value": "New Name",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
                 "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
                 "value": "New Name",
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "name": "New Name",
-              "objectMetadataId": Any<String>,
+              "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",
@@ -63,9 +56,8 @@ exports[`Field metadata relation update should fail relation when updating ONE_T
               },
             ],
             "flatEntityMinimalInformation": {
-              "id": Any<String>,
               "name": "staff",
-              "objectMetadataId": Any<String>,
+              "objectMetadataUniversalIdentifier": Any<String>,
               "universalIdentifier": Any<String>,
             },
             "metadataName": "fieldMetadata",

@@ -6,7 +6,7 @@ exports[`Create input validation - DATE Gql create input - failure DATE - should
 
 exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":{}} 1`] = `"Invalid value {} for date or date-time field "dateField""`;
 
-exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":1} 1`] = `"invalid input syntax for type date: "1""`;
+exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":1} 1`] = `"Data validation error."`;
 
 exports[`Create input validation - DATE Gql create input - failure DATE - should fail with : {"dateField":true} 1`] = `"Invalid value true for date or date-time field "dateField""`;
 
@@ -16,6 +16,6 @@ exports[`Create input validation - DATE Rest create input - failure DATE - shoul
 
 exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":{}} 1`] = `"["Invalid value {} for date or date-time field \\"dateField\\""]"`;
 
-exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":1} 1`] = `"["invalid input syntax for type date: \\"1\\""]"`;
+exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":1} 1`] = `"["Data validation error."]"`;
 
 exports[`Create input validation - DATE Rest create input - failure DATE - should fail with : {"dateField":true} 1`] = `"["Invalid value true for date or date-time field \\"dateField\\""]"`;
