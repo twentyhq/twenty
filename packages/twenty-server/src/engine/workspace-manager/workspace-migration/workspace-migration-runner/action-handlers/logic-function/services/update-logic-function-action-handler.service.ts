@@ -68,7 +68,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     flatLogicFunction: FlatLogicFunction;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const builtExists = await this.fileStorageService.checkFileExists_v2({
+    const builtExists = await this.fileStorageService.checkFileExists({
       workspaceId: flatLogicFunction.workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,

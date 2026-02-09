@@ -180,7 +180,7 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
       toDelete: false,
     };
 
-    const packageJsonFile = await this.fileStorageService.writeFile_v2({
+    const packageJsonFile = await this.fileStorageService.writeFile({
       sourceFile: packageJsonContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
@@ -190,7 +190,7 @@ export class BackfillApplicationPackageFilesCommand extends ActiveOrSuspendedWor
       settings: dependencyFileSettings,
     });
 
-    const yarnLockFile = await this.fileStorageService.writeFile_v2({
+    const yarnLockFile = await this.fileStorageService.writeFile({
       sourceFile: layer.yarnLock,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,

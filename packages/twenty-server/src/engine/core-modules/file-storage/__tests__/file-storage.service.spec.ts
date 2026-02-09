@@ -74,7 +74,7 @@ describe('FileStorageService', () => {
       mockFileStorageDriverFactory.getCurrentDriver.mockReturnValue(mockDriver);
     });
 
-    describe('writeFile', () => {
+    describe('writeFileLegacy', () => {
       it('should delegate to the current driver', async () => {
         const writeParams = {
           file: Buffer.from('test content'),
@@ -85,7 +85,7 @@ describe('FileStorageService', () => {
 
         mockDriver.writeFile.mockResolvedValue(undefined);
 
-        await service.writeFile(writeParams);
+        await service.writeFileLegacy(writeParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.writeFile).toHaveBeenCalledWith({
@@ -107,14 +107,14 @@ describe('FileStorageService', () => {
 
         mockDriver.writeFile.mockRejectedValue(error);
 
-        await expect(service.writeFile(writeParams)).rejects.toThrow(
+        await expect(service.writeFileLegacy(writeParams)).rejects.toThrow(
           'Write failed',
         );
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
       });
     });
 
-    describe('readFile', () => {
+    describe('readFileLegacy', () => {
       it('should delegate to the current driver', async () => {
         const readParams = {
           filePath: 'documents/test.txt',
@@ -124,7 +124,7 @@ describe('FileStorageService', () => {
 
         mockDriver.readFile.mockResolvedValue(mockStream);
 
-        const result = await service.readFile(readParams);
+        const result = await service.readFileLegacy(readParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.readFile).toHaveBeenCalledWith({
@@ -142,14 +142,14 @@ describe('FileStorageService', () => {
 
         mockDriver.readFile.mockRejectedValue(error);
 
-        await expect(service.readFile(readParams)).rejects.toThrow(
+        await expect(service.readFileLegacy(readParams)).rejects.toThrow(
           'Read failed',
         );
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
       });
     });
 
-    describe('delete', () => {
+    describe('deleteLegacy', () => {
       it('should delegate to the current driver with filename', async () => {
         const deleteParams = {
           folderPath: 'documents',
@@ -158,7 +158,7 @@ describe('FileStorageService', () => {
 
         mockDriver.delete.mockResolvedValue(undefined);
 
-        await service.delete(deleteParams);
+        await service.deleteLegacy(deleteParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.delete).toHaveBeenCalledWith(deleteParams);
@@ -171,7 +171,7 @@ describe('FileStorageService', () => {
 
         mockDriver.delete.mockResolvedValue(undefined);
 
-        await service.delete(deleteParams);
+        await service.deleteLegacy(deleteParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.delete).toHaveBeenCalledWith(deleteParams);
@@ -187,7 +187,7 @@ describe('FileStorageService', () => {
 
         mockDriver.delete.mockRejectedValue(error);
 
-        await expect(service.delete(deleteParams)).rejects.toThrow(
+        await expect(service.deleteLegacy(deleteParams)).rejects.toThrow(
           'Delete failed',
         );
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
@@ -195,38 +195,7 @@ describe('FileStorageService', () => {
       });
     });
 
-    describe('move', () => {
-      it('should delegate to the current driver', async () => {
-        const moveParams = {
-          from: { folderPath: 'documents', filename: 'test.txt' },
-          to: { folderPath: 'archive', filename: 'archived-test.txt' },
-        };
-
-        mockDriver.move.mockResolvedValue(undefined);
-
-        await service.move(moveParams);
-
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.move).toHaveBeenCalledWith(moveParams);
-      });
-
-      it('should handle move errors', async () => {
-        const moveParams = {
-          from: { folderPath: 'documents', filename: 'test.txt' },
-          to: { folderPath: 'archive', filename: 'archived-test.txt' },
-        };
-
-        const error = new Error('Move failed');
-
-        mockDriver.move.mockRejectedValue(error);
-
-        await expect(service.move(moveParams)).rejects.toThrow('Move failed');
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.move).toHaveBeenCalledWith(moveParams);
-      });
-    });
-
-    describe('copy', () => {
+    describe('copyLegacy', () => {
       it('should delegate to the current driver', async () => {
         const copyParams = {
           from: { folderPath: 'documents', filename: 'test.txt' },
@@ -235,7 +204,7 @@ describe('FileStorageService', () => {
 
         mockDriver.copy.mockResolvedValue(undefined);
 
-        await service.copy(copyParams);
+        await service.copyLegacy(copyParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.copy).toHaveBeenCalledWith(copyParams);
@@ -251,59 +220,15 @@ describe('FileStorageService', () => {
 
         mockDriver.copy.mockRejectedValue(error);
 
-        await expect(service.copy(copyParams)).rejects.toThrow('Copy failed');
+        await expect(service.copyLegacy(copyParams)).rejects.toThrow(
+          'Copy failed',
+        );
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.copy).toHaveBeenCalledWith(copyParams);
       });
     });
 
-    describe('checkFileExists', () => {
-      it('should delegate to the current driver and return true', async () => {
-        const checkParams = {
-          filePath: 'documents/test.txt',
-        };
-
-        mockDriver.checkFileExists.mockResolvedValue(true);
-
-        const result = await service.checkFileExists(checkParams);
-
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.checkFileExists).toHaveBeenCalledWith(checkParams);
-        expect(result).toBe(true);
-      });
-
-      it('should delegate to the current driver and return false', async () => {
-        const checkParams = {
-          filePath: 'documents/nonexistent.txt',
-        };
-
-        mockDriver.checkFileExists.mockResolvedValue(false);
-
-        const result = await service.checkFileExists(checkParams);
-
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.checkFileExists).toHaveBeenCalledWith(checkParams);
-        expect(result).toBe(false);
-      });
-
-      it('should handle checkFileExists errors', async () => {
-        const checkParams = {
-          filePath: 'documents/test.txt',
-        };
-
-        const error = new Error('Check failed');
-
-        mockDriver.checkFileExists.mockRejectedValue(error);
-
-        await expect(service.checkFileExists(checkParams)).rejects.toThrow(
-          'Check failed',
-        );
-        expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
-        expect(mockDriver.checkFileExists).toHaveBeenCalledWith(checkParams);
-      });
-    });
-
-    describe('checkFolderExists', () => {
+    describe('checkFolderExistsLegacy', () => {
       it('should delegate to the current driver and return true', async () => {
         const checkParams = {
           folderPath: 'documents',
@@ -311,7 +236,7 @@ describe('FileStorageService', () => {
 
         mockDriver.checkFolderExists.mockResolvedValue(true);
 
-        const result = await service.checkFolderExists(checkParams);
+        const result = await service.checkFolderExistsLegacy(checkParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.checkFolderExists).toHaveBeenCalledWith(checkParams);
@@ -325,7 +250,7 @@ describe('FileStorageService', () => {
 
         mockDriver.checkFolderExists.mockResolvedValue(false);
 
-        const result = await service.checkFolderExists(checkParams);
+        const result = await service.checkFolderExistsLegacy(checkParams);
 
         expect(fileStorageDriverFactory.getCurrentDriver).toHaveBeenCalled();
         expect(mockDriver.checkFolderExists).toHaveBeenCalledWith(checkParams);

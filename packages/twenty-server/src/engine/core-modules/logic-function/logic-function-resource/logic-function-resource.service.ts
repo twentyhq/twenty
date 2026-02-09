@@ -105,7 +105,7 @@ export class LogicFunctionResourceService {
     const sourceFile = sourceFiles[0];
     const builtFile = builtFiles[0];
 
-    await this.fileStorageService.writeFile_v2({
+    await this.fileStorageService.writeFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
@@ -118,7 +118,7 @@ export class LogicFunctionResourceService {
       },
     });
 
-    await this.fileStorageService.writeFile_v2({
+    await this.fileStorageService.writeFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
@@ -159,7 +159,7 @@ export class LogicFunctionResourceService {
 
       const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
 
-      await this.fileStorageService.uploadFolder_v2({
+      await this.fileStorageService.uploadFolder({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
@@ -184,7 +184,7 @@ export class LogicFunctionResourceService {
 
       const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
 
-      await this.fileStorageService.downloadFolder_v2({
+      await this.fileStorageService.downloadFolder({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
@@ -209,7 +209,7 @@ export class LogicFunctionResourceService {
 
       const builtFile = await fs.readFile(builtBundleFilePath, 'utf-8');
 
-      await this.fileStorageService.writeFile_v2({
+      await this.fileStorageService.writeFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
@@ -238,7 +238,7 @@ export class LogicFunctionResourceService {
     const baseFolderPath = getLogicFunctionBaseFolderPath(sourceHandlerPath);
 
     try {
-      return await this.fileStorageService.readFolder_v2({
+      return await this.fileStorageService.readFolder({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
@@ -275,7 +275,7 @@ export class LogicFunctionResourceService {
     const toBuiltBaseFolderPath =
       getLogicFunctionBaseFolderPath(toBuiltHandlerPath);
 
-    await this.fileStorageService.copy_v2({
+    await this.fileStorageService.copy({
       from: {
         workspaceId,
         applicationUniversalIdentifier,
@@ -290,7 +290,7 @@ export class LogicFunctionResourceService {
       },
     });
 
-    await this.fileStorageService.copy_v2({
+    await this.fileStorageService.copy({
       from: {
         workspaceId,
         applicationUniversalIdentifier,
@@ -316,14 +316,14 @@ export class LogicFunctionResourceService {
     inMemoryFolderPath: string;
   }) {
     await Promise.all([
-      this.fileStorageService.downloadFile_v2({
+      this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Dependencies,
         resourcePath: 'package.json',
         localPath: join(inMemoryFolderPath, 'package.json'),
       }),
-      this.fileStorageService.downloadFile_v2({
+      this.fileStorageService.downloadFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Dependencies,
@@ -344,7 +344,7 @@ export class LogicFunctionResourceService {
   }): Promise<string> {
     return (
       await streamToBuffer(
-        await this.fileStorageService.readFile_v2({
+        await this.fileStorageService.readFile({
           workspaceId: workspaceId,
           applicationUniversalIdentifier,
           fileFolder: FileFolder.BuiltLogicFunction,
@@ -365,7 +365,7 @@ export class LogicFunctionResourceService {
     applicationUniversalIdentifier: string;
     inMemoryDestinationPath: string;
   }): Promise<void> {
-    await this.fileStorageService.downloadFile_v2({
+    await this.fileStorageService.downloadFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,

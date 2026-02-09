@@ -359,7 +359,7 @@ export class ApplicationService {
       defaultPackageFields.yarnLockContent,
     );
 
-    const packageJsonFile = await this.fileStorageService.writeFile_v2({
+    const packageJsonFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.packageJsonContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
@@ -370,7 +370,7 @@ export class ApplicationService {
       queryRunner,
     });
 
-    const yarnLockFile = await this.fileStorageService.writeFile_v2({
+    const yarnLockFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.yarnLockContent,
       mimeType: undefined,
       fileFolder: FileFolder.Dependencies,

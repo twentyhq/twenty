@@ -206,7 +206,7 @@ export class ApplicationResolver {
 
     const buffer = await streamToBuffer(createReadStream());
 
-    return await this.fileStorageService.writeFile_v2({
+    return await this.fileStorageService.writeFile({
       sourceFile: buffer,
       mimeType: mimetype,
       fileFolder,
