@@ -8,6 +8,7 @@ import {
   IsString,
   IsUUID,
   Matches,
+  Max,
   Min,
 } from 'class-validator';
 
@@ -100,6 +101,13 @@ export class UpdateWorkspaceInput {
   trashRetentionDays?: number;
 
   @Field({ nullable: true })
+  @IsInt()
+  @Min(30) // Minimum 30 days retention for audit compliance
+  @Max(1095) // Maximum 3 years (matches ClickHouse table-level TTL)
+  @IsOptional()
+  eventLogRetentionDays?: number;
+
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   fastModel?: string;
@@ -108,6 +116,11 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   smartModel?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  aiAdditionalInstructions?: string;
 
   @Field(() => [String], { nullable: true })
   @IsArray()

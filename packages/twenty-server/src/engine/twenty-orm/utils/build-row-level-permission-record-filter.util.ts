@@ -21,6 +21,7 @@ import {
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -52,7 +53,9 @@ export const buildRowLevelPermissionRecordFilter = ({
     return null;
   }
 
-  const predicates = Object.values(flatRowLevelPermissionPredicateMaps.byId)
+  const predicates = Object.values(
+    flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
+  )
     .filter(isDefined)
     .filter(
       (predicate) =>
@@ -65,13 +68,14 @@ export const buildRowLevelPermissionRecordFilter = ({
     return null;
   }
 
-  const fieldMetadataMapById = flatFieldMetadataMaps.byId;
-
   const workspaceMember = authContext.workspaceMember;
 
   const recordFilters = predicates
     .map((predicate) => {
-      const fieldMetadata = fieldMetadataMapById[predicate.fieldMetadataId];
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: predicate.fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
 
       if (!isDefined(fieldMetadata)) {
         throw new PermissionsException(
@@ -85,8 +89,12 @@ export const buildRowLevelPermissionRecordFilter = ({
       let predicateValue: RowLevelPermissionPredicateValue = predicate.value;
 
       if (isDefined(workspaceMemberFieldMetadataId)) {
-        const workspaceMemberFieldMetadata =
-          fieldMetadataMapById[workspaceMemberFieldMetadataId];
+        const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps(
+          {
+            flatEntityId: workspaceMemberFieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          },
+        );
 
         if (!isDefined(workspaceMemberFieldMetadata)) {
           throw new PermissionsException(
@@ -162,29 +170,34 @@ export const buildRowLevelPermissionRecordFilter = ({
     })
     .filter(isDefined);
 
-  const predicateGroupsById = flatRowLevelPermissionPredicateGroupMaps.byId;
-
   const relevantGroupIds = new Set<string>();
 
   for (const predicate of predicates) {
     if (isDefined(predicate.rowLevelPermissionPredicateGroupId)) {
       relevantGroupIds.add(predicate.rowLevelPermissionPredicateGroupId);
 
-      let parentGroupId =
-        predicateGroupsById[predicate.rowLevelPermissionPredicateGroupId]
-          ?.parentRowLevelPermissionPredicateGroupId;
+      let parentGroupId = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: predicate.rowLevelPermissionPredicateGroupId,
+        flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+      })?.parentRowLevelPermissionPredicateGroupId;
 
       while (isDefined(parentGroupId) && !relevantGroupIds.has(parentGroupId)) {
         relevantGroupIds.add(parentGroupId);
-        parentGroupId =
-          predicateGroupsById[parentGroupId]
-            ?.parentRowLevelPermissionPredicateGroupId;
+        parentGroupId = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: parentGroupId,
+          flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+        })?.parentRowLevelPermissionPredicateGroupId;
       }
     }
   }
 
   const recordFilterGroups: RecordFilterGroup[] = [...relevantGroupIds]
-    .map((groupId) => predicateGroupsById[groupId])
+    .map((groupId) =>
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: groupId,
+        flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
+      }),
+    )
     .filter(isDefined)
     .filter(
       (predicateGroup) =>
@@ -203,7 +216,12 @@ export const buildRowLevelPermissionRecordFilter = ({
     }));
 
   const fieldMetadataItems = predicates
-    .map((predicate) => fieldMetadataMapById[predicate.fieldMetadataId])
+    .map((predicate) =>
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: predicate.fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
+    )
     .filter(isDefined)
     .map((field) => ({
       id: field.id,

@@ -1,4 +1,8 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
 import { buildStandardFlatAgentMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/build-standard-flat-agent-metadata-maps.util';
 import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util';
@@ -16,6 +20,7 @@ import { buildStandardFlatViewFieldMetadataMaps } from 'src/engine/workspace-man
 import { buildStandardFlatViewFilterMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-filter/build-standard-flat-view-filter-metadata-maps.util';
 import { buildStandardFlatViewGroupMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-group/build-standard-flat-view-group-metadata-maps.util';
 import { buildStandardFlatViewMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/build-standard-flat-view-metadata-maps.util';
+import { type IdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 
 export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
   now: string;
@@ -29,7 +34,11 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   workspaceId,
   twentyStandardApplicationId,
   shouldIncludeRecordPageLayouts,
-}: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): TwentyStandardAllFlatEntityMaps => {
+}: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): {
+  allFlatEntityMaps: TwentyStandardAllFlatEntityMaps;
+  // TODO remove once all metadatas has fully been universal migrated
+  idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
+} => {
   const standardObjectMetadataRelatedEntityIds =
     getStandardObjectMetadataRelatedEntityIds();
 
@@ -177,7 +186,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     },
   });
 
-  return {
+  const allFlatEntityMaps: TwentyStandardAllFlatEntityMaps = {
     flatViewFieldMaps,
     flatViewFilterMaps,
     flatViewGroupMaps,
@@ -192,5 +201,29 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatPageLayoutMaps,
     flatPageLayoutTabMaps,
     flatPageLayoutWidgetMaps,
+  };
+
+  const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =
+    {};
+
+  for (const metadataName of TWENTY_STANDARD_ALL_METADATA_NAME) {
+    const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
+    const flatEntityMaps = allFlatEntityMaps[flatEntityMapsKey];
+
+    const idByUniversalIdentifier = Object.fromEntries(
+      Object.entries(flatEntityMaps.universalIdentifierById)
+        .filter((entry): entry is [string, string] => isDefined(entry[1]))
+        .map(([id, universalIdentifier]) => [universalIdentifier, id]),
+    );
+
+    if (Object.keys(idByUniversalIdentifier).length > 0) {
+      idByUniversalIdentifierByMetadataName[metadataName] =
+        idByUniversalIdentifier;
+    }
+  }
+
+  return {
+    allFlatEntityMaps,
+    idByUniversalIdentifierByMetadataName,
   };
 };

@@ -58,14 +58,38 @@ describe('BarChartDataService', () => {
     mockExecuteGroupByQuery = jest.fn();
     mockGetOrRecomputeManyOrAllFlatEntityMaps = jest.fn().mockResolvedValue({
       flatObjectMetadataMaps: {
-        byId: { [objectMetadataId]: mockObjectMetadata },
+        byUniversalIdentifier: {
+          'test-object-universal-id': {
+            ...mockObjectMetadata,
+            universalIdentifier: 'test-object-universal-id',
+          },
+        },
+        universalIdentifierById: {
+          [objectMetadataId]: 'test-object-universal-id',
+        },
+        universalIdentifiersByApplicationId: {},
       },
       flatFieldMetadataMaps: {
-        byId: {
-          [mockGroupByField.id]: mockGroupByField,
-          [mockAggregateField.id]: mockAggregateField,
-          [mockSelectField.id]: mockSelectField,
+        byUniversalIdentifier: {
+          'group-by-field-universal-id': {
+            ...mockGroupByField,
+            universalIdentifier: 'group-by-field-universal-id',
+          },
+          'aggregate-field-universal-id': {
+            ...mockAggregateField,
+            universalIdentifier: 'aggregate-field-universal-id',
+          },
+          'select-field-universal-id': {
+            ...mockSelectField,
+            universalIdentifier: 'select-field-universal-id',
+          },
         },
+        universalIdentifierById: {
+          [mockGroupByField.id]: 'group-by-field-universal-id',
+          [mockAggregateField.id]: 'aggregate-field-universal-id',
+          [mockSelectField.id]: 'select-field-universal-id',
+        },
+        universalIdentifiersByApplicationId: {},
       },
     });
 
@@ -294,14 +318,38 @@ describe('BarChartDataService', () => {
     beforeEach(() => {
       mockGetOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue({
         flatObjectMetadataMaps: {
-          byId: { [objectMetadataId]: mockObjectMetadata },
+          byUniversalIdentifier: {
+            'test-object-universal-id': {
+              ...mockObjectMetadata,
+              universalIdentifier: 'test-object-universal-id',
+            },
+          },
+          universalIdentifierById: {
+            [objectMetadataId]: 'test-object-universal-id',
+          },
+          universalIdentifiersByApplicationId: {},
         },
         flatFieldMetadataMaps: {
-          byId: {
-            [mockGroupByField.id]: mockGroupByField,
-            [mockAggregateField.id]: mockAggregateField,
-            [mockSelectField.id]: mockSelectField,
+          byUniversalIdentifier: {
+            'group-by-field-universal-id': {
+              ...mockGroupByField,
+              universalIdentifier: 'group-by-field-universal-id',
+            },
+            'aggregate-field-universal-id': {
+              ...mockAggregateField,
+              universalIdentifier: 'aggregate-field-universal-id',
+            },
+            'select-field-universal-id': {
+              ...mockSelectField,
+              universalIdentifier: 'select-field-universal-id',
+            },
           },
+          universalIdentifierById: {
+            [mockGroupByField.id]: 'group-by-field-universal-id',
+            [mockAggregateField.id]: 'aggregate-field-universal-id',
+            [mockSelectField.id]: 'select-field-universal-id',
+          },
+          universalIdentifiersByApplicationId: {},
         },
       });
     });

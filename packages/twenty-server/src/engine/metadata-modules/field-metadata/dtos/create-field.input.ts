@@ -29,9 +29,6 @@ export class CreateFieldInput extends OmitType(
   universalIdentifier?: string;
 
   @HideField()
-  standardId?: string;
-
-  @HideField()
   applicationId?: string;
 
   @Field(() => Boolean, { nullable: true })

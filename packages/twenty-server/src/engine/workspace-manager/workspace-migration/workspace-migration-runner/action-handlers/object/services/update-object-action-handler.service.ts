@@ -4,7 +4,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-update.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
@@ -12,10 +19,14 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
-import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+import {
+  type FlatUpdateObjectAction,
+  type UniversalUpdateObjectAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+import {
+  type WorkspaceMigrationActionRunnerArgs,
+  type WorkspaceMigrationActionRunnerContext,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
   collectEnumOperationsForObject,
@@ -34,10 +45,52 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     super();
   }
 
+  override async transpileUniversalActionToFlatAction(
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateObjectAction>,
+  ): Promise<FlatUpdateObjectAction> {
+    const { action, allFlatEntityMaps } = context;
+
+    const flatObjectMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    // TODO remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+    const { labelIdentifierFieldMetadataUniversalIdentifier, ...restUpdate } =
+      action.update;
+
+    const transpiledUpdate: FlatEntityUpdate<'objectMetadata'> = {
+      ...restUpdate,
+    };
+
+    if (isDefined(labelIdentifierFieldMetadataUniversalIdentifier)) {
+      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+        universalIdentifier: labelIdentifierFieldMetadataUniversalIdentifier,
+      });
+
+      if (!isDefined(flatFieldMetadata)) {
+        throw new FlatEntityMapsException(
+          `Could not resolve labelIdentifierFieldMetadataUniversalIdentifier to labelIdentifierFieldMetadataId: no fieldMetadata found for universal identifier ${labelIdentifierFieldMetadataUniversalIdentifier}`,
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
+      transpiledUpdate.labelIdentifierFieldMetadataId = flatFieldMetadata.id;
+    }
+
+    return {
+      type: 'update',
+      metadataName: 'objectMetadata',
+      entityId: flatObjectMetadata.id,
+      update: transpiledUpdate,
+    };
+  }
+
   async executeForMetadata(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateObjectAction>,
   ): Promise<void> {
-    const { action, queryRunner } = context;
+    const { flatAction, queryRunner } = context;
 
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
@@ -45,21 +98,21 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       );
 
     await objectMetadataRepository.update(
-      action.entityId,
-      fromFlatEntityPropertiesUpdatesToPartialFlatEntity(action),
+      flatAction.entityId,
+      flatAction.update,
     );
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>,
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateObjectAction>,
   ): Promise<void> {
     const {
-      action,
+      flatAction,
       queryRunner,
       allFlatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
       workspaceId,
     } = context;
-    const { entityId, updates } = action;
+    const { entityId, update } = flatAction;
 
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
@@ -69,21 +122,16 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     const { schemaName, tableName: currentTableName } =
       getWorkspaceSchemaContextForMigration({
         workspaceId,
-        flatObjectMetadata: flatObjectMetadata,
+        objectMetadata: flatObjectMetadata,
       });
 
-    const nameSingularUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates: updates,
-      property: 'nameSingular',
-    });
-
-    if (isDefined(nameSingularUpdate)) {
-      const updatedObjectMetadata: FlatObjectMetadata = {
+    if (isDefined(update.nameSingular)) {
+      const updatedFlatObjectMetadata: FlatObjectMetadata = {
         ...flatObjectMetadata,
-        nameSingular: nameSingularUpdate.to,
+        nameSingular: update.nameSingular,
       };
 
-      const newTableName = computeObjectTargetTable(updatedObjectMetadata);
+      const newTableName = computeObjectTargetTable(updatedFlatObjectMetadata);
 
       if (currentTableName !== newTableName) {
         await this.workspaceSchemaManagerService.tableManager.renameTable({
@@ -96,13 +144,14 @@ export class UpdateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
         const objectFlatFieldMetadatas =
           findManyFlatEntityByIdInFlatEntityMapsOrThrow({
             flatEntityMaps: flatFieldMetadataMaps,
-            flatEntityIds: updatedObjectMetadata.fieldIds,
+            flatEntityIds: updatedFlatObjectMetadata.fieldIds,
           });
+
         const enumOrCompositeFlatFieldMetadatas =
           objectFlatFieldMetadatas.filter(
-            (flatField) =>
-              isEnumFlatFieldMetadata(flatField) ||
-              isCompositeFlatFieldMetadata(flatField),
+            (flatFieldMetadata) =>
+              isEnumFlatFieldMetadata(flatFieldMetadata) ||
+              isCompositeFlatFieldMetadata(flatFieldMetadata),
           );
 
         const enumOperations = collectEnumOperationsForObject({

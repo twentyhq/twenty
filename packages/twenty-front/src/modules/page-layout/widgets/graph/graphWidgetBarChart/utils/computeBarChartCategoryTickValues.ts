@@ -1,8 +1,8 @@
 import { BAR_CHART_CONSTANTS } from '@/page-layout/widgets/graph/graphWidgetBarChart/constants/BarChartConstants';
+import { type BarChartDatum } from '@/page-layout/widgets/graph/graphWidgetBarChart/types/BarChartDatum';
 import { computeMinHeightPerTick } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/computeMinHeightPerTick';
 import { computeChartCategoryTickValues } from '@/page-layout/widgets/graph/utils/computeChartCategoryTickValues';
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
-import { type BarDatum } from '@nivo/bar';
 import { BarChartLayout } from '~/generated/graphql';
 
 export const computeBarChartCategoryTickValues = ({
@@ -15,7 +15,7 @@ export const computeBarChartCategoryTickValues = ({
 }: {
   axisSize: number;
   axisFontSize: number;
-  data: BarDatum[];
+  data: BarChartDatum[];
   indexBy: string;
   layout: BarChartLayout;
   margins: ChartMargins;

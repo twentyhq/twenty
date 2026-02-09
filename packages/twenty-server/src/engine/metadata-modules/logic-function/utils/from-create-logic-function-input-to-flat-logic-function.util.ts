@@ -1,78 +1,60 @@
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { DEFAULT_TOOL_INPUT_SCHEMA } from 'src/engine/metadata-modules/logic-function/constants/default-tool-input-schema.constant';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function.input';
 import {
-  DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_HANDLER_NAME,
-  DEFAULT_SOURCE_HANDLER_PATH,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
-
-const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
 export type FromCreateLogicFunctionInputToFlatLogicFunctionArgs = {
-  createLogicFunctionInput: CreateLogicFunctionInput & {
-    logicFunctionLayerId: string;
-  };
+  createLogicFunctionInput: Omit<CreateLogicFunctionInput, 'applicationId'>;
   workspaceId: string;
-  workspaceCustomApplicationId: string;
+  ownerFlatApplication: FlatApplication;
 };
 
 export const fromCreateLogicFunctionInputToFlatLogicFunction = ({
   createLogicFunctionInput: rawCreateLogicFunctionInput,
   workspaceId,
-  workspaceCustomApplicationId,
+  ownerFlatApplication,
 }: FromCreateLogicFunctionInputToFlatLogicFunctionArgs): FlatLogicFunction => {
-  const id = v4();
+  const id = rawCreateLogicFunctionInput.id;
   const currentDate = new Date();
 
-  // Build full paths including the base folder
-  const baseFolder = `${WORKFLOW_BASE_FOLDER_PREFIX}/${id}`;
-  const sourceHandlerPath =
-    rawCreateLogicFunctionInput.sourceHandlerPath ??
-    `${baseFolder}/${DEFAULT_SOURCE_HANDLER_PATH}`;
-  const builtHandlerPath =
-    rawCreateLogicFunctionInput.builtHandlerPath ??
-    `${baseFolder}/${DEFAULT_BUILT_HANDLER_PATH}`;
+  const sourceHandlerPath = rawCreateLogicFunctionInput.sourceHandlerPath;
+  const builtHandlerPath = rawCreateLogicFunctionInput.builtHandlerPath;
+
+  const universalIdentifier =
+    rawCreateLogicFunctionInput.universalIdentifier ?? v4();
+
+  const checksum = rawCreateLogicFunctionInput.checksum;
 
   return {
     id,
-    cronTriggerSettings: null,
-    databaseEventTriggerSettings: null,
-    httpRouteTriggerSettings: null,
+    cronTriggerSettings:
+      rawCreateLogicFunctionInput.cronTriggerSettings ?? null,
+    databaseEventTriggerSettings:
+      rawCreateLogicFunctionInput.databaseEventTriggerSettings ?? null,
+    httpRouteTriggerSettings:
+      rawCreateLogicFunctionInput.httpRouteTriggerSettings ?? null,
     name: rawCreateLogicFunctionInput.name,
     description: rawCreateLogicFunctionInput.description ?? null,
     sourceHandlerPath,
     handlerName:
       rawCreateLogicFunctionInput.handlerName ?? DEFAULT_HANDLER_NAME,
     builtHandlerPath,
-    universalIdentifier:
-      rawCreateLogicFunctionInput.universalIdentifier ?? v4(),
+    universalIdentifier,
     createdAt: currentDate.toISOString(),
     updatedAt: currentDate.toISOString(),
     deletedAt: null,
-    applicationId: workspaceCustomApplicationId,
+    applicationId: ownerFlatApplication.id,
     runtime: LogicFunctionRuntime.NODE22,
     timeoutSeconds: rawCreateLogicFunctionInput.timeoutSeconds ?? 300,
-    logicFunctionLayerId: rawCreateLogicFunctionInput.logicFunctionLayerId,
     workspaceId,
-    code: rawCreateLogicFunctionInput?.code,
-    checksum: rawCreateLogicFunctionInput?.code
-      ? logicFunctionCreateHash(
-          JSON.stringify(rawCreateLogicFunctionInput.code),
-        )
-      : null,
-    // If no schema provided and no code provided, use default schema
-    // (because the default template will be used)
-    toolInputSchema: isDefined(rawCreateLogicFunctionInput?.toolInputSchema)
-      ? rawCreateLogicFunctionInput.toolInputSchema
-      : !isDefined(rawCreateLogicFunctionInput?.code)
-        ? DEFAULT_TOOL_INPUT_SCHEMA
-        : null,
+    checksum,
+    toolInputSchema: rawCreateLogicFunctionInput.toolInputSchema ?? null,
     isTool: rawCreateLogicFunctionInput?.isTool ?? false,
+    applicationUniversalIdentifier: ownerFlatApplication.universalIdentifier,
   };
 };

@@ -38,7 +38,7 @@ export class CommandMenuItemService {
         },
       );
 
-    return Object.values(flatCommandMenuItemMaps.byId)
+    return Object.values(flatCommandMenuItemMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.label.localeCompare(b.label))
       .map(fromFlatCommandMenuItemToCommandMenuItemDto);
@@ -88,6 +88,14 @@ export class CommandMenuItemService {
     input: CreateCommandMenuItemInput,
     workspaceId: string,
   ): Promise<CommandMenuItemDTO> {
+    const { flatObjectMetadataMaps, flatFrontComponentMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFrontComponentMaps'],
+        },
+      );
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -97,7 +105,9 @@ export class CommandMenuItemService {
       fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate({
         createCommandMenuItemInput: input,
         workspaceId,
-        applicationId: workspaceCustomFlatApplication.id,
+        flatApplication: workspaceCustomFlatApplication,
+        flatObjectMetadataMaps,
+        flatFrontComponentMaps,
       });
 
     const validateAndBuildResult =
@@ -112,6 +122,8 @@ export class CommandMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -142,11 +154,19 @@ export class CommandMenuItemService {
     input: UpdateCommandMenuItemInput,
     workspaceId: string,
   ): Promise<CommandMenuItemDTO> {
-    const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const {
+      flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatCommandMenuItemMaps'],
+          flatMapsKeys: ['flatCommandMenuItemMaps', 'flatObjectMetadataMaps'],
         },
       );
 
@@ -154,6 +174,7 @@ export class CommandMenuItemService {
       fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow({
         flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps,
         updateCommandMenuItemInput: input,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
     const validateAndBuildResult =
@@ -168,6 +189,8 @@ export class CommandMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -195,6 +218,11 @@ export class CommandMenuItemService {
   }
 
   async delete(id: string, workspaceId: string): Promise<CommandMenuItemDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatCommandMenuItemMaps: existingFlatCommandMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -221,6 +249,8 @@ export class CommandMenuItemService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -247,7 +277,7 @@ export class CommandMenuItemService {
         },
       );
 
-    return Object.values(flatCommandMenuItemMaps.byId)
+    return Object.values(flatCommandMenuItemMaps.byUniversalIdentifier)
       .filter(isDefined)
       .sort((a, b) => a.label.localeCompare(b.label));
   }
@@ -265,7 +295,7 @@ export class CommandMenuItemService {
       );
 
     const flatCommandMenuItem = Object.values(
-      flatCommandMenuItemMaps.byId,
+      flatCommandMenuItemMaps.byUniversalIdentifier,
     ).find(
       (item) => isDefined(item) && item.workflowVersionId === workflowVersionId,
     );

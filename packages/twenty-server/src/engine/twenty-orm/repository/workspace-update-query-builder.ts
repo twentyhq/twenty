@@ -16,7 +16,6 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { type RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
@@ -50,7 +49,6 @@ export class WorkspaceUpdateQueryBuilder<
   private internalContext: WorkspaceInternalContext;
   private authContext: AuthContext;
   private featureFlagMap: FeatureFlagMap;
-  private relationNestedQueries: RelationNestedQueries;
   private relationNestedConfig:
     | [RelationConnectQueryConfig[], RelationDisconnectQueryFieldsByEntityIndex]
     | null;
@@ -58,7 +56,19 @@ export class WorkspaceUpdateQueryBuilder<
     criteria: string;
     partialEntity: QueryDeepPartialEntity<T>;
   }[];
-  private filesFieldSync: FilesFieldSync;
+
+  private _relationNestedQueries?: RelationNestedQueries;
+  private _filesFieldSync?: FilesFieldSync;
+
+  private get relationNestedQueries(): RelationNestedQueries {
+    return (this._relationNestedQueries ??= new RelationNestedQueries(
+      this.internalContext,
+    ));
+  }
+
+  private get filesFieldSync(): FilesFieldSync {
+    return (this._filesFieldSync ??= new FilesFieldSync(this.internalContext));
+  }
 
   constructor(
     queryBuilder: UpdateQueryBuilder<T>,
@@ -74,10 +84,6 @@ export class WorkspaceUpdateQueryBuilder<
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
     this.authContext = authContext;
     this.featureFlagMap = featureFlagMap;
-    this.relationNestedQueries = new RelationNestedQueries(
-      this.internalContext,
-    );
-    this.filesFieldSync = new FilesFieldSync(this.internalContext);
   }
 
   override clone(): this {
@@ -166,7 +172,6 @@ export class WorkspaceUpdateQueryBuilder<
 
       let filesFieldDiffByEntityIndex = null;
       let filesFieldFileIds = null;
-      let fileIdToApplicationId = new Map<string, string>();
 
       const updatePayload = Array.isArray(this.expressionMap.valuesSet)
         ? (this.expressionMap.valuesSet[0] ?? {})
@@ -190,7 +195,6 @@ export class WorkspaceUpdateQueryBuilder<
         });
 
         filesFieldFileIds = result.fileIds;
-        fileIdToApplicationId = result.fileIdToApplicationId;
 
         this.expressionMap.valuesSet = result.entities[0];
       }
@@ -229,10 +233,7 @@ export class WorkspaceUpdateQueryBuilder<
       const result = await super.execute();
 
       if (isDefined(filesFieldFileIds)) {
-        await this.filesFieldSync.updateFileEntityRecords(
-          filesFieldFileIds,
-          fileIdToApplicationId,
-        );
+        await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
       const after = await eventSelectQueryBuilder.getMany();
@@ -367,7 +368,6 @@ export class WorkspaceUpdateQueryBuilder<
 
       let filesFieldDiffByEntityIndex = null;
       let filesFieldFileIds = null;
-      let fileIdToApplicationId = null;
 
       const entities = this.manyInputs.map((input) => input.partialEntity);
 
@@ -387,7 +387,6 @@ export class WorkspaceUpdateQueryBuilder<
         });
 
         filesFieldFileIds = result.fileIds;
-        fileIdToApplicationId = result.fileIdToApplicationId;
 
         this.manyInputs = result.entities.map((updatedEntity, index) => ({
           criteria: this.manyInputs[index].criteria,
@@ -444,11 +443,8 @@ export class WorkspaceUpdateQueryBuilder<
         results.push(result);
       }
 
-      if (isDefined(filesFieldFileIds) && isDefined(fileIdToApplicationId)) {
-        await this.filesFieldSync.updateFileEntityRecords(
-          filesFieldFileIds,
-          fileIdToApplicationId,
-        );
+      if (isDefined(filesFieldFileIds)) {
+        await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
       const afterRecords = await eventSelectQueryBuilder.getMany();
@@ -619,14 +615,6 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
-    if (
-      this.featureFlagMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-      ] !== true
-    ) {
-      return;
-    }
-
     if (this.shouldBypassPermissionChecks) {
       return;
     }
@@ -652,14 +640,6 @@ export class WorkspaceUpdateQueryBuilder<
   }: {
     updatedRecords: T[];
   }): void {
-    if (
-      this.featureFlagMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-      ] !== true
-    ) {
-      return;
-    }
-
     const mainAliasTarget = this.getMainAliasTarget();
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,

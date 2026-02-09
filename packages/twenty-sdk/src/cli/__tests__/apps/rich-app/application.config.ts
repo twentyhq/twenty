@@ -3,8 +3,8 @@ import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './src/roles/default-function.
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
-  displayName: 'Hello World',
-  description: 'A simple hello world app',
+  displayName: 'Rich App',
+  description: 'A simple rich app',
   icon: 'IconWorld',
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {

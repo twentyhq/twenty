@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
-import { PerObjectToolGeneratorService } from 'src/engine/core-modules/tool-generator/services/per-object-tool-generator.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
@@ -11,10 +11,6 @@ import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workfl
 import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
-import {
-  createWorkflowStepToolsFactory,
-  type WorkflowStepToolsDeps,
-} from 'src/modules/workflow/workflow-tools/factories/workflow-step-tools.factory';
 import { createActivateWorkflowVersionTool } from 'src/modules/workflow/workflow-tools/tools/activate-workflow-version.tool';
 import { createComputeStepOutputSchemaTool } from 'src/modules/workflow/workflow-tools/tools/compute-step-output-schema.tool';
 import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
@@ -25,6 +21,7 @@ import { createDeactivateWorkflowVersionTool } from 'src/modules/workflow/workfl
 import { createDeleteWorkflowVersionEdgeTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-edge.tool';
 import { createDeleteWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-step.tool';
 import { createGetWorkflowCurrentVersionTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-current-version.tool';
+import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 import { createUpdateWorkflowVersionTriggerTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-trigger.tool';
@@ -34,7 +31,6 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
 @Injectable()
 export class WorkflowToolWorkspaceService {
   private readonly deps: WorkflowToolDependencies;
-  private readonly workflowStepToolsDeps: WorkflowStepToolsDeps;
 
   constructor(
     workflowVersionStepService: WorkflowVersionStepWorkspaceService,
@@ -45,7 +41,7 @@ export class WorkflowToolWorkspaceService {
     workflowSchemaService: WorkflowSchemaWorkspaceService,
     globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     recordPositionService: RecordPositionService,
-    private readonly perObjectToolGenerator: PerObjectToolGeneratorService,
+    logicFunctionService: LogicFunctionService,
   ) {
     this.deps = {
       workflowVersionStepService,
@@ -56,10 +52,7 @@ export class WorkflowToolWorkspaceService {
       workflowSchemaService,
       globalWorkspaceOrmManager,
       recordPositionService,
-    };
-
-    this.workflowStepToolsDeps = {
-      workflowVersionStepService,
+      logicFunctionService,
     };
   }
 
@@ -119,6 +112,10 @@ export class WorkflowToolWorkspaceService {
       this.deps,
       context,
     );
+    const updateLogicFunctionSource = createUpdateLogicFunctionSourceTool(
+      this.deps,
+      context,
+    );
 
     return {
       [createCompleteWorkflow.name]: createCompleteWorkflow,
@@ -134,24 +131,7 @@ export class WorkflowToolWorkspaceService {
       [deactivateWorkflowVersion.name]: deactivateWorkflowVersion,
       [computeStepOutputSchema.name]: computeStepOutputSchema,
       [getWorkflowCurrentVersion.name]: getWorkflowCurrentVersion,
+      [updateLogicFunctionSource.name]: updateLogicFunctionSource,
     };
-  }
-
-  // Generates dynamic step configurator tools for each workspace object
-  async generateRecordStepConfiguratorTools(
-    workspaceId: string,
-    rolePermissionConfig: RolePermissionConfig,
-  ): Promise<ToolSet> {
-    const workflowStepToolsFactory = createWorkflowStepToolsFactory(
-      this.workflowStepToolsDeps,
-    );
-
-    return this.perObjectToolGenerator.generate(
-      {
-        workspaceId,
-        rolePermissionConfig,
-      },
-      [workflowStepToolsFactory],
-    );
   }
 }

@@ -12,7 +12,6 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { type RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
@@ -43,11 +42,22 @@ export class WorkspaceInsertQueryBuilder<
   private internalContext: WorkspaceInternalContext;
   private authContext: AuthContext;
   private featureFlagMap: FeatureFlagMap;
-  private relationNestedQueries: RelationNestedQueries;
   private relationNestedConfig:
     | [RelationConnectQueryConfig[], RelationDisconnectQueryFieldsByEntityIndex]
     | null;
-  private filesFieldSync: FilesFieldSync;
+
+  private _relationNestedQueries?: RelationNestedQueries;
+  private _filesFieldSync?: FilesFieldSync;
+
+  private get relationNestedQueries(): RelationNestedQueries {
+    return (this._relationNestedQueries ??= new RelationNestedQueries(
+      this.internalContext,
+    ));
+  }
+
+  private get filesFieldSync(): FilesFieldSync {
+    return (this._filesFieldSync ??= new FilesFieldSync(this.internalContext));
+  }
 
   constructor(
     queryBuilder: InsertQueryBuilder<T>,
@@ -63,10 +73,6 @@ export class WorkspaceInsertQueryBuilder<
     this.shouldBypassPermissionChecks = shouldBypassPermissionChecks;
     this.authContext = authContext;
     this.featureFlagMap = featureFlagMap;
-    this.relationNestedQueries = new RelationNestedQueries(
-      this.internalContext,
-    );
-    this.filesFieldSync = new FilesFieldSync(this.internalContext);
   }
 
   override clone(): this {
@@ -162,7 +168,6 @@ export class WorkspaceInsertQueryBuilder<
       );
 
       let filesFieldFileIds = null;
-      let fileIdToApplicationId = new Map<string, string>();
 
       const entities = Array.isArray(this.expressionMap.valuesSet)
         ? this.expressionMap.valuesSet
@@ -184,7 +189,6 @@ export class WorkspaceInsertQueryBuilder<
         });
 
         filesFieldFileIds = result.fileIds;
-        fileIdToApplicationId = result.fileIdToApplicationId;
 
         this.expressionMap.valuesSet = Array.isArray(
           this.expressionMap.valuesSet,
@@ -220,10 +224,7 @@ export class WorkspaceInsertQueryBuilder<
       const result = await super.execute();
 
       if (isDefined(filesFieldFileIds)) {
-        await this.filesFieldSync.updateFileEntityRecords(
-          filesFieldFileIds,
-          fileIdToApplicationId,
-        );
+        await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
       const eventSelectQueryBuilder = (
         this.connection.manager as WorkspaceEntityManager
@@ -316,14 +317,6 @@ export class WorkspaceInsertQueryBuilder<
   }
 
   private validateRLSPredicatesForInsert(): void {
-    if (
-      this.featureFlagMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-      ] !== true
-    ) {
-      return;
-    }
-
     const mainAliasTarget = this.getMainAliasTarget();
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,

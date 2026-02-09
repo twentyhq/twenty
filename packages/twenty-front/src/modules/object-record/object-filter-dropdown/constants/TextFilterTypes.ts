@@ -7,5 +7,6 @@ export const TEXT_FILTER_TYPES = [
   'LINKS',
   'ARRAY',
   'RAW_JSON',
+  'FILES',
   'UUID',
 ];

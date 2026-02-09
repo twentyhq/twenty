@@ -35,7 +35,6 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     description: null,
     standardOverrides: null,
     isUIReadOnly: false,
-    standardId: null,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
     duplicateCriteria: null,
@@ -74,17 +73,17 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
   ): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: fields.reduce(
+    byUniversalIdentifier: fields.reduce(
       (acc, field) => {
-        acc[field.id] = field;
+        acc[field.universalIdentifier] = field;
 
         return acc;
       },
       {} as Record<string, FlatFieldMetadata>,
     ),
-    idByUniversalIdentifier: fields.reduce(
+    universalIdentifierById: fields.reduce(
       (acc, field) => {
-        acc[field.universalIdentifier] = field.id;
+        acc[field.id] = field.universalIdentifier;
 
         return acc;
       },

@@ -18,5 +18,6 @@ export default defineConfig({
       truncateThreshold: 0,
     },
     fileParallelism: false,
+    setupFiles: ['src/cli/__tests__/constants/setupTest.ts'],
   },
 });

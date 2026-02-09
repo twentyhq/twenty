@@ -28,6 +28,10 @@ export const seedFrontComponentsAndCommandMenuItems = async ({
         'workspaceId',
         'universalIdentifier',
         'applicationId',
+        'sourceComponentPath',
+        'builtComponentPath',
+        'componentName',
+        'builtComponentChecksum',
       ])
       .values(
         frontComponents.map((row) => ({
@@ -36,6 +40,10 @@ export const seedFrontComponentsAndCommandMenuItems = async ({
           workspaceId: row.workspaceId,
           universalIdentifier: row.universalIdentifier,
           applicationId: row.applicationId,
+          sourceComponentPath: row.sourceComponentPath,
+          builtComponentPath: row.builtComponentPath,
+          componentName: row.componentName,
+          builtComponentChecksum: row.builtComponentChecksum,
         })),
       )
       .orIgnore()

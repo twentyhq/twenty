@@ -115,17 +115,17 @@ describe('buildColumnsToSelect', () => {
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
   ): FlatEntityMaps<FlatFieldMetadata> => ({
-    byId: fields.reduce(
+    byUniversalIdentifier: fields.reduce(
       (acc, field) => {
-        acc[field.id] = field;
+        acc[field.universalIdentifier] = field;
 
         return acc;
       },
       {} as Record<string, FlatFieldMetadata>,
     ),
-    idByUniversalIdentifier: fields.reduce(
+    universalIdentifierById: fields.reduce(
       (acc, field) => {
-        acc[field.universalIdentifier] = field.id;
+        acc[field.id] = field.universalIdentifier;
 
         return acc;
       },
@@ -137,18 +137,18 @@ describe('buildColumnsToSelect', () => {
   const buildFlatObjectMetadataMaps = (
     objects: FlatObjectMetadata[],
   ): FlatEntityMaps<FlatObjectMetadata> => ({
-    byId: objects.reduce(
+    byUniversalIdentifier: objects.reduce(
       (acc, obj) => {
-        acc[obj.id] = obj;
+        acc[obj.universalIdentifier as string] = obj;
 
         return acc;
       },
       {} as Record<string, FlatObjectMetadata>,
     ),
-    idByUniversalIdentifier: objects.reduce(
+    universalIdentifierById: objects.reduce(
       (acc, obj) => {
         if (obj.universalIdentifier) {
-          acc[obj.universalIdentifier] = obj.id;
+          acc[obj.id] = obj.universalIdentifier;
         }
 
         return acc;

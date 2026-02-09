@@ -37,7 +37,7 @@ export class AgentService {
         'flatRoleTargetByAgentIdMaps',
       ]);
 
-    return Object.values(flatAgentMaps.byId)
+    return Object.values(flatAgentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .map((flatAgent) => {
         const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
@@ -106,6 +106,12 @@ export class AgentService {
     input: CreateAgentInput & { isCustom: boolean },
     workspaceId: string,
   ): Promise<FlatAgentWithRoleId> {
+    const { flatApplicationMaps, flatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+        'flatRoleMaps',
+      ]);
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -113,14 +119,19 @@ export class AgentService {
         },
       );
 
+    const flatApplication = isDefined(input.applicationId)
+      ? flatApplicationMaps.byId[input.applicationId]
+      : undefined;
+
+    const resolvedFlatApplication =
+      flatApplication ?? workspaceCustomFlatApplication;
+
     const { flatAgentToCreate, flatRoleTargetToCreate } =
       fromCreateAgentInputToFlatAgent({
-        createAgentInput: {
-          ...input,
-          applicationId:
-            input.applicationId ?? workspaceCustomFlatApplication.id,
-        },
+        createAgentInput: input,
         workspaceId,
+        flatApplication: resolvedFlatApplication,
+        flatRoleMaps,
       });
 
     const validateAndBuildResult =
@@ -142,6 +153,8 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -175,10 +188,18 @@ export class AgentService {
     input: UpdateAgentInput;
     workspaceId: string;
   }): Promise<FlatAgentWithRoleId> {
-    const { flatRoleTargetByAgentIdMaps, flatAgentMaps } =
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
+    const { flatRoleTargetByAgentIdMaps, flatAgentMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatRoleTargetByAgentIdMaps',
         'flatAgentMaps',
+        'flatRoleMaps',
       ]);
 
     const {
@@ -190,6 +211,7 @@ export class AgentService {
       updateAgentInput: input,
       flatAgentMaps,
       flatRoleTargetByAgentIdMaps,
+      flatRoleMaps,
     });
 
     const validateAndBuildResult =
@@ -215,6 +237,8 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -281,6 +305,13 @@ export class AgentService {
       return [];
     }
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatAgentMaps, flatRoleTargetByAgentIdMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatAgentMaps',
@@ -321,6 +352,8 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 

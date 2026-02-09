@@ -10,7 +10,6 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/services/workspace-user-workspace-role-map-cache.service';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { type LogicFunctionLayerCacheMaps } from 'src/engine/metadata-modules/logic-function-layer/types/logic-function-layer-cache-maps.type';
 
 export const WORKSPACE_CACHE_KEYS_V2 = {
   flatObjectMetadataMaps: 'flat-maps:object-metadata',
@@ -45,7 +44,6 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatFrontComponentMaps: 'flat-maps:front-component',
   flatWebhookMaps: 'flat-maps:webhook',
   flatWorkspaceMemberMaps: 'flat-maps:workspace-member',
-  logicFunctionLayerMaps: 'cache:logic-function-layer',
   applicationVariableMaps: 'cache:application-variable',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
@@ -60,11 +58,11 @@ export type AdditionalCacheDataMaps = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
-  logicFunctionLayerMaps: LogicFunctionLayerCacheMaps;
   applicationVariableMaps: ApplicationVariableCacheMaps;
 };
 
-export type WorkspaceCacheDataMap = AllFlatEntityMaps & AdditionalCacheDataMaps;
+export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &
+  AdditionalCacheDataMaps;
 
 export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
 

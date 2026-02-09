@@ -5,18 +5,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 export const validateMorphOrRelationFlatFieldOnDelete = ({
-  flatFieldMetadata,
+  universalFlatFieldMetadata,
 }: {
-  flatFieldMetadata: FlatFieldMetadata<MorphOrRelationFieldMetadataType>;
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata<MorphOrRelationFieldMetadataType>;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
   if (
-    isDefined(flatFieldMetadata.settings.onDelete) &&
-    flatFieldMetadata.settings.relationType !== RelationType.MANY_TO_ONE
+    isDefined(universalFlatFieldMetadata.universalSettings.onDelete) &&
+    universalFlatFieldMetadata.universalSettings.relationType !==
+      RelationType.MANY_TO_ONE
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

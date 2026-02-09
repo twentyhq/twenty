@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -308,10 +309,10 @@ export class SearchService {
       );
     }
 
-    const labelIdentifierField =
-      flatFieldMetadataMaps.byId[
-        flatObjectMetadata.labelIdentifierFieldMetadataId
-      ];
+    const labelIdentifierField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatObjectMetadata.labelIdentifierFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     if (!isDefined(labelIdentifierField)) {
       throw new SearchException(
@@ -355,10 +356,10 @@ export class SearchService {
       return null;
     }
 
-    const imageIdentifierField =
-      flatFieldMetadataMaps.byId[
-        flatObjectMetadata.imageIdentifierFieldMetadataId
-      ];
+    const imageIdentifierField = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatObjectMetadata.imageIdentifierFieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
     if (!isDefined(imageIdentifierField)) {
       return null;

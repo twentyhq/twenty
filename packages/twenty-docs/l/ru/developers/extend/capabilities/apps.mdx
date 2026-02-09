@@ -17,10 +17,6 @@ description: Создавайте и управляйте настройками
 * Создавайте логические функции с пользовательскими триггерами
 * Развёртывайте одно и то же приложение в нескольких рабочих пространствах
 
-**Скоро:**
-
-* Пользовательские макеты и компоненты интерфейса
-
 ## Требования
 
 * Node.js 24+ и Yarn 4
@@ -95,81 +91,54 @@ my-twenty-app/
   README.md
   public/                           # Папка общедоступных ресурсов (изображения, шрифты и т. п.)
   src/
-    application.config.ts          # Обязательный — основная конфигурация приложения
-    default-function.role.ts       # Роль по умолчанию для бессерверных функций
-    hello-world.function.ts        # Пример бессерверной функции
-    hello-world.front-component.tsx # Пример фронтенд-компонента
-    // ваши сущности (*.object.ts, *.function.ts, *.front-component.tsx, *.role.ts)
-```
-
-### Соглашения важнее конфигурации
-
-Приложения используют подход **соглашения важнее конфигурации**, при котором сущности определяются по суффиксу файла. Это позволяет гибко организовать структуру в папке `src/app/`:
-
-| Суффикс файла           | Тип сущности                          |
-| ----------------------- | ------------------------------------- |
-| `*.object.ts`           | Определения пользовательских объектов |
-| `*.function.ts`         | Определения бессерверных функций      |
-| `*.front-component.tsx` | Определения компонентов фронтенда     |
-| `*.role.ts`             | Определения ролей                     |
-
-### Поддерживаемые способы организации папок
-
-Вы можете организовать свои сущности по любому из этих шаблонов:
-
-**Традиционный (по типам):**
-
-```text
-src/
-├── application.config.ts
-├── objects/
-│   └── postCard.object.ts
-├── functions/
-│   └── createPostCard.function.ts
-├── components/
-│   └── card.front-component.tsx
-└── roles/
-    └── admin.role.ts
-```
-
-**По функциональности:**
-
-```text
-src/
-├── application.config.ts
-└── post-card/
-    ├── postCard.object.ts
-    ├── createPostCard.function.ts
-    ├── card.front-component.tsx
-    └── postCardAdmin.role.ts
-```
-
-**Плоский:**
-
-```text
-src/
-├── application.config.ts
-├── postCard.object.ts
-├── createPostCard.function.ts
-├── card.front-component.tsx
-└── admin.role.ts
+  ├── application-config.ts           # Обязательный — основная конфигурация приложения
+  ├── roles/
+  │   └── default-role.ts               # Роль по умолчанию для логических функций
+  ├── logic-functions/
+  │   └── hello-world.ts                # Пример логической функции
+  └── front-components/
+      └── hello-world.tsx               # Пример фронтенд-компонента
 ```
 
 В общих чертах:
 
-* **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипты вроде `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` и `auth:login`, которые делегируют выполнение локальному CLI `twenty`.
+* **package.json**: Объявляет имя приложения, версию, движки (Node 24+, Yarn 4) и добавляет `twenty-sdk`, а также скрипты вроде `app:dev`, `app:generate`, `entity:add`, `function:logs`, `function:execute`, `app:uninstall` и команды аутентификации, которые делегируют выполнение локальному CLI `twenty`.
 * **.gitignore**: Игнорирует распространённые артефакты, такие как `node_modules`, `.yarn`, `generated/` (типизированный клиент), `dist/`, `build/`, каталоги coverage, файлы журналов и файлы `.env*`.
 * **yarn.lock**, **.yarnrc.yml**, **.yarn/**: Фиксируют и настраивают используемый в проекте инструментарий Yarn 4.
 * **.nvmrc**: Фиксирует версию Node.js, ожидаемую проектом.
 * **eslint.config.mjs** и **tsconfig.json**: Обеспечивают линтинг и конфигурацию TypeScript для исходников вашего приложения на TypeScript.
 * **README.md**: Короткий README в корне приложения с базовыми инструкциями.
 * **public/**: Папка для хранения общедоступных ресурсов (изображений, шрифтов, статических файлов), которые будут отдаваться вашим приложением. Файлы, размещённые здесь, загружаются во время синхронизации и доступны во время выполнения.
-* **src/**: Основное место, где вы определяете приложение как код:
-  * `application.config.ts`: Глобальная конфигурация вашего приложения (метаданные и параметры выполнения). См. раздел «Конфигурация приложения» ниже.
-  * `*.role.ts`: Определения ролей, используемых вашими логическими функциями. См. раздел «Роль функции по умолчанию» ниже.
-  * `*.object.ts`: Определения пользовательских объектов.
-  * `*.function.ts`: Определения логических функций.
-  * `*.front-component.tsx`: Определения фронтенд-компонентов.
+* **src/**: Основное место, где вы определяете приложение как код
+
+### Обнаружение сущностей
+
+SDK обнаруживает сущности, разбирая ваши файлы TypeScript в поисках вызовов **`export default define<Entity>({...})`**. Для каждого типа сущности существует соответствующая вспомогательная функция, экспортируемая из `twenty-sdk`:
+
+| Вспомогательная функция  | Тип сущности                               |
+| ------------------------ | ------------------------------------------ |
+| `defineObject()`         | Определения пользовательских объектов      |
+| `defineLogicFunction()`  | Определения логических функций             |
+| `defineFrontComponent()` | Определения компонентов фронтенда          |
+| `defineRole()`           | Определения ролей                          |
+| `defineField()`          | Расширения полей для существующих объектов |
+
+<Note>
+  **Имена файлов заданы гибко.** Обнаружение сущностей основано на AST — SDK сканирует ваши исходные файлы в поисках шаблона `export default define<Entity>({...})`. Вы можете организовывать файлы и папки как угодно. Группировка по типу сущности (например, `logic-functions/`, `roles/`) — это лишь соглашение для организации кода, а не требование.
+</Note>
+
+Пример обнаруженной сущности:
+
+```typescript
+// This file can be named anything and placed anywhere in src/
+import { defineObject, FieldType } from 'twenty-sdk';
+
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCard',
+  // ... rest of config
+});
+```
 
 Позднее команды добавят больше файлов и папок:
 
@@ -215,16 +184,18 @@ yarn auth:status
 
 ### Вспомогательные функции
 
-SDK предоставляет четыре вспомогательных функции с встроенной валидацией для определения сущностей вашего приложения:
+SDK предоставляет вспомогательные функции для определения сущностей вашего приложения. Как описано в [Обнаружение сущностей](#entity-detection), вы должны использовать `export default define<Entity>({...})`, чтобы ваши сущности были обнаружены:
 
-| Функция               | Назначение                                     |
-| --------------------- | ---------------------------------------------- |
-| `defineApplication()` | Настраивает метаданные приложения              |
-| `defineObject()`      | Определяет пользовательские объекты с полями   |
-| `defineFunction()`    | Определение логических функций с обработчиками |
-| `defineRole()`        | Настраивает права роли и доступ к объектам     |
+| Функция                  | Назначение                                                             |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `defineApplication()`    | Настройка метаданных приложения (обязательно, по одному на приложение) |
+| `defineObject()`         | Определяет пользовательские объекты с полями                           |
+| `defineLogicFunction()`  | Определение логических функций с обработчиками                         |
+| `defineFrontComponent()` | Определение фронт-компонентов для настраиваемого интерфейса            |
+| `defineRole()`           | Настраивает права роли и доступ к объектам                             |
+| `defineField()`          | Расширение существующих объектов дополнительными полями                |
 
-Эти функции проверяют вашу конфигурацию во время выполнения и обеспечивают лучшую автодополняемость в IDE и безопасность типов.
+Эти функции проверяют вашу конфигурацию на этапе сборки и обеспечивают автодополнение в IDE и безопасность типов.
 
 ### Определение объектов
 
@@ -311,9 +282,9 @@ export default defineObject({
   **Базовые поля создаются автоматически.** Когда вы определяете пользовательский объект, Twenty автоматически добавляет стандартные поля, такие как `name`, `createdAt`, `updatedAt`, `createdBy`, `position` и `deletedAt`. Вам не нужно определять их в массиве `fields` — добавляйте только свои пользовательские поля.
 </Note>
 
-### Конфигурация приложения (application.config.ts)
+### Конфигурация приложения (application-config.ts)
 
-У каждого приложения есть единственный файл `application.config.ts`, который описывает:
+У каждого приложения есть единственный файл `application-config.ts`, который описывает:
 
 * **Что это за приложение**: идентификаторы, отображаемое имя и описание.
 * **Как запускаются его функции**: какую роль они используют для прав доступа.
@@ -322,9 +293,9 @@ export default defineObject({
 Используйте `defineApplication()` для определения конфигурации вашего приложения:
 
 ```typescript
-// src/app/application.config.ts
+// src/application-config.ts
 import { defineApplication } from 'twenty-sdk';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from './default-function.role';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '4ec0391d-18d5-411c-b2f3-266ddc1c3ef7',
@@ -339,7 +310,7 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  roleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -347,11 +318,11 @@ export default defineApplication({
 
 * `universalIdentifier` — это детерминированные идентификаторы, которыми вы управляете; сгенерируйте их один раз и сохраняйте стабильными между синхронизациями.
 * `applicationVariables` становятся переменными окружения для ваших функций (например, `DEFAULT_RECIPIENT_NAME` доступна как `process.env.DEFAULT_RECIPIENT_NAME`).
-* `roleUniversalIdentifier` должен соответствовать роли, которую вы определяете в файле `*.role.ts` (см. ниже).
+* `defaultRoleUniversalIdentifier` должен соответствовать файлу роли (см. ниже).
 
 #### Роли и разрешения
 
-Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `roleUniversalIdentifier` в `application.config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
+Приложения могут определять роли, инкапсулирующие права на объекты и действия в вашем рабочем пространстве. Поле `defaultRoleUniversalIdentifier` в `application-config.ts` обозначает роль по умолчанию, используемую логическими функциями вашего приложения.
 
 * Ключ API во время выполнения, подставляемый как `TWENTY_API_KEY`, получается из этой роли функции по умолчанию.
 * Типизированный клиент будет ограничен правами, предоставленными этой ролью.
@@ -362,7 +333,7 @@ export default defineApplication({
 Когда вы генерируете новое приложение, CLI также создаёт файл роли по умолчанию. Используйте `defineRole()` для определения ролей со встроенной валидацией:
 
 ```typescript
-// src/app/default-function.role.ts
+// src/roles/default-role.ts
 import { defineRole, PermissionFlag } from 'twenty-sdk';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
@@ -401,10 +372,10 @@ export default defineRole({
 });
 ```
 
-`universalIdentifier` этой роли затем указывается в `application.config.ts` как `roleUniversalIdentifier`. Иными словами:
+Значение `universalIdentifier` этой роли затем указывается в `application-config.ts` как `defaultRoleUniversalIdentifier`. Иными словами:
 
 * **\*.role.ts** определяет, что может делать роль функции по умолчанию.
-* **application.config.ts** указывает на эту роль, чтобы ваши функции наследовали её права.
+* **application-config.ts** указывает на эту роль, чтобы ваши функции наследовали её права.
 
 Заметки:
 
@@ -415,11 +386,11 @@ export default defineRole({
 
 ### Конфигурация логической функции и точка входа
 
-Каждый файл функции использует `defineFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами. Используйте суффикс файла `*.function.ts` для автоматического обнаружения.
+Каждый файл функции использует `defineLogicFunction()` для экспорта конфигурации с обработчиком и необязательными триггерами.
 
 ```typescript
-// src/app/createPostCard.function.ts
-import { defineFunction } from 'twenty-sdk';
+// src/app/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk';
 import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
 import Twenty, { type Person } from '~/generated';
 
@@ -439,7 +410,7 @@ const handler = async (params: RoutePayload) => {
   return result;
 };
 
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'create-new-post-card',
   timeoutSeconds: 2,
@@ -515,7 +486,7 @@ export default defineFunction({
 Когда триггер маршрута вызывает вашу логическую функцию, она получает объект `RoutePayload`, соответствующий формату AWS HTTP API v2. Импортируйте тип из `twenty-sdk`:
 
 ```typescript
-import { defineFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
 
 const handler = async (event: RoutePayload) => {
   // Access request data
@@ -545,7 +516,7 @@ const handler = async (event: RoutePayload) => {
 По умолчанию HTTP-заголовки из входящих запросов **не** передаются в вашу логическую функцию по соображениям безопасности. Чтобы получить доступ к определённым заголовкам, явно перечислите их в массиве `forwardedRequestHeaders`:
 
 ```typescript
-export default defineFunction({
+export default defineLogicFunction({
   universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
   name: 'webhook-handler',
   handler,
@@ -580,8 +551,45 @@ const handler = async (event: RoutePayload) => {
 
 Вы можете создать новые функции двумя способами:
 
-* **Сгенерировано**: Запустите `yarn entity:add` и выберите опцию добавления новой функции. Это создаёт стартовый файл с обработчиком и конфигурацией.
-* **Вручную**: Создайте новый файл `*.function.ts` и используйте `defineFunction()`, следуя тому же шаблону.
+* **Сгенерировано**: Запустите `yarn entity:add` и выберите опцию добавления новой логической функции. Это создаёт стартовый файл с обработчиком и конфигурацией.
+* **Вручную**: Создайте новый файл `*.logic-function.ts` и используйте `defineLogicFunction()`, следуя тому же шаблону.
+
+### Фронт-компоненты
+
+Фронт-компоненты позволяют создавать пользовательские компоненты React, которые рендерятся внутри интерфейса Twenty. Используйте `defineFrontComponent()` для определения компонентов со встроенной валидацией:
+
+```typescript
+// src/my-widget.front-component.tsx
+import { defineFrontComponent } from 'twenty-sdk';
+
+const MyWidget = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>My Custom Widget</h1>
+      <p>This is a custom front component for Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'my-widget',
+  description: 'A custom widget component',
+  component: MyWidget,
+});
+```
+
+Основные моменты:
+
+* Фронт-компоненты — это компоненты React, которые рендерятся в изолированных контекстах внутри Twenty.
+* Используйте суффикс файла `*.front-component.tsx` для автоматического обнаружения.
+* Поле `component` ссылается на ваш компонент React.
+* Компоненты автоматически собираются и синхронизируются во время `yarn app:dev`.
+
+Вы можете создать новые фронт-компоненты двумя способами:
+
+* **Сгенерировано**: Запустите `yarn entity:add` и выберите опцию добавления нового фронт-компонента.
+* **Вручную**: Создайте новый файл `*.front-component.tsx` и используйте `defineFrontComponent()`.
 
 ### Сгенерированный типизированный клиент
 
@@ -606,12 +614,12 @@ const { me } = await client.query({ me: { id: true, displayName: true } });
 Заметки:
 
 * Вам не нужно передавать URL или ключ API сгенерированному клиенту. Он читает `TWENTY_API_URL` и `TWENTY_API_KEY` из process.env во время выполнения.
-* Права ключа API определяются ролью, на которую ссылается ваш `application.config.ts` через `roleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
-* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Выдавайте только те права, которые нужны вашим функциям, затем укажите в `roleUniversalIdentifier` универсальный идентификатор этой роли.
+* Права ключа API определяются ролью, на которую ссылается ваш `application-config.ts` через `defaultRoleUniversalIdentifier`. Это роль по умолчанию, используемая логическими функциями вашего приложения.
+* Приложения могут определять роли, чтобы следовать принципу наименьших привилегий. Предоставляйте только те права, которые нужны вашим функциям, затем укажите в `defaultRoleUniversalIdentifier` универсальный идентификатор этой роли.
 
 ### Пример Hello World
 
-Посмотрите минимальный сквозной пример, демонстрирующий объекты, функции и несколько триггеров, [здесь](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
+Ознакомьтесь с минимальным сквозным примером, демонстрирующим объекты, логические функции, фронт-компоненты и несколько триггеров, [здесь](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/hello-world):
 
 ## Ручная настройка (без генератора)
 

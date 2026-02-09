@@ -22,12 +22,17 @@ import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object
 const MOCK_FLAT_APPLICATION: FlatApplication = {
   id: '20202020-81ee-42da-a281-668632f32fe7',
   universalIdentifier: '20202020-81ee-42da-a281-668632f32fe7',
-  workspaceId: 'mock-workspace-id',
   name: 'Workspace Custom Application',
   description: null,
+  workspaceId: 'workspace-id',
   version: null,
   sourceType: 'local',
   sourcePath: '',
+  packageJsonChecksum: null,
+  packageJsonFileId: null,
+  yarnLockChecksum: null,
+  yarnLockFileId: null,
+  availablePackages: {},
   logicFunctionLayerId: null,
   defaultRoleId: null,
   defaultRole: null,
@@ -57,8 +62,6 @@ type TestCase = EachTestingContext<{
 }>;
 
 describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite', () => {
-  const mockWorkspaceId = 'mock-workspace-id';
-
   describe('Success cases', () => {
     const successTestCases: TestCase[] = [
       {
@@ -88,7 +91,6 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
                 },
               ],
             },
-            workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
@@ -135,7 +137,6 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
               morphRelationsCreationPayload: undefined as any,
             },
-            workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
@@ -155,7 +156,6 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
               morphRelationsCreationPayload: [],
             },
-            workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
@@ -189,7 +189,6 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
                 },
               ],
             },
-            workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
@@ -223,7 +222,6 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
                 },
               ],
             },
-            workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
@@ -250,7 +248,6 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
                 } as any,
               ],
             },
-            workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },
@@ -277,7 +274,6 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
                 },
               ],
             },
-            workspaceId: mockWorkspaceId,
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             flatFieldMetadataMaps: emptyFlatFieldMetadataMaps,
           },

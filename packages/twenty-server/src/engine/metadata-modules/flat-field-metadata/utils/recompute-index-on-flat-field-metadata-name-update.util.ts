@@ -4,6 +4,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
 type RecomputeIndexOnFlatFieldMetadataNameUpdateArgs = {
   flatObjectMetadata: FlatObjectMetadata;
@@ -18,7 +19,7 @@ export const recomputeIndexOnFlatFieldMetadataNameUpdate = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   relatedFlatIndexMetadata,
-}: RecomputeIndexOnFlatFieldMetadataNameUpdateArgs): FlatIndexMetadata[] => {
+}: RecomputeIndexOnFlatFieldMetadataNameUpdateArgs): UniversalFlatIndexMetadata[] => {
   if (relatedFlatIndexMetadata.length === 0) {
     return [];
   }

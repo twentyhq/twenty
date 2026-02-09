@@ -23,6 +23,10 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { formatBillingDatabaseProductToGraphqlDTO } from 'src/engine/core-modules/billing/utils/format-database-product-to-graphql-dto.util';
+import {
+  INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+  toDisplayCredits,
+} from 'src/engine/core-modules/billing/utils/to-display-credits.util';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -298,7 +302,17 @@ export class BillingResolver {
   async getMeteredProductsUsage(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<BillingMeteredProductUsageOutput[]> {
-    return await this.billingUsageService.getMeteredProductsUsage(workspace);
+    const usageData =
+      await this.billingUsageService.getMeteredProductsUsage(workspace);
+
+    return usageData.map((item) => ({
+      ...item,
+      usedCredits: toDisplayCredits(item.usedCredits),
+      grantedCredits: toDisplayCredits(item.grantedCredits),
+      rolloverCredits: toDisplayCredits(item.rolloverCredits),
+      totalGrantedCredits: toDisplayCredits(item.totalGrantedCredits),
+      unitPriceCents: item.unitPriceCents * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+    }));
   }
 
   @Mutation(() => BillingUpdateOutput)

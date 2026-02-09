@@ -590,7 +590,7 @@ export class AuthResolver {
           workspaceId,
           impersonatorUserWorkspaceId,
           impersonatedUserWorkspaceId,
-          impersonatorUserId,
+          _impersonatorUserId: impersonatorUserId,
           impersonatedUserId,
         },
       );
@@ -703,7 +703,7 @@ export class AuthResolver {
 
     const auditService = this.auditService.createContext({
       workspaceId: workspace.id,
-      userId: impersonatorUserWorkspace.user.id,
+      userWorkspaceId: impersonatorUserWorkspace.id,
     });
 
     auditService.insertWorkspaceEvent(MONITORING_EVENT, {

@@ -3,7 +3,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 type FeatureFlagMetadata = {
   label: string;
   description: string;
-  imagePath: string;
+  imagePath?: string;
 };
 
 export type PublicFeatureFlag = {
@@ -18,16 +18,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Junction Relations',
       description:
         'Enable many-to-many relations through junction tables configuration',
-      imagePath: 'https://twenty.com/images/lab/is-junction-relations.png',
     },
   },
   {
-    key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
+    key: FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
     metadata: {
-      label: 'Row Level Permissions',
-      description: 'Enable row level permission',
-      imagePath:
-        'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
+      label: 'Real-Time',
+      description: 'See all updates without reloading the page',
+      imagePath: 'https://twenty.com/images/lab/is-real-time-enabled.png',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

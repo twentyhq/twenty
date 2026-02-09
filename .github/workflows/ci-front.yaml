@@ -14,8 +14,8 @@ concurrency:
 
 env:
   # restore-cache action adds 'v4-' prefix and '-<branch>-<sha>' suffix to the key
-  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-depot-ubuntu-24.04-8-runner
-  STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v4-storybook-build-depot-ubuntu-24.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
+  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-ubuntu-latest-8-cores-runner
+  STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v4-storybook-build-ubuntu-latest-8-cores-runner-${{ github.ref_name }}-${{ github.sha }}
 
 jobs:
   changed-files-check:
@@ -27,6 +27,7 @@ jobs:
         packages/twenty-front/**
         packages/twenty-ui/**
         packages/twenty-shared/**
+        packages/twenty-sdk/**
   changed-files-check-e2e:
     uses: ./.github/workflows/changed-files.yaml
     with:
@@ -38,7 +39,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-latest-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
@@ -64,7 +65,7 @@ jobs:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
   front-sb-test:
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-latest-8-cores
     needs: front-sb-build
     strategy:
       fail-fast: false
@@ -85,6 +86,7 @@ jobs:
         run: |
           npx nx build twenty-shared
           npx nx build twenty-ui
+          npx nx build twenty-sdk
       - name: Install Playwright
         run: |
           cd packages/twenty-front
@@ -138,7 +140,7 @@ jobs:
     timeout-minutes: 30
     if: false
     needs: front-sb-build
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-latest-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -204,7 +206,7 @@ jobs:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
-    runs-on: depot-ubuntu-24.04-8
+    runs-on: ubuntu-latest-8-cores
     env:
       NODE_OPTIONS: "--max-old-space-size=10240"
     steps:

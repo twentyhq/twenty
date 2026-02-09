@@ -21,12 +21,12 @@ type RelationCreationPayloadAndObjectMetadata = {
 type ValidateMorphRelationCreationPayloadUtilArgs = {
   morphRelationCreationPayload: RelationCreationPayload[];
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  objectMetadataId: string;
+  objectMetadataUniversalIdentifier: string;
 };
 export const validateMorphRelationCreationPayload = async ({
   existingFlatObjectMetadataMaps,
   morphRelationCreationPayload,
-  objectMetadataId,
+  objectMetadataUniversalIdentifier,
 }: ValidateMorphRelationCreationPayloadUtilArgs): Promise<
   FieldInputTranspilationResult<RelationCreationPayloadAndObjectMetadata[]>
 > => {
@@ -72,7 +72,9 @@ export const validateMorphRelationCreationPayload = async ({
     ...new Set(allRelatedObjectMetadataIds),
   ];
 
-  if (allRelatedObjectMetadataIdsSet.includes(objectMetadataId)) {
+  if (
+    allRelatedObjectMetadataIdsSet.includes(objectMetadataUniversalIdentifier)
+  ) {
     return {
       status: 'fail',
       errors: [

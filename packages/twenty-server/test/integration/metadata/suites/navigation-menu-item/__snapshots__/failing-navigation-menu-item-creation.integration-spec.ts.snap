@@ -45,21 +45,6 @@ exports[`NavigationMenuItem creation should fail when creating with invalid fold
 }
 `;
 
-exports[`NavigationMenuItem creation should fail when creating with invalid userWorkspaceId (not a UUID) 1`] = `
-{
-  "extensions": {
-    "code": "GRAPHQL_VALIDATION_FAILED",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-    "value": "not-a-valid-uuid",
-  },
-  "message": "Invalid UUID",
-  "name": "ValidationError",
-}
-`;
-
 exports[`NavigationMenuItem creation should fail when creating with invalid targetObjectMetadataId (not a UUID) 1`] = `
 {
   "extensions": {
@@ -76,6 +61,21 @@ exports[`NavigationMenuItem creation should fail when creating with invalid targ
 `;
 
 exports[`NavigationMenuItem creation should fail when creating with invalid targetRecordId (not a UUID) 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "not-a-valid-uuid",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
+exports[`NavigationMenuItem creation should fail when creating with invalid userWorkspaceId (not a UUID) 1`] = `
 {
   "extensions": {
     "code": "GRAPHQL_VALIDATION_FAILED",
@@ -110,7 +110,6 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "navigationMenuItem",
@@ -134,76 +133,23 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
 exports[`NavigationMenuItem creation should fail when creating with missing targetRecordId 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "navigationMenuItem": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-              "message": "targetRecordId is required when targetObjectMetadataId is provided",
-              "userFriendlyMessage": "targetRecordId is required when targetObjectMetadataId is provided",
-            },
-            {
-              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-              "message": "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)",
-              "userFriendlyMessage": "Navigation menu item must be either a folder (with name), a view link (with viewId), or a record link (with targetRecordId and targetObjectMetadataId)",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "navigationMenuItem",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 navigationMenuItem",
-    "summary": {
-      "navigationMenuItem": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Multiple validation errors occurred while creating navigation menu item",
-  "name": "GraphQLError",
+  "message": "Could not find objectMetadata for given targetObjectMetadataId",
+  "name": "NotFoundError",
 }
 `;
 
 exports[`NavigationMenuItem creation should fail when creating with negative position 1`] = `
 {
   "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "navigationMenuItem": [
-        {
-          "errors": [
-            {
-              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
-              "message": "Position must be a non-negative integer",
-              "userFriendlyMessage": "Position must be a non-negative integer",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "id": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "navigationMenuItem",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 navigationMenuItem",
-    "summary": {
-      "navigationMenuItem": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Metadata validation failed",
+    "code": "NOT_FOUND",
+    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Multiple validation errors occurred while creating navigation menu item",
-  "name": "GraphQLError",
+  "message": "Could not find objectMetadata for given targetObjectMetadataId",
+  "name": "NotFoundError",
 }
 `;

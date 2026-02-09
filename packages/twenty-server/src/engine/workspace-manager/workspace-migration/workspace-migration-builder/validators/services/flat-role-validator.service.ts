@@ -4,17 +4,16 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { findFlatEntityPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration/utils/find-flat-entity-property-update.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateRoleIsEditable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
 import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
 
 @Injectable()
 export class FlatRoleValidatorService {
@@ -23,12 +22,11 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityToValidate.id,
         universalIdentifier: flatEntityToValidate.universalIdentifier,
         label: flatEntityToValidate.label,
       },
@@ -36,9 +34,9 @@ export class FlatRoleValidatorService {
       type: 'create',
     });
 
-    const existingRoles = Object.values(optimisticFlatRoleMaps.byId).filter(
-      isDefined,
-    );
+    const existingRoles = Object.values(
+      optimisticFlatRoleMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     validationResult.errors.push(
       ...validateRoleRequiredPropertiesAreDefined({
@@ -68,12 +66,11 @@ export class FlatRoleValidatorService {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
     buildOptions,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityToValidate.id,
         universalIdentifier: flatEntityToValidate.universalIdentifier,
         label: flatEntityToValidate.label,
       },
@@ -81,7 +78,10 @@ export class FlatRoleValidatorService {
       type: 'delete',
     });
 
-    const existingRole = optimisticFlatRoleMaps.byId[flatEntityToValidate.id];
+    const existingRole = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatEntityToValidate.universalIdentifier,
+      flatEntityMaps: optimisticFlatRoleMaps,
+    });
 
     if (!isDefined(existingRole)) {
       validationResult.errors.push({
@@ -104,8 +104,8 @@ export class FlatRoleValidatorService {
   }
 
   public validateFlatRoleUpdate({
-    flatEntityId,
-    flatEntityUpdates,
+    universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
@@ -113,12 +113,14 @@ export class FlatRoleValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'update'> {
-    const fromFlatRole = optimisticFlatRoleMaps.byId[flatEntityId];
+    const fromFlatRole = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
+      flatEntityMaps: optimisticFlatRoleMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: fromFlatRole?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'role',
       type: 'update',
@@ -143,9 +145,7 @@ export class FlatRoleValidatorService {
 
     const toFlatRole = {
       ...fromFlatRole,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     validationResult.errors.push(
@@ -154,19 +154,16 @@ export class FlatRoleValidatorService {
       }),
     );
 
-    const flatRoleLabelUpdate = findFlatEntityPropertyUpdate({
-      flatEntityUpdates,
-      property: 'label',
-    });
+    const flatRoleLabelUpdate = flatEntityUpdate.label;
 
     if (isDefined(flatRoleLabelUpdate)) {
-      const existingRoles = Object.values(optimisticFlatRoleMaps.byId).filter(
-        isDefined,
-      );
+      const existingRoles = Object.values(
+        optimisticFlatRoleMaps.byUniversalIdentifier,
+      ).filter(isDefined);
 
       validationResult.errors.push(
         ...validateRoleLabelUniqueness({
-          label: flatRoleLabelUpdate.to,
+          label: flatRoleLabelUpdate,
           existingFlatRoles: existingRoles,
         }),
       );

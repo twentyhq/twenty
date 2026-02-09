@@ -39,6 +39,8 @@ export const getFilterTypeFromFieldType = (
       return 'ARRAY';
     case FieldMetadataType.RAW_JSON:
       return 'RAW_JSON';
+    case FieldMetadataType.FILES:
+      return 'FILES';
     case FieldMetadataType.BOOLEAN:
       return 'BOOLEAN';
     case FieldMetadataType.TS_VECTOR:

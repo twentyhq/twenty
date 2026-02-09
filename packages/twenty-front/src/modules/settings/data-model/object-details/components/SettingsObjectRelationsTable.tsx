@@ -9,12 +9,19 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import styled from '@emotion/styled';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { IconArchive, IconFilter, IconSearch } from 'twenty-ui/display';
+import {
+  IconArchive,
+  IconFilter,
+  IconSearch,
+  IconSettings,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -73,17 +80,20 @@ export const SettingsObjectRelationsTable = ({
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
+  const [showSystemRelations, setShowSystemRelations] = useState(false);
+
+  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   const tableMetadata = SETTINGS_OBJECT_RELATION_TABLE_METADATA;
 
   const relationFields = useMemo(() => {
     return objectMetadataItem.fields.filter(
       (field) =>
-        !field.isSystem &&
+        (showSystemRelations || !field.isSystem) &&
         (field.type === FieldMetadataType.RELATION ||
           field.type === FieldMetadataType.MORPH_RELATION),
     );
-  }, [objectMetadataItem.fields]);
+  }, [objectMetadataItem.fields, showSystemRelations]);
 
   const sortedRelationFields = useSortedArray(relationFields, tableMetadata);
 
@@ -136,6 +146,17 @@ export const SettingsObjectRelationsTable = ({
                   text={t`Inactive`}
                   toggleSize="small"
                 />
+                {isAdvancedModeEnabled && (
+                  <MenuItemToggle
+                    LeftIcon={IconSettings}
+                    onToggleChange={() =>
+                      setShowSystemRelations(!showSystemRelations)
+                    }
+                    toggled={showSystemRelations}
+                    text={t`System relations`}
+                    toggleSize="small"
+                  />
+                )}
               </DropdownMenuItemsContainer>
             </DropdownContent>
           }

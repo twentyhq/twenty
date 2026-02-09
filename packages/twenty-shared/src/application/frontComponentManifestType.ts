@@ -4,6 +4,6 @@ export type FrontComponentManifest = {
   description?: string;
   sourceComponentPath: string;
   builtComponentPath: string;
-  builtComponentChecksum: string | null;
+  builtComponentChecksum: string;
   componentName: string;
 };

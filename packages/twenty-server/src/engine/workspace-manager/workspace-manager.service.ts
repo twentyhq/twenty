@@ -8,11 +8,11 @@ import { FlatApplication } from 'src/engine/core-modules/application/types/flat-
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { ADMIN_ROLE } from 'src/engine/metadata-modules/role/constants/admin-role';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 
 @Injectable()
@@ -102,7 +102,7 @@ export class WorkspaceManagerService {
   }): Promise<void> {
     const adminRole = await this.roleRepository.findOne({
       where: {
-        standardId: ADMIN_ROLE.standardId,
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
         workspaceId,
       },
     });
@@ -121,7 +121,7 @@ export class WorkspaceManagerService {
 
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
-      applicationId: workspaceCustomFlatApplication.id,
+      ownerFlatApplication: workspaceCustomFlatApplication,
     });
 
     await this.workspaceRepository.update(workspaceId, {

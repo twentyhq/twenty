@@ -1,9 +1,10 @@
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES = [
   'title',
   'type',
   'objectMetadataId',
   'gridPosition',
+  'position',
   'configuration',
-] as const satisfies (keyof FlatPageLayoutWidget)[];
+] as const satisfies MetadataEntityPropertyName<'pageLayoutWidget'>[];

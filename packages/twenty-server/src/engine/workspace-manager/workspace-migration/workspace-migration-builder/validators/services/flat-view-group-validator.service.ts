@@ -4,19 +4,18 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { fromFlatEntityPropertiesUpdatesToPartialFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-flat-entity-properties-updates-to-partial-flat-entity';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatViewGroupValidatorService {
   public validateFlatViewGroupUpdate({
-    flatEntityId,
-    flatEntityUpdates,
+    universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewGroupMaps: optimisticFlatViewGroupMaps,
       flatViewMaps,
@@ -24,13 +23,14 @@ export class FlatViewGroupValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
   >): FailedFlatEntityValidation<'viewGroup', 'update'> {
-    const existingFlatViewGroup =
-      optimisticFlatViewGroupMaps.byId[flatEntityId];
+    const existingFlatViewGroup = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
+      flatEntityMaps: optimisticFlatViewGroupMaps,
+    });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: existingFlatViewGroup?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'viewGroup',
       type: 'update',
@@ -48,9 +48,7 @@ export class FlatViewGroupValidatorService {
 
     const updatedFlatViewGroup = {
       ...existingFlatViewGroup,
-      ...fromFlatEntityPropertiesUpdatesToPartialFlatEntity({
-        updates: flatEntityUpdates,
-      }),
+      ...flatEntityUpdate,
     };
 
     if (!isDefined(updatedFlatViewGroup.fieldValue)) {
@@ -63,12 +61,11 @@ export class FlatViewGroupValidatorService {
 
     validationResult.flatEntityMinimalInformation = {
       ...validationResult.flatEntityMinimalInformation,
-      id: updatedFlatViewGroup.id,
-      viewId: updatedFlatViewGroup.viewId,
+      viewUniversalIdentifier: updatedFlatViewGroup.viewUniversalIdentifier,
     };
 
-    const flatView = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: updatedFlatViewGroup.viewId,
+    const flatView = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: updatedFlatViewGroup.viewUniversalIdentifier,
       flatEntityMaps: flatViewMaps,
     });
 
@@ -84,24 +81,25 @@ export class FlatViewGroupValidatorService {
   }
 
   public validateFlatViewGroupDeletion({
-    flatEntityToValidate: { id: viewGroupIdToDelete, universalIdentifier },
+    flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatViewGroupMaps: optimisticFlatViewGroupMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
   >): FailedFlatEntityValidation<'viewGroup', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: viewGroupIdToDelete,
         universalIdentifier,
       },
       metadataName: 'viewGroup',
       type: 'delete',
     });
 
-    const existingFlatViewGroup =
-      optimisticFlatViewGroupMaps.byId[viewGroupIdToDelete];
+    const existingFlatViewGroup = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
+      flatEntityMaps: optimisticFlatViewGroupMaps,
+    });
 
     if (!isDefined(existingFlatViewGroup)) {
       validationResult.errors.push({
@@ -120,33 +118,39 @@ export class FlatViewGroupValidatorService {
       flatViewGroupMaps: optimisticFlatViewGroupMaps,
       flatViewMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.viewGroup
   >): FailedFlatEntityValidation<'viewGroup', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatViewGroupToValidate.id,
         universalIdentifier: flatViewGroupToValidate.universalIdentifier,
-        viewId: flatViewGroupToValidate.viewId,
+        viewUniversalIdentifier:
+          flatViewGroupToValidate.viewUniversalIdentifier,
       },
       metadataName: 'viewGroup',
       type: 'create',
     });
 
-    const existingFlatViewGroup =
-      optimisticFlatViewGroupMaps.byId[flatViewGroupToValidate.id];
+    const existingFlatViewGroup = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewGroupToValidate.universalIdentifier,
+      flatEntityMaps: optimisticFlatViewGroupMaps,
+    });
 
     if (isDefined(existingFlatViewGroup)) {
-      const flatViewGroupId = flatViewGroupToValidate.id;
+      const flatViewGroupUniversalIdentifier =
+        flatViewGroupToValidate.universalIdentifier;
 
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`View group metadata with id ${flatViewGroupId} already exists`,
+        message: t`View group metadata with universal identifier ${flatViewGroupUniversalIdentifier} already exists`,
         userFriendlyMessage: msg`View group metadata already exists`,
       });
     }
 
-    const flatView = flatViewMaps.byId[flatViewGroupToValidate.viewId];
+    const flatView = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatViewGroupToValidate.viewUniversalIdentifier,
+      flatEntityMaps: flatViewMaps,
+    });
 
     if (!isDefined(flatView)) {
       validationResult.errors.push({

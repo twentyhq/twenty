@@ -7,7 +7,7 @@ import { type Readable } from 'stream';
 
 import { isObject } from '@sniptt/guards';
 import { FileFolder, Sources } from 'twenty-shared/types';
-import { Like, Repository } from 'typeorm';
+import { Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -37,13 +37,15 @@ export class FileStorageService {
     fileFolder,
     resourcePath,
   }: ResourceIdentifier): string {
-    return `${workspaceId}/${applicationUniversalIdentifier}/${fileFolder}/${resourcePath}`;
+    return join(
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder,
+      resourcePath,
+    ).replace(/\/+/g, '/');
   }
 
-  /**
-   * @deprecated Use writeFile_v2 instead
-   */
-  writeFile(params: {
+  writeFileLegacy(params: {
     file: string | Buffer | Uint8Array;
     name: string;
     folder: string;
@@ -60,7 +62,7 @@ export class FileStorageService {
     });
   }
 
-  async writeFile_v2({
+  async writeFile({
     sourceFile,
     mimeType,
     fileFolder,
@@ -69,15 +71,24 @@ export class FileStorageService {
     resourcePath,
     fileId,
     settings,
+    queryRunner,
   }: ResourceIdentifier & {
     sourceFile: string | Buffer | Uint8Array;
     mimeType: string | undefined;
     fileId?: string;
     settings: FileSettings;
+    queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const application = await this.applicationRepository.findOneOrFail({
+    const applicationRepository = queryRunner
+      ? queryRunner.manager.getRepository(ApplicationEntity)
+      : this.applicationRepository;
+    const fileRepository = queryRunner
+      ? queryRunner.manager.getRepository(FileEntity)
+      : this.fileRepository;
+
+    const application = await applicationRepository.findOneOrFail({
       where: {
         universalIdentifier: applicationUniversalIdentifier,
         workspaceId,
@@ -97,31 +108,37 @@ export class FileStorageService {
       sourceFile,
     });
 
-    const fileEntity = await this.fileRepository.save({
-      path: `${fileFolder}/${resourcePath}`,
-      workspaceId,
-      applicationId: application.id,
-      id: fileId,
-      size:
-        typeof sourceFile === 'string'
-          ? Buffer.byteLength(sourceFile)
-          : sourceFile.length,
-      settings,
-    });
+    await fileRepository.upsert(
+      {
+        path: `${fileFolder}/${resourcePath}`,
+        workspaceId,
+        applicationId: application.id,
+        id: fileId,
+        size:
+          typeof sourceFile === 'string'
+            ? Buffer.byteLength(sourceFile)
+            : sourceFile.length,
+        settings,
+      },
+      ['path', 'workspaceId', 'applicationId'],
+    );
 
-    return fileEntity;
+    return await fileRepository.findOneOrFail({
+      where: {
+        path: `${fileFolder}/${resourcePath}`,
+        applicationId: application.id,
+        workspaceId,
+      },
+    });
   }
 
-  /**
-   * @deprecated Use readFile_v2 instead
-   */
-  readFile(params: { filePath: string }): Promise<Readable> {
+  readFileLegacy(params: { filePath: string }): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     return driver.readFile(params);
   }
 
-  readFile_v2(params: ResourceIdentifier): Promise<Readable> {
+  readFile(params: ResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     const onStoragePath = this.buildOnStoragePath(params);
@@ -129,16 +146,13 @@ export class FileStorageService {
     return driver.readFile({ filePath: onStoragePath });
   }
 
-  /**
-   * @deprecated Use uploadFolder_v2 with local temp directory instead
-   */
-  async writeFolder(sources: Sources, folderPath: string): Promise<void> {
+  async writeFolderLegacy(sources: Sources, folderPath: string): Promise<void> {
     for (const key of Object.keys(sources)) {
       if (isObject(sources[key])) {
-        await this.writeFolder(sources[key], join(folderPath, key));
+        await this.writeFolderLegacy(sources[key], join(folderPath, key));
         continue;
       }
-      await this.writeFile({
+      await this.writeFileLegacy({
         file: sources[key],
         name: key,
         folder: folderPath,
@@ -147,10 +161,7 @@ export class FileStorageService {
     }
   }
 
-  /**
-   * @deprecated Use downloadFolder_v2 with local temp directory instead
-   */
-  async readFolder(
+  async readFolderLegacy(
     folderPath: string,
     localTempPath?: string,
   ): Promise<Sources> {
@@ -185,7 +196,7 @@ export class FileStorageService {
     return sources;
   }
 
-  async readFolder_v2(params: ResourceIdentifier): Promise<Sources> {
+  async readFolder(params: ResourceIdentifier): Promise<Sources> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const onStoragePath = this.buildOnStoragePath(params);
     const tempDir = `/tmp/twenty-read-folder-${Date.now()}`;
@@ -200,7 +211,7 @@ export class FileStorageService {
     return this.readLocalFolderToSources(tempDir);
   }
 
-  uploadFolder_v2(
+  uploadFolder(
     params: ResourceIdentifier & { localPath: string },
   ): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -212,7 +223,7 @@ export class FileStorageService {
     });
   }
 
-  downloadFolder_v2(
+  downloadFolder(
     params: ResourceIdentifier & { localPath: string },
   ): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -224,20 +235,72 @@ export class FileStorageService {
     });
   }
 
-  /**
-   * @deprecated Use delete_v2 instead
-   */
-  delete(params: { folderPath: string; filename?: string }): Promise<void> {
+  downloadFile(
+    params: ResourceIdentifier & { localPath: string },
+  ): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.downloadFile({
+      onStoragePath,
+      localPath: params.localPath,
+    });
+  }
+
+  deleteLegacy(params: {
+    folderPath: string;
+    filename?: string;
+  }): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     return driver.delete(params);
   }
 
-  delete_v2(params: ResourceIdentifier): Promise<void> {
+  async deleteApplicationFiles({
+    applicationUniversalIdentifier,
+    workspaceId,
+  }: {
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }) {
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId: workspaceId,
+      },
+    });
+
+    await this.fileRepository.delete({
+      applicationId: application.id,
+      workspaceId,
+    });
+  }
+
+  async delete(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const onStoragePath = this.buildOnStoragePath(params);
 
-    return driver.delete({ folderPath: onStoragePath });
+    const deleteResult = driver.delete({ folderPath: onStoragePath });
+
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: params.applicationUniversalIdentifier,
+        workspaceId: params.workspaceId,
+      },
+    });
+
+    const basePath = `${join(params.fileFolder, params.resourcePath)}`.replace(
+      /\/+/g,
+      '/',
+    );
+
+    await this.fileRepository.delete({
+      path: Like(`${basePath}%`),
+      applicationId: application.id,
+      workspaceId: params.workspaceId,
+    });
+
+    return deleteResult;
   }
 
   async deleteByFileId({
@@ -266,10 +329,7 @@ export class FileStorageService {
     await this.fileRepository.delete(fileId);
   }
 
-  /**
-   * @deprecated Use copy_v2 instead
-   */
-  copy(params: {
+  copyLegacy(params: {
     from: { folderPath: string; filename?: string };
     to: { folderPath: string; filename?: string };
   }): Promise<void> {
@@ -278,7 +338,7 @@ export class FileStorageService {
     return driver.copy(params);
   }
 
-  copy_v2({
+  copy({
     from,
     to,
   }: {
@@ -337,19 +397,7 @@ export class FileStorageService {
     });
   }
 
-  /**
-   * @deprecated Use move_v2 instead
-   */
-  move(params: {
-    from: { folderPath: string; filename?: string };
-    to: { folderPath: string; filename?: string };
-  }): Promise<void> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.move(params);
-  }
-
-  move_v2({
+  move({
     from,
     to,
   }: {
@@ -364,32 +412,20 @@ export class FileStorageService {
     });
   }
 
-  /**
-   * @deprecated Use checkFileExists_v2 instead
-   */
-  checkFileExists(params: { filePath: string }): Promise<boolean> {
+  checkFolderExistsLegacy(params: { folderPath: string }): Promise<boolean> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    return driver.checkFileExists(params);
+    return driver.checkFolderExists(params);
   }
 
-  checkFileExists_v2(params: ResourceIdentifier): Promise<boolean> {
+  checkFileExists(params: ResourceIdentifier): Promise<boolean> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const onStoragePath = this.buildOnStoragePath(params);
 
     return driver.checkFileExists({ filePath: onStoragePath });
   }
 
-  /**
-   * @deprecated Use checkFolderExists_v2 instead
-   */
-  checkFolderExists(params: { folderPath: string }): Promise<boolean> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    return driver.checkFolderExists(params);
-  }
-
-  checkFolderExists_v2(params: ResourceIdentifier): Promise<boolean> {
+  checkFolderExists(params: ResourceIdentifier): Promise<boolean> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const onStoragePath = this.buildOnStoragePath(params);
 

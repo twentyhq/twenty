@@ -18,6 +18,7 @@ module.exports = {
 
     './src/modules/billing/graphql/**/*.{ts,tsx}',
     './src/modules/settings/**/graphql/**/*.{ts,tsx}',
+    './src/modules/logic-functions/graphql/**/*.{ts,tsx}',
 
     './src/modules/databases/graphql/**/*.{ts,tsx}',
     './src/modules/workflow/**/graphql/**/*.{ts,tsx}',

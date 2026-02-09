@@ -90,7 +90,9 @@ export class PerObjectToolGeneratorService {
         },
       );
 
-    const allFlatObjects = Object.values(flatObjectMetadataMaps.byId)
+    const allFlatObjects = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter((obj) => obj.isActive && !obj.isSystem);
 

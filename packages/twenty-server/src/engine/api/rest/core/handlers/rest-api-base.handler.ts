@@ -25,6 +25,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -226,13 +227,19 @@ export abstract class RestApiBaseHandler {
 
     let objectId = idByNamePlural[parsedObject];
     let flatObjectMetadataItem = objectId
-      ? flatObjectMetadataMaps.byId[objectId]
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: objectId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        })
       : undefined;
 
     if (!flatObjectMetadataItem) {
       const wrongObjectId = idByNameSingular[parsedObject];
       const wrongFlatObjectMetadataItem = wrongObjectId
-        ? flatObjectMetadataMaps.byId[wrongObjectId]
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: wrongObjectId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
         : undefined;
 
       let hint = 'eg: companies';

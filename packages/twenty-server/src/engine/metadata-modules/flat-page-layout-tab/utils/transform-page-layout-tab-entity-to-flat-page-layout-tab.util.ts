@@ -48,13 +48,10 @@ export const transformPageLayoutTabEntityToFlatPageLayoutTab = ({
     widgetIds: pageLayoutTabEntity.widgets.map((widget) => widget.id),
     icon: pageLayoutTabEntity.icon,
     layoutMode: pageLayoutTabEntity.layoutMode,
-    __universal: {
-      universalIdentifier: pageLayoutTabEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      pageLayoutUniversalIdentifier,
-      widgetUniversalIdentifiers: pageLayoutTabEntity.widgets.map(
-        (widget) => widget.universalIdentifier,
-      ),
-    },
+    applicationUniversalIdentifier,
+    pageLayoutUniversalIdentifier,
+    widgetUniversalIdentifiers: pageLayoutTabEntity.widgets.map(
+      (widget) => widget.universalIdentifier,
+    ),
   };
 };

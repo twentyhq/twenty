@@ -19,6 +19,21 @@ export class FrontComponentEntity
   @Column({ nullable: false })
   name: string;
 
+  @Column({ nullable: true, type: 'varchar' })
+  description: string | null;
+
+  @Column({ nullable: false })
+  sourceComponentPath: string;
+
+  @Column({ nullable: false })
+  builtComponentPath: string;
+
+  @Column({ nullable: false })
+  componentName: string;
+
+  @Column({ nullable: false })
+  builtComponentChecksum: string;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

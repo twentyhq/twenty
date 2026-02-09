@@ -6,7 +6,8 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
 import { fromDeleteViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-delete-view-group-input-to-flat-view-group-or-throw.util';
@@ -86,9 +87,10 @@ export class ViewGroupService {
 
     const flatViewGroupsToCreate = createViewGroupInputs.map(
       (createViewGroupInput) => {
-        const mainGroupByFieldMetadataId =
-          flatViewMaps.byId[createViewGroupInput.viewId]
-            ?.mainGroupByFieldMetadataId;
+        const mainGroupByFieldMetadataId = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: createViewGroupInput.viewId,
+          flatEntityMaps: flatViewMaps,
+        })?.mainGroupByFieldMetadataId;
 
         if (!isDefined(mainGroupByFieldMetadataId)) {
           throw new ViewGroupException(
@@ -99,8 +101,8 @@ export class ViewGroupService {
 
         return fromCreateViewGroupInputToFlatViewGroupToCreate({
           createViewGroupInput,
-          workspaceId,
-          workspaceCustomApplicationId: workspaceCustomFlatApplication.id,
+          flatApplication: workspaceCustomFlatApplication,
+          flatViewMaps,
         });
       },
     );
@@ -117,6 +119,8 @@ export class ViewGroupService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -148,6 +152,13 @@ export class ViewGroupService {
     workspaceId: string;
     updateViewGroupInput: UpdateViewGroupInput;
   }): Promise<ViewGroupDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewGroupMaps: existingFlatViewGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -174,6 +185,8 @@ export class ViewGroupService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -193,8 +206,9 @@ export class ViewGroupService {
       );
 
     return fromFlatViewGroupToViewGroupDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatViewGroup.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewGroup.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewGroupMaps,
       }),
     );
@@ -207,6 +221,13 @@ export class ViewGroupService {
     deleteViewGroupInput: DeleteViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewGroupMaps: existingFlatViewGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -235,6 +256,8 @@ export class ViewGroupService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -254,8 +277,9 @@ export class ViewGroupService {
       );
 
     return fromFlatViewGroupToViewGroupDto(
-      findFlatEntityByIdInFlatEntityMapsOrThrow({
-        flatEntityId: optimisticallyUpdatedFlatViewGroupWithDeletedAt.id,
+      findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier:
+          optimisticallyUpdatedFlatViewGroupWithDeletedAt.universalIdentifier,
         flatEntityMaps: recomputedExistingFlatViewGroupMaps,
       }),
     );
@@ -268,6 +292,13 @@ export class ViewGroupService {
     destroyViewGroupInput: DestroyViewGroupInput;
     workspaceId: string;
   }): Promise<ViewGroupDTO> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
+
     const { flatViewGroupMaps: existingFlatViewGroupMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -282,6 +313,11 @@ export class ViewGroupService {
         flatViewGroupMaps: existingFlatViewGroupMaps,
       });
 
+    const existingFlatViewGroup = findFlatEntityByUniversalIdentifierOrThrow({
+      universalIdentifier: existingViewGroupToDelete.universalIdentifier,
+      flatEntityMaps: existingFlatViewGroupMaps,
+    });
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -294,6 +330,8 @@ export class ViewGroupService {
           },
           workspaceId,
           isSystemBuild: false,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
         },
       );
 
@@ -304,7 +342,10 @@ export class ViewGroupService {
       );
     }
 
-    return fromFlatViewGroupToViewGroupDto(existingViewGroupToDelete);
+    return fromFlatViewGroupToViewGroupDto({
+      ...existingFlatViewGroup,
+      deletedAt: new Date().toISOString(),
+    });
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {

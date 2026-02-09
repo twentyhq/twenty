@@ -1,19 +1,25 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/metadata-modules/view-filter-group/enums/view-filter-group-logical-operator';
+import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter-group.type';
 
 export const fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate = ({
   createViewFilterGroupInput: rawCreateViewFilterGroupInput,
-  workspaceId,
-  workspaceCustomApplicationId,
+  flatApplication,
+  flatViewMaps,
+  flatViewFilterGroupMaps,
 }: {
   createViewFilterGroupInput: CreateViewFilterGroupInput;
-  workspaceId: string;
-  workspaceCustomApplicationId: string;
-}): FlatViewFilterGroup => {
+  flatApplication: FlatApplication;
+} & Pick<
+  AllFlatEntityMaps,
+  'flatViewMaps' | 'flatViewFilterGroupMaps'
+>): UniversalFlatViewFilterGroup & { id: string } => {
   const { viewId, ...createViewFilterGroupInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawCreateViewFilterGroupInput,
@@ -23,10 +29,20 @@ export const fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate = ({
   const createdAt = new Date().toISOString();
   const viewFilterGroupId = createViewFilterGroupInput.id ?? v4();
 
+  const { viewUniversalIdentifier, parentViewFilterGroupUniversalIdentifier } =
+    resolveEntityRelationUniversalIdentifiers({
+      metadataName: 'viewFilterGroup',
+      foreignKeyValues: {
+        viewId,
+        parentViewFilterGroupId:
+          createViewFilterGroupInput.parentViewFilterGroupId,
+      },
+      flatEntityMaps: { flatViewMaps, flatViewFilterGroupMaps },
+    });
+
   return {
     id: viewFilterGroupId,
-    viewId,
-    workspaceId,
+    viewUniversalIdentifier,
     createdAt,
     updatedAt: createdAt,
     deletedAt: null,
@@ -34,12 +50,11 @@ export const fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate = ({
     logicalOperator:
       createViewFilterGroupInput.logicalOperator ??
       ViewFilterGroupLogicalOperator.AND,
-    parentViewFilterGroupId:
-      createViewFilterGroupInput.parentViewFilterGroupId ?? null,
+    parentViewFilterGroupUniversalIdentifier,
     positionInViewFilterGroup:
       createViewFilterGroupInput.positionInViewFilterGroup ?? null,
-    applicationId: workspaceCustomApplicationId,
-    viewFilterIds: [],
-    childViewFilterGroupIds: [],
+    applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    viewFilterUniversalIdentifiers: [],
+    childViewFilterGroupUniversalIdentifiers: [],
   };
 };
