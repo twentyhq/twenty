@@ -9,7 +9,11 @@ import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageL
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey, PageLayoutType } from '~/generated/graphql';
+import {
+  FeatureFlagKey,
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+} from '~/generated/graphql';
 
 export const PageLayoutContent = () => {
   const isRecordPageEnabled = useIsFeatureEnabled(
@@ -33,8 +37,10 @@ export const PageLayoutContent = () => {
   const isRecordPageLayout =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE;
 
-  const isCanvasLayout = isRecordPageEnabled && layoutMode === 'canvas';
-  const isVerticalList = isRecordPageEnabled && layoutMode === 'vertical-list';
+  const isCanvasLayout =
+    isRecordPageEnabled && layoutMode === PageLayoutTabLayoutMode.CANVAS;
+  const isVerticalList =
+    isRecordPageEnabled && layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
 
   if (isCanvasLayout) {
     return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;

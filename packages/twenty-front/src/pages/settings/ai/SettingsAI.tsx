@@ -1,3 +1,7 @@
+import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
+
+import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -7,12 +11,24 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
-import { IconSettings, IconSparkles, IconTool } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconFileText,
+  IconSettings,
+  IconSparkles,
+  IconTool,
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Card, Section } from 'twenty-ui/layout';
 import { SettingsAIMCP } from './components/SettingsAIMCP';
 import { SettingsAIRouterSettings } from './components/SettingsAIRouterSettings';
 import { SettingsSkillsTable } from './components/SettingsSkillsTable';
 import { SettingsToolsTable } from './components/SettingsToolsTable';
 import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
 
 export const SettingsAI = () => {
   const activeTabId = useRecoilComponentValue(
@@ -63,6 +79,28 @@ export const SettingsAI = () => {
         {isSettingsTab && (
           <>
             <SettingsAIRouterSettings />
+            <Section>
+              <H2Title
+                title={t`System Prompt`}
+                description={t`View and customize AI instructions`}
+              />
+              <Card rounded>
+                <SettingsOptionCardContentButton
+                  Icon={IconFileText}
+                  title={t`System Prompt`}
+                  description={t`View the AI system prompt and add custom instructions`}
+                  Button={
+                    <StyledLink to={getSettingsPath(SettingsPath.AIPrompts)}>
+                      <Button
+                        title={t`Configure`}
+                        variant="secondary"
+                        size="small"
+                      />
+                    </StyledLink>
+                  }
+                />
+              </Card>
+            </Section>
             <SettingsAIMCP />
           </>
         )}

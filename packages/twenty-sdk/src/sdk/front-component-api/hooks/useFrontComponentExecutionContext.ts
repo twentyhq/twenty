@@ -1,26 +1,39 @@
-import { useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  getFrontComponentExecutionContext,
+  subscribeToFrontComponentExecutionContext,
+  unsubscribeFromFrontComponentExecutionContext,
+} from '../context/frontComponentContext';
 import { type FrontComponentExecutionContext } from '../types/FrontComponentExecutionContext';
-import { type FrontComponentExecutionContextStore } from '../types/FrontComponentExecutionContextStore';
 
-const getStore = (): FrontComponentExecutionContextStore => {
-  const store = (globalThis as Record<string, unknown>)
-    .frontComponentExecutionContextStore as
-    | FrontComponentExecutionContextStore
-    | undefined;
+export const useFrontComponentExecutionContext = <T>(
+  selector: (context: FrontComponentExecutionContext | undefined) => T,
+): T => {
+  const [currentSelectedValue, setCurrentSelectedValue] = useState(() =>
+    selector(getFrontComponentExecutionContext()),
+  );
 
-  if (store === undefined) {
-    throw new Error(
-      'frontComponentExecutionContextStore not found on globalThis. This hook must be used within a front component running in the worker.',
-    );
-  }
+  const previousSelectedValueRef = useRef(currentSelectedValue);
 
-  return store;
-};
+  useEffect(() => {
+    const onContextChange = () => {
+      const newSelectedValue = selector(getFrontComponentExecutionContext());
 
-export const useFrontComponentExecutionContext = ():
-  | FrontComponentExecutionContext
-  | undefined => {
-  const store = getStore();
+      const hasSelectedValueChanged =
+        newSelectedValue !== previousSelectedValueRef.current;
 
-  return useSyncExternalStore(store.subscribe, store.getSnapshot);
+      if (hasSelectedValueChanged) {
+        previousSelectedValueRef.current = newSelectedValue;
+        setCurrentSelectedValue(newSelectedValue);
+      }
+    };
+
+    subscribeToFrontComponentExecutionContext(onContextChange);
+
+    onContextChange();
+
+    return () => unsubscribeFromFrontComponentExecutionContext(onContextChange);
+  }, [selector]);
+
+  return currentSelectedValue;
 };

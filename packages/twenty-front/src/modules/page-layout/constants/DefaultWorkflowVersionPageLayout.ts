@@ -1,6 +1,10 @@
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowVersionPageLayoutId';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
-import { PageLayoutType, WidgetType } from '~/generated/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from '~/generated/graphql';
 
 /**
  * Default WorkflowVersion PageLayout.
@@ -15,7 +19,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
-  defaultTabIdToFocusOnMobileAndSidePanel: 'workflow-version-tab-flow',
+  defaultTabToFocusOnMobileAndSidePanelId: 'workflow-version-tab-flow',
   tabs: [
     // Fields tab (position 100)
     {
@@ -24,7 +28,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
       title: 'Home',
       icon: 'IconHome',
       position: 100,
-      layoutMode: 'vertical-list',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       pageLayoutId: DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -62,7 +66,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
       title: 'Flow',
       icon: 'IconSettings',
       position: 200,
-      layoutMode: 'canvas',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
       pageLayoutId: DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

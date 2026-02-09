@@ -1,15 +1,16 @@
-import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { IconHandMove, IconSparkles } from 'twenty-ui/display';
+import { IconEdit, IconSparkles } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated/graphql';
+
+import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 
 const StyledIconButton = styled(IconButton)`
   color: ${({ theme }) => theme.font.color.secondary};
@@ -19,12 +20,8 @@ export const CommandMenuTopBarRightCornerIcon = () => {
   const isMobile = useIsMobile();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const commandMenuPage = useRecoilValue(commandMenuPageState);
-  const commandMenuNavigationStack = useRecoilValue(
-    commandMenuNavigationStackState,
-  );
-
-  const { goBackFromCommandMenu } = useCommandMenuHistory();
   const { openAskAIPage } = useOpenAskAIPageInCommandMenu();
+  const { createChatThread } = useCreateNewAIChatThread();
 
   if (isMobile || !isAiEnabled) {
     return null;
@@ -34,8 +31,6 @@ export const CommandMenuTopBarRightCornerIcon = () => {
     CommandMenuPages.AskAI,
     CommandMenuPages.ViewPreviousAIChats,
   ].includes(commandMenuPage);
-
-  const canGoBack = commandMenuNavigationStack.length > 1;
 
   if (!isOnAskAIPage) {
     return (
@@ -48,16 +43,13 @@ export const CommandMenuTopBarRightCornerIcon = () => {
     );
   }
 
-  if (!canGoBack) {
-    return null;
-  }
-
   return (
     <StyledIconButton
-      Icon={IconHandMove}
+      Icon={IconEdit}
       size="small"
       variant="tertiary"
-      onClick={goBackFromCommandMenu}
+      onClick={() => createChatThread()}
+      ariaLabel={t`New conversation`}
     />
   );
 };
