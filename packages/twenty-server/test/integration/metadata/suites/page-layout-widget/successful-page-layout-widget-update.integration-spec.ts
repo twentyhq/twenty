@@ -202,25 +202,23 @@ describe('Page layout widget update should succeed', () => {
     },
   );
 
-  describe('GRAPH widget update tests', () => {
-    for (const { title, configKey } of GRAPH_SUCCESSFUL_TEST_CASES) {
-      it(`should ${title}`, async () => {
-        const { data } = await updateOnePageLayoutWidget({
-          expectToFail: false,
-          input: {
-            id: testPageLayoutWidgetId,
-            type: WidgetType.GRAPH,
-            objectMetadataId: testObjectMetadataId,
-            configuration: chartConfigs[configKey],
-          },
-        });
-
-        expect(data.updatePageLayoutWidget).toMatchSnapshot(
-          extractRecordIdsAndDatesAsExpectAny({
-            ...data.updatePageLayoutWidget,
-          }),
-        );
+  for (const { title, configKey } of GRAPH_SUCCESSFUL_TEST_CASES) {
+    it(`should ${title}`, async () => {
+      const { data } = await updateOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          id: testPageLayoutWidgetId,
+          type: WidgetType.GRAPH,
+          objectMetadataId: testObjectMetadataId,
+          configuration: chartConfigs[configKey],
+        },
       });
-    }
-  });
+
+      expect(data.updatePageLayoutWidget).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({
+          ...data.updatePageLayoutWidget,
+        }),
+      );
+    });
+  }
 });

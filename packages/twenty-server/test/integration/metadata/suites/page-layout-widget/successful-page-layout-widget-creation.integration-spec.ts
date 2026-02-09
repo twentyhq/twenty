@@ -243,29 +243,27 @@ describe('Page layout widget creation should succeed', () => {
     },
   );
 
-  describe('GRAPH widget tests', () => {
-    for (const { title, widgetTitle, configKey } of GRAPH_TEST_CASES) {
-      it(`should ${title}`, async () => {
-        const { data } = await createOnePageLayoutWidget({
-          expectToFail: false,
-          input: {
-            title: widgetTitle,
-            type: WidgetType.GRAPH,
-            objectMetadataId: testObjectMetadataId,
-            configuration: chartConfigs[configKey],
-            pageLayoutTabId: testPageLayoutTabId,
-            gridPosition: DEFAULT_GRID_POSITION,
-          },
-        });
-
-        createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
-
-        expect(data.createPageLayoutWidget).toMatchSnapshot(
-          extractRecordIdsAndDatesAsExpectAny({
-            ...data.createPageLayoutWidget,
-          }),
-        );
+  for (const { title, widgetTitle, configKey } of GRAPH_TEST_CASES) {
+    it(`should ${title}`, async () => {
+      const { data } = await createOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          title: widgetTitle,
+          type: WidgetType.GRAPH,
+          objectMetadataId: testObjectMetadataId,
+          configuration: chartConfigs[configKey],
+          pageLayoutTabId: testPageLayoutTabId,
+          gridPosition: DEFAULT_GRID_POSITION,
+        },
       });
-    }
-  });
+
+      createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
+
+      expect(data.createPageLayoutWidget).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({
+          ...data.createPageLayoutWidget,
+        }),
+      );
+    });
+  }
 });

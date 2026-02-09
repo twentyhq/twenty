@@ -141,7 +141,7 @@ describe('Page layout with tabs update should succeed', () => {
     const runtimeChartTestMetadata = await getRuntimeChartTestMetadata();
 
     graphWidgetObjectMetadataId = runtimeChartTestMetadata.objectMetadataId;
-    pieChartConfiguration = runtimeChartTestMetadata.chartConfigs.pieChart;
+    pieChartConfiguration = runtimeChartTestMetadata.chartConfigs.pieChartMinimal;
   });
 
   beforeEach(async () => {
