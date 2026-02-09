@@ -8,12 +8,7 @@ import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-we
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
-  imports: [
-    AuditModule,
-    MetricsModule,
-    ToolModule,
-    WorkspaceCacheModule,
-  ],
+  imports: [AuditModule, MetricsModule, ToolModule, WorkspaceCacheModule],
   providers: [CallWebhookJobsJob, CallWebhookJob],
 })
 export class WebhookJobModule {}

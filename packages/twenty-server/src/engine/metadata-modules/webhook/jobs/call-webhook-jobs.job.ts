@@ -47,11 +47,10 @@ export class CallWebhookJobsJob {
       '*.*',
     ];
 
-    const { flatWebhookMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceEventBatch.workspaceId,
-        ['flatWebhookMaps'],
-      );
+    const { flatWebhookMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceEventBatch.workspaceId,
+      ['flatWebhookMaps'],
+    );
 
     const webhooks = Object.values(flatWebhookMaps.byUniversalIdentifier)
       .filter(isDefined)
