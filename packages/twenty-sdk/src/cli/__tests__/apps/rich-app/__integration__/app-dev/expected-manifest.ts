@@ -46,7 +46,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'A component using an external component file',
       name: 'card-component',
       sourceComponentPath: 'src/components/card.front-component.tsx',
-      universalIdentifier: 'i0i1i2i3-i4i5-4000-8000-000000000001',
+      universalIdentifier: '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7',
     },
     {
       builtComponentPath: 'src/components/greeting.front-component.mjs',
@@ -55,7 +55,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'A component that uses greeting utility',
       name: 'greeting-component',
       sourceComponentPath: 'src/components/greeting.front-component.tsx',
-      universalIdentifier: 'h0h1h2h3-h4h5-4000-8000-000000000001',
+      universalIdentifier: '370ae182-743f-4ecb-b625-7ac48e21f0e5',
     },
     {
       builtComponentPath: 'src/components/test.front-component.mjs',
