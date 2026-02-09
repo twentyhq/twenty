@@ -21,6 +21,19 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AiSystemPromptPreview = {
+  __typename?: 'AISystemPromptPreview';
+  estimatedTokenCount: Scalars['Int'];
+  sections: Array<AiSystemPromptSection>;
+};
+
+export type AiSystemPromptSection = {
+  __typename?: 'AISystemPromptSection';
+  content: Scalars['String'];
+  estimatedTokenCount: Scalars['Int'];
+  title: Scalars['String'];
+};
+
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
@@ -2077,6 +2090,7 @@ export enum MessageChannelVisibility {
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
+  GROQ = 'GROQ',
   NONE = 'NONE',
   OPENAI = 'OPENAI',
   OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
@@ -3664,6 +3678,7 @@ export type Query = {
   frontComponent?: Maybe<FrontComponent>;
   frontComponents: Array<FrontComponent>;
   getAISystemPrompt: Scalars['String'];
+  getAISystemPromptPreview: AiSystemPromptPreview;
   getAddressDetails: PlaceDetailsResult;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
@@ -8558,6 +8573,7 @@ export const GetChatThreadsDocument = gql`
     totalInputTokens
     totalOutputTokens
     contextWindowTokens
+    conversationSize
     totalInputCredits
     totalOutputCredits
     createdAt
@@ -15983,6 +15999,21 @@ export const GetAiSystemPromptPreviewDocument = gql`
 }
     `;
 
+/**
+ * __useGetAiSystemPromptPreviewQuery__
+ *
+ * To run a query within a React component, call `useGetAiSystemPromptPreviewQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAiSystemPromptPreviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAiSystemPromptPreviewQuery({
+ *   variables: {
+ *   },
+ * });
+ */
 export function useGetAiSystemPromptPreviewQuery(baseOptions?: Apollo.QueryHookOptions<GetAiSystemPromptPreviewQuery, GetAiSystemPromptPreviewQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<GetAiSystemPromptPreviewQuery, GetAiSystemPromptPreviewQueryVariables>(GetAiSystemPromptPreviewDocument, options);
