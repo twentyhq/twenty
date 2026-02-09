@@ -1,20 +1,22 @@
 import { isDefined } from 'twenty-shared/utils';
 
 const mockFrontComponentCode = `
-// react-globals:react/jsx-runtime
-var jsx = globalThis.jsx;
+var navigate = /* @__PURE__ */ (() => globalThis.TwentySdk.navigate)();
 
-// src/test-component.front-component.tsx
-var RemoteComponents = globalThis.RemoteComponents;
+var AppPath = /* @__PURE__ */ (() => globalThis.TwentyShared["types"].AppPath)();
+
+var Button = /* @__PURE__ */ (() => globalThis.RemoteComponents.TwentyUiButton)();
+
+var jsx = /* @__PURE__ */ (() => globalThis.jsx)();
 
 var TestComponent = () => {
   return /* @__PURE__ */ jsx(
-    RemoteComponents.TwentyUiButton,
+    Button,
     {
-      title: "Click me",
-      onClick: (event) => {
-        console.log("click event:", event);
-      }
+      title: "Navigate to people index page",
+      onClick: () => navigate?.(AppPath.RecordIndexPage, {
+        objectNamePlural: "people"
+      })
     }
   );
 };
