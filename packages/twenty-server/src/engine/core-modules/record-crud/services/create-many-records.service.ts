@@ -74,7 +74,9 @@ export class CreateManyRecordsService {
       return {
         success: true,
         message: `Created ${createdRecords.length} records in ${objectName}`,
-        result: createdRecords,
+        result: params.slimResponse
+          ? createdRecords.map((record) => ({ id: record.id }))
+          : createdRecords,
         recordReferences: createdRecords.map((record) => ({
           objectNameSingular: objectName,
           recordId: record.id,

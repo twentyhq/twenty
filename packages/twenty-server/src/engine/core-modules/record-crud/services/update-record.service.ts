@@ -103,7 +103,7 @@ export class UpdateRecordService {
       return {
         success: true,
         message: `Record updated successfully in ${objectName}`,
-        result: updatedRecord,
+        result: params.slimResponse ? { id: objectRecordId } : updatedRecord,
         recordReferences: [
           {
             objectNameSingular: objectName,

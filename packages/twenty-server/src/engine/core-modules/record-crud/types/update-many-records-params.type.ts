@@ -10,4 +10,5 @@ export type UpdateManyRecordsParams = {
   data: ObjectRecordProperties;
   authContext: WorkspaceAuthContext;
   rolePermissionConfig?: RolePermissionConfig;
+  slimResponse?: boolean;
 };

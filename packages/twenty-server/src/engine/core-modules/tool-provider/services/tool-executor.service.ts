@@ -44,10 +44,7 @@ export class ToolExecutorService {
   private readonly logger = new Logger(ToolExecutorService.name);
 
   // Per-tool handlers (action tools, etc.)
-  private readonly staticToolHandlers = new Map<
-    string,
-    StaticToolHandler
-  >();
+  private readonly staticToolHandlers = new Map<string, StaticToolHandler>();
 
   // Category-level ToolSet generators (workflow, view, dashboard, metadata)
   private readonly categoryGenerators = new Map<
@@ -68,10 +65,7 @@ export class ToolExecutorService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  registerStaticHandler(
-    toolId: string,
-    handler: StaticToolHandler,
-  ): void {
+  registerStaticHandler(toolId: string, handler: StaticToolHandler): void {
     this.staticToolHandlers.set(toolId, handler);
   }
 
@@ -97,11 +91,7 @@ export class ToolExecutorService {
           context,
         );
       case 'static':
-        return this.dispatchStaticTool(
-          descriptor,
-          cleanArgs,
-          context,
-        );
+        return this.dispatchStaticTool(descriptor, cleanArgs, context);
       case 'logic_function':
         return this.dispatchLogicFunction(
           descriptor.executionRef,
@@ -150,6 +140,7 @@ export class ToolExecutorService {
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
+          slimResponse: true,
         });
 
       case 'create_many':
@@ -159,14 +150,13 @@ export class ToolExecutorService {
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           createdBy: context.actorContext,
+          slimResponse: true,
         });
 
       case 'update': {
         const { id, ...fields } = args;
         const objectRecord = Object.fromEntries(
-          Object.entries(fields).filter(
-            ([, value]) => value !== undefined,
-          ),
+          Object.entries(fields).filter(([, value]) => value !== undefined),
         );
 
         return this.updateRecordService.execute({
@@ -175,6 +165,7 @@ export class ToolExecutorService {
           objectRecord,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
+          slimResponse: true,
         });
       }
 
@@ -185,6 +176,7 @@ export class ToolExecutorService {
           data: args.data as Record<string, unknown>,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
+          slimResponse: true,
         });
 
       case 'delete':
@@ -197,9 +189,7 @@ export class ToolExecutorService {
         });
 
       default:
-        throw new Error(
-          `Unknown database_crud operation: ${ref.operation}`,
-        );
+        throw new Error(`Unknown database_crud operation: ${ref.operation}`);
     }
   }
 
@@ -213,9 +203,7 @@ export class ToolExecutorService {
     }
 
     // Per-tool handler first (action tools)
-    const handler = this.staticToolHandlers.get(
-      descriptor.executionRef.toolId,
-    );
+    const handler = this.staticToolHandlers.get(descriptor.executionRef.toolId);
 
     if (handler) {
       return handler.execute(args, context);
@@ -270,5 +258,54 @@ export class ToolExecutorService {
       success: true,
       result: result.data,
     };
+  }
+
+  // Build authContext on demand for database CRUD operations
+  private async buildAuthContext(
+    context: ToolProviderContext,
+  ): Promise<WorkspaceAuthContext> {
+    if (!isDefined(context.userId) || !isDefined(context.userWorkspaceId)) {
+      throw new AuthException(
+        'userId and userWorkspaceId are required for database operations',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: context.userId },
+    });
+
+    if (!isDefined(user)) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
+
+    const workspaceMember = isDefined(workspaceMemberId)
+      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+      : undefined;
+
+    if (!isDefined(workspaceMemberId) || !isDefined(workspaceMember)) {
+      throw new AuthException(
+        'Workspace member not found',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
+    }
+
+    return buildUserAuthContext({
+      workspace: { id: context.workspaceId } as WorkspaceEntity,
+      userWorkspaceId: context.userWorkspaceId,
+      user,
+      workspaceMemberId,
+      workspaceMember,
+    });
   }
 }

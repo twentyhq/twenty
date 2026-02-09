@@ -62,7 +62,9 @@ export class UpdateManyRecordsService {
       return {
         success: true,
         message: `Updated ${updatedRecords.length} records in ${objectName}`,
-        result: updatedRecords,
+        result: params.slimResponse
+          ? updatedRecords.map((record) => ({ id: record.id }))
+          : updatedRecords,
         recordReferences: updatedRecords.map((record) => ({
           objectNameSingular: objectName,
           recordId: record.id,

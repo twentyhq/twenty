@@ -10,4 +10,5 @@ export type CreateManyRecordsParams = {
   authContext: WorkspaceAuthContext;
   rolePermissionConfig?: RolePermissionConfig;
   createdBy?: ActorMetadata;
+  slimResponse?: boolean;
 };
