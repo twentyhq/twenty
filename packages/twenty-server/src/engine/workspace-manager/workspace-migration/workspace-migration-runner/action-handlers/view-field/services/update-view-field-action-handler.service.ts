@@ -2,8 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { FlatUpdateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
+import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import {
+  FlatUpdateViewFieldAction,
+  UniversalUpdateViewFieldAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -19,9 +24,27 @@ export class UpdateViewFieldActionHandlerService extends WorkspaceMigrationRunne
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateViewFieldAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateViewFieldAction>,
   ): Promise<FlatUpdateViewFieldAction> {
-    return context.action;
+    const { action, allFlatEntityMaps } = context;
+
+    const flatViewField = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatViewFieldMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    const update = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'viewField',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
+
+    return {
+      type: 'update',
+      metadataName: 'viewField',
+      entityId: flatViewField.id,
+      update,
+    };
   }
 
   async executeForMetadata(

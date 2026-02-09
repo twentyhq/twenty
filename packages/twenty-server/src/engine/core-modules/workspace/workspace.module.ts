@@ -6,6 +6,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -27,6 +28,7 @@ import { CheckCustomDomainValidRecordsCronJob } from 'src/engine/core-modules/wo
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceGaugeService } from 'src/engine/core-modules/workspace/workspace-gauge.service';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -42,7 +44,8 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([BillingSubscriptionEntity]),
+    TypeOrmModule.forFeature([BillingSubscriptionEntity, WorkspaceEntity]),
+    MetricsModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         AuditModule,
@@ -84,6 +87,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
   providers: [
     WorkspaceResolver,
     WorkspaceService,
+    WorkspaceGaugeService,
     CheckCustomDomainValidRecordsCronCommand,
     CheckCustomDomainValidRecordsCronJob,
   ],

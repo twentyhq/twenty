@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { FlatUpdatePageLayoutWidgetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
+import { UniversalUpdatePageLayoutWidgetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatPageLayoutWidgetValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service';
 
 @Injectable()
@@ -20,9 +20,11 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
   }
 
   protected async validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutWidget
+    >,
   ): Promise<
-    FlatEntityValidationReturnType<
+    UniversalFlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.pageLayoutWidget,
       'create'
     >
@@ -50,8 +52,10 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.pageLayoutWidget>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.pageLayoutWidget
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.pageLayoutWidget,
     'delete'
   > {
@@ -84,7 +88,7 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
       typeof ALL_METADATA_NAME.pageLayoutWidget
     >,
   ): Promise<
-    FlatEntityValidationReturnType<
+    UniversalFlatEntityValidationReturnType<
       typeof ALL_METADATA_NAME.pageLayoutWidget,
       'update'
     >
@@ -101,14 +105,15 @@ export class WorkspaceMigrationPageLayoutWidgetActionsBuilderService extends Wor
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updatePageLayoutWidgetAction: FlatUpdatePageLayoutWidgetAction = {
-      type: 'update',
-      metadataName: 'pageLayoutWidget',
-      entityId: flatEntityId,
-      update: flatEntityUpdate,
-    };
+    const updatePageLayoutWidgetAction: UniversalUpdatePageLayoutWidgetAction =
+      {
+        type: 'update',
+        metadataName: 'pageLayoutWidget',
+        universalIdentifier,
+        update: flatEntityUpdate,
+      };
 
     return {
       status: 'success',

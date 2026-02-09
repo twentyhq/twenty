@@ -25,7 +25,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { HealthIndicatorId } from 'src/engine/core-modules/health/enums/health-indicator-id.enum';
+import { HealthIndicatorId } from 'src/engine/core-modules/admin-panel/enums/health-indicator-id.enum';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';

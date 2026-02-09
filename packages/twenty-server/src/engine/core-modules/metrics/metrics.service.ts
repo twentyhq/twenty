@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   metrics,
@@ -6,30 +6,76 @@ import {
   type Meter,
   type MetricOptions,
   type ObservableGauge,
-  type ObservableResult,
 } from '@opentelemetry/api';
+import { isDefined } from 'twenty-shared/utils';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
 import { type MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const METER_NAME = 'twenty-server';
+const METRICS_CACHE_TTL = 60 * 1000; // 1 minute
 
 @Injectable()
 export class MetricsService {
-  constructor(private readonly metricsCacheService: MetricsCacheService) {}
+  private readonly logger = new Logger(MetricsService.name);
+
+  constructor(
+    private readonly metricsCacheService: MetricsCacheService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineHealth)
+    private readonly healthCacheStorage: CacheStorageService,
+  ) {}
 
   getMeter(): Meter {
     return metrics.getMeter(METER_NAME);
   }
 
-  createObservableGauge(
-    name: string,
-    options: MetricOptions,
-    callback: (observableResult: ObservableResult) => void | Promise<void>,
-  ): ObservableGauge {
-    const gauge = this.getMeter().createObservableGauge(name, options);
+  createObservableGauge({
+    metricName,
+    options,
+    callback,
+    cacheValue = false,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    callback: () => number | Promise<number>;
+    cacheValue?: boolean;
+  }): ObservableGauge {
+    const gauge = this.getMeter().createObservableGauge(metricName, options);
 
-    gauge.addCallback(callback);
+    gauge.addCallback(async (observableResult) => {
+      if (cacheValue) {
+        const cachedResult =
+          await this.healthCacheStorage.get<number>(metricName);
+
+        if (isDefined(cachedResult)) {
+          observableResult.observe(cachedResult);
+
+          return;
+        }
+      }
+
+      try {
+        const result = await callback();
+
+        observableResult.observe(result);
+
+        if (cacheValue) {
+          await this.healthCacheStorage.set(
+            metricName,
+            result,
+            METRICS_CACHE_TTL,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to collect gauge metric ${metricName}`,
+          error,
+        );
+      }
+    });
 
     return gauge;
   }

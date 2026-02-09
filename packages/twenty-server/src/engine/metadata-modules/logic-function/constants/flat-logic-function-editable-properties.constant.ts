@@ -1,4 +1,4 @@
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 
 export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'name',
@@ -12,4 +12,4 @@ export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'cronTriggerSettings',
   'databaseEventTriggerSettings',
   'httpRouteTriggerSettings',
-] as const satisfies (keyof FlatLogicFunction)[];
+] as const satisfies (MetadataEntityPropertyName<'logicFunction'> | 'code')[];

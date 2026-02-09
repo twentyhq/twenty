@@ -1,27 +1,27 @@
 import { msg } from '@lingui/core/macro';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
-import { type FlatEntityUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-properties-updates.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateJunctionTargetSettings } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util';
 import { validateMorphOrRelationFlatFieldJoinColumName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-join-column-name.util';
 import { validateMorphOrRelationFlatFieldOnDelete } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util';
+import { type UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs = Omit<
   FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>,
   'updates'
 > & {
-  update: FlatEntityUpdate<'fieldMetadata'>;
+  update: UniversalFlatEntityUpdate<'fieldMetadata'>;
 };
 
 export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
-  flatEntityToValidate: flatFieldMetadataToValidate,
+  flatEntityToValidate: universalFlatFieldMetadata,
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
@@ -31,8 +31,8 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
 }: ValidateMorphOrRelationFlatFieldMetadataUpdatesArgs): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  const fromFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: flatFieldMetadataToValidate.id,
+  const fromFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: universalFlatFieldMetadata.universalIdentifier,
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
@@ -46,7 +46,7 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
     ];
   }
 
-  if (!isMorphOrRelationFlatFieldMetadata(fromFlatFieldMetadata)) {
+  if (!isMorphOrRelationUniversalFlatFieldMetadata(fromFlatFieldMetadata)) {
     return [
       {
         code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
@@ -56,10 +56,10 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
     ];
   }
 
-  const toSettings = update.settings as
-    | FlatFieldMetadata<MorphOrRelationFieldMetadataType>['settings']
+  const toSettings = update.universalSettings as
+    | UniversalFlatFieldMetadata<MorphOrRelationFieldMetadataType>['universalSettings']
     | undefined;
-  const fromSettings = fromFlatFieldMetadata.settings;
+  const fromSettings = fromFlatFieldMetadata.universalSettings;
 
   const isJoinColumnNameUpdated =
     isDefined(toSettings?.joinColumnName) &&
@@ -70,7 +70,7 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
     errors.push(
       ...validateMorphOrRelationFlatFieldJoinColumName({
         buildOptions,
-        flatFieldMetadata: flatFieldMetadataToValidate,
+        universalFlatFieldMetadata,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
@@ -81,7 +81,7 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
 
   errors.push(
     ...validateMorphOrRelationFlatFieldOnDelete({
-      flatFieldMetadata: flatFieldMetadataToValidate,
+      universalFlatFieldMetadata,
     }),
   );
 
@@ -89,7 +89,7 @@ export const validateMorphOrRelationFlatFieldMetadataUpdates = ({
 };
 
 export const validateMorphOrRelationFlatFieldMetadata = ({
-  flatEntityToValidate: flatFieldMetadataToValidate,
+  flatEntityToValidate: universalFlatFieldMetadataToValidate,
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
@@ -100,43 +100,45 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   workspaceId,
   additionalCacheDataMaps,
 }: FlatFieldMetadataTypeValidationArgs<MorphOrRelationFieldMetadataType>): FlatFieldMetadataValidationError[] => {
-  const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
-    flatFieldMetadataToValidate;
+  const {
+    relationTargetFieldMetadataUniversalIdentifier,
+    relationTargetObjectMetadataUniversalIdentifier,
+  } = universalFlatFieldMetadataToValidate;
 
-  const uuidsValidation = [
-    relationTargetObjectMetadataId,
-    relationTargetFieldMetadataId,
-  ].flatMap<FlatFieldMetadataValidationError>((id) =>
-    isValidUuid(id)
+  const universalIdentifiersValidation = [
+    relationTargetObjectMetadataUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
+  ].flatMap<FlatFieldMetadataValidationError>((universalIdentifier) =>
+    isDefined(universalIdentifier)
       ? []
       : {
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: `Invalid uuid ${id}`,
-          userFriendlyMessage: msg`Invalid uuid ${id}`,
-          value: id,
+          message: `Invalid universal identifier ${universalIdentifier}`,
+          userFriendlyMessage: msg`Invalid universal identifier ${universalIdentifier}`,
+          value: universalIdentifier,
         },
   );
 
-  if (uuidsValidation.length > 0) {
-    return uuidsValidation;
+  if (universalIdentifiersValidation.length > 0) {
+    return universalIdentifiersValidation;
   }
 
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: relationTargetObjectMetadataId,
+  const targetFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: relationTargetObjectMetadataUniversalIdentifier,
     flatEntityMaps: flatObjectMetadataMaps,
   });
 
   const targetFlatFieldMetadata =
     (remainingFlatEntityMapsToValidate
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: relationTargetFieldMetadataId,
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
           flatEntityMaps: remainingFlatEntityMapsToValidate,
         })
       : undefined) ??
-    findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: relationTargetFieldMetadataId,
+    findFlatEntityByUniversalIdentifier({
+      universalIdentifier: relationTargetFieldMetadataUniversalIdentifier,
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
@@ -159,7 +161,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
       userFriendlyMessage: msg`Relation field target metadata not found`,
     });
   } else {
-    if (!isMorphOrRelationFlatFieldMetadata(targetFlatFieldMetadata)) {
+    if (!isMorphOrRelationUniversalFlatFieldMetadata(targetFlatFieldMetadata)) {
       errors.push({
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message:
@@ -168,8 +170,8 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
       });
     } else {
       if (
-        targetFlatFieldMetadata.objectMetadataId !==
-        flatFieldMetadataToValidate.relationTargetObjectMetadataId
+        targetFlatFieldMetadata.objectMetadataUniversalIdentifier !==
+        universalFlatFieldMetadataToValidate.relationTargetObjectMetadataUniversalIdentifier
       ) {
         errors.push({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -180,8 +182,8 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
       }
 
       if (
-        targetFlatFieldMetadata.relationTargetObjectMetadataId !==
-        flatFieldMetadataToValidate.objectMetadataId
+        targetFlatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier !==
+        universalFlatFieldMetadataToValidate.objectMetadataUniversalIdentifier
       ) {
         errors.push({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -192,8 +194,8 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
       }
 
       if (
-        targetFlatFieldMetadata.relationTargetFieldMetadataId !==
-        flatFieldMetadataToValidate.id
+        targetFlatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier !==
+        universalFlatFieldMetadataToValidate.universalIdentifier
       ) {
         errors.push({
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
@@ -209,7 +211,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
   if (isDefined(update)) {
     errors.push(
       ...validateMorphOrRelationFlatFieldMetadataUpdates({
-        flatEntityToValidate: flatFieldMetadataToValidate,
+        flatEntityToValidate: universalFlatFieldMetadataToValidate,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
@@ -225,21 +227,21 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     errors.push(
       ...validateMorphOrRelationFlatFieldJoinColumName({
         buildOptions,
-        flatFieldMetadata: flatFieldMetadataToValidate,
+        universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
         },
       }),
       ...validateMorphOrRelationFlatFieldOnDelete({
-        flatFieldMetadata: flatFieldMetadataToValidate,
+        universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
       }),
     );
   }
 
   errors.push(
     ...validateJunctionTargetSettings({
-      flatFieldMetadata: flatFieldMetadataToValidate,
+      universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
       flatFieldMetadataMaps,
     }),
   );

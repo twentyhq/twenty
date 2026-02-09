@@ -834,14 +834,14 @@ msgstr ""
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
 msgstr ""
 
-#. js-lingui-id: KYkpUZ
-#: src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util.ts
-msgid "Could not find {metadataName}"
-msgstr ""
-
 #. js-lingui-id: Fep47m
 #: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
 msgid "Could not find {targetMetadataName} for given {foreignKey}"
+msgstr ""
+
+#. js-lingui-id: qs7GyL
+#: src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util.ts
+msgid "Could not find {targetMetadataName} for given {universalForeignKey}"
 msgstr ""
 
 #. js-lingui-id: LZf/L8
@@ -1211,11 +1211,6 @@ msgstr ""
 msgid "Field does not belong to the indexed object"
 msgstr ""
 
-#. js-lingui-id: DXxcTd
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
-msgid "Field ID is already used in another index"
-msgstr ""
-
 #. js-lingui-id: AgbRjM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Field label identifier is required"
@@ -1523,11 +1518,6 @@ msgstr ""
 msgid "Index field has an invalid reference"
 msgstr ""
 
-#. js-lingui-id: +hk7cY
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
-msgid "Index field ID already exists in another index"
-msgstr ""
-
 #. js-lingui-id: ITue4V
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index field references incorrect index metadata"
@@ -1549,15 +1539,15 @@ msgstr ""
 msgid "Index to delete not found"
 msgstr ""
 
-#. js-lingui-id: qgBN4Y
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
-msgid "Index with same id already exists"
-msgstr ""
-
 #. js-lingui-id: a+k+8J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same name already exists"
+msgstr ""
+
+#. js-lingui-id: D6Tjt0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index with same universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: 9Lkkre
@@ -1783,11 +1773,6 @@ msgstr ""
 msgid "Invalid issuer URL."
 msgstr ""
 
-#. js-lingui-id: raw9cL
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
-msgid "Invalid junction target field ID"
-msgstr ""
-
 #. js-lingui-id: tm//h9
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Invalid label format."
@@ -1987,14 +1972,14 @@ msgstr ""
 msgid "Invalid two-factor authentication configuration."
 msgstr ""
 
+#. js-lingui-id: brtxSP
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Invalid universal identifier {universalIdentifier}"
+msgstr ""
+
 #. js-lingui-id: SzaGv7
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid URL format."
-msgstr ""
-
-#. js-lingui-id: 1Iyic0
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
-msgid "Invalid uuid {id}"
 msgstr ""
 
 #. js-lingui-id: Z3Su9z
@@ -2368,9 +2353,9 @@ msgstr ""
 msgid "Logic function not found."
 msgstr ""
 
-#. js-lingui-id: 31hiGK
+#. js-lingui-id: Lf8I7I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
-msgid "Logic function with same id already exists"
+msgid "Logic function with same universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: hg6l4j
@@ -2769,10 +2754,10 @@ msgstr ""
 msgid "Object to update not found"
 msgstr ""
 
-#. js-lingui-id: cdjRFZ
+#. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
-msgid "Object with same id already exists"
+msgid "Object with same universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: 53pIyA
@@ -2957,9 +2942,9 @@ msgstr ""
 msgid "Page layout widget to update not found"
 msgstr ""
 
-#. js-lingui-id: +4z9mT
+#. js-lingui-id: hGYqrE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
+msgid "Page layout widget with universal identifier {flatPageLayoutWidgetUniversalIdentifier} already exists"
 msgstr ""
 
 #. js-lingui-id: T1gSWA
@@ -3283,6 +3268,11 @@ msgstr ""
 msgid "Role not found."
 msgstr ""
 
+#. js-lingui-id: K+Gn31
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role target already exists"
+msgstr ""
+
 #. js-lingui-id: ctpIGF
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role target is missing identifier."
@@ -3307,10 +3297,9 @@ msgstr ""
 msgid "Role target not found."
 msgstr ""
 
-#. js-lingui-id: alYNOd
+#. js-lingui-id: +fwgt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
-msgid "Role target with this id already exists"
+msgid "Role target with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: Ub8R48
@@ -3333,10 +3322,20 @@ msgstr ""
 msgid "Route path already exists."
 msgstr ""
 
+#. js-lingui-id: /ruB5e
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Row level permission predicate already exists"
+msgstr ""
+
 #. js-lingui-id: RwBHMj
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Row level permission predicate feature is disabled."
+msgstr ""
+
+#. js-lingui-id: lG+q53
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Row level permission predicate group already exists"
 msgstr ""
 
 #. js-lingui-id: va8c5P
@@ -3364,10 +3363,9 @@ msgstr ""
 msgid "Row level permission predicate group to update not found"
 msgstr ""
 
-#. js-lingui-id: LrJvM0
+#. js-lingui-id: j4iZI5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
-msgid "Row level permission predicate group with this id already exists"
+msgid "Row level permission predicate group with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: fEazMl
@@ -3387,10 +3385,9 @@ msgstr ""
 msgid "Row level permission predicate to update not found"
 msgstr ""
 
-#. js-lingui-id: CUT3wK
+#. js-lingui-id: B4yoLq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Row level permission predicate with this id already exists"
+msgid "Row level permission predicate with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: +5kO8P
@@ -4138,9 +4135,9 @@ msgstr ""
 msgid "View field metadata already exists"
 msgstr ""
 
-#. js-lingui-id: Yvf7WL
+#. js-lingui-id: mdX5P2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
-msgid "View field metadata with id {flatViewFieldId} already exists"
+msgid "View field metadata with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: 7LMaUn
@@ -4186,9 +4183,19 @@ msgstr ""
 msgid "View field to update parent view object not found"
 msgstr ""
 
-#. js-lingui-id: 89Wiy+
+#. js-lingui-id: Zqbr+6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
-msgid "View field with same fieldmetadataId and viewId already exists"
+msgid "View field with same fieldMetadataUniversalIdentifier and viewUniversalIdentifier already exists"
+msgstr ""
+
+#. js-lingui-id: sbHaOg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter already exists"
+msgstr ""
+
+#. js-lingui-id: Ii4ysu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group already exists"
 msgstr ""
 
 #. js-lingui-id: ENVlLK
@@ -4215,10 +4222,9 @@ msgstr ""
 msgid "View filter group not found"
 msgstr ""
 
-#. js-lingui-id: UfIsQu
+#. js-lingui-id: inVepb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
-msgid "View filter group with this id already exists"
+msgid "View filter group with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: 1KSqGE
@@ -4244,10 +4250,9 @@ msgstr ""
 msgid "View filter to update not found"
 msgstr ""
 
-#. js-lingui-id: LnNgrI
+#. js-lingui-id: bM1MKh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-msgid "View filter with this id already exists"
+msgid "View filter with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: MGbEFN
@@ -4255,9 +4260,9 @@ msgstr ""
 msgid "View group metadata already exists"
 msgstr ""
 
-#. js-lingui-id: lbyQO4
+#. js-lingui-id: c1XRE3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
-msgid "View group metadata with id {flatViewGroupId} already exists"
+msgid "View group metadata with universal identifier {flatViewGroupUniversalIdentifier} already exists"
 msgstr ""
 
 #. js-lingui-id: JdAvYa
@@ -4329,9 +4334,9 @@ msgstr ""
 msgid "View to update not found"
 msgstr ""
 
-#. js-lingui-id: ZgRtC4
+#. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-msgid "View with same id is already exists"
+msgid "View with same universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: qTtxHh
