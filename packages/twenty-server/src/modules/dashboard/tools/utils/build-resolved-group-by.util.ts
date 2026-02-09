@@ -1,8 +1,10 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import { resolveMorphTargetObjectId } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-morph-target-object-id.util';
 import { humanizeSubFieldLabel } from 'src/modules/dashboard/tools/utils/humanize-sub-field-label.util';
 
 type ResolvedGroupBy = {
@@ -18,11 +20,13 @@ export const buildResolvedGroupBy = ({
   subFieldName,
   getFieldById,
   fieldsByObjectId,
+  allFields,
 }: {
   fieldId?: string | null;
   subFieldName?: string | null;
   getFieldById: (fieldId?: string | null) => FlatFieldMetadata | null;
   fieldsByObjectId: Map<string, FlatFieldMetadata[]>;
+  allFields: FlatFieldMetadata[];
 }) => {
   const field = getFieldById(fieldId);
 
@@ -45,8 +49,13 @@ export const buildResolvedGroupBy = ({
       const nestedSubFieldName =
         dotIndex === -1 ? undefined : subFieldName.slice(dotIndex + 1);
 
-      const targetFields = isDefined(field.relationTargetObjectMetadataId)
-        ? (fieldsByObjectId.get(field.relationTargetObjectMetadataId) ?? [])
+      const targetObjectId =
+        field.type === FieldMetadataType.MORPH_RELATION
+          ? resolveMorphTargetObjectId({ field, allFields })
+          : field.relationTargetObjectMetadataId;
+
+      const targetFields = isDefined(targetObjectId)
+        ? (fieldsByObjectId.get(targetObjectId) ?? [])
         : [];
       const nestedField = targetFields.find(
         (targetField) => targetField.name === nestedFieldName,

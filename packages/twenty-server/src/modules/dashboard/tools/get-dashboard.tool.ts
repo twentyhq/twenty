@@ -78,6 +78,7 @@ export const createGetDashboardTool = (
           subFieldName,
           getFieldById,
           fieldsByObjectId,
+          allFields,
         });
 
       const dashboard =
