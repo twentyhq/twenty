@@ -29,6 +29,8 @@ export type {
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
 export { CommandBlock } from './command-block/components/CommandBlock';
+export type { IconProps } from './icon/components/Icon';
+export { Icon } from './icon/components/Icon';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconChartBarHorizontal } from './icon/components/IconChartBarHorizontal';
 export { IconGmail } from './icon/components/IconGmail';
