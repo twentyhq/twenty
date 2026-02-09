@@ -88,8 +88,7 @@ describe('Page layout with tabs update should succeed', () => {
                   aggregateFieldMetadataId:
                     testFieldMetadataIds.fieldMetadataId1,
                   aggregateOperation: AggregateOperations.COUNT,
-                  groupByFieldMetadataId:
-                    testFieldMetadataIds.fieldMetadataId2,
+                  groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
                 },
               },
             ],
@@ -98,16 +97,10 @@ describe('Page layout with tabs update should succeed', () => {
       },
     },
     {
-      title:
-        'update page layout with multiple tabs and different widget types',
+      title: 'update page layout with multiple tabs and different widget types',
       context: {
         layoutName: 'Multi-Tab Layout',
-        buildTabs: ({
-          tabId1,
-          tabId2,
-          pieChartWidgetId,
-          iframeWidgetId,
-        }) => [
+        buildTabs: ({ tabId1, tabId2, pieChartWidgetId, iframeWidgetId }) => [
           {
             id: tabId1,
             title: 'First Tab',
@@ -130,8 +123,7 @@ describe('Page layout with tabs update should succeed', () => {
                   aggregateFieldMetadataId:
                     testFieldMetadataIds.fieldMetadataId1,
                   aggregateOperation: AggregateOperations.COUNT,
-                  groupByFieldMetadataId:
-                    testFieldMetadataIds.fieldMetadataId2,
+                  groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
                 },
               },
             ],
