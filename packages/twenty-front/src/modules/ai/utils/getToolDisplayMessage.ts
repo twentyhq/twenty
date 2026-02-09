@@ -88,8 +88,8 @@ export const getToolDisplayMessage = (
     return query ? `${action} the web for '${query}'` : `${action} the web`;
   }
 
-  if (toolName === 'learn_tools') {
-    const names = extractLearnToolNames(input);
+  if (resolvedToolName === 'learn_tools') {
+    const names = extractLearnToolNames(resolvedInput);
     const action = isFinished ? 'Learned' : 'Learning';
 
     return names ? `${action} ${names}` : `${action} tools...`;

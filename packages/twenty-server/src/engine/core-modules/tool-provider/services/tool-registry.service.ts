@@ -376,9 +376,7 @@ export class ToolRegistryService {
 
     // Apply excludeTools filter
     if (excludeTools?.length) {
-      const excludeSet = new Set(
-        excludeTools.map((toolType) => toolType.toLowerCase()),
-      );
+      const excludeSet = new Set(excludeTools);
 
       filteredDescriptors = filteredDescriptors.filter(
         (descriptor) => !excludeSet.has(descriptor.name),

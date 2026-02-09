@@ -133,8 +133,7 @@ export class AgentChatStreamingService {
                     totalCacheCreationTokens;
                   const outputTokens = part.totalUsage?.outputTokens ?? 0;
                   const cachedInputTokens =
-                    (part.totalUsage?.cachedInputTokens ?? 0) +
-                    totalCacheCreationTokens;
+                    part.totalUsage?.cachedInputTokens ?? 0;
 
                   const inputCostInCents =
                     (inputTokens / 1000) *

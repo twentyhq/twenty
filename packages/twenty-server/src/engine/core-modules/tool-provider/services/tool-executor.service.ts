@@ -241,8 +241,8 @@ export class ToolExecutorService {
     context: ToolProviderContext,
   ): Promise<unknown> {
     const result =
-      await this.logicFunctionExecutorService.executeOneLogicFunction({
-        id: ref.logicFunctionId,
+      await this.logicFunctionExecutorService.execute({
+        logicFunctionId: ref.logicFunctionId,
         workspaceId: context.workspaceId,
         payload: args,
       });
