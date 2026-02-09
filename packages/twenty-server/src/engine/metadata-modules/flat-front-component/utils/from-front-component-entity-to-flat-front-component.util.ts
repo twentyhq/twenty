@@ -26,6 +26,11 @@ export const fromFrontComponentEntityToFlatFrontComponent = ({
   return {
     id: frontComponentEntity.id,
     name: frontComponentEntity.name,
+    description: frontComponentEntity.description,
+    sourceComponentPath: frontComponentEntity.sourceComponentPath,
+    builtComponentPath: frontComponentEntity.builtComponentPath,
+    componentName: frontComponentEntity.componentName,
+    builtComponentChecksum: frontComponentEntity.builtComponentChecksum,
     workspaceId: frontComponentEntity.workspaceId,
     universalIdentifier: frontComponentEntity.universalIdentifier,
     applicationId: frontComponentEntity.applicationId,

@@ -28,7 +28,6 @@ import { ExceptionHandlerModule } from 'src/engine/core-modules/exception-handle
 import { exceptionHandlerModuleFactory } from 'src/engine/core-modules/exception-handler/exception-handler.module-factory';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { GeoMapModule } from 'src/engine/core-modules/geo-map/geo-map-module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { ImapSmtpCaldavModule } from 'src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.module';
@@ -47,7 +46,7 @@ import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
-import { logicFunctionModuleFactory } from 'src/engine/core-modules/logic-function/logic-function-executor/factories/logic-function-module.factory';
+import { logicFunctionModuleFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/factories/logic-function-module.factory';
 import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
@@ -69,6 +68,8 @@ import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.modul
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
+import { ApplicationLayerModule } from 'src/engine/core-modules/application-layer/application-layer.module';
+import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -90,6 +91,7 @@ import { FileModule } from './file/file.module';
     RowLevelPermissionModule,
     OpenApiModule,
     ApplicationModule,
+    ApplicationLayerModule,
     ApplicationSyncModule,
     AppTokenModule,
     TimelineMessagingModule,
@@ -144,7 +146,7 @@ import { FileModule } from './file/file.module';
     AiBillingModule,
     LogicFunctionModule.forRootAsync({
       useFactory: logicFunctionModuleFactory,
-      inject: [TwentyConfigService, FileStorageService],
+      inject: [TwentyConfigService, LogicFunctionResourceService],
     }),
     CodeInterpreterModule.forRootAsync({
       useFactory: codeInterpreterModuleFactory,

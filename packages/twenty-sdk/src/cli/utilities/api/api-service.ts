@@ -413,7 +413,7 @@ export class ApiService {
   > {
     try {
       const mutation = `
-        mutation ExecuteOneLogicFunction($input: ExecuteLogicFunctionInput!) {
+        mutation ExecuteOneLogicFunction($input: ExecuteOneLogicFunctionInput!) {
           executeOneLogicFunction(input: $input) {
             data
             logs

@@ -1,4 +1,3 @@
-import { HTTPMethod } from 'twenty-shared/types';
 import {
   Check,
   Column,
@@ -9,25 +8,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'twenty-shared/application';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-
-export type CronTriggerSettings = {
-  pattern: string;
-};
-
-export type DatabaseEventTriggerSettings = {
-  eventName: string;
-  updatedFields?: string[];
-};
-
-export type HttpRouteTriggerSettings = {
-  path: string;
-  httpMethod: HTTPMethod;
-  isAuthRequired: boolean;
-  forwardedRequestHeaders?: string[];
-};
 
 const DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS = 300; // 5 minutes
 

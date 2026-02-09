@@ -38,16 +38,12 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000010',
       name: 'my-function',
       timeoutSeconds: 5,
-      triggers: [
-        {
-          universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000011',
-          type: 'route',
-          path: '/my-function',
-          httpMethod: 'GET',
-          isAuthRequired: false,
-        },
-      ],
-      handlerName: 'default.handler',
+      httpRouteTriggerSettings: {
+        path: '/my-function',
+        httpMethod: 'GET',
+        isAuthRequired: false,
+      },
+      handlerName: 'default.config.handler',
       sourceHandlerPath: 'my.function.ts',
       builtHandlerPath: 'my.function.mjs',
       builtHandlerChecksum: '[checksum]',

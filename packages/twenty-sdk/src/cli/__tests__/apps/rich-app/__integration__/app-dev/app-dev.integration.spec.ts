@@ -14,7 +14,7 @@ describe('rich-app app:dev', () => {
   beforeAll(async () => {
     result = await runAppDev({ appPath: APP_PATH });
     if (!result.success) {
-      console.log(result.output);
+      console.log(result.output.slice(undefined, 20_000));
     }
     expect(result.success).toBe(true);
   }, 60000);
