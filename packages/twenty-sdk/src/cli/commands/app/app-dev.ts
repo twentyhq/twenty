@@ -152,7 +152,7 @@ export class AppDevCommand {
   private async startDependencyWatcher(): Promise<void> {
     this.dependencyWatcher = new FileUploadWatcher({
       appPath: this.appPath,
-      fileFolder: FileFolder.Source,
+      fileFolder: FileFolder.Dependencies,
       watchPaths: ['package.json', 'yarn.lock'],
       handleFileBuilt: this.orchestrator!.handleFileBuilt.bind(
         this.orchestrator,

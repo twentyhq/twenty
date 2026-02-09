@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import axios, { type AxiosRequestConfig } from 'axios';
+import { type AxiosRequestConfig, isAxiosError } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 import { parseDataFromContentType } from 'twenty-shared/workflow';
 
@@ -60,7 +60,7 @@ export class HttpTool implements Tool {
         headers: response.headers as Record<string, string>,
       };
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (isAxiosError(error)) {
         return {
           success: false,
           message: `HTTP ${method} request to ${url} failed`,

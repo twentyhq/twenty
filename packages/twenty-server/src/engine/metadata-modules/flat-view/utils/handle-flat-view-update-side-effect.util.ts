@@ -51,6 +51,7 @@ export const handleFlatViewUpdateSideEffect = ({
 
   sideEffectResult.flatViewGroupsToCreate = computeFlatViewGroupsOnViewCreate({
     flatViewToCreateId: toFlatView.id,
+    flatViewToCreateUniversalIdentifier: toFlatView.universalIdentifier,
     mainGroupByFieldMetadataId: newMainGroupByFieldMetadataId,
     flatFieldMetadataMaps,
   });

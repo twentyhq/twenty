@@ -1,34 +1,30 @@
 import { promises as fs } from 'fs';
 import { spawn } from 'node:child_process';
 import { join } from 'path';
-import { dirname } from 'node:path';
-
-import { FileFolder } from 'twenty-shared/types';
 
 import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
-  type LogicFunctionExecutorDriver,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-executor-driver.interface';
+  type LogicFunctionDriver,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-engine-and-build-dependencies';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
-import { LambdaBuildDirectoryManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/lambda-build-directory-manager';
+import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { getRelativePathFromBase } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-handler-path.util';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application-layer/utils/copy-yarn-engine-and-build-dependencies';
+import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 export interface LocalDriverOptions {
-  fileStorageService: FileStorageService;
+  logicFunctionResourceService: LogicFunctionResourceService;
 }
 
-export class LocalDriver implements LogicFunctionExecutorDriver {
-  private readonly fileStorageService: FileStorageService;
+export class LocalDriver implements LogicFunctionDriver {
+  private readonly logicFunctionResourceService: LogicFunctionResourceService;
 
   constructor(options: LocalDriverOptions) {
-    this.fileStorageService = options.fileStorageService;
+    this.logicFunctionResourceService = options.logicFunctionResourceService;
   }
 
   private getInMemoryLayerFolderPath = (flatApplication: FlatApplication) => {
@@ -36,33 +32,6 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
 
     return join(LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER, checksum);
   };
-
-  private async copyDependenciesInMemory({
-    applicationUniversalIdentifier,
-    workspaceId,
-    inMemoryLayerFolderPath,
-  }: {
-    applicationUniversalIdentifier: string;
-    workspaceId: string;
-    inMemoryLayerFolderPath: string;
-  }) {
-    await Promise.all([
-      this.fileStorageService.downloadFile_v2({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Dependencies,
-        resourcePath: 'package.json',
-        localPath: join(inMemoryLayerFolderPath, 'package.json'),
-      }),
-      this.fileStorageService.downloadFile_v2({
-        workspaceId,
-        applicationUniversalIdentifier,
-        fileFolder: FileFolder.Dependencies,
-        resourcePath: 'yarn.lock',
-        localPath: join(inMemoryLayerFolderPath, 'yarn.lock'),
-      }),
-    ]);
-  }
 
   private async createLayerIfNotExists({
     flatApplication,
@@ -77,10 +46,10 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
     try {
       await fs.access(inMemoryLayerFolderPath);
     } catch {
-      await this.copyDependenciesInMemory({
+      await this.logicFunctionResourceService.copyDependenciesInMemory({
         applicationUniversalIdentifier,
         workspaceId: flatApplication.workspaceId,
-        inMemoryLayerFolderPath,
+        inMemoryFolderPath: inMemoryLayerFolderPath,
       });
       await copyYarnEngineAndBuildDependencies(inMemoryLayerFolderPath);
     }
@@ -115,19 +84,21 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
 
     const startTime = Date.now();
 
-    const lambdaBuildDirectoryManager = new LambdaBuildDirectoryManager();
+    const temporaryDirManager = new TemporaryDirManager();
 
     try {
-      const { sourceTemporaryDir } = await lambdaBuildDirectoryManager.init();
+      const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const baseFolderPath = dirname(flatLogicFunction.builtHandlerPath);
+      const inMemoryBuiltHandlerPath = join(
+        sourceTemporaryDir,
+        flatLogicFunction.builtHandlerPath,
+      );
 
-      await this.fileStorageService.downloadFolder_v2({
+      await this.logicFunctionResourceService.copyBuiltCodeInMemory({
         workspaceId: flatLogicFunction.workspaceId,
         applicationUniversalIdentifier,
-        fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: baseFolderPath,
-        localPath: sourceTemporaryDir,
+        builtHandlerPath: flatLogicFunction.builtHandlerPath,
+        inMemoryDestinationPath: inMemoryBuiltHandlerPath,
       });
 
       try {
@@ -179,15 +150,9 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
       });
 
       try {
-        const relativeBuiltPath = getRelativePathFromBase(
-          flatLogicFunction.builtHandlerPath,
-          baseFolderPath,
-        );
-        const builtBundleFilePath = join(sourceTemporaryDir, relativeBuiltPath);
-
         const runnerPath = await this.writeBootstrapRunner({
           dir: sourceTemporaryDir,
-          builtFileAbsPath: builtBundleFilePath,
+          builtFileAbsPath: inMemoryBuiltHandlerPath,
           handlerName: flatLogicFunction.handlerName,
         });
 
@@ -240,7 +205,7 @@ export class LocalDriver implements LogicFunctionExecutorDriver {
         consoleListener.release();
       }
     } finally {
-      await lambdaBuildDirectoryManager.clean();
+      await temporaryDirManager.clean();
     }
   }
 

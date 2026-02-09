@@ -98,26 +98,23 @@ export const fromViewEntityToFlatView = ({
     viewFilterIds: viewEntity.viewFilters.map(({ id }) => id),
     viewGroupIds: viewEntity.viewGroups.map(({ id }) => id),
     viewFilterGroupIds: viewEntity.viewFilterGroups?.map(({ id }) => id) ?? [],
-    __universal: {
-      universalIdentifier: viewEntity.universalIdentifier,
-      applicationUniversalIdentifier,
-      objectMetadataUniversalIdentifier,
-      kanbanAggregateOperationFieldMetadataUniversalIdentifier,
-      calendarFieldMetadataUniversalIdentifier,
-      mainGroupByFieldMetadataUniversalIdentifier,
-      viewFieldUniversalIdentifiers: viewEntity.viewFields.map(
+    applicationUniversalIdentifier,
+    objectMetadataUniversalIdentifier,
+    kanbanAggregateOperationFieldMetadataUniversalIdentifier,
+    calendarFieldMetadataUniversalIdentifier,
+    mainGroupByFieldMetadataUniversalIdentifier,
+    viewFieldUniversalIdentifiers: viewEntity.viewFields.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    viewFilterUniversalIdentifiers: viewEntity.viewFilters.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    viewGroupUniversalIdentifiers: viewEntity.viewGroups.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    viewFilterGroupUniversalIdentifiers:
+      viewEntity.viewFilterGroups?.map(
         ({ universalIdentifier }) => universalIdentifier,
-      ),
-      viewFilterUniversalIdentifiers: viewEntity.viewFilters.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
-      viewGroupUniversalIdentifiers: viewEntity.viewGroups.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
-      viewFilterGroupUniversalIdentifiers:
-        viewEntity.viewFilterGroups?.map(
-          ({ universalIdentifier }) => universalIdentifier,
-        ) ?? [],
-    },
+      ) ?? [],
   };
 };

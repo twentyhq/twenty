@@ -78,7 +78,7 @@ export const manifestUpdateChecksums = ({
       };
     }
 
-    if (fileFolder === FileFolder.Source) {
+    if (fileFolder === FileFolder.Dependencies) {
       if (rootBuiltPath === 'package.json') {
         result.application.packageJsonChecksum = checksum;
       }

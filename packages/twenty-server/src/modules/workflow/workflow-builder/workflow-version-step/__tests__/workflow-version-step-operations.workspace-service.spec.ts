@@ -1,13 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
+import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -27,8 +26,7 @@ const mockWorkspaceId = 'workspace-id';
 describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let service: WorkflowVersionStepOperationsWorkspaceService;
   let globalWorkspaceOrmManager: jest.Mocked<GlobalWorkspaceOrmManager>;
-  let logicFunctionService: jest.Mocked<LogicFunctionService>;
-  let applicationService: jest.Mocked<ApplicationService>;
+  let logicFunctionMetadataService: jest.Mocked<LogicFunctionMetadataService>;
   let codeStepBuildService: jest.Mocked<CodeStepBuildService>;
   let agentRepository: jest.Mocked<any>;
   let roleTargetRepository: jest.Mocked<any>;
@@ -40,21 +38,33 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   let flatEntityMapsCacheService: jest.Mocked<WorkspaceManyOrAllFlatEntityMapsCacheService>;
 
   beforeEach(async () => {
-    applicationService = {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-        .fn()
-        .mockResolvedValue({
-          workspaceCustomFlatApplication: {
-            universalIdentifier: 'app-universal-id',
-          },
-        }),
-    } as unknown as jest.Mocked<ApplicationService>;
-
     codeStepBuildService = {
       seedCodeStepFiles: jest.fn().mockResolvedValue({
         sourceHandlerPath: 'workflow/logic-fn-id/src/index.ts',
         builtHandlerPath: 'workflow/logic-fn-id/src/index.mjs',
         checksum: 'seed-checksum',
+      }),
+      createCodeStepLogicFunction: jest.fn().mockResolvedValue({
+        id: 'new-function-id',
+        name: 'Test Function',
+        description: 'Test Description',
+        workspaceId: mockWorkspaceId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        deletedAt: null,
+        runtime: LogicFunctionRuntime.NODE22,
+        timeoutSeconds: 30,
+        sourceHandlerPath: 'src/index.ts',
+        builtHandlerPath: 'index.mjs',
+        handlerName: 'main',
+        checksum: null,
+        toolInputSchema: null,
+        isTool: false,
+        universalIdentifier: 'universal-id',
+        applicationId: 'application-id',
+        cronTriggerSettings: null,
+        databaseEventTriggerSettings: null,
+        httpRouteTriggerSettings: null,
       }),
       copySourceAndBuiltForNewCodeStep: jest.fn().mockResolvedValue(undefined),
       duplicateCodeStepLogicFunction: jest.fn().mockResolvedValue({
@@ -81,10 +91,10 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       }),
     } as unknown as jest.Mocked<CodeStepBuildService>;
 
-    logicFunctionService = {
+    logicFunctionMetadataService = {
       createOne: jest.fn(),
       destroyOne: jest.fn(),
-    } as unknown as jest.Mocked<LogicFunctionService>;
+    } as unknown as jest.Mocked<LogicFunctionMetadataService>;
 
     agentRepository = {
       findOne: jest.fn(),
@@ -128,12 +138,8 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: globalWorkspaceOrmManager,
         },
         {
-          provide: LogicFunctionService,
-          useValue: logicFunctionService,
-        },
-        {
-          provide: ApplicationService,
-          useValue: applicationService,
+          provide: LogicFunctionMetadataService,
+          useValue: logicFunctionMetadataService,
         },
         {
           provide: CodeStepBuildService,
@@ -207,7 +213,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(logicFunctionService.destroyOne).toHaveBeenCalledWith({
+      expect(logicFunctionMetadataService.destroyOne).toHaveBeenCalledWith({
         id: 'function-id',
         workspaceId: mockWorkspaceId,
       });
@@ -311,12 +317,15 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         isTool: false,
         universalIdentifier: 'universal-id',
         applicationId: 'application-id',
+        applicationUniversalIdentifier: 'application-universal-id',
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
       };
 
-      logicFunctionService.createOne.mockResolvedValue(mockFlatLogicFunction);
+      logicFunctionMetadataService.createOne.mockResolvedValue(
+        mockFlatLogicFunction,
+      );
 
       const result = await service.runStepCreationSideEffectsAndBuildStep({
         type: WorkflowActionType.CODE,
@@ -381,6 +390,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         isTool: false,
         universalIdentifier: 'existing-universal-id',
         applicationId: 'application-id',
+        applicationUniversalIdentifier: 'application-universal-id',
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
@@ -404,6 +414,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         isTool: false,
         universalIdentifier: 'universal-id',
         applicationId: 'application-id',
+        applicationUniversalIdentifier: 'application-universal-id',
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
@@ -427,7 +438,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         },
       );
 
-      logicFunctionService.createOne.mockResolvedValue(
+      logicFunctionMetadataService.createOne.mockResolvedValue(
         mockNewFlatLogicFunction,
       );
 

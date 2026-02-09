@@ -18,7 +18,7 @@ describe('getFunctionBaseFile', () => {
     expect(result).toContain("name: 'my-function'");
     expect(result).toContain('timeoutSeconds: 5');
     expect(result).toContain('handler,');
-    expect(result).toContain('triggers: [');
+    expect(result).toContain('// httpRouteTriggerSettings: {');
 
     expect(result).toContain('const handler = async');
 
@@ -51,9 +51,9 @@ describe('getFunctionBaseFile', () => {
       name: 'example-function',
     });
 
-    expect(result).toContain("type: 'route'");
-    expect(result).toContain("type: 'cron'");
-    expect(result).toContain("type: 'databaseEvent'");
+    expect(result).toContain('// httpRouteTriggerSettings: {');
+    expect(result).toContain('// cronTriggerSettings: {');
+    expect(result).toContain('// databaseEventTriggerSettings: {');
     expect(result).toContain("httpMethod: 'POST'");
     expect(result).toContain("pattern: '0 0 * * *'");
     expect(result).toContain("eventName: 'objectName.created'");

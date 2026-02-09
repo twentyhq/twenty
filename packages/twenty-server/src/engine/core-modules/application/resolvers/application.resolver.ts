@@ -194,6 +194,7 @@ export class ApplicationResolver {
       FileFolder.BuiltFrontComponent,
       FileFolder.PublicAsset,
       FileFolder.Source,
+      FileFolder.Dependencies,
     ];
 
     if (!allowedApplicationFileFolders.includes(fileFolder)) {
@@ -205,7 +206,7 @@ export class ApplicationResolver {
 
     const buffer = await streamToBuffer(createReadStream());
 
-    return await this.fileStorageService.writeFile_v2({
+    return await this.fileStorageService.writeFile({
       sourceFile: buffer,
       mimeType: mimetype,
       fileFolder,

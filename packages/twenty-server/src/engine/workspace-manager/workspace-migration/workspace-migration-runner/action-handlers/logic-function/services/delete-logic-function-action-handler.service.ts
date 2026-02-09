@@ -59,7 +59,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
 
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
-    await this.fileStorageService.delete_v2({
+    await this.fileStorageService.delete({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,

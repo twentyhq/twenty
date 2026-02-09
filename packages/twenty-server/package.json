@@ -108,7 +108,6 @@
     "graphql": "16.8.1",
     "graphql-fields": "2.0.3",
     "graphql-middleware": "^6.1.35",
-    "graphql-rate-limit": "3.3.0",
     "graphql-redis-subscriptions": "2.7.0",
     "graphql-scalars": "1.23.0",
     "graphql-subscriptions": "2.0.0",
@@ -182,7 +181,7 @@
   "devDependencies": {
     "@faker-js/faker": "^9.8.0",
     "@lingui/cli": "^5.1.2",
-    "@nestjs/cli": "11.0.10",
+    "@nestjs/cli": "^11.0.16",
     "@nestjs/devtools-integration": "^0.2.1",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.9",
