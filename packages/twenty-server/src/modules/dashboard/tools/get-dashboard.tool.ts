@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { buildFieldsByObjectIdMap } from 'src/engine/metadata-modules/page-layout-widget/utils/build-fields-by-object-id-map.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { getFieldById } from 'src/engine/metadata-modules/page-layout-widget/utils/get-field-by-id.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
@@ -114,6 +115,17 @@ export const createGetDashboardTool = (
           position: tab.position,
           widgets:
             tab.widgets?.map((w) => {
+              if (w.type !== WidgetType.GRAPH) {
+                return {
+                  id: w.id,
+                  title: w.title,
+                  type: w.type,
+                  gridPosition: w.gridPosition,
+                  objectMetadataId: w.objectMetadataId,
+                  configuration: w.configuration,
+                };
+              }
+
               const configuration =
                 w.configuration as GraphConfigurationLike | null;
 
