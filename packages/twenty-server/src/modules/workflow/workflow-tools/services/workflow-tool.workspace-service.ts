@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
@@ -20,6 +21,7 @@ import { createDeactivateWorkflowVersionTool } from 'src/modules/workflow/workfl
 import { createDeleteWorkflowVersionEdgeTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-edge.tool';
 import { createDeleteWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-step.tool';
 import { createGetWorkflowCurrentVersionTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-current-version.tool';
+import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 import { createUpdateWorkflowVersionTriggerTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-trigger.tool';
@@ -39,6 +41,7 @@ export class WorkflowToolWorkspaceService {
     workflowSchemaService: WorkflowSchemaWorkspaceService,
     globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     recordPositionService: RecordPositionService,
+    logicFunctionService: LogicFunctionService,
   ) {
     this.deps = {
       workflowVersionStepService,
@@ -49,6 +52,7 @@ export class WorkflowToolWorkspaceService {
       workflowSchemaService,
       globalWorkspaceOrmManager,
       recordPositionService,
+      logicFunctionService,
     };
   }
 
@@ -108,6 +112,10 @@ export class WorkflowToolWorkspaceService {
       this.deps,
       context,
     );
+    const updateLogicFunctionSource = createUpdateLogicFunctionSourceTool(
+      this.deps,
+      context,
+    );
 
     return {
       [createCompleteWorkflow.name]: createCompleteWorkflow,
@@ -123,6 +131,7 @@ export class WorkflowToolWorkspaceService {
       [deactivateWorkflowVersion.name]: deactivateWorkflowVersion,
       [computeStepOutputSchema.name]: computeStepOutputSchema,
       [getWorkflowCurrentVersion.name]: getWorkflowCurrentVersion,
+      [updateLogicFunctionSource.name]: updateLogicFunctionSource,
     };
   }
 }
