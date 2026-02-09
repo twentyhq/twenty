@@ -1,19 +1,16 @@
 import { join } from 'path';
 
-import { runBuildPipeline } from '@/cli/__tests__/integration/utils/run-build-pipeline.util';
+import { runAppDevInProcess } from '@/cli/__tests__/integration/utils/run-app-dev-in-process.util';
 import { defineFrontComponentsTests } from './tests/front-components.tests';
 import { defineLogicFunctionsTests } from './tests/logic-functions.tests';
 import { defineManifestTests } from './tests/manifest.tests';
 
 const APP_PATH = join(__dirname, '../..');
 
-describe('root-app manifest build', () => {
+describe('root-app app:dev', () => {
   beforeAll(async () => {
-    const result = await runBuildPipeline(APP_PATH);
+    const result = await runAppDevInProcess({ appPath: APP_PATH });
 
-    if (!result.success) {
-      console.log('Build errors:', result.errors);
-    }
     expect(result.success).toBe(true);
   }, 60000);
 
