@@ -332,7 +332,9 @@ describe('getTabsByDisplayMode', () => {
       });
 
       expect(result.pinnedLeftTab).toBeUndefined();
-      expect(result.tabsToRenderInTabList[0]?.layoutMode).toBe('grid');
+      expect(result.tabsToRenderInTabList[0]?.layoutMode).toBe(
+        PageLayoutTabLayoutMode.GRID,
+      );
     });
   });
 
