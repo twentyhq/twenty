@@ -307,7 +307,7 @@ export class FrontComponentService {
       },
     );
 
-    return this.fileStorageService.readFile_v2({
+    return this.fileStorageService.readFile({
       workspaceId,
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: FileFolder.BuiltFrontComponent,
