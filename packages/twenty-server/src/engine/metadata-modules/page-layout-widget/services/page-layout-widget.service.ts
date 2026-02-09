@@ -234,15 +234,6 @@ export class PageLayoutWidgetService {
         }
       : input;
 
-    if (isDefined(createInput.configuration)) {
-      await this.validateChartFieldReferencesIfApplicable({
-        configuration: createInput.configuration,
-        objectMetadataId: createInput.objectMetadataId ?? null,
-        widgetType: createInput.type,
-        workspaceId,
-      });
-    }
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -264,6 +255,15 @@ export class PageLayoutWidgetService {
         flatPageLayoutTabMaps,
         flatObjectMetadataMaps,
       });
+
+    if (isDefined(createInput.configuration)) {
+      await this.validateChartFieldReferencesIfApplicable({
+        configuration: createInput.configuration,
+        objectMetadataId: createInput.objectMetadataId ?? null,
+        widgetType: createInput.type,
+        workspaceId,
+      });
+    }
 
     await this.validateAndRunWidgetMigration({
       workspaceId,
@@ -332,6 +332,20 @@ export class PageLayoutWidgetService {
           }
         : updateData;
 
+    const updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId = {
+      id,
+      update: {
+        ...processedUpdateData,
+      },
+    };
+
+    const flatPageLayoutWidgetToUpdate =
+      fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow({
+        updatePageLayoutWidgetInput,
+        flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      });
+
     const shouldValidateChartFields =
       isConfigurationBeingUpdated ||
       Object.prototype.hasOwnProperty.call(updateData, 'objectMetadataId') ||
@@ -360,20 +374,6 @@ export class PageLayoutWidgetService {
         });
       }
     }
-
-    const updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId = {
-      id,
-      update: {
-        ...processedUpdateData,
-      },
-    };
-
-    const flatPageLayoutWidgetToUpdate =
-      fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow({
-        updatePageLayoutWidgetInput,
-        flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      });
 
     await this.validateAndRunWidgetMigration({
       workspaceId,
