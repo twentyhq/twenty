@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.17",
+    "@ai-sdk/groq": "^2.0.34",
     "@ai-sdk/openai": "^2.0.30",
     "@ai-sdk/provider-utils": "^3.0.9",
     "@ai-sdk/xai": "^2.0.19",

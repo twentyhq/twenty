@@ -1,6 +1,5 @@
-import { Inject, Injectable, Optional } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit, Optional } from '@nestjs/common';
 
-import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import {
@@ -10,11 +9,14 @@ import {
 
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
 import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
+import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 @Injectable()
-export class WorkflowToolProvider implements ToolProvider {
+export class WorkflowToolProvider implements ToolProvider, OnModuleInit {
   readonly category = ToolCategory.WORKFLOW;
 
   constructor(
@@ -22,7 +24,23 @@ export class WorkflowToolProvider implements ToolProvider {
     @Inject(WORKFLOW_TOOL_SERVICE_TOKEN)
     private readonly workflowToolService: WorkflowToolWorkspaceService | null,
     private readonly permissionsService: PermissionsService,
+    private readonly toolExecutorService: ToolExecutorService,
   ) {}
+
+  onModuleInit(): void {
+    if (this.workflowToolService) {
+      const service = this.workflowToolService;
+
+      this.toolExecutorService.registerCategoryGenerator(
+        ToolCategory.WORKFLOW,
+        async (context) =>
+          service.generateWorkflowTools(
+            context.workspaceId,
+            context.rolePermissionConfig,
+          ),
+      );
+    }
+  }
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
     if (!this.workflowToolService) {
@@ -36,14 +54,18 @@ export class WorkflowToolProvider implements ToolProvider {
     );
   }
 
-  async generateTools(context: ToolProviderContext): Promise<ToolSet> {
+  async generateDescriptors(
+    context: ToolProviderContext,
+  ): Promise<ToolDescriptor[]> {
     if (!this.workflowToolService) {
-      return {};
+      return [];
     }
 
-    return this.workflowToolService.generateWorkflowTools(
+    const toolSet = await this.workflowToolService.generateWorkflowTools(
       context.workspaceId,
       context.rolePermissionConfig,
     );
+
+    return toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW);
   }
 }
