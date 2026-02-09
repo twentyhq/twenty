@@ -12,6 +12,7 @@ describe('filterAttachmentsToRestore', () => {
     const attachmentIdsToRestore = filterAttachmentsToRestore(
       [],
       softDeletedAttachments,
+      false,
     );
     expect(attachmentIdsToRestore).toEqual([]);
   });
@@ -20,6 +21,7 @@ describe('filterAttachmentsToRestore', () => {
     const attachmentIdsToRestore = filterAttachmentsToRestore(
       ['https://exemple.com/files/attachment/test.txt'],
       [],
+      false,
     );
     expect(attachmentIdsToRestore).toEqual([]);
   });
@@ -38,6 +40,7 @@ describe('filterAttachmentsToRestore', () => {
     const attachmentIdsToRestore = filterAttachmentsToRestore(
       ['https://exemple.com/files/images/test.txt'],
       softDeletedAttachments,
+      false,
     );
     expect(attachmentIdsToRestore).toEqual(['1']);
   });

@@ -57,7 +57,6 @@ export const ActivityRichTextEditor = ({
 }: ActivityRichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
 
-  // Map to track URL -> fileId for files uploaded in this session
   const [urlToFileIdMap] = useState<Map<string, string>>(() => new Map());
 
   const cache = useApolloCoreClient().cache;
@@ -137,7 +136,6 @@ export const ActivityRichTextEditor = ({
     });
   };
 
-  // Enrich blocknote JSON with attachmentFileId from our URL mapping
   const enrichBlocknoteWithFileIds = useCallback(
     (blocknoteString: string): string => {
       try {
@@ -146,12 +144,9 @@ export const ActivityRichTextEditor = ({
           const blockProps = block.props as Record<string, unknown>;
           const url = blockProps?.url as string;
 
-          // Check if this block has a URL in our mapping
           if (isDefined(url) && !blockProps?.attachmentFileId) {
             const fileId = urlToFileIdMap.get(url);
             if (isDefined(fileId)) {
-              // eslint-disable-next-line no-console
-              console.log(`Enriching ${block.type} block with fileId:`, fileId);
               return {
                 ...block,
                 props: {
@@ -177,7 +172,6 @@ export const ActivityRichTextEditor = ({
         setCanCreateActivity(true);
       }
 
-      // Enrich with fileIds before persisting
       const enrichedBody = enrichBlocknoteWithFileIds(activityBody);
       persistBodyDebounced(prepareBodyWithSignedUrls(enrichedBody));
     },
@@ -243,9 +237,6 @@ export const ActivityRichTextEditor = ({
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
 
-    // eslint-disable-next-line no-console
-    console.log('📝 Editor changed, document:', editor.document);
-
     handleBodyChangeDebounced(newStringifiedBody);
   };
 
@@ -259,8 +250,7 @@ export const ActivityRichTextEditor = ({
       `Failed to parse body for activity ${activityId}, for rich text version 'v2'`,
     );
 
-    // Populate urlToFileIdMap from existing blocks that have attachmentFileId
-    if (parsedBody) {
+    if (isDefined(parsedBody)) {
       parsedBody.forEach((block) => {
         const blockProps = block.props as Record<string, unknown>;
         const url = blockProps?.url as string;
@@ -268,11 +258,6 @@ export const ActivityRichTextEditor = ({
 
         if (isDefined(url) && isDefined(fileId)) {
           urlToFileIdMap.set(url, fileId);
-          // eslint-disable-next-line no-console
-          console.log('Loaded existing URL -> fileId mapping:', {
-            url,
-            fileId,
-          });
         }
       });
     }
@@ -281,29 +266,13 @@ export const ActivityRichTextEditor = ({
   }, [activity, activityId, urlToFileIdMap]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
-    // eslint-disable-next-line no-console
-    console.log('🔄 BlockNote upload starting:', file.name);
-
     const { attachmentAbsoluteURL, attachmentFileId } =
       await handleUploadAttachment(file);
 
-    // eslint-disable-next-line no-console
-    console.log('✅ Upload complete:', {
-      url: attachmentAbsoluteURL,
-      fileId: attachmentFileId,
-    });
-
-    // Store the mapping for later enrichment
     if (isDefined(attachmentFileId)) {
       urlToFileIdMap.set(attachmentAbsoluteURL, attachmentFileId);
-      // eslint-disable-next-line no-console
-      console.log('📝 Stored URL -> fileId mapping:', {
-        url: attachmentAbsoluteURL,
-        fileId: attachmentFileId,
-      });
     }
 
-    // Return just the URL - BlockNote's default blocks work with this
     return attachmentAbsoluteURL;
   };
 
