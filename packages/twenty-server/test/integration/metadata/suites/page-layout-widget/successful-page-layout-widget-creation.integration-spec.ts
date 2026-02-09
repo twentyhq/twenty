@@ -1,24 +1,15 @@
 import {
-  TEST_GAUGE_CHART_CONFIG,
-  TEST_GAUGE_CHART_CONFIG_MINIMAL,
-  TEST_HORIZONTAL_BAR_CHART_CONFIG,
-  TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
+  type ChartTestConfigKey,
+  type ChartTestConfigMap,
   TEST_IFRAME_CONFIG,
-  TEST_LINE_CHART_CONFIG,
-  TEST_LINE_CHART_CONFIG_MINIMAL,
-  TEST_NUMBER_CHART_CONFIG,
-  TEST_NUMBER_CHART_CONFIG_MINIMAL,
-  TEST_PIE_CHART_CONFIG,
-  TEST_PIE_CHART_CONFIG_MINIMAL,
   TEST_STANDALONE_RICH_TEXT_CONFIG,
   TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
-  TEST_VERTICAL_BAR_CHART_CONFIG,
-  TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
 import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
+import { getRuntimeChartTestMetadata } from 'test/integration/metadata/suites/page-layout-widget/utils/get-runtime-chart-test-metadata.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
@@ -52,7 +43,7 @@ const DEFAULT_GRID_POSITION = {
   columnSpan: 1,
 };
 
-const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+const NON_GRAPH_SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
   // IFRAME widget tests
   {
     title: 'create a page layout widget with IFRAME configuration',
@@ -103,156 +94,88 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       },
     },
   },
-  // AGGREGATE_CHART (number chart) widget tests
+];
+
+type GraphTestCase = {
+  title: string;
+  widgetTitle: string;
+  configKey: ChartTestConfigKey;
+};
+
+const GRAPH_TEST_CASES: GraphTestCase[] = [
   {
-    title:
-      'create a page layout widget with AGGREGATE_CHART full configuration',
-    context: {
-      input: {
-        title: 'Number Chart Widget',
-        type: WidgetType.GRAPH,
-        configuration: TEST_NUMBER_CHART_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    title: 'create a page layout widget with AGGREGATE_CHART full configuration',
+    widgetTitle: 'Number Chart Widget',
+    configKey: 'aggregateChart',
   },
   {
     title:
       'create a page layout widget with AGGREGATE_CHART minimal configuration',
-    context: {
-      input: {
-        title: 'Number Chart Widget Minimal',
-        type: WidgetType.GRAPH,
-        configuration: TEST_NUMBER_CHART_CONFIG_MINIMAL,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Number Chart Widget Minimal',
+    configKey: 'aggregateChartMinimal',
   },
-  // BAR_CHART vertical widget tests
   {
     title:
       'create a page layout widget with VERTICAL BAR_CHART full configuration',
-    context: {
-      input: {
-        title: 'Vertical Bar Chart Widget',
-        type: WidgetType.GRAPH,
-        configuration: TEST_VERTICAL_BAR_CHART_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Vertical Bar Chart Widget',
+    configKey: 'verticalBarChart',
   },
   {
     title:
       'create a page layout widget with VERTICAL BAR_CHART minimal configuration',
-    context: {
-      input: {
-        title: 'Vertical Bar Chart Widget Minimal',
-        type: WidgetType.GRAPH,
-        configuration: TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Vertical Bar Chart Widget Minimal',
+    configKey: 'verticalBarChartMinimal',
   },
-  // BAR_CHART horizontal widget tests
   {
     title:
       'create a page layout widget with HORIZONTAL BAR_CHART full configuration',
-    context: {
-      input: {
-        title: 'Horizontal Bar Chart Widget',
-        type: WidgetType.GRAPH,
-        configuration: TEST_HORIZONTAL_BAR_CHART_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Horizontal Bar Chart Widget',
+    configKey: 'horizontalBarChart',
   },
   {
     title:
       'create a page layout widget with HORIZONTAL BAR_CHART minimal configuration',
-    context: {
-      input: {
-        title: 'Horizontal Bar Chart Widget Minimal',
-        type: WidgetType.GRAPH,
-        configuration: TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Horizontal Bar Chart Widget Minimal',
+    configKey: 'horizontalBarChartMinimal',
   },
-  // PIE_CHART widget tests
   {
     title: 'create a page layout widget with PIE_CHART full configuration',
-    context: {
-      input: {
-        title: 'Pie Chart Widget',
-        type: WidgetType.GRAPH,
-        configuration: TEST_PIE_CHART_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Pie Chart Widget',
+    configKey: 'pieChart',
   },
   {
     title: 'create a page layout widget with PIE_CHART minimal configuration',
-    context: {
-      input: {
-        title: 'Pie Chart Widget Minimal',
-        type: WidgetType.GRAPH,
-        configuration: TEST_PIE_CHART_CONFIG_MINIMAL,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Pie Chart Widget Minimal',
+    configKey: 'pieChartMinimal',
   },
-  // LINE_CHART widget tests
   {
     title: 'create a page layout widget with LINE_CHART full configuration',
-    context: {
-      input: {
-        title: 'Line Chart Widget',
-        type: WidgetType.GRAPH,
-        configuration: TEST_LINE_CHART_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Line Chart Widget',
+    configKey: 'lineChart',
   },
   {
     title: 'create a page layout widget with LINE_CHART minimal configuration',
-    context: {
-      input: {
-        title: 'Line Chart Widget Minimal',
-        type: WidgetType.GRAPH,
-        configuration: TEST_LINE_CHART_CONFIG_MINIMAL,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Line Chart Widget Minimal',
+    configKey: 'lineChartMinimal',
   },
-  // GAUGE_CHART widget tests
   {
     title: 'create a page layout widget with GAUGE_CHART full configuration',
-    context: {
-      input: {
-        title: 'Gauge Chart Widget',
-        type: WidgetType.GRAPH,
-        configuration: TEST_GAUGE_CHART_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Gauge Chart Widget',
+    configKey: 'gaugeChart',
   },
   {
     title: 'create a page layout widget with GAUGE_CHART minimal configuration',
-    context: {
-      input: {
-        title: 'Gauge Chart Widget Minimal',
-        type: WidgetType.GRAPH,
-        configuration: TEST_GAUGE_CHART_CONFIG_MINIMAL,
-        gridPosition: DEFAULT_GRID_POSITION,
-      },
-    },
+    widgetTitle: 'Gauge Chart Widget Minimal',
+    configKey: 'gaugeChartMinimal',
   },
 ];
 
 describe('Page layout widget creation should succeed', () => {
   let testPageLayoutId: string;
   let testPageLayoutTabId: string;
-  let createdPageLayoutWidgetId: string;
+  let createdPageLayoutWidgetId: string | undefined;
+  let testObjectMetadataId: string;
+  let chartConfigs: ChartTestConfigMap;
 
   beforeAll(async () => {
     const { data: layoutData } = await createOnePageLayout({
@@ -271,6 +194,11 @@ describe('Page layout widget creation should succeed', () => {
     });
 
     testPageLayoutTabId = tabData.createPageLayoutTab.id;
+
+    const runtimeChartTestMetadata = await getRuntimeChartTestMetadata();
+
+    testObjectMetadataId = runtimeChartTestMetadata.objectMetadataId;
+    chartConfigs = runtimeChartTestMetadata.chartConfigs;
   });
 
   afterAll(async () => {
@@ -291,9 +219,11 @@ describe('Page layout widget creation should succeed', () => {
         input: { id: createdPageLayoutWidgetId },
       });
     }
+
+    createdPageLayoutWidgetId = undefined;
   });
 
-  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+  it.each(eachTestingContextFilter(NON_GRAPH_SUCCESSFUL_TEST_CASES))(
     'should $title',
     async ({ context: { input } }) => {
       const { data } = await createOnePageLayoutWidget({
@@ -311,4 +241,28 @@ describe('Page layout widget creation should succeed', () => {
       );
     },
   );
+
+  describe('GRAPH widget tests', () => {
+    for (const { title, widgetTitle, configKey } of GRAPH_TEST_CASES) {
+      it(`should ${title}`, async () => {
+        const { data } = await createOnePageLayoutWidget({
+          expectToFail: false,
+          input: {
+            title: widgetTitle,
+            type: WidgetType.GRAPH,
+            objectMetadataId: testObjectMetadataId,
+            configuration: chartConfigs[configKey],
+            pageLayoutTabId: testPageLayoutTabId,
+            gridPosition: DEFAULT_GRID_POSITION,
+          },
+        });
+
+        createdPageLayoutWidgetId = data?.createPageLayoutWidget?.id;
+
+        expect(data.createPageLayoutWidget).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny({ ...data.createPageLayoutWidget }),
+        );
+      });
+    }
+  });
 });

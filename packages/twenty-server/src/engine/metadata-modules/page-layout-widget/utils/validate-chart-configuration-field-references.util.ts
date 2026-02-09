@@ -29,7 +29,7 @@ export const validateChartConfigurationFieldReferences = ({
   if (!isChartFieldsForValidation(configuration)) {
     if (widgetType === WidgetType.GRAPH) {
       throw new Error(
-        'GRAPH widgets require configurationType AGGREGATE_CHART, BAR_CHART, LINE_CHART, or PIE_CHART.',
+        'GRAPH widgets require configurationType AGGREGATE_CHART, BAR_CHART, GAUGE_CHART, LINE_CHART, or PIE_CHART.',
       );
     }
 

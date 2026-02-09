@@ -1,17 +1,14 @@
 import {
-  TEST_GAUGE_CHART_CONFIG,
-  TEST_HORIZONTAL_BAR_CHART_CONFIG,
+  type ChartTestConfigKey,
+  type ChartTestConfigMap,
   TEST_IFRAME_CONFIG_ALTERNATIVE,
-  TEST_LINE_CHART_CONFIG,
-  TEST_NUMBER_CHART_CONFIG,
-  TEST_PIE_CHART_CONFIG,
   TEST_STANDALONE_RICH_TEXT_CONFIG,
-  TEST_VERTICAL_BAR_CHART_CONFIG,
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
 import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
+import { getRuntimeChartTestMetadata } from 'test/integration/metadata/suites/page-layout-widget/utils/get-runtime-chart-test-metadata.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
@@ -29,6 +26,7 @@ type TestContext = {
   input: {
     title?: string;
     type?: WidgetType;
+    objectMetadataId?: string;
     configuration?: AllPageLayoutWidgetConfiguration;
     gridPosition?: {
       row: number;
@@ -39,21 +37,12 @@ type TestContext = {
   };
 };
 
-const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
+const NON_GRAPH_SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
   {
     title: 'update page layout widget title',
     context: {
       input: {
         title: 'Updated Widget Title',
-      },
-    },
-  },
-  {
-    title: 'update page layout widget type',
-    context: {
-      input: {
-        type: WidgetType.GRAPH,
-        configuration: TEST_NUMBER_CHART_CONFIG,
       },
     },
   },
@@ -70,7 +59,6 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       },
     },
   },
-  // Configuration update tests
   {
     title: 'update page layout widget to IFRAME configuration',
     context: {
@@ -88,59 +76,41 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       },
     },
   },
+];
+
+type GraphTestCase = {
+  title: string;
+  configKey: ChartTestConfigKey;
+};
+
+const GRAPH_SUCCESSFUL_TEST_CASES: GraphTestCase[] = [
+  {
+    title: 'update page layout widget type',
+    configKey: 'aggregateChart',
+  },
   {
     title: 'update page layout widget to AGGREGATE_CHART configuration',
-    context: {
-      input: {
-        type: WidgetType.GRAPH,
-        configuration: TEST_NUMBER_CHART_CONFIG,
-      },
-    },
+    configKey: 'aggregateChart',
   },
   {
     title: 'update page layout widget to VERTICAL BAR_CHART configuration',
-    context: {
-      input: {
-        type: WidgetType.GRAPH,
-        configuration: TEST_VERTICAL_BAR_CHART_CONFIG,
-      },
-    },
+    configKey: 'verticalBarChart',
   },
   {
     title: 'update page layout widget to HORIZONTAL BAR_CHART configuration',
-    context: {
-      input: {
-        type: WidgetType.GRAPH,
-        configuration: TEST_HORIZONTAL_BAR_CHART_CONFIG,
-      },
-    },
+    configKey: 'horizontalBarChart',
   },
   {
     title: 'update page layout widget to PIE_CHART configuration',
-    context: {
-      input: {
-        type: WidgetType.GRAPH,
-        configuration: TEST_PIE_CHART_CONFIG,
-      },
-    },
+    configKey: 'pieChart',
   },
   {
     title: 'update page layout widget to LINE_CHART configuration',
-    context: {
-      input: {
-        type: WidgetType.GRAPH,
-        configuration: TEST_LINE_CHART_CONFIG,
-      },
-    },
+    configKey: 'lineChart',
   },
   {
     title: 'update page layout widget to GAUGE_CHART configuration',
-    context: {
-      input: {
-        type: WidgetType.GRAPH,
-        configuration: TEST_GAUGE_CHART_CONFIG,
-      },
-    },
+    configKey: 'gaugeChart',
   },
 ];
 
@@ -148,6 +118,8 @@ describe('Page layout widget update should succeed', () => {
   let testPageLayoutId: string;
   let testPageLayoutTabId: string;
   let testPageLayoutWidgetId: string;
+  let testObjectMetadataId: string;
+  let chartConfigs: ChartTestConfigMap;
 
   beforeAll(async () => {
     const { data: layoutData } = await createOnePageLayout({
@@ -166,6 +138,11 @@ describe('Page layout widget update should succeed', () => {
     });
 
     testPageLayoutTabId = tabData.createPageLayoutTab.id;
+
+    const runtimeChartTestMetadata = await getRuntimeChartTestMetadata();
+
+    testObjectMetadataId = runtimeChartTestMetadata.objectMetadataId;
+    chartConfigs = runtimeChartTestMetadata.chartConfigs;
   });
 
   afterAll(async () => {
@@ -208,7 +185,7 @@ describe('Page layout widget update should succeed', () => {
     });
   });
 
-  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+  it.each(eachTestingContextFilter(NON_GRAPH_SUCCESSFUL_TEST_CASES))(
     'should $title',
     async ({ context: { input } }) => {
       const { data } = await updateOnePageLayoutWidget({
@@ -224,4 +201,26 @@ describe('Page layout widget update should succeed', () => {
       );
     },
   );
+
+  describe('GRAPH widget update tests', () => {
+    for (const { title, configKey } of GRAPH_SUCCESSFUL_TEST_CASES) {
+      it(`should ${title}`, async () => {
+        const { data } = await updateOnePageLayoutWidget({
+          expectToFail: false,
+          input: {
+            id: testPageLayoutWidgetId,
+            type: WidgetType.GRAPH,
+            objectMetadataId: testObjectMetadataId,
+            configuration: chartConfigs[configKey],
+          },
+        });
+
+        expect(data.updatePageLayoutWidget).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny({
+            ...data.updatePageLayoutWidget,
+          }),
+        );
+      });
+    }
+  });
 });

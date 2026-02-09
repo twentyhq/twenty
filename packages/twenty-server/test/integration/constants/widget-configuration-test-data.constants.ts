@@ -197,6 +197,99 @@ export const TEST_GAUGE_CHART_CONFIG_MINIMAL: GaugeChartConfigurationDTO = {
   displayDataLabel: false,
 };
 
+export type ChartTestConfigMap = {
+  aggregateChart: AggregateChartConfigurationDTO;
+  aggregateChartMinimal: AggregateChartConfigurationDTO;
+  verticalBarChart: BarChartConfigurationDTO;
+  verticalBarChartMinimal: BarChartConfigurationDTO;
+  horizontalBarChart: BarChartConfigurationDTO;
+  horizontalBarChartMinimal: BarChartConfigurationDTO;
+  lineChart: LineChartConfigurationDTO;
+  lineChartMinimal: LineChartConfigurationDTO;
+  pieChart: PieChartConfigurationDTO;
+  pieChartMinimal: PieChartConfigurationDTO;
+  gaugeChart: GaugeChartConfigurationDTO;
+  gaugeChartMinimal: GaugeChartConfigurationDTO;
+};
+
+export type ChartTestConfigKey = keyof ChartTestConfigMap;
+
+export const buildChartTestConfigs = ({
+  aggregateFieldMetadataId,
+  groupByFieldMetadataIdPrimary,
+  groupByFieldMetadataIdSecondary,
+  gaugeMinimalAggregateOperation = AggregateOperations.COUNT_TRUE,
+  gaugeMinimalAggregateFieldMetadataId,
+}: {
+  aggregateFieldMetadataId: string;
+  groupByFieldMetadataIdPrimary: string;
+  groupByFieldMetadataIdSecondary: string;
+  gaugeMinimalAggregateOperation?: AggregateOperations;
+  gaugeMinimalAggregateFieldMetadataId?: string;
+}): ChartTestConfigMap => {
+  return {
+    aggregateChart: {
+      ...TEST_NUMBER_CHART_CONFIG,
+      aggregateFieldMetadataId,
+    },
+    aggregateChartMinimal: {
+      ...TEST_NUMBER_CHART_CONFIG_MINIMAL,
+      aggregateFieldMetadataId,
+    },
+    verticalBarChart: {
+      ...TEST_VERTICAL_BAR_CHART_CONFIG,
+      aggregateFieldMetadataId,
+      primaryAxisGroupByFieldMetadataId: groupByFieldMetadataIdPrimary,
+    },
+    verticalBarChartMinimal: {
+      ...TEST_VERTICAL_BAR_CHART_CONFIG_MINIMAL,
+      aggregateFieldMetadataId,
+      primaryAxisGroupByFieldMetadataId: groupByFieldMetadataIdPrimary,
+    },
+    horizontalBarChart: {
+      ...TEST_HORIZONTAL_BAR_CHART_CONFIG,
+      aggregateFieldMetadataId,
+      primaryAxisGroupByFieldMetadataId: groupByFieldMetadataIdPrimary,
+    },
+    horizontalBarChartMinimal: {
+      ...TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
+      aggregateFieldMetadataId,
+      primaryAxisGroupByFieldMetadataId: groupByFieldMetadataIdPrimary,
+    },
+    lineChart: {
+      ...TEST_LINE_CHART_CONFIG,
+      aggregateFieldMetadataId,
+      primaryAxisGroupByFieldMetadataId: groupByFieldMetadataIdPrimary,
+      secondaryAxisGroupByFieldMetadataId: groupByFieldMetadataIdSecondary,
+    },
+    lineChartMinimal: {
+      ...TEST_LINE_CHART_CONFIG_MINIMAL,
+      aggregateFieldMetadataId,
+      primaryAxisGroupByFieldMetadataId: groupByFieldMetadataIdPrimary,
+    },
+    pieChart: {
+      ...TEST_PIE_CHART_CONFIG,
+      aggregateFieldMetadataId,
+      groupByFieldMetadataId: groupByFieldMetadataIdPrimary,
+    },
+    pieChartMinimal: {
+      ...TEST_PIE_CHART_CONFIG_MINIMAL,
+      aggregateFieldMetadataId,
+      groupByFieldMetadataId: groupByFieldMetadataIdPrimary,
+    },
+    gaugeChart: {
+      ...TEST_GAUGE_CHART_CONFIG,
+      aggregateFieldMetadataId,
+    },
+    gaugeChartMinimal: {
+      ...TEST_GAUGE_CHART_CONFIG_MINIMAL,
+      aggregateFieldMetadataId:
+        gaugeMinimalAggregateFieldMetadataId ?? aggregateFieldMetadataId,
+      aggregateOperation: gaugeMinimalAggregateOperation,
+    },
+  };
+};
+
 export const INVALID_IFRAME_CONFIG_BAD_URL = {
   url: 'not-a-valid-url',
 };
