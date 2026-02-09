@@ -9,27 +9,41 @@ import {
   type ObservableResult,
 } from '@opentelemetry/api';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsCacheService } from 'src/engine/core-modules/metrics/metrics-cache.service';
 import { type MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const METER_NAME = 'twenty-server';
+const METRICS_CACHE_TTL = 60 * 1000; // 1 minute
 
 @Injectable()
 export class MetricsService {
-  constructor(private readonly metricsCacheService: MetricsCacheService) {}
+  constructor(
+    private readonly metricsCacheService: MetricsCacheService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineHealth)
+    private readonly healthCacheStorage: CacheStorageService,
+  ) {}
 
   getMeter(): Meter {
     return metrics.getMeter(METER_NAME);
   }
 
   createObservableGauge(
-    name: string,
+    metricName: string,
     options: MetricOptions,
-    callback: (observableResult: ObservableResult) => void | Promise<void>,
+    callback: (
+      observableResult: ObservableResult,
+    ) => unknown | Promise<unknown>,
   ): ObservableGauge {
-    const gauge = this.getMeter().createObservableGauge(name, options);
+    const gauge = this.getMeter().createObservableGauge(metricName, options);
 
-    gauge.addCallback(callback);
+    gauge.addCallback(async (observableResult) => {
+      const result = await callback(observableResult);
+
+      await this.healthCacheStorage.set(metricName, result, METRICS_CACHE_TTL);
+    });
 
     return gauge;
   }
