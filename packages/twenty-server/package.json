@@ -81,7 +81,7 @@
     "ai": "5.0.52",
     "apollo-server-core": "3.13.0",
     "archiver": "7.0.1",
-    "axios": "1.12.2",
+    "axios": "^1.13.5",
     "babel-plugin-module-resolver": "5.0.2",
     "bcrypt": "5.1.1",
     "bullmq": "5.40.0",
