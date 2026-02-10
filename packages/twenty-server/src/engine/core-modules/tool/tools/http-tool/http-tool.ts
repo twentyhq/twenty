@@ -52,6 +52,7 @@ export class HttpTool implements Tool {
         undefined,
         {
           workspaceId: context.workspaceId,
+          userId: context.userId,
           source: 'workflow-http',
         },
       );
