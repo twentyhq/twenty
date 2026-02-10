@@ -107,10 +107,7 @@ describe('validateEmailsFieldOrThrow', () => {
 
     it('should throw when one of additionalEmails is invalid', () => {
       const emailsValue = {
-        additionalEmails: [
-          'Additional1example.com',
-          'additional2@example.com',
-        ],
+        additionalEmails: ['Additional1example.com', 'additional2@example.com'],
       };
 
       expect(() =>

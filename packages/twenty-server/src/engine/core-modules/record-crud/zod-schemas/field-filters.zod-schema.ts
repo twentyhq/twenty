@@ -355,13 +355,11 @@ export const generateFieldFilterZodSchema = (
               eq: z
                 .string()
                 .email()
-                .lowercase()
                 .optional()
                 .describe('Primary email equals'),
               neq: z
                 .string()
                 .email()
-                .lowercase()
                 .optional()
                 .describe('Primary email not equals'),
               like: z

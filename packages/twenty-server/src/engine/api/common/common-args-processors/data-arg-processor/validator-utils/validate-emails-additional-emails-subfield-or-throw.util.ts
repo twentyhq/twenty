@@ -1,13 +1,13 @@
 import { inspect } from 'util';
 
-import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
+import { msg } from '@lingui/core/macro';
 
-import { validateEmailsPrimaryEmailSubfieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { validateEmailsPrimaryEmailSubfieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-emails-primary-email-subfield-or-throw.util';
 
 export const validateEmailsAdditionalEmailsSubfieldOrThrow = (
   value: unknown,

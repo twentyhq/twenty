@@ -120,10 +120,11 @@ export class DataArgProcessor {
           );
         }
 
-        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
+        const fieldMetadata =
+          findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>({
+            flatEntityId: fieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          });
 
         if (!fieldMetadata) {
           throw new CommonQueryRunnerException(

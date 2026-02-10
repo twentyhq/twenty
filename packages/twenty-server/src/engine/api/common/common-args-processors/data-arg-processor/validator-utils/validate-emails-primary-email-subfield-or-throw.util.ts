@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 
-import { isNull } from '@sniptt/guards';
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { z } from 'zod';
 
 import {
@@ -9,7 +9,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-export const validateEmailValueOrThrow = (
+export const validateEmailsPrimaryEmailSubfieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): string | null => {
@@ -25,9 +25,7 @@ export const validateEmailValueOrThrow = (
     );
   }
 
-  if (
-    !z.email().trim().safeParse(value).success
-  ) {
+  if (!z.email().trim().safeParse(value).success && isNonEmptyString(value)) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(
