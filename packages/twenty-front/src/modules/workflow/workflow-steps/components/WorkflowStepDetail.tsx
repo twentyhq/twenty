@@ -187,7 +187,7 @@ export const WorkflowStepDetail = ({
         case 'FORM': {
           return (
             <WorkflowEditActionFormBuilder
-              trigger={trigger}
+              triggerType={trigger?.type}
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={props}

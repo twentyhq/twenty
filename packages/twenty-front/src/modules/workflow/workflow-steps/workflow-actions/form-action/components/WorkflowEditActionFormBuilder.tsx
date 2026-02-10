@@ -7,7 +7,7 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import {
   type WorkflowFormAction,
-  type WorkflowTrigger,
+  type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -35,7 +35,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 export type WorkflowEditActionFormBuilderProps = {
-  trigger: WorkflowTrigger | null;
+  triggerType: WorkflowTriggerType | undefined;
   action: WorkflowFormAction;
   actionOptions:
     | {
@@ -133,7 +133,7 @@ const StyledAddFieldButtonContentContainer = styled.div`
 `;
 
 export const WorkflowEditActionFormBuilder = ({
-  trigger,
+  triggerType,
   action,
   actionOptions,
 }: WorkflowEditActionFormBuilderProps) => {
@@ -220,13 +220,12 @@ export const WorkflowEditActionFormBuilder = ({
   return (
     <>
       <StyledWorkflowStepBody>
-        {trigger && trigger.type !== 'MANUAL' && isCalloutVisible && (
+        {triggerType && triggerType !== 'MANUAL' && isCalloutVisible && (
           <Callout
             learnMoreText={t`Learn more`}
             variant={'warning'}
             title={t`This form will appear in workflow runs.`}
             description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
-            className='workflow-edit-action-form-callout'
             onClose={() => setIsCalloutVisible(false)}
             learnMoreUrl={
               'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form'
