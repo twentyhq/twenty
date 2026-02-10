@@ -2,7 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { orderObjectProperties } from 'src/engine/metadata-modules/flat-entity/utils/order-object-properties.util';
-import { type MetadataEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
+import { type MetadataUniversalEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { type MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-stringify.type';
 
 export function transformUniversalFlatEntityForComparison<
@@ -13,7 +13,7 @@ export function transformUniversalFlatEntityForComparison<
   propertiesToStringify,
 }: {
   universalFlatEntity: MetadataUniversalFlatEntity<T>;
-  propertiesToCompare: MetadataEntityPropertiesToCompare<T>[];
+  propertiesToCompare: MetadataUniversalEntityPropertiesToCompare<T>[];
   propertiesToStringify: MetadataUniversalFlatEntityPropertiesToStringify<T>[];
 }) {
   return propertiesToCompare.reduce(

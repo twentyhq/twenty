@@ -11,11 +11,10 @@ export type AllUniversalWorkspaceMigrationAction<
     WorkspaceMigrationActionType = WorkspaceMigrationActionType,
 > = MetadataUniversalWorkspaceMigrationAction<AllMetadataName, TActionType>;
 
-export type AllFlatWorkspaceMigrationAction =
-  MetadataFlatWorkspaceMigrationAction<
-    AllMetadataName,
-    WorkspaceMigrationActionType
-  >;
+export type AllFlatWorkspaceMigrationAction<
+  TActionType extends
+    WorkspaceMigrationActionType = WorkspaceMigrationActionType,
+> = MetadataFlatWorkspaceMigrationAction<AllMetadataName, TActionType>;
 
 export { WorkspaceMigrationActionType };
 
