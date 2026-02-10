@@ -2,12 +2,13 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import * as fs from 'fs/promises';
-import { join } from 'path';
+import { dirname, join } from 'path';
 
 import { Command } from 'nest-commander';
 import { FileFolder, type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
+import { isObject } from 'class-validator';
 import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -26,9 +27,6 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const OLD_BUILT_FOLDER = 'built-function';
 const OLD_SOURCE_FOLDER = 'serverless-function';
@@ -52,7 +50,6 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
-    private readonly logicFunctionResourceService: LogicFunctionResourceService,
   ) {
     super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
   }
@@ -187,44 +184,17 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       return null;
     }
 
-    const applicationUniversalIdentifier =
-      await this.getApplicationUniversalIdentifier(
-        oldLogicFunction.application.id,
-      );
-
-    if (!applicationUniversalIdentifier) {
-      this.logger.warn(
-        `Logic function ${serverlessFunctionId} application ${oldLogicFunction.application.id} not found not found in workspace ${workspaceId}, skipping`,
-      );
-
-      return null;
-    }
-
-    const newLogicFunctionId = v4();
-
-    const { tempRoot, checksum } = await this.migrateFilesFromOldPathToTemp({
+    const tempRoot = await this.migrateFilesFromOldPathToTemp(
       workspaceId,
-      applicationUniversalIdentifier,
       serverlessFunctionId,
       version,
-    });
+    );
 
-    await this.logicFunctionMetadataService.createOne({
-      input: {
-        name: oldLogicFunction.name,
-        description: oldLogicFunction.description ?? undefined,
-        timeoutSeconds: oldLogicFunction.timeoutSeconds ?? 300,
-        toolInputSchema: oldLogicFunction.toolInputSchema ?? undefined,
-        isTool: oldLogicFunction.isTool ?? false,
-        handlerName: 'main',
-        builtHandlerPath: 'src/index.mjs',
-        sourceHandlerPath: 'src/index.ts',
-        checksum,
-        id: newLogicFunctionId,
-      },
-      workspaceId,
-      ownerFlatApplication: oldLogicFunction.application,
-    });
+    const newLogicFunctionId = v4();
+    const applicationUniversalIdentifier =
+      await this.getApplicationUniversalIdentifier(
+        oldLogicFunction.applicationId,
+      );
 
     if (isDefined(applicationUniversalIdentifier)) {
       await this.uploadTempToNewPath(
@@ -235,6 +205,23 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       );
     }
 
+    await this.logicFunctionMetadataService.createOne({
+      input: {
+        id: newLogicFunctionId,
+        name: oldLogicFunction.name,
+        description: oldLogicFunction.description ?? undefined,
+        timeoutSeconds: oldLogicFunction.timeoutSeconds ?? 300,
+        toolInputSchema: oldLogicFunction.toolInputSchema ?? undefined,
+        isTool: oldLogicFunction.isTool ?? false,
+        sourceHandlerPath: `${NEW_WORKFLOW_RESOURCE_PREFIX}/${newLogicFunctionId}/src/index.ts`,
+        builtHandlerPath: `${NEW_WORKFLOW_RESOURCE_PREFIX}/${newLogicFunctionId}/src/index.mjs`,
+        handlerName: oldLogicFunction.handlerName,
+        checksum: oldLogicFunction.checksum ?? 'temporary',
+      },
+      workspaceId,
+      ownerFlatApplication: oldLogicFunction.application,
+    });
+
     await fs.rm(tempRoot, { recursive: true, force: true });
 
     this.logger.log(
@@ -244,17 +231,11 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     return newLogicFunctionId;
   }
 
-  private async migrateFilesFromOldPathToTemp({
-    workspaceId,
-    applicationUniversalIdentifier,
-    serverlessFunctionId,
-    version,
-  }: {
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-    serverlessFunctionId: string;
-    version: string;
-  }): Promise<{ tempRoot: string; checksum: string }> {
+  private async migrateFilesFromOldPathToTemp(
+    workspaceId: string,
+    serverlessFunctionId: string,
+    version: string,
+  ): Promise<string> {
     const workspacePrefix = `workspace-${workspaceId}`;
     const oldPaths = {
       built: `${workspacePrefix}/${OLD_BUILT_FOLDER}/${serverlessFunctionId}/${version}`,
@@ -274,23 +255,7 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       oldPaths.built,
     );
 
-    const builtContent = (
-      await streamToBuffer(
-        await this.fileStorageService.readFile({
-          fileFolder: FileFolder.BuiltLogicFunction,
-          resourcePath: 'src/index.mjs',
-          workspaceId,
-          applicationUniversalIdentifier,
-        }),
-      )
-    ).toString('utf-8');
-
-    const checksum = logicFunctionCreateHash(builtContent);
-
-    await this.logicFunctionResourceService.writeSourcesToLocalFolder(
-      builtSources as Sources,
-      builtTempDir,
-    );
+    await this.writeSourcesToLocalFolder(builtSources as Sources, builtTempDir);
 
     const sourceSources = await this.fileStorageService.readFolderLegacy(
       oldPaths.source,
@@ -298,12 +263,9 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     const flattened =
       (sourceSources.src as Sources) ?? (sourceSources as Sources);
 
-    await this.logicFunctionResourceService.writeSourcesToLocalFolder(
-      flattened,
-      sourceTempDir,
-    );
+    await this.writeSourcesToLocalFolder(flattened, sourceTempDir);
 
-    return { tempRoot, checksum };
+    return tempRoot;
   }
 
   private async uploadTempToNewPath(
@@ -316,20 +278,50 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     const builtTempDir = join(tempRoot, 'built');
     const sourceTempDir = join(tempRoot, 'source');
 
-    await this.fileStorageService.uploadFolder({
+    const builtFile = await fs.readFile(join(builtTempDir, 'index.mjs'));
+    const sourceFile = await fs.readFile(join(sourceTempDir, 'index.ts'));
+
+    await this.fileStorageService.writeFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath,
-      localPath: builtTempDir,
+      resourcePath: `${resourcePath}/index.mjs`,
+      sourceFile: builtFile,
+      mimeType: 'application/javascript',
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
     });
 
-    await this.fileStorageService.uploadFolder({
+    await this.fileStorageService.writeFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
-      resourcePath,
-      localPath: sourceTempDir,
+      resourcePath: `${resourcePath}/index.ts`,
+      sourceFile: sourceFile,
+      mimeType: 'application/typescript',
+      settings: {
+        isTemporaryFile: false,
+        toDelete: false,
+      },
     });
+  }
+
+  private async writeSourcesToLocalFolder(
+    sources: Sources,
+    localPath: string,
+  ): Promise<void> {
+    for (const key of Object.keys(sources)) {
+      const filePath = join(localPath, key);
+      const value = sources[key];
+
+      if (isObject(value)) {
+        await this.writeSourcesToLocalFolder(value as Sources, filePath);
+        continue;
+      }
+      await fs.mkdir(dirname(filePath), { recursive: true });
+      await fs.writeFile(filePath, value);
+    }
   }
 }
