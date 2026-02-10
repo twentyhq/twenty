@@ -93,6 +93,7 @@ export class GraphQLConfigService
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
       include: [CoreEngineModule],
+      resolverSchemaScope: 'core',
       buildSchemaOptions: {
         orphanedTypes: [
           ApiConfig,

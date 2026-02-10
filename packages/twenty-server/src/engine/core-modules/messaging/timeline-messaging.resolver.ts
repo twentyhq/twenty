@@ -1,16 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import {
-  Args,
-  ArgsType,
-  Field,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 
 import { Max } from 'class-validator';
 
+import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/messaging/dtos/dismiss-reconnect-account-banner.input';
@@ -66,7 +59,7 @@ class GetTimelineThreadsFromOpportunityIdArgs {
 }
 
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard, CustomPermissionGuard)
-@Resolver(() => TimelineThreadsWithTotalDTO)
+@CoreResolver(() => TimelineThreadsWithTotalDTO)
 export class TimelineMessagingResolver {
   constructor(
     private readonly getMessagesFromPersonIdsService: GetMessagesService,

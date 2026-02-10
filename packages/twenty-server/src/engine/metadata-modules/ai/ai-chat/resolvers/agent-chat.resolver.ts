@@ -6,7 +6,6 @@ import {
   Parent,
   Query,
   ResolveField,
-  Resolver,
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -17,6 +16,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
   FeatureFlagGuard,
   RequireFeatureFlag,
@@ -35,7 +35,7 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
   FeatureFlagGuard,
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
-@Resolver(() => AgentChatThreadDTO)
+@MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(
     private readonly agentChatService: AgentChatService,

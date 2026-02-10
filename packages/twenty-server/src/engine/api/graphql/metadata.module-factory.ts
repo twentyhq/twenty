@@ -27,6 +27,7 @@ export const metadataModuleFactory = async (
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
     include: [MetadataGraphQLApiModule],
+    resolverSchemaScope: 'metadata',
     renderGraphiQL() {
       return renderApolloPlayground({ path: 'metadata' });
     },

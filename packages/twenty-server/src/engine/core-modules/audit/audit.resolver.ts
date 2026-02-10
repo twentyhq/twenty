@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation } from '@nestjs/graphql';
 
 import { AuditExceptionFilter } from 'src/engine/core-modules/audit/audit-exception-filter';
 import {
@@ -12,6 +12,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -24,7 +25,7 @@ import {
 } from './dtos/create-analytics.input';
 import { AuditService } from './services/audit.service';
 
-@Resolver(() => Analytics)
+@MetadataResolver(() => Analytics)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuditExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class AuditResolver {
