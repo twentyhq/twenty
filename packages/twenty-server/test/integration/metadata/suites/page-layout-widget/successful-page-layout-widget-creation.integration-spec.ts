@@ -105,6 +105,7 @@ describe('Page layout widget creation should succeed', () => {
   let testSetup: {
     pageLayoutId: string;
     pageLayoutTabId: string;
+    objectMetadataId: string;
     fieldMetadataId1: string;
     fieldMetadataId2: string;
     fieldMetadataId3: string;
@@ -389,6 +390,7 @@ describe('Page layout widget creation should succeed', () => {
         input: {
           title: widgetTitle,
           type: WidgetType.GRAPH,
+          objectMetadataId: testSetup.objectMetadataId,
           configuration: buildConfiguration(),
           pageLayoutTabId: testSetup.pageLayoutTabId,
           gridPosition: DEFAULT_GRID_POSITION,

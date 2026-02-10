@@ -52,6 +52,7 @@ type TestContext = {
 
 describe('Page layout with tabs update should succeed', () => {
   let testFieldMetadataIds: {
+    objectMetadataId: string;
     fieldMetadataId1: string;
     fieldMetadataId2: string;
     fieldMetadataId3: string;
@@ -76,7 +77,7 @@ describe('Page layout with tabs update should succeed', () => {
                 pageLayoutTabId: tabId1,
                 title: 'Pie Chart Widget',
                 type: WidgetType.GRAPH,
-                objectMetadataId: null,
+                objectMetadataId: testFieldMetadataIds.objectMetadataId,
                 gridPosition: {
                   row: 0,
                   column: 0,
@@ -111,7 +112,7 @@ describe('Page layout with tabs update should succeed', () => {
                 pageLayoutTabId: tabId1,
                 title: 'Pie Chart Widget',
                 type: WidgetType.GRAPH,
-                objectMetadataId: null,
+                objectMetadataId: testFieldMetadataIds.objectMetadataId,
                 gridPosition: {
                   row: 0,
                   column: 0,

@@ -86,6 +86,7 @@ describe('Page layout widget update should succeed', () => {
   let testSetup: {
     pageLayoutId: string;
     pageLayoutTabId: string;
+    objectMetadataId: string;
     fieldMetadataId1: string;
     fieldMetadataId2: string;
     fieldMetadataId3: string;
@@ -333,6 +334,7 @@ describe('Page layout widget update should succeed', () => {
           title: 'Original Graph Widget',
           pageLayoutTabId: testSetup.pageLayoutTabId,
           type: WidgetType.GRAPH,
+          objectMetadataId: testSetup.objectMetadataId,
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: testSetup.fieldMetadataId1,
