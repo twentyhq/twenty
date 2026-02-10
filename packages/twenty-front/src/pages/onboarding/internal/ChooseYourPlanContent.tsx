@@ -181,6 +181,14 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
     };
   };
 
+  const planChangeLink = (plan: BillingPlanKey) => {
+    const interval = billingCheckoutSession.interval;
+    const requirePaymentMethod = billingCheckoutSession.requirePaymentMethod;
+    return AppPath.PlanRequired.concat(
+      `?billingCheckoutSession={%22plan%22:%22${plan}%22,%22interval%22:%22${interval}%22,%22requirePaymentMethod%22:${requirePaymentMethod}}`,
+    );
+  };
+
   const { signOut } = useAuth();
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
@@ -265,13 +273,11 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
         </ClickToActionLink>
         <span />
         {currentPlanKey === BillingPlanKey.PRO ? (
-          <ClickToActionLink
-            href={AppPath.PlanRequired.concat('?plan=enterprise')}
-          >
+          <ClickToActionLink href={planChangeLink(BillingPlanKey.ENTERPRISE)}>
             <Trans>Organization plan</Trans>
           </ClickToActionLink>
         ) : (
-          <ClickToActionLink href={AppPath.PlanRequired.concat('?plan=pro')}>
+          <ClickToActionLink href={planChangeLink(BillingPlanKey.PRO)}>
             <Trans>Pro plan</Trans>
           </ClickToActionLink>
         )}

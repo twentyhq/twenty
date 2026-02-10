@@ -4,7 +4,6 @@ import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessio
 import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import deepEqual from 'deep-equal';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 // Initialize state that are hydrated from query parameters
 // We used to use recoil-sync to do this, but it was causing issues with Firefox
@@ -40,34 +39,6 @@ export const useInitializeQueryParamState = () => {
                 'Failed to parse billingCheckoutSession from URL',
                 error,
               );
-              set(
-                billingCheckoutSessionState,
-                BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
-              );
-            }
-          },
-          plan: (value: string) => {
-            const billingCheckoutSession = snapshot
-              .getLoadable(billingCheckoutSessionState)
-              .getValue();
-
-            try {
-              if (value === 'pro' || value === 'enterprise') {
-                const changedPlan =
-                  value === 'pro'
-                    ? BillingPlanKey.PRO
-                    : BillingPlanKey.ENTERPRISE;
-
-                if (billingCheckoutSession.plan !== changedPlan) {
-                  set(billingCheckoutSessionState, (prev) => ({
-                    ...prev,
-                    plan: changedPlan,
-                  }));
-                }
-              }
-            } catch (error) {
-              // eslint-disable-next-line no-console
-              console.error('Failed to parse plan from URL', error);
               set(
                 billingCheckoutSessionState,
                 BILLING_CHECKOUT_SESSION_DEFAULT_VALUE,
