@@ -4,7 +4,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { getFieldById } from 'src/engine/metadata-modules/page-layout-widget/utils/get-field-by-id.util';
+import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { validateCompositeSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-composite-subfield.util';
 import { validateRelationSubfield } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-relation-subfield.util';
 
@@ -29,7 +29,7 @@ export const validateGroupByField = ({
     throw new Error(`${paramName} is required.`);
   }
 
-  const field = getFieldById(fieldId, flatFieldMetadataMaps);
+  const field = findActiveFlatFieldMetadataById(fieldId, flatFieldMetadataMaps);
 
   if (!isDefined(field)) {
     throw new Error(`${paramName} "${fieldId}" not found.`);

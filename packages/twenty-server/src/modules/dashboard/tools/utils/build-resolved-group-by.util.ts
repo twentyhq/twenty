@@ -5,7 +5,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
-import { getFieldById } from 'src/engine/metadata-modules/page-layout-widget/utils/get-field-by-id.util';
+import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { resolveMorphTargetObjectId } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-morph-target-object-id.util';
 import { humanizeSubFieldLabel } from 'src/modules/dashboard/tools/utils/humanize-sub-field-label.util';
 
@@ -30,7 +30,7 @@ export const buildResolvedGroupBy = ({
   fieldsByObjectId: Map<string, FlatFieldMetadata[]>;
   allFields: FlatFieldMetadata[];
 }) => {
-  const field = getFieldById(fieldId, flatFieldMetadataMaps);
+  const field = findActiveFlatFieldMetadataById(fieldId, flatFieldMetadataMaps);
 
   if (!isDefined(field)) return null;
 

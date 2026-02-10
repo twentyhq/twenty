@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
-import { buildFieldsByObjectIdMap } from 'src/engine/metadata-modules/page-layout-widget/utils/build-fields-by-object-id-map.util';
-import { getFieldById } from 'src/engine/metadata-modules/page-layout-widget/utils/get-field-by-id.util';
+import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
 import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
 import { validateGroupByField } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-group-by-field.util';
 
@@ -46,15 +46,10 @@ export const validateChartConfigurationFieldReferences = ({
     throw new Error('objectMetadataId is required for graph widgets.');
   }
 
-  const objectIdentifier =
-    flatObjectMetadataMaps.universalIdentifierById[objectMetadataId];
-
-  if (!isDefined(objectIdentifier)) {
-    throw new Error(`objectMetadataId "${objectMetadataId}" not found.`);
-  }
-
-  const objectMetadata =
-    flatObjectMetadataMaps.byUniversalIdentifier[objectIdentifier];
+  const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: objectMetadataId,
+    flatEntityMaps: flatObjectMetadataMaps,
+  });
 
   if (!isDefined(objectMetadata) || !objectMetadata.isActive) {
     throw new Error(`objectMetadataId "${objectMetadataId}" not found.`);
@@ -63,9 +58,17 @@ export const validateChartConfigurationFieldReferences = ({
   const allFields = Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
     .filter(isDefined)
     .filter((field) => field.isActive);
-  const fieldsByObjectId = buildFieldsByObjectIdMap(allFields);
 
-  const aggregateField = getFieldById(
+  const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
+
+  allFields.forEach((field) => {
+    const existing = fieldsByObjectId.get(field.objectMetadataId) ?? [];
+
+    existing.push(field);
+    fieldsByObjectId.set(field.objectMetadataId, existing);
+  });
+
+  const aggregateField = findActiveFlatFieldMetadataById(
     configuration.aggregateFieldMetadataId,
     flatFieldMetadataMaps,
   );

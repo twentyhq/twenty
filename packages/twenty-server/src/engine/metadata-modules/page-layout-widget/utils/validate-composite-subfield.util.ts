@@ -12,11 +12,11 @@ export const validateCompositeSubfield = ({
   subFieldName: string | null | undefined;
   paramName: string;
 }): void => {
-  if (!isDefined(subFieldName)) {
-    const allowed = getCompositeSubfieldNames(field.type);
+  const allowedSubFields = getCompositeSubfieldNames(field.type);
 
+  if (!isDefined(subFieldName)) {
     throw new Error(
-      `Composite field "${paramName}" requires a subfield. Allowed: ${allowed.join(', ')}`,
+      `Composite field "${paramName}" requires a subfield. Allowed: ${allowedSubFields.join(', ')}`,
     );
   }
 
@@ -24,10 +24,7 @@ export const validateCompositeSubfield = ({
     throw new Error(`Composite subfield "${subFieldName}" is invalid.`);
   }
 
-  const allowedSubFields = getCompositeSubfieldNames(field.type);
-  const isValid = allowedSubFields.some((value) => value === subFieldName);
-
-  if (!isValid) {
+  if (!allowedSubFields.includes(subFieldName)) {
     throw new Error(
       `Invalid subfield "${subFieldName}" for "${paramName}". Allowed: ${allowedSubFields.join(
         ', ',

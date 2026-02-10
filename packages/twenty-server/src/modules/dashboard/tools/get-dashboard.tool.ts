@@ -1,10 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { buildFieldsByObjectIdMap } from 'src/engine/metadata-modules/page-layout-widget/utils/build-fields-by-object-id-map.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { getFieldById } from 'src/engine/metadata-modules/page-layout-widget/utils/get-field-by-id.util';
+import { findActiveFlatFieldMetadataById } from 'src/engine/metadata-modules/page-layout-widget/utils/find-active-flat-field-metadata-by-id.util';
+import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   type DashboardToolContext,
@@ -15,17 +16,6 @@ import { buildResolvedGroupBy } from 'src/modules/dashboard/tools/utils/build-re
 const getDashboardSchema = z.object({
   dashboardId: z.string().uuid().describe('The UUID of the dashboard to fetch'),
 });
-
-type GraphConfigurationLike = Record<string, unknown> & {
-  configurationType: WidgetConfigurationType;
-  aggregateFieldMetadataId?: string | null;
-  primaryAxisGroupByFieldMetadataId?: string | null;
-  primaryAxisGroupBySubFieldName?: string | null;
-  secondaryAxisGroupByFieldMetadataId?: string | null;
-  secondaryAxisGroupBySubFieldName?: string | null;
-  groupByFieldMetadataId?: string | null;
-  groupBySubFieldName?: string | null;
-};
 
 export const createGetDashboardTool = (
   deps: Pick<
@@ -56,7 +46,14 @@ export const createGetDashboardTool = (
         .filter(isDefined)
         .filter((field) => field.isActive);
 
-      const fieldsByObjectId = buildFieldsByObjectIdMap(allFields);
+      const fieldsByObjectId = new Map<string, FlatFieldMetadata[]>();
+
+      allFields.forEach((field) => {
+        const existing = fieldsByObjectId.get(field.objectMetadataId) ?? [];
+
+        existing.push(field);
+        fieldsByObjectId.set(field.objectMetadataId, existing);
+      });
 
       const buildResolvedGroupByForConfiguration = ({
         fieldId,
@@ -115,23 +112,9 @@ export const createGetDashboardTool = (
           position: tab.position,
           widgets:
             tab.widgets?.map((w) => {
-              if (w.type !== WidgetType.GRAPH) {
-                return {
-                  id: w.id,
-                  title: w.title,
-                  type: w.type,
-                  gridPosition: w.gridPosition,
-                  objectMetadataId: w.objectMetadataId,
-                  configuration: w.configuration,
-                };
-              }
-
-              const configuration =
-                w.configuration as GraphConfigurationLike | null;
-
               if (
-                !isDefined(configuration) ||
-                !isDefined(configuration.configurationType)
+                w.type !== WidgetType.GRAPH ||
+                !isChartFieldsForValidation(w.configuration)
               ) {
                 return {
                   id: w.id,
@@ -143,20 +126,19 @@ export const createGetDashboardTool = (
                 };
               }
 
+              const configuration = w.configuration;
               const resolved: Record<string, unknown> = {};
 
-              if (isDefined(configuration.aggregateFieldMetadataId)) {
-                const aggregateField = getFieldById(
-                  configuration.aggregateFieldMetadataId,
-                  flatFieldMetadataMaps,
-                );
+              const aggregateField = findActiveFlatFieldMetadataById(
+                configuration.aggregateFieldMetadataId,
+                flatFieldMetadataMaps,
+              );
 
-                if (isDefined(aggregateField)) {
-                  resolved.aggregateField = {
-                    fieldName: aggregateField.name,
-                    fieldLabel: aggregateField.label ?? aggregateField.name,
-                  };
-                }
+              if (isDefined(aggregateField)) {
+                resolved.aggregateField = {
+                  fieldName: aggregateField.name,
+                  fieldLabel: aggregateField.label ?? aggregateField.name,
+                };
               }
 
               switch (configuration.configurationType) {
