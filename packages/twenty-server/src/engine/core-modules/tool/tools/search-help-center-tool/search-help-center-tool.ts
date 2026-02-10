@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isAxiosError } from 'axios';
 
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { SearchHelpCenterInputZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';

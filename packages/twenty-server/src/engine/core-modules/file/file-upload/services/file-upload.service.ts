@@ -10,7 +10,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignedFile = { path: string; token: string };

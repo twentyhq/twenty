@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 
 import { TelemetryService } from './telemetry.service';
 
 @Module({
-  providers: [TelemetryService, SecureHttpClientService],
+  imports: [SecureHttpClientModule],
+  providers: [TelemetryService],
   exports: [TelemetryService],
 })
 export class TelemetryModule {}

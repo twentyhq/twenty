@@ -43,8 +43,6 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
           },
           layoutType: PageLayoutType.RECORD_PAGE,
           isInRightDrawer: false,
-          // TODO: Remove once the traditional record show page is removed.
-          isLegacyRecordShowPage: true,
         }}
       >
         <ContextStoreComponentInstanceContext.Provider

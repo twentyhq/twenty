@@ -6466,11 +6466,6 @@ msgstr "Ẩn nhóm {groupValue}"
 msgid "Hide hidden groups"
 msgstr "Ẩn nhóm ẩn"
 
-#. js-lingui-id: i0qMbr
-#: src/modules/object-record/record-show/hooks/useRecordShowContainerTabs.ts
-msgid "Home"
-msgstr "Trang chủ"
-
 #. js-lingui-id: Xkd22/
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts

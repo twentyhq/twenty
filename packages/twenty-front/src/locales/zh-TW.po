@@ -6466,11 +6466,6 @@ msgstr "隱藏群組 {groupValue}"
 msgid "Hide hidden groups"
 msgstr "隱藏隱藏的群組"
 
-#. js-lingui-id: i0qMbr
-#: src/modules/object-record/record-show/hooks/useRecordShowContainerTabs.ts
-msgid "Home"
-msgstr "首頁"
-
 #. js-lingui-id: Xkd22/
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
