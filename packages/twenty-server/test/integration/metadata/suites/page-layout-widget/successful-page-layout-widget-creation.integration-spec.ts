@@ -109,6 +109,7 @@ describe('Page layout widget creation should succeed', () => {
     fieldMetadataId1: string;
     fieldMetadataId2: string;
     fieldMetadataId3: string;
+    fieldMetadataId3SubFieldName: string;
   };
   let createdPageLayoutWidgetId: string | undefined;
 
@@ -263,6 +264,8 @@ describe('Page layout widget creation should succeed', () => {
           primaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId2,
           primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
           secondaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId3,
+          secondaryAxisGroupBySubFieldName:
+            testSetup.fieldMetadataId3SubFieldName,
           secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
           displayDataLabel: true,
           axisNameDisplay: AxisNameDisplay.NONE,

@@ -6,6 +6,7 @@ export type TestFieldMetadataIds = {
   fieldMetadataId1: string;
   fieldMetadataId2: string;
   fieldMetadataId3: string;
+  fieldMetadataId3SubFieldName: string;
 };
 
 // Uses well-known company fields that make semantic sense for chart configs:
@@ -55,5 +56,6 @@ export const fetchTestFieldMetadataIds =
       fieldMetadataId1: findFieldByName('employees').id,
       fieldMetadataId2: findFieldByName('name').id,
       fieldMetadataId3: findFieldByName('domainName').id,
+      fieldMetadataId3SubFieldName: 'primaryLinkUrl',
     };
   };

@@ -32,7 +32,7 @@ exports[`Page layout with tabs update should succeed should update page layout w
             "groupByFieldMetadataId": Any<String>,
             "groupBySubFieldName": null,
             "manualSortOrder": null,
-            "orderBy": "FIELD_ASC",
+            "orderBy": "VALUE_DESC",
             "showCenterMetric": true,
             "timezone": "UTC",
           },

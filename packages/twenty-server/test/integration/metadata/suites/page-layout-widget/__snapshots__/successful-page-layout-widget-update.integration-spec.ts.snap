@@ -330,7 +330,7 @@ exports[`Page layout widget update should succeed from an IFRAME widget should u
     "rowSpan": 1,
   },
   "id": Any<String>,
-  "objectMetadataId": Any<String>,
+  "objectMetadataId": null,
   "pageLayoutTabId": Any<String>,
   "title": "Original Widget Title",
   "type": "IFRAME",

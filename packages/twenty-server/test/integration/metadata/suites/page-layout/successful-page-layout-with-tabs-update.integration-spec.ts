@@ -56,6 +56,7 @@ describe('Page layout with tabs update should succeed', () => {
     fieldMetadataId1: string;
     fieldMetadataId2: string;
     fieldMetadataId3: string;
+    fieldMetadataId3SubFieldName: string;
   };
   let testPageLayoutId: string;
   let testTabId1: string;
