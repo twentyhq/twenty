@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { IconHelp, IconX } from '@ui/display/icon/components/TablerIcons';
-import { IconButton } from '@ui/input';
+import { IconButton, LightButton } from '@ui/input';
 
 export type CalloutVariant =
   | 'info'
@@ -89,32 +89,6 @@ const StyledFooter = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledLearnMoreLinkButton = styled.button<{ variant: CalloutVariant }>`
-  border: none;
-  background-color: ${({ theme, variant }) =>
-    variant === 'info'
-      ? theme.color.blue1
-      : variant === 'warning'
-        ? theme.color.yellow1
-        : variant === 'success'
-          ? theme.color.green1
-          : variant === 'error'
-            ? theme.color.red1
-            : theme.color.gray1};
-  color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
-  font-family: ${({ theme }) => theme.font.family};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  text-decoration: none;
-  transition: color ${({ theme }) => theme.animation.duration.instant}s ease;
-
-  &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
-    text-decoration: underline;
-  }
-`;
-
 const StyledCloseButton = styled(IconButton)`
   position: absolute;
   right: ${({ theme }) => theme.spacing(3)};
@@ -148,14 +122,13 @@ export const Callout = ({
         <StyledTitle>{title}</StyledTitle>
         <StyledDescription>{description}</StyledDescription>
         <StyledFooter>
-          <StyledLearnMoreLinkButton
-            variant={variant}
+          <LightButton
+            type={'button'}
+            title={learnMoreText}
             onClick={() => {
               window.open(learnMoreUrl, '_blank', 'noopener noreferrer');
             }}
-          >
-            {learnMoreText}
-          </StyledLearnMoreLinkButton>
+          />
         </StyledFooter>
       </StyledContent>
       <StyledCloseButton
