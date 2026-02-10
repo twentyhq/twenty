@@ -1,29 +1,20 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
+import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
   CreateMetadataEvent,
   type MetadataEvent,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
-// TODO prastoin create util type
-type FlatCreateAction<TMetadataName extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['create'];
-
-export type DeriveMetadataEventsFromCreateActionArgs<
-  TMetadataName extends AllMetadataName,
-> = {
-  flatAction: FlatCreateAction<TMetadataName>;
+export type DeriveMetadataEventsFromCreateActionArgs = {
+  flatAction: AllFlatWorkspaceMigrationAction<'create'>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
-export const deriveMetadataEventsFromCreateAction = <
-  TMetadataName extends AllMetadataName,
->({
+export const deriveMetadataEventsFromCreateAction = ({
   flatAction,
-}: DeriveMetadataEventsFromCreateActionArgs<TMetadataName>): MetadataEvent[] => {
+}: DeriveMetadataEventsFromCreateActionArgs): MetadataEvent[] => {
   switch (flatAction.metadataName) {
     case 'fieldMetadata': {
       return flatAction.flatFieldMetadatas.map(

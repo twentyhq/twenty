@@ -1,5 +1,5 @@
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
-import { MetadataEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
+import { MetadataUniversalEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { AllMetadataName } from 'twenty-shared/metadata';
 
 type BaseMetadataEvent<T extends AllMetadataName, TPayload extends object> = {
@@ -17,7 +17,7 @@ export type DeleteMetadataEvent<T extends AllMetadataName> = BaseMetadataEvent<
 export type UpdateMetadataEvent<
   T extends AllMetadataName,
   TProperties extends
-    MetadataEntityPropertiesToCompare<T> = MetadataEntityPropertiesToCompare<T>,
+    MetadataUniversalEntityPropertiesToCompare<T> = MetadataUniversalEntityPropertiesToCompare<T>,
 > = BaseMetadataEvent<
   T,
   {

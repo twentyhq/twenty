@@ -1,30 +1,21 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type AllFlatEntityTypesByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-types-by-metadata-name';
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
-// TODO prastoin create util type
-type FlatDeleteAction<TMetadataName extends AllMetadataName> =
-  AllFlatEntityTypesByMetadataName[TMetadataName]['flatActions']['delete'];
-
-export type DeriveMetadataEventsFromDeleteActionArgs<
-  TMetadataName extends AllMetadataName,
-> = {
-  flatAction: FlatDeleteAction<TMetadataName>;
+export type DeriveMetadataEventsFromDeleteActionArgs = {
+  flatAction: AllFlatWorkspaceMigrationAction<'delete'>;
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
-export const deriveMetadataEventsFromDeleteAction = <
-  TMetadataName extends AllMetadataName,
->({
+export const deriveMetadataEventsFromDeleteAction = ({
   flatAction,
   allFlatEntityMaps,
-}: DeriveMetadataEventsFromDeleteActionArgs<TMetadataName>): MetadataEvent[] => {
+}: DeriveMetadataEventsFromDeleteActionArgs): MetadataEvent[] => {
   switch (flatAction.metadataName) {
     case 'fieldMetadata':
     case 'objectMetadata':
