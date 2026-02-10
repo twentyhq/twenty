@@ -2,10 +2,10 @@ import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAgentChatContextOrThrow } from '@/ai/hooks/useAgentChatContextOrThrow';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Button } from 'twenty-ui/input';
+import { IconArrowUp } from 'twenty-ui/display';
+import { RoundedIconButton } from 'twenty-ui/input';
 
 export const SendMessageButton = () => {
   const agentChatInput = useRecoilValue(agentChatInputState);
@@ -27,14 +27,10 @@ export const SendMessageButton = () => {
   });
 
   return (
-    <Button
-      hotkeys={agentChatInput && !isLoading ? ['⏎'] : undefined}
+    <RoundedIconButton
+      Icon={IconArrowUp}
       onClick={() => handleSendMessage()}
       disabled={!agentChatInput || isLoading}
-      variant="primary"
-      accent="blue"
-      size="small"
-      title={t`Send`}
     />
   );
 };

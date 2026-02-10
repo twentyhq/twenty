@@ -107,7 +107,6 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   });
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
-  const sourceFieldUniversalIdentifier = v4();
   const targetFieldUniversalIdentifier = v4();
 
   const defaultDescriptionFromField =
@@ -125,10 +124,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     'flatRelationTargetFieldMetadata'
   > = {
     ...getDefaultFlatFieldMetadata({
-      createFieldInput: {
-        ...createFieldInput,
-        universalIdentifier: sourceFieldUniversalIdentifier,
-      },
+      createFieldInput,
       workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
       flatApplication,
@@ -212,7 +208,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
     relationTargetObjectMetadataUniversalIdentifier:
       sourceFlatObjectMetadata.universalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier:
-      sourceFieldUniversalIdentifier,
+      sourceFlatFieldMetadata.universalIdentifier,
   };
 
   const indexMetadata: FlatIndexMetadata = generateIndexForFlatFieldMetadata({
