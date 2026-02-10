@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
@@ -21,10 +23,20 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
     super();
   }
 
-  override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateNavigationMenuItemAction>,
-  ): Promise<FlatCreateNavigationMenuItemAction> {
-    return context.action;
+  override async transpileUniversalActionToFlatAction({
+    action,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateNavigationMenuItemAction>): Promise<FlatCreateNavigationMenuItemAction> {
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        applicationId: flatApplication.id,
+        id: action.id ?? v4(),
+        workspaceId,
+      },
+    };
   }
 
   async executeForMetadata(

@@ -2,6 +2,8 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -19,10 +21,20 @@ export class CreateRowLevelPermissionPredicateGroupActionHandlerService extends 
   'create',
   'rowLevelPermissionPredicateGroup',
 ) {
-  override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateRowLevelPermissionPredicateGroupAction>,
-  ): Promise<FlatCreateRowLevelPermissionPredicateGroupAction> {
-    return context.action;
+  override async transpileUniversalActionToFlatAction({
+    action,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateRowLevelPermissionPredicateGroupAction>): Promise<FlatCreateRowLevelPermissionPredicateGroupAction> {
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        applicationId: flatApplication.id,
+        id: action.id ?? v4(),
+        workspaceId,
+      },
+    };
   }
 
   async executeForMetadata(

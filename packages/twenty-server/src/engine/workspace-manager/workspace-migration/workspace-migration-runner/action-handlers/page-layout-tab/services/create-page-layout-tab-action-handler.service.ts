@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
@@ -21,10 +23,20 @@ export class CreatePageLayoutTabActionHandlerService extends WorkspaceMigrationR
     super();
   }
 
-  override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<UniversalCreatePageLayoutTabAction>,
-  ): Promise<FlatCreatePageLayoutTabAction> {
-    return context.action;
+  override async transpileUniversalActionToFlatAction({
+    action,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreatePageLayoutTabAction>): Promise<FlatCreatePageLayoutTabAction> {
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        applicationId: flatApplication.id,
+        id: action.id ?? v4(),
+        workspaceId,
+      },
+    };
   }
 
   async executeForMetadata(

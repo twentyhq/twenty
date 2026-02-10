@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -29,10 +30,20 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
     super();
   }
 
-  override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateFrontComponentAction>,
-  ): Promise<FlatCreateFrontComponentAction> {
-    return context.action;
+  override async transpileUniversalActionToFlatAction({
+    action,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateFrontComponentAction>): Promise<FlatCreateFrontComponentAction> {
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        applicationId: flatApplication.id,
+        id: action.id ?? v4(),
+        workspaceId,
+      },
+    };
   }
 
   async executeForMetadata(
