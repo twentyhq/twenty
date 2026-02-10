@@ -78,8 +78,8 @@ describe('computeParameters', () => {
         name: 'filter',
         in: 'query',
         description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2.
-        For like/ilike, use % as a wildcard (e.g. %value% for contains).
-        Refer to the filter section at the top of the page for more details.`,
+    For like/ilike, use % as a wildcard (e.g. %value% for contains).
+    Refer to the filter section at the top of the page for more details.`,
         required: false,
         schema: {
           type: 'string',
