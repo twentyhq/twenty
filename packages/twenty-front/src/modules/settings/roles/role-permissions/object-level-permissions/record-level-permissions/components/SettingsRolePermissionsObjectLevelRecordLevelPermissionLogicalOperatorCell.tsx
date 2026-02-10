@@ -18,6 +18,7 @@ const StyledText = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   height: ${({ theme }) => theme.spacing(8)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContainer = styled.div`

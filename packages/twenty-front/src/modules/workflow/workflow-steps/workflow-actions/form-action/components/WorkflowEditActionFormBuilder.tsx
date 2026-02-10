@@ -5,7 +5,10 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { type WorkflowFormAction } from '@/workflow/types/Workflow';
+import {
+  type WorkflowFormAction,
+  type WorkflowTriggerType,
+} from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowMessage } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowMessage';
@@ -21,6 +24,7 @@ import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  Callout,
   IconChevronDown,
   IconGripVertical,
   IconPlus,
@@ -31,6 +35,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 export type WorkflowEditActionFormBuilderProps = {
+  triggerType: WorkflowTriggerType | undefined;
   action: WorkflowFormAction;
   actionOptions:
     | {
@@ -128,6 +133,7 @@ const StyledAddFieldButtonContentContainer = styled.div`
 `;
 
 export const WorkflowEditActionFormBuilder = ({
+  triggerType,
   action,
   actionOptions,
 }: WorkflowEditActionFormBuilderProps) => {
@@ -136,6 +142,7 @@ export const WorkflowEditActionFormBuilder = ({
 
   const [formData, setFormData] = useState<FormData>(action.settings.input);
 
+  const [isCalloutVisible, setIsCalloutVisible] = useState<boolean>(true);
   const [selectedField, setSelectedField] = useState<string | null>(null);
   const [hoveredField, setHoveredField] = useState<string | null>(null);
 
@@ -213,6 +220,18 @@ export const WorkflowEditActionFormBuilder = ({
   return (
     <>
       <StyledWorkflowStepBody>
+        {triggerType && triggerType !== 'MANUAL' && isCalloutVisible && (
+          <Callout
+            learnMoreText={t`Learn more`}
+            variant={'warning'}
+            title={t`This form will appear in workflow runs.`}
+            description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
+            onClose={() => setIsCalloutVisible(false)}
+            learnMoreUrl={
+              'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form'
+            }
+          />
+        )}
         {formData.length === 0 && (
           <WorkflowMessage
             title={t`Add inputs to your form`}
