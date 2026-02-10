@@ -31,7 +31,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus, Info } from 'twenty-ui/display';
+import { Callout, IconPlus } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -243,16 +243,14 @@ export const WorkflowEditActionEmailBase = ({
           />
           {isDefined(missingScopes) && (
             <>
-              <Info
-                accent="danger"
-                text={t`Additional permissions are required for this action. Please reauthorize your account.`}
-              />
-              <Button
-                title={t`Reauthorize`}
-                variant="secondary"
-                accent="default"
-                size="small"
-                onClick={handleReauthorize}
+              <Callout
+                variant={'error'}
+                title={t`Missing email draft permission.`}
+                description={t`This account is connected, but we don't have permission to draft emails on your behalf yet. You'll be redirected to approve this access.`}
+                action={{
+                  label: t`Reauthorize`,
+                  onClick: handleReauthorize,
+                }}
               />
             </>
           )}

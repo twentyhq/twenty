@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { IconHelp, IconX } from '@ui/display/icon/components/TablerIcons';
 import { IconButton, LightButton } from '@ui/input';
+import { isDefined } from 'twenty-shared/utils';
 
 export type CalloutVariant =
   | 'info'
@@ -99,17 +100,18 @@ export type CalloutProps = {
   variant: CalloutVariant;
   title: string;
   description: string;
-  learnMoreText: string;
-  learnMoreUrl: string;
-  onClose: () => void;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+  onClose?: () => void;
 };
 
 export const Callout = ({
   variant,
   title,
   description,
-  learnMoreText,
-  learnMoreUrl,
+  action,
   onClose,
 }: CalloutProps) => {
   return (
@@ -121,15 +123,15 @@ export const Callout = ({
       <StyledContent>
         <StyledTitle>{title}</StyledTitle>
         <StyledDescription>{description}</StyledDescription>
-        <StyledFooter>
-          <LightButton
-            type={'button'}
-            title={learnMoreText}
-            onClick={() => {
-              window.open(learnMoreUrl, '_blank', 'noopener noreferrer');
-            }}
-          />
-        </StyledFooter>
+        {isDefined(action) && (
+          <StyledFooter>
+            <LightButton
+              type={'button'}
+              title={action.label}
+              onClick={action.onClick}
+            />
+          </StyledFooter>
+        )}
       </StyledContent>
       <StyledCloseButton
         Icon={IconX}
