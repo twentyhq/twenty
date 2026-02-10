@@ -34,9 +34,7 @@ const signBlocknoteImageUrls = (
       return block;
     }
 
-    const fileName = pathname.match(
-      /files\/attachment\/(?:.+)\/(.+)$/,
-    )?.[1];
+    const fileName = pathname.match(/files\/attachment\/(?:.+)\/(.+)$/)?.[1];
 
     if (!isDefined(fileName)) {
       return block;

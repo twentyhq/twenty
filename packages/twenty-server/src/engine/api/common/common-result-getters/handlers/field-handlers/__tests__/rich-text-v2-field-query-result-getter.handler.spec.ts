@@ -206,9 +206,7 @@ describe('RichTextV2FieldQueryResultGetterHandler', () => {
         ...baseRecord,
         bodyV2: {
           markdown: null,
-          blocknote: JSON.stringify([
-            { type: 'paragraph', text: 'Hello' },
-          ]),
+          blocknote: JSON.stringify([{ type: 'paragraph', text: 'Hello' }]),
         },
         description: {
           markdown: null,
@@ -216,11 +214,7 @@ describe('RichTextV2FieldQueryResultGetterHandler', () => {
         },
       };
 
-      const result = await handler.handle(
-        record,
-        'ws-1',
-        multiFieldMetadata,
-      );
+      const result = await handler.handle(record, 'ws-1', multiFieldMetadata);
 
       // bodyV2 should be unchanged (no images), description should be
       // unchanged (non-array blocknote)
