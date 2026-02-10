@@ -1,20 +1,14 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
   type CreateMetadataEvent,
   type MetadataEvent,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 
-export type DeriveMetadataEventsFromCreateActionArgs = {
-  flatAction: AllFlatWorkspaceMigrationAction<'create'>;
-  allFlatEntityMaps: AllFlatEntityMaps;
-};
-
-export const deriveMetadataEventsFromCreateAction = ({
-  flatAction,
-}: DeriveMetadataEventsFromCreateActionArgs): MetadataEvent[] => {
+export const deriveMetadataEventsFromCreateAction = (
+  flatAction: AllFlatWorkspaceMigrationAction<'create'>,
+): MetadataEvent[] => {
   switch (flatAction.metadataName) {
     case 'fieldMetadata': {
       return flatAction.flatFieldMetadatas.map(

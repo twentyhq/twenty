@@ -145,10 +145,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }: FlatActionWithAllFlatEntityMapsArgs<TFlatAction>): MetadataEvent[] {
     switch (flatAction.type) {
       case 'create': {
-        return deriveMetadataEventsFromCreateAction({
-          flatAction,
-          allFlatEntityMaps,
-        });
+        return deriveMetadataEventsFromCreateAction(flatAction);
       }
       case 'delete': {
         return deriveMetadataEventsFromDeleteAction({
