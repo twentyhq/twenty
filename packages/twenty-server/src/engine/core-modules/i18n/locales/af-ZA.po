@@ -233,9 +233,9 @@ msgstr "Agent met die naam \"{name}\" bestaan reeds"
 msgid "Aggregate field is required for graph widget"
 msgstr ""
 
-#. js-lingui-id: Wmauvm
+#. js-lingui-id: /Z4Wk1
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
-msgid "Aggregate field metadata ID is required for graph widget \"{widgetTitle}\""
+msgid "Aggregate field metadata is required for graph widget \"{widgetTitle}\""
 msgstr ""
 
 #. js-lingui-id: uhRAsd
@@ -625,9 +625,9 @@ msgstr ""
 msgid "Cannot modify predicate group to change its object"
 msgstr ""
 
-#. js-lingui-id: 988ie8
+#. js-lingui-id: /lHFxo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
-msgid "Cannot modify predicate group to change its object from {existingObjectMetadataId} to {updatedObjectMetadataId}"
+msgid "Cannot modify predicate group to change its object from {existingObjectMetadataIdentifier} to {updatedObjectMetadataIdentifier}"
 msgstr ""
 
 #. js-lingui-id: jm1hwE
@@ -635,9 +635,9 @@ msgstr ""
 msgid "Cannot modify predicate group to change its role"
 msgstr ""
 
-#. js-lingui-id: mV16wS
+#. js-lingui-id: yxykz2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
-msgid "Cannot modify predicate group to change its role from {existingRoleId} to {updatedRoleId}"
+msgid "Cannot modify predicate group to change its role from {existingRoleIdentifier} to {updatedRoleIdentifier}"
 msgstr ""
 
 #. js-lingui-id: HDo5ie
@@ -645,9 +645,9 @@ msgstr ""
 msgid "Cannot modify predicate to change its object"
 msgstr ""
 
-#. js-lingui-id: BNrNUY
+#. js-lingui-id: ku/9og
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Cannot modify predicate to change its object from {existingObjectMetadataId} to {updatedObjectMetadataId}"
+msgid "Cannot modify predicate to change its object from {existingObjectMetadataIdentifier} to {updatedObjectMetadataIdentifier}"
 msgstr ""
 
 #. js-lingui-id: 7JaPm8
@@ -655,9 +655,9 @@ msgstr ""
 msgid "Cannot modify predicate to change its role"
 msgstr ""
 
-#. js-lingui-id: sn8IgB
+#. js-lingui-id: uoi9Wy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Cannot modify predicate to change its role from {existingRoleId} to {updatedRoleId}"
+msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} to {updatedRoleIdentifier}"
 msgstr ""
 
 #. js-lingui-id: Q0diyJ
@@ -752,9 +752,9 @@ msgstr ""
 msgid "Configuration is required for graph widget"
 msgstr ""
 
-#. js-lingui-id: BGpA6L
+#. js-lingui-id: 9fX6Jd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-flat-page-layout-widget-for-creation.util.ts
-msgid "Configuration is required for graph widget \"{title}\""
+msgid "Configuration is required for graph widget \"{widgetTitle}\""
 msgstr ""
 
 #. js-lingui-id: heMezC
@@ -762,9 +762,9 @@ msgstr ""
 msgid "Configuration is required for iframe widget"
 msgstr ""
 
-#. js-lingui-id: QUAb9a
+#. js-lingui-id: liZHXq
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-flat-page-layout-widget-for-creation.util.ts
-msgid "Configuration is required for iframe widget \"{title}\""
+msgid "Configuration is required for iframe widget \"{widgetTitle}\""
 msgstr ""
 
 #. js-lingui-id: viS7/+
@@ -772,9 +772,9 @@ msgstr ""
 msgid "Configuration is required for standalone rich text widget"
 msgstr ""
 
-#. js-lingui-id: iFLH99
+#. js-lingui-id: rVKk74
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-flat-page-layout-widget-for-creation.util.ts
-msgid "Configuration is required for standalone rich text widget \"{title}\""
+msgid "Configuration is required for standalone rich text widget \"{widgetTitle}\""
 msgstr ""
 
 #. js-lingui-id: oH0/eJ
@@ -785,11 +785,15 @@ msgstr ""
 msgid "Configuration type is required"
 msgstr ""
 
+#. js-lingui-id: TsoT/4
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
+msgid "Configuration type is required for widget \"{title}\""
+msgstr ""
+
 #. js-lingui-id: SlSmjG
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-iframe-configuration-type.util.ts
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-graph-configuration-type.util.ts
-#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
 msgid "Configuration type is required for widget \"{widgetTitle}\""
 msgstr ""
 
@@ -1091,9 +1095,9 @@ msgstr "Fout"
 msgid "Exactly one of workflow version or front component is required"
 msgstr ""
 
-#. js-lingui-id: I8MWHr
+#. js-lingui-id: yX0axn
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
-msgid "Exactly one of workflowVersionId or frontComponentId is required"
+msgid "Exactly one of workflowVersionId or frontComponentUniversalIdentifier is required"
 msgstr ""
 
 #. js-lingui-id: AiFXmG
@@ -1646,9 +1650,9 @@ msgstr ""
 msgid "Invalid configuration type for front component widget"
 msgstr ""
 
-#. js-lingui-id: T3xkLf
+#. js-lingui-id: 8G4vdK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-configuration-type.util.ts
-msgid "Invalid configuration type for front component widget \"{widgetTitle}\". Expected FRONT_COMPONENT, got {configurationTypeString}"
+msgid "Invalid configuration type for front component widget \"{title}\". Expected FRONT_COMPONENT, got {configurationTypeString}"
 msgstr ""
 
 #. js-lingui-id: PXgd1R
@@ -1676,9 +1680,9 @@ msgstr ""
 msgid "Invalid configuration type for standalone rich text widget"
 msgstr ""
 
-#. js-lingui-id: TnqLFj
+#. js-lingui-id: 9uz7OL
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util.ts
-msgid "Invalid configuration type for standalone rich text widget \"{widgetTitle}\". Expected {expectedConfigurationType}, got {configurationType}"
+msgid "Invalid configuration type for standalone rich text widget \"{widgetTitle}\". Expected STANDALONE_RICH_TEXT, got {configurationTypeString}"
 msgstr ""
 
 #. js-lingui-id: jUt31O
