@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNull } from '@sniptt/guards';
 import { z } from 'zod';
 
 import {
