@@ -875,7 +875,7 @@ describe('group-by resolver (integration)', () => {
       viewId = createViewData.createCoreView.id;
 
       // create a filter group and a filter for the view
-      const viewFilterGroupResponse = await makeGraphqlAPIRequest(
+      const viewFilterGroupResponse = await makeMetadataAPIRequest(
         createViewFilterGroupOperationFactory({
           data: {
             viewId,

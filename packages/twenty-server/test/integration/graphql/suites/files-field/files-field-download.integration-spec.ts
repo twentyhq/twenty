@@ -1,12 +1,13 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeGraphqlAPIRequestWithFileUpload } from 'test/integration/graphql/utils/make-graphql-api-request-with-file-upload.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { uploadFilesFieldFileMutation } from 'test/integration/graphql/utils/upload-files-field-file-mutation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-file-upload.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const deleteFileMutation = gql`
@@ -50,7 +51,7 @@ type UploadedFile = {
 };
 
 const deleteFile = async (fileId: string): Promise<void> => {
-  await makeGraphqlAPIRequest({
+  await makeMetadataAPIRequest({
     query: deleteFileMutation,
     variables: { fileId },
   });
@@ -66,7 +67,7 @@ describe('files-field.controller - GET /files-field/:id', () => {
     content: string,
     contentType: string,
   ): Promise<UploadedFile> => {
-    const response = await makeGraphqlAPIRequestWithFileUpload(
+    const response = await makeMetadataAPIRequestWithFileUpload(
       {
         query: uploadFilesFieldFileMutation,
         variables: { file: null, fieldMetadataId: createdFieldMetadataId },
