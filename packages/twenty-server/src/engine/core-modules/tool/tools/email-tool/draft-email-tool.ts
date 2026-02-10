@@ -7,8 +7,8 @@ import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-too
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
-    type Tool,
-    type ToolExecutionContext,
+  type Tool,
+  type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
 import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
 
