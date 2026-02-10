@@ -4,7 +4,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/delete-flat-entity-from-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -12,16 +12,20 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', () => {
-  it('should delete a view and update related objectMetadata and fieldMetadata by removing viewId', () => {
+  it('should delete a view and update related objectMetadata and fieldMetadata by removing both id and universal identifier aggregators', () => {
     const objectMetadataId = 'object-1';
     const viewId = 'view-1';
     const applicationId = '20202020-f3ad-452e-b5b6-2d49d3ea88b1';
     const workspaceId = '20202020-bc64-4148-8a79-b3144f743694';
+    const objectUniversalIdentifier = 'object-universal-1';
+    const fieldUniversalIdentifier = 'field-universal-1';
+    const viewUniversalIdentifier = 'view-universal-1';
 
     const mockObjectMetadata = getFlatObjectMetadataMock({
       id: objectMetadataId,
-      universalIdentifier: 'object-universal-1',
+      universalIdentifier: objectUniversalIdentifier,
       viewIds: [viewId, 'something-else'],
+      viewUniversalIdentifiers: [viewUniversalIdentifier, 'something-else-ui'],
       fieldIds: [],
       workspaceId,
       imageIdentifierFieldMetadataId: '20202020-9d65-415f-b0e1-216a2e257ea4',
@@ -33,24 +37,27 @@ describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThr
       objectMetadataId,
       id: '20202020-4087-423b-852a-91f91acf2df2',
       type: FieldMetadataType.DATE,
-      universalIdentifier: 'field-universal-1',
+      universalIdentifier: fieldUniversalIdentifier,
       viewFieldIds: [],
       viewFilterIds: [],
       workspaceId,
       calendarViewIds: [viewId],
+      calendarViewUniversalIdentifiers: [viewUniversalIdentifier],
       mainGroupByFieldMetadataViewIds: [],
       applicationId,
     });
 
     const mockView: Partial<FlatView> = {
       id: viewId,
-      universalIdentifier: 'view-universal-1',
+      universalIdentifier: viewUniversalIdentifier,
       objectMetadataId: objectMetadataId,
+      objectMetadataUniversalIdentifier: objectUniversalIdentifier,
       viewFieldIds: [],
       viewFilterIds: [],
       viewGroupIds: [],
       workspaceId,
       calendarFieldMetadataId: mockFieldMetadata.id,
+      calendarFieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
       createdAt: new Date('2024-01-01').toISOString(),
       updatedAt: new Date('2024-01-01').toISOString(),
       icon: 'icon',
@@ -83,28 +90,30 @@ describe('deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThr
     });
 
     expect(
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: viewId,
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: viewUniversalIdentifier,
         flatEntityMaps: flatEntityAndRelatedMapsToMutate.flatViewMaps,
       }),
     ).toBeUndefined();
 
     expect(
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: objectMetadataId,
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: objectUniversalIdentifier,
         flatEntityMaps: flatEntityAndRelatedMapsToMutate.flatObjectMetadataMaps,
       }),
     ).toMatchObject<Partial<FlatObjectMetadata>>({
       viewIds: ['something-else'],
+      viewUniversalIdentifiers: ['something-else-ui'],
     });
 
     expect(
-      findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: mockFieldMetadata.id,
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: fieldUniversalIdentifier,
         flatEntityMaps: flatEntityAndRelatedMapsToMutate.flatFieldMetadataMaps,
       }),
     ).toMatchObject<Partial<FlatFieldMetadata>>({
       calendarViewIds: [],
+      calendarViewUniversalIdentifiers: [],
     });
   });
 });

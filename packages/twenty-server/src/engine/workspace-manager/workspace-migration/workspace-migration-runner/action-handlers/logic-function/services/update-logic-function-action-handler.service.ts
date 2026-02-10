@@ -6,13 +6,18 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { FlatUpdateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import {
+  FlatUpdateLogicFunctionAction,
+  UniversalUpdateLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -28,9 +33,27 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateLogicFunctionAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateLogicFunctionAction>,
   ): Promise<FlatUpdateLogicFunctionAction> {
-    return context.action;
+    const { action, allFlatEntityMaps } = context;
+
+    const flatLogicFunction = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    const update = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'logicFunction',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
+
+    return {
+      type: 'update',
+      metadataName: 'logicFunction',
+      entityId: flatLogicFunction.id,
+      update,
+    };
   }
 
   async executeForMetadata(

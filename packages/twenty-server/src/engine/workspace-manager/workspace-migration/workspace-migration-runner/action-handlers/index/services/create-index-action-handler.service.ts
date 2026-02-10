@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { type FlatCreateIndexAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import {
+  type FlatCreateIndexAction,
+  type UniversalCreateIndexAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import { fromUniversalFlatIndexToFlatIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/from-universal-flat-index-to-flat-index.util';
 import {
   createIndexInWorkspaceSchema,
   insertIndexMetadata,
@@ -26,9 +32,23 @@ export class CreateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateIndexAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateIndexAction>,
   ): Promise<FlatCreateIndexAction> {
-    return context.action;
+    const { action, allFlatEntityMaps, workspaceId, flatApplication } = context;
+
+    const flatEntity = fromUniversalFlatIndexToFlatIndex({
+      universalFlatIndexMetadata: action.flatEntity,
+      indexMetadataId: action.id ?? v4(),
+      allFlatEntityMaps,
+      workspaceId,
+      applicationId: flatApplication.id,
+    });
+
+    return {
+      type: action.type,
+      metadataName: action.metadataName,
+      flatEntity,
+    };
   }
 
   async executeForMetadata(

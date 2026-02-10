@@ -54,6 +54,10 @@ For CRON triggers, settings.type must be one of these exact values:
    - Requires: pattern: string (cron expression)
    - Example: { type: "CUSTOM", pattern: "0 * * * *", outputSchema: {} }
 
+## CODE Steps
+
+CODE steps run custom TypeScript code. Load the \`update_logic_function_source\` tool to modify the source code.
+
 ## Critical Notes
 
 Always rely on tool schema definitions:

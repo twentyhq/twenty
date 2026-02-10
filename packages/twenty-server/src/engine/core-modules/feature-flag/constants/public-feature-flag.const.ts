@@ -21,15 +21,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
-    metadata: {
-      label: 'Row Level Permissions',
-      description: 'Enable row level permission',
-      imagePath:
-        'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_SSE_DB_EVENTS_ENABLED,
     metadata: {
       label: 'Real-Time',

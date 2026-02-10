@@ -4,9 +4,9 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
 import { UniversalUpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatObjectMetadataValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service';
 
 @Injectable()
@@ -20,8 +20,10 @@ export class WorkspaceMigrationObjectActionsBuilderService extends WorkspaceEnti
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.objectMetadata
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
     'create'
   > {
@@ -44,14 +46,15 @@ export class WorkspaceMigrationObjectActionsBuilderService extends WorkspaceEnti
         metadataName: 'objectMetadata',
         universalFlatFieldMetadatas: [],
         flatEntity: flatObjectMetadataToValidate,
-        id: flatObjectMetadataToValidate.id,
       },
     };
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.objectMetadata>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.objectMetadata
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
     'delete'
   > {
@@ -81,7 +84,7 @@ export class WorkspaceMigrationObjectActionsBuilderService extends WorkspaceEnti
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.objectMetadata
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.objectMetadata,
     'update'
   > {

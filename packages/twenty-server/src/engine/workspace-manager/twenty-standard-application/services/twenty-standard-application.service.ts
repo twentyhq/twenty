@@ -77,13 +77,15 @@ export class TwentyStandardApplicationService {
       'SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS',
     );
 
-    const toTwentyStandardAllFlatEntityMaps =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-        shouldIncludeRecordPageLayouts,
-      });
+    const {
+      allFlatEntityMaps: toTwentyStandardAllFlatEntityMaps,
+      idByUniversalIdentifierByMetadataName,
+    } = computeTwentyStandardApplicationAllFlatEntityMaps({
+      now: new Date().toISOString(),
+      workspaceId,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      shouldIncludeRecordPageLayouts,
+    });
 
     const fromToAllFlatEntityMaps: FromToAllFlatEntityMaps = {};
 
@@ -119,6 +121,7 @@ export class TwentyStandardApplicationService {
           },
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName,
         },
       );
 

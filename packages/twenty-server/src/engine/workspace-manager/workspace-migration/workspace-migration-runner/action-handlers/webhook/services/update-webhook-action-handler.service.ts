@@ -2,8 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import { FlatUpdateWebhookAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
+import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import {
+  FlatUpdateWebhookAction,
+  UniversalUpdateWebhookAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/types/workspace-migration-webhook-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -15,9 +20,27 @@ export class UpdateWebhookActionHandlerService extends WorkspaceMigrationRunnerA
   'webhook',
 ) {
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateWebhookAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateWebhookAction>,
   ): Promise<FlatUpdateWebhookAction> {
-    return context.action;
+    const { action, allFlatEntityMaps } = context;
+
+    const flatWebhook = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatWebhookMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    const update = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'webhook',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
+
+    return {
+      type: 'update',
+      metadataName: 'webhook',
+      entityId: flatWebhook.id,
+      update,
+    };
   }
 
   async executeForMetadata(

@@ -17,9 +17,9 @@ import {
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-max-char-length.constants';
 import { IDENTIFIER_MIN_CHAR_LENGTH } from 'src/engine/metadata-modules/utils/constants/identifier-min-char-length.constants';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
 const validateMetadataOptionId = (sanitizedId?: string) => {
@@ -198,9 +198,9 @@ const validateDuplicates = (
 };
 
 const validateFieldMetadataInputOptions = (
-  flatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>,
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>,
 ): FlatFieldMetadataValidationError[] => {
-  const { options } = flatFieldMetadata;
+  const { options } = universalFlatFieldMetadata;
 
   if (!isDefined(options) || options.length === 0) {
     return [
@@ -328,9 +328,9 @@ const validateFieldMetadataDefaultValue = ({
   defaultValue,
   options,
   type,
-}: Omit<FlatFieldMetadata<EnumFieldMetadataType>, 'defaultValue'> &
+}: Omit<UniversalFlatFieldMetadata<EnumFieldMetadataType>, 'defaultValue'> &
   NonNullableRequired<
-    Pick<FlatFieldMetadata<EnumFieldMetadataType>, 'defaultValue'>
+    Pick<UniversalFlatFieldMetadata<EnumFieldMetadataType>, 'defaultValue'>
   >) => {
   switch (type) {
     case FieldMetadataType.SELECT:
@@ -354,18 +354,18 @@ const validateFieldMetadataDefaultValue = ({
 };
 
 export const validateEnumSelectFlatFieldMetadata = ({
-  flatEntityToValidate: flatFieldMetadataToValidate,
+  flatEntityToValidate: universalFlatFieldMetadataToValidate,
 }: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const optionsValidationErrors = validateFieldMetadataInputOptions(
-    flatFieldMetadataToValidate,
+    universalFlatFieldMetadataToValidate,
   );
 
   const defaultValueValidationErrors = isDefined(
-    flatFieldMetadataToValidate.defaultValue,
+    universalFlatFieldMetadataToValidate.defaultValue,
   )
     ? validateFieldMetadataDefaultValue({
-        ...flatFieldMetadataToValidate,
-        defaultValue: flatFieldMetadataToValidate.defaultValue,
+        ...universalFlatFieldMetadataToValidate,
+        defaultValue: universalFlatFieldMetadataToValidate.defaultValue,
       })
     : [];
 

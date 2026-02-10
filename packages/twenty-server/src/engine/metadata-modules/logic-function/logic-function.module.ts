@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { ApplicationLayerModule } from 'src/engine/core-modules/application-layer/application-layer.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
@@ -18,11 +19,11 @@ import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-func
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionResolver } from 'src/engine/metadata-modules/logic-function/logic-function.resolver';
 import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
+import { LogicFunctionService } from 'src/engine/metadata-modules/logic-function/services/logic-function.service';
 import { WorkspaceFlatLogicFunctionMapCacheService } from 'src/engine/metadata-modules/logic-function/services/workspace-flat-logic-function-map-cache.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-import { ApplicationLayerModule } from 'src/engine/core-modules/application-layer/application-layer.module';
 
 @Module({
   imports: [
@@ -45,9 +46,10 @@ import { ApplicationLayerModule } from 'src/engine/core-modules/application-laye
   ],
   providers: [
     LogicFunctionMetadataService,
+    LogicFunctionService,
     LogicFunctionResolver,
     WorkspaceFlatLogicFunctionMapCacheService,
   ],
-  exports: [LogicFunctionMetadataService],
+  exports: [LogicFunctionMetadataService, LogicFunctionService],
 })
 export class LogicFunctionModule {}

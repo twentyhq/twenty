@@ -4,4 +4,4 @@ import { type WidgetConfigurationType } from 'src/engine/metadata-modules/page-l
 
 export type FlatPageLayoutWidget<
   T extends WidgetConfigurationType = WidgetConfigurationType,
-> = Omit<FlatEntityFrom<PageLayoutWidgetEntity<T>>, 'universalConfiguration'>;
+> = FlatEntityFrom<PageLayoutWidgetEntity<T>>;

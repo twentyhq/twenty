@@ -12,7 +12,7 @@ import { type MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modu
 import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
+import { deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-from-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
 
 type DeleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<
@@ -22,23 +22,23 @@ type DeleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArg
   flatEntity: MetadataFlatEntity<T>;
   flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
 };
+
 export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrow =
   <T extends AllMetadataName>({
     metadataName,
     flatEntity,
     flatEntityAndRelatedMapsToMutate,
   }: DeleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<T>) => {
-    const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
+    deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
+      {
+        metadataName,
+        universalFlatEntity: flatEntity,
+        universalFlatEntityAndRelatedMapsToMutate:
+          flatEntityAndRelatedMapsToMutate,
+      },
+    );
 
-    deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow<
-      MetadataFlatEntity<T>
-    >({
-      entityToDeleteId: flatEntity.id,
-      flatEntityMapsToMutate:
-        flatEntityAndRelatedMapsToMutate[flatEntityMapsKey],
-    });
-
-    const manyToOneRelations = Object.values(
+    const idBasedManyToOneRelations = Object.values(
       ALL_METADATA_RELATIONS[metadataName].manyToOne,
     ) as Array<{
       metadataName: AllMetadataName;
@@ -46,8 +46,8 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
       foreignKey: keyof MetadataFlatEntity<T>;
     } | null>;
 
-    for (const relation of manyToOneRelations) {
-      if (!isDefined(relation)) {
+    for (const idBasedRelation of idBasedManyToOneRelations) {
+      if (!isDefined(idBasedRelation)) {
         continue;
       }
 
@@ -55,7 +55,7 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
         metadataName: relatedMetadataName,
         flatEntityForeignKeyAggregator,
         foreignKey,
-      } = relation;
+      } = idBasedRelation;
 
       if (!isDefined(flatEntityForeignKeyAggregator)) {
         continue;
@@ -92,7 +92,7 @@ export const deleteFlatEntityFromFlatEntityAndRelatedEntityMapsThroughMutationOr
         )
       ) {
         throw new FlatEntityMapsException(
-          `Should never occur, invalid flat entity typing. flat ${metadataName} should contain ${flatEntityForeignKeyAggregator}`,
+          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${flatEntityForeignKeyAggregator}`,
           FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
         );
       }

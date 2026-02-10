@@ -4,23 +4,14 @@ import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { MergeRecordsContainer } from '@/object-record/record-merge/components/MergeRecordsContainer';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import styled from '@emotion/styled';
 
-const StyledRightDrawerRecord = styled.div<{
-  isMobile: boolean;
-}>`
-  height: ${({ theme, isMobile }) => {
-    const mobileOffset = isMobile ? theme.spacing(16) : '0px';
-
-    return `calc(100% - ${mobileOffset})`;
-  }};
+const StyledRightDrawerRecord = styled.div`
+  height: 100%;
 `;
 
 export const CommandMenuMergeRecordPage = () => {
-  const isMobile = useIsMobile();
-
   const commandMenuPageInstanceId = useComponentInstanceStateContext(
     CommandMenuPageComponentInstanceContext,
   )?.instanceId;
@@ -45,7 +36,7 @@ export const CommandMenuMergeRecordPage = () => {
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: commandMenuPageInstanceId }}
         >
-          <StyledRightDrawerRecord isMobile={isMobile}>
+          <StyledRightDrawerRecord>
             <MergeRecordsContainer
               objectNameSingular={objectMetadataItem.nameSingular}
             />

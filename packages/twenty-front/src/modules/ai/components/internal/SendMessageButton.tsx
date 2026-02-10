@@ -4,12 +4,13 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconArrowUp } from 'twenty-ui/display';
+import { IconArrowUp, IconPlayerStop } from 'twenty-ui/display';
 import { RoundedIconButton } from 'twenty-ui/input';
 
 export const SendMessageButton = () => {
   const agentChatInput = useRecoilValue(agentChatInputState);
-  const { handleSendMessage, isLoading } = useAgentChatContextOrThrow();
+  const { handleSendMessage, handleStop, isLoading, isStreaming } =
+    useAgentChatContextOrThrow();
 
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
@@ -26,9 +27,20 @@ export const SendMessageButton = () => {
     },
   });
 
+  if (isStreaming) {
+    return (
+      <RoundedIconButton
+        Icon={IconPlayerStop}
+        size="medium"
+        onClick={() => handleStop()}
+      />
+    );
+  }
+
   return (
     <RoundedIconButton
       Icon={IconArrowUp}
+      size="medium"
       onClick={() => handleSendMessage()}
       disabled={!agentChatInput || isLoading}
     />

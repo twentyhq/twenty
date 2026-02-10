@@ -1,6 +1,6 @@
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
-import { getRuntimeChartTestMetadata } from 'test/integration/metadata/suites/page-layout-widget/utils/get-runtime-chart-test-metadata.util';
+import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
@@ -11,6 +11,7 @@ import {
 } from 'twenty-shared/testing';
 import { v4 } from 'uuid';
 
+import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -28,8 +29,6 @@ type TestContext = {
     tabId2: string;
     pieChartWidgetId: string;
     iframeWidgetId: string;
-    graphWidgetObjectMetadataId: string;
-    pieChartConfiguration: AllPageLayoutWidgetConfiguration;
   }) => Array<{
     id: string;
     title: string;
@@ -51,98 +50,112 @@ type TestContext = {
   }>;
 };
 
-const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
-  {
-    title: 'update page layout with single tab and widget',
-    context: {
-      layoutName: 'Updated Page Layout',
-      buildTabs: ({
-        tabId1,
-        pieChartWidgetId,
-        graphWidgetObjectMetadataId,
-        pieChartConfiguration,
-      }) => [
-        {
-          id: tabId1,
-          title: 'Updated Tab 1',
-          position: 0,
-          widgets: [
-            {
-              id: pieChartWidgetId,
-              pageLayoutTabId: tabId1,
-              title: 'Pie Chart Widget',
-              type: WidgetType.GRAPH,
-              objectMetadataId: graphWidgetObjectMetadataId,
-              gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
-              configuration: pieChartConfiguration,
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    title: 'update page layout with multiple tabs and different widget types',
-    context: {
-      layoutName: 'Multi-Tab Layout',
-      buildTabs: ({
-        tabId1,
-        tabId2,
-        pieChartWidgetId,
-        iframeWidgetId,
-        graphWidgetObjectMetadataId,
-        pieChartConfiguration,
-      }) => [
-        {
-          id: tabId1,
-          title: 'First Tab',
-          position: 0,
-          widgets: [
-            {
-              id: pieChartWidgetId,
-              pageLayoutTabId: tabId1,
-              title: 'Pie Chart Widget',
-              type: WidgetType.GRAPH,
-              objectMetadataId: graphWidgetObjectMetadataId,
-              gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
-              configuration: pieChartConfiguration,
-            },
-          ],
-        },
-        {
-          id: tabId2,
-          title: 'Second Tab',
-          position: 1,
-          widgets: [
-            {
-              id: iframeWidgetId,
-              pageLayoutTabId: tabId2,
-              title: 'Iframe Widget',
-              type: WidgetType.IFRAME,
-              objectMetadataId: null,
-              gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
-              configuration: MOCK_IFRAME_CONFIGURATION,
-            },
-          ],
-        },
-      ],
-    },
-  },
-];
-
 describe('Page layout with tabs update should succeed', () => {
+  let testFieldMetadataIds: {
+    fieldMetadataId1: string;
+    fieldMetadataId2: string;
+    fieldMetadataId3: string;
+  };
   let testPageLayoutId: string;
   let testTabId1: string;
   let testTabId2: string;
-  let graphWidgetObjectMetadataId: string;
-  let pieChartConfiguration: AllPageLayoutWidgetConfiguration;
+
+  const testCases: EachTestingContext<TestContext>[] = [
+    {
+      title: 'update page layout with single tab and widget',
+      context: {
+        layoutName: 'Updated Page Layout',
+        buildTabs: ({ tabId1, pieChartWidgetId }) => [
+          {
+            id: tabId1,
+            title: 'Updated Tab 1',
+            position: 0,
+            widgets: [
+              {
+                id: pieChartWidgetId,
+                pageLayoutTabId: tabId1,
+                title: 'Pie Chart Widget',
+                type: WidgetType.GRAPH,
+                objectMetadataId: null,
+                gridPosition: {
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                configuration: {
+                  configurationType: WidgetConfigurationType.PIE_CHART,
+                  aggregateFieldMetadataId:
+                    testFieldMetadataIds.fieldMetadataId1,
+                  aggregateOperation: AggregateOperations.COUNT,
+                  groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      title: 'update page layout with multiple tabs and different widget types',
+      context: {
+        layoutName: 'Multi-Tab Layout',
+        buildTabs: ({ tabId1, tabId2, pieChartWidgetId, iframeWidgetId }) => [
+          {
+            id: tabId1,
+            title: 'First Tab',
+            position: 0,
+            widgets: [
+              {
+                id: pieChartWidgetId,
+                pageLayoutTabId: tabId1,
+                title: 'Pie Chart Widget',
+                type: WidgetType.GRAPH,
+                objectMetadataId: null,
+                gridPosition: {
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                configuration: {
+                  configurationType: WidgetConfigurationType.PIE_CHART,
+                  aggregateFieldMetadataId:
+                    testFieldMetadataIds.fieldMetadataId1,
+                  aggregateOperation: AggregateOperations.COUNT,
+                  groupByFieldMetadataId: testFieldMetadataIds.fieldMetadataId2,
+                },
+              },
+            ],
+          },
+          {
+            id: tabId2,
+            title: 'Second Tab',
+            position: 1,
+            widgets: [
+              {
+                id: iframeWidgetId,
+                pageLayoutTabId: tabId2,
+                title: 'Iframe Widget',
+                type: WidgetType.IFRAME,
+                objectMetadataId: null,
+                gridPosition: {
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                configuration: MOCK_IFRAME_CONFIGURATION,
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ];
 
   beforeAll(async () => {
-    const runtimeChartTestMetadata = await getRuntimeChartTestMetadata();
-
-    graphWidgetObjectMetadataId = runtimeChartTestMetadata.objectMetadataId;
-    pieChartConfiguration =
-      runtimeChartTestMetadata.chartConfigs.pieChartMinimal;
+    testFieldMetadataIds = await fetchTestFieldMetadataIds();
   });
 
   beforeEach(async () => {
@@ -192,7 +205,7 @@ describe('Page layout with tabs update should succeed', () => {
     });
   });
 
-  it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
+  it.each(eachTestingContextFilter(testCases))(
     'should $title',
     async ({ context: { layoutName, buildTabs } }) => {
       const pieChartWidgetId = v4();
@@ -203,8 +216,6 @@ describe('Page layout with tabs update should succeed', () => {
         tabId2: testTabId2,
         pieChartWidgetId,
         iframeWidgetId,
-        graphWidgetObjectMetadataId,
-        pieChartConfiguration,
       };
 
       const { data } = await updateOnePageLayoutWithTabsAndWidgets({

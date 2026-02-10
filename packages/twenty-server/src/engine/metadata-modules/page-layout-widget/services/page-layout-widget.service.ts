@@ -239,11 +239,19 @@ export class PageLayoutWidgetService {
         { workspaceId },
       );
 
-    const { flatPageLayoutTabMaps, flatObjectMetadataMaps } =
+    const {
+      flatPageLayoutTabMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatPageLayoutTabMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatPageLayoutTabMaps',
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+          ],
         },
       );
 
@@ -254,6 +262,7 @@ export class PageLayoutWidgetService {
         flatApplication: workspaceCustomFlatApplication,
         flatPageLayoutTabMaps,
         flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
       });
 
     if (isDefined(createInput.configuration)) {
@@ -309,11 +318,14 @@ export class PageLayoutWidgetService {
       existingFlatPageLayoutWidgetMaps,
     );
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
         },
       );
 
@@ -344,6 +356,7 @@ export class PageLayoutWidgetService {
         updatePageLayoutWidgetInput,
         flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       });
 
     const shouldValidateChartFields =

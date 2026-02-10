@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type FlatUpdateIndexAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import {
+  type FlatUpdateIndexAction,
+  type UniversalUpdateIndexAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/index/types/workspace-migration-index-action';
+import { fromUniversalFlatIndexToFlatIndex } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/index/utils/from-universal-flat-index-to-flat-index.util';
 import {
   createIndexInWorkspaceSchema,
   deleteIndexMetadata,
@@ -29,9 +36,30 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateIndexAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateIndexAction>,
   ): Promise<FlatUpdateIndexAction> {
-    return context.action;
+    const { action, allFlatEntityMaps, workspaceId, flatApplication } = context;
+
+    const flatIndexMetadata = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatIndexMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    const updatedFlatIndex = fromUniversalFlatIndexToFlatIndex({
+      universalFlatIndexMetadata: action.updatedUniversalFlatIndex,
+      indexMetadataId: v4(),
+      allFlatEntityMaps,
+      workspaceId,
+      applicationId: flatApplication.id,
+    });
+
+    return {
+      type: action.type,
+      metadataName: action.metadataName,
+      entityId: flatIndexMetadata.id,
+      update: {},
+      updatedFlatIndex,
+    };
   }
 
   async executeForMetadata(
@@ -48,7 +76,7 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 
     // Create new index metadata
     await insertIndexMetadata({
-      flatIndexMetadata: flatAction.updatedFlatEntity,
+      flatIndexMetadata: flatAction.updatedFlatIndex,
       queryRunner,
     });
   }
@@ -67,7 +95,7 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
       workspaceId,
     } = context;
 
-    const { entityId, updatedFlatEntity } = flatAction;
+    const { entityId, updatedFlatIndex } = flatAction;
 
     // Get the old index to drop it
     const flatIndexMetadataToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow(
@@ -90,11 +118,11 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
     // Create new index
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
-      flatEntityId: updatedFlatEntity.objectMetadataId,
+      flatEntityId: updatedFlatIndex.objectMetadataId,
     });
 
     await createIndexInWorkspaceSchema({
-      flatIndexMetadata: updatedFlatEntity,
+      flatIndexMetadata: updatedFlatIndex,
       flatObjectMetadata,
       flatFieldMetadataMaps,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,

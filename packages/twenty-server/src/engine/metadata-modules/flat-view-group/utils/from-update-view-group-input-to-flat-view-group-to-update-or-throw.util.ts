@@ -14,6 +14,7 @@ import {
   ViewGroupException,
   ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
+import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export const fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow = ({
@@ -22,7 +23,7 @@ export const fromUpdateViewGroupInputToFlatViewGroupToUpdateOrThrow = ({
 }: {
   updateViewGroupInput: UpdateViewGroupInput;
   flatViewGroupMaps: FlatEntityMaps<FlatViewGroup>;
-}): FlatViewGroup => {
+}): UniversalFlatViewGroup => {
   const { id: viewGroupToUpdateId, update } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateViewGroupInput,
