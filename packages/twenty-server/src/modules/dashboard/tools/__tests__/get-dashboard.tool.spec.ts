@@ -136,15 +136,13 @@ describe('get_dashboard tool', () => {
     expect(result.success).toBe(true);
     const widgets = result.result?.layout?.tabs?.[0]?.widgets ?? [];
 
-    type ResolvedConfiguration = {
-      _resolved?: {
-        aggregateField?: { fieldLabel?: string };
-        primaryAxisGroupBy?: { fullPath?: string; subFieldLabel?: string };
-      };
-    } & Record<string, unknown>;
-
     const configuration = widgets[0]?.configuration as
-      | ResolvedConfiguration
+      | {
+          _resolved?: {
+            aggregateField?: { fieldLabel?: string };
+            primaryAxisGroupBy?: { fullPath?: string; subFieldLabel?: string };
+          };
+        }
       | undefined;
 
     expect(configuration?._resolved?.aggregateField?.fieldLabel).toBe('Amount');
@@ -156,7 +154,7 @@ describe('get_dashboard tool', () => {
     );
 
     const missingResolved = (
-      widgets[1]?.configuration as ResolvedConfiguration | undefined
+      widgets[1]?.configuration as { _resolved?: unknown } | undefined
     )?._resolved;
 
     expect(missingResolved).toBeUndefined();
