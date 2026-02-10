@@ -7,7 +7,6 @@ import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admi
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -20,6 +19,7 @@ import { WorkerHealthIndicator } from 'src/engine/core-modules/admin-panel/indic
 import { ImpersonationModule } from 'src/engine/core-modules/impersonation/impersonation.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-client.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -39,13 +39,13 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     TelemetryModule,
     ImpersonationModule,
     PermissionsModule,
+    SecureHttpClientModule,
   ],
   providers: [
     AdminPanelResolver,
     AdminPanelService,
     AdminPanelHealthService,
     AdminPanelQueueService,
-    SecureHttpClientService,
     DatabaseHealthIndicator,
     RedisHealthIndicator,
     WorkerHealthIndicator,

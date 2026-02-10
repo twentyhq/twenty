@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type CreateEventInput = {

@@ -1,4 +1,4 @@
-import { isPrivateIp } from 'src/engine/core-modules/tool/utils/is-private-ip.util';
+import { isPrivateIp } from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
 
 describe('isPrivateIp', () => {
   describe('loopback addresses', () => {
