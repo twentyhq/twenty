@@ -58,7 +58,7 @@ diff --git a/dist/services/resolvers-explorer.service.js b/dist/services/resolve
 index 1234567..abcdefg 100644
 --- a/dist/services/resolvers-explorer.service.js
 +++ b/dist/services/resolvers-explorer.service.js
-@@ -43,6 +43,13 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -43,6 +43,15 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
      filterResolvers(gqlAdapter, wrapper, moduleRef) {
          const { instance } = wrapper;
          if (!instance) {
@@ -66,13 +66,15 @@ index 1234567..abcdefg 100644
          }
 +        const resolverSchemaScope = this.gqlOptions.resolverSchemaScope;
 +        if (resolverSchemaScope && wrapper.metatype) {
-+            const scope = Reflect.getMetadata('RESOLVER_SCHEMA_SCOPE', wrapper.metatype);
++            // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
++            // TODO: remove this fallback once nestjs-query is deprecated
++            const scope = Reflect.getMetadata('RESOLVER_SCHEMA_SCOPE', wrapper.metatype) || 'metadata';
 +            if (scope !== resolverSchemaScope) {
 +                return undefined;
 +            }
 +        }
          const prototype = Object.getPrototypeOf(instance);
-@@ -147,5 +154,12 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -147,5 +154,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
      getAllCtors() {
          const modules = this.getModules(this.modulesContainer, this.gqlOptions.include || []);
          const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
@@ -80,7 +82,9 @@ index 1234567..abcdefg 100644
 +        const resolverSchemaScope = this.gqlOptions.resolverSchemaScope;
 +        if (resolverSchemaScope) {
 +            return resolvers.filter((ctor) => {
-+                const scope = Reflect.getMetadata('RESOLVER_SCHEMA_SCOPE', ctor);
++                // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
++                // TODO: remove this fallback once nestjs-query is deprecated
++                const scope = Reflect.getMetadata('RESOLVER_SCHEMA_SCOPE', ctor) || 'metadata';
 +                return scope === resolverSchemaScope;
 +            });
 +        }

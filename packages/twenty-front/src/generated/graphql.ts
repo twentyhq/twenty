@@ -18,7 +18,6 @@ export type Scalars = {
   JSON: any;
   JSONObject: any;
   UUID: any;
-  Upload: any;
 };
 
 export type AiSystemPromptPreview = {
@@ -32,16 +31,6 @@ export type AiSystemPromptSection = {
   content: Scalars['String'];
   estimatedTokenCount: Scalars['Int'];
   title: Scalars['String'];
-};
-
-export type ActivateWorkspaceInput = {
-  displayName?: InputMaybe<Scalars['String']>;
-};
-
-export type AddQuerySubscriptionInput = {
-  eventStreamId: Scalars['String'];
-  operationSignature: Scalars['JSON'];
-  queryId: Scalars['String'];
 };
 
 export type AdminPanelHealthServiceData = {
@@ -98,11 +87,6 @@ export type AgentChatThread = {
   totalOutputCredits: Scalars['Float'];
   totalOutputTokens: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type AgentIdInput = {
-  /** The id of the agent. */
-  id: Scalars['UUID'];
 };
 
 export type AgentMessage = {
@@ -196,41 +180,11 @@ export enum AggregateOperations {
   SUM = 'SUM'
 }
 
-export enum AllMetadataName {
-  agent = 'agent',
-  commandMenuItem = 'commandMenuItem',
-  fieldMetadata = 'fieldMetadata',
-  frontComponent = 'frontComponent',
-  index = 'index',
-  logicFunction = 'logicFunction',
-  navigationMenuItem = 'navigationMenuItem',
-  objectMetadata = 'objectMetadata',
-  pageLayout = 'pageLayout',
-  pageLayoutTab = 'pageLayoutTab',
-  pageLayoutWidget = 'pageLayoutWidget',
-  role = 'role',
-  roleTarget = 'roleTarget',
-  rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
-  rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
-  skill = 'skill',
-  view = 'view',
-  viewField = 'viewField',
-  viewFilter = 'viewFilter',
-  viewFilterGroup = 'viewFilterGroup',
-  viewGroup = 'viewGroup',
-  webhook = 'webhook'
-}
-
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
-
-export enum AnalyticsType {
-  PAGEVIEW = 'PAGEVIEW',
-  TRACK = 'TRACK'
-}
 
 export type ApiConfig = {
   __typename?: 'ApiConfig';
@@ -421,11 +375,6 @@ export type BarChartConfiguration = {
   secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
   timezone?: Maybe<Scalars['String']>;
-};
-
-export type BarChartDataInput = {
-  configuration: Scalars['JSON'];
-  objectMetadataId: Scalars['UUID'];
 };
 
 export type BarChartDataOutput = {
@@ -794,14 +743,6 @@ export type ConnectedImapSmtpCaldavAccount = {
   provider: Scalars['String'];
 };
 
-export type ConnectionParameters = {
-  host: Scalars['String'];
-  password: Scalars['String'];
-  port: Scalars['Float'];
-  secure?: InputMaybe<Scalars['Boolean']>;
-  username?: InputMaybe<Scalars['String']>;
-};
-
 export type ConnectionParametersOutput = {
   __typename?: 'ConnectionParametersOutput';
   host: Scalars['String'];
@@ -912,229 +853,11 @@ export type CoreViewSort = {
   workspaceId: Scalars['UUID'];
 };
 
-export type CreateAgentInput = {
-  description?: InputMaybe<Scalars['String']>;
-  evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
-  icon?: InputMaybe<Scalars['String']>;
-  label: Scalars['String'];
-  modelConfiguration?: InputMaybe<Scalars['JSON']>;
-  modelId: Scalars['String'];
-  name?: InputMaybe<Scalars['String']>;
-  prompt: Scalars['String'];
-  responseFormat?: InputMaybe<Scalars['JSON']>;
-  roleId?: InputMaybe<Scalars['UUID']>;
-};
-
-export type CreateApiKeyInput = {
-  expiresAt: Scalars['String'];
-  name: Scalars['String'];
-  revokedAt?: InputMaybe<Scalars['String']>;
-  roleId: Scalars['UUID'];
-};
-
-export type CreateApplicationInput = {
-  description?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  sourcePath: Scalars['String'];
-  universalIdentifier: Scalars['String'];
-  version: Scalars['String'];
-};
-
-export type CreateApprovedAccessDomainInput = {
-  domain: Scalars['String'];
-  email: Scalars['String'];
-};
-
-export type CreateCommandMenuItemInput = {
-  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
-  availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
-  frontComponentId?: InputMaybe<Scalars['UUID']>;
-  icon?: InputMaybe<Scalars['String']>;
-  isPinned?: InputMaybe<Scalars['Boolean']>;
-  label: Scalars['String'];
-  workflowVersionId?: InputMaybe<Scalars['UUID']>;
-};
-
-export type CreateDefaultLogicFunctionInput = {
-  description?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
-};
-
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
   /** Workflow version ID */
   workflowVersionIdToCopy: Scalars['UUID'];
-};
-
-export type CreateFieldInput = {
-  defaultValue?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  isActive?: InputMaybe<Scalars['Boolean']>;
-  isCustom?: InputMaybe<Scalars['Boolean']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
-  isNullable?: InputMaybe<Scalars['Boolean']>;
-  isRemoteCreation?: InputMaybe<Scalars['Boolean']>;
-  isSystem?: InputMaybe<Scalars['Boolean']>;
-  isUIReadOnly?: InputMaybe<Scalars['Boolean']>;
-  isUnique?: InputMaybe<Scalars['Boolean']>;
-  label: Scalars['String'];
-  morphRelationsCreationPayload?: InputMaybe<Array<Scalars['JSON']>>;
-  name: Scalars['String'];
-  objectMetadataId: Scalars['UUID'];
-  options?: InputMaybe<Scalars['JSON']>;
-  relationCreationPayload?: InputMaybe<Scalars['JSON']>;
-  settings?: InputMaybe<Scalars['JSON']>;
-  type: FieldMetadataType;
-};
-
-export type CreateFrontComponentInput = {
-  builtComponentChecksum: Scalars['String'];
-  builtComponentPath: Scalars['String'];
-  componentName: Scalars['String'];
-  description?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  name: Scalars['String'];
-  sourceComponentPath: Scalars['String'];
-};
-
-export type CreateObjectInput = {
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
-  isRemote?: InputMaybe<Scalars['Boolean']>;
-  labelPlural: Scalars['String'];
-  labelSingular: Scalars['String'];
-  namePlural: Scalars['String'];
-  nameSingular: Scalars['String'];
-  primaryKeyColumnType?: InputMaybe<Scalars['String']>;
-  primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']>;
-  shortcut?: InputMaybe<Scalars['String']>;
-  skipNameField?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CreateOneFieldMetadataInput = {
-  /** The record to create */
-  field: CreateFieldInput;
-};
-
-export type CreateOneObjectInput = {
-  /** The object to create */
-  object: CreateObjectInput;
-};
-
-export type CreatePageLayoutInput = {
-  name: Scalars['String'];
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
-  type?: InputMaybe<PageLayoutType>;
-};
-
-export type CreatePageLayoutTabInput = {
-  pageLayoutId: Scalars['UUID'];
-  position?: InputMaybe<Scalars['Float']>;
-  title: Scalars['String'];
-};
-
-export type CreatePageLayoutWidgetInput = {
-  configuration: Scalars['JSON'];
-  gridPosition: GridPositionInput;
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
-  pageLayoutTabId: Scalars['UUID'];
-  position?: InputMaybe<Scalars['JSON']>;
-  title: Scalars['String'];
-  type: WidgetType;
-};
-
-export type CreateRoleInput = {
-  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
-  canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
-  canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']>;
-  canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']>;
-  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  label: Scalars['String'];
-};
-
-export type CreateViewFieldInput = {
-  aggregateOperation?: InputMaybe<AggregateOperations>;
-  fieldMetadataId: Scalars['UUID'];
-  id?: InputMaybe<Scalars['UUID']>;
-  isVisible?: InputMaybe<Scalars['Boolean']>;
-  position?: InputMaybe<Scalars['Float']>;
-  size?: InputMaybe<Scalars['Float']>;
-  viewId: Scalars['UUID'];
-};
-
-export type CreateViewFilterGroupInput = {
-  id?: InputMaybe<Scalars['UUID']>;
-  logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
-  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
-  viewId: Scalars['UUID'];
-};
-
-export type CreateViewFilterInput = {
-  fieldMetadataId: Scalars['UUID'];
-  id?: InputMaybe<Scalars['UUID']>;
-  operand?: InputMaybe<ViewFilterOperand>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
-  subFieldName?: InputMaybe<Scalars['String']>;
-  value: Scalars['JSON'];
-  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
-  viewId: Scalars['UUID'];
-};
-
-export type CreateViewGroupInput = {
-  fieldValue: Scalars['String'];
-  id?: InputMaybe<Scalars['UUID']>;
-  isVisible?: InputMaybe<Scalars['Boolean']>;
-  position?: InputMaybe<Scalars['Float']>;
-  viewId: Scalars['UUID'];
-};
-
-export type CreateViewInput = {
-  anyFieldFilterValue?: InputMaybe<Scalars['String']>;
-  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  calendarLayout?: InputMaybe<ViewCalendarLayout>;
-  icon: Scalars['String'];
-  id?: InputMaybe<Scalars['UUID']>;
-  isCompact?: InputMaybe<Scalars['Boolean']>;
-  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
-  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  key?: InputMaybe<ViewKey>;
-  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  name: Scalars['String'];
-  objectMetadataId: Scalars['UUID'];
-  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
-  position?: InputMaybe<Scalars['Float']>;
-  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']>;
-  type?: InputMaybe<ViewType>;
-  visibility?: InputMaybe<ViewVisibility>;
-};
-
-export type CreateViewSortInput = {
-  direction?: InputMaybe<ViewSortDirection>;
-  fieldMetadataId: Scalars['UUID'];
-  id?: InputMaybe<Scalars['UUID']>;
-  viewId: Scalars['UUID'];
-};
-
-export type CreateWebhookInput = {
-  description?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  operations: Array<Scalars['String']>;
-  secret?: InputMaybe<Scalars['String']>;
-  targetUrl: Scalars['String'];
 };
 
 export type CreateWorkflowVersionEdgeInput = {
@@ -1188,39 +911,10 @@ export enum DatabaseEventAction {
   UPSERTED = 'UPSERTED'
 }
 
-export type DateTimeFilter = {
-  eq?: InputMaybe<Scalars['DateTime']>;
-  gt?: InputMaybe<Scalars['DateTime']>;
-  gte?: InputMaybe<Scalars['DateTime']>;
-  in?: InputMaybe<Array<Scalars['DateTime']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['DateTime']>;
-  lte?: InputMaybe<Scalars['DateTime']>;
-  neq?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type DeleteApprovedAccessDomainInput = {
-  id: Scalars['UUID'];
-};
-
 export type DeleteJobsResponse = {
   __typename?: 'DeleteJobsResponse';
   deletedCount: Scalars['Int'];
   results: Array<JobOperationResult>;
-};
-
-export type DeleteOneFieldInput = {
-  /** The id of the field to delete. */
-  id: Scalars['UUID'];
-};
-
-export type DeleteOneObjectInput = {
-  /** The id of the record to delete. */
-  id: Scalars['UUID'];
-};
-
-export type DeleteSsoInput = {
-  identityProviderId: Scalars['UUID'];
 };
 
 export type DeleteSsoOutput = {
@@ -1232,21 +926,6 @@ export type DeleteTwoFactorAuthenticationMethodOutput = {
   __typename?: 'DeleteTwoFactorAuthenticationMethodOutput';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
-};
-
-export type DeleteViewFieldInput = {
-  /** The id of the view field to delete. */
-  id: Scalars['UUID'];
-};
-
-export type DeleteViewFilterInput = {
-  /** The id of the view filter to delete. */
-  id: Scalars['UUID'];
-};
-
-export type DeleteViewGroupInput = {
-  /** The id of the view group to delete. */
-  id: Scalars['UUID'];
 };
 
 export type DeleteWorkflowVersionStepInput = {
@@ -1263,21 +942,6 @@ export type DeletedWorkspaceMember = {
   name: FullName;
   userEmail: Scalars['String'];
   userWorkspaceId?: Maybe<Scalars['UUID']>;
-};
-
-export type DestroyViewFieldInput = {
-  /** The id of the view field to destroy. */
-  id: Scalars['UUID'];
-};
-
-export type DestroyViewFilterInput = {
-  /** The id of the view filter to destroy. */
-  id: Scalars['UUID'];
-};
-
-export type DestroyViewGroupInput = {
-  /** The id of the view group to destroy. */
-  id: Scalars['UUID'];
 };
 
 export type DomainRecord = {
@@ -1318,11 +982,6 @@ export type DuplicatedDashboard = {
   updatedAt: Scalars['String'];
 };
 
-export type EditSsoInput = {
-  id: Scalars['UUID'];
-  status: SsoIdentityProviderStatus;
-};
-
 export type EditSsoOutput = {
   __typename?: 'EditSsoOutput';
   id: Scalars['UUID'];
@@ -1330,12 +989,6 @@ export type EditSsoOutput = {
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
-};
-
-export type EmailAccountConnectionParameters = {
-  CALDAV?: InputMaybe<ConnectionParameters>;
-  IMAP?: InputMaybe<ConnectionParameters>;
-  SMTP?: InputMaybe<ConnectionParameters>;
 };
 
 export type EmailPasswordResetLinkOutput = {
@@ -1372,30 +1025,10 @@ export type EmailsConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
-export type EventLogDateRangeInput = {
-  end?: InputMaybe<Scalars['DateTime']>;
-  start?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type EventLogFiltersInput = {
-  dateRange?: InputMaybe<EventLogDateRangeInput>;
-  eventType?: InputMaybe<Scalars['String']>;
-  objectMetadataId?: InputMaybe<Scalars['String']>;
-  recordId?: InputMaybe<Scalars['String']>;
-  userWorkspaceId?: InputMaybe<Scalars['String']>;
-};
-
 export type EventLogPageInfo = {
   __typename?: 'EventLogPageInfo';
   endCursor?: Maybe<Scalars['String']>;
   hasNextPage: Scalars['Boolean'];
-};
-
-export type EventLogQueryInput = {
-  after?: InputMaybe<Scalars['String']>;
-  filters?: InputMaybe<EventLogFiltersInput>;
-  first?: InputMaybe<Scalars['Int']>;
-  table: EventLogTable;
 };
 
 export type EventLogQueryResult = {
@@ -1416,12 +1049,6 @@ export type EventLogRecord = {
   userWorkspaceId?: Maybe<Scalars['String']>;
 };
 
-export enum EventLogTable {
-  OBJECT_EVENT = 'OBJECT_EVENT',
-  PAGEVIEW = 'PAGEVIEW',
-  WORKSPACE_EVENT = 'WORKSPACE_EVENT'
-}
-
 export type EventSubscription = {
   __typename?: 'EventSubscription';
   eventStreamId: Scalars['String'];
@@ -1432,15 +1059,6 @@ export type EventWithQueryIds = {
   __typename?: 'EventWithQueryIds';
   event: ObjectRecordEvent;
   queryIds: Array<Scalars['String']>;
-};
-
-export type ExecuteOneLogicFunctionInput = {
-  /** Force rebuild from source before executing */
-  forceRebuild?: InputMaybe<Scalars['Boolean']>;
-  /** Id of the logic function to execute */
-  id: Scalars['UUID'];
-  /** Payload in JSON format */
-  payload: Scalars['JSON'];
 };
 
 export type FeatureFlag = {
@@ -1577,13 +1195,6 @@ export type FieldPermission = {
   roleId: Scalars['UUID'];
 };
 
-export type FieldPermissionInput = {
-  canReadFieldValue?: InputMaybe<Scalars['Boolean']>;
-  canUpdateFieldValue?: InputMaybe<Scalars['Boolean']>;
-  fieldMetadataId: Scalars['UUID'];
-  objectMetadataId: Scalars['UUID'];
-};
-
 export type FieldRichTextConfiguration = {
   __typename?: 'FieldRichTextConfiguration';
   configurationType: WidgetConfigurationType;
@@ -1602,30 +1213,10 @@ export type File = {
   size: Scalars['Float'];
 };
 
-export enum FileFolder {
-  AgentChat = 'AgentChat',
-  Attachment = 'Attachment',
-  BuiltFrontComponent = 'BuiltFrontComponent',
-  BuiltLogicFunction = 'BuiltLogicFunction',
-  Dependencies = 'Dependencies',
-  File = 'File',
-  FilesField = 'FilesField',
-  PersonPicture = 'PersonPicture',
-  ProfilePicture = 'ProfilePicture',
-  PublicAsset = 'PublicAsset',
-  Source = 'Source',
-  WorkspaceLogo = 'WorkspaceLogo'
-}
-
 export type FilesConfiguration = {
   __typename?: 'FilesConfiguration';
   configurationType: WidgetConfigurationType;
 };
-
-export enum FilterIs {
-  NotNull = 'NotNull',
-  Null = 'Null'
-}
 
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
@@ -1677,15 +1268,6 @@ export type GaugeChartConfiguration = {
   timezone?: Maybe<Scalars['String']>;
 };
 
-export type GetApiKeyInput = {
-  id: Scalars['UUID'];
-};
-
-export type GetAuthorizationUrlForSsoInput = {
-  identityProviderId: Scalars['UUID'];
-  workspaceInviteHash?: InputMaybe<Scalars['String']>;
-};
-
 export type GetAuthorizationUrlForSsoOutput = {
   __typename?: 'GetAuthorizationUrlForSSOOutput';
   authorizationURL: Scalars['String'];
@@ -1706,13 +1288,6 @@ export enum GraphOrderBy {
 
 export type GridPosition = {
   __typename?: 'GridPosition';
-  column: Scalars['Float'];
-  columnSpan: Scalars['Float'];
-  row: Scalars['Float'];
-  rowSpan: Scalars['Float'];
-};
-
-export type GridPositionInput = {
   column: Scalars['Float'];
   columnSpan: Scalars['Float'];
   row: Scalars['Float'];
@@ -1912,11 +1487,6 @@ export type LineChartConfiguration = {
   timezone?: Maybe<Scalars['String']>;
 };
 
-export type LineChartDataInput = {
-  configuration: Scalars['JSON'];
-  objectMetadataId: Scalars['UUID'];
-};
-
 export type LineChartDataOutput = {
   __typename?: 'LineChartDataOutput';
   formattedToRawLookup: Scalars['JSON'];
@@ -2002,23 +1572,10 @@ export enum LogicFunctionExecutionStatus {
   SUCCESS = 'SUCCESS'
 }
 
-export type LogicFunctionIdInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
-};
-
 export type LogicFunctionLogs = {
   __typename?: 'LogicFunctionLogs';
   /** Execution Logs */
   logs: Scalars['String'];
-};
-
-export type LogicFunctionLogsInput = {
-  applicationId?: InputMaybe<Scalars['UUID']>;
-  applicationUniversalIdentifier?: InputMaybe<Scalars['UUID']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  name?: InputMaybe<Scalars['String']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
 export type LoginTokenOutput = {
@@ -2061,183 +1618,23 @@ export enum ModelProvider {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean'];
-  activateWorkspace: Workspace;
-  addQueryToEventStream: Scalars['Boolean'];
-  assignRoleToAgent: Scalars['Boolean'];
-  assignRoleToApiKey: Scalars['Boolean'];
-  authorizeApp: AuthorizeAppOutput;
-  cancelSwitchBillingInterval: BillingUpdateOutput;
-  cancelSwitchBillingPlan: BillingUpdateOutput;
-  cancelSwitchMeteredPrice: BillingUpdateOutput;
-  checkCustomDomainValidRecords?: Maybe<DomainValidRecords>;
-  checkPublicDomainValidRecords?: Maybe<DomainValidRecords>;
-  checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
-  createApiKey: ApiKey;
-  createApprovedAccessDomain: ApprovedAccessDomain;
-  createCommandMenuItem: CommandMenuItem;
-  createCoreView: CoreView;
-  createCoreViewField: CoreViewField;
-  createCoreViewFilter: CoreViewFilter;
-  createCoreViewFilterGroup: CoreViewFilterGroup;
-  createCoreViewGroup: CoreViewGroup;
-  createCoreViewSort: CoreViewSort;
-  createDatabaseConfigVariable: Scalars['Boolean'];
-  createDefaultLogicFunction: LogicFunction;
   createDraftFromWorkflowVersion: WorkflowVersionDto;
-  createEmailingDomain: EmailingDomain;
-  createFile: File;
-  createFrontComponent: FrontComponent;
-  createManyCoreViewFields: Array<CoreViewField>;
-  createManyCoreViewGroups: Array<CoreViewGroup>;
-  createOIDCIdentityProvider: SetupSsoOutput;
-  createObjectEvent: Analytics;
-  createOneAgent: Agent;
-  createOneAppToken: AppToken;
-  createOneApplication: Application;
-  createOneField: Field;
-  createOneObject: Object;
-  createOneRole: Role;
-  createPageLayout: PageLayout;
-  createPageLayoutTab: PageLayoutTab;
-  createPageLayoutWidget: PageLayoutWidget;
-  createPublicDomain: PublicDomain;
-  createSAMLIdentityProvider: SetupSsoOutput;
-  createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
-  deleteApprovedAccessDomain: Scalars['Boolean'];
-  deleteCommandMenuItem: CommandMenuItem;
-  deleteCoreView: Scalars['Boolean'];
-  deleteCoreViewField: CoreViewField;
-  deleteCoreViewFilter: CoreViewFilter;
-  deleteCoreViewFilterGroup: Scalars['Boolean'];
-  deleteCoreViewGroup: CoreViewGroup;
-  deleteCoreViewSort: Scalars['Boolean'];
-  deleteCurrentWorkspace: Workspace;
-  deleteDatabaseConfigVariable: Scalars['Boolean'];
-  deleteEmailingDomain: Scalars['Boolean'];
-  deleteFile: File;
-  deleteFrontComponent: FrontComponent;
-  deleteJobs: DeleteJobsResponse;
-  deleteOneAgent: Agent;
-  deleteOneField: Field;
-  deleteOneLogicFunction: LogicFunction;
-  deleteOneObject: Object;
-  deleteOneRole: Scalars['String'];
-  deletePublicDomain: Scalars['Boolean'];
-  deleteSSOIdentityProvider: DeleteSsoOutput;
-  deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
-  deleteUser: User;
-  deleteUserFromWorkspace: UserWorkspace;
-  deleteWebhook: Webhook;
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
-  deleteWorkspaceInvitation: Scalars['String'];
-  destroyCoreView: Scalars['Boolean'];
-  destroyCoreViewField: CoreViewField;
-  destroyCoreViewFilter: CoreViewFilter;
-  destroyCoreViewFilterGroup: Scalars['Boolean'];
-  destroyCoreViewGroup: CoreViewGroup;
-  destroyCoreViewSort: Scalars['Boolean'];
-  destroyPageLayout: Scalars['Boolean'];
-  destroyPageLayoutTab: Scalars['Boolean'];
-  destroyPageLayoutWidget: Scalars['Boolean'];
-  disablePostgresProxy: PostgresCredentials;
   dismissReconnectAccountBanner: Scalars['Boolean'];
-  duplicateDashboard: DuplicatedDashboard;
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
-  editSSOIdentityProvider: EditSsoOutput;
-  emailPasswordResetLink: EmailPasswordResetLinkOutput;
-  enablePostgresProxy: PostgresCredentials;
-  endSubscriptionTrialPeriod: BillingEndTrialPeriodOutput;
-  executeOneLogicFunction: LogicFunctionExecutionResult;
-  generateApiKeyToken: ApiKeyToken;
-  generateTransientToken: TransientTokenOutput;
-  getAuthTokensFromLoginToken: AuthTokens;
-  getAuthTokensFromOTP: AuthTokens;
-  getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
-  getLoginTokenFromCredentials: LoginTokenOutput;
-  impersonate: ImpersonateOutput;
-  initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
-  initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
-  installApplication: Scalars['Boolean'];
-  installMarketplaceApp: Scalars['Boolean'];
-  removeQueryFromEventStream: Scalars['Boolean'];
-  removeRoleFromAgent: Scalars['Boolean'];
-  renewToken: AuthTokens;
-  resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
-  resendWorkspaceInvitation: SendInvitationsOutput;
-  retryJobs: RetryJobsResponse;
-  revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: RunWorkflowVersionOutput;
-  saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
-  sendInvitations: SendInvitationsOutput;
-  setMeteredSubscriptionPrice: BillingUpdateOutput;
-  signIn: AvailableWorkspacesAndAccessTokensOutput;
-  signUp: AvailableWorkspacesAndAccessTokensOutput;
-  signUpInNewWorkspace: SignUpOutput;
-  signUpInWorkspace: SignUpOutput;
-  skipBookOnboardingStep: OnboardingStepSuccess;
-  skipSyncEmailOnboardingStep: OnboardingStepSuccess;
-  startChannelSync: ChannelSyncSuccess;
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean'];
-  switchBillingPlan: BillingUpdateOutput;
-  switchSubscriptionInterval: BillingUpdateOutput;
-  syncApplication: Scalars['Boolean'];
   testHttpRequest: TestHttpRequestOutput;
-  trackAnalytics: Analytics;
-  uninstallApplication: Scalars['Boolean'];
-  updateApiKey?: Maybe<ApiKey>;
-  updateCommandMenuItem: CommandMenuItem;
-  updateCoreView: CoreView;
-  updateCoreViewField: CoreViewField;
-  updateCoreViewFilter: CoreViewFilter;
-  updateCoreViewFilterGroup: CoreViewFilterGroup;
-  updateCoreViewGroup: CoreViewGroup;
-  updateCoreViewSort: CoreViewSort;
-  updateDatabaseConfigVariable: Scalars['Boolean'];
-  updateFrontComponent: FrontComponent;
-  updateLabPublicFeatureFlag: FeatureFlagDto;
-  updateLogicFunctionSource: Scalars['Boolean'];
-  updateOneAgent: Agent;
-  updateOneApplicationVariable: Scalars['Boolean'];
-  updateOneField: Field;
-  updateOneObject: Object;
-  updateOneRole: Role;
-  updatePageLayout: PageLayout;
-  updatePageLayoutTab: PageLayoutTab;
-  updatePageLayoutWidget: PageLayoutWidget;
-  updatePageLayoutWithTabsAndWidgets: PageLayout;
-  updatePasswordViaResetToken: InvalidatePasswordOutput;
-  updateUserEmail: Scalars['Boolean'];
-  updateWebhook: Webhook;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
-  updateWorkspace: Workspace;
-  updateWorkspaceFeatureFlag: Scalars['Boolean'];
-  updateWorkspaceMemberRole: WorkspaceMember;
-  uploadApplicationFile: File;
-  /** @deprecated Use uploadFilesFieldFile instead */
-  uploadFile: SignedFile;
-  uploadFilesFieldFile: File;
-  uploadImage: SignedFile;
-  uploadWorkspaceLogo: SignedFile;
-  uploadWorkspaceMemberProfilePicture: SignedFile;
-  upsertFieldPermissions: Array<FieldPermission>;
-  upsertObjectPermissions: Array<ObjectPermission>;
-  upsertPermissionFlags: Array<PermissionFlag>;
-  upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
-  userLookupAdminPanel: UserLookup;
-  validateApprovedAccessDomain: ApprovedAccessDomain;
-  verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginTokenOutput;
-  verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokensOutput;
-  verifyEmailingDomain: EmailingDomain;
-  verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
 };
 
 
@@ -2246,205 +1643,13 @@ export type MutationActivateWorkflowVersionArgs = {
 };
 
 
-export type MutationActivateWorkspaceArgs = {
-  data: ActivateWorkspaceInput;
-};
-
-
-export type MutationAddQueryToEventStreamArgs = {
-  input: AddQuerySubscriptionInput;
-};
-
-
-export type MutationAssignRoleToAgentArgs = {
-  agentId: Scalars['UUID'];
-  roleId: Scalars['UUID'];
-};
-
-
-export type MutationAssignRoleToApiKeyArgs = {
-  apiKeyId: Scalars['UUID'];
-  roleId: Scalars['UUID'];
-};
-
-
-export type MutationAuthorizeAppArgs = {
-  clientId: Scalars['String'];
-  codeChallenge?: InputMaybe<Scalars['String']>;
-  redirectUrl: Scalars['String'];
-};
-
-
-export type MutationCheckPublicDomainValidRecordsArgs = {
-  domain: Scalars['String'];
-};
-
-
-export type MutationCheckoutSessionArgs = {
-  plan?: BillingPlanKey;
-  recurringInterval: SubscriptionInterval;
-  requirePaymentMethod?: Scalars['Boolean'];
-  successUrlPath?: InputMaybe<Scalars['String']>;
-};
-
-
 export type MutationComputeStepOutputSchemaArgs = {
   input: ComputeStepOutputSchemaInput;
 };
 
 
-export type MutationCreateApiKeyArgs = {
-  input: CreateApiKeyInput;
-};
-
-
-export type MutationCreateApprovedAccessDomainArgs = {
-  input: CreateApprovedAccessDomainInput;
-};
-
-
-export type MutationCreateCommandMenuItemArgs = {
-  input: CreateCommandMenuItemInput;
-};
-
-
-export type MutationCreateCoreViewArgs = {
-  input: CreateViewInput;
-};
-
-
-export type MutationCreateCoreViewFieldArgs = {
-  input: CreateViewFieldInput;
-};
-
-
-export type MutationCreateCoreViewFilterArgs = {
-  input: CreateViewFilterInput;
-};
-
-
-export type MutationCreateCoreViewFilterGroupArgs = {
-  input: CreateViewFilterGroupInput;
-};
-
-
-export type MutationCreateCoreViewGroupArgs = {
-  input: CreateViewGroupInput;
-};
-
-
-export type MutationCreateCoreViewSortArgs = {
-  input: CreateViewSortInput;
-};
-
-
-export type MutationCreateDatabaseConfigVariableArgs = {
-  key: Scalars['String'];
-  value: Scalars['JSON'];
-};
-
-
-export type MutationCreateDefaultLogicFunctionArgs = {
-  input: CreateDefaultLogicFunctionInput;
-};
-
-
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
-};
-
-
-export type MutationCreateEmailingDomainArgs = {
-  domain: Scalars['String'];
-  driver: EmailingDomainDriver;
-};
-
-
-export type MutationCreateFileArgs = {
-  file: Scalars['Upload'];
-};
-
-
-export type MutationCreateFrontComponentArgs = {
-  input: CreateFrontComponentInput;
-};
-
-
-export type MutationCreateManyCoreViewFieldsArgs = {
-  inputs: Array<CreateViewFieldInput>;
-};
-
-
-export type MutationCreateManyCoreViewGroupsArgs = {
-  inputs: Array<CreateViewGroupInput>;
-};
-
-
-export type MutationCreateOidcIdentityProviderArgs = {
-  input: SetupOidcSsoInput;
-};
-
-
-export type MutationCreateObjectEventArgs = {
-  event: Scalars['String'];
-  objectMetadataId: Scalars['UUID'];
-  properties?: InputMaybe<Scalars['JSON']>;
-  recordId: Scalars['UUID'];
-};
-
-
-export type MutationCreateOneAgentArgs = {
-  input: CreateAgentInput;
-};
-
-
-export type MutationCreateOneApplicationArgs = {
-  input: CreateApplicationInput;
-};
-
-
-export type MutationCreateOneFieldArgs = {
-  input: CreateOneFieldMetadataInput;
-};
-
-
-export type MutationCreateOneObjectArgs = {
-  input: CreateOneObjectInput;
-};
-
-
-export type MutationCreateOneRoleArgs = {
-  createRoleInput: CreateRoleInput;
-};
-
-
-export type MutationCreatePageLayoutArgs = {
-  input: CreatePageLayoutInput;
-};
-
-
-export type MutationCreatePageLayoutTabArgs = {
-  input: CreatePageLayoutTabInput;
-};
-
-
-export type MutationCreatePageLayoutWidgetArgs = {
-  input: CreatePageLayoutWidgetInput;
-};
-
-
-export type MutationCreatePublicDomainArgs = {
-  domain: Scalars['String'];
-};
-
-
-export type MutationCreateSamlIdentityProviderArgs = {
-  input: SetupSamlSsoInput;
-};
-
-
-export type MutationCreateWebhookArgs = {
-  input: CreateWebhookInput;
 };
 
 
@@ -2463,122 +1668,6 @@ export type MutationDeactivateWorkflowVersionArgs = {
 };
 
 
-export type MutationDeleteApprovedAccessDomainArgs = {
-  input: DeleteApprovedAccessDomainInput;
-};
-
-
-export type MutationDeleteCommandMenuItemArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type MutationDeleteCoreViewArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDeleteCoreViewFieldArgs = {
-  input: DeleteViewFieldInput;
-};
-
-
-export type MutationDeleteCoreViewFilterArgs = {
-  input: DeleteViewFilterInput;
-};
-
-
-export type MutationDeleteCoreViewFilterGroupArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDeleteCoreViewGroupArgs = {
-  input: DeleteViewGroupInput;
-};
-
-
-export type MutationDeleteCoreViewSortArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDeleteDatabaseConfigVariableArgs = {
-  key: Scalars['String'];
-};
-
-
-export type MutationDeleteEmailingDomainArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDeleteFileArgs = {
-  fileId: Scalars['UUID'];
-};
-
-
-export type MutationDeleteFrontComponentArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type MutationDeleteJobsArgs = {
-  jobIds: Array<Scalars['String']>;
-  queueName: Scalars['String'];
-};
-
-
-export type MutationDeleteOneAgentArgs = {
-  input: AgentIdInput;
-};
-
-
-export type MutationDeleteOneFieldArgs = {
-  input: DeleteOneFieldInput;
-};
-
-
-export type MutationDeleteOneLogicFunctionArgs = {
-  input: LogicFunctionIdInput;
-};
-
-
-export type MutationDeleteOneObjectArgs = {
-  input: DeleteOneObjectInput;
-};
-
-
-export type MutationDeleteOneRoleArgs = {
-  roleId: Scalars['UUID'];
-};
-
-
-export type MutationDeletePublicDomainArgs = {
-  domain: Scalars['String'];
-};
-
-
-export type MutationDeleteSsoIdentityProviderArgs = {
-  input: DeleteSsoInput;
-};
-
-
-export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
-  twoFactorAuthenticationMethodId: Scalars['UUID'];
-};
-
-
-export type MutationDeleteUserFromWorkspaceArgs = {
-  workspaceMemberIdToDelete: Scalars['String'];
-};
-
-
-export type MutationDeleteWebhookArgs = {
-  id: Scalars['UUID'];
-};
-
-
 export type MutationDeleteWorkflowVersionEdgeArgs = {
   input: CreateWorkflowVersionEdgeInput;
 };
@@ -2589,63 +1678,8 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 };
 
 
-export type MutationDeleteWorkspaceInvitationArgs = {
-  appTokenId: Scalars['String'];
-};
-
-
-export type MutationDestroyCoreViewArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDestroyCoreViewFieldArgs = {
-  input: DestroyViewFieldInput;
-};
-
-
-export type MutationDestroyCoreViewFilterArgs = {
-  input: DestroyViewFilterInput;
-};
-
-
-export type MutationDestroyCoreViewFilterGroupArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDestroyCoreViewGroupArgs = {
-  input: DestroyViewGroupInput;
-};
-
-
-export type MutationDestroyCoreViewSortArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDestroyPageLayoutArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDestroyPageLayoutTabArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationDestroyPageLayoutWidgetArgs = {
-  id: Scalars['String'];
-};
-
-
 export type MutationDismissReconnectAccountBannerArgs = {
   connectedAccountId: Scalars['UUID'];
-};
-
-
-export type MutationDuplicateDashboardArgs = {
-  id: Scalars['UUID'];
 };
 
 
@@ -2659,166 +1693,8 @@ export type MutationDuplicateWorkflowVersionStepArgs = {
 };
 
 
-export type MutationEditSsoIdentityProviderArgs = {
-  input: EditSsoInput;
-};
-
-
-export type MutationEmailPasswordResetLinkArgs = {
-  email: Scalars['String'];
-  workspaceId: Scalars['UUID'];
-};
-
-
-export type MutationExecuteOneLogicFunctionArgs = {
-  input: ExecuteOneLogicFunctionInput;
-};
-
-
-export type MutationGenerateApiKeyTokenArgs = {
-  apiKeyId: Scalars['UUID'];
-  expiresAt: Scalars['String'];
-};
-
-
-export type MutationGetAuthTokensFromLoginTokenArgs = {
-  loginToken: Scalars['String'];
-  origin: Scalars['String'];
-};
-
-
-export type MutationGetAuthTokensFromOtpArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  loginToken: Scalars['String'];
-  origin: Scalars['String'];
-  otp: Scalars['String'];
-};
-
-
-export type MutationGetAuthorizationUrlForSsoArgs = {
-  input: GetAuthorizationUrlForSsoInput;
-};
-
-
-export type MutationGetLoginTokenFromCredentialsArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  locale?: InputMaybe<Scalars['String']>;
-  origin: Scalars['String'];
-  password: Scalars['String'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationImpersonateArgs = {
-  userId: Scalars['UUID'];
-  workspaceId: Scalars['UUID'];
-};
-
-
-export type MutationInitiateOtpProvisioningArgs = {
-  loginToken: Scalars['String'];
-  origin: Scalars['String'];
-};
-
-
-export type MutationInstallApplicationArgs = {
-  workspaceMigration: WorkspaceMigrationInput;
-};
-
-
-export type MutationRemoveQueryFromEventStreamArgs = {
-  input: RemoveQueryFromEventStreamInput;
-};
-
-
-export type MutationRemoveRoleFromAgentArgs = {
-  agentId: Scalars['UUID'];
-};
-
-
-export type MutationRenewTokenArgs = {
-  appToken: Scalars['String'];
-};
-
-
-export type MutationResendEmailVerificationTokenArgs = {
-  email: Scalars['String'];
-  origin: Scalars['String'];
-};
-
-
-export type MutationResendWorkspaceInvitationArgs = {
-  appTokenId: Scalars['String'];
-};
-
-
-export type MutationRetryJobsArgs = {
-  jobIds: Array<Scalars['String']>;
-  queueName: Scalars['String'];
-};
-
-
-export type MutationRevokeApiKeyArgs = {
-  input: RevokeApiKeyInput;
-};
-
-
 export type MutationRunWorkflowVersionArgs = {
   input: RunWorkflowVersionInput;
-};
-
-
-export type MutationSaveImapSmtpCaldavAccountArgs = {
-  accountOwnerId: Scalars['UUID'];
-  connectionParameters: EmailAccountConnectionParameters;
-  handle: Scalars['String'];
-  id?: InputMaybe<Scalars['UUID']>;
-};
-
-
-export type MutationSendInvitationsArgs = {
-  emails: Array<Scalars['String']>;
-};
-
-
-export type MutationSetMeteredSubscriptionPriceArgs = {
-  priceId: Scalars['String'];
-};
-
-
-export type MutationSignInArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  locale?: InputMaybe<Scalars['String']>;
-  password: Scalars['String'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationSignUpArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  locale?: InputMaybe<Scalars['String']>;
-  password: Scalars['String'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationSignUpInWorkspaceArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  locale?: InputMaybe<Scalars['String']>;
-  password: Scalars['String'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
-  workspaceId?: InputMaybe<Scalars['UUID']>;
-  workspaceInviteHash?: InputMaybe<Scalars['String']>;
-  workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationStartChannelSyncArgs = {
-  connectedAccountId: Scalars['UUID'];
 };
 
 
@@ -2832,158 +1708,8 @@ export type MutationSubmitFormStepArgs = {
 };
 
 
-export type MutationSyncApplicationArgs = {
-  manifest: Scalars['JSON'];
-};
-
-
 export type MutationTestHttpRequestArgs = {
   input: TestHttpRequestInput;
-};
-
-
-export type MutationTrackAnalyticsArgs = {
-  event?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  properties?: InputMaybe<Scalars['JSON']>;
-  type: AnalyticsType;
-};
-
-
-export type MutationUninstallApplicationArgs = {
-  universalIdentifier: Scalars['String'];
-};
-
-
-export type MutationUpdateApiKeyArgs = {
-  input: UpdateApiKeyInput;
-};
-
-
-export type MutationUpdateCommandMenuItemArgs = {
-  input: UpdateCommandMenuItemInput;
-};
-
-
-export type MutationUpdateCoreViewArgs = {
-  id: Scalars['String'];
-  input: UpdateViewInput;
-};
-
-
-export type MutationUpdateCoreViewFieldArgs = {
-  input: UpdateViewFieldInput;
-};
-
-
-export type MutationUpdateCoreViewFilterArgs = {
-  input: UpdateViewFilterInput;
-};
-
-
-export type MutationUpdateCoreViewFilterGroupArgs = {
-  id: Scalars['String'];
-  input: UpdateViewFilterGroupInput;
-};
-
-
-export type MutationUpdateCoreViewGroupArgs = {
-  input: UpdateViewGroupInput;
-};
-
-
-export type MutationUpdateCoreViewSortArgs = {
-  id: Scalars['String'];
-  input: UpdateViewSortInput;
-};
-
-
-export type MutationUpdateDatabaseConfigVariableArgs = {
-  key: Scalars['String'];
-  value: Scalars['JSON'];
-};
-
-
-export type MutationUpdateFrontComponentArgs = {
-  input: UpdateFrontComponentInput;
-};
-
-
-export type MutationUpdateLabPublicFeatureFlagArgs = {
-  input: UpdateLabPublicFeatureFlagInput;
-};
-
-
-export type MutationUpdateLogicFunctionSourceArgs = {
-  input: UpdateLogicFunctionSourceInput;
-};
-
-
-export type MutationUpdateOneAgentArgs = {
-  input: UpdateAgentInput;
-};
-
-
-export type MutationUpdateOneApplicationVariableArgs = {
-  applicationId: Scalars['UUID'];
-  key: Scalars['String'];
-  value: Scalars['String'];
-};
-
-
-export type MutationUpdateOneFieldArgs = {
-  input: UpdateOneFieldMetadataInput;
-};
-
-
-export type MutationUpdateOneObjectArgs = {
-  input: UpdateOneObjectInput;
-};
-
-
-export type MutationUpdateOneRoleArgs = {
-  updateRoleInput: UpdateRoleInput;
-};
-
-
-export type MutationUpdatePageLayoutArgs = {
-  id: Scalars['String'];
-  input: UpdatePageLayoutInput;
-};
-
-
-export type MutationUpdatePageLayoutTabArgs = {
-  id: Scalars['String'];
-  input: UpdatePageLayoutTabInput;
-};
-
-
-export type MutationUpdatePageLayoutWidgetArgs = {
-  id: Scalars['String'];
-  input: UpdatePageLayoutWidgetInput;
-};
-
-
-export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
-  id: Scalars['String'];
-  input: UpdatePageLayoutWithTabsInput;
-};
-
-
-export type MutationUpdatePasswordViaResetTokenArgs = {
-  newPassword: Scalars['String'];
-  passwordResetToken: Scalars['String'];
-};
-
-
-export type MutationUpdateUserEmailArgs = {
-  newEmail: Scalars['String'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateWebhookArgs = {
-  input: UpdateWebhookInput;
 };
 
 
@@ -2999,115 +1725,6 @@ export type MutationUpdateWorkflowVersionPositionsArgs = {
 
 export type MutationUpdateWorkflowVersionStepArgs = {
   input: UpdateWorkflowVersionStepInput;
-};
-
-
-export type MutationUpdateWorkspaceArgs = {
-  data: UpdateWorkspaceInput;
-};
-
-
-export type MutationUpdateWorkspaceFeatureFlagArgs = {
-  featureFlag: Scalars['String'];
-  value: Scalars['Boolean'];
-  workspaceId: Scalars['UUID'];
-};
-
-
-export type MutationUpdateWorkspaceMemberRoleArgs = {
-  roleId: Scalars['UUID'];
-  workspaceMemberId: Scalars['UUID'];
-};
-
-
-export type MutationUploadApplicationFileArgs = {
-  applicationUniversalIdentifier: Scalars['String'];
-  file: Scalars['Upload'];
-  fileFolder: FileFolder;
-  filePath: Scalars['String'];
-};
-
-
-export type MutationUploadFileArgs = {
-  file: Scalars['Upload'];
-  fileFolder?: InputMaybe<FileFolder>;
-};
-
-
-export type MutationUploadFilesFieldFileArgs = {
-  fieldMetadataId: Scalars['String'];
-  file: Scalars['Upload'];
-};
-
-
-export type MutationUploadImageArgs = {
-  file: Scalars['Upload'];
-  fileFolder?: InputMaybe<FileFolder>;
-};
-
-
-export type MutationUploadWorkspaceLogoArgs = {
-  file: Scalars['Upload'];
-};
-
-
-export type MutationUploadWorkspaceMemberProfilePictureArgs = {
-  file: Scalars['Upload'];
-};
-
-
-export type MutationUpsertFieldPermissionsArgs = {
-  upsertFieldPermissionsInput: UpsertFieldPermissionsInput;
-};
-
-
-export type MutationUpsertObjectPermissionsArgs = {
-  upsertObjectPermissionsInput: UpsertObjectPermissionsInput;
-};
-
-
-export type MutationUpsertPermissionFlagsArgs = {
-  upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
-};
-
-
-export type MutationUpsertRowLevelPermissionPredicatesArgs = {
-  input: UpsertRowLevelPermissionPredicatesInput;
-};
-
-
-export type MutationUserLookupAdminPanelArgs = {
-  userIdentifier: Scalars['String'];
-};
-
-
-export type MutationValidateApprovedAccessDomainArgs = {
-  input: ValidateApprovedAccessDomainInput;
-};
-
-
-export type MutationVerifyEmailAndGetLoginTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerificationToken: Scalars['String'];
-  origin: Scalars['String'];
-};
-
-
-export type MutationVerifyEmailAndGetWorkspaceAgnosticTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  emailVerificationToken: Scalars['String'];
-};
-
-
-export type MutationVerifyEmailingDomainArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
-  otp: Scalars['String'];
 };
 
 export type NativeModelCapabilities = {
@@ -3235,14 +1852,6 @@ export type ObjectPermission = {
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
 };
 
-export type ObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  objectMetadataId: Scalars['UUID'];
-};
-
 export type ObjectRecordEvent = {
   __typename?: 'ObjectRecordEvent';
   action: DatabaseEventAction;
@@ -3259,16 +1868,6 @@ export type ObjectRecordEventProperties = {
   before?: Maybe<Scalars['JSON']>;
   diff?: Maybe<Scalars['JSON']>;
   updatedFields?: Maybe<Array<Scalars['String']>>;
-};
-
-export type ObjectRecordFilterInput = {
-  and?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<UuidFilter>;
-  not?: InputMaybe<ObjectRecordFilterInput>;
-  or?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
 /** Date granularity options (e.g. DAY, MONTH, QUARTER, YEAR, WEEK, DAY_OF_THE_WEEK, MONTH_OF_THE_YEAR, QUARTER_OF_THE_YEAR) */
@@ -3300,12 +1899,6 @@ export type OnDbEvent = {
   objectNameSingular: Scalars['String'];
   record: Scalars['JSON'];
   updatedFields?: Maybe<Array<Scalars['String']>>;
-};
-
-export type OnDbEventInput = {
-  action?: InputMaybe<DatabaseEventAction>;
-  objectNameSingular?: InputMaybe<Scalars['String']>;
-  recordId?: InputMaybe<Scalars['UUID']>;
 };
 
 /** Onboarding status */
@@ -3470,11 +2063,6 @@ export type PieChartConfiguration = {
   timezone?: Maybe<Scalars['String']>;
 };
 
-export type PieChartDataInput = {
-  configuration: Scalars['JSON'];
-  objectMetadataId: Scalars['UUID'];
-};
-
 export type PieChartDataItem = {
   __typename?: 'PieChartDataItem';
   id: Scalars['String'];
@@ -3541,304 +2129,12 @@ export type PublicWorkspaceDataOutput = {
 
 export type Query = {
   __typename?: 'Query';
-  apiKey?: Maybe<ApiKey>;
-  apiKeys: Array<ApiKey>;
-  barChartData: BarChartDataOutput;
-  billingPortalSession: BillingSessionOutput;
-  checkApplicationExist: Scalars['Boolean'];
-  checkUserExists: CheckUserExistOutput;
-  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValidOutput;
-  commandMenuItem?: Maybe<CommandMenuItem>;
-  commandMenuItems: Array<CommandMenuItem>;
-  currentUser: User;
-  currentWorkspace: Workspace;
-  eventLogs: EventLogQueryResult;
-  field: Field;
-  fields: FieldConnection;
-  findManyAgents: Array<Agent>;
-  findManyApplications: Array<Application>;
-  findManyLogicFunctions: Array<LogicFunction>;
-  findManyMarketplaceApps: Array<MarketplaceApp>;
-  findManyPublicDomains: Array<PublicDomain>;
-  findOneAgent: Agent;
-  findOneApplication: Application;
-  findOneLogicFunction: LogicFunction;
-  findWorkspaceFromInviteHash: Workspace;
-  findWorkspaceInvitations: Array<WorkspaceInvitation>;
-  frontComponent?: Maybe<FrontComponent>;
-  frontComponents: Array<FrontComponent>;
-  getAddressDetails: PlaceDetailsResult;
-  getApprovedAccessDomains: Array<ApprovedAccessDomain>;
-  getAutoCompleteAddress: Array<AutocompleteResult>;
-  getAvailablePackages: Scalars['JSON'];
-  getConfigVariablesGrouped: ConfigVariablesOutput;
-  getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
-  getCoreView?: Maybe<CoreView>;
-  getCoreViewField?: Maybe<CoreViewField>;
-  getCoreViewFields: Array<CoreViewField>;
-  getCoreViewFilter?: Maybe<CoreViewFilter>;
-  getCoreViewFilterGroup?: Maybe<CoreViewFilterGroup>;
-  getCoreViewFilterGroups: Array<CoreViewFilterGroup>;
-  getCoreViewFilters: Array<CoreViewFilter>;
-  getCoreViewGroup?: Maybe<CoreViewGroup>;
-  getCoreViewGroups: Array<CoreViewGroup>;
-  getCoreViewSort?: Maybe<CoreViewSort>;
-  getCoreViewSorts: Array<CoreViewSort>;
-  getCoreViews: Array<CoreView>;
-  getDatabaseConfigVariable: ConfigVariable;
-  getEmailingDomains: Array<EmailingDomain>;
-  getIndicatorHealthStatus: AdminPanelHealthServiceData;
-  getLogicFunctionSourceCode?: Maybe<Scalars['JSON']>;
-  getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
-  getPageLayout?: Maybe<PageLayout>;
-  getPageLayoutTab: PageLayoutTab;
-  getPageLayoutTabs: Array<PageLayoutTab>;
-  getPageLayoutWidget: PageLayoutWidget;
-  getPageLayoutWidgets: Array<PageLayoutWidget>;
-  getPageLayouts: Array<PageLayout>;
-  getPostgresCredentials?: Maybe<PostgresCredentials>;
-  getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
-  getQueueJobs: QueueJobsResponse;
-  getQueueMetrics: QueueMetricsData;
-  getRoles: Array<Role>;
-  getSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
-  getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
-  getToolIndex: Array<ToolIndexEntry>;
-  index: Index;
-  indexMetadatas: IndexConnection;
-  lineChartData: LineChartDataOutput;
-  listPlans: Array<BillingPlanOutput>;
-  object: Object;
-  objects: ObjectConnection;
-  pieChartData: PieChartDataOutput;
-  search: SearchResultConnection;
-  validatePasswordResetToken: ValidatePasswordResetTokenOutput;
-  versionInfo: VersionInfo;
-  webhook?: Maybe<Webhook>;
-  webhooks: Array<Webhook>;
-};
-
-
-export type QueryApiKeyArgs = {
-  input: GetApiKeyInput;
-};
-
-
-export type QueryBarChartDataArgs = {
-  input: BarChartDataInput;
-};
-
-
-export type QueryBillingPortalSessionArgs = {
-  returnUrlPath?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryCheckApplicationExistArgs = {
-  id?: InputMaybe<Scalars['UUID']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']>;
-};
-
-
-export type QueryCheckUserExistsArgs = {
-  captchaToken?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-};
-
-
-export type QueryCheckWorkspaceInviteHashIsValidArgs = {
-  inviteHash: Scalars['String'];
-};
-
-
-export type QueryCommandMenuItemArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryEventLogsArgs = {
-  input: EventLogQueryInput;
-};
-
-
-export type QueryFindOneAgentArgs = {
-  input: AgentIdInput;
-};
-
-
-export type QueryFindOneApplicationArgs = {
-  id?: InputMaybe<Scalars['UUID']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']>;
-};
-
-
-export type QueryFindOneLogicFunctionArgs = {
-  input: LogicFunctionIdInput;
-};
-
-
-export type QueryFindWorkspaceFromInviteHashArgs = {
-  inviteHash: Scalars['String'];
-};
-
-
-export type QueryFrontComponentArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryGetAddressDetailsArgs = {
-  placeId: Scalars['String'];
-  token: Scalars['String'];
-};
-
-
-export type QueryGetAutoCompleteAddressArgs = {
-  address: Scalars['String'];
-  country?: InputMaybe<Scalars['String']>;
-  isFieldCity?: InputMaybe<Scalars['Boolean']>;
-  token: Scalars['String'];
-};
-
-
-export type QueryGetAvailablePackagesArgs = {
-  input: LogicFunctionIdInput;
-};
-
-
-export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
-  id: Scalars['UUID'];
-};
-
-
-export type QueryGetCoreViewArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetCoreViewFieldArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetCoreViewFieldsArgs = {
-  viewId: Scalars['String'];
-};
-
-
-export type QueryGetCoreViewFilterArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetCoreViewFilterGroupArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetCoreViewFilterGroupsArgs = {
-  viewId?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetCoreViewFiltersArgs = {
-  viewId?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetCoreViewGroupArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetCoreViewGroupsArgs = {
-  viewId?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetCoreViewSortArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetCoreViewSortsArgs = {
-  viewId?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetCoreViewsArgs = {
-  objectMetadataId?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetDatabaseConfigVariableArgs = {
-  key: Scalars['String'];
-};
-
-
-export type QueryGetIndicatorHealthStatusArgs = {
-  indicatorId: HealthIndicatorId;
-};
-
-
-export type QueryGetLogicFunctionSourceCodeArgs = {
-  input: LogicFunctionIdInput;
-};
-
-
-export type QueryGetPageLayoutArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutTabArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutTabsArgs = {
-  pageLayoutId: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutWidgetArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutWidgetsArgs = {
-  pageLayoutTabId: Scalars['String'];
-};
-
-
-export type QueryGetPageLayoutsArgs = {
-  objectMetadataId?: InputMaybe<Scalars['String']>;
-  pageLayoutType?: InputMaybe<PageLayoutType>;
-};
-
-
-export type QueryGetPublicWorkspaceDataByDomainArgs = {
-  origin?: InputMaybe<Scalars['String']>;
-};
-
-
-export type QueryGetQueueJobsArgs = {
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  queueName: Scalars['String'];
-  state: JobState;
-};
-
-
-export type QueryGetQueueMetricsArgs = {
-  queueName: Scalars['String'];
-  timeRange?: InputMaybe<QueueMetricsTimeRange>;
 };
 
 
@@ -3881,36 +2177,6 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
   personId: Scalars['UUID'];
-};
-
-
-export type QueryLineChartDataArgs = {
-  input: LineChartDataInput;
-};
-
-
-export type QueryPieChartDataArgs = {
-  input: PieChartDataInput;
-};
-
-
-export type QuerySearchArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
-  limit: Scalars['Int'];
-  searchInput: Scalars['String'];
-};
-
-
-export type QueryValidatePasswordResetTokenArgs = {
-  passwordResetToken: Scalars['String'];
-};
-
-
-export type QueryWebhookArgs = {
-  id: Scalars['UUID'];
 };
 
 export type QueueJob = {
@@ -4003,11 +2269,6 @@ export enum RelationType {
   ONE_TO_MANY = 'ONE_TO_MANY'
 }
 
-export type RemoveQueryFromEventStreamInput = {
-  eventStreamId: Scalars['String'];
-  queryId: Scalars['String'];
-};
-
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
@@ -4017,10 +2278,6 @@ export type RetryJobsResponse = {
   __typename?: 'RetryJobsResponse';
   results: Array<JobOperationResult>;
   retriedCount: Scalars['Int'];
-};
-
-export type RevokeApiKeyInput = {
-  id: Scalars['UUID'];
 };
 
 export type RichTextV2Body = {
@@ -4081,30 +2338,10 @@ export type RowLevelPermissionPredicateGroup = {
   roleId: Scalars['String'];
 };
 
-export type RowLevelPermissionPredicateGroupInput = {
-  id?: InputMaybe<Scalars['UUID']>;
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: Scalars['UUID'];
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-};
-
 export enum RowLevelPermissionPredicateGroupLogicalOperator {
   AND = 'AND',
   OR = 'OR'
 }
-
-export type RowLevelPermissionPredicateInput = {
-  fieldMetadataId: Scalars['UUID'];
-  id?: InputMaybe<Scalars['UUID']>;
-  operand: RowLevelPermissionPredicateOperand;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']>;
-  subFieldName?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['JSON']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']>;
-};
 
 export enum RowLevelPermissionPredicateOperand {
   CONTAINS = 'CONTAINS',
@@ -4207,22 +2444,6 @@ export type Sentry = {
   release?: Maybe<Scalars['String']>;
 };
 
-export type SetupOidcSsoInput = {
-  clientID: Scalars['String'];
-  clientSecret: Scalars['String'];
-  issuer: Scalars['String'];
-  name: Scalars['String'];
-};
-
-export type SetupSamlSsoInput = {
-  certificate: Scalars['String'];
-  fingerprint?: InputMaybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  issuer: Scalars['String'];
-  name: Scalars['String'];
-  ssoURL: Scalars['String'];
-};
-
 export type SetupSsoOutput = {
   __typename?: 'SetupSsoOutput';
   id: Scalars['UUID'];
@@ -4280,28 +2501,6 @@ export type SubmitFormStepInput = {
   stepId: Scalars['UUID'];
   /** Workflow run ID */
   workflowRunId: Scalars['UUID'];
-};
-
-export type Subscription = {
-  __typename?: 'Subscription';
-  logicFunctionLogs: LogicFunctionLogs;
-  onDbEvent: OnDbEvent;
-  onEventSubscription?: Maybe<EventSubscription>;
-};
-
-
-export type SubscriptionLogicFunctionLogsArgs = {
-  input: LogicFunctionLogsInput;
-};
-
-
-export type SubscriptionOnDbEventArgs = {
-  input: OnDbEventInput;
-};
-
-
-export type SubscriptionOnEventSubscriptionArgs = {
-  eventStreamId: Scalars['String'];
 };
 
 export enum SubscriptionInterval {
@@ -4467,17 +2666,6 @@ export type TwoFactorAuthenticationMethodDto = {
   twoFactorAuthenticationMethodId: Scalars['UUID'];
 };
 
-export type UuidFilter = {
-  eq?: InputMaybe<Scalars['UUID']>;
-  gt?: InputMaybe<Scalars['UUID']>;
-  gte?: InputMaybe<Scalars['UUID']>;
-  in?: InputMaybe<Array<Scalars['UUID']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['UUID']>;
-  lte?: InputMaybe<Scalars['UUID']>;
-  neq?: InputMaybe<Scalars['UUID']>;
-};
-
 export type UuidFilterComparison = {
   eq?: InputMaybe<Scalars['UUID']>;
   gt?: InputMaybe<Scalars['UUID']>;
@@ -4493,261 +2681,6 @@ export type UuidFilterComparison = {
   notILike?: InputMaybe<Scalars['UUID']>;
   notIn?: InputMaybe<Array<Scalars['UUID']>>;
   notLike?: InputMaybe<Scalars['UUID']>;
-};
-
-export type UpdateAgentInput = {
-  description?: InputMaybe<Scalars['String']>;
-  evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
-  icon?: InputMaybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  label?: InputMaybe<Scalars['String']>;
-  modelConfiguration?: InputMaybe<Scalars['JSON']>;
-  modelId?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  prompt?: InputMaybe<Scalars['String']>;
-  responseFormat?: InputMaybe<Scalars['JSON']>;
-  roleId?: InputMaybe<Scalars['UUID']>;
-};
-
-export type UpdateApiKeyInput = {
-  expiresAt?: InputMaybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  name?: InputMaybe<Scalars['String']>;
-  revokedAt?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateCommandMenuItemInput = {
-  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
-  availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
-  icon?: InputMaybe<Scalars['String']>;
-  id: Scalars['UUID'];
-  isPinned?: InputMaybe<Scalars['Boolean']>;
-  label?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateFieldInput = {
-  defaultValue?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  isActive?: InputMaybe<Scalars['Boolean']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
-  isNullable?: InputMaybe<Scalars['Boolean']>;
-  isSystem?: InputMaybe<Scalars['Boolean']>;
-  isUIReadOnly?: InputMaybe<Scalars['Boolean']>;
-  isUnique?: InputMaybe<Scalars['Boolean']>;
-  label?: InputMaybe<Scalars['String']>;
-  morphRelationsUpdatePayload?: InputMaybe<Array<Scalars['JSON']>>;
-  name?: InputMaybe<Scalars['String']>;
-  options?: InputMaybe<Scalars['JSON']>;
-  settings?: InputMaybe<Scalars['JSON']>;
-};
-
-export type UpdateFrontComponentInput = {
-  /** The id of the front component to update */
-  id: Scalars['UUID'];
-  /** The front component fields to update */
-  update: UpdateFrontComponentInputUpdates;
-};
-
-export type UpdateFrontComponentInputUpdates = {
-  description?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateLabPublicFeatureFlagInput = {
-  publicFeatureFlag: Scalars['String'];
-  value: Scalars['Boolean'];
-};
-
-export type UpdateLogicFunctionSourceInput = {
-  /** The source code (Sources) to write. Only updates source files. */
-  code: Scalars['JSON'];
-  /** The id of the logic function. */
-  id: Scalars['UUID'];
-};
-
-export type UpdateObjectPayload = {
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  isActive?: InputMaybe<Scalars['Boolean']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
-  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  labelPlural?: InputMaybe<Scalars['String']>;
-  labelSingular?: InputMaybe<Scalars['String']>;
-  namePlural?: InputMaybe<Scalars['String']>;
-  nameSingular?: InputMaybe<Scalars['String']>;
-  shortcut?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateOneFieldMetadataInput = {
-  /** The id of the record to update */
-  id: Scalars['UUID'];
-  /** The record to update */
-  update: UpdateFieldInput;
-};
-
-export type UpdateOneObjectInput = {
-  /** The id of the object to update */
-  id: Scalars['UUID'];
-  update: UpdateObjectPayload;
-};
-
-export type UpdatePageLayoutInput = {
-  name?: InputMaybe<Scalars['String']>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
-  type?: InputMaybe<PageLayoutType>;
-};
-
-export type UpdatePageLayoutTabInput = {
-  position?: InputMaybe<Scalars['Float']>;
-  title?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdatePageLayoutTabWithWidgetsInput = {
-  id: Scalars['UUID'];
-  position: Scalars['Float'];
-  title: Scalars['String'];
-  widgets: Array<UpdatePageLayoutWidgetWithIdInput>;
-};
-
-export type UpdatePageLayoutWidgetInput = {
-  configuration?: InputMaybe<Scalars['JSON']>;
-  gridPosition?: InputMaybe<GridPositionInput>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
-  position?: InputMaybe<Scalars['JSON']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<WidgetType>;
-};
-
-export type UpdatePageLayoutWidgetWithIdInput = {
-  configuration?: InputMaybe<Scalars['JSON']>;
-  gridPosition: GridPositionInput;
-  id: Scalars['UUID'];
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
-  pageLayoutTabId: Scalars['UUID'];
-  position?: InputMaybe<Scalars['JSON']>;
-  title: Scalars['String'];
-  type: WidgetType;
-};
-
-export type UpdatePageLayoutWithTabsInput = {
-  name: Scalars['String'];
-  objectMetadataId?: InputMaybe<Scalars['UUID']>;
-  tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
-  type: PageLayoutType;
-};
-
-export type UpdateRoleInput = {
-  /** The id of the role to update */
-  id: Scalars['UUID'];
-  update: UpdateRolePayload;
-};
-
-export type UpdateRolePayload = {
-  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
-  canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
-  canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']>;
-  canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']>;
-  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  label?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateViewFieldInput = {
-  /** The id of the view field to update */
-  id: Scalars['UUID'];
-  /** The view field to update */
-  update: UpdateViewFieldInputUpdates;
-};
-
-export type UpdateViewFieldInputUpdates = {
-  aggregateOperation?: InputMaybe<AggregateOperations>;
-  isVisible?: InputMaybe<Scalars['Boolean']>;
-  position?: InputMaybe<Scalars['Float']>;
-  size?: InputMaybe<Scalars['Float']>;
-};
-
-export type UpdateViewFilterGroupInput = {
-  id?: InputMaybe<Scalars['UUID']>;
-  logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
-  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
-  viewId?: InputMaybe<Scalars['UUID']>;
-};
-
-export type UpdateViewFilterInput = {
-  /** The id of the view filter to update */
-  id: Scalars['UUID'];
-  /** The view filter to update */
-  update: UpdateViewFilterInputUpdates;
-};
-
-export type UpdateViewFilterInputUpdates = {
-  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  operand?: InputMaybe<ViewFilterOperand>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
-  subFieldName?: InputMaybe<Scalars['String']>;
-  value?: InputMaybe<Scalars['JSON']>;
-  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
-};
-
-export type UpdateViewGroupInput = {
-  /** The id of the view group to update */
-  id: Scalars['UUID'];
-  /** The view group to update */
-  update: UpdateViewGroupInputUpdates;
-};
-
-export type UpdateViewGroupInputUpdates = {
-  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  fieldValue?: InputMaybe<Scalars['String']>;
-  isVisible?: InputMaybe<Scalars['Boolean']>;
-  position?: InputMaybe<Scalars['Float']>;
-};
-
-export type UpdateViewInput = {
-  anyFieldFilterValue?: InputMaybe<Scalars['String']>;
-  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  calendarLayout?: InputMaybe<ViewCalendarLayout>;
-  icon?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  isCompact?: InputMaybe<Scalars['Boolean']>;
-  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
-  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  name?: InputMaybe<Scalars['String']>;
-  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
-  position?: InputMaybe<Scalars['Float']>;
-  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']>;
-  type?: InputMaybe<ViewType>;
-  visibility?: InputMaybe<ViewVisibility>;
-};
-
-export type UpdateViewSortInput = {
-  direction?: InputMaybe<ViewSortDirection>;
-  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
-  id?: InputMaybe<Scalars['UUID']>;
-  viewId?: InputMaybe<Scalars['UUID']>;
-};
-
-export type UpdateWebhookInput = {
-  /** The id of the webhook to update */
-  id: Scalars['UUID'];
-  /** The webhook fields to update */
-  update: UpdateWebhookInputUpdates;
-};
-
-export type UpdateWebhookInputUpdates = {
-  description?: InputMaybe<Scalars['String']>;
-  operations?: InputMaybe<Array<Scalars['String']>>;
-  secret?: InputMaybe<Scalars['String']>;
-  targetUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateWorkflowRunStepInput = {
@@ -4769,52 +2702,6 @@ export type UpdateWorkflowVersionStepInput = {
   step: Scalars['JSON'];
   /** Workflow version ID */
   workflowVersionId: Scalars['UUID'];
-};
-
-export type UpdateWorkspaceInput = {
-  aiAdditionalInstructions?: InputMaybe<Scalars['String']>;
-  allowImpersonation?: InputMaybe<Scalars['Boolean']>;
-  customDomain?: InputMaybe<Scalars['String']>;
-  defaultRoleId?: InputMaybe<Scalars['UUID']>;
-  displayName?: InputMaybe<Scalars['String']>;
-  editableProfileFields?: InputMaybe<Array<Scalars['String']>>;
-  eventLogRetentionDays?: InputMaybe<Scalars['Float']>;
-  fastModel?: InputMaybe<Scalars['String']>;
-  inviteHash?: InputMaybe<Scalars['String']>;
-  isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
-  isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
-  isMicrosoftAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
-  isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
-  isPasswordAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
-  isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']>;
-  isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
-  isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
-  logo?: InputMaybe<Scalars['String']>;
-  smartModel?: InputMaybe<Scalars['String']>;
-  subdomain?: InputMaybe<Scalars['String']>;
-  trashRetentionDays?: InputMaybe<Scalars['Float']>;
-};
-
-export type UpsertFieldPermissionsInput = {
-  fieldPermissions: Array<FieldPermissionInput>;
-  roleId: Scalars['UUID'];
-};
-
-export type UpsertObjectPermissionsInput = {
-  objectPermissions: Array<ObjectPermissionInput>;
-  roleId: Scalars['UUID'];
-};
-
-export type UpsertPermissionFlagsInput = {
-  permissionFlagKeys: Array<PermissionFlagType>;
-  roleId: Scalars['UUID'];
-};
-
-export type UpsertRowLevelPermissionPredicatesInput = {
-  objectMetadataId: Scalars['UUID'];
-  predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
-  predicates: Array<RowLevelPermissionPredicateInput>;
-  roleId: Scalars['UUID'];
 };
 
 export type UpsertRowLevelPermissionPredicatesResult = {
@@ -4888,11 +2775,6 @@ export type UserWorkspace = {
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['UUID'];
-};
-
-export type ValidateApprovedAccessDomainInput = {
-  approvedAccessDomainId: Scalars['UUID'];
-  validationToken: Scalars['String'];
 };
 
 export type ValidatePasswordResetTokenOutput = {
@@ -5289,22 +3171,6 @@ export enum WorkspaceMemberTimeFormatEnum {
   SYSTEM = 'SYSTEM'
 }
 
-export enum WorkspaceMigrationActionType {
-  create = 'create',
-  delete = 'delete',
-  update = 'update'
-}
-
-export type WorkspaceMigrationDeleteActionInput = {
-  metadataName: AllMetadataName;
-  type: WorkspaceMigrationActionType;
-  universalIdentifier: Scalars['String'];
-};
-
-export type WorkspaceMigrationInput = {
-  actions: Array<WorkspaceMigrationDeleteActionInput>;
-};
-
 export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']>;
@@ -5323,2231 +3189,720 @@ export type WorkspaceUrlsAndId = {
   workspaceUrls: WorkspaceUrls;
 };
 
-export type SearchQueryVariables = Exact<{
-  searchInput: Scalars['String'];
-  limit: Scalars['Int'];
-  after?: InputMaybe<Scalars['String']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
+export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
+
+export type ActivateWorkflowVersionMutationVariables = Exact<{
+  workflowVersionId: Scalars['UUID'];
 }>;
 
 
-export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, objectLabelSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type ActivateWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
 
-export type PageLayoutFragmentFragment = { __typename?: 'PageLayout', id: any, name: string, objectMetadataId?: any | null, type: PageLayoutType, defaultTabToFocusOnMobileAndSidePanelId?: any | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: any } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null };
-
-export type PageLayoutTabFragmentFragment = { __typename?: 'PageLayoutTab', id: any, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: any } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null };
-
-export type DuplicateDashboardMutationVariables = Exact<{
-  id: Scalars['UUID'];
+export type ComputeStepOutputSchemaMutationVariables = Exact<{
+  input: ComputeStepOutputSchemaInput;
 }>;
 
 
-export type DuplicateDashboardMutation = { __typename?: 'Mutation', duplicateDashboard: { __typename?: 'DuplicatedDashboard', id: any, title?: string | null, pageLayoutId?: any | null, position: number, createdAt: string, updatedAt: string } };
+export type ComputeStepOutputSchemaMutation = { __typename?: 'Mutation', computeStepOutputSchema: any };
 
-export type FindOnePageLayoutQueryVariables = Exact<{
-  id: Scalars['String'];
+export type CreateDraftFromWorkflowVersionMutationVariables = Exact<{
+  input: CreateDraftFromWorkflowVersionInput;
 }>;
 
 
-export type FindOnePageLayoutQuery = { __typename?: 'Query', getPageLayout?: { __typename?: 'PageLayout', id: any, name: string, objectMetadataId?: any | null, type: PageLayoutType, defaultTabToFocusOnMobileAndSidePanelId?: any | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: any } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null } | null };
+export type CreateDraftFromWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'WorkflowVersionDTO', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } };
 
-export type FindManyMarketplaceAppsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FindManyMarketplaceAppsQuery = { __typename?: 'Query', findManyMarketplaceApps: Array<{ __typename?: 'MarketplaceApp', id: string, name: string, description: string, icon: string, version: string, author: string, category: string, logo?: string | null, screenshots: Array<string>, aboutDescription: string, providers: Array<string>, websiteUrl?: string | null, termsUrl?: string | null }> };
-
-export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: any } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } };
-
-export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
-  id: Scalars['String'];
-  input: UpdatePageLayoutWithTabsInput;
+export type CreateWorkflowVersionEdgeMutationVariables = Exact<{
+  input: CreateWorkflowVersionEdgeInput;
 }>;
 
 
-export type UpdatePageLayoutWithTabsAndWidgetsMutation = { __typename?: 'Mutation', updatePageLayoutWithTabsAndWidgets: { __typename?: 'PageLayout', id: any, name: string, type: PageLayoutType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, position: number, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: any } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null } };
+export type CreateWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
-export type FindAllRecordPageLayoutsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FindAllRecordPageLayoutsQuery = { __typename?: 'Query', getPageLayouts: Array<{ __typename?: 'PageLayout', id: any, name: string, objectMetadataId?: any | null, type: PageLayoutType, defaultTabToFocusOnMobileAndSidePanelId?: any | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: any, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: any, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: any, title: string, type: WidgetType, objectMetadataId?: any | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: any, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: any, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: any } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: any, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: any | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: any, aggregateFieldMetadataId: any, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null }> };
-
-export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null };
-
-export type ViewFilterFragmentFragment = { __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null };
-
-export type ViewFilterGroupFragmentFragment = { __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any };
-
-export type ViewFragmentFragment = { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, mainGroupByFieldMetadataId?: any | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: any | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
-
-export type ViewGroupFragmentFragment = { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null };
-
-export type ViewSortFragmentFragment = { __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any };
-
-export type CreateCoreViewMutationVariables = Exact<{
-  input: CreateViewInput;
+export type CreateWorkflowVersionStepMutationVariables = Exact<{
+  input: CreateWorkflowVersionStepInput;
 }>;
 
 
-export type CreateCoreViewMutation = { __typename?: 'Mutation', createCoreView: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, mainGroupByFieldMetadataId?: any | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: any | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
+export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
-export type CreateCoreViewFieldMutationVariables = Exact<{
-  input: CreateViewFieldInput;
+export type DeactivateWorkflowVersionMutationVariables = Exact<{
+  workflowVersionId: Scalars['UUID'];
 }>;
 
 
-export type CreateCoreViewFieldMutation = { __typename?: 'Mutation', createCoreViewField: { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+export type DeactivateWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
 
-export type CreateCoreViewFilterMutationVariables = Exact<{
-  input: CreateViewFilterInput;
+export type DeleteWorkflowVersionEdgeMutationVariables = Exact<{
+  input: CreateWorkflowVersionEdgeInput;
 }>;
 
 
-export type CreateCoreViewFilterMutation = { __typename?: 'Mutation', createCoreViewFilter: { __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+export type DeleteWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
-export type CreateCoreViewFilterGroupMutationVariables = Exact<{
-  input: CreateViewFilterGroupInput;
+export type DeleteWorkflowVersionStepMutationVariables = Exact<{
+  input: DeleteWorkflowVersionStepInput;
 }>;
 
 
-export type CreateCoreViewFilterGroupMutation = { __typename?: 'Mutation', createCoreViewFilterGroup: { __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any } };
+export type DeleteWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
-export type CreateCoreViewGroupMutationVariables = Exact<{
-  input: CreateViewGroupInput;
+export type DuplicateWorkflowMutationVariables = Exact<{
+  input: DuplicateWorkflowInput;
 }>;
 
 
-export type CreateCoreViewGroupMutation = { __typename?: 'Mutation', createCoreViewGroup: { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+export type DuplicateWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'WorkflowVersionDTO', id: any, name: string, status: string, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string, workflowId: any } };
 
-export type CreateCoreViewSortMutationVariables = Exact<{
-  input: CreateViewSortInput;
+export type DuplicateWorkflowVersionStepMutationVariables = Exact<{
+  input: DuplicateWorkflowVersionStepInput;
 }>;
 
 
-export type CreateCoreViewSortMutation = { __typename?: 'Mutation', createCoreViewSort: { __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any } };
+export type DuplicateWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
-export type CreateManyCoreViewFieldsMutationVariables = Exact<{
-  inputs: Array<CreateViewFieldInput> | CreateViewFieldInput;
+export type RunWorkflowVersionMutationVariables = Exact<{
+  input: RunWorkflowVersionInput;
 }>;
 
 
-export type CreateManyCoreViewFieldsMutation = { __typename?: 'Mutation', createManyCoreViewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersionOutput', workflowRunId: any } };
 
-export type CreateManyCoreViewGroupsMutationVariables = Exact<{
-  inputs: Array<CreateViewGroupInput> | CreateViewGroupInput;
+export type StopWorkflowRunMutationVariables = Exact<{
+  workflowRunId: Scalars['UUID'];
 }>;
 
 
-export type CreateManyCoreViewGroupsMutation = { __typename?: 'Mutation', createManyCoreViewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
+export type StopWorkflowRunMutation = { __typename?: 'Mutation', stopWorkflowRun: { __typename: 'WorkflowRun', id: any, status: WorkflowRunStatusEnum } };
 
-export type DeleteCoreViewMutationVariables = Exact<{
-  id: Scalars['String'];
+export type UpdateWorkflowRunStepMutationVariables = Exact<{
+  input: UpdateWorkflowRunStepInput;
 }>;
 
 
-export type DeleteCoreViewMutation = { __typename?: 'Mutation', deleteCoreView: boolean };
+export type UpdateWorkflowRunStepMutation = { __typename?: 'Mutation', updateWorkflowRunStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
 
-export type DeleteCoreViewFieldMutationVariables = Exact<{
-  input: DeleteViewFieldInput;
+export type UpdateWorkflowVersionStepMutationVariables = Exact<{
+  input: UpdateWorkflowVersionStepInput;
 }>;
 
 
-export type DeleteCoreViewFieldMutation = { __typename?: 'Mutation', deleteCoreViewField: { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
 
-export type DeleteCoreViewFilterMutationVariables = Exact<{
-  input: DeleteViewFilterInput;
+export type SubmitFormStepMutationVariables = Exact<{
+  input: SubmitFormStepInput;
 }>;
 
 
-export type DeleteCoreViewFilterMutation = { __typename?: 'Mutation', deleteCoreViewFilter: { __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
+export type SubmitFormStepMutation = { __typename?: 'Mutation', submitFormStep: boolean };
 
-export type DeleteCoreViewFilterGroupMutationVariables = Exact<{
-  id: Scalars['String'];
+export type TestHttpRequestMutationVariables = Exact<{
+  input: TestHttpRequestInput;
 }>;
 
 
-export type DeleteCoreViewFilterGroupMutation = { __typename?: 'Mutation', deleteCoreViewFilterGroup: boolean };
+export type TestHttpRequestMutation = { __typename?: 'Mutation', testHttpRequest: { __typename?: 'TestHttpRequestOutput', success: boolean, message: string, result?: any | null, error?: any | null, status?: number | null, statusText?: string | null, headers?: any | null } };
 
-export type DeleteCoreViewGroupMutationVariables = Exact<{
-  input: DeleteViewGroupInput;
+export type UpdateWorkflowVersionPositionsMutationVariables = Exact<{
+  input: UpdateWorkflowVersionPositionsInput;
 }>;
 
 
-export type DeleteCoreViewGroupMutation = { __typename?: 'Mutation', deleteCoreViewGroup: { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type DeleteCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DeleteCoreViewSortMutation = { __typename?: 'Mutation', deleteCoreViewSort: boolean };
-
-export type DestroyCoreViewMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DestroyCoreViewMutation = { __typename?: 'Mutation', destroyCoreView: boolean };
-
-export type DestroyCoreViewFieldMutationVariables = Exact<{
-  input: DestroyViewFieldInput;
-}>;
-
-
-export type DestroyCoreViewFieldMutation = { __typename?: 'Mutation', destroyCoreViewField: { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type DestroyCoreViewFilterMutationVariables = Exact<{
-  input: DestroyViewFilterInput;
-}>;
-
-
-export type DestroyCoreViewFilterMutation = { __typename?: 'Mutation', destroyCoreViewFilter: { __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type DestroyCoreViewFilterGroupMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DestroyCoreViewFilterGroupMutation = { __typename?: 'Mutation', destroyCoreViewFilterGroup: boolean };
-
-export type DestroyCoreViewGroupMutationVariables = Exact<{
-  input: DestroyViewGroupInput;
-}>;
-
-
-export type DestroyCoreViewGroupMutation = { __typename?: 'Mutation', destroyCoreViewGroup: { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type DestroyCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type DestroyCoreViewSortMutation = { __typename?: 'Mutation', destroyCoreViewSort: boolean };
-
-export type UpdateCoreViewMutationVariables = Exact<{
-  id: Scalars['String'];
-  input: UpdateViewInput;
-}>;
-
-
-export type UpdateCoreViewMutation = { __typename?: 'Mutation', updateCoreView: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, mainGroupByFieldMetadataId?: any | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: any | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> } };
-
-export type UpdateCoreViewFieldMutationVariables = Exact<{
-  input: UpdateViewFieldInput;
-}>;
-
-
-export type UpdateCoreViewFieldMutation = { __typename?: 'Mutation', updateCoreViewField: { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type UpdateCoreViewFilterMutationVariables = Exact<{
-  input: UpdateViewFilterInput;
-}>;
-
-
-export type UpdateCoreViewFilterMutation = { __typename?: 'Mutation', updateCoreViewFilter: { __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type UpdateCoreViewFilterGroupMutationVariables = Exact<{
-  id: Scalars['String'];
-  input: UpdateViewFilterGroupInput;
-}>;
-
-
-export type UpdateCoreViewFilterGroupMutation = { __typename?: 'Mutation', updateCoreViewFilterGroup: { __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any } };
-
-export type UpdateCoreViewGroupMutationVariables = Exact<{
-  input: UpdateViewGroupInput;
-}>;
-
-
-export type UpdateCoreViewGroupMutation = { __typename?: 'Mutation', updateCoreViewGroup: { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } };
-
-export type UpdateCoreViewSortMutationVariables = Exact<{
-  id: Scalars['String'];
-  input: UpdateViewSortInput;
-}>;
-
-
-export type UpdateCoreViewSortMutation = { __typename?: 'Mutation', updateCoreViewSort: { __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any } };
-
-export type FindAllCoreViewsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type FindAllCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, mainGroupByFieldMetadataId?: any | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: any | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
-
-export type FindManyCoreViewFieldsQueryVariables = Exact<{
-  viewId: Scalars['String'];
-}>;
-
-
-export type FindManyCoreViewFieldsQuery = { __typename?: 'Query', getCoreViewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
-
-export type FindManyCoreViewFilterGroupsQueryVariables = Exact<{
-  viewId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type FindManyCoreViewFilterGroupsQuery = { __typename?: 'Query', getCoreViewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }> };
-
-export type FindManyCoreViewFiltersQueryVariables = Exact<{
-  viewId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type FindManyCoreViewFiltersQuery = { __typename?: 'Query', getCoreViewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
-
-export type FindManyCoreViewGroupsQueryVariables = Exact<{
-  viewId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type FindManyCoreViewGroupsQuery = { __typename?: 'Query', getCoreViewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
-
-export type FindManyCoreViewSortsQueryVariables = Exact<{
-  viewId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type FindManyCoreViewSortsQuery = { __typename?: 'Query', getCoreViewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }> };
-
-export type FindManyCoreViewsQueryVariables = Exact<{
-  objectMetadataId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type FindManyCoreViewsQuery = { __typename?: 'Query', getCoreViews: Array<{ __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, mainGroupByFieldMetadataId?: any | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: any | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
-
-export type FindOneCoreViewQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type FindOneCoreViewQuery = { __typename?: 'Query', getCoreView?: { __typename?: 'CoreView', id: any, name: string, objectMetadataId: any, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: any | null, mainGroupByFieldMetadataId?: any | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: any | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: any | null, viewFields: Array<{ __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null }> } | null };
-
-export type FindOneCoreViewFieldQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type FindOneCoreViewFieldQuery = { __typename?: 'Query', getCoreViewField?: { __typename?: 'CoreViewField', id: any, fieldMetadataId: any, viewId: any, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
-
-export type FindOneCoreViewFilterQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type FindOneCoreViewFilterQuery = { __typename?: 'Query', getCoreViewFilter?: { __typename?: 'CoreViewFilter', id: any, fieldMetadataId: any, operand: ViewFilterOperand, value: any, viewFilterGroupId?: any | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
-
-export type FindOneCoreViewFilterGroupQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type FindOneCoreViewFilterGroupQuery = { __typename?: 'Query', getCoreViewFilterGroup?: { __typename?: 'CoreViewFilterGroup', id: any, parentViewFilterGroupId?: any | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: any } | null };
-
-export type FindOneCoreViewGroupQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type FindOneCoreViewGroupQuery = { __typename?: 'Query', getCoreViewGroup?: { __typename?: 'CoreViewGroup', id: any, isVisible: boolean, fieldValue: string, position: number, viewId: any, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
-
-export type FindOneCoreViewSortQueryVariables = Exact<{
-  id: Scalars['String'];
-}>;
-
-
-export type FindOneCoreViewSortQuery = { __typename?: 'Query', getCoreViewSort?: { __typename?: 'CoreViewSort', id: any, fieldMetadataId: any, direction: ViewSortDirection, viewId: any } | null };
-
-export const PageLayoutWidgetFragmentFragmentDoc = gql`
-    fragment PageLayoutWidgetFragment on PageLayoutWidget {
-  id
-  title
-  type
-  objectMetadataId
-  createdAt
-  updatedAt
-  deletedAt
-  gridPosition {
-    column
-    columnSpan
-    row
-    rowSpan
-  }
-  position {
-    ... on PageLayoutWidgetGridPosition {
-      layoutMode
-      row
-      column
-      rowSpan
-      columnSpan
-    }
-    ... on PageLayoutWidgetVerticalListPosition {
-      layoutMode
-      index
-    }
-    ... on PageLayoutWidgetCanvasPosition {
-      layoutMode
-    }
-  }
-  configuration {
-    ... on BarChartConfiguration {
-      configurationType
-      aggregateFieldMetadataId
-      aggregateOperation
-      primaryAxisGroupByFieldMetadataId
-      primaryAxisGroupBySubFieldName
-      primaryAxisDateGranularity
-      primaryAxisOrderBy
-      primaryAxisManualSortOrder
-      secondaryAxisGroupByFieldMetadataId
-      secondaryAxisGroupBySubFieldName
-      secondaryAxisGroupByDateGranularity
-      secondaryAxisOrderBy
-      secondaryAxisManualSortOrder
-      omitNullValues
-      axisNameDisplay
-      displayDataLabel
-      displayLegend
-      rangeMin
-      rangeMax
-      color
-      description
-      filter
-      groupMode
-      layout
-      isCumulative
-      timezone
-      firstDayOfTheWeek
-    }
-    ... on LineChartConfiguration {
-      configurationType
-      aggregateFieldMetadataId
-      aggregateOperation
-      primaryAxisGroupByFieldMetadataId
-      primaryAxisGroupBySubFieldName
-      primaryAxisDateGranularity
-      primaryAxisOrderBy
-      primaryAxisManualSortOrder
-      secondaryAxisGroupByFieldMetadataId
-      secondaryAxisGroupBySubFieldName
-      secondaryAxisGroupByDateGranularity
-      secondaryAxisOrderBy
-      secondaryAxisManualSortOrder
-      omitNullValues
-      axisNameDisplay
-      displayDataLabel
-      displayLegend
-      rangeMin
-      rangeMax
-      color
-      description
-      filter
-      isStacked
-      isCumulative
-      timezone
-      firstDayOfTheWeek
-    }
-    ... on PieChartConfiguration {
-      configurationType
-      groupByFieldMetadataId
-      aggregateFieldMetadataId
-      aggregateOperation
-      groupBySubFieldName
-      dateGranularity
-      orderBy
-      manualSortOrder
-      displayDataLabel
-      showCenterMetric
-      displayLegend
-      hideEmptyCategory
-      color
-      description
-      filter
-      timezone
-      firstDayOfTheWeek
-    }
-    ... on AggregateChartConfiguration {
-      configurationType
-      aggregateFieldMetadataId
-      aggregateOperation
-      label
-      displayDataLabel
-      format
-      description
-      filter
-      prefix
-      suffix
-      timezone
-      firstDayOfTheWeek
-      ratioAggregateConfig {
-        fieldMetadataId
-        optionValue
-      }
-    }
-    ... on GaugeChartConfiguration {
-      configurationType
-      aggregateFieldMetadataId
-      aggregateOperation
-      displayDataLabel
-      color
-      description
-      filter
-      timezone
-      firstDayOfTheWeek
-    }
-    ... on IframeConfiguration {
-      configurationType
-      url
-    }
-    ... on StandaloneRichTextConfiguration {
-      configurationType
-      body {
-        blocknote
-        markdown
-      }
-    }
-    ... on CalendarConfiguration {
-      configurationType
-    }
-    ... on EmailsConfiguration {
-      configurationType
-    }
-    ... on FieldConfiguration {
-      configurationType
-    }
-    ... on FieldRichTextConfiguration {
-      configurationType
-    }
-    ... on FieldsConfiguration {
-      configurationType
-    }
-    ... on FilesConfiguration {
-      configurationType
-    }
-    ... on NotesConfiguration {
-      configurationType
-    }
-    ... on TasksConfiguration {
-      configurationType
-    }
-    ... on TimelineConfiguration {
-      configurationType
-    }
-    ... on ViewConfiguration {
-      configurationType
-    }
-    ... on WorkflowConfiguration {
-      configurationType
-    }
-    ... on WorkflowRunConfiguration {
-      configurationType
-    }
-    ... on WorkflowVersionConfiguration {
-      configurationType
-    }
-    ... on FrontComponentConfiguration {
-      configurationType
-      frontComponentId
-    }
-  }
-  pageLayoutTabId
+export type UpdateWorkflowVersionPositionsMutation = { __typename?: 'Mutation', updateWorkflowVersionPositions: boolean };
+
+export const WorkflowDiffFragmentFragmentDoc = gql`
+    fragment WorkflowDiffFragment on WorkflowVersionStepChanges {
+  triggerDiff
+  stepsDiff
 }
     `;
-export const PageLayoutTabFragmentFragmentDoc = gql`
-    fragment PageLayoutTabFragment on PageLayoutTab {
-  id
-  title
-  icon
-  position
-  layoutMode
-  widgets {
-    ...PageLayoutWidgetFragment
-  }
-  pageLayoutId
-  createdAt
-  updatedAt
-}
-    ${PageLayoutWidgetFragmentFragmentDoc}`;
-export const PageLayoutFragmentFragmentDoc = gql`
-    fragment PageLayoutFragment on PageLayout {
-  id
-  name
-  objectMetadataId
-  type
-  defaultTabToFocusOnMobileAndSidePanelId
-  createdAt
-  updatedAt
-  tabs {
-    ...PageLayoutTabFragment
-  }
-}
-    ${PageLayoutTabFragmentFragmentDoc}`;
-export const ViewFieldFragmentFragmentDoc = gql`
-    fragment ViewFieldFragment on CoreViewField {
-  id
-  fieldMetadataId
-  viewId
-  isVisible
-  position
-  size
-  aggregateOperation
-  createdAt
-  updatedAt
-  deletedAt
+export const ActivateWorkflowVersionDocument = gql`
+    mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
+  activateWorkflowVersion(workflowVersionId: $workflowVersionId)
 }
     `;
-export const ViewFilterFragmentFragmentDoc = gql`
-    fragment ViewFilterFragment on CoreViewFilter {
-  id
-  fieldMetadataId
-  operand
-  value
-  viewFilterGroupId
-  positionInViewFilterGroup
-  subFieldName
-  viewId
-  createdAt
-  updatedAt
-  deletedAt
-}
-    `;
-export const ViewFilterGroupFragmentFragmentDoc = gql`
-    fragment ViewFilterGroupFragment on CoreViewFilterGroup {
-  id
-  parentViewFilterGroupId
-  logicalOperator
-  positionInViewFilterGroup
-  viewId
-}
-    `;
-export const ViewSortFragmentFragmentDoc = gql`
-    fragment ViewSortFragment on CoreViewSort {
-  id
-  fieldMetadataId
-  direction
-  viewId
-}
-    `;
-export const ViewGroupFragmentFragmentDoc = gql`
-    fragment ViewGroupFragment on CoreViewGroup {
-  id
-  isVisible
-  fieldValue
-  position
-  viewId
-  createdAt
-  updatedAt
-  deletedAt
-}
-    `;
-export const ViewFragmentFragmentDoc = gql`
-    fragment ViewFragment on CoreView {
-  id
-  name
-  objectMetadataId
-  type
-  key
-  icon
-  position
-  isCompact
-  openRecordIn
-  kanbanAggregateOperation
-  kanbanAggregateOperationFieldMetadataId
-  mainGroupByFieldMetadataId
-  shouldHideEmptyGroups
-  anyFieldFilterValue
-  calendarFieldMetadataId
-  calendarLayout
-  visibility
-  createdByUserWorkspaceId
-  viewFields {
-    ...ViewFieldFragment
-  }
-  viewFilters {
-    ...ViewFilterFragment
-  }
-  viewFilterGroups {
-    ...ViewFilterGroupFragment
-  }
-  viewSorts {
-    ...ViewSortFragment
-  }
-  viewGroups {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}
-${ViewFilterFragmentFragmentDoc}
-${ViewFilterGroupFragmentFragmentDoc}
-${ViewSortFragmentFragmentDoc}
-${ViewGroupFragmentFragmentDoc}`;
-export const SearchDocument = gql`
-    query Search($searchInput: String!, $limit: Int!, $after: String, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
-  search(
-    searchInput: $searchInput
-    limit: $limit
-    after: $after
-    excludedObjectNameSingulars: $excludedObjectNameSingulars
-    includedObjectNameSingulars: $includedObjectNameSingulars
-    filter: $filter
-  ) {
-    edges {
-      node {
-        recordId
-        objectNameSingular
-        objectLabelSingular
-        label
-        imageUrl
-        tsRankCD
-        tsRank
-      }
-      cursor
-    }
-    pageInfo {
-      hasNextPage
-      endCursor
-    }
-  }
-}
-    `;
+export type ActivateWorkflowVersionMutationFn = Apollo.MutationFunction<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
 
 /**
- * __useSearchQuery__
+ * __useActivateWorkflowVersionMutation__
  *
- * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchQuery({
- *   variables: {
- *      searchInput: // value for 'searchInput'
- *      limit: // value for 'limit'
- *      after: // value for 'after'
- *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
- *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'
- *      filter: // value for 'filter'
- *   },
- * });
- */
-export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-      }
-export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-        }
-export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
-export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
-export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
-export const DuplicateDashboardDocument = gql`
-    mutation DuplicateDashboard($id: UUID!) {
-  duplicateDashboard(id: $id) {
-    id
-    title
-    pageLayoutId
-    position
-    createdAt
-    updatedAt
-  }
-}
-    `;
-export type DuplicateDashboardMutationFn = Apollo.MutationFunction<DuplicateDashboardMutation, DuplicateDashboardMutationVariables>;
-
-/**
- * __useDuplicateDashboardMutation__
- *
- * To run a mutation, you first call `useDuplicateDashboardMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDuplicateDashboardMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useActivateWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateWorkflowVersionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [duplicateDashboardMutation, { data, loading, error }] = useDuplicateDashboardMutation({
+ * const [activateWorkflowVersionMutation, { data, loading, error }] = useActivateWorkflowVersionMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      workflowVersionId: // value for 'workflowVersionId'
  *   },
  * });
  */
-export function useDuplicateDashboardMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateDashboardMutation, DuplicateDashboardMutationVariables>) {
+export function useActivateWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DuplicateDashboardMutation, DuplicateDashboardMutationVariables>(DuplicateDashboardDocument, options);
+        return Apollo.useMutation<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>(ActivateWorkflowVersionDocument, options);
       }
-export type DuplicateDashboardMutationHookResult = ReturnType<typeof useDuplicateDashboardMutation>;
-export type DuplicateDashboardMutationResult = Apollo.MutationResult<DuplicateDashboardMutation>;
-export type DuplicateDashboardMutationOptions = Apollo.BaseMutationOptions<DuplicateDashboardMutation, DuplicateDashboardMutationVariables>;
-export const FindOnePageLayoutDocument = gql`
-    query FindOnePageLayout($id: String!) {
-  getPageLayout(id: $id) {
-    ...PageLayoutFragment
-  }
+export type ActivateWorkflowVersionMutationHookResult = ReturnType<typeof useActivateWorkflowVersionMutation>;
+export type ActivateWorkflowVersionMutationResult = Apollo.MutationResult<ActivateWorkflowVersionMutation>;
+export type ActivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
+export const ComputeStepOutputSchemaDocument = gql`
+    mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
+  computeStepOutputSchema(input: $input)
 }
-    ${PageLayoutFragmentFragmentDoc}`;
+    `;
+export type ComputeStepOutputSchemaMutationFn = Apollo.MutationFunction<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
 
 /**
- * __useFindOnePageLayoutQuery__
+ * __useComputeStepOutputSchemaMutation__
  *
- * To run a query within a React component, call `useFindOnePageLayoutQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOnePageLayoutQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useComputeStepOutputSchemaMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useComputeStepOutputSchemaMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useFindOnePageLayoutQuery({
+ * const [computeStepOutputSchemaMutation, { data, loading, error }] = useComputeStepOutputSchemaMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useFindOnePageLayoutQuery(baseOptions: Apollo.QueryHookOptions<FindOnePageLayoutQuery, FindOnePageLayoutQueryVariables>) {
+export function useComputeStepOutputSchemaMutation(baseOptions?: Apollo.MutationHookOptions<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOnePageLayoutQuery, FindOnePageLayoutQueryVariables>(FindOnePageLayoutDocument, options);
+        return Apollo.useMutation<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>(ComputeStepOutputSchemaDocument, options);
       }
-export function useFindOnePageLayoutLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOnePageLayoutQuery, FindOnePageLayoutQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOnePageLayoutQuery, FindOnePageLayoutQueryVariables>(FindOnePageLayoutDocument, options);
-        }
-export type FindOnePageLayoutQueryHookResult = ReturnType<typeof useFindOnePageLayoutQuery>;
-export type FindOnePageLayoutLazyQueryHookResult = ReturnType<typeof useFindOnePageLayoutLazyQuery>;
-export type FindOnePageLayoutQueryResult = Apollo.QueryResult<FindOnePageLayoutQuery, FindOnePageLayoutQueryVariables>;
-export const FindManyMarketplaceAppsDocument = gql`
-    query FindManyMarketplaceApps {
-  findManyMarketplaceApps {
+export type ComputeStepOutputSchemaMutationHookResult = ReturnType<typeof useComputeStepOutputSchemaMutation>;
+export type ComputeStepOutputSchemaMutationResult = Apollo.MutationResult<ComputeStepOutputSchemaMutation>;
+export type ComputeStepOutputSchemaMutationOptions = Apollo.BaseMutationOptions<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
+export const CreateDraftFromWorkflowVersionDocument = gql`
+    mutation CreateDraftFromWorkflowVersion($input: CreateDraftFromWorkflowVersionInput!) {
+  createDraftFromWorkflowVersion(input: $input) {
     id
     name
-    description
-    icon
-    version
-    author
-    category
-    logo
-    screenshots
-    aboutDescription
-    providers
-    websiteUrl
-    termsUrl
+    status
+    trigger
+    steps
+    createdAt
+    updatedAt
   }
 }
     `;
+export type CreateDraftFromWorkflowVersionMutationFn = Apollo.MutationFunction<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
 
 /**
- * __useFindManyMarketplaceAppsQuery__
+ * __useCreateDraftFromWorkflowVersionMutation__
  *
- * To run a query within a React component, call `useFindManyMarketplaceAppsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyMarketplaceAppsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useCreateDraftFromWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDraftFromWorkflowVersionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useFindManyMarketplaceAppsQuery({
+ * const [createDraftFromWorkflowVersionMutation, { data, loading, error }] = useCreateDraftFromWorkflowVersionMutation({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useFindManyMarketplaceAppsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyMarketplaceAppsQuery, FindManyMarketplaceAppsQueryVariables>) {
+export function useCreateDraftFromWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyMarketplaceAppsQuery, FindManyMarketplaceAppsQueryVariables>(FindManyMarketplaceAppsDocument, options);
+        return Apollo.useMutation<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>(CreateDraftFromWorkflowVersionDocument, options);
       }
-export function useFindManyMarketplaceAppsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyMarketplaceAppsQuery, FindManyMarketplaceAppsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyMarketplaceAppsQuery, FindManyMarketplaceAppsQueryVariables>(FindManyMarketplaceAppsDocument, options);
-        }
-export type FindManyMarketplaceAppsQueryHookResult = ReturnType<typeof useFindManyMarketplaceAppsQuery>;
-export type FindManyMarketplaceAppsLazyQueryHookResult = ReturnType<typeof useFindManyMarketplaceAppsLazyQuery>;
-export type FindManyMarketplaceAppsQueryResult = Apollo.QueryResult<FindManyMarketplaceAppsQuery, FindManyMarketplaceAppsQueryVariables>;
-export const UpdatePageLayoutWithTabsAndWidgetsDocument = gql`
-    mutation UpdatePageLayoutWithTabsAndWidgets($id: String!, $input: UpdatePageLayoutWithTabsInput!) {
-  updatePageLayoutWithTabsAndWidgets(id: $id, input: $input) {
+export type CreateDraftFromWorkflowVersionMutationHookResult = ReturnType<typeof useCreateDraftFromWorkflowVersionMutation>;
+export type CreateDraftFromWorkflowVersionMutationResult = Apollo.MutationResult<CreateDraftFromWorkflowVersionMutation>;
+export type CreateDraftFromWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<CreateDraftFromWorkflowVersionMutation, CreateDraftFromWorkflowVersionMutationVariables>;
+export const CreateWorkflowVersionEdgeDocument = gql`
+    mutation CreateWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
+  createWorkflowVersionEdge(input: $input) {
+    ...WorkflowDiffFragment
+  }
+}
+    ${WorkflowDiffFragmentFragmentDoc}`;
+export type CreateWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
+
+/**
+ * __useCreateWorkflowVersionEdgeMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkflowVersionEdgeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkflowVersionEdgeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkflowVersionEdgeMutation, { data, loading, error }] = useCreateWorkflowVersionEdgeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateWorkflowVersionEdgeMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>(CreateWorkflowVersionEdgeDocument, options);
+      }
+export type CreateWorkflowVersionEdgeMutationHookResult = ReturnType<typeof useCreateWorkflowVersionEdgeMutation>;
+export type CreateWorkflowVersionEdgeMutationResult = Apollo.MutationResult<CreateWorkflowVersionEdgeMutation>;
+export type CreateWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOptions<CreateWorkflowVersionEdgeMutation, CreateWorkflowVersionEdgeMutationVariables>;
+export const CreateWorkflowVersionStepDocument = gql`
+    mutation CreateWorkflowVersionStep($input: CreateWorkflowVersionStepInput!) {
+  createWorkflowVersionStep(input: $input) {
+    ...WorkflowDiffFragment
+  }
+}
+    ${WorkflowDiffFragmentFragmentDoc}`;
+export type CreateWorkflowVersionStepMutationFn = Apollo.MutationFunction<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
+
+/**
+ * __useCreateWorkflowVersionStepMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkflowVersionStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkflowVersionStepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkflowVersionStepMutation, { data, loading, error }] = useCreateWorkflowVersionStepMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>(CreateWorkflowVersionStepDocument, options);
+      }
+export type CreateWorkflowVersionStepMutationHookResult = ReturnType<typeof useCreateWorkflowVersionStepMutation>;
+export type CreateWorkflowVersionStepMutationResult = Apollo.MutationResult<CreateWorkflowVersionStepMutation>;
+export type CreateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<CreateWorkflowVersionStepMutation, CreateWorkflowVersionStepMutationVariables>;
+export const DeactivateWorkflowVersionDocument = gql`
+    mutation DeactivateWorkflowVersion($workflowVersionId: UUID!) {
+  deactivateWorkflowVersion(workflowVersionId: $workflowVersionId)
+}
+    `;
+export type DeactivateWorkflowVersionMutationFn = Apollo.MutationFunction<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
+
+/**
+ * __useDeactivateWorkflowVersionMutation__
+ *
+ * To run a mutation, you first call `useDeactivateWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeactivateWorkflowVersionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deactivateWorkflowVersionMutation, { data, loading, error }] = useDeactivateWorkflowVersionMutation({
+ *   variables: {
+ *      workflowVersionId: // value for 'workflowVersionId'
+ *   },
+ * });
+ */
+export function useDeactivateWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>(DeactivateWorkflowVersionDocument, options);
+      }
+export type DeactivateWorkflowVersionMutationHookResult = ReturnType<typeof useDeactivateWorkflowVersionMutation>;
+export type DeactivateWorkflowVersionMutationResult = Apollo.MutationResult<DeactivateWorkflowVersionMutation>;
+export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
+export const DeleteWorkflowVersionEdgeDocument = gql`
+    mutation DeleteWorkflowVersionEdge($input: CreateWorkflowVersionEdgeInput!) {
+  deleteWorkflowVersionEdge(input: $input) {
+    ...WorkflowDiffFragment
+  }
+}
+    ${WorkflowDiffFragmentFragmentDoc}`;
+export type DeleteWorkflowVersionEdgeMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
+
+/**
+ * __useDeleteWorkflowVersionEdgeMutation__
+ *
+ * To run a mutation, you first call `useDeleteWorkflowVersionEdgeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteWorkflowVersionEdgeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteWorkflowVersionEdgeMutation, { data, loading, error }] = useDeleteWorkflowVersionEdgeMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteWorkflowVersionEdgeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>(DeleteWorkflowVersionEdgeDocument, options);
+      }
+export type DeleteWorkflowVersionEdgeMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionEdgeMutation>;
+export type DeleteWorkflowVersionEdgeMutationResult = Apollo.MutationResult<DeleteWorkflowVersionEdgeMutation>;
+export type DeleteWorkflowVersionEdgeMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionEdgeMutation, DeleteWorkflowVersionEdgeMutationVariables>;
+export const DeleteWorkflowVersionStepDocument = gql`
+    mutation DeleteWorkflowVersionStep($input: DeleteWorkflowVersionStepInput!) {
+  deleteWorkflowVersionStep(input: $input) {
+    ...WorkflowDiffFragment
+  }
+}
+    ${WorkflowDiffFragmentFragmentDoc}`;
+export type DeleteWorkflowVersionStepMutationFn = Apollo.MutationFunction<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
+
+/**
+ * __useDeleteWorkflowVersionStepMutation__
+ *
+ * To run a mutation, you first call `useDeleteWorkflowVersionStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteWorkflowVersionStepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteWorkflowVersionStepMutation, { data, loading, error }] = useDeleteWorkflowVersionStepMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>(DeleteWorkflowVersionStepDocument, options);
+      }
+export type DeleteWorkflowVersionStepMutationHookResult = ReturnType<typeof useDeleteWorkflowVersionStepMutation>;
+export type DeleteWorkflowVersionStepMutationResult = Apollo.MutationResult<DeleteWorkflowVersionStepMutation>;
+export type DeleteWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DeleteWorkflowVersionStepMutation, DeleteWorkflowVersionStepMutationVariables>;
+export const DuplicateWorkflowDocument = gql`
+    mutation DuplicateWorkflow($input: DuplicateWorkflowInput!) {
+  duplicateWorkflow(input: $input) {
+    id
+    name
+    status
+    trigger
+    steps
+    createdAt
+    updatedAt
+    workflowId
+  }
+}
+    `;
+export type DuplicateWorkflowMutationFn = Apollo.MutationFunction<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
+
+/**
+ * __useDuplicateWorkflowMutation__
+ *
+ * To run a mutation, you first call `useDuplicateWorkflowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDuplicateWorkflowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [duplicateWorkflowMutation, { data, loading, error }] = useDuplicateWorkflowMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDuplicateWorkflowMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>(DuplicateWorkflowDocument, options);
+      }
+export type DuplicateWorkflowMutationHookResult = ReturnType<typeof useDuplicateWorkflowMutation>;
+export type DuplicateWorkflowMutationResult = Apollo.MutationResult<DuplicateWorkflowMutation>;
+export type DuplicateWorkflowMutationOptions = Apollo.BaseMutationOptions<DuplicateWorkflowMutation, DuplicateWorkflowMutationVariables>;
+export const DuplicateWorkflowVersionStepDocument = gql`
+    mutation DuplicateWorkflowVersionStep($input: DuplicateWorkflowVersionStepInput!) {
+  duplicateWorkflowVersionStep(input: $input) {
+    ...WorkflowDiffFragment
+  }
+}
+    ${WorkflowDiffFragmentFragmentDoc}`;
+export type DuplicateWorkflowVersionStepMutationFn = Apollo.MutationFunction<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
+
+/**
+ * __useDuplicateWorkflowVersionStepMutation__
+ *
+ * To run a mutation, you first call `useDuplicateWorkflowVersionStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDuplicateWorkflowVersionStepMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [duplicateWorkflowVersionStepMutation, { data, loading, error }] = useDuplicateWorkflowVersionStepMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDuplicateWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>(DuplicateWorkflowVersionStepDocument, options);
+      }
+export type DuplicateWorkflowVersionStepMutationHookResult = ReturnType<typeof useDuplicateWorkflowVersionStepMutation>;
+export type DuplicateWorkflowVersionStepMutationResult = Apollo.MutationResult<DuplicateWorkflowVersionStepMutation>;
+export type DuplicateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<DuplicateWorkflowVersionStepMutation, DuplicateWorkflowVersionStepMutationVariables>;
+export const RunWorkflowVersionDocument = gql`
+    mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
+  runWorkflowVersion(input: $input) {
+    workflowRunId
+  }
+}
+    `;
+export type RunWorkflowVersionMutationFn = Apollo.MutationFunction<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
+
+/**
+ * __useRunWorkflowVersionMutation__
+ *
+ * To run a mutation, you first call `useRunWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRunWorkflowVersionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [runWorkflowVersionMutation, { data, loading, error }] = useRunWorkflowVersionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRunWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>(RunWorkflowVersionDocument, options);
+      }
+export type RunWorkflowVersionMutationHookResult = ReturnType<typeof useRunWorkflowVersionMutation>;
+export type RunWorkflowVersionMutationResult = Apollo.MutationResult<RunWorkflowVersionMutation>;
+export type RunWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
+export const StopWorkflowRunDocument = gql`
+    mutation StopWorkflowRun($workflowRunId: UUID!) {
+  stopWorkflowRun(workflowRunId: $workflowRunId) {
+    id
+    status
+    __typename
+  }
+}
+    `;
+export type StopWorkflowRunMutationFn = Apollo.MutationFunction<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
+
+/**
+ * __useStopWorkflowRunMutation__
+ *
+ * To run a mutation, you first call `useStopWorkflowRunMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStopWorkflowRunMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [stopWorkflowRunMutation, { data, loading, error }] = useStopWorkflowRunMutation({
+ *   variables: {
+ *      workflowRunId: // value for 'workflowRunId'
+ *   },
+ * });
+ */
+export function useStopWorkflowRunMutation(baseOptions?: Apollo.MutationHookOptions<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>(StopWorkflowRunDocument, options);
+      }
+export type StopWorkflowRunMutationHookResult = ReturnType<typeof useStopWorkflowRunMutation>;
+export type StopWorkflowRunMutationResult = Apollo.MutationResult<StopWorkflowRunMutation>;
+export type StopWorkflowRunMutationOptions = Apollo.BaseMutationOptions<StopWorkflowRunMutation, StopWorkflowRunMutationVariables>;
+export const UpdateWorkflowRunStepDocument = gql`
+    mutation UpdateWorkflowRunStep($input: UpdateWorkflowRunStepInput!) {
+  updateWorkflowRunStep(input: $input) {
     id
     name
     type
-    objectMetadataId
-    createdAt
-    updatedAt
-    deletedAt
-    tabs {
-      id
-      title
-      position
-      pageLayoutId
-      widgets {
-        ...PageLayoutWidgetFragment
-      }
-      createdAt
-      updatedAt
+    settings
+    valid
+    nextStepIds
+    position {
+      x
+      y
     }
   }
 }
-    ${PageLayoutWidgetFragmentFragmentDoc}`;
-export type UpdatePageLayoutWithTabsAndWidgetsMutationFn = Apollo.MutationFunction<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
+    `;
+export type UpdateWorkflowRunStepMutationFn = Apollo.MutationFunction<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
 
 /**
- * __useUpdatePageLayoutWithTabsAndWidgetsMutation__
+ * __useUpdateWorkflowRunStepMutation__
  *
- * To run a mutation, you first call `useUpdatePageLayoutWithTabsAndWidgetsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePageLayoutWithTabsAndWidgetsMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateWorkflowRunStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateWorkflowRunStepMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updatePageLayoutWithTabsAndWidgetsMutation, { data, loading, error }] = useUpdatePageLayoutWithTabsAndWidgetsMutation({
- *   variables: {
- *      id: // value for 'id'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdatePageLayoutWithTabsAndWidgetsMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>(UpdatePageLayoutWithTabsAndWidgetsDocument, options);
-      }
-export type UpdatePageLayoutWithTabsAndWidgetsMutationHookResult = ReturnType<typeof useUpdatePageLayoutWithTabsAndWidgetsMutation>;
-export type UpdatePageLayoutWithTabsAndWidgetsMutationResult = Apollo.MutationResult<UpdatePageLayoutWithTabsAndWidgetsMutation>;
-export type UpdatePageLayoutWithTabsAndWidgetsMutationOptions = Apollo.BaseMutationOptions<UpdatePageLayoutWithTabsAndWidgetsMutation, UpdatePageLayoutWithTabsAndWidgetsMutationVariables>;
-export const FindAllRecordPageLayoutsDocument = gql`
-    query FindAllRecordPageLayouts {
-  getPageLayouts(pageLayoutType: RECORD_PAGE) {
-    ...PageLayoutFragment
-  }
-}
-    ${PageLayoutFragmentFragmentDoc}`;
-
-/**
- * __useFindAllRecordPageLayoutsQuery__
- *
- * To run a query within a React component, call `useFindAllRecordPageLayoutsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindAllRecordPageLayoutsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindAllRecordPageLayoutsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useFindAllRecordPageLayoutsQuery(baseOptions?: Apollo.QueryHookOptions<FindAllRecordPageLayoutsQuery, FindAllRecordPageLayoutsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindAllRecordPageLayoutsQuery, FindAllRecordPageLayoutsQueryVariables>(FindAllRecordPageLayoutsDocument, options);
-      }
-export function useFindAllRecordPageLayoutsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllRecordPageLayoutsQuery, FindAllRecordPageLayoutsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindAllRecordPageLayoutsQuery, FindAllRecordPageLayoutsQueryVariables>(FindAllRecordPageLayoutsDocument, options);
-        }
-export type FindAllRecordPageLayoutsQueryHookResult = ReturnType<typeof useFindAllRecordPageLayoutsQuery>;
-export type FindAllRecordPageLayoutsLazyQueryHookResult = ReturnType<typeof useFindAllRecordPageLayoutsLazyQuery>;
-export type FindAllRecordPageLayoutsQueryResult = Apollo.QueryResult<FindAllRecordPageLayoutsQuery, FindAllRecordPageLayoutsQueryVariables>;
-export const CreateCoreViewDocument = gql`
-    mutation CreateCoreView($input: CreateViewInput!) {
-  createCoreView(input: $input) {
-    ...ViewFragment
-  }
-}
-    ${ViewFragmentFragmentDoc}`;
-export type CreateCoreViewMutationFn = Apollo.MutationFunction<CreateCoreViewMutation, CreateCoreViewMutationVariables>;
-
-/**
- * __useCreateCoreViewMutation__
- *
- * To run a mutation, you first call `useCreateCoreViewMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCoreViewMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCoreViewMutation, { data, loading, error }] = useCreateCoreViewMutation({
+ * const [updateWorkflowRunStepMutation, { data, loading, error }] = useUpdateWorkflowRunStepMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateCoreViewMutation(baseOptions?: Apollo.MutationHookOptions<CreateCoreViewMutation, CreateCoreViewMutationVariables>) {
+export function useUpdateWorkflowRunStepMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCoreViewMutation, CreateCoreViewMutationVariables>(CreateCoreViewDocument, options);
+        return Apollo.useMutation<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>(UpdateWorkflowRunStepDocument, options);
       }
-export type CreateCoreViewMutationHookResult = ReturnType<typeof useCreateCoreViewMutation>;
-export type CreateCoreViewMutationResult = Apollo.MutationResult<CreateCoreViewMutation>;
-export type CreateCoreViewMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewMutation, CreateCoreViewMutationVariables>;
-export const CreateCoreViewFieldDocument = gql`
-    mutation CreateCoreViewField($input: CreateViewFieldInput!) {
-  createCoreViewField(input: $input) {
-    ...ViewFieldFragment
+export type UpdateWorkflowRunStepMutationHookResult = ReturnType<typeof useUpdateWorkflowRunStepMutation>;
+export type UpdateWorkflowRunStepMutationResult = Apollo.MutationResult<UpdateWorkflowRunStepMutation>;
+export type UpdateWorkflowRunStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowRunStepMutation, UpdateWorkflowRunStepMutationVariables>;
+export const UpdateWorkflowVersionStepDocument = gql`
+    mutation UpdateWorkflowVersionStep($input: UpdateWorkflowVersionStepInput!) {
+  updateWorkflowVersionStep(input: $input) {
+    id
+    name
+    type
+    settings
+    valid
+    nextStepIds
+    position {
+      x
+      y
+    }
   }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-export type CreateCoreViewFieldMutationFn = Apollo.MutationFunction<CreateCoreViewFieldMutation, CreateCoreViewFieldMutationVariables>;
-
-/**
- * __useCreateCoreViewFieldMutation__
- *
- * To run a mutation, you first call `useCreateCoreViewFieldMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCoreViewFieldMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCoreViewFieldMutation, { data, loading, error }] = useCreateCoreViewFieldMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateCoreViewFieldMutation(baseOptions?: Apollo.MutationHookOptions<CreateCoreViewFieldMutation, CreateCoreViewFieldMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCoreViewFieldMutation, CreateCoreViewFieldMutationVariables>(CreateCoreViewFieldDocument, options);
-      }
-export type CreateCoreViewFieldMutationHookResult = ReturnType<typeof useCreateCoreViewFieldMutation>;
-export type CreateCoreViewFieldMutationResult = Apollo.MutationResult<CreateCoreViewFieldMutation>;
-export type CreateCoreViewFieldMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewFieldMutation, CreateCoreViewFieldMutationVariables>;
-export const CreateCoreViewFilterDocument = gql`
-    mutation CreateCoreViewFilter($input: CreateViewFilterInput!) {
-  createCoreViewFilter(input: $input) {
-    ...ViewFilterFragment
-  }
-}
-    ${ViewFilterFragmentFragmentDoc}`;
-export type CreateCoreViewFilterMutationFn = Apollo.MutationFunction<CreateCoreViewFilterMutation, CreateCoreViewFilterMutationVariables>;
-
-/**
- * __useCreateCoreViewFilterMutation__
- *
- * To run a mutation, you first call `useCreateCoreViewFilterMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCoreViewFilterMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCoreViewFilterMutation, { data, loading, error }] = useCreateCoreViewFilterMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateCoreViewFilterMutation(baseOptions?: Apollo.MutationHookOptions<CreateCoreViewFilterMutation, CreateCoreViewFilterMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCoreViewFilterMutation, CreateCoreViewFilterMutationVariables>(CreateCoreViewFilterDocument, options);
-      }
-export type CreateCoreViewFilterMutationHookResult = ReturnType<typeof useCreateCoreViewFilterMutation>;
-export type CreateCoreViewFilterMutationResult = Apollo.MutationResult<CreateCoreViewFilterMutation>;
-export type CreateCoreViewFilterMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewFilterMutation, CreateCoreViewFilterMutationVariables>;
-export const CreateCoreViewFilterGroupDocument = gql`
-    mutation CreateCoreViewFilterGroup($input: CreateViewFilterGroupInput!) {
-  createCoreViewFilterGroup(input: $input) {
-    ...ViewFilterGroupFragment
-  }
-}
-    ${ViewFilterGroupFragmentFragmentDoc}`;
-export type CreateCoreViewFilterGroupMutationFn = Apollo.MutationFunction<CreateCoreViewFilterGroupMutation, CreateCoreViewFilterGroupMutationVariables>;
-
-/**
- * __useCreateCoreViewFilterGroupMutation__
- *
- * To run a mutation, you first call `useCreateCoreViewFilterGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCoreViewFilterGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCoreViewFilterGroupMutation, { data, loading, error }] = useCreateCoreViewFilterGroupMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateCoreViewFilterGroupMutation(baseOptions?: Apollo.MutationHookOptions<CreateCoreViewFilterGroupMutation, CreateCoreViewFilterGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCoreViewFilterGroupMutation, CreateCoreViewFilterGroupMutationVariables>(CreateCoreViewFilterGroupDocument, options);
-      }
-export type CreateCoreViewFilterGroupMutationHookResult = ReturnType<typeof useCreateCoreViewFilterGroupMutation>;
-export type CreateCoreViewFilterGroupMutationResult = Apollo.MutationResult<CreateCoreViewFilterGroupMutation>;
-export type CreateCoreViewFilterGroupMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewFilterGroupMutation, CreateCoreViewFilterGroupMutationVariables>;
-export const CreateCoreViewGroupDocument = gql`
-    mutation CreateCoreViewGroup($input: CreateViewGroupInput!) {
-  createCoreViewGroup(input: $input) {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewGroupFragmentFragmentDoc}`;
-export type CreateCoreViewGroupMutationFn = Apollo.MutationFunction<CreateCoreViewGroupMutation, CreateCoreViewGroupMutationVariables>;
-
-/**
- * __useCreateCoreViewGroupMutation__
- *
- * To run a mutation, you first call `useCreateCoreViewGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCoreViewGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCoreViewGroupMutation, { data, loading, error }] = useCreateCoreViewGroupMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateCoreViewGroupMutation(baseOptions?: Apollo.MutationHookOptions<CreateCoreViewGroupMutation, CreateCoreViewGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCoreViewGroupMutation, CreateCoreViewGroupMutationVariables>(CreateCoreViewGroupDocument, options);
-      }
-export type CreateCoreViewGroupMutationHookResult = ReturnType<typeof useCreateCoreViewGroupMutation>;
-export type CreateCoreViewGroupMutationResult = Apollo.MutationResult<CreateCoreViewGroupMutation>;
-export type CreateCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewGroupMutation, CreateCoreViewGroupMutationVariables>;
-export const CreateCoreViewSortDocument = gql`
-    mutation CreateCoreViewSort($input: CreateViewSortInput!) {
-  createCoreViewSort(input: $input) {
-    ...ViewSortFragment
-  }
-}
-    ${ViewSortFragmentFragmentDoc}`;
-export type CreateCoreViewSortMutationFn = Apollo.MutationFunction<CreateCoreViewSortMutation, CreateCoreViewSortMutationVariables>;
-
-/**
- * __useCreateCoreViewSortMutation__
- *
- * To run a mutation, you first call `useCreateCoreViewSortMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCoreViewSortMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCoreViewSortMutation, { data, loading, error }] = useCreateCoreViewSortMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateCoreViewSortMutation(baseOptions?: Apollo.MutationHookOptions<CreateCoreViewSortMutation, CreateCoreViewSortMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCoreViewSortMutation, CreateCoreViewSortMutationVariables>(CreateCoreViewSortDocument, options);
-      }
-export type CreateCoreViewSortMutationHookResult = ReturnType<typeof useCreateCoreViewSortMutation>;
-export type CreateCoreViewSortMutationResult = Apollo.MutationResult<CreateCoreViewSortMutation>;
-export type CreateCoreViewSortMutationOptions = Apollo.BaseMutationOptions<CreateCoreViewSortMutation, CreateCoreViewSortMutationVariables>;
-export const CreateManyCoreViewFieldsDocument = gql`
-    mutation CreateManyCoreViewFields($inputs: [CreateViewFieldInput!]!) {
-  createManyCoreViewFields(inputs: $inputs) {
-    ...ViewFieldFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-export type CreateManyCoreViewFieldsMutationFn = Apollo.MutationFunction<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>;
-
-/**
- * __useCreateManyCoreViewFieldsMutation__
- *
- * To run a mutation, you first call `useCreateManyCoreViewFieldsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateManyCoreViewFieldsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createManyCoreViewFieldsMutation, { data, loading, error }] = useCreateManyCoreViewFieldsMutation({
- *   variables: {
- *      inputs: // value for 'inputs'
- *   },
- * });
- */
-export function useCreateManyCoreViewFieldsMutation(baseOptions?: Apollo.MutationHookOptions<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>(CreateManyCoreViewFieldsDocument, options);
-      }
-export type CreateManyCoreViewFieldsMutationHookResult = ReturnType<typeof useCreateManyCoreViewFieldsMutation>;
-export type CreateManyCoreViewFieldsMutationResult = Apollo.MutationResult<CreateManyCoreViewFieldsMutation>;
-export type CreateManyCoreViewFieldsMutationOptions = Apollo.BaseMutationOptions<CreateManyCoreViewFieldsMutation, CreateManyCoreViewFieldsMutationVariables>;
-export const CreateManyCoreViewGroupsDocument = gql`
-    mutation CreateManyCoreViewGroups($inputs: [CreateViewGroupInput!]!) {
-  createManyCoreViewGroups(inputs: $inputs) {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewGroupFragmentFragmentDoc}`;
-export type CreateManyCoreViewGroupsMutationFn = Apollo.MutationFunction<CreateManyCoreViewGroupsMutation, CreateManyCoreViewGroupsMutationVariables>;
-
-/**
- * __useCreateManyCoreViewGroupsMutation__
- *
- * To run a mutation, you first call `useCreateManyCoreViewGroupsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateManyCoreViewGroupsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createManyCoreViewGroupsMutation, { data, loading, error }] = useCreateManyCoreViewGroupsMutation({
- *   variables: {
- *      inputs: // value for 'inputs'
- *   },
- * });
- */
-export function useCreateManyCoreViewGroupsMutation(baseOptions?: Apollo.MutationHookOptions<CreateManyCoreViewGroupsMutation, CreateManyCoreViewGroupsMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateManyCoreViewGroupsMutation, CreateManyCoreViewGroupsMutationVariables>(CreateManyCoreViewGroupsDocument, options);
-      }
-export type CreateManyCoreViewGroupsMutationHookResult = ReturnType<typeof useCreateManyCoreViewGroupsMutation>;
-export type CreateManyCoreViewGroupsMutationResult = Apollo.MutationResult<CreateManyCoreViewGroupsMutation>;
-export type CreateManyCoreViewGroupsMutationOptions = Apollo.BaseMutationOptions<CreateManyCoreViewGroupsMutation, CreateManyCoreViewGroupsMutationVariables>;
-export const DeleteCoreViewDocument = gql`
-    mutation DeleteCoreView($id: String!) {
-  deleteCoreView(id: $id)
 }
     `;
-export type DeleteCoreViewMutationFn = Apollo.MutationFunction<DeleteCoreViewMutation, DeleteCoreViewMutationVariables>;
+export type UpdateWorkflowVersionStepMutationFn = Apollo.MutationFunction<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
 
 /**
- * __useDeleteCoreViewMutation__
+ * __useUpdateWorkflowVersionStepMutation__
  *
- * To run a mutation, you first call `useDeleteCoreViewMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteCoreViewMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateWorkflowVersionStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateWorkflowVersionStepMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteCoreViewMutation, { data, loading, error }] = useDeleteCoreViewMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteCoreViewMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCoreViewMutation, DeleteCoreViewMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteCoreViewMutation, DeleteCoreViewMutationVariables>(DeleteCoreViewDocument, options);
-      }
-export type DeleteCoreViewMutationHookResult = ReturnType<typeof useDeleteCoreViewMutation>;
-export type DeleteCoreViewMutationResult = Apollo.MutationResult<DeleteCoreViewMutation>;
-export type DeleteCoreViewMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewMutation, DeleteCoreViewMutationVariables>;
-export const DeleteCoreViewFieldDocument = gql`
-    mutation DeleteCoreViewField($input: DeleteViewFieldInput!) {
-  deleteCoreViewField(input: $input) {
-    ...ViewFieldFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-export type DeleteCoreViewFieldMutationFn = Apollo.MutationFunction<DeleteCoreViewFieldMutation, DeleteCoreViewFieldMutationVariables>;
-
-/**
- * __useDeleteCoreViewFieldMutation__
- *
- * To run a mutation, you first call `useDeleteCoreViewFieldMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteCoreViewFieldMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteCoreViewFieldMutation, { data, loading, error }] = useDeleteCoreViewFieldMutation({
+ * const [updateWorkflowVersionStepMutation, { data, loading, error }] = useUpdateWorkflowVersionStepMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useDeleteCoreViewFieldMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCoreViewFieldMutation, DeleteCoreViewFieldMutationVariables>) {
+export function useUpdateWorkflowVersionStepMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteCoreViewFieldMutation, DeleteCoreViewFieldMutationVariables>(DeleteCoreViewFieldDocument, options);
+        return Apollo.useMutation<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>(UpdateWorkflowVersionStepDocument, options);
       }
-export type DeleteCoreViewFieldMutationHookResult = ReturnType<typeof useDeleteCoreViewFieldMutation>;
-export type DeleteCoreViewFieldMutationResult = Apollo.MutationResult<DeleteCoreViewFieldMutation>;
-export type DeleteCoreViewFieldMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewFieldMutation, DeleteCoreViewFieldMutationVariables>;
-export const DeleteCoreViewFilterDocument = gql`
-    mutation DeleteCoreViewFilter($input: DeleteViewFilterInput!) {
-  deleteCoreViewFilter(input: $input) {
-    ...ViewFilterFragment
-  }
-}
-    ${ViewFilterFragmentFragmentDoc}`;
-export type DeleteCoreViewFilterMutationFn = Apollo.MutationFunction<DeleteCoreViewFilterMutation, DeleteCoreViewFilterMutationVariables>;
-
-/**
- * __useDeleteCoreViewFilterMutation__
- *
- * To run a mutation, you first call `useDeleteCoreViewFilterMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteCoreViewFilterMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteCoreViewFilterMutation, { data, loading, error }] = useDeleteCoreViewFilterMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDeleteCoreViewFilterMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCoreViewFilterMutation, DeleteCoreViewFilterMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteCoreViewFilterMutation, DeleteCoreViewFilterMutationVariables>(DeleteCoreViewFilterDocument, options);
-      }
-export type DeleteCoreViewFilterMutationHookResult = ReturnType<typeof useDeleteCoreViewFilterMutation>;
-export type DeleteCoreViewFilterMutationResult = Apollo.MutationResult<DeleteCoreViewFilterMutation>;
-export type DeleteCoreViewFilterMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewFilterMutation, DeleteCoreViewFilterMutationVariables>;
-export const DeleteCoreViewFilterGroupDocument = gql`
-    mutation DeleteCoreViewFilterGroup($id: String!) {
-  deleteCoreViewFilterGroup(id: $id)
+export type UpdateWorkflowVersionStepMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionStepMutation>;
+export type UpdateWorkflowVersionStepMutationResult = Apollo.MutationResult<UpdateWorkflowVersionStepMutation>;
+export type UpdateWorkflowVersionStepMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionStepMutation, UpdateWorkflowVersionStepMutationVariables>;
+export const SubmitFormStepDocument = gql`
+    mutation SubmitFormStep($input: SubmitFormStepInput!) {
+  submitFormStep(input: $input)
 }
     `;
-export type DeleteCoreViewFilterGroupMutationFn = Apollo.MutationFunction<DeleteCoreViewFilterGroupMutation, DeleteCoreViewFilterGroupMutationVariables>;
+export type SubmitFormStepMutationFn = Apollo.MutationFunction<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
 
 /**
- * __useDeleteCoreViewFilterGroupMutation__
+ * __useSubmitFormStepMutation__
  *
- * To run a mutation, you first call `useDeleteCoreViewFilterGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteCoreViewFilterGroupMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSubmitFormStepMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitFormStepMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteCoreViewFilterGroupMutation, { data, loading, error }] = useDeleteCoreViewFilterGroupMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDeleteCoreViewFilterGroupMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCoreViewFilterGroupMutation, DeleteCoreViewFilterGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteCoreViewFilterGroupMutation, DeleteCoreViewFilterGroupMutationVariables>(DeleteCoreViewFilterGroupDocument, options);
-      }
-export type DeleteCoreViewFilterGroupMutationHookResult = ReturnType<typeof useDeleteCoreViewFilterGroupMutation>;
-export type DeleteCoreViewFilterGroupMutationResult = Apollo.MutationResult<DeleteCoreViewFilterGroupMutation>;
-export type DeleteCoreViewFilterGroupMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewFilterGroupMutation, DeleteCoreViewFilterGroupMutationVariables>;
-export const DeleteCoreViewGroupDocument = gql`
-    mutation DeleteCoreViewGroup($input: DeleteViewGroupInput!) {
-  deleteCoreViewGroup(input: $input) {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewGroupFragmentFragmentDoc}`;
-export type DeleteCoreViewGroupMutationFn = Apollo.MutationFunction<DeleteCoreViewGroupMutation, DeleteCoreViewGroupMutationVariables>;
-
-/**
- * __useDeleteCoreViewGroupMutation__
- *
- * To run a mutation, you first call `useDeleteCoreViewGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteCoreViewGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteCoreViewGroupMutation, { data, loading, error }] = useDeleteCoreViewGroupMutation({
+ * const [submitFormStepMutation, { data, loading, error }] = useSubmitFormStepMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useDeleteCoreViewGroupMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCoreViewGroupMutation, DeleteCoreViewGroupMutationVariables>) {
+export function useSubmitFormStepMutation(baseOptions?: Apollo.MutationHookOptions<SubmitFormStepMutation, SubmitFormStepMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteCoreViewGroupMutation, DeleteCoreViewGroupMutationVariables>(DeleteCoreViewGroupDocument, options);
+        return Apollo.useMutation<SubmitFormStepMutation, SubmitFormStepMutationVariables>(SubmitFormStepDocument, options);
       }
-export type DeleteCoreViewGroupMutationHookResult = ReturnType<typeof useDeleteCoreViewGroupMutation>;
-export type DeleteCoreViewGroupMutationResult = Apollo.MutationResult<DeleteCoreViewGroupMutation>;
-export type DeleteCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewGroupMutation, DeleteCoreViewGroupMutationVariables>;
-export const DeleteCoreViewSortDocument = gql`
-    mutation DeleteCoreViewSort($id: String!) {
-  deleteCoreViewSort(id: $id)
+export type SubmitFormStepMutationHookResult = ReturnType<typeof useSubmitFormStepMutation>;
+export type SubmitFormStepMutationResult = Apollo.MutationResult<SubmitFormStepMutation>;
+export type SubmitFormStepMutationOptions = Apollo.BaseMutationOptions<SubmitFormStepMutation, SubmitFormStepMutationVariables>;
+export const TestHttpRequestDocument = gql`
+    mutation TestHttpRequest($input: TestHttpRequestInput!) {
+  testHttpRequest(input: $input) {
+    success
+    message
+    result
+    error
+    status
+    statusText
+    headers
+  }
 }
     `;
-export type DeleteCoreViewSortMutationFn = Apollo.MutationFunction<DeleteCoreViewSortMutation, DeleteCoreViewSortMutationVariables>;
+export type TestHttpRequestMutationFn = Apollo.MutationFunction<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
 
 /**
- * __useDeleteCoreViewSortMutation__
+ * __useTestHttpRequestMutation__
  *
- * To run a mutation, you first call `useDeleteCoreViewSortMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteCoreViewSortMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useTestHttpRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTestHttpRequestMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [deleteCoreViewSortMutation, { data, loading, error }] = useDeleteCoreViewSortMutation({
+ * const [testHttpRequestMutation, { data, loading, error }] = useTestHttpRequestMutation({
  *   variables: {
- *      id: // value for 'id'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useDeleteCoreViewSortMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCoreViewSortMutation, DeleteCoreViewSortMutationVariables>) {
+export function useTestHttpRequestMutation(baseOptions?: Apollo.MutationHookOptions<TestHttpRequestMutation, TestHttpRequestMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteCoreViewSortMutation, DeleteCoreViewSortMutationVariables>(DeleteCoreViewSortDocument, options);
+        return Apollo.useMutation<TestHttpRequestMutation, TestHttpRequestMutationVariables>(TestHttpRequestDocument, options);
       }
-export type DeleteCoreViewSortMutationHookResult = ReturnType<typeof useDeleteCoreViewSortMutation>;
-export type DeleteCoreViewSortMutationResult = Apollo.MutationResult<DeleteCoreViewSortMutation>;
-export type DeleteCoreViewSortMutationOptions = Apollo.BaseMutationOptions<DeleteCoreViewSortMutation, DeleteCoreViewSortMutationVariables>;
-export const DestroyCoreViewDocument = gql`
-    mutation DestroyCoreView($id: String!) {
-  destroyCoreView(id: $id)
+export type TestHttpRequestMutationHookResult = ReturnType<typeof useTestHttpRequestMutation>;
+export type TestHttpRequestMutationResult = Apollo.MutationResult<TestHttpRequestMutation>;
+export type TestHttpRequestMutationOptions = Apollo.BaseMutationOptions<TestHttpRequestMutation, TestHttpRequestMutationVariables>;
+export const UpdateWorkflowVersionPositionsDocument = gql`
+    mutation UpdateWorkflowVersionPositions($input: UpdateWorkflowVersionPositionsInput!) {
+  updateWorkflowVersionPositions(input: $input)
 }
     `;
-export type DestroyCoreViewMutationFn = Apollo.MutationFunction<DestroyCoreViewMutation, DestroyCoreViewMutationVariables>;
+export type UpdateWorkflowVersionPositionsMutationFn = Apollo.MutationFunction<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;
 
 /**
- * __useDestroyCoreViewMutation__
+ * __useUpdateWorkflowVersionPositionsMutation__
  *
- * To run a mutation, you first call `useDestroyCoreViewMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDestroyCoreViewMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateWorkflowVersionPositionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateWorkflowVersionPositionsMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [destroyCoreViewMutation, { data, loading, error }] = useDestroyCoreViewMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDestroyCoreViewMutation(baseOptions?: Apollo.MutationHookOptions<DestroyCoreViewMutation, DestroyCoreViewMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DestroyCoreViewMutation, DestroyCoreViewMutationVariables>(DestroyCoreViewDocument, options);
-      }
-export type DestroyCoreViewMutationHookResult = ReturnType<typeof useDestroyCoreViewMutation>;
-export type DestroyCoreViewMutationResult = Apollo.MutationResult<DestroyCoreViewMutation>;
-export type DestroyCoreViewMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewMutation, DestroyCoreViewMutationVariables>;
-export const DestroyCoreViewFieldDocument = gql`
-    mutation DestroyCoreViewField($input: DestroyViewFieldInput!) {
-  destroyCoreViewField(input: $input) {
-    ...ViewFieldFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-export type DestroyCoreViewFieldMutationFn = Apollo.MutationFunction<DestroyCoreViewFieldMutation, DestroyCoreViewFieldMutationVariables>;
-
-/**
- * __useDestroyCoreViewFieldMutation__
- *
- * To run a mutation, you first call `useDestroyCoreViewFieldMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDestroyCoreViewFieldMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [destroyCoreViewFieldMutation, { data, loading, error }] = useDestroyCoreViewFieldMutation({
+ * const [updateWorkflowVersionPositionsMutation, { data, loading, error }] = useUpdateWorkflowVersionPositionsMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useDestroyCoreViewFieldMutation(baseOptions?: Apollo.MutationHookOptions<DestroyCoreViewFieldMutation, DestroyCoreViewFieldMutationVariables>) {
+export function useUpdateWorkflowVersionPositionsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DestroyCoreViewFieldMutation, DestroyCoreViewFieldMutationVariables>(DestroyCoreViewFieldDocument, options);
+        return Apollo.useMutation<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>(UpdateWorkflowVersionPositionsDocument, options);
       }
-export type DestroyCoreViewFieldMutationHookResult = ReturnType<typeof useDestroyCoreViewFieldMutation>;
-export type DestroyCoreViewFieldMutationResult = Apollo.MutationResult<DestroyCoreViewFieldMutation>;
-export type DestroyCoreViewFieldMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewFieldMutation, DestroyCoreViewFieldMutationVariables>;
-export const DestroyCoreViewFilterDocument = gql`
-    mutation DestroyCoreViewFilter($input: DestroyViewFilterInput!) {
-  destroyCoreViewFilter(input: $input) {
-    ...ViewFilterFragment
-  }
-}
-    ${ViewFilterFragmentFragmentDoc}`;
-export type DestroyCoreViewFilterMutationFn = Apollo.MutationFunction<DestroyCoreViewFilterMutation, DestroyCoreViewFilterMutationVariables>;
-
-/**
- * __useDestroyCoreViewFilterMutation__
- *
- * To run a mutation, you first call `useDestroyCoreViewFilterMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDestroyCoreViewFilterMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [destroyCoreViewFilterMutation, { data, loading, error }] = useDestroyCoreViewFilterMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDestroyCoreViewFilterMutation(baseOptions?: Apollo.MutationHookOptions<DestroyCoreViewFilterMutation, DestroyCoreViewFilterMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DestroyCoreViewFilterMutation, DestroyCoreViewFilterMutationVariables>(DestroyCoreViewFilterDocument, options);
-      }
-export type DestroyCoreViewFilterMutationHookResult = ReturnType<typeof useDestroyCoreViewFilterMutation>;
-export type DestroyCoreViewFilterMutationResult = Apollo.MutationResult<DestroyCoreViewFilterMutation>;
-export type DestroyCoreViewFilterMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewFilterMutation, DestroyCoreViewFilterMutationVariables>;
-export const DestroyCoreViewFilterGroupDocument = gql`
-    mutation DestroyCoreViewFilterGroup($id: String!) {
-  destroyCoreViewFilterGroup(id: $id)
-}
-    `;
-export type DestroyCoreViewFilterGroupMutationFn = Apollo.MutationFunction<DestroyCoreViewFilterGroupMutation, DestroyCoreViewFilterGroupMutationVariables>;
-
-/**
- * __useDestroyCoreViewFilterGroupMutation__
- *
- * To run a mutation, you first call `useDestroyCoreViewFilterGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDestroyCoreViewFilterGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [destroyCoreViewFilterGroupMutation, { data, loading, error }] = useDestroyCoreViewFilterGroupMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDestroyCoreViewFilterGroupMutation(baseOptions?: Apollo.MutationHookOptions<DestroyCoreViewFilterGroupMutation, DestroyCoreViewFilterGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DestroyCoreViewFilterGroupMutation, DestroyCoreViewFilterGroupMutationVariables>(DestroyCoreViewFilterGroupDocument, options);
-      }
-export type DestroyCoreViewFilterGroupMutationHookResult = ReturnType<typeof useDestroyCoreViewFilterGroupMutation>;
-export type DestroyCoreViewFilterGroupMutationResult = Apollo.MutationResult<DestroyCoreViewFilterGroupMutation>;
-export type DestroyCoreViewFilterGroupMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewFilterGroupMutation, DestroyCoreViewFilterGroupMutationVariables>;
-export const DestroyCoreViewGroupDocument = gql`
-    mutation DestroyCoreViewGroup($input: DestroyViewGroupInput!) {
-  destroyCoreViewGroup(input: $input) {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewGroupFragmentFragmentDoc}`;
-export type DestroyCoreViewGroupMutationFn = Apollo.MutationFunction<DestroyCoreViewGroupMutation, DestroyCoreViewGroupMutationVariables>;
-
-/**
- * __useDestroyCoreViewGroupMutation__
- *
- * To run a mutation, you first call `useDestroyCoreViewGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDestroyCoreViewGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [destroyCoreViewGroupMutation, { data, loading, error }] = useDestroyCoreViewGroupMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useDestroyCoreViewGroupMutation(baseOptions?: Apollo.MutationHookOptions<DestroyCoreViewGroupMutation, DestroyCoreViewGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DestroyCoreViewGroupMutation, DestroyCoreViewGroupMutationVariables>(DestroyCoreViewGroupDocument, options);
-      }
-export type DestroyCoreViewGroupMutationHookResult = ReturnType<typeof useDestroyCoreViewGroupMutation>;
-export type DestroyCoreViewGroupMutationResult = Apollo.MutationResult<DestroyCoreViewGroupMutation>;
-export type DestroyCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewGroupMutation, DestroyCoreViewGroupMutationVariables>;
-export const DestroyCoreViewSortDocument = gql`
-    mutation DestroyCoreViewSort($id: String!) {
-  destroyCoreViewSort(id: $id)
-}
-    `;
-export type DestroyCoreViewSortMutationFn = Apollo.MutationFunction<DestroyCoreViewSortMutation, DestroyCoreViewSortMutationVariables>;
-
-/**
- * __useDestroyCoreViewSortMutation__
- *
- * To run a mutation, you first call `useDestroyCoreViewSortMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDestroyCoreViewSortMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [destroyCoreViewSortMutation, { data, loading, error }] = useDestroyCoreViewSortMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useDestroyCoreViewSortMutation(baseOptions?: Apollo.MutationHookOptions<DestroyCoreViewSortMutation, DestroyCoreViewSortMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DestroyCoreViewSortMutation, DestroyCoreViewSortMutationVariables>(DestroyCoreViewSortDocument, options);
-      }
-export type DestroyCoreViewSortMutationHookResult = ReturnType<typeof useDestroyCoreViewSortMutation>;
-export type DestroyCoreViewSortMutationResult = Apollo.MutationResult<DestroyCoreViewSortMutation>;
-export type DestroyCoreViewSortMutationOptions = Apollo.BaseMutationOptions<DestroyCoreViewSortMutation, DestroyCoreViewSortMutationVariables>;
-export const UpdateCoreViewDocument = gql`
-    mutation UpdateCoreView($id: String!, $input: UpdateViewInput!) {
-  updateCoreView(id: $id, input: $input) {
-    ...ViewFragment
-  }
-}
-    ${ViewFragmentFragmentDoc}`;
-export type UpdateCoreViewMutationFn = Apollo.MutationFunction<UpdateCoreViewMutation, UpdateCoreViewMutationVariables>;
-
-/**
- * __useUpdateCoreViewMutation__
- *
- * To run a mutation, you first call `useUpdateCoreViewMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCoreViewMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCoreViewMutation, { data, loading, error }] = useUpdateCoreViewMutation({
- *   variables: {
- *      id: // value for 'id'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateCoreViewMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCoreViewMutation, UpdateCoreViewMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCoreViewMutation, UpdateCoreViewMutationVariables>(UpdateCoreViewDocument, options);
-      }
-export type UpdateCoreViewMutationHookResult = ReturnType<typeof useUpdateCoreViewMutation>;
-export type UpdateCoreViewMutationResult = Apollo.MutationResult<UpdateCoreViewMutation>;
-export type UpdateCoreViewMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewMutation, UpdateCoreViewMutationVariables>;
-export const UpdateCoreViewFieldDocument = gql`
-    mutation UpdateCoreViewField($input: UpdateViewFieldInput!) {
-  updateCoreViewField(input: $input) {
-    ...ViewFieldFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-export type UpdateCoreViewFieldMutationFn = Apollo.MutationFunction<UpdateCoreViewFieldMutation, UpdateCoreViewFieldMutationVariables>;
-
-/**
- * __useUpdateCoreViewFieldMutation__
- *
- * To run a mutation, you first call `useUpdateCoreViewFieldMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCoreViewFieldMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCoreViewFieldMutation, { data, loading, error }] = useUpdateCoreViewFieldMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateCoreViewFieldMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCoreViewFieldMutation, UpdateCoreViewFieldMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCoreViewFieldMutation, UpdateCoreViewFieldMutationVariables>(UpdateCoreViewFieldDocument, options);
-      }
-export type UpdateCoreViewFieldMutationHookResult = ReturnType<typeof useUpdateCoreViewFieldMutation>;
-export type UpdateCoreViewFieldMutationResult = Apollo.MutationResult<UpdateCoreViewFieldMutation>;
-export type UpdateCoreViewFieldMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewFieldMutation, UpdateCoreViewFieldMutationVariables>;
-export const UpdateCoreViewFilterDocument = gql`
-    mutation UpdateCoreViewFilter($input: UpdateViewFilterInput!) {
-  updateCoreViewFilter(input: $input) {
-    ...ViewFilterFragment
-  }
-}
-    ${ViewFilterFragmentFragmentDoc}`;
-export type UpdateCoreViewFilterMutationFn = Apollo.MutationFunction<UpdateCoreViewFilterMutation, UpdateCoreViewFilterMutationVariables>;
-
-/**
- * __useUpdateCoreViewFilterMutation__
- *
- * To run a mutation, you first call `useUpdateCoreViewFilterMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCoreViewFilterMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCoreViewFilterMutation, { data, loading, error }] = useUpdateCoreViewFilterMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateCoreViewFilterMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCoreViewFilterMutation, UpdateCoreViewFilterMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCoreViewFilterMutation, UpdateCoreViewFilterMutationVariables>(UpdateCoreViewFilterDocument, options);
-      }
-export type UpdateCoreViewFilterMutationHookResult = ReturnType<typeof useUpdateCoreViewFilterMutation>;
-export type UpdateCoreViewFilterMutationResult = Apollo.MutationResult<UpdateCoreViewFilterMutation>;
-export type UpdateCoreViewFilterMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewFilterMutation, UpdateCoreViewFilterMutationVariables>;
-export const UpdateCoreViewFilterGroupDocument = gql`
-    mutation UpdateCoreViewFilterGroup($id: String!, $input: UpdateViewFilterGroupInput!) {
-  updateCoreViewFilterGroup(id: $id, input: $input) {
-    ...ViewFilterGroupFragment
-  }
-}
-    ${ViewFilterGroupFragmentFragmentDoc}`;
-export type UpdateCoreViewFilterGroupMutationFn = Apollo.MutationFunction<UpdateCoreViewFilterGroupMutation, UpdateCoreViewFilterGroupMutationVariables>;
-
-/**
- * __useUpdateCoreViewFilterGroupMutation__
- *
- * To run a mutation, you first call `useUpdateCoreViewFilterGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCoreViewFilterGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCoreViewFilterGroupMutation, { data, loading, error }] = useUpdateCoreViewFilterGroupMutation({
- *   variables: {
- *      id: // value for 'id'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateCoreViewFilterGroupMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCoreViewFilterGroupMutation, UpdateCoreViewFilterGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCoreViewFilterGroupMutation, UpdateCoreViewFilterGroupMutationVariables>(UpdateCoreViewFilterGroupDocument, options);
-      }
-export type UpdateCoreViewFilterGroupMutationHookResult = ReturnType<typeof useUpdateCoreViewFilterGroupMutation>;
-export type UpdateCoreViewFilterGroupMutationResult = Apollo.MutationResult<UpdateCoreViewFilterGroupMutation>;
-export type UpdateCoreViewFilterGroupMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewFilterGroupMutation, UpdateCoreViewFilterGroupMutationVariables>;
-export const UpdateCoreViewGroupDocument = gql`
-    mutation UpdateCoreViewGroup($input: UpdateViewGroupInput!) {
-  updateCoreViewGroup(input: $input) {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewGroupFragmentFragmentDoc}`;
-export type UpdateCoreViewGroupMutationFn = Apollo.MutationFunction<UpdateCoreViewGroupMutation, UpdateCoreViewGroupMutationVariables>;
-
-/**
- * __useUpdateCoreViewGroupMutation__
- *
- * To run a mutation, you first call `useUpdateCoreViewGroupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCoreViewGroupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCoreViewGroupMutation, { data, loading, error }] = useUpdateCoreViewGroupMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateCoreViewGroupMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCoreViewGroupMutation, UpdateCoreViewGroupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCoreViewGroupMutation, UpdateCoreViewGroupMutationVariables>(UpdateCoreViewGroupDocument, options);
-      }
-export type UpdateCoreViewGroupMutationHookResult = ReturnType<typeof useUpdateCoreViewGroupMutation>;
-export type UpdateCoreViewGroupMutationResult = Apollo.MutationResult<UpdateCoreViewGroupMutation>;
-export type UpdateCoreViewGroupMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewGroupMutation, UpdateCoreViewGroupMutationVariables>;
-export const UpdateCoreViewSortDocument = gql`
-    mutation UpdateCoreViewSort($id: String!, $input: UpdateViewSortInput!) {
-  updateCoreViewSort(id: $id, input: $input) {
-    ...ViewSortFragment
-  }
-}
-    ${ViewSortFragmentFragmentDoc}`;
-export type UpdateCoreViewSortMutationFn = Apollo.MutationFunction<UpdateCoreViewSortMutation, UpdateCoreViewSortMutationVariables>;
-
-/**
- * __useUpdateCoreViewSortMutation__
- *
- * To run a mutation, you first call `useUpdateCoreViewSortMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCoreViewSortMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCoreViewSortMutation, { data, loading, error }] = useUpdateCoreViewSortMutation({
- *   variables: {
- *      id: // value for 'id'
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useUpdateCoreViewSortMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCoreViewSortMutation, UpdateCoreViewSortMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCoreViewSortMutation, UpdateCoreViewSortMutationVariables>(UpdateCoreViewSortDocument, options);
-      }
-export type UpdateCoreViewSortMutationHookResult = ReturnType<typeof useUpdateCoreViewSortMutation>;
-export type UpdateCoreViewSortMutationResult = Apollo.MutationResult<UpdateCoreViewSortMutation>;
-export type UpdateCoreViewSortMutationOptions = Apollo.BaseMutationOptions<UpdateCoreViewSortMutation, UpdateCoreViewSortMutationVariables>;
-export const FindAllCoreViewsDocument = gql`
-    query FindAllCoreViews {
-  getCoreViews {
-    ...ViewFragment
-  }
-}
-    ${ViewFragmentFragmentDoc}`;
-
-/**
- * __useFindAllCoreViewsQuery__
- *
- * To run a query within a React component, call `useFindAllCoreViewsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindAllCoreViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindAllCoreViewsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useFindAllCoreViewsQuery(baseOptions?: Apollo.QueryHookOptions<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>(FindAllCoreViewsDocument, options);
-      }
-export function useFindAllCoreViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>(FindAllCoreViewsDocument, options);
-        }
-export type FindAllCoreViewsQueryHookResult = ReturnType<typeof useFindAllCoreViewsQuery>;
-export type FindAllCoreViewsLazyQueryHookResult = ReturnType<typeof useFindAllCoreViewsLazyQuery>;
-export type FindAllCoreViewsQueryResult = Apollo.QueryResult<FindAllCoreViewsQuery, FindAllCoreViewsQueryVariables>;
-export const FindManyCoreViewFieldsDocument = gql`
-    query FindManyCoreViewFields($viewId: String!) {
-  getCoreViewFields(viewId: $viewId) {
-    ...ViewFieldFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-
-/**
- * __useFindManyCoreViewFieldsQuery__
- *
- * To run a query within a React component, call `useFindManyCoreViewFieldsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyCoreViewFieldsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindManyCoreViewFieldsQuery({
- *   variables: {
- *      viewId: // value for 'viewId'
- *   },
- * });
- */
-export function useFindManyCoreViewFieldsQuery(baseOptions: Apollo.QueryHookOptions<FindManyCoreViewFieldsQuery, FindManyCoreViewFieldsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyCoreViewFieldsQuery, FindManyCoreViewFieldsQueryVariables>(FindManyCoreViewFieldsDocument, options);
-      }
-export function useFindManyCoreViewFieldsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyCoreViewFieldsQuery, FindManyCoreViewFieldsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyCoreViewFieldsQuery, FindManyCoreViewFieldsQueryVariables>(FindManyCoreViewFieldsDocument, options);
-        }
-export type FindManyCoreViewFieldsQueryHookResult = ReturnType<typeof useFindManyCoreViewFieldsQuery>;
-export type FindManyCoreViewFieldsLazyQueryHookResult = ReturnType<typeof useFindManyCoreViewFieldsLazyQuery>;
-export type FindManyCoreViewFieldsQueryResult = Apollo.QueryResult<FindManyCoreViewFieldsQuery, FindManyCoreViewFieldsQueryVariables>;
-export const FindManyCoreViewFilterGroupsDocument = gql`
-    query FindManyCoreViewFilterGroups($viewId: String) {
-  getCoreViewFilterGroups(viewId: $viewId) {
-    ...ViewFilterGroupFragment
-  }
-}
-    ${ViewFilterGroupFragmentFragmentDoc}`;
-
-/**
- * __useFindManyCoreViewFilterGroupsQuery__
- *
- * To run a query within a React component, call `useFindManyCoreViewFilterGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyCoreViewFilterGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindManyCoreViewFilterGroupsQuery({
- *   variables: {
- *      viewId: // value for 'viewId'
- *   },
- * });
- */
-export function useFindManyCoreViewFilterGroupsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyCoreViewFilterGroupsQuery, FindManyCoreViewFilterGroupsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyCoreViewFilterGroupsQuery, FindManyCoreViewFilterGroupsQueryVariables>(FindManyCoreViewFilterGroupsDocument, options);
-      }
-export function useFindManyCoreViewFilterGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyCoreViewFilterGroupsQuery, FindManyCoreViewFilterGroupsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyCoreViewFilterGroupsQuery, FindManyCoreViewFilterGroupsQueryVariables>(FindManyCoreViewFilterGroupsDocument, options);
-        }
-export type FindManyCoreViewFilterGroupsQueryHookResult = ReturnType<typeof useFindManyCoreViewFilterGroupsQuery>;
-export type FindManyCoreViewFilterGroupsLazyQueryHookResult = ReturnType<typeof useFindManyCoreViewFilterGroupsLazyQuery>;
-export type FindManyCoreViewFilterGroupsQueryResult = Apollo.QueryResult<FindManyCoreViewFilterGroupsQuery, FindManyCoreViewFilterGroupsQueryVariables>;
-export const FindManyCoreViewFiltersDocument = gql`
-    query FindManyCoreViewFilters($viewId: String) {
-  getCoreViewFilters(viewId: $viewId) {
-    ...ViewFilterFragment
-  }
-}
-    ${ViewFilterFragmentFragmentDoc}`;
-
-/**
- * __useFindManyCoreViewFiltersQuery__
- *
- * To run a query within a React component, call `useFindManyCoreViewFiltersQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyCoreViewFiltersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindManyCoreViewFiltersQuery({
- *   variables: {
- *      viewId: // value for 'viewId'
- *   },
- * });
- */
-export function useFindManyCoreViewFiltersQuery(baseOptions?: Apollo.QueryHookOptions<FindManyCoreViewFiltersQuery, FindManyCoreViewFiltersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyCoreViewFiltersQuery, FindManyCoreViewFiltersQueryVariables>(FindManyCoreViewFiltersDocument, options);
-      }
-export function useFindManyCoreViewFiltersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyCoreViewFiltersQuery, FindManyCoreViewFiltersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyCoreViewFiltersQuery, FindManyCoreViewFiltersQueryVariables>(FindManyCoreViewFiltersDocument, options);
-        }
-export type FindManyCoreViewFiltersQueryHookResult = ReturnType<typeof useFindManyCoreViewFiltersQuery>;
-export type FindManyCoreViewFiltersLazyQueryHookResult = ReturnType<typeof useFindManyCoreViewFiltersLazyQuery>;
-export type FindManyCoreViewFiltersQueryResult = Apollo.QueryResult<FindManyCoreViewFiltersQuery, FindManyCoreViewFiltersQueryVariables>;
-export const FindManyCoreViewGroupsDocument = gql`
-    query FindManyCoreViewGroups($viewId: String) {
-  getCoreViewGroups(viewId: $viewId) {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewGroupFragmentFragmentDoc}`;
-
-/**
- * __useFindManyCoreViewGroupsQuery__
- *
- * To run a query within a React component, call `useFindManyCoreViewGroupsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyCoreViewGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindManyCoreViewGroupsQuery({
- *   variables: {
- *      viewId: // value for 'viewId'
- *   },
- * });
- */
-export function useFindManyCoreViewGroupsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyCoreViewGroupsQuery, FindManyCoreViewGroupsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyCoreViewGroupsQuery, FindManyCoreViewGroupsQueryVariables>(FindManyCoreViewGroupsDocument, options);
-      }
-export function useFindManyCoreViewGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyCoreViewGroupsQuery, FindManyCoreViewGroupsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyCoreViewGroupsQuery, FindManyCoreViewGroupsQueryVariables>(FindManyCoreViewGroupsDocument, options);
-        }
-export type FindManyCoreViewGroupsQueryHookResult = ReturnType<typeof useFindManyCoreViewGroupsQuery>;
-export type FindManyCoreViewGroupsLazyQueryHookResult = ReturnType<typeof useFindManyCoreViewGroupsLazyQuery>;
-export type FindManyCoreViewGroupsQueryResult = Apollo.QueryResult<FindManyCoreViewGroupsQuery, FindManyCoreViewGroupsQueryVariables>;
-export const FindManyCoreViewSortsDocument = gql`
-    query FindManyCoreViewSorts($viewId: String) {
-  getCoreViewSorts(viewId: $viewId) {
-    ...ViewSortFragment
-  }
-}
-    ${ViewSortFragmentFragmentDoc}`;
-
-/**
- * __useFindManyCoreViewSortsQuery__
- *
- * To run a query within a React component, call `useFindManyCoreViewSortsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyCoreViewSortsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindManyCoreViewSortsQuery({
- *   variables: {
- *      viewId: // value for 'viewId'
- *   },
- * });
- */
-export function useFindManyCoreViewSortsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyCoreViewSortsQuery, FindManyCoreViewSortsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyCoreViewSortsQuery, FindManyCoreViewSortsQueryVariables>(FindManyCoreViewSortsDocument, options);
-      }
-export function useFindManyCoreViewSortsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyCoreViewSortsQuery, FindManyCoreViewSortsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyCoreViewSortsQuery, FindManyCoreViewSortsQueryVariables>(FindManyCoreViewSortsDocument, options);
-        }
-export type FindManyCoreViewSortsQueryHookResult = ReturnType<typeof useFindManyCoreViewSortsQuery>;
-export type FindManyCoreViewSortsLazyQueryHookResult = ReturnType<typeof useFindManyCoreViewSortsLazyQuery>;
-export type FindManyCoreViewSortsQueryResult = Apollo.QueryResult<FindManyCoreViewSortsQuery, FindManyCoreViewSortsQueryVariables>;
-export const FindManyCoreViewsDocument = gql`
-    query FindManyCoreViews($objectMetadataId: String) {
-  getCoreViews(objectMetadataId: $objectMetadataId) {
-    ...ViewFragment
-  }
-}
-    ${ViewFragmentFragmentDoc}`;
-
-/**
- * __useFindManyCoreViewsQuery__
- *
- * To run a query within a React component, call `useFindManyCoreViewsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindManyCoreViewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindManyCoreViewsQuery({
- *   variables: {
- *      objectMetadataId: // value for 'objectMetadataId'
- *   },
- * });
- */
-export function useFindManyCoreViewsQuery(baseOptions?: Apollo.QueryHookOptions<FindManyCoreViewsQuery, FindManyCoreViewsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindManyCoreViewsQuery, FindManyCoreViewsQueryVariables>(FindManyCoreViewsDocument, options);
-      }
-export function useFindManyCoreViewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindManyCoreViewsQuery, FindManyCoreViewsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindManyCoreViewsQuery, FindManyCoreViewsQueryVariables>(FindManyCoreViewsDocument, options);
-        }
-export type FindManyCoreViewsQueryHookResult = ReturnType<typeof useFindManyCoreViewsQuery>;
-export type FindManyCoreViewsLazyQueryHookResult = ReturnType<typeof useFindManyCoreViewsLazyQuery>;
-export type FindManyCoreViewsQueryResult = Apollo.QueryResult<FindManyCoreViewsQuery, FindManyCoreViewsQueryVariables>;
-export const FindOneCoreViewDocument = gql`
-    query FindOneCoreView($id: String!) {
-  getCoreView(id: $id) {
-    ...ViewFragment
-  }
-}
-    ${ViewFragmentFragmentDoc}`;
-
-/**
- * __useFindOneCoreViewQuery__
- *
- * To run a query within a React component, call `useFindOneCoreViewQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneCoreViewQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindOneCoreViewQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useFindOneCoreViewQuery(baseOptions: Apollo.QueryHookOptions<FindOneCoreViewQuery, FindOneCoreViewQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneCoreViewQuery, FindOneCoreViewQueryVariables>(FindOneCoreViewDocument, options);
-      }
-export function useFindOneCoreViewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCoreViewQuery, FindOneCoreViewQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneCoreViewQuery, FindOneCoreViewQueryVariables>(FindOneCoreViewDocument, options);
-        }
-export type FindOneCoreViewQueryHookResult = ReturnType<typeof useFindOneCoreViewQuery>;
-export type FindOneCoreViewLazyQueryHookResult = ReturnType<typeof useFindOneCoreViewLazyQuery>;
-export type FindOneCoreViewQueryResult = Apollo.QueryResult<FindOneCoreViewQuery, FindOneCoreViewQueryVariables>;
-export const FindOneCoreViewFieldDocument = gql`
-    query FindOneCoreViewField($id: String!) {
-  getCoreViewField(id: $id) {
-    ...ViewFieldFragment
-  }
-}
-    ${ViewFieldFragmentFragmentDoc}`;
-
-/**
- * __useFindOneCoreViewFieldQuery__
- *
- * To run a query within a React component, call `useFindOneCoreViewFieldQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneCoreViewFieldQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindOneCoreViewFieldQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useFindOneCoreViewFieldQuery(baseOptions: Apollo.QueryHookOptions<FindOneCoreViewFieldQuery, FindOneCoreViewFieldQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneCoreViewFieldQuery, FindOneCoreViewFieldQueryVariables>(FindOneCoreViewFieldDocument, options);
-      }
-export function useFindOneCoreViewFieldLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCoreViewFieldQuery, FindOneCoreViewFieldQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneCoreViewFieldQuery, FindOneCoreViewFieldQueryVariables>(FindOneCoreViewFieldDocument, options);
-        }
-export type FindOneCoreViewFieldQueryHookResult = ReturnType<typeof useFindOneCoreViewFieldQuery>;
-export type FindOneCoreViewFieldLazyQueryHookResult = ReturnType<typeof useFindOneCoreViewFieldLazyQuery>;
-export type FindOneCoreViewFieldQueryResult = Apollo.QueryResult<FindOneCoreViewFieldQuery, FindOneCoreViewFieldQueryVariables>;
-export const FindOneCoreViewFilterDocument = gql`
-    query FindOneCoreViewFilter($id: String!) {
-  getCoreViewFilter(id: $id) {
-    ...ViewFilterFragment
-  }
-}
-    ${ViewFilterFragmentFragmentDoc}`;
-
-/**
- * __useFindOneCoreViewFilterQuery__
- *
- * To run a query within a React component, call `useFindOneCoreViewFilterQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneCoreViewFilterQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindOneCoreViewFilterQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useFindOneCoreViewFilterQuery(baseOptions: Apollo.QueryHookOptions<FindOneCoreViewFilterQuery, FindOneCoreViewFilterQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneCoreViewFilterQuery, FindOneCoreViewFilterQueryVariables>(FindOneCoreViewFilterDocument, options);
-      }
-export function useFindOneCoreViewFilterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCoreViewFilterQuery, FindOneCoreViewFilterQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneCoreViewFilterQuery, FindOneCoreViewFilterQueryVariables>(FindOneCoreViewFilterDocument, options);
-        }
-export type FindOneCoreViewFilterQueryHookResult = ReturnType<typeof useFindOneCoreViewFilterQuery>;
-export type FindOneCoreViewFilterLazyQueryHookResult = ReturnType<typeof useFindOneCoreViewFilterLazyQuery>;
-export type FindOneCoreViewFilterQueryResult = Apollo.QueryResult<FindOneCoreViewFilterQuery, FindOneCoreViewFilterQueryVariables>;
-export const FindOneCoreViewFilterGroupDocument = gql`
-    query FindOneCoreViewFilterGroup($id: String!) {
-  getCoreViewFilterGroup(id: $id) {
-    ...ViewFilterGroupFragment
-  }
-}
-    ${ViewFilterGroupFragmentFragmentDoc}`;
-
-/**
- * __useFindOneCoreViewFilterGroupQuery__
- *
- * To run a query within a React component, call `useFindOneCoreViewFilterGroupQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneCoreViewFilterGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindOneCoreViewFilterGroupQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useFindOneCoreViewFilterGroupQuery(baseOptions: Apollo.QueryHookOptions<FindOneCoreViewFilterGroupQuery, FindOneCoreViewFilterGroupQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneCoreViewFilterGroupQuery, FindOneCoreViewFilterGroupQueryVariables>(FindOneCoreViewFilterGroupDocument, options);
-      }
-export function useFindOneCoreViewFilterGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCoreViewFilterGroupQuery, FindOneCoreViewFilterGroupQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneCoreViewFilterGroupQuery, FindOneCoreViewFilterGroupQueryVariables>(FindOneCoreViewFilterGroupDocument, options);
-        }
-export type FindOneCoreViewFilterGroupQueryHookResult = ReturnType<typeof useFindOneCoreViewFilterGroupQuery>;
-export type FindOneCoreViewFilterGroupLazyQueryHookResult = ReturnType<typeof useFindOneCoreViewFilterGroupLazyQuery>;
-export type FindOneCoreViewFilterGroupQueryResult = Apollo.QueryResult<FindOneCoreViewFilterGroupQuery, FindOneCoreViewFilterGroupQueryVariables>;
-export const FindOneCoreViewGroupDocument = gql`
-    query FindOneCoreViewGroup($id: String!) {
-  getCoreViewGroup(id: $id) {
-    ...ViewGroupFragment
-  }
-}
-    ${ViewGroupFragmentFragmentDoc}`;
-
-/**
- * __useFindOneCoreViewGroupQuery__
- *
- * To run a query within a React component, call `useFindOneCoreViewGroupQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneCoreViewGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindOneCoreViewGroupQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useFindOneCoreViewGroupQuery(baseOptions: Apollo.QueryHookOptions<FindOneCoreViewGroupQuery, FindOneCoreViewGroupQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneCoreViewGroupQuery, FindOneCoreViewGroupQueryVariables>(FindOneCoreViewGroupDocument, options);
-      }
-export function useFindOneCoreViewGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCoreViewGroupQuery, FindOneCoreViewGroupQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneCoreViewGroupQuery, FindOneCoreViewGroupQueryVariables>(FindOneCoreViewGroupDocument, options);
-        }
-export type FindOneCoreViewGroupQueryHookResult = ReturnType<typeof useFindOneCoreViewGroupQuery>;
-export type FindOneCoreViewGroupLazyQueryHookResult = ReturnType<typeof useFindOneCoreViewGroupLazyQuery>;
-export type FindOneCoreViewGroupQueryResult = Apollo.QueryResult<FindOneCoreViewGroupQuery, FindOneCoreViewGroupQueryVariables>;
-export const FindOneCoreViewSortDocument = gql`
-    query FindOneCoreViewSort($id: String!) {
-  getCoreViewSort(id: $id) {
-    ...ViewSortFragment
-  }
-}
-    ${ViewSortFragmentFragmentDoc}`;
-
-/**
- * __useFindOneCoreViewSortQuery__
- *
- * To run a query within a React component, call `useFindOneCoreViewSortQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindOneCoreViewSortQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindOneCoreViewSortQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useFindOneCoreViewSortQuery(baseOptions: Apollo.QueryHookOptions<FindOneCoreViewSortQuery, FindOneCoreViewSortQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindOneCoreViewSortQuery, FindOneCoreViewSortQueryVariables>(FindOneCoreViewSortDocument, options);
-      }
-export function useFindOneCoreViewSortLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindOneCoreViewSortQuery, FindOneCoreViewSortQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindOneCoreViewSortQuery, FindOneCoreViewSortQueryVariables>(FindOneCoreViewSortDocument, options);
-        }
-export type FindOneCoreViewSortQueryHookResult = ReturnType<typeof useFindOneCoreViewSortQuery>;
-export type FindOneCoreViewSortLazyQueryHookResult = ReturnType<typeof useFindOneCoreViewSortLazyQuery>;
-export type FindOneCoreViewSortQueryResult = Apollo.QueryResult<FindOneCoreViewSortQuery, FindOneCoreViewSortQueryVariables>;
+export type UpdateWorkflowVersionPositionsMutationHookResult = ReturnType<typeof useUpdateWorkflowVersionPositionsMutation>;
+export type UpdateWorkflowVersionPositionsMutationResult = Apollo.MutationResult<UpdateWorkflowVersionPositionsMutation>;
+export type UpdateWorkflowVersionPositionsMutationOptions = Apollo.BaseMutationOptions<UpdateWorkflowVersionPositionsMutation, UpdateWorkflowVersionPositionsMutationVariables>;
