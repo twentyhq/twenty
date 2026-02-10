@@ -1,5 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { hasMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
+import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -106,6 +106,7 @@ export const WorkflowEditActionEmailBase = ({
     await triggerApisOAuth(missingScopes.provider, {
       redirectLocation: redirectUrl,
       loginHint: missingScopes.loginHint,
+      extraScopes: missingScopes.extraScopes,
     });
   };
 
@@ -170,11 +171,16 @@ export const WorkflowEditActionEmailBase = ({
     (account) => account.id === formData.connectedAccountId,
   );
 
+  const missingDraftScopes = isDefined(selectedAccount)
+    ? getMissingDraftEmailScopes(selectedAccount)
+    : [];
+
   const missingScopes =
     isDefined(selectedAccount) &&
     selectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
-    hasMissingDraftEmailScopes(selectedAccount)
+    missingDraftScopes.length > 0
       ? {
+          extraScopes: missingDraftScopes,
           provider: selectedAccount.provider,
           loginHint: selectedAccount.handle,
         }

@@ -4,24 +4,28 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-export const hasMissingDraftEmailScopes = (
+export const getMissingDraftEmailScopes = (
   connectedAccount: ConnectedAccount,
-): boolean => {
+): string[] => {
   const scopes = connectedAccount.scopes;
 
   switch (connectedAccount.provider) {
-    case ConnectedAccountProvider.GOOGLE:
-      return !(
+    case ConnectedAccountProvider.GOOGLE: {
+      const hasScope =
         isDefined(scopes) &&
-        scopes.some((scope) => scope === GMAIL_COMPOSE_SCOPE)
-      );
-    case ConnectedAccountProvider.MICROSOFT:
-      return !(
+        scopes.some((scope) => scope === GMAIL_COMPOSE_SCOPE);
+
+      return hasScope ? [] : [GMAIL_COMPOSE_SCOPE];
+    }
+    case ConnectedAccountProvider.MICROSOFT: {
+      const hasScope =
         isDefined(scopes) &&
-        scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE)
-      );
+        scopes.some((scope) => scope === MICROSOFT_SEND_SCOPE);
+
+      return hasScope ? [] : [MICROSOFT_SEND_SCOPE];
+    }
     case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-      return false;
+      return [];
     default:
       assertUnreachable(
         connectedAccount.provider,

@@ -1,7 +1,7 @@
 import { GMAIL_COMPOSE_SCOPE } from '@/accounts/constants/GmailComposeScope';
 import { MICROSOFT_SEND_SCOPE } from '@/accounts/constants/MicrosoftSendScope';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { hasMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
+import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 const buildConnectedAccount = (
@@ -15,64 +15,70 @@ const buildConnectedAccount = (
     ...overrides,
   }) as ConnectedAccount;
 
-describe('hasMissingDraftEmailScopes', () => {
+describe('getMissingDraftEmailScopes', () => {
   describe('Google provider', () => {
-    it('should return true when gmail.compose is missing', () => {
+    it('should return gmail.compose scope when it is missing', () => {
       const account = buildConnectedAccount({
         provider: ConnectedAccountProvider.GOOGLE,
         scopes: [],
       });
 
-      expect(hasMissingDraftEmailScopes(account)).toBe(true);
+      expect(getMissingDraftEmailScopes(account)).toEqual([
+        GMAIL_COMPOSE_SCOPE,
+      ]);
     });
 
-    it('should return false when gmail.compose scope exists', () => {
+    it('should return empty array when gmail.compose scope exists', () => {
       const account = buildConnectedAccount({
         provider: ConnectedAccountProvider.GOOGLE,
         scopes: [GMAIL_COMPOSE_SCOPE],
       });
 
-      expect(hasMissingDraftEmailScopes(account)).toBe(false);
+      expect(getMissingDraftEmailScopes(account)).toEqual([]);
     });
 
-    it('should return true when scopes are null', () => {
+    it('should return gmail.compose scope when scopes are null', () => {
       const account = buildConnectedAccount({
         provider: ConnectedAccountProvider.GOOGLE,
         scopes: null,
       });
 
-      expect(hasMissingDraftEmailScopes(account)).toBe(true);
+      expect(getMissingDraftEmailScopes(account)).toEqual([
+        GMAIL_COMPOSE_SCOPE,
+      ]);
     });
   });
 
   describe('Microsoft provider', () => {
-    it('should return true when Mail.Send is missing', () => {
+    it('should return Mail.Send scope when it is missing', () => {
       const account = buildConnectedAccount({
         provider: ConnectedAccountProvider.MICROSOFT,
         scopes: [],
       });
 
-      expect(hasMissingDraftEmailScopes(account)).toBe(true);
+      expect(getMissingDraftEmailScopes(account)).toEqual([
+        MICROSOFT_SEND_SCOPE,
+      ]);
     });
 
-    it('should return false when Mail.Send scope exists', () => {
+    it('should return empty array when Mail.Send scope exists', () => {
       const account = buildConnectedAccount({
         provider: ConnectedAccountProvider.MICROSOFT,
         scopes: [MICROSOFT_SEND_SCOPE],
       });
 
-      expect(hasMissingDraftEmailScopes(account)).toBe(false);
+      expect(getMissingDraftEmailScopes(account)).toEqual([]);
     });
   });
 
   describe('IMAP/SMTP provider', () => {
-    it('should always return false', () => {
+    it('should always return empty array', () => {
       const account = buildConnectedAccount({
         provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
         connectionParameters: undefined,
       });
 
-      expect(hasMissingDraftEmailScopes(account)).toBe(false);
+      expect(getMissingDraftEmailScopes(account)).toEqual([]);
     });
   });
 });
