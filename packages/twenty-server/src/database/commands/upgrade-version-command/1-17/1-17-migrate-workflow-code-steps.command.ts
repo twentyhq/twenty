@@ -1,14 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as fs from 'fs/promises';
-import { dirname, join } from 'path';
+import crypto from 'crypto';
 
 import { Command } from 'nest-commander';
 import { FileFolder, type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
-import { isObject } from 'class-validator';
 import { v4 } from 'uuid';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -184,24 +182,29 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       return null;
     }
 
-    const tempRoot = await this.migrateFilesFromOldPathToTemp(
-      workspaceId,
-      serverlessFunctionId,
-      version,
-    );
-
     const newLogicFunctionId = v4();
     const applicationUniversalIdentifier =
       await this.getApplicationUniversalIdentifier(
         oldLogicFunction.applicationId,
       );
 
+    const { builtContent, sourceContent } = await this.readOldFunctionFiles(
+      workspaceId,
+      serverlessFunctionId,
+      version,
+    );
+
+    const checksum = crypto
+      .createHash('md5')
+      .update(builtContent)
+      .digest('hex');
+
     if (isDefined(applicationUniversalIdentifier)) {
-      await this.uploadTempToNewPath(
+      await this.uploadFunctionFiles(
         workspaceId,
         applicationUniversalIdentifier,
         newLogicFunctionId,
-        tempRoot,
+        { builtContent, sourceContent },
       );
     }
 
@@ -216,13 +219,11 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
         sourceHandlerPath: `${NEW_WORKFLOW_RESOURCE_PREFIX}/${newLogicFunctionId}/src/index.ts`,
         builtHandlerPath: `${NEW_WORKFLOW_RESOURCE_PREFIX}/${newLogicFunctionId}/src/index.mjs`,
         handlerName: oldLogicFunction.handlerName,
-        checksum: oldLogicFunction.checksum ?? 'temporary',
+        checksum,
       },
       workspaceId,
       ownerFlatApplication: oldLogicFunction.application,
     });
-
-    await fs.rm(tempRoot, { recursive: true, force: true });
 
     this.logger.log(
       `Created logic function ${newLogicFunctionId} (from ${serverlessFunctionId}/${version}) and migrated files in workspace ${workspaceId}`,
@@ -231,62 +232,51 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
     return newLogicFunctionId;
   }
 
-  private async migrateFilesFromOldPathToTemp(
+  private async readOldFunctionFiles(
     workspaceId: string,
     serverlessFunctionId: string,
     version: string,
-  ): Promise<string> {
+  ): Promise<{ builtContent: string; sourceContent: string }> {
     const workspacePrefix = `workspace-${workspaceId}`;
-    const oldPaths = {
-      built: `${workspacePrefix}/${OLD_BUILT_FOLDER}/${serverlessFunctionId}/${version}`,
-      source: `${workspacePrefix}/${OLD_SOURCE_FOLDER}/${serverlessFunctionId}/${version}`,
-    };
-
-    const tempRoot = await fs.mkdtemp(
-      `/tmp/twenty-migrate-code-step-${workspaceId}-${serverlessFunctionId}-${version}-`,
-    );
-    const builtTempDir = join(tempRoot, 'built');
-    const sourceTempDir = join(tempRoot, 'source');
-
-    await fs.mkdir(builtTempDir, { recursive: true });
-    await fs.mkdir(sourceTempDir, { recursive: true });
 
     const builtSources = await this.fileStorageService.readFolderLegacy(
-      oldPaths.built,
+      `${workspacePrefix}/${OLD_BUILT_FOLDER}/${serverlessFunctionId}/${version}`,
     );
-
-    await this.writeSourcesToLocalFolder(builtSources as Sources, builtTempDir);
 
     const sourceSources = await this.fileStorageService.readFolderLegacy(
-      oldPaths.source,
+      `${workspacePrefix}/${OLD_SOURCE_FOLDER}/${serverlessFunctionId}/${version}`,
     );
-    const flattened =
+
+    // Old source layout may nest files under a `src/` key
+    const sourceRoot =
       (sourceSources.src as Sources) ?? (sourceSources as Sources);
 
-    await this.writeSourcesToLocalFolder(flattened, sourceTempDir);
+    const builtContent = builtSources['index.mjs'] as string;
+    const sourceContent = sourceRoot['index.ts'] as string;
 
-    return tempRoot;
+    if (!isDefined(builtContent) || !isDefined(sourceContent)) {
+      throw new Error(
+        `Missing index.mjs or index.ts for serverless function ${serverlessFunctionId}/${version} in workspace ${workspaceId}`,
+      );
+    }
+
+    return { builtContent, sourceContent };
   }
 
-  private async uploadTempToNewPath(
+  private async uploadFunctionFiles(
     workspaceId: string,
     applicationUniversalIdentifier: string,
     newLogicFunctionId: string,
-    tempRoot: string,
+    files: { builtContent: string; sourceContent: string },
   ): Promise<void> {
     const resourcePath = `${NEW_WORKFLOW_RESOURCE_PREFIX}/${newLogicFunctionId}/src`;
-    const builtTempDir = join(tempRoot, 'built');
-    const sourceTempDir = join(tempRoot, 'source');
-
-    const builtFile = await fs.readFile(join(builtTempDir, 'index.mjs'));
-    const sourceFile = await fs.readFile(join(sourceTempDir, 'index.ts'));
 
     await this.fileStorageService.writeFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: `${resourcePath}/index.mjs`,
-      sourceFile: builtFile,
+      sourceFile: Buffer.from(files.builtContent),
       mimeType: 'application/javascript',
       settings: {
         isTemporaryFile: false,
@@ -299,29 +289,12 @@ export class MigrateWorkflowCodeStepsCommand extends ActiveOrSuspendedWorkspaces
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: `${resourcePath}/index.ts`,
-      sourceFile: sourceFile,
+      sourceFile: Buffer.from(files.sourceContent),
       mimeType: 'application/typescript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,
       },
     });
-  }
-
-  private async writeSourcesToLocalFolder(
-    sources: Sources,
-    localPath: string,
-  ): Promise<void> {
-    for (const key of Object.keys(sources)) {
-      const filePath = join(localPath, key);
-      const value = sources[key];
-
-      if (isObject(value)) {
-        await this.writeSourcesToLocalFolder(value as Sources, filePath);
-        continue;
-      }
-      await fs.mkdir(dirname(filePath), { recursive: true });
-      await fs.writeFile(filePath, value);
-    }
   }
 }
