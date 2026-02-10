@@ -4,7 +4,7 @@ import { type AxiosRequestConfig, isAxiosError } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 import { parseDataFromContentType } from 'twenty-shared/workflow';
 
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { HttpRequestInputZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
 import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-tool/types/http-request-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -26,7 +26,7 @@ export class HttpTool implements Tool {
 
   async execute(
     parameters: ToolInput,
-    _context: ToolExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<ToolOutput> {
     const { url, method, headers, body } = parameters as HttpRequestInput;
     const headersCopy = { ...headers };
@@ -48,7 +48,14 @@ export class HttpTool implements Tool {
         }
       }
 
-      const axiosClient = this.secureHttpClientService.getHttpClient();
+      const axiosClient = this.secureHttpClientService.getHttpClient(
+        undefined,
+        {
+          workspaceId: context.workspaceId,
+          userId: context.userId,
+          source: 'workflow-http',
+        },
+      );
       const response = await axiosClient(axiosConfig);
 
       return {

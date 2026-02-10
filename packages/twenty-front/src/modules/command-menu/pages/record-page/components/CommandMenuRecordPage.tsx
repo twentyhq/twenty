@@ -6,31 +6,26 @@ import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/c
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { INFORMATION_BANNER_HEIGHT } from '@/information-banner/constants/InformationBannerHeight';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
+import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 const StyledRightDrawerRecord = styled.div<{
-  isMobile: boolean;
   hasDeletedRecordBanner: boolean;
 }>`
-  height: ${({ theme, isMobile, hasDeletedRecordBanner }) => {
-    const mobileOffset = isMobile ? theme.spacing(16) : '0px';
+  height: ${({ hasDeletedRecordBanner }) => {
     const bannerOffset = hasDeletedRecordBanner
       ? INFORMATION_BANNER_HEIGHT
       : '0px';
-    return `calc(100% - ${mobileOffset} - ${bannerOffset})`;
+    return `calc(100% - ${bannerOffset})`;
   }};
 `;
 
 export const CommandMenuRecordPage = () => {
-  const isMobile = useIsMobile();
-
   const viewableRecordNameSingular = useRecoilComponentValue(
     viewableRecordNameSingularComponentState,
   );
@@ -79,16 +74,13 @@ export const CommandMenuRecordPage = () => {
         <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: commandMenuPageInstanceId }}
         >
-          <StyledRightDrawerRecord
-            isMobile={isMobile}
-            hasDeletedRecordBanner={!!recordDeletedAt}
-          >
+          <StyledRightDrawerRecord hasDeletedRecordBanner={!!recordDeletedAt}>
             <TimelineActivityContext.Provider
               value={{
                 recordId: objectRecordId,
               }}
             >
-              <PageLayoutDispatcher
+              <PageLayoutRecordPageRenderer
                 targetRecordIdentifier={{
                   id: objectRecordId,
                   targetObjectNameSingular: objectNameSingular,

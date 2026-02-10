@@ -108,15 +108,15 @@ export const useBillingWording = () => {
     const prefix =
       subscriptionStatus === SubscriptionStatus.Trialing
         ? t`Your trial period will end, and `
-        : undefined;
+        : '';
     const body = t`you will be charged $${enterprisePrice} per user per month`;
-    const suffix = isYearlyPlan ? t` billed annually` : undefined;
+    const suffix = isYearlyPlan ? t` billed annually` : '';
     return capitalize(`${prefix}${body}${suffix}.`);
   };
 
   const confirmationModalSwitchToProMessage = () => {
     const beautifiedRenewDate = getBeautifiedRenewDate();
-    const suffix1 = isYearlyPlan ? t` billed annually` : undefined;
+    const suffix1 = isYearlyPlan ? t` billed annually` : '';
     const suffix2 = t`. The change will be applied the ${beautifiedRenewDate}.`;
     const body = t`You will be charged $${proPrice} per user per month`;
     return `${body}${suffix1}${suffix2}`;

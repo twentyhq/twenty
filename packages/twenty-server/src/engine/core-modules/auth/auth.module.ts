@@ -44,8 +44,8 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -116,6 +116,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     DomainServerConfigModule,
     ApplicationModule,
     WorkspaceCacheModule,
+    SecureHttpClientModule,
   ],
   controllers: [
     GoogleAuthController,
@@ -150,7 +151,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,
-    SecureHttpClientService,
   ],
   exports: [
     AccessTokenService,

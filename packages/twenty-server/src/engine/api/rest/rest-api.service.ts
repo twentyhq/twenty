@@ -5,7 +5,7 @@ import { type AxiosResponse } from 'axios';
 import { type Query } from 'src/engine/api/rest/core/types/query.type';
 import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
 import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
-import { SecureHttpClientService } from 'src/engine/core-modules/tool/services/secure-http-client.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 export enum GraphqlApiType {
   CORE = 'core',
