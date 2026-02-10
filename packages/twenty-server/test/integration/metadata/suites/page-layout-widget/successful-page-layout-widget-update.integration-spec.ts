@@ -5,9 +5,9 @@ import {
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
-import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
 import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
+import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
@@ -86,9 +86,11 @@ describe('Page layout widget update should succeed', () => {
   let testSetup: {
     pageLayoutId: string;
     pageLayoutTabId: string;
+    objectMetadataId: string;
     fieldMetadataId1: string;
     fieldMetadataId2: string;
     fieldMetadataId3: string;
+    fieldMetadataId3SubFieldName: string;
   };
 
   beforeAll(async () => {
@@ -301,6 +303,8 @@ describe('Page layout widget update should succeed', () => {
             primaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId2,
             primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
             secondaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId3,
+            secondaryAxisGroupBySubFieldName:
+              testSetup.fieldMetadataId3SubFieldName,
             secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
             displayDataLabel: true,
             axisNameDisplay: AxisNameDisplay.NONE,
@@ -333,6 +337,7 @@ describe('Page layout widget update should succeed', () => {
           title: 'Original Graph Widget',
           pageLayoutTabId: testSetup.pageLayoutTabId,
           type: WidgetType.GRAPH,
+          objectMetadataId: testSetup.objectMetadataId,
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
             aggregateFieldMetadataId: testSetup.fieldMetadataId1,

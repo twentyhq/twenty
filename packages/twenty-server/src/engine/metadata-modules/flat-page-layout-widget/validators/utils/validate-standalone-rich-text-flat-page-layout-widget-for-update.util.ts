@@ -4,33 +4,33 @@ import { type ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs } from 
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { validateStandaloneRichTextBody } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util';
 import { validateStandaloneRichTextConfigurationType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util';
-import { type StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
 
 export const validateStandaloneRichTextFlatPageLayoutWidgetForUpdate = (
   args: ValidateFlatPageLayoutWidgetTypeSpecificitiesForUpdateArgs,
 ): FlatPageLayoutWidgetValidationError[] => {
   const { flatEntityToValidate } = args;
-  const { configuration, title } = flatEntityToValidate;
+  const { universalConfiguration, title: widgetTitle } = flatEntityToValidate;
   const errors: FlatPageLayoutWidgetValidationError[] = [];
 
-  if (!isDefined(configuration)) {
+  if (!isDefined(universalConfiguration)) {
     return [];
   }
 
-  const standaloneRichTextConfiguration =
-    configuration as StandaloneRichTextConfigurationDTO;
+  const result = validateStandaloneRichTextConfigurationType({
+    universalConfiguration,
+    widgetTitle,
+  });
 
-  const configurationTypeErrors = validateStandaloneRichTextConfigurationType(
-    standaloneRichTextConfiguration,
-    title,
-  );
+  if (result.status === 'fail') {
+    return result.errors;
+  }
 
-  errors.push(...configurationTypeErrors);
+  const { standaloneRichTextUniversalConfiguration } = result;
 
-  const bodyErrors = validateStandaloneRichTextBody(
-    standaloneRichTextConfiguration,
-    title,
-  );
+  const bodyErrors = validateStandaloneRichTextBody({
+    standaloneRichTextUniversalConfiguration,
+    widgetTitle,
+  });
 
   errors.push(...bodyErrors);
 
