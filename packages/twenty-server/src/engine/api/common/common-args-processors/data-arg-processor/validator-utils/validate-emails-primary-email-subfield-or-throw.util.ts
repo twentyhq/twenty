@@ -13,7 +13,7 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): string | null => {
-  if (isNull(value) || !isNonEmptyString(value)) return null;
+  if (isNull(value)) return null;
 
   if (typeof value !== 'string') {
     const inspectedValue = inspect(value);
@@ -25,7 +25,10 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
     );
   }
 
-  if (!z.email({ pattern: z.regexes.unicodeEmail }).safeParse(value).success) {
+  if (
+    !z.email({ pattern: z.regexes.unicodeEmail }).safeParse(value).success &&
+    isNonEmptyString(value)
+  ) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(
