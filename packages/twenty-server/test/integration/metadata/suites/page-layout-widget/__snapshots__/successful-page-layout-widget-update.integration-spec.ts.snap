@@ -136,7 +136,7 @@ exports[`Page layout widget update should succeed from a GRAPH widget should upd
     "rangeMin": -100,
     "secondaryAxisGroupByDateGranularity": "DAY",
     "secondaryAxisGroupByFieldMetadataId": Any<String>,
-    "secondaryAxisGroupBySubFieldName": null,
+    "secondaryAxisGroupBySubFieldName": "primaryLinkUrl",
     "secondaryAxisManualSortOrder": null,
     "secondaryAxisOrderBy": "FIELD_DESC",
     "timezone": "UTC",

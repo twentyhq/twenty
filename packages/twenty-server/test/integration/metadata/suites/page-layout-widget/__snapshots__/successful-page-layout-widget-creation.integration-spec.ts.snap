@@ -293,7 +293,7 @@ exports[`Page layout widget creation should succeed should create a page layout 
     "rangeMin": -100,
     "secondaryAxisGroupByDateGranularity": "DAY",
     "secondaryAxisGroupByFieldMetadataId": Any<String>,
-    "secondaryAxisGroupBySubFieldName": null,
+    "secondaryAxisGroupBySubFieldName": "primaryLinkUrl",
     "secondaryAxisManualSortOrder": null,
     "secondaryAxisOrderBy": "FIELD_DESC",
     "timezone": "UTC",
