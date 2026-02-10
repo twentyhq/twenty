@@ -5,40 +5,40 @@ import { type ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs } fro
 import { type FlatPageLayoutWidgetValidationError } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-validation-error.type';
 import { validateStandaloneRichTextBody } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util';
 import { validateStandaloneRichTextConfigurationType } from 'src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-configuration-type.util';
-import { type StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 
 export const validateStandaloneRichTextFlatPageLayoutWidgetForCreation = (
   args: ValidateFlatPageLayoutWidgetTypeSpecificitiesForCreationArgs,
 ): FlatPageLayoutWidgetValidationError[] => {
   const { flatEntityToValidate } = args;
-  const { configuration, title } = flatEntityToValidate;
+  const { universalConfiguration, title: widgetTitle } = flatEntityToValidate;
   const errors: FlatPageLayoutWidgetValidationError[] = [];
 
-  if (!isDefined(configuration)) {
+  if (!isDefined(universalConfiguration)) {
     errors.push({
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      message: t`Configuration is required for standalone rich text widget "${title}"`,
+      message: t`Configuration is required for standalone rich text widget "${widgetTitle}"`,
       userFriendlyMessage: msg`Configuration is required for standalone rich text widget`,
     });
 
     return errors;
   }
 
-  const standaloneRichTextConfiguration =
-    configuration as StandaloneRichTextConfigurationDTO;
+  const result = validateStandaloneRichTextConfigurationType({
+    universalConfiguration,
+    widgetTitle,
+  });
 
-  const configurationTypeErrors = validateStandaloneRichTextConfigurationType(
-    standaloneRichTextConfiguration,
-    title,
-  );
+  if (result.status === 'fail') {
+    return [...errors, ...result.errors];
+  }
 
-  errors.push(...configurationTypeErrors);
+  const { standaloneRichTextUniversalConfiguration } = result;
 
-  const bodyErrors = validateStandaloneRichTextBody(
-    standaloneRichTextConfiguration,
-    title,
-  );
+  const bodyErrors = validateStandaloneRichTextBody({
+    standaloneRichTextUniversalConfiguration,
+    widgetTitle,
+  });
 
   errors.push(...bodyErrors);
 
