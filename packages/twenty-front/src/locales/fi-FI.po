@@ -6466,11 +6466,6 @@ msgstr "Piilota ryhmä {groupValue}"
 msgid "Hide hidden groups"
 msgstr "Piilota piilotetut ryhmät"
 
-#. js-lingui-id: i0qMbr
-#: src/modules/object-record/record-show/hooks/useRecordShowContainerTabs.ts
-msgid "Home"
-msgstr "Koti"
-
 #. js-lingui-id: Xkd22/
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts

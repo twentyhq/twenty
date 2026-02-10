@@ -6466,11 +6466,6 @@ msgstr "Csoport elrejtése: {groupValue}"
 msgid "Hide hidden groups"
 msgstr "Rejtett csoportok elrejtése"
 
-#. js-lingui-id: i0qMbr
-#: src/modules/object-record/record-show/hooks/useRecordShowContainerTabs.ts
-msgid "Home"
-msgstr "Kezdőlap"
-
 #. js-lingui-id: Xkd22/
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts

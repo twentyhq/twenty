@@ -6466,11 +6466,6 @@ msgstr "Versteek groep {groupValue}"
 msgid "Hide hidden groups"
 msgstr "Versteek versteekte groepe"
 
-#. js-lingui-id: i0qMbr
-#: src/modules/object-record/record-show/hooks/useRecordShowContainerTabs.ts
-msgid "Home"
-msgstr "Tuis"
-
 #. js-lingui-id: Xkd22/
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 #: src/modules/command-menu/pages/page-layout/constants/GraphTypeInformation.ts
