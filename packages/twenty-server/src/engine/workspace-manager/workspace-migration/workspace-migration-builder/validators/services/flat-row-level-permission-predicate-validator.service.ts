@@ -200,10 +200,8 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       updatedPredicate.roleUniversalIdentifier !==
       existingPredicate.roleUniversalIdentifier
     ) {
-      const existingRoleIdentifier =
-        existingPredicate.roleUniversalIdentifier;
-      const updatedRoleIdentifier =
-        updatedPredicate.roleUniversalIdentifier;
+      const existingRoleIdentifier = existingPredicate.roleUniversalIdentifier;
+      const updatedRoleIdentifier = updatedPredicate.roleUniversalIdentifier;
 
       validationResult.errors.push({
         code: RowLevelPermissionPredicateExceptionCode.UNAUTHORIZED_ROLE_MODIFICATION,
