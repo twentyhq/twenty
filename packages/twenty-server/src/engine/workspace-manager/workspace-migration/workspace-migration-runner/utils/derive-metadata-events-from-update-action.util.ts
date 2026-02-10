@@ -8,6 +8,7 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
+  type UpdateMetadataEventDiff,
   type CreateMetadataEvent,
   type DeleteMetadataEvent,
   type MetadataEvent,
@@ -38,7 +39,7 @@ const buildUpdateMetadataEvent = <TMetadataName extends AllMetadataName>({
         after: after[field],
       },
     ]),
-  );
+  ) as UpdateMetadataEventDiff<TMetadataName, (typeof updatedFields)[number]>;
 
   return {
     type: 'update',
@@ -49,7 +50,7 @@ const buildUpdateMetadataEvent = <TMetadataName extends AllMetadataName>({
       before,
       after,
     },
-  } as UpdateMetadataEvent<TMetadataName>;
+  };
 };
 
 export const deriveMetadataEventsFromUpdateAction = ({

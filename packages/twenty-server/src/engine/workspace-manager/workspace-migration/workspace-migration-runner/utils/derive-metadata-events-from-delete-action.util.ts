@@ -56,7 +56,7 @@ export const deriveMetadataEventsFromDeleteAction = ({
           properties: {
             before: flatEntityToDelete,
           },
-        } as MetadataEvent,
+        },
       ];
     }
     default: {

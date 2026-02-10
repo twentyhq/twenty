@@ -15,6 +15,16 @@ export type DeleteMetadataEvent<T extends AllMetadataName> = BaseMetadataEvent<
   type: 'delete';
 };
 
+export type UpdateMetadataEventDiff<
+  T extends AllMetadataName,
+  TProperties extends MetadataUniversalFlatEntityPropertiesToCompare<T>,
+> = {
+  [P in TProperties]: {
+    before: MetadataFlatEntity<T>[P];
+    after: MetadataFlatEntity<T>[P];
+  };
+};
+
 export type UpdateMetadataEvent<
   T extends AllMetadataName,
   TProperties extends
@@ -23,12 +33,7 @@ export type UpdateMetadataEvent<
   T,
   {
     updatedFields: TProperties[];
-    diff: {
-      [P in TProperties]: {
-        before: MetadataFlatEntity<T>[P];
-        after: MetadataFlatEntity<T>[P];
-      };
-    };
+    diff: UpdateMetadataEventDiff<T, TProperties>;
     before: MetadataFlatEntity<T>;
     after: MetadataFlatEntity<T>;
   }
