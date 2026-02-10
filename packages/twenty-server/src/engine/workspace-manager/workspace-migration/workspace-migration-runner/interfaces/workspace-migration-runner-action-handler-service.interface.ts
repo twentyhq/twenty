@@ -44,16 +44,15 @@ type FlatActionWithAllFlatEntityMapsArgs<
   allFlatEntityMaps: AllFlatEntityMaps;
 };
 
-export type ActionHandlerExecuteResult<
-  TMetadataName extends AllMetadataName,
-> = {
-  partialOptimisticCache: Pick<
-    AllFlatEntityMaps,
-    | MetadataRelatedFlatEntityMapsKeys<TMetadataName>
-    | MetadataToFlatEntityMapsKey<TMetadataName>
-  >;
-  metadataEvents: MetadataEvent[];
-};
+export type ActionHandlerExecuteResult<TMetadataName extends AllMetadataName> =
+  {
+    partialOptimisticCache: Pick<
+      AllFlatEntityMaps,
+      | MetadataRelatedFlatEntityMapsKeys<TMetadataName>
+      | MetadataToFlatEntityMapsKey<TMetadataName>
+    >;
+    metadataEvents: MetadataEvent[];
+  };
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   TActionType extends WorkspaceMigrationActionType,

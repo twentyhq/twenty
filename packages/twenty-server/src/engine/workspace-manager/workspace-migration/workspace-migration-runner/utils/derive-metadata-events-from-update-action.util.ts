@@ -5,11 +5,11 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { MetadataUniversalEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
+import { type MetadataUniversalEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
-  CreateMetadataEvent,
-  DeleteMetadataEvent,
+  type CreateMetadataEvent,
+  type DeleteMetadataEvent,
   type MetadataEvent,
   type UpdateMetadataEvent,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
@@ -80,6 +80,7 @@ export const deriveMetadataEventsFromUpdateAction = ({
         },
         type: 'create',
       };
+
       return [deleteIndexMetadataEvent, createIndexMetadataEvent];
     }
     case 'fieldMetadata':
@@ -121,7 +122,9 @@ export const deriveMetadataEventsFromUpdateAction = ({
 
       const updatedFields = Object.keys(
         flatAction.update,
-      ) as MetadataUniversalEntityPropertiesToCompare<typeof flatAction.metadataName>[];
+      ) as MetadataUniversalEntityPropertiesToCompare<
+        typeof flatAction.metadataName
+      >[];
 
       return [
         buildUpdateMetadataEvent({
