@@ -62,8 +62,15 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
     await this.fileStorageService.delete({
       workspaceId,
       applicationUniversalIdentifier,
+      fileFolder: FileFolder.Source,
+      resourcePath: flatLogicFunction.id, // TODO: generalise resourcePath so it is always logicFunctionId
+    });
+
+    await this.fileStorageService.delete({
+      workspaceId,
+      applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: flatLogicFunction.builtHandlerPath,
+      resourcePath: flatLogicFunction.id,
     });
   }
 

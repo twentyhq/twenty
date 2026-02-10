@@ -7,7 +7,7 @@ import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/com
 import {
   type LogicFunctionFormValues,
   useLogicFunctionUpdateFormState,
-} from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
+} from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';

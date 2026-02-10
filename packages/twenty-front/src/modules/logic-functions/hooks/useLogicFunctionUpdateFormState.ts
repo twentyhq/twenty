@@ -1,8 +1,8 @@
-import { useGetOneLogicFunction } from '@/settings/logic-functions/hooks/useGetOneLogicFunction';
+import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { type Sources } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type GetOneLogicFunctionQuery } from '~/generated-metadata/graphql';
+import { type FindOneLogicFunctionQuery } from '~/generated-metadata/graphql';
 import { type LogicFunction } from '~/generated/graphql';
 
 export type LogicFunctionNewFormValues = {
@@ -37,7 +37,7 @@ export const useLogicFunctionUpdateFormState = ({
   const { logicFunction, loading: logicFunctionLoading } =
     useGetOneLogicFunction({
       id: logicFunctionId,
-      onCompleted: (data: GetOneLogicFunctionQuery) => {
+      onCompleted: (data: FindOneLogicFunctionQuery) => {
         const fn = data?.findOneLogicFunction;
 
         if (isDefined(fn)) {

@@ -14,13 +14,12 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
-import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-input-to-flat-logic-function.util';
+import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-flat-logic-function.util';
 import {
   WorkflowActionType,
   type WorkflowAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-logic-function-input-schema';
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 
@@ -47,33 +46,14 @@ export class CodeStepBuildService {
     logicFunctionId: string;
     workspaceId: string;
   }) {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-    const { sourceHandlerPath, builtHandlerPath, handlerName, checksum } =
-      await this.logicFunctionResourceService.seedSourceFiles({
-        sourceSubfolder: this.getSourceSubfolderForCodeStep(logicFunctionId),
-        workspaceId,
-        applicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-      });
-
-    return await this.logicFunctionMetadataService.createOne({
+    return await this.logicFunctionFromSourceService.createOne({
       input: {
         id: logicFunctionId,
-        name: 'A Logic Function Code Workflow Step',
+        name: 'A Code Step',
         description: '',
-        sourceHandlerPath,
-        builtHandlerPath,
-        handlerName,
-        checksum,
-        toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
       },
       workspaceId,
-      ownerFlatApplication: workspaceCustomFlatApplication,
+      sourceSubfolder: this.getSourceSubfolderForCodeStep(logicFunctionId),
     });
   }
 
@@ -110,23 +90,16 @@ export class CodeStepBuildService {
 
     const newUniversalIdentifier = v4();
 
-    const { sourceHandlerPath, builtHandlerPath } = existingLogicFunction;
+    const { sourceHandlerPath } = existingLogicFunction;
 
     const toSourceHandlerPath = sourceHandlerPath.replace(
       existingLogicFunction.id,
       newId,
     );
 
-    const toBuiltHandlerPath = builtHandlerPath.replace(
-      existingLogicFunction.id,
-      newId,
-    );
-
     await this.logicFunctionResourceService.copyResources({
       fromSourceHandlerPath: sourceHandlerPath,
-      fromBuiltHandlerPath: builtHandlerPath,
       toSourceHandlerPath,
-      toBuiltHandlerPath,
       workspaceId,
       applicationUniversalIdentifier,
     });
@@ -138,7 +111,6 @@ export class CodeStepBuildService {
           id: newId,
           universalIdentifier: newUniversalIdentifier,
           description: existingLogicFunction.description ?? undefined,
-          builtHandlerPath: toBuiltHandlerPath,
           sourceHandlerPath: toSourceHandlerPath,
           toolInputSchema: existingLogicFunction.toolInputSchema ?? {},
           checksum: existingLogicFunction.checksum ?? '[default-checksum]', // TODO: checksum should never be null, update column in logicFunction entity to set it non nullable
@@ -258,13 +230,8 @@ export class CodeStepBuildService {
   isWorkflowCodeStepLogicFunction(
     flatLogicFunction: FlatLogicFunction,
   ): boolean {
-    return (
-      flatLogicFunction.sourceHandlerPath.startsWith(
-        `${WORKFLOW_BASE_FOLDER_PREFIX}/`,
-      ) ||
-      flatLogicFunction.builtHandlerPath.startsWith(
-        `${WORKFLOW_BASE_FOLDER_PREFIX}/`,
-      )
+    return flatLogicFunction.sourceHandlerPath.startsWith(
+      `${WORKFLOW_BASE_FOLDER_PREFIX}/`,
     );
   }
 

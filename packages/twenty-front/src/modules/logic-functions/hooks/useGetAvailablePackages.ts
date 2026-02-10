@@ -1,6 +1,6 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useQuery } from '@apollo/client';
-import { FIND_MANY_AVAILABLE_PACKAGES } from '@/settings/logic-functions/graphql/queries/findManyAvailablePackages';
+import { FIND_MANY_AVAILABLE_PACKAGES } from '@/logic-functions/graphql/queries/findManyAvailablePackages';
 import {
   type FindManyAvailablePackagesQuery,
   type FindManyAvailablePackagesQueryVariables,

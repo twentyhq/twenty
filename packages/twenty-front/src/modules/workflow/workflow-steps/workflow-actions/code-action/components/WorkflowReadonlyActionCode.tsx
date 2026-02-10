@@ -1,4 +1,4 @@
-import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
+import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
 

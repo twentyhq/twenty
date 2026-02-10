@@ -20,9 +20,10 @@ import {
 
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { LogicFunctionSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-source.input';
 
 @InputType()
-export class CreateLogicFunction {
+export class CreateLogicFunctionFromSourceInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
@@ -50,30 +51,20 @@ export class CreateLogicFunction {
   @IsOptional()
   timeoutSeconds?: number;
 
-  @Field(() => graphqlTypeJson, { nullable: false })
+  @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
-  toolInputSchema: object;
+  @IsOptional()
+  toolInputSchema?: object;
 
   @IsBoolean()
   @Field({ nullable: true })
   @IsOptional()
   isTool?: boolean;
 
-  @IsBoolean()
-  @Field({ nullable: false })
-  isBuildUpToDate: boolean;
-
-  @IsString()
-  @Field({ nullable: true })
-  checksum?: string;
-
-  @IsString()
-  @Field({ nullable: false })
-  handlerName: string;
-
-  @IsString()
-  @Field({ nullable: false })
-  sourceHandlerPath: string;
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  source?: JsonbProperty<LogicFunctionSourceInput>;
 
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })

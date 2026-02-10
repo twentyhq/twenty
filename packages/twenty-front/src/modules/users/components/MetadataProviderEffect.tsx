@@ -28,7 +28,7 @@ import {
   type WorkspaceMember,
   useFindAllCoreViewsQuery,
   useGetCurrentUserQuery,
-  useGetManyLogicFunctionsQuery,
+  useFindManyLogicFunctionsQuery,
 } from '~/generated-metadata/graphql';
 import { useFindAllRecordPageLayoutsQuery } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -131,7 +131,7 @@ export const MetadataProviderEffect = () => {
     },
   );
 
-  const { data: logicFunctionsData } = useGetManyLogicFunctionsQuery({
+  const { data: logicFunctionsData } = useFindManyLogicFunctionsQuery({
     skip: !isLoggedIn,
   });
 

@@ -310,7 +310,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         runtime: LogicFunctionRuntime.NODE22,
         timeoutSeconds: 30,
         sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'index.mjs',
         handlerName: 'main',
         checksum: null,
         toolInputSchema: null,
@@ -321,6 +320,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
+        isBuildUpToDate: false,
       };
 
       logicFunctionMetadataService.createOne.mockResolvedValue(
@@ -383,7 +383,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         runtime: LogicFunctionRuntime.NODE22,
         timeoutSeconds: 30,
         sourceHandlerPath: 'workflow/function-id/src/index.ts',
-        builtHandlerPath: 'workflow/function-id/src/index.mjs',
         handlerName: 'main',
         checksum: 'existing-checksum',
         toolInputSchema: null,
@@ -394,6 +393,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
+        isBuildUpToDate: true,
       };
 
       const mockNewFlatLogicFunction: FlatLogicFunction = {
@@ -407,7 +407,6 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         runtime: LogicFunctionRuntime.NODE22,
         timeoutSeconds: 30,
         sourceHandlerPath: 'src/index.ts',
-        builtHandlerPath: 'index.mjs',
         handlerName: 'main',
         checksum: null,
         toolInputSchema: null,
@@ -418,6 +417,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         cronTriggerSettings: null,
         databaseEventTriggerSettings: null,
         httpRouteTriggerSettings: null,
+        isBuildUpToDate: false,
       };
 
       const emptyMaps = createEmptyAllFlatEntityMaps();

@@ -24,7 +24,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @InputType()
-class UpdateLogicFunctionInputUpdates {
+class UpdateLogicFunctionFromSourceInputUpdates {
   @IsString()
   @Field()
   @IsOptional()
@@ -43,24 +43,23 @@ class UpdateLogicFunctionInputUpdates {
   timeoutSeconds?: number;
 
   @IsString()
-  @Field({ nullable: true })
+  @Field({ nullable: false })
+  @IsOptional()
+  sourceHandlerCode?: string;
+
+  @Field(() => graphqlTypeJson, { nullable: false })
+  @IsObject()
+  @IsOptional()
+  toolInputSchema?: object;
+
+  @IsString()
+  @Field({ nullable: false })
   @IsOptional()
   handlerName?: string;
 
   @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
+  @Field({ nullable: false })
   sourceHandlerPath?: string;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  builtHandlerPath?: string;
-
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  toolInputSchema?: object;
 
   @IsBoolean()
   @Field({ nullable: true })
@@ -74,7 +73,6 @@ class UpdateLogicFunctionInputUpdates {
 
   @IsString()
   @Field({ nullable: true })
-  @IsOptional()
   checksum?: string;
 
   @IsObject()
@@ -94,7 +92,7 @@ class UpdateLogicFunctionInputUpdates {
 }
 
 @InputType()
-export class UpdateLogicFunctionSourceInput {
+export class UpdateLogicFunctionFromSourceInput {
   @Field(() => UUIDScalarType, {
     description: 'Id of the logic function to update',
   })
@@ -102,10 +100,10 @@ export class UpdateLogicFunctionSourceInput {
   @IsUUID()
   id: string;
 
-  @Type(() => UpdateLogicFunctionInputUpdates)
+  @Type(() => UpdateLogicFunctionFromSourceInputUpdates)
   @ValidateNested()
-  @Field(() => UpdateLogicFunctionInputUpdates, {
+  @Field(() => UpdateLogicFunctionFromSourceInputUpdates, {
     description: 'The logic function updates',
   })
-  update: UpdateLogicFunctionInputUpdates;
+  update: UpdateLogicFunctionFromSourceInputUpdates;
 }

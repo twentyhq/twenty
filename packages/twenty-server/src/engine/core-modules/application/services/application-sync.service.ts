@@ -940,7 +940,6 @@ export class ApplicationSyncService {
           name,
           timeoutSeconds: logicFunctionToSync.timeoutSeconds,
           sourceHandlerPath: logicFunctionToSync.sourceHandlerPath,
-          builtHandlerPath: logicFunctionToSync.builtHandlerPath,
           handlerName: logicFunctionToSync.handlerName,
           toolInputSchema: logicFunctionToSync.toolInputSchema,
           isTool: logicFunctionToSync.isTool,
@@ -956,6 +955,7 @@ export class ApplicationSyncService {
             logicFunctionToSync.httpRouteTriggerSettings as
               | JsonbProperty<HttpRouteTriggerSettings>
               | undefined,
+          isBuildUpToDate: true,
         },
         workspaceId,
         ownerFlatApplication,
@@ -974,8 +974,7 @@ export class ApplicationSyncService {
           timeoutSeconds: logicFunctionToCreate.timeoutSeconds,
           sourceHandlerPath: logicFunctionToCreate.sourceHandlerPath,
           handlerName: logicFunctionToCreate.handlerName,
-          builtHandlerPath: logicFunctionToCreate.builtHandlerPath,
-          toolInputSchema: logicFunctionToCreate.toolInputSchema,
+          toolInputSchema: logicFunctionToCreate.toolInputSchema ?? {}, // TODO: compute tool input schema on buildManifest
           isTool: logicFunctionToCreate.isTool,
           checksum: logicFunctionToCreate.builtHandlerChecksum,
           id: v4(),
@@ -990,6 +989,7 @@ export class ApplicationSyncService {
             logicFunctionToCreate.httpRouteTriggerSettings as
               | JsonbProperty<HttpRouteTriggerSettings>
               | undefined,
+          isBuildUpToDate: true,
         },
         workspaceId,
         ownerFlatApplication,

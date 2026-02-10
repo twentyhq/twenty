@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { join } from 'path';
+
 import { Sources } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -7,12 +9,15 @@ import { ApplicationService } from 'src/engine/core-modules/application/services
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { CreateDefaultLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-default-logic-function.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
+import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
+import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-logic-function-input-schema';
+import { DEFAULT_SOURCE_HANDLER_PATH } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 
 @Injectable()
 export class LogicFunctionFromSourceService {
@@ -71,12 +76,27 @@ export class LogicFunctionFromSourceService {
     return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
   }
 
-  async createDefault({
+  private getSourceHandlerPath({
+    logicFunctionId,
+    sourceSubfolder,
+  }: {
+    logicFunctionId: string;
+    sourceSubfolder?: string;
+  }) {
+    return join(
+      sourceSubfolder ?? logicFunctionId,
+      DEFAULT_SOURCE_HANDLER_PATH,
+    );
+  }
+
+  async createOne({
     input,
     workspaceId,
+    sourceSubfolder,
   }: {
-    input: CreateDefaultLogicFunctionInput;
+    input: CreateLogicFunctionFromSourceInput;
     workspaceId: string;
+    sourceSubfolder?: string;
   }): Promise<LogicFunctionDTO> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -85,9 +105,40 @@ export class LogicFunctionFromSourceService {
 
     const logicFunctionId = input.id ?? v4();
 
-    const { sourceHandlerPath, builtHandlerPath, handlerName, checksum } =
+    const sourceHandlerPath = this.getSourceHandlerPath({
+      logicFunctionId,
+      sourceSubfolder,
+    });
+
+    if (input.source) {
+      await this.logicFunctionResourceService.uploadSourceFile({
+        sourceHandlerPath,
+        sourceHandlerCode: input.source.sourceHandlerCode,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceId,
+      });
+
+      const flatLogicFunction =
+        await this.logicFunctionMetadataService.createOne({
+          input: {
+            ...input,
+            handlerName: input.source.handlerName,
+            toolInputSchema: input.source.toolInputSchema,
+            sourceHandlerPath,
+            id: logicFunctionId,
+            isBuildUpToDate: false,
+          },
+          workspaceId,
+          ownerFlatApplication: workspaceCustomFlatApplication,
+        });
+
+      return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+    }
+
+    const { handlerName, checksum } =
       await this.logicFunctionResourceService.seedSourceFiles({
-        sourceSubfolder: logicFunctionId,
+        sourceHandlerPath,
         workspaceId,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
@@ -99,9 +150,10 @@ export class LogicFunctionFromSourceService {
           ...input,
           id: logicFunctionId,
           sourceHandlerPath,
-          builtHandlerPath,
           handlerName,
           checksum,
+          toolInputSchema: SEED_LOGIC_FUNCTION_INPUT_SCHEMA,
+          isBuildUpToDate: true,
         },
         workspaceId,
         ownerFlatApplication: workspaceCustomFlatApplication,
@@ -109,6 +161,50 @@ export class LogicFunctionFromSourceService {
     );
 
     return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+  }
+
+  async updateOne({
+    id,
+    update,
+    sourceSubfolder,
+    workspaceId,
+  }: {
+    id: string;
+    update: UpdateLogicFunctionFromSourceInput['update'];
+    workspaceId: string;
+    sourceSubfolder?: string;
+  }): Promise<void> {
+    const { applicationUniversalIdentifier } =
+      await this.getLogicFunctionContext({ id, workspaceId });
+
+    const sourceHandlerPath = this.getSourceHandlerPath({
+      logicFunctionId: id,
+      sourceSubfolder,
+    });
+
+    let formattedUpdate: UpdateLogicFunctionFromSourceInput['update'] = {
+      ...update,
+    };
+
+    if (update.sourceHandlerCode) {
+      await this.logicFunctionResourceService.uploadSourceFile({
+        sourceHandlerPath,
+        sourceHandlerCode: update.sourceHandlerCode,
+        applicationUniversalIdentifier,
+        workspaceId,
+      });
+
+      formattedUpdate = {
+        ...formattedUpdate,
+        isBuildUpToDate: false,
+      };
+    }
+
+    await this.logicFunctionMetadataService.updateOne({
+      id,
+      update: formattedUpdate,
+      workspaceId,
+    });
   }
 
   async buildOneFromSource({
@@ -122,11 +218,10 @@ export class LogicFunctionFromSourceService {
       await this.getLogicFunctionContext({ id, workspaceId });
 
     const { checksum } =
-      await this.logicFunctionResourceService.buildFromSource({
+      await this.logicFunctionResourceService.buildFromSourceFile({
         workspaceId,
         applicationUniversalIdentifier,
         sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-        builtHandlerPath: flatLogicFunction.builtHandlerPath,
       });
 
     await this.logicFunctionMetadataService.updateOne({
@@ -191,26 +286,6 @@ export class LogicFunctionFromSourceService {
       workspaceId,
       applicationUniversalIdentifier,
       sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-    });
-  }
-
-  async updateLogicFunctionSource({
-    id,
-    code,
-    workspaceId,
-  }: {
-    id: string;
-    code: Sources;
-    workspaceId: string;
-  }): Promise<void> {
-    const { flatLogicFunction, applicationUniversalIdentifier } =
-      await this.getLogicFunctionContext({ id, workspaceId });
-
-    await this.logicFunctionResourceService.updateSourceFiles({
-      workspaceId,
-      applicationUniversalIdentifier,
-      sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-      code,
     });
   }
 

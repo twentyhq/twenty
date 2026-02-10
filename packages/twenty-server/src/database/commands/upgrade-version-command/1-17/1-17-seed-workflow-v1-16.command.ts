@@ -13,7 +13,6 @@ import { RecordPositionService } from 'src/engine/core-modules/record-position/s
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
-  DEFAULT_BUILT_HANDLER_PATH,
   DEFAULT_HANDLER_NAME,
   DEFAULT_SOURCE_HANDLER_PATH,
   LogicFunctionEntity,
@@ -431,7 +430,6 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
       name,
       description: 'Temporary logic function for 1.17 migration testing',
       sourceHandlerPath: DEFAULT_SOURCE_HANDLER_PATH,
-      builtHandlerPath: DEFAULT_BUILT_HANDLER_PATH,
       handlerName: DEFAULT_HANDLER_NAME,
       runtime: LogicFunctionRuntime.NODE22,
       timeoutSeconds: 300,

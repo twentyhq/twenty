@@ -89,17 +89,13 @@ export class LocalDriver implements LogicFunctionDriver {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const inMemoryBuiltHandlerPath = join(
-        sourceTemporaryDir,
-        flatLogicFunction.builtHandlerPath,
-      );
-
-      await this.logicFunctionResourceService.copyBuiltCodeInMemory({
-        workspaceId: flatLogicFunction.workspaceId,
-        applicationUniversalIdentifier,
-        builtHandlerPath: flatLogicFunction.builtHandlerPath,
-        inMemoryDestinationPath: inMemoryBuiltHandlerPath,
-      });
+      const inMemoryBuiltHandlerPath =
+        await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+          workspaceId: flatLogicFunction.workspaceId,
+          applicationUniversalIdentifier,
+          sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+          inMemoryDestinationPath: sourceTemporaryDir,
+        });
 
       try {
         await fs.symlink(

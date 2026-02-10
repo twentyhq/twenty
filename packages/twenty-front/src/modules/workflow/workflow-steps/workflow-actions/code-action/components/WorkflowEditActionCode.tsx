@@ -1,6 +1,6 @@
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
-import { useGetAvailablePackages } from '@/settings/logic-functions/hooks/useGetAvailablePackages';
-import { type LogicFunctionFormValues } from '@/settings/logic-functions/hooks/useLogicFunctionUpdateFormState';
+import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
+import { type LogicFunctionFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';

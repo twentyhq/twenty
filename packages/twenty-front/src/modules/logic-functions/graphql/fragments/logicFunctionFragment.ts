@@ -8,7 +8,6 @@ export const LOGIC_FUNCTION_FRAGMENT = gql`
     runtime
     timeoutSeconds
     sourceHandlerPath
-    builtHandlerPath
     handlerName
     toolInputSchema
     isTool

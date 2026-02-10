@@ -12,18 +12,18 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { CreateDefaultLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-default-logic-function.input';
 import { ExecuteOneLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/execute-logic-function.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionIdInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-id.input';
 import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.dto';
 import { LogicFunctionLogsInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.input';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
-import { UpdateLogicFunctionSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-source.input';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { logicFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/logic-function/utils/logic-function-graphql-api-exception-handler.utils';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
+import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 
 @UseGuards(
   WorkspaceAuthGuard,
@@ -100,12 +100,12 @@ export class LogicFunctionResolver {
 
   @Mutation(() => LogicFunctionDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
-  async createDefaultLogicFunction(
-    @Args('input') input: CreateDefaultLogicFunctionInput,
+  async createOneLogicFunction(
+    @Args('input') input: CreateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
-      return await this.logicFunctionFromSourceService.createDefault({
+      return await this.logicFunctionFromSourceService.createOne({
         input,
         workspaceId,
       });
@@ -148,14 +148,14 @@ export class LogicFunctionResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
-  async updateLogicFunctionSource(
-    @Args('input') { id, code }: UpdateLogicFunctionSourceInput,
+  async updateOneLogicFunction(
+    @Args('input') { id, update }: UpdateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
     try {
-      await this.logicFunctionFromSourceService.updateLogicFunctionSource({
+      await this.logicFunctionFromSourceService.updateOne({
         id,
-        code,
+        update,
         workspaceId,
       });
 

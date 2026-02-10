@@ -955,15 +955,6 @@ export type CreateCommandMenuItemInput = {
   workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
-export type CreateDefaultLogicFunctionInput = {
-  description?: InputMaybe<Scalars['String']>;
-  isBuildUpToDate?: InputMaybe<Scalars['Boolean']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
-};
-
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -1001,6 +992,20 @@ export type CreateFrontComponentInput = {
   id?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
   sourceComponentPath: Scalars['String'];
+};
+
+export type CreateLogicFunctionFromSourceInput = {
+  cronTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  source?: InputMaybe<Scalars['JSON']>;
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateObjectInput = {
@@ -1962,7 +1967,6 @@ export type Location = {
 export type LogicFunction = {
   __typename?: 'LogicFunction';
   applicationId?: Maybe<Scalars['UUID']>;
-  builtHandlerPath: Scalars['String'];
   createdAt: Scalars['DateTime'];
   cronTriggerSettings?: Maybe<Scalars['JSON']>;
   databaseEventTriggerSettings?: Maybe<Scalars['JSON']>;
@@ -2082,7 +2086,6 @@ export type Mutation = {
   createCoreViewGroup: CoreViewGroup;
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
-  createDefaultLogicFunction: LogicFunction;
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
@@ -2095,6 +2098,7 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneApplication: Application;
   createOneField: Field;
+  createOneLogicFunction: LogicFunction;
   createOneObject: Object;
   createOneRole: Role;
   createPageLayout: PageLayout;
@@ -2201,10 +2205,10 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlagDto;
-  updateLogicFunctionSource: Scalars['Boolean'];
   updateOneAgent: Agent;
   updateOneApplicationVariable: Scalars['Boolean'];
   updateOneField: Field;
+  updateOneLogicFunction: Scalars['Boolean'];
   updateOneObject: Object;
   updateOneRole: Role;
   updatePageLayout: PageLayout;
@@ -2343,11 +2347,6 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
-export type MutationCreateDefaultLogicFunctionArgs = {
-  input: CreateDefaultLogicFunctionInput;
-};
-
-
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -2404,6 +2403,11 @@ export type MutationCreateOneApplicationArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
+};
+
+
+export type MutationCreateOneLogicFunctionArgs = {
+  input: CreateLogicFunctionFromSourceInput;
 };
 
 
@@ -2913,11 +2917,6 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 };
 
 
-export type MutationUpdateLogicFunctionSourceArgs = {
-  input: UpdateLogicFunctionSourceInput;
-};
-
-
 export type MutationUpdateOneAgentArgs = {
   input: UpdateAgentInput;
 };
@@ -2932,6 +2931,11 @@ export type MutationUpdateOneApplicationVariableArgs = {
 
 export type MutationUpdateOneFieldArgs = {
   input: UpdateOneFieldMetadataInput;
+};
+
+
+export type MutationUpdateOneLogicFunctionArgs = {
+  input: UpdateLogicFunctionInput;
 };
 
 
@@ -4558,11 +4562,27 @@ export type UpdateLabPublicFeatureFlagInput = {
   value: Scalars['Boolean'];
 };
 
-export type UpdateLogicFunctionSourceInput = {
-  /** The source code (Sources) to write. Only updates source files. */
-  code: Scalars['JSON'];
-  /** The id of the logic function. */
+export type UpdateLogicFunctionInput = {
+  /** Id of the logic function to update */
   id: Scalars['UUID'];
+  /** The logic function updates */
+  update: UpdateLogicFunctionInputUpdates;
+};
+
+export type UpdateLogicFunctionInputUpdates = {
+  builtHandlerPath?: InputMaybe<Scalars['String']>;
+  checksum?: InputMaybe<Scalars['String']>;
+  cronTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  isBuildUpToDate: Scalars['Boolean'];
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema: Scalars['JSON'];
 };
 
 export type UpdateObjectPayload = {
