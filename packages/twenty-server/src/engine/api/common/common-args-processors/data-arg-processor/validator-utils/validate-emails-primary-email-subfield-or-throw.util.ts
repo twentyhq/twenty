@@ -13,7 +13,7 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): string | null => {
-  if (isNull(value)) return null;
+  if (isNull(value) || value === '') return null;
 
   if (typeof value !== 'string') {
     const inspectedValue = inspect(value);
@@ -23,12 +23,6 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
       { userFriendlyMessage: msg`Invalid value: "${inspectedValue}"` },
     );
-  }
-
-  if (value === '') {
-    return value;
-    // just to make sure the behavior is the same as earlier with empty strings
-    // probably to be changed once behavior regarding empty strings is normalized
   }
 
   if (!z.email().safeParse(value).success) {
