@@ -102,7 +102,7 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     compiledMessage.keepBcc = true;
 
     const messageBuffer = await compiledMessage.build();
-    const encodedMessage = Buffer.from(messageBuffer).toString('base64');
+    const encodedMessage = Buffer.from(messageBuffer).toString('base64url');
 
     return { gmailClient, encodedMessage };
   }
