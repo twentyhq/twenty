@@ -65,15 +65,15 @@
     },
     "typecheck": {},
     "lint": {
-      "options": {
-        "maxWarnings": 0
-      },
-      "configurations": {
-        "ci": {},
-        "fix": {}
-      }
+      "dependsOn": [
+        { "projects": ["twenty-eslint-rules"], "target": "build" }
+      ]
     },
-    "lint:diff-with-main": {},
+    "lint:diff-with-main": {
+      "dependsOn": [
+        { "projects": ["twenty-eslint-rules"], "target": "build" }
+      ]
+    },
     "fmt": {
       "options": {
         "files": "src"

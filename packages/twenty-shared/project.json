@@ -57,7 +57,14 @@
     "typecheck": {},
     "test": {},
     "lint": {
-      "options": {},
+      "dependsOn": [
+        {
+          "projects": [
+            "twenty-eslint-rules"
+          ],
+          "target": "build"
+        }
+      ],
       "configurations": {
         "fix": {}
       }

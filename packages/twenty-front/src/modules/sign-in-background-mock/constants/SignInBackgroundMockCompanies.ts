@@ -2,7 +2,7 @@ import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getR
 import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
+// eslint-disable-next-line @typescript-eslint/naming-convention, twenty/constants-upper-case
 const baseMock = [
   {
     __typename: 'Company',
@@ -1365,7 +1365,7 @@ const baseMock = [
   },
 ];
 
-// eslint-disable-next-line twenty/max-consts-per-file, @typescript-eslint/naming-convention
+// eslint-disable-next-line twenty/max-consts-per-file, @typescript-eslint/naming-convention, twenty/constants-upper-case
 const baseMockToRecordConnection = {
   edges: baseMock.map(
     (mockCompany) =>

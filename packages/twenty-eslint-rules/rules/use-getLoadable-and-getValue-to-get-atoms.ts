@@ -9,7 +9,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     type: 'problem',
     docs: {
       description: 'Ensure you are using getLoadable and getValue',
-      recommended: 'recommended',
     },
     fixable: 'code',
     schema: [],

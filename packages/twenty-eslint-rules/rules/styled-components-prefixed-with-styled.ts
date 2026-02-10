@@ -10,7 +10,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     type: 'suggestion',
     docs: {
       description: 'Warn when StyledComponents are not prefixed with Styled',
-      recommended: 'recommended',
     },
     messages: {
       noStyledPrefix:

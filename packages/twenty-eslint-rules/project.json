@@ -4,7 +4,15 @@
   "sourceRoot": "packages/twenty-eslint-rules",
   "tags": ["scope:shared"],
   "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "command": "npx esbuild {projectRoot}/oxlint-plugin.ts --bundle --format=esm --platform=node --outfile={projectRoot}/dist/oxlint-plugin.mjs --alias:@typescript-eslint/utils=./{projectRoot}/oxlint-shims --alias:typescript=./{projectRoot}/oxlint-shims/typescript-shim --alias:util=./{projectRoot}/oxlint-shims/util-shim --alias:path=./{projectRoot}/oxlint-shims/path-shim"
+      }
+    },
     "lint": {
+      "executor": "@nx/eslint:lint",
       "options": {
         "eslintConfig": "{workspaceRoot}/eslint.config.mjs",
         "lintFilePatterns": ["{projectRoot}/**/*.ts"]

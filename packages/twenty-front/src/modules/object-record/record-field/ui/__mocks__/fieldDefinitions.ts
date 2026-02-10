@@ -1,6 +1,6 @@
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import {
+import type { FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import type {
   FieldActorMetadata,
   FieldFullNameMetadata,
   FieldLinksMetadata,

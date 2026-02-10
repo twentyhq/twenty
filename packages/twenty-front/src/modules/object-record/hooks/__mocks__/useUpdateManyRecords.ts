@@ -1,4 +1,4 @@
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import type { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { gql } from '@apollo/client';
 import { getMockPersonRecord } from '~/testing/mock-data/people';
 

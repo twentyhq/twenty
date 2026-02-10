@@ -1,4 +1,4 @@
-import { RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
+import type { RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { gql } from '@apollo/client';
 
 import { peopleQueryResult } from '~/testing/mock-data/people';

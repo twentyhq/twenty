@@ -67,7 +67,7 @@ export const SettingsLogicFunctionCodeEditor = ({
 
       if (isDefined(environmentVariables)) {
         const envTypeDefinitions = Object.keys(environmentVariables)
-          // eslint-disable-next-line lingui/no-unlocalized-strings
+          // oxlint-disable-next-line twenty/no-unlocalized-strings
           .map((key) => `${key}: string;`)
           .join('\n');
         const environmentDefinition = `

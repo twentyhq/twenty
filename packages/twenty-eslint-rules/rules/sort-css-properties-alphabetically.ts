@@ -238,7 +238,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
   meta: {
     docs: {
       description: 'Styles are sorted alphabetically.',
-      recommended: 'recommended',
     },
     messages: {
       sortCssPropertiesAlphabetically:

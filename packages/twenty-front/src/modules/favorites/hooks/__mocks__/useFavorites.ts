@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 
-import { Favorite } from '@/favorites/types/Favorite';
+import type { Favorite } from '@/favorites/types/Favorite';
 import { generateCreateOneRecordMutation } from '@/object-metadata/utils/generateCreateOneRecordMutation';
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { AvatarType } from 'twenty-ui/display';
+import type { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import type { AvatarType } from 'twenty-ui/display';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 

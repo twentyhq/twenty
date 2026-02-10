@@ -10,17 +10,18 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
+  isMobile: boolean;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
   overflow: auto;
   padding: ${({ theme }) => theme.spacing(6, 8, 8)};
-  width: ${({ width }) => {
+  width: ${({ width, isMobile }) => {
     if (isDefined(width)) {
       return width + 'px';
     }
-    if (useIsMobile()) {
+    if (isMobile) {
       return 'unset';
     }
     return OBJECT_SETTINGS_WIDTH + 'px';
@@ -34,6 +35,7 @@ export const SettingsPageContainer = ({
   children: ReactNode;
 }) => {
   const location = useLocation();
+  const isMobile = useIsMobile();
   const settingsPath = useMemo(() => {
     const sortedPaths = Object.values(SettingsPath).sort(
       (a, b) => b.length - a.length,
@@ -52,7 +54,9 @@ export const SettingsPageContainer = ({
 
   return (
     <ScrollWrapper componentInstanceId={componentInstanceId}>
-      <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
+      <StyledSettingsPageContainer isMobile={isMobile}>
+        {children}
+      </StyledSettingsPageContainer>
     </ScrollWrapper>
   );
 };

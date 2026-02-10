@@ -1,9 +1,9 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
-import {
+import type {
   SpreadsheetImportDialogOptions,
   SpreadsheetImportFields
 } from '@/spreadsheet-import/types';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import type { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { sleep } from '~/utils/sleep';
 

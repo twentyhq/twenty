@@ -149,20 +149,23 @@
         "command": "ts-node --transpile-only"
       }
     },
-    "lint": {
+    "fmt": {
       "options": {
-        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"],
-        "maxWarnings": 0
+        "files": "src"
       },
       "configurations": {
-        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
         "fix": {}
       }
     },
+    "lint": {
+      "dependsOn": [
+        { "projects": ["twenty-eslint-rules"], "target": "build" }
+      ]
+    },
     "lint:diff-with-main": {
-      "options": {
-        "pattern": "\\.(ts|tsx|js|jsx|json)$"
-      }
+      "dependsOn": [
+        { "projects": ["twenty-eslint-rules"], "target": "build" }
+      ]
     },
     "test": {},
     "test:debug": {

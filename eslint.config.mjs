@@ -24,7 +24,14 @@ export default [
 
   // Global ignores
   {
-    ignores: ['**/node_modules/**'],
+    ignores: [
+      '**/node_modules/**',
+      // Packages migrated to OxLint — skip ESLint entirely
+      'packages/twenty-front/**',
+      'packages/twenty-server/**',
+      'packages/twenty-shared/**',
+      'packages/twenty-sdk/**',
+    ],
   },
 
   // Base configuration for all files

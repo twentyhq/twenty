@@ -25,9 +25,9 @@ export const SettingsApplicationsCreateTab = () => {
   const { copyToClipboard } = useCopyToClipboard();
 
   const commands = [
-    // eslint-disable-next-line lingui/no-unlocalized-strings
+    // oxlint-disable-next-line twenty/no-unlocalized-strings
     'npx create-twenty-app@latest my-twenty-app',
-    // eslint-disable-next-line lingui/no-unlocalized-strings
+    // oxlint-disable-next-line twenty/no-unlocalized-strings
     'cd my-twenty-app',
   ];
 

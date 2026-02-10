@@ -49,7 +49,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     type: 'problem',
     docs: {
       description: 'Ensure component props follow naming convention',
-      recommended: 'recommended',
     },
     fixable: 'code',
     schema: [],

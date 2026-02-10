@@ -40,20 +40,15 @@
       "dependsOn": ["^build"]
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "nx:run-commands",
       "cache": true,
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "eslintConfig": "{projectRoot}/eslint.config.mjs",
-        "cache": true,
-        "cacheLocation": "{workspaceRoot}/.cache/eslint"
+        "command": "npx oxlint -c {projectRoot}/.oxlintrc.json {projectRoot}/src --max-warnings=0"
       },
       "configurations": {
-        "ci": {
-          "cacheStrategy": "content"
-        },
+        "ci": {},
         "fix": {
-          "fix": true
+          "command": "npx oxlint -c {projectRoot}/.oxlintrc.json {projectRoot}/src --fix --max-warnings=0"
         }
       },
       "dependsOn": ["^build"]
@@ -62,12 +57,12 @@
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
-        "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx eslint --config {projectRoot}/eslint.config.mjs \"$@\"; fi' _",
+        "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx oxlint -c {projectRoot}/.oxlintrc.json \"$@\"; fi' _",
         "pattern": "\\.(ts|tsx|js|jsx)$"
       },
       "configurations": {
         "fix": {
-          "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx eslint --config {projectRoot}/eslint.config.mjs --fix \"$@\"; fi' _"
+          "command": "git diff --name-only --diff-filter=d main | grep -E '{args.pattern}' | grep '^{projectRoot}/' | xargs sh -c 'if [ $# -gt 0 ]; then npx oxlint -c {projectRoot}/.oxlintrc.json --fix \"$@\"; fi' _"
         }
       }
     },

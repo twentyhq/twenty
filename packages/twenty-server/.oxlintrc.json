@@ -1,0 +1,73 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "import"],
+  "categories": {
+    "correctness": "off"
+  },
+  "jsPlugins": ["../twenty-eslint-rules/dist/oxlint-plugin.mjs"],
+  "rules": {
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "no-console": ["warn", { "allow": ["group", "groupCollapsed", "groupEnd"] }],
+    "no-control-regex": "off",
+    "no-debugger": "error",
+    "no-duplicate-imports": "error",
+    "no-undef": "off",
+    "no-unused-vars": ["warn", { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }],
+    "no-redeclare": "off",
+    "no-restricted-imports": ["error", {
+      "patterns": [
+        {
+          "group": ["../*"],
+          "message": "Relative imports are not allowed."
+        },
+        {
+          "group": ["lodash"],
+          "message": "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)"
+        }
+      ]
+    }],
+
+    "import/no-duplicates": "error",
+
+    "typescript/no-redeclare": "error",
+    "typescript/ban-ts-comment": "error",
+    "typescript/consistent-type-imports": "off",
+    "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-empty-object-type": ["error", {
+      "allowInterfaces": "with-single-extends"
+    }],
+    "typescript/no-explicit-any": "error",
+    "typescript/no-empty-function": "off",
+    "typescript/no-unused-vars": ["warn", { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }],
+
+    "twenty/prefer-arrow-functions": "off",
+    "twenty/inject-workspace-repository": "warn",
+    "twenty/rest-api-methods-should-be-guarded": "error",
+    "twenty/graphql-resolvers-should-be-guarded": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.spec.ts",
+        "**/*.integration-spec.ts",
+        "**/__tests__/**",
+        "**/test/integration/**",
+        "**/test/utils/**"
+      ],
+      "rules": {
+        "typescript/no-explicit-any": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    ".local-storage/",
+    "src/engine/workspace-manager/dev-seeder/data/constants/**",
+    "src/engine/workspace-manager/dev-seeder/data/seeds/**",
+    "src/utils/email-providers.ts",
+    "src/engine/core-modules/i18n/locales/generated/**",
+    "src/engine/core-modules/logic-function/logic-function-resource/constants/seed-project/src/index.ts"
+  ]
+}

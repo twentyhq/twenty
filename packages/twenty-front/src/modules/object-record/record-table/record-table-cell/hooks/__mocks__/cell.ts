@@ -1,6 +1,6 @@
-import { RecordTableCellContextValue } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableRowContextValue } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { RecordTableRowDraggableContextValue } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
+import type { RecordTableCellContextValue } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import type { RecordTableRowContextValue } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import type { RecordTableRowDraggableContextValue } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 
 export const recordTableRowContextValue: RecordTableRowContextValue = {
   rowIndex: 2,

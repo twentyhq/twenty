@@ -9,7 +9,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     type: 'problem',
     docs: {
       description: 'Ensure `useRecoilCallback` is used with a dependency array',
-      recommended: 'recommended',
     },
     schema: [],
     messages: {

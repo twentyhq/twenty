@@ -49,6 +49,16 @@
     "**/.yarn": true
   },
   "eslint.debug": true,
+  "eslint.workingDirectories": [
+    { "pattern": "packages/twenty-ui" },
+    { "pattern": "packages/twenty-emails" },
+    { "pattern": "packages/twenty-docs" },
+    { "pattern": "packages/twenty-website" },
+    { "pattern": "packages/twenty-eslint-rules" }
+  ],
+  "oxc.enable": true,
+  "oxc.lint.run": "onType",
+  "oxc.trace.server": "verbose",
   "files.associations": {
     ".cursorrules": "markdown"
   },

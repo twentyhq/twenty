@@ -15,7 +15,6 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
     docs: {
       description:
         'Ensure recoil value and setter are named after their atom name',
-      recommended: 'recommended',
     },
     fixable: 'code',
     schema: [],

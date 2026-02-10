@@ -21,6 +21,7 @@
       }
     },
     "lint": {
+      "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
           "{projectRoot}/**/*.{mdx,json}",
