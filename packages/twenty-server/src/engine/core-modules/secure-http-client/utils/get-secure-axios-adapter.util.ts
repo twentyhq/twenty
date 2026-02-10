@@ -8,9 +8,9 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios';
 
-import { isPrivateIp } from 'src/engine/core-modules/tool/utils/is-private-ip.util';
+import { isPrivateIp } from 'src/engine/core-modules/secure-http-client/utils/is-private-ip.util';
 
-import { type SecureAdapterDependencies } from './get-secure-axios-adapter.types';
+import { type SecureAdapterDependencies } from './secure-adapter-dependencies.type';
 
 const defaultDependencies: SecureAdapterDependencies = {
   dnsLookup: dns.lookup,
@@ -62,14 +62,14 @@ export const getSecureAxiosAdapter = (
       optionsOrCallback,
       maybeCallback,
     ) => {
-      const options =
+      const lookupOptions =
         typeof optionsOrCallback === 'object' ? optionsOrCallback : {};
       const callback =
         typeof optionsOrCallback === 'function'
           ? optionsOrCallback
           : maybeCallback;
 
-      if (options.all) {
+      if (lookupOptions.all) {
         (callback as Function)(null, [
           { address: resolvedIp, family: ipFamily },
         ]);

@@ -6,7 +6,7 @@ import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/c
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { INFORMATION_BANNER_HEIGHT } from '@/information-banner/constants/InformationBannerHeight';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
+import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
@@ -80,7 +80,7 @@ export const CommandMenuRecordPage = () => {
                 recordId: objectRecordId,
               }}
             >
-              <PageLayoutDispatcher
+              <PageLayoutRecordPageRenderer
                 targetRecordIdentifier={{
                   id: objectRecordId,
                   targetObjectNameSingular: objectNameSingular,

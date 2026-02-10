@@ -7,7 +7,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { MainContainerLayoutWithCommandMenu } from '@/object-record/components/MainContainerLayoutWithCommandMenu';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { PageLayoutDispatcher } from '@/object-record/record-show/components/PageLayoutDispatcher';
+import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
@@ -58,11 +58,12 @@ export const RecordShowPage = () => {
                   recordId: objectRecordId,
                 }}
               >
-                <PageLayoutDispatcher
+                <PageLayoutRecordPageRenderer
                   targetRecordIdentifier={{
                     id: objectRecordId,
                     targetObjectNameSingular: objectNameSingular,
                   }}
+                  isInRightDrawer={false}
                 />
                 <RecordShowPageSSESubscribeEffect
                   objectNameSingular={objectNameSingular}

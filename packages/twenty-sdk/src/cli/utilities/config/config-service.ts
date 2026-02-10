@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
-import * as os from 'os';
 import * as path from 'path';
+
+import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 
 export type TwentyConfig = {
   apiUrl: string;
@@ -19,7 +20,7 @@ export class ConfigService {
   private static activeWorkspace = DEFAULT_WORKSPACE_NAME;
 
   constructor() {
-    this.configPath = path.join(os.homedir(), '.twenty', 'config.json');
+    this.configPath = getConfigPath();
   }
 
   static setActiveWorkspace(name?: string) {

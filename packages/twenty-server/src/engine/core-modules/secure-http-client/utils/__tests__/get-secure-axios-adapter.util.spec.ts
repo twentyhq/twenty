@@ -3,8 +3,8 @@ import * as https from 'https';
 
 import { AxiosHeaders, type InternalAxiosRequestConfig } from 'axios';
 
-import { type SecureAdapterDependencies } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.types';
-import { getSecureAxiosAdapter } from 'src/engine/core-modules/tool/utils/get-secure-axios-adapter.util';
+import { type SecureAdapterDependencies } from 'src/engine/core-modules/secure-http-client/utils/secure-adapter-dependencies.type';
+import { getSecureAxiosAdapter } from 'src/engine/core-modules/secure-http-client/utils/get-secure-axios-adapter.util';
 
 describe('getSecureAxiosAdapter', () => {
   let mockDnsLookup: jest.Mock;
