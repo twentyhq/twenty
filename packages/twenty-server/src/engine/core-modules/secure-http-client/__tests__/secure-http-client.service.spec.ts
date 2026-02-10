@@ -32,7 +32,7 @@ describe('SecureHttpClientService', () => {
       const client = service.getHttpClient();
 
       expect(client).toBeDefined();
-      expect(client.defaults.adapter).toBeDefined();
+      expect(typeof client.defaults.adapter).toBe('function');
     });
 
     it('should pass through axios config like baseURL', () => {
