@@ -25,7 +25,13 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
     );
   }
 
-  if (!z.email().trim().safeParse(value).success && isNonEmptyString(value)) {
+  if (value === '') {
+    return value;
+    // just to make sure the behavior is the same as earlier with empty strings
+    // probably to be changed once behavior regarding empty strings is normalized
+  }
+
+  if (!z.email().safeParse(value).success) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(
