@@ -11,7 +11,7 @@ type ExtractPropertyToCompare<
   ? MetadataConfig[P]['universalProperty']
   : P;
 
-export type MetadataUniversalEntityPropertiesToCompare<
+export type MetadataUniversalFlatEntityPropertiesToCompare<
   T extends AllMetadataName,
   MetadataConfig = (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
 > = {
@@ -23,7 +23,7 @@ export type MetadataUniversalEntityPropertiesToCompare<
 type Assertions = [
   Expect<
     Equal<
-      MetadataUniversalEntityPropertiesToCompare<'fieldMetadata'>,
+      MetadataUniversalFlatEntityPropertiesToCompare<'fieldMetadata'>,
       | 'name'
       | 'label'
       | 'icon'
@@ -40,7 +40,7 @@ type Assertions = [
 
   Expect<
     Equal<
-      MetadataUniversalEntityPropertiesToCompare<'view'>,
+      MetadataUniversalFlatEntityPropertiesToCompare<'view'>,
       | 'name'
       | 'icon'
       | 'deletedAt'

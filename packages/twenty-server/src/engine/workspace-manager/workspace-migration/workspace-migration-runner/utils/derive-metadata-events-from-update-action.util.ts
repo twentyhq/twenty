@@ -5,7 +5,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { type MetadataUniversalEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
+import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 import {
   type CreateMetadataEvent,
@@ -28,7 +28,7 @@ const buildUpdateMetadataEvent = <TMetadataName extends AllMetadataName>({
   metadataName: TMetadataName;
   before: MetadataFlatEntity<TMetadataName>;
   after: MetadataFlatEntity<TMetadataName>;
-  updatedFields: MetadataUniversalEntityPropertiesToCompare<TMetadataName>[];
+  updatedFields: MetadataUniversalFlatEntityPropertiesToCompare<TMetadataName>[];
 }): UpdateMetadataEvent<TMetadataName> => {
   const diff = Object.fromEntries(
     updatedFields.map((field) => [
@@ -122,7 +122,7 @@ export const deriveMetadataEventsFromUpdateAction = ({
 
       const updatedFields = Object.keys(
         flatAction.update,
-      ) as MetadataUniversalEntityPropertiesToCompare<
+      ) as MetadataUniversalFlatEntityPropertiesToCompare<
         typeof flatAction.metadataName
       >[];
 
