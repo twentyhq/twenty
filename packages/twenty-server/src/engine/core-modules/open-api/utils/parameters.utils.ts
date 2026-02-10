@@ -94,7 +94,7 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
     name: 'filter',
     in: 'query',
     description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2.
-    For like/ilike, use % as a wildcard (e.g. %value% for contains).
+    For like/ilike, use % as a wildcard (e.g. %value% for substring match).
     Refer to the filter section at the top of the page for more details.`,
     required: false,
     schema: {
@@ -115,8 +115,8 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
         description: 'A more complex filter param',
       },
       like: {
-        value: 'name[ilike]:"%value%"',
-        description: 'Case-insensitive pattern matching',
+        value: 'name[like]:"%value%"',
+        description: 'Pattern matching',
       },
     },
   };

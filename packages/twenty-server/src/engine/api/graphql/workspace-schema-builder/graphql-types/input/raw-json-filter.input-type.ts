@@ -8,7 +8,7 @@ export const RawJsonFilterType = new GraphQLInputObjectType({
     is: { type: FilterIs },
     like: {
       type: GraphQLString,
-      description: 'Pattern match with % wildcard',
+      description: 'Pattern match with % wildcard (e.g. %value%)',
     },
   },
 });

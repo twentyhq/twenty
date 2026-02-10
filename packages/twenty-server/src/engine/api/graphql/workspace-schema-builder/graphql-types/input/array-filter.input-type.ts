@@ -7,7 +7,7 @@ export const ArrayFilterType = new GraphQLInputObjectType({
   fields: {
     containsIlike: {
       type: GraphQLString,
-      description: 'Case-insensitive match with % wildcard',
+      description: 'Case-insensitive match with % wildcard (e.g. %value%)',
     },
     is: { type: FilterIs },
     isEmptyArray: { type: GraphQLBoolean },

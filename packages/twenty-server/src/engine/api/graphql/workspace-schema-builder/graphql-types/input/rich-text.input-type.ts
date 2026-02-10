@@ -5,7 +5,7 @@ const richTextV2LeafFilter = new GraphQLInputObjectType({
   fields: {
     ilike: {
       type: GraphQLString,
-      description: 'Case-insensitive match with % wildcard',
+      description: 'Case-insensitive match with % wildcard (e.g. %value%)',
     },
   },
 });
