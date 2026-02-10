@@ -31,12 +31,9 @@ module.exports = {
 
     './src/modules/page-layout/widgets/**/graphql/**/*.{ts,tsx}',
 
-    './src/modules/search/graphql/**/*.{ts,tsx}',
     './src/modules/dashboards/graphql/**/*.{ts,tsx}',
     './src/modules/page-layout/graphql/**/*.{ts,tsx}',
     './src/modules/marketplace/graphql/**/*.{ts,tsx}',
-    './src/modules/command-menu/graphql/**/*.{ts,tsx}',
-
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',
     '!./src/**/__mocks__/*.ts',

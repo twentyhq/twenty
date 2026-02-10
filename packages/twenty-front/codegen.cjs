@@ -6,6 +6,10 @@ module.exports = {
     '/graphql',
   documents: [
     './src/modules/workflow/**/graphql/**/*.{ts,tsx}',
+    './src/modules/activities/emails/graphql/**/*.{ts,tsx}',
+    './src/modules/activities/calendar/graphql/**/*.{ts,tsx}',
+    './src/modules/search/graphql/**/*.{ts,tsx}',
+    './src/modules/command-menu/graphql/**/*.{ts,tsx}',
 
     '!./src/**/*.test.{ts,tsx}',
     '!./src/**/*.stories.{ts,tsx}',

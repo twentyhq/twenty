@@ -27,10 +27,10 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type WorkspaceMember,
   useFindAllCoreViewsQuery,
+  useFindAllRecordPageLayoutsQuery,
   useGetCurrentUserQuery,
   useGetManyLogicFunctionsQuery,
 } from '~/generated-metadata/graphql';
-import { useFindAllRecordPageLayoutsQuery } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';

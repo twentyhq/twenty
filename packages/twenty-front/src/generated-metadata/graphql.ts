@@ -1172,17 +1172,6 @@ export enum DatabaseEventAction {
   UPSERTED = 'UPSERTED'
 }
 
-export type DateTimeFilter = {
-  eq?: InputMaybe<Scalars['DateTime']>;
-  gt?: InputMaybe<Scalars['DateTime']>;
-  gte?: InputMaybe<Scalars['DateTime']>;
-  in?: InputMaybe<Array<Scalars['DateTime']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['DateTime']>;
-  lte?: InputMaybe<Scalars['DateTime']>;
-  neq?: InputMaybe<Scalars['DateTime']>;
-};
-
 export type DeleteApprovedAccessDomainInput = {
   id: Scalars['UUID'];
 };
@@ -1586,11 +1575,6 @@ export type FilesConfiguration = {
   __typename?: 'FilesConfiguration';
   configurationType: WidgetConfigurationType;
 };
-
-export enum FilterIs {
-  NotNull = 'NotNull',
-  Null = 'Null'
-}
 
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
@@ -3185,16 +3169,6 @@ export type ObjectRecordEventProperties = {
   updatedFields?: Maybe<Array<Scalars['String']>>;
 };
 
-export type ObjectRecordFilterInput = {
-  and?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<UuidFilter>;
-  not?: InputMaybe<ObjectRecordFilterInput>;
-  or?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 /** Date granularity options (e.g. DAY, MONTH, QUARTER, YEAR, WEEK, DAY_OF_THE_WEEK, MONTH_OF_THE_YEAR, QUARTER_OF_THE_YEAR) */
 export enum ObjectRecordGroupByDateGranularity {
   DAY = 'DAY',
@@ -3542,7 +3516,6 @@ export type Query = {
   object: Object;
   objects: ObjectConnection;
   pieChartData: PieChartDataOutput;
-  search: SearchResultConnection;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   validatePasswordResetToken: ValidatePasswordResetTokenOutput;
@@ -3832,16 +3805,6 @@ export type QueryPieChartDataArgs = {
 };
 
 
-export type QuerySearchArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
-  limit: Scalars['Int'];
-  searchInput: Scalars['String'];
-};
-
-
 export type QuerySkillArgs = {
   id: Scalars['UUID'];
 };
@@ -4103,12 +4066,6 @@ export type SearchRecord = {
   tsRankCD: Scalars['Float'];
 };
 
-export type SearchResultConnection = {
-  __typename?: 'SearchResultConnection';
-  edges: Array<SearchResultEdge>;
-  pageInfo: SearchResultPageInfo;
-};
-
 export type SearchResultEdge = {
   __typename?: 'SearchResultEdge';
   cursor: Scalars['String'];
@@ -4344,17 +4301,6 @@ export type TwoFactorAuthenticationMethodDto = {
   status: Scalars['String'];
   strategy: Scalars['String'];
   twoFactorAuthenticationMethodId: Scalars['UUID'];
-};
-
-export type UuidFilter = {
-  eq?: InputMaybe<Scalars['UUID']>;
-  gt?: InputMaybe<Scalars['UUID']>;
-  gte?: InputMaybe<Scalars['UUID']>;
-  in?: InputMaybe<Array<Scalars['UUID']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['UUID']>;
-  lte?: InputMaybe<Scalars['UUID']>;
-  neq?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UuidFilterComparison = {
@@ -5603,18 +5549,6 @@ export type FindManyCommandMenuItemsQueryVariables = Exact<{ [key: string]: neve
 
 
 export type FindManyCommandMenuItemsQuery = { __typename?: 'Query', commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, workflowVersionId?: string | null, frontComponentId?: string | null, label: string, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, availabilityObjectMetadataId?: string | null, frontComponent?: { __typename?: 'FrontComponent', id: string, name: string } | null }> };
-
-export type SearchQueryVariables = Exact<{
-  searchInput: Scalars['String'];
-  limit: Scalars['Int'];
-  after?: InputMaybe<Scalars['String']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
-}>;
-
-
-export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, objectLabelSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export type PageLayoutFragmentFragment = { __typename?: 'PageLayout', id: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, deletedAt?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: string, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: string } | { __typename?: 'GaugeChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, displayDataLabel?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: string, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextV2Body', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null };
 
@@ -10049,68 +9983,6 @@ export function useFindManyCommandMenuItemsLazyQuery(baseOptions?: Apollo.LazyQu
 export type FindManyCommandMenuItemsQueryHookResult = ReturnType<typeof useFindManyCommandMenuItemsQuery>;
 export type FindManyCommandMenuItemsLazyQueryHookResult = ReturnType<typeof useFindManyCommandMenuItemsLazyQuery>;
 export type FindManyCommandMenuItemsQueryResult = Apollo.QueryResult<FindManyCommandMenuItemsQuery, FindManyCommandMenuItemsQueryVariables>;
-export const SearchDocument = gql`
-    query Search($searchInput: String!, $limit: Int!, $after: String, $excludedObjectNameSingulars: [String!], $includedObjectNameSingulars: [String!], $filter: ObjectRecordFilterInput) {
-  search(
-    searchInput: $searchInput
-    limit: $limit
-    after: $after
-    excludedObjectNameSingulars: $excludedObjectNameSingulars
-    includedObjectNameSingulars: $includedObjectNameSingulars
-    filter: $filter
-  ) {
-    edges {
-      node {
-        recordId
-        objectNameSingular
-        objectLabelSingular
-        label
-        imageUrl
-        tsRankCD
-        tsRank
-      }
-      cursor
-    }
-    pageInfo {
-      hasNextPage
-      endCursor
-    }
-  }
-}
-    `;
-
-/**
- * __useSearchQuery__
- *
- * To run a query within a React component, call `useSearchQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useSearchQuery({
- *   variables: {
- *      searchInput: // value for 'searchInput'
- *      limit: // value for 'limit'
- *      after: // value for 'after'
- *      excludedObjectNameSingulars: // value for 'excludedObjectNameSingulars'
- *      includedObjectNameSingulars: // value for 'includedObjectNameSingulars'
- *      filter: // value for 'filter'
- *   },
- * });
- */
-export function useSearchQuery(baseOptions: Apollo.QueryHookOptions<SearchQuery, SearchQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-      }
-export function useSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchQuery, SearchQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchQuery, SearchQueryVariables>(SearchDocument, options);
-        }
-export type SearchQueryHookResult = ReturnType<typeof useSearchQuery>;
-export type SearchLazyQueryHookResult = ReturnType<typeof useSearchLazyQuery>;
-export type SearchQueryResult = Apollo.QueryResult<SearchQuery, SearchQueryVariables>;
 export const DuplicateDashboardDocument = gql`
     mutation DuplicateDashboard($id: UUID!) {
   duplicateDashboard(id: $id) {
