@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.17",
+    "@ai-sdk/groq": "^2.0.34",
     "@ai-sdk/openai": "^2.0.30",
     "@ai-sdk/provider-utils": "^3.0.9",
     "@ai-sdk/xai": "^2.0.19",
@@ -80,7 +81,7 @@
     "ai": "5.0.52",
     "apollo-server-core": "3.13.0",
     "archiver": "7.0.1",
-    "axios": "1.12.2",
+    "axios": "^1.13.5",
     "babel-plugin-module-resolver": "5.0.2",
     "bcrypt": "5.1.1",
     "bullmq": "5.40.0",
@@ -108,7 +109,6 @@
     "graphql": "16.8.1",
     "graphql-fields": "2.0.3",
     "graphql-middleware": "^6.1.35",
-    "graphql-rate-limit": "3.3.0",
     "graphql-redis-subscriptions": "2.7.0",
     "graphql-scalars": "1.23.0",
     "graphql-subscriptions": "2.0.0",
@@ -182,7 +182,7 @@
   "devDependencies": {
     "@faker-js/faker": "^9.8.0",
     "@lingui/cli": "^5.1.2",
-    "@nestjs/cli": "11.0.10",
+    "@nestjs/cli": "^11.0.16",
     "@nestjs/devtools-integration": "^0.2.1",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.9",

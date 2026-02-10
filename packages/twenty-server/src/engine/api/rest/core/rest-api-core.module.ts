@@ -1,4 +1,3 @@
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
@@ -27,6 +26,7 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -58,7 +58,6 @@ const restApiCoreResolvers = [
     AuthModule,
     ApiKeyModule,
     UserRoleModule,
-    HttpModule,
     TwentyORMModule,
     RecordTransformerModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -67,6 +66,7 @@ const restApiCoreResolvers = [
     CoreCommonApiModule,
     WorkspaceDomainsModule,
     WorkspaceCacheModule,
+    SecureHttpClientModule,
   ],
   controllers: [RestApiCoreController],
   providers: [

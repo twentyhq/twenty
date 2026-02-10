@@ -1,14 +1,14 @@
 import { msg, t } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 
-import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
+import { type UniversalFlatRoleTarget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-target.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 type ValidateFlatRoleTargetAssignationAvailabilityArgs = {
-  flatRole: FlatRole;
-  flatRoleTarget: FlatRoleTarget;
+  flatRole: UniversalFlatRole;
+  flatRoleTarget: UniversalFlatRoleTarget;
 };
 export const validateFlatRoleTargetAssignationAvailability = ({
   flatRole,

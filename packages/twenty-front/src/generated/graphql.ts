@@ -21,6 +21,19 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AiSystemPromptPreview = {
+  __typename?: 'AISystemPromptPreview';
+  estimatedTokenCount: Scalars['Int'];
+  sections: Array<AiSystemPromptSection>;
+};
+
+export type AiSystemPromptSection = {
+  __typename?: 'AISystemPromptSection';
+  content: Scalars['String'];
+  estimatedTokenCount: Scalars['Int'];
+  title: Scalars['String'];
+};
+
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
@@ -76,12 +89,13 @@ export type Agent = {
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
   contextWindowTokens?: Maybe<Scalars['Int']>;
+  conversationSize: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   title?: Maybe<Scalars['String']>;
-  totalInputCredits: Scalars['Int'];
+  totalInputCredits: Scalars['Float'];
   totalInputTokens: Scalars['Int'];
-  totalOutputCredits: Scalars['Int'];
+  totalOutputCredits: Scalars['Float'];
   totalOutputTokens: Scalars['Int'];
   updatedAt: Scalars['DateTime'];
 };
@@ -941,6 +955,14 @@ export type CreateCommandMenuItemInput = {
   workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
+export type CreateDefaultLogicFunctionInput = {
+  description?: InputMaybe<Scalars['String']>;
+  isTool?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolInputSchema?: InputMaybe<Scalars['JSON']>;
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID'];
@@ -971,20 +993,13 @@ export type CreateFieldInput = {
 };
 
 export type CreateFrontComponentInput = {
+  builtComponentChecksum: Scalars['String'];
+  builtComponentPath: Scalars['String'];
+  componentName: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['UUID']>;
   name: Scalars['String'];
-};
-
-export type CreateLogicFunctionInput = {
-  builtHandlerPath?: InputMaybe<Scalars['String']>;
-  code?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  handlerName?: InputMaybe<Scalars['String']>;
-  isTool?: InputMaybe<Scalars['Boolean']>;
-  name: Scalars['String'];
-  sourceHandlerPath?: InputMaybe<Scalars['String']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']>;
-  toolInputSchema?: InputMaybe<Scalars['JSON']>;
+  sourceComponentPath: Scalars['String'];
 };
 
 export type CreateObjectInput = {
@@ -1457,11 +1472,9 @@ export enum FeatureFlagKey {
   IS_NOTE_TARGET_MIGRATED = 'IS_NOTE_TARGET_MIGRATED',
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED = 'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
-  IS_RECORD_PAGE_LAYOUT_ENABLED = 'IS_RECORD_PAGE_LAYOUT_ENABLED',
   IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED = 'IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED',
   IS_SSE_DB_EVENTS_ENABLED = 'IS_SSE_DB_EVENTS_ENABLED',
   IS_TASK_TARGET_MIGRATED = 'IS_TASK_TARGET_MIGRATED',
-  IS_TIMELINE_ACTIVITY_MIGRATED = 'IS_TIMELINE_ACTIVITY_MIGRATED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED'
 }
 
@@ -1627,9 +1640,15 @@ export type FindAvailableSsoidpOutput = {
 export type FrontComponent = {
   __typename?: 'FrontComponent';
   applicationId: Scalars['UUID'];
+  builtComponentChecksum: Scalars['String'];
+  builtComponentPath: Scalars['String'];
+  componentName: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   name: Scalars['String'];
+  sourceComponentPath: Scalars['String'];
+  universalIdentifier?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1672,11 +1691,6 @@ export type GetAuthorizationUrlForSsoOutput = {
   authorizationURL: Scalars['String'];
   id: Scalars['UUID'];
   type: Scalars['String'];
-};
-
-export type GetLogicFunctionSourceCodeInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
 };
 
 /** Order by options for graph widgets */
@@ -2037,6 +2051,7 @@ export enum MessageChannelVisibility {
 
 export enum ModelProvider {
   ANTHROPIC = 'ANTHROPIC',
+  GROQ = 'GROQ',
   NONE = 'NONE',
   OPENAI = 'OPENAI',
   OPENAI_COMPATIBLE = 'OPENAI_COMPATIBLE',
@@ -2068,6 +2083,7 @@ export type Mutation = {
   createCoreViewGroup: CoreViewGroup;
   createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
+  createDefaultLogicFunction: LogicFunction;
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createEmailingDomain: EmailingDomain;
   createFile: File;
@@ -2080,7 +2096,6 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneApplication: Application;
   createOneField: Field;
-  createOneLogicFunction: LogicFunction;
   createOneObject: Object;
   createOneRole: Role;
   createPageLayout: PageLayout;
@@ -2329,6 +2344,11 @@ export type MutationCreateDatabaseConfigVariableArgs = {
 };
 
 
+export type MutationCreateDefaultLogicFunctionArgs = {
+  input: CreateDefaultLogicFunctionInput;
+};
+
+
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
 };
@@ -2385,11 +2405,6 @@ export type MutationCreateOneApplicationArgs = {
 
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
-};
-
-
-export type MutationCreateOneLogicFunctionArgs = {
-  input: CreateLogicFunctionInput;
 };
 
 
@@ -3773,7 +3788,7 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 
 export type QueryGetLogicFunctionSourceCodeArgs = {
-  input: GetLogicFunctionSourceCodeInput;
+  input: LogicFunctionIdInput;
 };
 
 
@@ -4535,6 +4550,7 @@ export type UpdateFrontComponentInput = {
 };
 
 export type UpdateFrontComponentInputUpdates = {
+  description?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
 };
 
@@ -4756,6 +4772,7 @@ export type UpdateWorkflowVersionStepInput = {
 };
 
 export type UpdateWorkspaceInput = {
+  aiAdditionalInstructions?: InputMaybe<Scalars['String']>;
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   customDomain?: InputMaybe<Scalars['String']>;
   defaultRoleId?: InputMaybe<Scalars['UUID']>;
@@ -5143,6 +5160,7 @@ export type WorkflowVersionStepChanges = {
 export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
+  aiAdditionalInstructions?: Maybe<Scalars['String']>;
   allowImpersonation: Scalars['Boolean'];
   billingEntitlements: Array<BillingEntitlement>;
   billingSubscriptions: Array<BillingSubscription>;

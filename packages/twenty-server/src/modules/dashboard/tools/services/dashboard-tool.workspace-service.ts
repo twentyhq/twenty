@@ -4,11 +4,13 @@ import { type ToolSet } from 'ai';
 
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { createAddDashboardTabTool } from 'src/modules/dashboard/tools/add-dashboard-tab.tool';
 import { createAddDashboardWidgetTool } from 'src/modules/dashboard/tools/add-dashboard-widget.tool';
 import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/create-complete-dashboard.tool';
 import { createDeleteDashboardWidgetTool } from 'src/modules/dashboard/tools/delete-dashboard-widget.tool';
@@ -28,6 +30,7 @@ export class DashboardToolWorkspaceService {
     globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     recordPositionService: RecordPositionService,
     applicationService: ApplicationService,
+    flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {
     this.deps = {
       pageLayoutService,
@@ -36,6 +39,7 @@ export class DashboardToolWorkspaceService {
       globalWorkspaceOrmManager,
       recordPositionService,
       applicationService,
+      flatEntityMapsCacheService,
     };
   }
 
@@ -51,6 +55,7 @@ export class DashboardToolWorkspaceService {
     );
     const listDashboards = createListDashboardsTool(this.deps, context);
     const getDashboard = createGetDashboardTool(this.deps, context);
+    const addDashboardTab = createAddDashboardTabTool(this.deps, context);
     const addDashboardWidget = createAddDashboardWidgetTool(this.deps, context);
     const updateDashboardWidget = createUpdateDashboardWidgetTool(
       this.deps,
@@ -65,6 +70,7 @@ export class DashboardToolWorkspaceService {
       [createCompleteDashboard.name]: createCompleteDashboard,
       [listDashboards.name]: listDashboards,
       [getDashboard.name]: getDashboard,
+      [addDashboardTab.name]: addDashboardTab,
       [addDashboardWidget.name]: addDashboardWidget,
       [updateDashboardWidget.name]: updateDashboardWidget,
       [deleteDashboardWidget.name]: deleteDashboardWidget,

@@ -63,16 +63,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-sdk",
-        "command": "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && npx vitest run --config vitest.integration.config.ts"
+        "command": "npx vitest run --config vitest.integration.config.ts"
       }
     },
     "test:e2e": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-sdk",
-        "commands": [
-          "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts"
-        ]
+        "command": "npx wait-on http://localhost:3000/healthz --timeout 600000 --interval 1000 --log && NODE_ENV=test npx vitest run --config ./vitest.e2e.config.ts"
       },
       "parallel": false,
       "dependsOn": [

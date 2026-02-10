@@ -70,7 +70,7 @@ describe('copyBaseApplicationProject', () => {
     const packageJson = await fs.readJson(packageJsonPath);
     expect(packageJson.name).toBe('my-test-app');
     expect(packageJson.version).toBe('0.1.0');
-    expect(packageJson.dependencies['twenty-sdk']).toBe('0.4.8');
+    expect(packageJson.dependencies['twenty-sdk']).toBe('0.5.0');
     expect(packageJson.scripts['app:dev']).toBe('twenty app:dev');
   });
 

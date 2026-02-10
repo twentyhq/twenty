@@ -10,13 +10,9 @@ export default defineLogicFunction({
   name: 'greeting-function',
   timeoutSeconds: 5,
   handler: greetingHandler,
-  triggers: [
-    {
-      universalIdentifier: 'f7b12160-3d25-4c92-a13f-a325dd60eb04',
-      type: 'route',
-      path: '/greet',
-      httpMethod: 'GET',
-      isAuthRequired: false,
-    },
-  ],
+  httpRouteTriggerSettings: {
+    path: '/greet',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
 });

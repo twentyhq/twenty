@@ -73,6 +73,7 @@ describe('RefreshTokenService', () => {
       const mockJwtPayload = {
         jti: 'token-id',
         sub: 'user-id',
+        type: JwtTokenTypeEnum.REFRESH,
       };
       const mockAppToken = {
         id: 'token-id',

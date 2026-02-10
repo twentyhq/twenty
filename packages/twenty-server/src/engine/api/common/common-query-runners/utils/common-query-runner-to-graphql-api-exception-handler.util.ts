@@ -28,6 +28,7 @@ export const commonQueryRunnerToGraphqlApiExceptionHandler = (
     case CommonQueryRunnerExceptionCode.BAD_REQUEST:
     case CommonQueryRunnerExceptionCode.TOO_COMPLEX_QUERY:
     case CommonQueryRunnerExceptionCode.MISSING_TIMEZONE_FOR_DATE_GROUP_BY:
+    case CommonQueryRunnerExceptionCode.INVALID_TIMEZONE:
       throw new UserInputError(error);
     case CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT:
       throw new AuthenticationError(error);

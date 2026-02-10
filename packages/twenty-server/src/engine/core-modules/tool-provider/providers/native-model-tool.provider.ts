@@ -4,7 +4,7 @@ import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type ToolProvider,
+  type NativeToolProvider,
   type ToolProviderContext,
 } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
@@ -12,8 +12,10 @@ import { ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-c
 import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
+// SDK-native tools (anthropic webSearch, etc.) are opaque and not serializable.
+// This provider keeps generateTools() and is excluded from the descriptor system.
 @Injectable()
-export class NativeModelToolProvider implements ToolProvider {
+export class NativeModelToolProvider implements NativeToolProvider {
   readonly category = ToolCategory.NATIVE_MODEL;
 
   constructor(

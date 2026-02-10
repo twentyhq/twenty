@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "0.4.8",
+  "version": "0.5.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -50,7 +50,7 @@
     "@remote-dom/react": "^1.2.2",
     "@sniptt/guards": "^0.2.0",
     "archiver": "^7.0.1",
-    "axios": "^1.6.0",
+    "axios": "^1.13.5",
     "chalk": "^5.3.0",
     "chokidar": "^4.0.0",
     "commander": "^12.0.0",

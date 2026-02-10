@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -12,6 +11,7 @@ import {
   type AddressFields,
   sanitizePlaceDetailsResults,
 } from 'src/engine/core-modules/geo-map/utils/sanitize-place-details-results.util';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class GeoMapService {
   private apiMapKey: string | undefined;
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly httpService: HttpService,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {
     if (
       !this.twentyConfigService.get(
@@ -50,7 +50,9 @@ export class GeoMapService {
     if (isDefined(isFieldCity) && isFieldCity === true) {
       url += `&types=(cities)`;
     }
-    const result = await this.httpService.axiosRef.get(url);
+    const httpClient = this.secureHttpClientService.getHttpClient();
+
+    const result = await httpClient.get(url);
 
     if (result.data.status === 'OK') {
       return sanitizeAutocompleteResults(result.data.predictions);
@@ -63,7 +65,9 @@ export class GeoMapService {
     placeId: string,
     token: string,
   ): Promise<AddressFields | undefined> {
-    const result = await this.httpService.axiosRef.get(
+    const httpClient = this.secureHttpClientService.getHttpClient();
+
+    const result = await httpClient.get(
       `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components%2Cgeometry&key=${this.apiMapKey}`,
     );
 

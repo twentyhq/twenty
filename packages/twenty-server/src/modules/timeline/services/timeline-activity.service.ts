@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
-import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -19,6 +18,7 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+import { extractObjectSingularNameFromTargetColumnName } from 'src/modules/timeline/utils/extract-object-singular-name-from-target-column-name.util';
 
 type ActivityType = 'note' | 'task';
 
@@ -67,7 +67,7 @@ export class TimelineActivityService {
     const payloadsByObjectSingularName = timelineActivitiesPayloads.reduce(
       (acc, payload) => {
         const computedObjectSingularName =
-          payload.overrideObjectSingularName ?? objectSingularName;
+          payload.objectSingularName ?? objectSingularName;
 
         acc[computedObjectSingularName] = [
           ...(acc[computedObjectSingularName] || []),
@@ -79,18 +79,11 @@ export class TimelineActivityService {
       {} as Record<string, TimelineActivityPayload[]>,
     );
 
-    const isFeatureFlagTimelineActivityMigrated =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_TIMELINE_ACTIVITY_MIGRATED,
-        workspaceId,
-      );
-
     for (const objectSingularName in payloadsByObjectSingularName) {
       await this.timelineActivityRepository.upsertTimelineActivities({
         objectSingularName,
         workspaceId,
         payloads: payloadsByObjectSingularName[objectSingularName],
-        isFeatureFlagTimelineActivityMigrated,
       });
     }
   }
@@ -255,7 +248,7 @@ export class TimelineActivityService {
             linkedRecordId: activityId,
             linkedObjectMetadataId: objectMetadata.id,
             properties: event.properties,
-            overrideObjectSingularName: objectMetadata.nameSingular,
+            objectSingularName: objectMetadata.nameSingular,
           } satisfies TimelineActivityPayload;
         });
       })
@@ -361,9 +354,12 @@ export class TimelineActivityService {
           targetColumnName
         ];
 
+        const objectSingularName =
+          extractObjectSingularNameFromTargetColumnName(targetColumnName);
+
         return {
           name: `linked-${activityType}.${action}`,
-          overrideObjectSingularName: targetColumnName.replace(/Id$/, ''),
+          objectSingularName,
           recordId,
           linkedRecordCachedName: activity.title,
           linkedRecordId: activity.id,

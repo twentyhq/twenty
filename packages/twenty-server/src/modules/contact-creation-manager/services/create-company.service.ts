@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import axios, { type AxiosInstance } from 'axios';
+import { type AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
 import {
@@ -13,6 +13,7 @@ import {
 } from 'twenty-shared/utils';
 import { type DeepPartial, ILike } from 'typeorm';
 
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -37,8 +38,9 @@ export class CreateCompanyService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {
-    this.httpService = axios.create({
+    this.httpService = this.secureHttpClientService.getHttpClient({
       baseURL: TWENTY_COMPANIES_BASE_URL,
     });
   }

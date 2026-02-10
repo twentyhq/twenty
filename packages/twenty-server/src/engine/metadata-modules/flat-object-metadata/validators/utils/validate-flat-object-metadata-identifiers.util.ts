@@ -4,63 +4,69 @@ import {
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 export const validateFlatObjectMetadataIdentifiers = ({
-  flatObjectMetadata,
-  flatFieldMetadataMaps,
+  universalFlatObjectMetadata,
+  universalFlatFieldMetadataMaps,
 }: {
-  flatObjectMetadata: Pick<
-    FlatObjectMetadata,
-    'labelIdentifierFieldMetadataId' | 'imageIdentifierFieldMetadataId'
+  universalFlatObjectMetadata: Pick<
+    UniversalFlatObjectMetadata,
+    | 'labelIdentifierFieldMetadataUniversalIdentifier'
+    | 'imageIdentifierFieldMetadataUniversalIdentifier'
   >;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  universalFlatFieldMetadataMaps: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>;
 }) => {
   const errors: FlatObjectMetadataValidationError[] = [];
 
-  const { labelIdentifierFieldMetadataId, imageIdentifierFieldMetadataId } =
-    flatObjectMetadata;
+  const {
+    labelIdentifierFieldMetadataUniversalIdentifier,
+    imageIdentifierFieldMetadataUniversalIdentifier,
+  } = universalFlatObjectMetadata;
 
   // TODO should not be nullable
-  if (isDefined(labelIdentifierFieldMetadataId)) {
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: labelIdentifierFieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
+  if (isDefined(labelIdentifierFieldMetadataUniversalIdentifier)) {
+    const universalFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: labelIdentifierFieldMetadataUniversalIdentifier,
+      flatEntityMaps: universalFlatFieldMetadataMaps,
     });
 
-    if (!isDefined(flatFieldMetadata)) {
+    if (!isDefined(universalFlatFieldMetadata)) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
-          'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
+          'labelIdentifierFieldMetadataUniversalIdentifier validation failed: related field metadata not found',
         userFriendlyMessage: msg`Field declared as label identifier not found`,
       });
-    } else if (!isLabelIdentifierFieldMetadataTypes(flatFieldMetadata.type)) {
+    } else if (
+      !isLabelIdentifierFieldMetadataTypes(universalFlatFieldMetadata.type)
+    ) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
-          'labelIdentifierFieldMetadataId validation failed: field type not compatible',
+          'labelIdentifierFieldMetadataUniversalIdentifier validation failed: field type not compatible',
         userFriendlyMessage: msg`Field cannot be used as label identifier`,
       });
     }
   }
 
-  if (isDefined(imageIdentifierFieldMetadataId)) {
-    const relatedFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: imageIdentifierFieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
+  if (isDefined(imageIdentifierFieldMetadataUniversalIdentifier)) {
+    const relatedUniversalFlatFieldMetadata =
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: imageIdentifierFieldMetadataUniversalIdentifier,
+        flatEntityMaps: universalFlatFieldMetadataMaps,
+      });
 
-    if (!isDefined(relatedFlatFieldMetadata)) {
+    if (!isDefined(relatedUniversalFlatFieldMetadata)) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message:
-          'imageIdentifierFieldMetadataId validation failed: related field metadata not found',
+          'imageIdentifierFieldMetadataUniversalIdentifier validation failed: related field metadata not found',
         userFriendlyMessage: msg`Field declared as image identifier not found`,
       });
     }

@@ -8,14 +8,9 @@ import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/u
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
 import { isPageLayoutInEditModeComponentState } from '@/page-layout/states/isPageLayoutInEditModeComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey, PageLayoutType } from '~/generated/graphql';
+import { PageLayoutTabLayoutMode, PageLayoutType } from '~/generated/graphql';
 
 export const PageLayoutContent = () => {
-  const isRecordPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_ENABLED,
-  );
-
   const isPageLayoutInEditMode = useRecoilComponentValue(
     isPageLayoutInEditModeComponentState,
   );
@@ -33,8 +28,8 @@ export const PageLayoutContent = () => {
   const isRecordPageLayout =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE;
 
-  const isCanvasLayout = isRecordPageEnabled && layoutMode === 'canvas';
-  const isVerticalList = isRecordPageEnabled && layoutMode === 'vertical-list';
+  const isCanvasLayout = layoutMode === PageLayoutTabLayoutMode.CANVAS;
+  const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
 
   if (isCanvasLayout) {
     return <PageLayoutCanvasViewer widgets={activeTab.widgets} />;

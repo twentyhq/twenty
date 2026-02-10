@@ -13,7 +13,11 @@ const StyledSvg = styled.svg`
 
 const StyledBackgroundCircle = styled.circle`
   fill: none;
-  stroke: ${({ theme }) => theme.background.quaternary};
+  stroke: color-mix(
+    in srgb,
+    ${({ theme }) => theme.border.color.strong} 50%,
+    ${({ theme }) => theme.background.quaternary} 50%
+  );
 `;
 
 const StyledProgressCircle = styled.circle`

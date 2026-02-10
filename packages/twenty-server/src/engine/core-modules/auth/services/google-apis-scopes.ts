@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -7,6 +6,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { includesExpectedScopes } from 'src/engine/core-modules/auth/services/google-apis-scopes.service.util';
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 interface TokenInfoResponse {
   scope: string;
@@ -24,13 +24,17 @@ interface TokenInfoResponse {
 
 @Injectable()
 export class GoogleAPIScopesService {
-  constructor(private httpService: HttpService) {}
+  constructor(
+    private readonly secureHttpClientService: SecureHttpClientService,
+  ) {}
 
   public async getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
     accessToken: string,
   ): Promise<{ scopes: string[]; isValid: boolean }> {
     try {
-      const response = await this.httpService.axiosRef.get<TokenInfoResponse>(
+      const httpClient = this.secureHttpClientService.getHttpClient();
+
+      const response = await httpClient.get<TokenInfoResponse>(
         `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`,
         { timeout: 600 },
       );

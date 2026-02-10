@@ -486,8 +486,12 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
     );
 
     try {
-      await this.fileStorageService.delete({ folderPath: OLD_BUILT_FOLDER });
-      await this.fileStorageService.delete({ folderPath: OLD_SOURCE_FOLDER });
+      await this.fileStorageService.deleteLegacy({
+        folderPath: OLD_BUILT_FOLDER,
+      });
+      await this.fileStorageService.deleteLegacy({
+        folderPath: OLD_SOURCE_FOLDER,
+      });
       this.logger.log(
         `Cleaned old file storage: ${OLD_BUILT_FOLDER}, ${OLD_SOURCE_FOLDER}`,
       );
@@ -516,7 +520,10 @@ export class SeedWorkflowV1_16Command extends ActiveOrSuspendedWorkspacesMigrati
       },
     };
 
-    await this.fileStorageService.writeFolder(builtSources, builtFolder);
-    await this.fileStorageService.writeFolder(sourceSources, sourceFolder);
+    await this.fileStorageService.writeFolderLegacy(builtSources, builtFolder);
+    await this.fileStorageService.writeFolderLegacy(
+      sourceSources,
+      sourceFolder,
+    );
   }
 }

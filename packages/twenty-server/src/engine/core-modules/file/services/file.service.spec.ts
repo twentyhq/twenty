@@ -21,7 +21,7 @@ describe('FileService', () => {
         {
           provide: FileStorageService,
           useValue: {
-            copy: jest.fn(),
+            copyLegacy: jest.fn(),
           },
         },
         {
@@ -50,7 +50,7 @@ describe('FileService', () => {
       'newWorkspaceId',
     );
 
-    expect(fileStorageService.copy).toHaveBeenCalledWith({
+    expect(fileStorageService.copyLegacy).toHaveBeenCalledWith({
       from: {
         folderPath: 'workspace-workspaceId/path/to',
         filename: 'file',

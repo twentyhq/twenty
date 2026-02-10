@@ -2,12 +2,12 @@ import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { AgentExceptionCode } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 type ValidateAgentRequiredPropertiesArgs = {
-  flatAgent: FlatAgent;
-  updatedProperties?: Partial<FlatAgent>;
+  flatAgent: UniversalFlatAgent;
+  updatedProperties?: Partial<UniversalFlatAgent>;
 };
 
 export const validateAgentRequiredProperties = ({

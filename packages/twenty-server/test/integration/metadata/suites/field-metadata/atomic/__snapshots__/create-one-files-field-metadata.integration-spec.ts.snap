@@ -15,9 +15,8 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "filesFieldUnique",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -35,7 +34,6 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "IDX_UNIQUE_47bf8eae9471bbd64cbb794a3b6",
             "universalIdentifier": Any<String>,
           },
@@ -73,9 +71,8 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "filesFieldInvalid",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -111,9 +108,8 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "filesFieldExceeds",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",
@@ -149,9 +145,8 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "name": "filesFieldNoSettings",
-            "objectMetadataId": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "fieldMetadata",

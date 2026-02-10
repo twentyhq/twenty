@@ -15,7 +15,7 @@ import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces/aws-region.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
-import { LogicFunctionExecutorDriverType } from 'src/engine/core-modules/logic-function/logic-function-executor/interfaces/logic-function-executor.interface';
+import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
@@ -239,17 +239,6 @@ export class ConfigVariables {
   CALENDAR_PROVIDER_MICROSOFT_ENABLED = false;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.OTHER,
-    isSensitive: true,
-    description:
-      'Legacy variable to be deprecated when all API Keys expire. Replaced by APP_KEY',
-    type: ConfigVariableType.STRING,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  ACCESS_TOKEN_SECRET: string;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the access token is valid',
     type: ConfigVariableType.STRING,
@@ -277,12 +266,13 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
-    description: 'Cooldown period for refreshing tokens',
+    description:
+      'Grace period allowing concurrent refresh token use (e.g. two tabs refreshing simultaneously). Reuse after this window triggers suspicious activity detection.',
     type: ConfigVariableType.STRING,
   })
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_COOL_DOWN = '1m';
+  REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
@@ -466,13 +456,12 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
-    options: Object.values(LogicFunctionExecutorDriverType),
+    options: Object.values(LogicFunctionDriverType),
     isEnvOnly: true,
   })
   @IsOptional()
   @CastToUpperSnakeCase()
-  LOGIC_FUNCTION_TYPE: LogicFunctionExecutorDriverType =
-    LogicFunctionExecutorDriverType.LOCAL;
+  LOGIC_FUNCTION_TYPE: LogicFunctionDriverType = LogicFunctionDriverType.LOCAL;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -506,7 +495,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsAWSRegion()
   LOGIC_FUNCTION_LAMBDA_REGION: AwsRegion;
@@ -517,7 +506,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   LOGIC_FUNCTION_LAMBDA_ROLE: string;
 
@@ -527,7 +516,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsOptional()
   LOGIC_FUNCTION_LAMBDA_SUBHOSTING_ROLE?: string;
@@ -539,7 +528,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsOptional()
   LOGIC_FUNCTION_LAMBDA_ACCESS_KEY_ID: string;
@@ -551,7 +540,7 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   @ValidateIf(
-    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionExecutorDriverType.LAMBDA,
+    (env) => env.LOGIC_FUNCTION_TYPE === LogicFunctionDriverType.LAMBDA,
   )
   @IsOptional()
   LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY: string;
@@ -1272,6 +1261,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   XAI_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    isSensitive: true,
+    description: 'API key for Groq integration',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  GROQ_API_KEY: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

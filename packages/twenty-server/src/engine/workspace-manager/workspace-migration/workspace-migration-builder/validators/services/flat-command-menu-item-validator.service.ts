@@ -6,22 +6,21 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatCommandMenuItemValidatorService {
   public validateFlatCommandMenuItemCreation({
     flatEntityToValidate: flatCommandMenuItem,
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatCommandMenuItem.id,
         universalIdentifier: flatCommandMenuItem.universalIdentifier,
       },
       metadataName: 'commandMenuItem',
@@ -39,12 +38,14 @@ export class FlatCommandMenuItemValidatorService {
     const hasWorkflowVersionId = isDefined(
       flatCommandMenuItem.workflowVersionId,
     );
-    const hasFrontComponentId = isDefined(flatCommandMenuItem.frontComponentId);
+    const hasFrontComponentUniversalIdentifier = isDefined(
+      flatCommandMenuItem.frontComponentUniversalIdentifier,
+    );
 
-    if (hasWorkflowVersionId === hasFrontComponentId) {
+    if (hasWorkflowVersionId === hasFrontComponentUniversalIdentifier) {
       validationResult.errors.push({
         code: CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED,
-        message: t`Exactly one of workflowVersionId or frontComponentId is required`,
+        message: t`Exactly one of workflowVersionId or frontComponentUniversalIdentifier is required`,
         userFriendlyMessage: msg`Exactly one of workflow version or front component is required`,
       });
     }
@@ -57,20 +58,19 @@ export class FlatCommandMenuItemValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
     },
-  }: FlatEntityValidationArgs<
+  }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'delete'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityToValidate.id,
         universalIdentifier: flatEntityToValidate.universalIdentifier,
       },
       metadataName: 'commandMenuItem',
       type: 'delete',
     });
 
-    const existingCommandMenuItem = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatEntityToValidate.id,
+    const existingCommandMenuItem = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatEntityToValidate.universalIdentifier,
       flatEntityMaps: optimisticFlatCommandMenuItemMaps,
     });
 
@@ -86,7 +86,7 @@ export class FlatCommandMenuItemValidatorService {
   }
 
   public validateFlatCommandMenuItemUpdate({
-    flatEntityId,
+    universalIdentifier,
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatCommandMenuItemMaps: optimisticFlatCommandMenuItemMaps,
@@ -94,15 +94,14 @@ export class FlatCommandMenuItemValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.commandMenuItem
   >): FailedFlatEntityValidation<'commandMenuItem', 'update'> {
-    const fromFlatCommandMenuItem = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId,
+    const fromFlatCommandMenuItem = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
       flatEntityMaps: optimisticFlatCommandMenuItemMaps,
     });
 
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
-        id: flatEntityId,
-        universalIdentifier: fromFlatCommandMenuItem?.universalIdentifier,
+        universalIdentifier,
       },
       metadataName: 'commandMenuItem',
       type: 'update',

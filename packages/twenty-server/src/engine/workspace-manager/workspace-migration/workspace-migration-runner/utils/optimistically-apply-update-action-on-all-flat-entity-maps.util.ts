@@ -40,7 +40,7 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = <
       });
 
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
-        flatEntity: flatAction.updatedFlatEntity,
+        flatEntity: flatAction.updatedFlatIndex,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,
         metadataName: flatAction.metadataName,
       });

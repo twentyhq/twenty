@@ -1,5 +1,32 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`CommandMenuItem update should fail when updating a non-existent command menu item 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "COMMAND_MENU_ITEM_NOT_FOUND",
+    "userFriendlyMessage": "Command menu item not found.",
+  },
+  "message": "Command menu item not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`CommandMenuItem update should fail when updating with empty id 1`] = `
+{
+  "extensions": {
+    "code": "GRAPHQL_VALIDATION_FAILED",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+    "value": "",
+  },
+  "message": "Invalid UUID",
+  "name": "ValidationError",
+}
+`;
+
 exports[`CommandMenuItem update should fail when updating with empty label 1`] = `
 {
   "extensions": {
@@ -15,7 +42,6 @@ exports[`CommandMenuItem update should fail when updating with empty label 1`] =
             },
           ],
           "flatEntityMinimalInformation": {
-            "id": Any<String>,
             "universalIdentifier": Any<String>,
           },
           "metadataName": "commandMenuItem",
@@ -36,35 +62,6 @@ exports[`CommandMenuItem update should fail when updating with empty label 1`] =
 }
 `;
 
-exports[`CommandMenuItem update should fail when updating with missing id 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Field "id" of required type "UUID!" was not provided.",
-  "name": "GraphQLError",
-}
-`;
-
-exports[`CommandMenuItem update should fail when updating with empty id 1`] = `
-{
-  "extensions": {
-    "code": "GRAPHQL_VALIDATION_FAILED",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-    "value": "",
-  },
-  "message": "Invalid UUID",
-  "name": "ValidationError",
-}
-`;
-
 exports[`CommandMenuItem update should fail when updating with invalid id (not a UUID) 1`] = `
 {
   "extensions": {
@@ -80,14 +77,16 @@ exports[`CommandMenuItem update should fail when updating with invalid id (not a
 }
 `;
 
-exports[`CommandMenuItem update should fail when updating a non-existent command menu item 1`] = `
+exports[`CommandMenuItem update should fail when updating with missing id 1`] = `
 {
   "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "COMMAND_MENU_ITEM_NOT_FOUND",
-    "userFriendlyMessage": "Command menu item not found.",
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Command menu item not found",
-  "name": "NotFoundError",
+  "message": "Field "id" of required type "UUID!" was not provided.",
+  "name": "GraphQLError",
 }
 `;

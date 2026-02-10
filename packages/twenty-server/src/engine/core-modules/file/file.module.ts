@@ -1,4 +1,3 @@
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -10,6 +9,7 @@ import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/job
 import { FileAttachmentListener } from 'src/engine/core-modules/file/listeners/file-attachment.listener';
 import { FileWorkspaceMemberListener } from 'src/engine/core-modules/file/listeners/file-workspace-member.listener';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
@@ -25,10 +25,10 @@ import { FileService } from './services/file.service';
   imports: [
     JwtModule,
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
-    HttpModule,
     PermissionsModule,
     FileStorageModule,
     FilesFieldModule,
+    SecureHttpClientModule,
   ],
   providers: [
     FileService,

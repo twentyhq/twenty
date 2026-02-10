@@ -189,7 +189,6 @@ const createDefaultFunction = async ({
   fileName: string;
 }) => {
   const universalIdentifier = v4();
-  const triggerUniversalIdentifier = v4();
 
   const content = `import { defineLogicFunction } from 'twenty-sdk';
 
@@ -204,15 +203,11 @@ export default defineLogicFunction({
   description: 'A simple logic function',
   timeoutSeconds: 5,
   handler,
-  triggers: [
-    {
-      universalIdentifier: '${triggerUniversalIdentifier}',
-      type: 'route',
-      path: '/hello-world-logic-function',
-      httpMethod: 'GET',
-      isAuthRequired: false,
-    },
-  ],
+  httpRouteTriggerSettings: {
+    path: '/hello-world-logic-function',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
 });
 `;
 
@@ -282,7 +277,7 @@ const createPackageJson = async ({
       'lint:fix': 'eslint --fix',
     },
     dependencies: {
-      'twenty-sdk': '0.4.8',
+      'twenty-sdk': '0.5.0',
     },
     devDependencies: {
       typescript: '^5.9.3',

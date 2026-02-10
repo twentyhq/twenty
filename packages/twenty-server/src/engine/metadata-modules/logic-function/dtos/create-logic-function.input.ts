@@ -1,76 +1,45 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsObject, IsOptional, IsString } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
-import { Sources } from 'twenty-shared/types';
+import {
+  CronTriggerSettings,
+  DatabaseEventTriggerSettings,
+  HttpRouteTriggerSettings,
+} from 'twenty-shared/application';
+
+import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { CreateDefaultLogicFunctionInput } from 'src/engine/metadata-modules/logic-function/dtos/create-default-logic-function.input';
 
 @InputType()
-export class CreateLogicFunctionInput {
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  name: string;
+export class CreateLogicFunctionInput extends CreateDefaultLogicFunctionInput {
+  @HideField()
+  checksum: string;
 
   @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  description?: string;
+  @Field({ nullable: false })
+  handlerName: string;
 
-  @IsNumber()
-  @Field({ nullable: true })
-  @Min(1)
-  @Max(900)
-  @IsOptional()
-  timeoutSeconds?: number;
+  @IsString()
+  @Field({ nullable: false })
+  sourceHandlerPath: string;
 
-  @HideField()
-  applicationId?: string;
+  @IsString()
+  @Field({ nullable: false })
+  builtHandlerPath: string;
 
-  @HideField()
-  universalIdentifier?: string;
-
-  @HideField()
-  id?: string;
-
-  @HideField()
-  checksum?: string;
-
-  @Field(() => graphqlTypeJson, { nullable: true })
   @IsObject()
-  @IsOptional()
-  code?: Sources;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  handlerName?: string;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  sourceHandlerPath?: string;
-
-  @IsString()
-  @Field({ nullable: true })
-  @IsOptional()
-  builtHandlerPath?: string;
-
   @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
   @IsOptional()
-  toolInputSchema?: object;
+  cronTriggerSettings?: JsonbProperty<CronTriggerSettings>;
 
-  @IsBoolean()
-  @Field({ nullable: true })
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
-  isTool?: boolean;
+  databaseEventTriggerSettings?: JsonbProperty<DatabaseEventTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  httpRouteTriggerSettings?: JsonbProperty<HttpRouteTriggerSettings>;
 }

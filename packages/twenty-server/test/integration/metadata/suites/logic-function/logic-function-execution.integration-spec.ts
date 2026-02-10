@@ -1,6 +1,7 @@
-import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-one-logic-function.util';
+import { createDefaultLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-default-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
+import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
 
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
@@ -53,24 +54,32 @@ describe('Logic Function Execution', () => {
 
   it('should execute the default logic function template', async () => {
     // Create the function with default template code
-    const { data: createData } = await createOneLogicFunction({
+    const { data: createData } = await createDefaultLogicFunction({
       input: {
         name: 'Test Default Function',
-        code: DEFAULT_TEMPLATE_FUNCTION_CODE,
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createOneLogicFunction?.id;
+    const functionId = createData?.createDefaultLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
+
+    await updateLogicFunctionSource({
+      input: {
+        id: createData.createDefaultLogicFunction.id,
+        code: DEFAULT_TEMPLATE_FUNCTION_CODE,
+      },
+      expectToFail: false,
+    });
 
     // Execute with the default template's expected params: { a: string, b: number }
     const { data: executeData } = await executeLogicFunction({
       input: {
         id: functionId,
         payload: { a: 'hello', b: 42 },
+        forceRebuild: true,
       },
       expectToFail: false,
     });
@@ -90,18 +99,25 @@ describe('Logic Function Execution', () => {
 
   it('should execute a function with external packages (lodash.groupby)', async () => {
     // Create the function with the external packages code
-    const { data: createData } = await createOneLogicFunction({
+    const { data: createData } = await createDefaultLogicFunction({
       input: {
         name: 'External Packages Test',
-        code: EXTERNAL_PACKAGES_FUNCTION_CODE,
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createOneLogicFunction?.id;
+    const functionId = createData?.createDefaultLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
+
+    await updateLogicFunctionSource({
+      input: {
+        id: createData.createDefaultLogicFunction.id,
+        code: EXTERNAL_PACKAGES_FUNCTION_CODE,
+      },
+      expectToFail: false,
+    });
 
     // Execute the function with items to group
     const { data: executeData } = await executeLogicFunction({
@@ -114,6 +130,7 @@ describe('Logic Function Execution', () => {
             { category: 'fruit', name: 'banana' },
           ],
         },
+        forceRebuild: true,
       },
       expectToFail: false,
     });
@@ -145,24 +162,32 @@ describe('Logic Function Execution', () => {
 
   it('should handle errors thrown by logic functions', async () => {
     // Create the function with error-throwing code
-    const { data: createData } = await createOneLogicFunction({
+    const { data: createData } = await createDefaultLogicFunction({
       input: {
         name: 'Error Test Function',
-        code: ERROR_FUNCTION_CODE,
       },
       expectToFail: false,
     });
 
-    const functionId = createData?.createOneLogicFunction?.id;
+    const functionId = createData?.createDefaultLogicFunction?.id;
 
     expect(functionId).toBeDefined();
     createdFunctionIds.push(functionId);
+
+    await updateLogicFunctionSource({
+      input: {
+        id: createData.createDefaultLogicFunction.id,
+        code: ERROR_FUNCTION_CODE,
+      },
+      expectToFail: false,
+    });
 
     // Execute with shouldFail = false (should succeed)
     const { data: successData } = await executeLogicFunction({
       input: {
         id: functionId,
         payload: { shouldFail: false },
+        forceRebuild: true,
       },
       expectToFail: false,
     });
@@ -179,6 +204,7 @@ describe('Logic Function Execution', () => {
       input: {
         id: functionId,
         payload: { shouldFail: true },
+        forceRebuild: true,
       },
       expectToFail: false, // The GraphQL call succeeds, but the function execution fails
     });

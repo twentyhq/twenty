@@ -1,7 +1,14 @@
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
+import {
+  FlatEntityMapsException,
+  FlatEntityMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { FLAT_FIELD_METADATA_MORPH_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_RELATION_UPDATE_CONSTANT } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-morph-relation-editable-properties-on-sibling-morph-relation-update.constant';
 import { FLAT_FIELD_METADATA_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_OR_RELATION_UPDATE_CONSTANT } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-editable-properties-on-sibling-morph-or-relation-update.constant';
@@ -57,6 +64,45 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
     }),
     standardOverrides,
   };
+
+  if (updatedEditableFieldProperties.settings !== undefined) {
+    const updatedSettings = toFlatFieldMetadata.settings;
+
+    const isRelationSettings =
+      isFieldMetadataSettingsOfType(
+        updatedSettings,
+        FieldMetadataType.RELATION,
+      ) ||
+      isFieldMetadataSettingsOfType(
+        updatedSettings,
+        FieldMetadataType.MORPH_RELATION,
+      );
+
+    if (
+      isRelationSettings &&
+      isDefined(updatedSettings?.junctionTargetFieldId)
+    ) {
+      const junctionFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: updatedSettings.junctionTargetFieldId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      if (!isDefined(junctionFlatFieldMetadata)) {
+        throw new FlatEntityMapsException(
+          `Field metadata universal identifier not found for id: ${updatedSettings.junctionTargetFieldId}`,
+          FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+        );
+      }
+
+      toFlatFieldMetadata.universalSettings = {
+        ...updatedSettings,
+        junctionTargetFieldUniversalIdentifier:
+          junctionFlatFieldMetadata.universalIdentifier,
+      };
+    } else {
+      toFlatFieldMetadata.universalSettings = updatedSettings;
+    }
+  }
 
   if (
     isFlatFieldMetadataOfType(fromFlatFieldMetadata, FieldMetadataType.RELATION)

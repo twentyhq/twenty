@@ -34,6 +34,7 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
+  IconArrowDown,
   IconArrowUp,
   IconCalendarEvent,
   IconCalendarRepeat,
@@ -473,7 +474,7 @@ export const SettingsBillingSubscriptionInfo = ({
         {isEnterprisePlan &&
           (!nextPlan || currentPlan.planKey === nextPlan.planKey) && (
             <Button
-              Icon={IconArrowUp}
+              Icon={IconArrowDown}
               title={t`Switch to Pro`}
               variant="secondary"
               onClick={() => openModal(SWITCH_BILLING_PLAN_TO_PRO_MODAL_ID)}

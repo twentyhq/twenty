@@ -28,8 +28,6 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
           },
           layoutType: PageLayoutType.RECORD_PAGE,
           isInRightDrawer: false,
-          // TODO: Remove once the traditional record show page is removed.
-          isLegacyRecordShowPage: true,
         }}
       >
         <Story />

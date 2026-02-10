@@ -2,8 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
-import { FlatUpdateNavigationMenuItemAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
+import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
+import {
+  FlatUpdateNavigationMenuItemAction,
+  UniversalUpdateNavigationMenuItemAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/navigation-menu-item/types/workspace-migration-navigation-menu-item-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -15,9 +20,27 @@ export class UpdateNavigationMenuItemActionHandlerService extends WorkspaceMigra
   'navigationMenuItem',
 ) {
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatUpdateNavigationMenuItemAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateNavigationMenuItemAction>,
   ): Promise<FlatUpdateNavigationMenuItemAction> {
-    return context.action;
+    const { action, allFlatEntityMaps } = context;
+
+    const flatNavigationMenuItem = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatNavigationMenuItemMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
+
+    const update = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'navigationMenuItem',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
+
+    return {
+      type: 'update',
+      metadataName: 'navigationMenuItem',
+      entityId: flatNavigationMenuItem.id,
+      update,
+    };
   }
 
   async executeForMetadata(

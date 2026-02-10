@@ -117,6 +117,11 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   smartModel?: string;
 
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  aiAdditionalInstructions?: string;
+
   @Field(() => [String], { nullable: true })
   @IsArray()
   @IsString({ each: true })

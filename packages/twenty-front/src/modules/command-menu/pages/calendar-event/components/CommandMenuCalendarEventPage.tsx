@@ -60,7 +60,6 @@ export const CommandMenuCalendarEventPage = () => {
         },
         layoutType: PageLayoutType.RECORD_PAGE,
         isInRightDrawer: true,
-        isLegacyRecordShowPage: true,
       }}
     >
       <CalendarEventDetailsEffect record={calendarEvent} />

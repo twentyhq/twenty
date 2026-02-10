@@ -26,9 +26,6 @@ const StyledPropertyBoxContainer = styled('div', {
     noHorizontalPadding ? 0 : theme.spacing(2)};
 `;
 
-/**
- * TODO: Remove noHorizontalPadding logic once the traditional record show page is removed.
- */
 export const PropertyBox = ({
   children,
   className,
@@ -37,8 +34,7 @@ export const PropertyBox = ({
   const layoutRenderingContext = useLayoutRenderingContext();
 
   const isInRecordPageLayout =
-    layoutRenderingContext.layoutType === PageLayoutType.RECORD_PAGE &&
-    !layoutRenderingContext.isLegacyRecordShowPage;
+    layoutRenderingContext.layoutType === PageLayoutType.RECORD_PAGE;
 
   return (
     <StyledPropertyBoxContainer
