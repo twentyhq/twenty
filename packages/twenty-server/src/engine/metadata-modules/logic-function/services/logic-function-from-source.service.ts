@@ -18,7 +18,7 @@ import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 
 @Injectable()
-export class LogicFunctionService {
+export class LogicFunctionFromSourceService {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
