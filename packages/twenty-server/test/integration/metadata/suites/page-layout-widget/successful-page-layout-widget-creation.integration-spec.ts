@@ -5,9 +5,9 @@ import {
 } from 'test/integration/constants/widget-configuration-test-data.constants';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
-import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
 import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
+import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
@@ -109,7 +109,7 @@ describe('Page layout widget creation should succeed', () => {
     fieldMetadataId2: string;
     fieldMetadataId3: string;
   };
-  let createdPageLayoutWidgetId: string;
+  let createdPageLayoutWidgetId: string | undefined;
 
   const graphTestCases: EachTestingContext<GraphTestContext>[] = [
     {
@@ -402,5 +402,4 @@ describe('Page layout widget creation should succeed', () => {
       );
     },
   );
-
 });
