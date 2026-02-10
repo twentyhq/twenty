@@ -1,7 +1,7 @@
 import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
-import { isNull } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { z } from 'zod';
 
 import {
@@ -13,7 +13,7 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): string | null => {
-  if (isNull(value) || value === '') return null;
+  if (isNull(value) || !isNonEmptyString(value)) return null;
 
   if (typeof value !== 'string') {
     const inspectedValue = inspect(value);
@@ -25,7 +25,7 @@ export const validateEmailsPrimaryEmailSubfieldOrThrow = (
     );
   }
 
-  if (!z.email().safeParse(value).success) {
+  if (!z.email({ pattern: z.regexes.unicodeEmail }).safeParse(value).success) {
     const inspectedValue = inspect(value);
 
     throw new CommonQueryRunnerException(
