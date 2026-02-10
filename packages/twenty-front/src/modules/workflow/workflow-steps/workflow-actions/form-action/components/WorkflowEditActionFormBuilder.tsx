@@ -232,7 +232,7 @@ export const WorkflowEditActionFormBuilder = ({
                 window.open(
                   'https://docs.twenty.com/user-guide/workflows/capabilities/workflow-actions#form',
                   '_blank',
-                  'noopener noreferrer',
+                  'noopener,noreferrer',
                 ),
             }}
           />
