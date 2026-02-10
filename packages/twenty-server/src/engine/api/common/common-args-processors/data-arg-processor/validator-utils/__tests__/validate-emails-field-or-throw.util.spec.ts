@@ -84,20 +84,9 @@ describe('validateEmailsFieldOrThrow', () => {
       ).toThrow(CommonQueryRunnerException);
     });
 
-    it('should throw when primaryEmail has uppercase letters', () => {
+    it('should throw when additionalEmails is an invalid string', () => {
       const emailsValue = {
-        primaryEmail: 'PRIMARY@example.com',
-        additionalEmails: [],
-      };
-
-      expect(() =>
-        validateEmailsFieldOrThrow(emailsValue, 'testField'),
-      ).toThrow(CommonQueryRunnerException);
-    });
-
-    it('should throw when additionalEmails has string with uppercase letters', () => {
-      const emailsValue = {
-        additionalEmails: ['ADDITIONAL@example.com'],
+        additionalEmails: 'ADDITIONALexample.com',
       };
 
       expect(() =>
@@ -107,7 +96,7 @@ describe('validateEmailsFieldOrThrow', () => {
 
     it('should throw when primaryEmail is invalid but additionalEmails are valid', () => {
       const emailsValue = {
-        primaryEmail: 'Primary@example.com',
+        primaryEmail: 'Primaryexample.com',
         additionalEmails: ['additional@example.com'],
       };
 
@@ -119,7 +108,7 @@ describe('validateEmailsFieldOrThrow', () => {
     it('should throw when one of additionalEmails is invalid', () => {
       const emailsValue = {
         additionalEmails: [
-          'Additional1@example.com',
+          'Additional1example.com',
           'additional2@example.com',
         ],
       };

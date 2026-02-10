@@ -26,7 +26,6 @@ export const validateEmailValueOrThrow = (
   }
 
   if (
-    value !== value.toLowerCase() ||
     !z.email().trim().safeParse(value).success
   ) {
     const inspectedValue = inspect(value);

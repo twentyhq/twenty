@@ -1,3 +1,3 @@
 import { z } from 'zod';
 
-export const emailSchema = z.email().lowercase();
+export const emailSchema = z.email();
