@@ -12,7 +12,6 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { GraphqlQueryFilterFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
@@ -30,16 +29,7 @@ export const applyRowLevelPermissionPredicates = <T extends ObjectLiteral>({
   objectMetadata,
   internalContext,
   authContext,
-  featureFlagMap,
 }: ApplyRowLevelPermissionPredicatesArgs<T>): void => {
-  if (
-    featureFlagMap[
-      FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-    ] !== true
-  ) {
-    return;
-  }
-
   const roleId = authContext.userWorkspaceId
     ? internalContext.userWorkspaceRoleMap[authContext.userWorkspaceId]
     : undefined;

@@ -18,7 +18,8 @@ type ExpectedGenericFlatEntityInformation = {
     [P in WorkspaceMigrationActionType]: unknown;
   };
   flatEntity: SyncableFlatEntity;
-  universalFlatEntity: UniversalSyncableFlatEntity;
+  // TODO remove SyncableFlatEntity once every metadata has been universal migrated
+  universalFlatEntity: UniversalSyncableFlatEntity | SyncableFlatEntity;
   entity: unknown;
 };
 

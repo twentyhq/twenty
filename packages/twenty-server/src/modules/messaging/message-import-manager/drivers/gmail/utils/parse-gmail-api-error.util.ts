@@ -116,6 +116,13 @@ export const parseGmailApiError = (
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
+
+      if (gmailApiError.reason === 'internal_failure') {
+        return new MessageImportDriverException(
+          `${gmailApiError.code} - ${gmailApiError.message}`,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
+      }
       break;
 
     default:

@@ -80,7 +80,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
     }
   };
 
-  const { sendMessage, messages, status, error, regenerate } = useChat({
+  const { sendMessage, messages, status, error, regenerate, stop } = useChat({
     transport: new DefaultChatTransport({
       api: `${REST_API_BASE_URL}/agent-chat/stream`,
       headers: () => ({
@@ -185,6 +185,7 @@ export const useAgentChat = (uiMessages: ExtendedUIMessage[]) => {
   return {
     messages,
     handleSendMessage,
+    handleStop: stop,
     isLoading,
     isStreaming,
     error,

@@ -10,6 +10,7 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-widget/constants/flat-page-layout-widget-editable-properties.constant';
 import { type FlatPageLayoutWidgetMaps } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget-maps.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import {
   PageLayoutWidgetException,
@@ -28,12 +29,13 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     updatePageLayoutWidgetInput: rawUpdatePageLayoutWidgetInput,
     flatPageLayoutWidgetMaps,
     flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
   }: {
     updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId;
     flatPageLayoutWidgetMaps: FlatPageLayoutWidgetMaps;
   } & Pick<
     AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
+    'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
   >): FlatPageLayoutWidget => {
     const { id: pageLayoutWidgetToUpdateId } =
       extractAndSanitizeObjectStringFields(rawUpdatePageLayoutWidgetInput, [
@@ -87,6 +89,15 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
 
       flatPageLayoutWidgetToUpdate.objectMetadataUniversalIdentifier =
         objectMetadataUniversalIdentifier;
+    }
+
+    if (isDefined(updatedEditableFieldProperties.configuration)) {
+      flatPageLayoutWidgetToUpdate.universalConfiguration =
+        fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+          configuration: flatPageLayoutWidgetToUpdate.configuration,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+        });
     }
 
     return flatPageLayoutWidgetToUpdate;

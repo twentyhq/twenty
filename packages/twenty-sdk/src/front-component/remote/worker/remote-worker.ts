@@ -15,9 +15,9 @@ import { jsx, jsxs } from 'react/jsx-runtime';
 import * as TwentySharedTypes from 'twenty-shared/types';
 import * as TwentySharedUtils from 'twenty-shared/utils';
 
+import * as TwentySdk from '@/sdk';
 import { setFrontComponentExecutionContext } from '@/sdk/front-component-api/context/frontComponentContext';
 import { setNavigate } from '@/sdk/front-component-api/functions/navigate';
-import * as TwentySdk from '@/sdk';
 
 import { type FrontComponentExecutionContext } from '../../types/FrontComponentExecutionContext';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
@@ -47,11 +47,33 @@ const render: WorkerExports['render'] = async (
   root.connect(batchedConnection);
   document.body.append(root);
 
-  /* @vite-ignore */
-  const componentModule = await import(renderContext.componentUrl);
+  const response = await fetch(renderContext.componentUrl, {
+    headers: { Authorization: `Bearer ${renderContext.authToken}` },
+  });
 
-  const reactRoot = createRoot(root);
-  reactRoot.render(componentModule.default);
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch front component from ${renderContext.componentUrl}: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const responseText = await response.text();
+
+  const blob = new Blob([responseText], {
+    type: 'application/javascript',
+  });
+
+  const importUrl = URL.createObjectURL(blob);
+
+  try {
+    /* @vite-ignore */
+    const componentModule = await import(importUrl);
+
+    const reactRoot = createRoot(root);
+    reactRoot.render(componentModule.default);
+  } finally {
+    URL.revokeObjectURL(importUrl);
+  }
 };
 
 const initializeHostCommunicationApi: WorkerExports['initializeHostCommunicationApi'] =

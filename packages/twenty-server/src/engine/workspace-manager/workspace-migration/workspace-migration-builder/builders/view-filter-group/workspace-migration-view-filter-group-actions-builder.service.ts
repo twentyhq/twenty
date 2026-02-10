@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 
-import { type FlatUpdateViewFilterGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action.type';
+import { type UniversalUpdateViewFilterGroupAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/types/workspace-migration-view-filter-group-action.type';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
-import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-update-validation-args.type';
-import { type FlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-args.type';
-import { type FlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/flat-entity-validation-result.type';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { type UniversalFlatEntityValidationReturnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-result.type';
 import { FlatViewFilterGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service';
 
 @Injectable()
@@ -20,8 +20,10 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
   }
 
   protected validateFlatEntityCreation(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilterGroup>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.viewFilterGroup
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilterGroup,
     'create'
   > {
@@ -50,8 +52,10 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
   }
 
   protected validateFlatEntityDeletion(
-    args: FlatEntityValidationArgs<typeof ALL_METADATA_NAME.viewFilterGroup>,
-  ): FlatEntityValidationReturnType<
+    args: UniversalFlatEntityValidationArgs<
+      typeof ALL_METADATA_NAME.viewFilterGroup
+    >,
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilterGroup,
     'delete'
   > {
@@ -83,7 +87,7 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
     args: FlatEntityUpdateValidationArgs<
       typeof ALL_METADATA_NAME.viewFilterGroup
     >,
-  ): FlatEntityValidationReturnType<
+  ): UniversalFlatEntityValidationReturnType<
     typeof ALL_METADATA_NAME.viewFilterGroup,
     'update'
   > {
@@ -99,12 +103,12 @@ export class WorkspaceMigrationViewFilterGroupActionsBuilderService extends Work
       };
     }
 
-    const { flatEntityId, flatEntityUpdate } = args;
+    const { universalIdentifier, flatEntityUpdate } = args;
 
-    const updateViewFilterGroupAction: FlatUpdateViewFilterGroupAction = {
+    const updateViewFilterGroupAction: UniversalUpdateViewFilterGroupAction = {
       type: 'update',
       metadataName: 'viewFilterGroup',
-      entityId: flatEntityId,
+      universalIdentifier,
       update: flatEntityUpdate,
     };
 

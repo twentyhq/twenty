@@ -1,4 +1,5 @@
-import { getMockFrontComponentUrl } from '@/front-components/utils/mockFrontComponent';
+import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -13,7 +14,7 @@ type FrontComponentRendererProps = {
 };
 
 export const FrontComponentRenderer = ({
-  frontComponentId: _frontComponentId,
+  frontComponentId,
 }: FrontComponentRendererProps) => {
   const theme = useTheme();
   const [hasError, setHasError] = useState(false);
@@ -21,6 +22,9 @@ export const FrontComponentRenderer = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const { executionContext, frontComponentHostCommunicationApi } =
     useFrontComponentExecutionContext();
+
+  const componentUrl = `${REST_API_BASE_URL}/front-components/${frontComponentId}`;
+  const authToken = getTokenPair()?.accessOrWorkspaceAgnosticToken?.token;
 
   const handleError = (error?: Error) => {
     if (isDefined(error)) {
@@ -33,14 +37,16 @@ export const FrontComponentRenderer = ({
     setHasError(true);
   };
 
-  if (hasError) {
+  if (hasError || !isDefined(authToken)) {
+    // TODO: Add an error display component here
     return null;
   }
 
   return (
     <SharedFrontComponentRenderer
       theme={theme}
-      componentUrl={getMockFrontComponentUrl()}
+      componentUrl={componentUrl}
+      authToken={authToken}
       executionContext={executionContext}
       frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
       onError={handleError}

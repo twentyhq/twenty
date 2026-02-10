@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
-import { FlatCreateViewFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
+import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
+import {
+  FlatCreateViewFieldAction,
+  UniversalCreateViewFieldAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field/types/workspace-migration-view-field-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -18,10 +24,30 @@ export class CreateViewFieldActionHandlerService extends WorkspaceMigrationRunne
     super();
   }
 
-  override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateViewFieldAction>,
-  ): Promise<FlatCreateViewFieldAction> {
-    return context.action;
+  override async transpileUniversalActionToFlatAction({
+    action,
+    allFlatEntityMaps,
+    flatApplication,
+    workspaceId,
+  }: WorkspaceMigrationActionRunnerArgs<UniversalCreateViewFieldAction>): Promise<FlatCreateViewFieldAction> {
+    const { fieldMetadataId, viewId } =
+      resolveUniversalRelationIdentifiersToIds({
+        flatEntityMaps: allFlatEntityMaps,
+        metadataName: action.metadataName,
+        universalForeignKeyValues: action.flatEntity,
+      });
+
+    return {
+      ...action,
+      flatEntity: {
+        ...action.flatEntity,
+        fieldMetadataId,
+        viewId,
+        id: action.id ?? v4(),
+        applicationId: flatApplication.id,
+        workspaceId,
+      },
+    };
   }
 
   async executeForMetadata(

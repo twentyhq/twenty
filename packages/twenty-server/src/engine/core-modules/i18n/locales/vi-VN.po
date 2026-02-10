@@ -839,14 +839,14 @@ msgstr ""
 msgid "Contradicting field permissions have been detected on a relation field ({fieldName})."
 msgstr "Phát hiện sự mâu thuẫn về quyền hạn trên trường quan hệ ({fieldName})."
 
-#. js-lingui-id: KYkpUZ
-#: src/engine/metadata-modules/flat-entity/utils/resolve-universal-identifier-from-flat-entity-id-or-throw.util.ts
-msgid "Could not find {metadataName}"
-msgstr ""
-
 #. js-lingui-id: Fep47m
 #: src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util.ts
 msgid "Could not find {targetMetadataName} for given {foreignKey}"
+msgstr ""
+
+#. js-lingui-id: qs7GyL
+#: src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util.ts
+msgid "Could not find {targetMetadataName} for given {universalForeignKey}"
 msgstr ""
 
 #. js-lingui-id: LZf/L8
@@ -1216,11 +1216,6 @@ msgstr "Không tìm thấy trường được khai báo làm mã định danh nh
 msgid "Field does not belong to the indexed object"
 msgstr "Trường không thuộc về đối tượng đã được lập chỉ mục"
 
-#. js-lingui-id: DXxcTd
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
-msgid "Field ID is already used in another index"
-msgstr "ID trường đã được sử dụng trong chỉ mục khác"
-
 #. js-lingui-id: AgbRjM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Field label identifier is required"
@@ -1528,11 +1523,6 @@ msgstr "Chỉ mục đã tồn tại"
 msgid "Index field has an invalid reference"
 msgstr "Trường chỉ mục có tham chiếu không hợp lệ"
 
-#. js-lingui-id: +hk7cY
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
-msgid "Index field ID already exists in another index"
-msgstr "ID trường chỉ mục đã tồn tại trong chỉ mục khác"
-
 #. js-lingui-id: ITue4V
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index field references incorrect index metadata"
@@ -1554,16 +1544,16 @@ msgstr "Không tìm thấy đối tượng liên quan đến chỉ mục"
 msgid "Index to delete not found"
 msgstr "Không tìm thấy chỉ mục để xóa"
 
-#. js-lingui-id: qgBN4Y
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
-msgid "Index with same id already exists"
-msgstr "Chỉ mục với ID tương tự đã tồn tại"
-
 #. js-lingui-id: a+k+8J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same name already exists"
 msgstr "Chỉ mục với tên tương tự đã tồn tại"
+
+#. js-lingui-id: D6Tjt0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
+msgid "Index with same universal identifier already exists"
+msgstr ""
 
 #. js-lingui-id: 9Lkkre
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
@@ -1788,11 +1778,6 @@ msgstr "Đầu vào được cung cấp không hợp lệ."
 msgid "Invalid issuer URL."
 msgstr "URL nhà phát hành không hợp lệ."
 
-#. js-lingui-id: raw9cL
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
-msgid "Invalid junction target field ID"
-msgstr ""
-
 #. js-lingui-id: tm//h9
 #: src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception.ts
 msgid "Invalid label format."
@@ -1992,15 +1977,15 @@ msgstr "Loại kích hoạt không hợp lệ để kích hoạt quy trình làm
 msgid "Invalid two-factor authentication configuration."
 msgstr "Cấu hình xác thực hai yếu tố không hợp lệ."
 
+#. js-lingui-id: brtxSP
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Invalid universal identifier {universalIdentifier}"
+msgstr ""
+
 #. js-lingui-id: SzaGv7
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid URL format."
 msgstr "Định dạng URL không hợp lệ."
-
-#. js-lingui-id: 1Iyic0
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
-msgid "Invalid uuid {id}"
-msgstr "uuid không hợp lệ {id}"
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
@@ -2373,9 +2358,9 @@ msgstr ""
 msgid "Logic function not found."
 msgstr ""
 
-#. js-lingui-id: 31hiGK
+#. js-lingui-id: Lf8I7I
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
-msgid "Logic function with same id already exists"
+msgid "Logic function with same universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: hg6l4j
@@ -2774,11 +2759,11 @@ msgstr "Không tìm thấy đối tượng cần xóa"
 msgid "Object to update not found"
 msgstr "Không tìm thấy đối tượng cần cập nhật"
 
-#. js-lingui-id: cdjRFZ
+#. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
-msgid "Object with same id already exists"
-msgstr "Đối tượng có cùng ID đã tồn tại"
+msgid "Object with same universal identifier already exists"
+msgstr ""
 
 #. js-lingui-id: 53pIyA
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -2962,10 +2947,10 @@ msgstr "Không tìm thấy tiện ích bố cục trang để hủy bỏ"
 msgid "Page layout widget to update not found"
 msgstr "Không tìm thấy tiện ích bố cục trang cần cập nhật"
 
-#. js-lingui-id: +4z9mT
+#. js-lingui-id: hGYqrE
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
-msgid "Page layout widget with id {flatPageLayoutWidgetId} already exists"
-msgstr "Tiện ích bố cục trang với id {flatPageLayoutWidgetId} đã tồn tại"
+msgid "Page layout widget with universal identifier {flatPageLayoutWidgetUniversalIdentifier} already exists"
+msgstr ""
 
 #. js-lingui-id: T1gSWA
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -3288,6 +3273,11 @@ msgstr ""
 msgid "Role not found."
 msgstr "Không tìm thấy vai trò."
 
+#. js-lingui-id: K+Gn31
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role target already exists"
+msgstr ""
+
 #. js-lingui-id: ctpIGF
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role target is missing identifier."
@@ -3312,10 +3302,9 @@ msgstr ""
 msgid "Role target not found."
 msgstr "Không tìm thấy mục tiêu vai trò."
 
-#. js-lingui-id: alYNOd
+#. js-lingui-id: +fwgt2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
-msgid "Role target with this id already exists"
+msgid "Role target with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: Ub8R48
@@ -3338,10 +3327,20 @@ msgstr "Không tìm thấy định tuyến."
 msgid "Route path already exists."
 msgstr "Đường dẫn định tuyến đã tồn tại."
 
+#. js-lingui-id: /ruB5e
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Row level permission predicate already exists"
+msgstr ""
+
 #. js-lingui-id: RwBHMj
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Row level permission predicate feature is disabled."
+msgstr ""
+
+#. js-lingui-id: lG+q53
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
+msgid "Row level permission predicate group already exists"
 msgstr ""
 
 #. js-lingui-id: va8c5P
@@ -3369,10 +3368,9 @@ msgstr ""
 msgid "Row level permission predicate group to update not found"
 msgstr ""
 
-#. js-lingui-id: LrJvM0
+#. js-lingui-id: j4iZI5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-group-validator.service.ts
-msgid "Row level permission predicate group with this id already exists"
+msgid "Row level permission predicate group with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: fEazMl
@@ -3392,10 +3390,9 @@ msgstr ""
 msgid "Row level permission predicate to update not found"
 msgstr ""
 
-#. js-lingui-id: CUT3wK
+#. js-lingui-id: B4yoLq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Row level permission predicate with this id already exists"
+msgid "Row level permission predicate with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: +5kO8P
@@ -4143,10 +4140,10 @@ msgstr "Trường xem đã tồn tại."
 msgid "View field metadata already exists"
 msgstr "Siêu dữ liệu trường chế độ xem đã tồn tại"
 
-#. js-lingui-id: Yvf7WL
+#. js-lingui-id: mdX5P2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
-msgid "View field metadata with id {flatViewFieldId} already exists"
-msgstr "Siêu dữ liệu trường chế độ xem với id {flatViewFieldId} đã tồn tại"
+msgid "View field metadata with this universal identifier already exists"
+msgstr ""
 
 #. js-lingui-id: 7LMaUn
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
@@ -4191,10 +4188,20 @@ msgstr "Không tìm thấy trường chế độ xem để cập nhật chế đ
 msgid "View field to update parent view object not found"
 msgstr "Không tìm thấy trường chế độ xem để cập nhật đối tượng chế độ xem parent"
 
-#. js-lingui-id: 89Wiy+
+#. js-lingui-id: Zqbr+6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
-msgid "View field with same fieldmetadataId and viewId already exists"
-msgstr "Trường xem có cùng fieldmetadataId và viewId đã tồn tại"
+msgid "View field with same fieldMetadataUniversalIdentifier and viewUniversalIdentifier already exists"
+msgstr ""
+
+#. js-lingui-id: sbHaOg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+msgid "View filter already exists"
+msgstr ""
+
+#. js-lingui-id: Ii4ysu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
+msgid "View filter group already exists"
+msgstr ""
 
 #. js-lingui-id: ENVlLK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
@@ -4220,10 +4227,9 @@ msgstr ""
 msgid "View filter group not found"
 msgstr ""
 
-#. js-lingui-id: UfIsQu
+#. js-lingui-id: inVepb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
-msgid "View filter group with this id already exists"
+msgid "View filter group with this universal identifier already exists"
 msgstr ""
 
 #. js-lingui-id: 1KSqGE
@@ -4249,21 +4255,20 @@ msgstr "Không tìm thấy bộ lọc để hủy bỏ"
 msgid "View filter to update not found"
 msgstr "Không tìm thấy bộ lọc để cập nhật"
 
-#. js-lingui-id: LnNgrI
+#. js-lingui-id: bM1MKh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-msgid "View filter with this id already exists"
-msgstr "Bộ lọc đã tồn tại với ID này"
+msgid "View filter with this universal identifier already exists"
+msgstr ""
 
 #. js-lingui-id: MGbEFN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 msgid "View group metadata already exists"
 msgstr "Siêu dữ liệu nhóm chế độ xem đã tồn tại"
 
-#. js-lingui-id: lbyQO4
+#. js-lingui-id: c1XRE3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
-msgid "View group metadata with id {flatViewGroupId} already exists"
-msgstr "Siêu dữ liệu nhóm chế độ xem với id {flatViewGroupId} đã tồn tại"
+msgid "View group metadata with universal identifier {flatViewGroupUniversalIdentifier} already exists"
+msgstr ""
 
 #. js-lingui-id: JdAvYa
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
@@ -4334,10 +4339,10 @@ msgstr "Không tìm thấy chế độ xem cần hủy"
 msgid "View to update not found"
 msgstr "Không tìm thấy chế độ xem cần cập nhật"
 
-#. js-lingui-id: ZgRtC4
+#. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-msgid "View with same id is already exists"
-msgstr "Chế độ xem có cùng id đã tồn tại"
+msgid "View with same universal identifier already exists"
+msgstr ""
 
 #. js-lingui-id: qTtxHh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts

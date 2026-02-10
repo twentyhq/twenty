@@ -11,6 +11,7 @@ type MetadataRequiredForValidation = {
   };
 };
 
+// TODO deprecate in favor of ALL_METADATA_RELATIONS
 export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   fieldMetadata: {
     objectMetadata: true,

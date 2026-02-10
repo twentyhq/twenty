@@ -101,6 +101,9 @@ const computeRecordPageWidgets = ({
               configuration: {
                 configurationType: WidgetConfigurationType.FIELDS,
               },
+              universalConfiguration: {
+                configurationType: WidgetConfigurationType.FIELDS,
+              },
               objectMetadataId,
               conditionalDisplay: widget.conditionalDisplay ?? null,
             },

@@ -17,13 +17,10 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
 }: {
   account: ConnectedAccount;
 }) => {
-  const messageChannelSyncStatus = account.messageChannels[0]?.syncStatus;
-  const calendarChannelSyncStatus = account.calendarChannels[0]?.syncStatus;
+  const messageChannel = account.messageChannels[0];
+  const calendarChannel = account.calendarChannels[0];
 
-  const status = computeSyncStatus(
-    messageChannelSyncStatus,
-    calendarChannelSyncStatus,
-  );
+  const status = computeSyncStatus(messageChannel, calendarChannel);
 
   return (
     <StyledRowRightContainer>
@@ -43,6 +40,9 @@ export const SettingsAccountsConnectedAccountsRowRightContainer = ({
           weight="medium"
           isLoaderVisible
         />
+      )}
+      {status === SyncStatus.PENDING_CONFIGURATION && (
+        <Status color="orange" text={t`Setup incomplete`} weight="medium" />
       )}
       <SettingsAccountsRowDropdownMenu account={account} />
     </StyledRowRightContainer>
