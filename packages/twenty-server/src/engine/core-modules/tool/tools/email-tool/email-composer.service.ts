@@ -325,7 +325,6 @@ export class EmailComposerService {
         sanitizedHtmlBody,
         attachments,
         connectedAccount: connectedAccountWithFreshTokens,
-        connectedAccountId,
       },
     };
   }

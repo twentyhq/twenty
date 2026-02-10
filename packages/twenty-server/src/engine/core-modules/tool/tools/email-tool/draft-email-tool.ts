@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
-import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-tool/types/composed-email.type';
-import { EmailToolException } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { EmailToolInputZodSchema } from 'src/engine/core-modules/tool/tools/email-tool/email-tool.schema';
+import { EmailToolException } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
+import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-tool/types/composed-email.type';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import {
-  type Tool,
-  type ToolExecutionContext,
+    type Tool,
+    type ToolExecutionContext,
 } from 'src/engine/core-modules/tool/types/tool.type';
-import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { MessagingMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/services/messaging-message-outbound.service';
 
 @Injectable()
 export class DraftEmailTool implements Tool {
@@ -22,7 +22,7 @@ export class DraftEmailTool implements Tool {
 
   constructor(
     private readonly emailComposerService: EmailComposerService,
-    private readonly sendMessageService: MessagingSendMessageService,
+    private readonly messageOutboundService: MessagingMessageOutboundService,
   ) {}
 
   async execute(
@@ -55,7 +55,7 @@ export class DraftEmailTool implements Tool {
           ccRecipients: data.recipients.cc,
           bccRecipients: data.recipients.bcc,
           subject: data.sanitizedSubject,
-          connectedAccountId: data.connectedAccountId,
+          connectedAccountId: data.connectedAccount.id,
           attachmentCount: data.attachments.length,
         },
       };
@@ -80,7 +80,7 @@ export class DraftEmailTool implements Tool {
   }
 
   private async createDraft(data: ComposedEmail): Promise<void> {
-    await this.sendMessageService.createDraft(
+    await this.messageOutboundService.createDraft(
       {
         to: data.recipients.to,
         cc: data.recipients.cc.length > 0 ? data.recipients.cc : undefined,
