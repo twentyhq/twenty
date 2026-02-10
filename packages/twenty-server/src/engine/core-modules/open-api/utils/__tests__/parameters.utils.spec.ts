@@ -77,8 +77,9 @@ describe('computeParameters', () => {
       expect(computeFilterParameters()).toEqual({
         name: 'filter',
         in: 'query',
-        description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2
-    Refer to the filter section at the top of the page for more details.`,
+        description: `Format: field[COMPARATOR]:value,field2[COMPARATOR]:value2.
+        For like/ilike, use % as a wildcard (e.g. %value% for contains).
+        Refer to the filter section at the top of the page for more details.`,
         required: false,
         schema: {
           type: 'string',
@@ -96,6 +97,10 @@ describe('computeParameters', () => {
             value:
               'or(createdAt[gte]:"2024-01-01",createdAt[lte]:"2023-01-01",not(id[is]:NULL))',
             description: 'A more complex filter param',
+          },
+          like: {
+            value: 'name[ilike]:"%value%"',
+            description: 'Case-insensitive pattern matching',
           },
         },
       });
