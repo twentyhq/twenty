@@ -117,14 +117,13 @@ export class LogicFunctionResolver {
   @Mutation(() => LogicFunctionExecutionResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async executeOneLogicFunction(
-    @Args('input') { id, payload, forceRebuild }: ExecuteOneLogicFunctionInput,
+    @Args('input') { id, payload }: ExecuteOneLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionExecutionResultDTO> {
     try {
       return await this.logicFunctionFromSourceService.executeOne({
         id,
         payload,
-        forceRebuild,
         workspaceId,
       });
     } catch (error) {

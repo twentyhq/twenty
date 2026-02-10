@@ -67,6 +67,11 @@ class UpdateLogicFunctionInputUpdates {
   @IsOptional()
   isTool?: boolean;
 
+  @IsBoolean()
+  @Field({ nullable: true })
+  @IsOptional()
+  isBuildUpToDate?: boolean;
+
   @IsString()
   @Field({ nullable: true })
   @IsOptional()

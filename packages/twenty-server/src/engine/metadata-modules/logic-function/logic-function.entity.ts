@@ -68,6 +68,9 @@ export class LogicFunctionEntity
   @Column({ nullable: false, default: false })
   isTool: boolean;
 
+  @Column({ nullable: false, type: 'boolean', default: true })
+  isBuildUpToDate: boolean;
+
   @Column({ nullable: true, type: 'jsonb' })
   cronTriggerSettings: JsonbProperty<CronTriggerSettings> | null;
 

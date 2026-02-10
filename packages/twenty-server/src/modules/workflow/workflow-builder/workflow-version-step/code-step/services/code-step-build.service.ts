@@ -22,6 +22,7 @@ import {
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { SEED_LOGIC_FUNCTION_INPUT_SCHEMA } from 'src/engine/core-modules/logic-function/logic-function-resource/constants/seed-logic-function-input-schema';
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 
 const WORKFLOW_BASE_FOLDER_PREFIX = 'workflow';
 
@@ -30,6 +31,7 @@ export class CodeStepBuildService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
+    private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
   ) {}
@@ -246,18 +248,9 @@ export class CodeStepBuildService {
         continue;
       }
 
-      const { checksum } =
-        await this.logicFunctionResourceService.buildFromSource({
-          sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-          builtHandlerPath: flatLogicFunction.builtHandlerPath,
-          workspaceId,
-          applicationUniversalIdentifier,
-        });
-
-      await this.logicFunctionMetadataService.updateChecksum({
-        id: flatLogicFunction.id,
-        checksum,
+      await this.logicFunctionFromSourceService.buildOneFromSource({
         workspaceId,
+        id: logicFunctionId,
       });
     }
   }

@@ -961,6 +961,7 @@ export type CreateCommandMenuItemInput = {
 
 export type CreateDefaultLogicFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
+  isBuildUpToDate?: InputMaybe<Scalars['Boolean']>;
   isTool?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
@@ -1463,8 +1464,6 @@ export type EventWithQueryIds = {
 };
 
 export type ExecuteOneLogicFunctionInput = {
-  /** Force rebuild from source before executing */
-  forceRebuild?: InputMaybe<Scalars['Boolean']>;
   /** Id of the logic function to execute */
   id: Scalars['UUID'];
   /** Payload in JSON format */

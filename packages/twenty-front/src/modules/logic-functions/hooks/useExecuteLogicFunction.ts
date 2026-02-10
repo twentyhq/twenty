@@ -11,7 +11,6 @@ import { sleep } from '~/utils/sleep';
 type ExecuteOneLogicFunctionInput = {
   id: string;
   payload: object;
-  forceRebuild?: boolean;
 };
 
 type ExecuteOneLogicFunctionResult = {
@@ -46,9 +45,7 @@ export const useExecuteLogicFunction = ({
     logicFunctionTestDataFamilyState(logicFunctionId),
   );
 
-  const executeLogicFunction = async ({
-    forceRebuild = false,
-  }: { forceRebuild?: boolean } = {}) => {
+  const executeLogicFunction = async () => {
     try {
       setIsExecuting(true);
       await sleep(200); // Delay artificially to avoid flashing the UI
@@ -57,7 +54,6 @@ export const useExecuteLogicFunction = ({
           input: {
             id: logicFunctionId,
             payload: logicFunctionTestData.input,
-            forceRebuild,
           },
         },
       });

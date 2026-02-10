@@ -49,4 +49,9 @@ export class CreateDefaultLogicFunctionInput {
   @Field({ nullable: true })
   @IsOptional()
   isTool?: boolean;
+
+  @IsBoolean()
+  @Field({ nullable: true })
+  @IsOptional()
+  isBuildUpToDate?: boolean;
 }

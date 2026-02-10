@@ -111,35 +111,47 @@ export class LogicFunctionFromSourceService {
     return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
   }
 
-  // TODO: remove forceRebuild parameter and add a column called shouldRebuild or isBuiltUpToDate
+  async buildOneFromSource({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const { flatLogicFunction, applicationUniversalIdentifier } =
+      await this.getLogicFunctionContext({ id, workspaceId });
+
+    const { checksum } =
+      await this.logicFunctionResourceService.buildFromSource({
+        workspaceId,
+        applicationUniversalIdentifier,
+        sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
+        builtHandlerPath: flatLogicFunction.builtHandlerPath,
+      });
+
+    await this.logicFunctionMetadataService.updateOne({
+      id,
+      update: { checksum, isBuildUpToDate: true },
+      workspaceId,
+    });
+  }
+
   async executeOne({
     id,
     payload,
-    forceRebuild,
     workspaceId,
   }: {
     id: string;
     payload: object;
-    forceRebuild?: boolean;
     workspaceId: string;
   }): Promise<LogicFunctionExecutionResultDTO> {
-    if (forceRebuild) {
-      const { flatLogicFunction, applicationUniversalIdentifier } =
-        await this.getLogicFunctionContext({ id, workspaceId });
+    const { flatLogicFunction } = await this.getLogicFunctionContext({
+      id,
+      workspaceId,
+    });
 
-      const { checksum } =
-        await this.logicFunctionResourceService.buildFromSource({
-          workspaceId,
-          applicationUniversalIdentifier,
-          sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
-          builtHandlerPath: flatLogicFunction.builtHandlerPath,
-        });
-
-      await this.logicFunctionMetadataService.updateChecksum({
-        id,
-        checksum,
-        workspaceId,
-      });
+    if (flatLogicFunction.isBuildUpToDate) {
+      await this.buildOneFromSource({ workspaceId, id });
     }
 
     const result = await this.logicFunctionExecutorService.execute({

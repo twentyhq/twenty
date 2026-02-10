@@ -273,7 +273,7 @@ export const WorkflowEditActionCode = ({
     }
 
     if (!isExecuting) {
-      await executeLogicFunction({ forceRebuild: true });
+      await executeLogicFunction();
     }
   };
 

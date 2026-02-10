@@ -191,64 +191,6 @@ export class LogicFunctionMetadataService {
     );
   }
 
-  async updateChecksum({
-    id,
-    checksum,
-    workspaceId,
-  }: {
-    id: string;
-    checksum: string;
-    workspaceId: string;
-  }) {
-    const resolvedOwnerFlatApplication = (
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      )
-    ).workspaceCustomFlatApplication;
-
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id,
-      flatLogicFunctionMaps,
-    });
-
-    const optimisticallyUpdatedFlatLogicFunction = {
-      ...flatLogicFunction,
-      checksum,
-    };
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            logicFunction: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [optimisticallyUpdatedFlatLogicFunction],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            resolvedOwnerFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while updating logic function checksum',
-      );
-    }
-  }
-
   private async getFlatLogicFunctionAfterUpdate(
     id: string,
     workspaceId: string,

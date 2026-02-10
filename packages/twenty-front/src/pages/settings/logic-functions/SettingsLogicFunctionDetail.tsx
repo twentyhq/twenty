@@ -46,7 +46,7 @@ export const SettingsLogicFunctionDetail = () => {
   });
 
   const handleExecute = async () => {
-    await executeLogicFunction({ forceRebuild: false });
+    await executeLogicFunction();
   };
 
   const onChange = (key: string) => {
