@@ -3,6 +3,7 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import type { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
+import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import {
   type WorkflowToolContext,
@@ -40,7 +41,32 @@ const createWorkflowVersionStepSchema = z.object({
     })
     .optional()
     .describe('Optional position coordinates for the step'),
+  defaultSettings: z
+    .record(z.string(), z.any())
+    .optional()
+    .describe(
+      'Optional default settings for the step. Required for LOGIC_FUNCTION steps: pass { input: { logicFunctionId: "<id>" } }. Use list_logic_function_tools to discover available logic function IDs.',
+    ),
 });
+
+const enrichResultWithNextStep = ({
+  result,
+  stepType,
+}: {
+  result: WorkflowVersionStepChangesDTO;
+  stepType: WorkflowActionType;
+}) => {
+  switch (stepType) {
+    case WorkflowActionType.CODE:
+      return {
+        ...result,
+        nextStep:
+          'This CODE step was created with a default placeholder function. You MUST now call update_logic_function_source with the logicFunctionId from this step to define the actual code.',
+      };
+    default:
+      return result;
+  }
+};
 
 export const createCreateWorkflowVersionStepTool = (
   deps: Pick<
@@ -84,12 +110,18 @@ export const createCreateWorkflowVersionStepTool = (
         }
       }
 
-      return await deps.workflowVersionStepService.createWorkflowVersionStep({
-        workspaceId: context.workspaceId,
-        input: {
-          ...parameters,
-          parentStepId: effectiveParentStepId,
-        },
+      const result =
+        await deps.workflowVersionStepService.createWorkflowVersionStep({
+          workspaceId: context.workspaceId,
+          input: {
+            ...parameters,
+            parentStepId: effectiveParentStepId,
+          },
+        });
+
+      return enrichResultWithNextStep({
+        result,
+        stepType: parameters.stepType,
       });
     } catch (error) {
       return {
