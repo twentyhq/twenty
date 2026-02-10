@@ -4,13 +4,13 @@ import {
 } from 'twenty-shared/metadata';
 
 import { ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
-import { type MetadataUniversalFlatEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
+import { type MetadataEntityPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-compare.type';
 import { type MetadataUniversalFlatEntityPropertiesToStringify } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-properties-to-stringify.type';
 
 type UniversalFlatEntityPropertiesToCompareAndStringify<
   T extends AllMetadataName,
 > = {
-  propertiesToCompare: MetadataUniversalFlatEntityPropertiesToCompare<T>[];
+  propertiesToCompare: MetadataEntityPropertiesToCompare<T>[];
   propertiesToStringify: MetadataUniversalFlatEntityPropertiesToStringify<T>[];
 };
 const computeUniversalFlatEntityPropertiesToCompareAndStringify = <
@@ -33,7 +33,7 @@ const computeUniversalFlatEntityPropertiesToCompareAndStringify = <
     const comparedProperty = configuration.universalProperty ?? property;
 
     accumulator.propertiesToCompare.push(
-      comparedProperty as MetadataUniversalFlatEntityPropertiesToCompare<T>,
+      comparedProperty as MetadataEntityPropertiesToCompare<T>,
     );
     if (configuration.toStringify === true) {
       accumulator.propertiesToStringify.push(
