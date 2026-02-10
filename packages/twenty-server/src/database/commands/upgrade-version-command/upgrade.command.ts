@@ -70,10 +70,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       this.identifyWebhookMetadataCommand,
       this
         .makeWebhookUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.migrateWorkflowCodeStepsCommand,
       this.deleteFileRecordsCommand,
-      this.backfillApplicationPackageFilesCommand,
       this.updateFileTableMigrationCommand,
+      this.migrateWorkflowCodeStepsCommand,
+      this.backfillApplicationPackageFilesCommand,
       this.fixMorphRelationFieldNamesCommand,
     ];
 
