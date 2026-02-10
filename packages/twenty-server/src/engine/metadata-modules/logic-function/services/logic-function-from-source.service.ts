@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { Sources } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationLayerService } from 'src/engine/core-modules/application-layer/application-layer.service';
@@ -13,7 +12,6 @@ import { CreateDefaultLogicFunctionInput } from 'src/engine/metadata-modules/log
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { LogicFunctionMetadataService } from 'src/engine/metadata-modules/logic-function/services/logic-function-metadata.service';
-import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 
@@ -35,20 +33,7 @@ export class LogicFunctionFromSourceService {
     id: string;
     workspaceId: string;
   }): Promise<LogicFunctionDTO> {
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    const flatLogicFunction = findFlatLogicFunctionOrThrow({
-      id,
-      flatLogicFunctionMaps,
-    });
-
-    return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+    return await this.logicFunctionMetadataService.findOne({ id, workspaceId });
   }
 
   async findMany({
@@ -56,23 +41,7 @@ export class LogicFunctionFromSourceService {
   }: {
     workspaceId: string;
   }): Promise<LogicFunctionDTO[]> {
-    const { flatLogicFunctionMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
-        },
-      );
-
-    return Object.values(flatLogicFunctionMaps.byUniversalIdentifier)
-      .filter(
-        (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
-          isDefined(flatLogicFunction) &&
-          !isDefined(flatLogicFunction.deletedAt),
-      )
-      .map((flatLogicFunction) =>
-        fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
-      );
+    return await this.logicFunctionMetadataService.findMany({ workspaceId });
   }
 
   async getAvailablePackages({

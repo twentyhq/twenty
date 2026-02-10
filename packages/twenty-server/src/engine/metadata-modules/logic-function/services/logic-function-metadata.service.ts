@@ -19,6 +19,8 @@ import { fromCreateLogicFunctionInputToFlatLogicFunction } from 'src/engine/meta
 import { fromUpdateLogicFunctionInputToFlatLogicFunctionToUpdateOrThrow } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-input-to-flat-logic-function-to-update-or-throw.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
+import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 
 @Injectable()
 export class LogicFunctionMetadataService {
@@ -27,6 +29,53 @@ export class LogicFunctionMetadataService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
   ) {}
+
+  async findOne({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<LogicFunctionDTO> {
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    const flatLogicFunction = findFlatLogicFunctionOrThrow({
+      id,
+      flatLogicFunctionMaps,
+    });
+
+    return fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction });
+  }
+
+  async findMany({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<LogicFunctionDTO[]> {
+    const { flatLogicFunctionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps'],
+        },
+      );
+
+    return Object.values(flatLogicFunctionMaps.byUniversalIdentifier)
+      .filter(
+        (flatLogicFunction): flatLogicFunction is FlatLogicFunction =>
+          isDefined(flatLogicFunction) &&
+          !isDefined(flatLogicFunction.deletedAt),
+      )
+      .map((flatLogicFunction) =>
+        fromFlatLogicFunctionToLogicFunctionDto({ flatLogicFunction }),
+      );
+  }
 
   async createOne({
     input,
