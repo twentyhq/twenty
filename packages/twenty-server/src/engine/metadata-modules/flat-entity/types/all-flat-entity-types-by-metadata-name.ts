@@ -41,15 +41,28 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
+import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
+import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
+import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
+import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
+import { type UniversalFlatRoleTarget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-target.type';
+import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
+import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { type UniversalFlatSkill } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-skill.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter-group.type';
 import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { type UniversalFlatWebhook } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-webhook.type';
 import {
   type FlatCreateAgentAction,
   type FlatDeleteAgentAction,
@@ -324,7 +337,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteRowLevelPermissionPredicateAction;
     };
     flatEntity: FlatRowLevelPermissionPredicate;
-    universalFlatEntity: FlatRowLevelPermissionPredicate;
+    universalFlatEntity: UniversalFlatRowLevelPermissionPredicate;
     entity: MetadataEntity<'rowLevelPermissionPredicate'>;
   };
   rowLevelPermissionPredicateGroup: {
@@ -340,7 +353,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteRowLevelPermissionPredicateGroupAction;
     };
     flatEntity: FlatRowLevelPermissionPredicateGroup;
-    universalFlatEntity: FlatRowLevelPermissionPredicateGroup;
+    universalFlatEntity: UniversalFlatRowLevelPermissionPredicateGroup;
     entity: MetadataEntity<'rowLevelPermissionPredicateGroup'>;
   };
   viewFilterGroup: {
@@ -388,7 +401,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteLogicFunctionAction;
     };
     flatEntity: FlatLogicFunction;
-    universalFlatEntity: FlatLogicFunction;
+    universalFlatEntity: UniversalFlatLogicFunction;
     entity: MetadataEntity<'logicFunction'>;
   };
   viewFilter: {
@@ -420,7 +433,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteRoleAction;
     };
     flatEntity: FlatRole;
-    universalFlatEntity: FlatRole;
+    universalFlatEntity: UniversalFlatRole;
     entity: MetadataEntity<'role'>;
   };
   roleTarget: {
@@ -436,7 +449,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteRoleTargetAction;
     };
     flatEntity: FlatRoleTarget;
-    universalFlatEntity: FlatRoleTarget;
+    universalFlatEntity: UniversalFlatRoleTarget;
     entity: MetadataEntity<'roleTarget'>;
   };
   agent: {
@@ -452,7 +465,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteAgentAction;
     };
     flatEntity: FlatAgent;
-    universalFlatEntity: FlatAgent;
+    universalFlatEntity: UniversalFlatAgent;
     entity: MetadataEntity<'agent'>;
   };
   skill: {
@@ -484,7 +497,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteCommandMenuItemAction;
     };
     flatEntity: FlatCommandMenuItem;
-    universalFlatEntity: FlatCommandMenuItem;
+    universalFlatEntity: UniversalFlatCommandMenuItem;
     entity: MetadataEntity<'commandMenuItem'>;
   };
   navigationMenuItem: {
@@ -500,7 +513,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteNavigationMenuItemAction;
     };
     flatEntity: FlatNavigationMenuItem;
-    universalFlatEntity: FlatNavigationMenuItem;
+    universalFlatEntity: UniversalFlatNavigationMenuItem;
     entity: NavigationMenuItemEntity;
   };
   pageLayout: {
@@ -516,7 +529,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeletePageLayoutAction;
     };
     flatEntity: FlatPageLayout;
-    universalFlatEntity: FlatPageLayout;
+    universalFlatEntity: UniversalFlatPageLayout;
     entity: MetadataEntity<'pageLayout'>;
   };
   pageLayoutWidget: {
@@ -532,7 +545,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeletePageLayoutWidgetAction;
     };
     flatEntity: FlatPageLayoutWidget;
-    universalFlatEntity: FlatPageLayoutWidget;
+    universalFlatEntity: UniversalFlatPageLayoutWidget;
     entity: MetadataEntity<'pageLayoutWidget'>;
   };
   pageLayoutTab: {
@@ -548,7 +561,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeletePageLayoutTabAction;
     };
     flatEntity: FlatPageLayoutTab;
-    universalFlatEntity: FlatPageLayoutTab;
+    universalFlatEntity: UniversalFlatPageLayoutTab;
     entity: MetadataEntity<'pageLayoutTab'>;
   };
   frontComponent: {
@@ -564,7 +577,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteFrontComponentAction;
     };
     flatEntity: FlatFrontComponent;
-    universalFlatEntity: FlatFrontComponent;
+    universalFlatEntity: UniversalFlatFrontComponent;
     entity: MetadataEntity<'frontComponent'>;
   };
   webhook: {
@@ -580,7 +593,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteWebhookAction;
     };
     flatEntity: FlatWebhook;
-    universalFlatEntity: FlatWebhook;
+    universalFlatEntity: UniversalFlatWebhook;
     entity: MetadataEntity<'webhook'>;
   };
 };
