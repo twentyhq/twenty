@@ -11,7 +11,10 @@ import {
   FrontComponentException,
   FrontComponentExceptionCode,
 } from 'src/engine/metadata-modules/front-component/front-component.exception';
-import { FlatCreateFrontComponentAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
+import {
+  FlatCreateFrontComponentAction,
+  UniversalCreateFrontComponentAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/types/workspace-migration-front-component-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -27,7 +30,7 @@ export class CreateFrontComponentActionHandlerService extends WorkspaceMigration
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateFrontComponentAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateFrontComponentAction>,
   ): Promise<FlatCreateFrontComponentAction> {
     return context.action;
   }

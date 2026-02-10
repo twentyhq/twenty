@@ -5,7 +5,10 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
-import { FlatCreateRowLevelPermissionPredicateAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
+import {
+  FlatCreateRowLevelPermissionPredicateAction,
+  UniversalCreateRowLevelPermissionPredicateAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/types/workspace-migration-row-level-permission-predicate-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -17,7 +20,7 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
   'rowLevelPermissionPredicate',
 ) {
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateRowLevelPermissionPredicateAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateRowLevelPermissionPredicateAction>,
   ): Promise<FlatCreateRowLevelPermissionPredicateAction> {
     return context.action;
   }

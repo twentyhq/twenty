@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
-import { FlatCreatePageLayoutWidgetAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
+import {
+  FlatCreatePageLayoutWidgetAction,
+  UniversalCreatePageLayoutWidgetAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -19,7 +22,7 @@ export class CreatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreatePageLayoutWidgetAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalCreatePageLayoutWidgetAction>,
   ): Promise<FlatCreatePageLayoutWidgetAction> {
     return context.action;
   }

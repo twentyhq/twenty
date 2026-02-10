@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { FlatCreateRoleAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
+import {
+  FlatCreateRoleAction,
+  UniversalCreateRoleAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/types/workspace-migration-role-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -19,7 +22,7 @@ export class CreateRoleActionHandlerService extends WorkspaceMigrationRunnerActi
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateRoleAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateRoleAction>,
   ): Promise<FlatCreateRoleAction> {
     return context.action;
   }

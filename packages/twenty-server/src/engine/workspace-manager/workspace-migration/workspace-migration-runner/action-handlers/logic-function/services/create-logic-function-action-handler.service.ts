@@ -10,7 +10,10 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { FlatCreateLogicFunctionAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
+import {
+  FlatCreateLogicFunctionAction,
+  UniversalCreateLogicFunctionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/logic-function/types/workspace-migration-logic-function-action.type';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -26,7 +29,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   }
 
   override async transpileUniversalActionToFlatAction(
-    context: WorkspaceMigrationActionRunnerArgs<FlatCreateLogicFunctionAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UniversalCreateLogicFunctionAction>,
   ): Promise<FlatCreateLogicFunctionAction> {
     return context.action;
   }
