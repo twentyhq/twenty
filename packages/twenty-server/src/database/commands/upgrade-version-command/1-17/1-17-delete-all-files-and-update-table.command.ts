@@ -6,18 +6,20 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { updateFileTableQueries } from 'src/database/typeorm/core/migrations/utils/1768572831179-updateFileTable.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 
 @Command({
-  name: 'upgrade:delete-file-records',
-  description:
-    'Delete all file records and add unique constraint on file entity',
+  name: 'upgrade:delete-file-records-and-update-table',
+  description: 'Delete all file records and update file table schema',
 })
-export class DeleteFileRecordsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
-  protected readonly logger = new Logger(DeleteFileRecordsCommand.name);
+export class DeleteFileRecordsAndUpdateTableCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+  protected readonly logger = new Logger(
+    DeleteFileRecordsAndUpdateTableCommand.name,
+  );
   private hasAddedConstraint = false;
 
   constructor(
@@ -35,7 +37,27 @@ export class DeleteFileRecordsCommand extends ActiveOrSuspendedWorkspacesMigrati
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
     await this.deleteFileRecords(args);
+    await this.updateFileTable();
     await this.addFileEntityUniqueConstraint(args);
+  }
+
+  private async updateFileTable(): Promise<void> {
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await updateFileTableQueries(queryRunner);
+
+      await queryRunner.commitTransaction();
+      this.logger.log('Successfully updated file table');
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      this.logger.error(`Rolling back updateFileTable: ${error.message}`);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async deleteFileRecords({
