@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
   FlatCreateRoleTargetAction,
   UniversalCreateRoleTargetAction,
@@ -21,13 +22,21 @@ export class CreateRoleTargetActionHandlerService extends WorkspaceMigrationRunn
 ) {
   override async transpileUniversalActionToFlatAction({
     action,
+    allFlatEntityMaps,
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateRoleTargetAction>): Promise<FlatCreateRoleTargetAction> {
+    const { roleId } = resolveUniversalRelationIdentifiersToIds({
+      flatEntityMaps: allFlatEntityMaps,
+      metadataName: action.metadataName,
+      universalForeignKeyValues: action.flatEntity,
+    });
+
     return {
       ...action,
       flatEntity: {
         ...action.flatEntity,
+        roleId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
