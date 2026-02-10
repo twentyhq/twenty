@@ -20,7 +20,7 @@ export class DeleteFileRecordsAndUpdateTableCommand extends ActiveOrSuspendedWor
   protected readonly logger = new Logger(
     DeleteFileRecordsAndUpdateTableCommand.name,
   );
-  private hasAddedConstraint = false;
+  private hasRunOnce = false;
 
   constructor(
     @InjectRepository(WorkspaceEntity)
@@ -36,9 +36,14 @@ export class DeleteFileRecordsAndUpdateTableCommand extends ActiveOrSuspendedWor
   }
 
   override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
+    if (this.hasRunOnce) {
+      return;
+    }
+
     await this.deleteFileRecords(args);
     await this.updateFileTable();
     await this.addFileEntityUniqueConstraint(args);
+    this.hasRunOnce = true;
   }
 
   private async updateFileTable(): Promise<void> {
@@ -72,7 +77,6 @@ export class DeleteFileRecordsAndUpdateTableCommand extends ActiveOrSuspendedWor
 
     const files = await this.fileRepository.find({
       select: ['id'],
-      where: { workspaceId },
       withDeleted: true,
     });
 
@@ -110,10 +114,6 @@ export class DeleteFileRecordsAndUpdateTableCommand extends ActiveOrSuspendedWor
   private async addFileEntityUniqueConstraint({
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    if (this.hasAddedConstraint) {
-      return;
-    }
-
     if (options.dryRun) {
       return;
     }
@@ -130,7 +130,6 @@ export class DeleteFileRecordsAndUpdateTableCommand extends ActiveOrSuspendedWor
 
       await queryRunner.commitTransaction();
       this.logger.log('Successfully added file entity unique constraint');
-      this.hasAddedConstraint = true;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error(
