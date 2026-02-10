@@ -1,8 +1,8 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 
-import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application-layer/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
-import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application-layer/constants/seed-dependencies-dirname';
+import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
+import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/constants/seed-dependencies-dirname';
 
 // To regenerate: use logicFunctionCreateHash from logic-function-create-hash.utils.
 // package.json: hash(JSON.stringify(JSON.parse(content))). yarn.lock: hash(content).

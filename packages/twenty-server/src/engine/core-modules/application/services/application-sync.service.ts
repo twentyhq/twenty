@@ -28,7 +28,7 @@ import {
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application-layer/utils/get-default-application-package-fields.util';
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/utils/get-default-application-package-fields.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';

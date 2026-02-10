@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { Sources } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { ApplicationLayerService } from 'src/engine/core-modules/application-layer/application-layer.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -22,7 +21,6 @@ export class LogicFunctionFromSourceService {
     private readonly logicFunctionMetadataService: LogicFunctionMetadataService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly applicationService: ApplicationService,
-    private readonly applicationLayerService: ApplicationLayerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -51,7 +49,7 @@ export class LogicFunctionFromSourceService {
     id: string;
     workspaceId: string;
   }) {
-    return this.applicationLayerService.getAvailablePackages({
+    return this.logicFunctionMetadataService.getAvailablePackages({
       logicFunctionId: id,
       workspaceId,
     });

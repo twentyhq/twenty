@@ -21,11 +21,11 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/application-layer/constants/seed-dependencies/**",
+        "include": "engine/core-modules/application/constants/seed-dependencies/**",
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/core-modules/application-layer/constants/yarn-engine/**",
+        "include": "engine/core-modules/application/constants/yarn-engine/**",
         "outDir": "dist/assets"
       },
       {

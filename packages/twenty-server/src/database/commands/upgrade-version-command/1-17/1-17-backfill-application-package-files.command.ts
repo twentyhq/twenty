@@ -10,7 +10,7 @@ import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application-layer/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
+import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';

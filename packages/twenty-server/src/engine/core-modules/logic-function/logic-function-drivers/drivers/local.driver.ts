@@ -13,7 +13,7 @@ import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/l
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application-layer/utils/copy-yarn-engine-and-build-dependencies';
+import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 
 export interface LocalDriverOptions {

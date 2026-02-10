@@ -3,7 +3,7 @@ import { promises as fs, statSync } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util';
 
-import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application-layer/constants/yarn-engine-dirname';
+import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/constants/yarn-engine-dirname';
 
 const execFilePromise = promisify(execFile);
 

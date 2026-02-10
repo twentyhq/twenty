@@ -334,4 +334,40 @@ export class LogicFunctionMetadataService {
 
     return existingFlatLogicFunction;
   }
+
+  async getAvailablePackages({
+    logicFunctionId,
+    workspaceId,
+  }: {
+    logicFunctionId: string;
+    workspaceId: string;
+  }) {
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+        },
+      );
+
+    const logicFunctionUniversalIdentifier =
+      flatLogicFunctionMaps.universalIdentifierById[logicFunctionId];
+
+    if (!logicFunctionUniversalIdentifier) {
+      return {};
+    }
+
+    const logicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[
+        logicFunctionUniversalIdentifier
+      ];
+
+    if (!logicFunction) {
+      return {};
+    }
+
+    const application = flatApplicationMaps.byId[logicFunction.applicationId];
+
+    return application?.availablePackages ?? {};
+  }
 }
