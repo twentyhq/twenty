@@ -95,7 +95,7 @@ describe('GmailMessageOutboundService', () => {
     expect(mockSend).toHaveBeenCalledWith({
       userId: 'me',
       requestBody: {
-        raw: Buffer.from('mocked-email-content').toString('base64'),
+        raw: Buffer.from('mocked-email-content').toString('base64url'),
       },
     });
   });
@@ -127,7 +127,7 @@ describe('GmailMessageOutboundService', () => {
     expect(mockSend).toHaveBeenCalledWith({
       userId: 'me',
       requestBody: {
-        raw: Buffer.from('mocked-email-content').toString('base64'),
+        raw: Buffer.from('mocked-email-content').toString('base64url'),
       },
     });
   });
