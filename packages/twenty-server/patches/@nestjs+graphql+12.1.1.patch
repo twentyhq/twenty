@@ -14,7 +14,7 @@ index 72bab49dcc2b411408c75adf64c3f250cdeaa195..068dc04966e3f7ac7c7093f9ed8f29f2
  export interface GqlOptionsFactory<T extends Record<string, any> = GqlModuleOptions> {
      createGqlOptions(): Promise<Omit<T, 'driver'>> | Omit<T, 'driver'>;
 diff --git a/dist/schema-builder/graphql-schema.factory.js b/dist/schema-builder/graphql-schema.factory.js
-index f349a6e8ea629f8784143b2596e9e95b3255d348..98ac2b29428acfa4a9fc4b71bf9f07d625a307ba 100644
+index f349a6e8ea629f8784143b2596e9e95b3255d348..8385e86dd481f8401fbc1c81da9cc39550d0157e 100644
 --- a/dist/schema-builder/graphql-schema.factory.js
 +++ b/dist/schema-builder/graphql-schema.factory.js
 @@ -16,6 +16,7 @@ const subscription_type_factory_1 = require("./factories/subscription-type.facto
@@ -41,7 +41,7 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..98ac2b29428acfa4a9fc4b71bf9f07d6
          const schema = new graphql_1.GraphQLSchema({
              mutation: this.mutationTypeFactory.create(resolvers, options),
              query: this.queryTypeFactory.create(resolvers, options),
-@@ -68,6 +74,82 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
+@@ -68,6 +74,116 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
              .forEach((classRef) => this.addScalarTypeByClassRef(classRef, scalarsMap));
          options.scalarsMap = scalarsMap;
      }
@@ -51,8 +51,22 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..98ac2b29428acfa4a9fc4b71bf9f07d6
 +        const reachable = new Set();
 +        const queue = [];
 +        const enqueue = (ref) => {
-+            if (ref && typeof ref === 'function' && !SCALAR_TYPES.includes(ref) && !reachable.has(ref)) {
++            if (!ref || reachable.has(ref)) return;
++            // Accept class constructors (functions) and symbols (union type IDs)
++            if (typeof ref === 'function' && !SCALAR_TYPES.includes(ref)) {
 +                queue.push(ref);
++            }
++            else if (typeof ref === 'symbol') {
++                // Symbols are union type identifiers — mark reachable and
++                // eagerly enqueue all union member types
++                reachable.add(ref);
++                TMS.getUnionsMetadata().forEach((union) => {
++                    if (union.id === ref) {
++                        try {
++                            union.typesFn().forEach((t) => enqueue(t));
++                        } catch (e) { /* noop */ }
++                    }
++                });
 +            }
 +        };
 +        // Seed with return types and argument types from scoped resolvers
@@ -70,11 +84,7 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..98ac2b29428acfa4a9fc4b71bf9f07d6
 +            });
 +        });
 +        // Seed with explicit orphaned types
-+        (orphanedTypes || []).forEach((t) => {
-+            if (typeof t === 'function') {
-+                enqueue(t);
-+            }
-+        });
++        (orphanedTypes || []).forEach((t) => enqueue(t));
 +        // BFS through type metadata to find all transitively reachable types
 +        const processQueue = () => {
 +            while (queue.length > 0) {
@@ -94,10 +104,32 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..98ac2b29428acfa4a9fc4b71bf9f07d6
 +                    const interfaces = (0, get_interfaces_array_util_1.getInterfacesArray)(meta.interfaces);
 +                    interfaces.forEach((i) => enqueue(i));
 +                };
-+                processMetadata(TMS.getObjectTypeMetadataByTarget(type));
-+                processMetadata(TMS.getInputTypeMetadataByTarget(type));
-+                processMetadata(TMS.getInterfaceMetadataByTarget(type));
-+                processMetadata(TMS.getArgumentsMetadataByTarget(type));
++                const processType = (target) => {
++                    processMetadata(TMS.getObjectTypeMetadataByTarget(target));
++                    processMetadata(TMS.getInputTypeMetadataByTarget(target));
++                    processMetadata(TMS.getInterfaceMetadataByTarget(target));
++                    processMetadata(TMS.getArgumentsMetadataByTarget(target));
++                };
++                // Process this type and walk the prototype chain
++                // to catch parent class metadata (e.g. nestjs-query ArgsType inheritance)
++                // Also add ancestor types to the reachable set so they are generated
++                // in TypeDefinitionsStorage (needed by InputTypeDefinitionFactory
++                // and ObjectTypeDefinitionFactory for parent field resolution).
++                let current = type;
++                while (current && current !== Function.prototype && current !== Object) {
++                    processType(current);
++                    current = Object.getPrototypeOf(current);
++                    if (current && current !== Function.prototype && current !== Object) {
++                        if (typeof current === 'function' && !SCALAR_TYPES.includes(current) && !reachable.has(current)) {
++                            const hasMetadata = TMS.getObjectTypeMetadataByTarget(current)
++                                || TMS.getInputTypeMetadataByTarget(current)
++                                || TMS.getInterfaceMetadataByTarget(current);
++                            if (hasMetadata) {
++                                reachable.add(current);
++                            }
++                        }
++                    }
++                }
 +            }
 +        };
 +        processQueue();
@@ -109,11 +141,13 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..98ac2b29428acfa4a9fc4b71bf9f07d6
 +            }
 +        });
 +        processQueue();
-+        // Include all members of reachable unions
++        // Include all members of unions where any member is already reachable
 +        TMS.getUnionsMetadata().forEach((union) => {
++            if (reachable.has(union.id)) return; // already handled
 +            try {
 +                const types = union.typesFn();
 +                if (types.some((t) => reachable.has(t))) {
++                    reachable.add(union.id);
 +                    types.forEach((t) => enqueue(t));
 +                }
 +            } catch (e) { /* noop */ }
@@ -159,7 +193,7 @@ index a19dee7a15b355a83124479f7e5e6cb91795070d..a3cfb3b8fcdb92de1ebfb6149389acca
  exports.TypeDefinitionsStorage = TypeDefinitionsStorage;
  exports.TypeDefinitionsStorage = TypeDefinitionsStorage = tslib_1.__decorate([
 diff --git a/dist/schema-builder/type-definitions.generator.js b/dist/schema-builder/type-definitions.generator.js
-index d5423f1603ea2dbe32f70778cb715de648960cf3..8df68a0630b7323637d27ba051f40f2f0dc2a3e3 100644
+index d5423f1603ea2dbe32f70778cb715de648960cf3..689d0e93f9f2c39138bca4ca425fc9e8edf4f77e 100644
 --- a/dist/schema-builder/type-definitions.generator.js
 +++ b/dist/schema-builder/type-definitions.generator.js
 @@ -19,25 +19,37 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
@@ -211,7 +245,7 @@ index d5423f1603ea2dbe32f70778cb715de648960cf3..8df68a0630b7323637d27ba051f40f2f
          const interfaceDefs = metadata.map((metadata) => this.interfaceDefinitionFactory.create(metadata, options));
          this.typeDefinitionsStorage.addInterfaces(interfaceDefs);
      }
-@@ -46,8 +58,19 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
+@@ -46,8 +58,21 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
          const enumDefs = metadata.map((metadata) => this.enumDefinitionFactory.create(metadata));
          this.typeDefinitionsStorage.addEnums(enumDefs);
      }
@@ -221,6 +255,8 @@ index d5423f1603ea2dbe32f70778cb715de648960cf3..8df68a0630b7323637d27ba051f40f2f
 +        let metadata = type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadata();
 +        if (reachableTypes) {
 +            metadata = metadata.filter((m) => {
++                // Include if the union's symbol ID is in the reachable set
++                if (reachableTypes.has(m.id)) return true;
 +                try {
 +                    const types = m.typesFn();
 +                    return types.some((t) => reachableTypes.has(t));
