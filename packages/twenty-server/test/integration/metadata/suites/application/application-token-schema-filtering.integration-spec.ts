@@ -25,13 +25,15 @@ const CUSTOM_OBJECT_TYPE_NAMES = [
   'EmploymentHistory',
 ];
 
-const makeGraphqlIntrospectionRequest = (token: string) => {
+const makeGraphqlIntrospectionRequest = async (token: string): Promise<request.Response> => {
   const client = request(`http://localhost:${APP_PORT}`);
 
-  return client
+  const response = await client
     .post('/graphql')
     .set('Authorization', `Bearer ${token}`)
     .send({ query: INTROSPECTION_QUERY });
+
+  return response;
 };
 
 describe('Application token schema filtering', () => {
