@@ -91,9 +91,12 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion: number,
     typeDefs: string,
+    appId?: string,
   ): Promise<void> {
+    const appSuffix = appId ? `:${appId}` : '';
+
     return this.cacheStorageService.set<string>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
+      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}${appSuffix}`,
       typeDefs,
       TTL_ONE_WEEK,
     );
@@ -102,9 +105,12 @@ export class WorkspaceCacheStorageService {
   getGraphQLTypeDefs(
     workspaceId: string,
     metadataVersion: number,
+    appId?: string,
   ): Promise<string | undefined> {
+    const appSuffix = appId ? `:${appId}` : '';
+
     return this.cacheStorageService.get<string>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
+      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}${appSuffix}`,
     );
   }
 
@@ -112,9 +118,12 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     metadataVersion: number,
     usedScalarNames: string[],
+    appId?: string,
   ): Promise<void> {
+    const appSuffix = appId ? `:${appId}` : '';
+
     return this.cacheStorageService.set<string[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
+      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}${appSuffix}`,
       usedScalarNames,
       TTL_ONE_WEEK,
     );
@@ -123,9 +132,12 @@ export class WorkspaceCacheStorageService {
   getGraphQLUsedScalarNames(
     workspaceId: string,
     metadataVersion: number,
+    appId?: string,
   ): Promise<string[] | undefined> {
+    const appSuffix = appId ? `:${appId}` : '';
+
     return this.cacheStorageService.get<string[]>(
-      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
+      `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}${appSuffix}`,
     );
   }
 

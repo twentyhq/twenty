@@ -1,7 +1,7 @@
-diff --git a/dist/cjs/index.js b/dist/cjs/index.js
+diff --git a/node_modules/@graphql-yoga/nestjs/dist/cjs/index.js b/node_modules/@graphql-yoga/nestjs/dist/cjs/index.js
 index 1684394..dd0773d 100644
---- a/dist/cjs/index.js
-+++ b/dist/cjs/index.js
+--- a/node_modules/@graphql-yoga/nestjs/dist/cjs/index.js
++++ b/node_modules/@graphql-yoga/nestjs/dist/cjs/index.js
 @@ -3,10 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  exports.YogaDriver = exports.AbstractYogaDriver = void 0;
  const tslib_1 = require("tslib");
@@ -34,8 +34,9 @@ index 1684394..dd0773d 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const url = request.req.baseUrl
++                const appId = request.req.appId ?? 'all'
 +
-+                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -86,8 +87,9 @@ index 1684394..dd0773d 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const url = request.req.baseUrl
++                const appId = request.req.appId ?? 'all'
 +
-+                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -124,10 +126,10 @@ index 1684394..dd0773d 100644
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use fastify logger
-diff --git a/dist/esm/index.js b/dist/esm/index.js
+diff --git a/node_modules/@graphql-yoga/nestjs/dist/esm/index.js b/node_modules/@graphql-yoga/nestjs/dist/esm/index.js
 index 7068c51..8494b69 100644
---- a/dist/esm/index.js
-+++ b/dist/esm/index.js
+--- a/node_modules/@graphql-yoga/nestjs/dist/esm/index.js
++++ b/node_modules/@graphql-yoga/nestjs/dist/esm/index.js
 @@ -1,9 +1,13 @@
 -import { __decorate } from "tslib";
 -import { printSchema } from 'graphql';
@@ -162,8 +164,9 @@ index 7068c51..8494b69 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const url = request.req.baseUrl
++                const appId = request.req.appId ?? 'all'
 +
-+                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -214,8 +217,9 @@ index 7068c51..8494b69 100644
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const url = request.req.baseUrl
++                const appId = request.req.appId ?? 'all'
 +
-+                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
++                const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -252,10 +256,10 @@ index 7068c51..8494b69 100644
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use fastify logger
-diff --git a/dist/typings/index.d.cts b/dist/typings/index.d.cts
+diff --git a/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.cts b/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.cts
 index 2c6a965..2f2b59f 100644
---- a/dist/typings/index.d.cts
-+++ b/dist/typings/index.d.cts
+--- a/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.cts
++++ b/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.cts
 @@ -1,7 +1,8 @@
  import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
  import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -291,10 +295,10 @@ index 2c6a965..2f2b59f 100644
          preStartHook?: (app: FastifyInstance) => void;
      }): void;
      subscriptionWithFilter<TPayload, TVariables, TContext>(instanceRef: unknown, filterFn: (payload: TPayload, variables: TVariables, context: TContext) => boolean | Promise<boolean>, createSubscribeContext: Function): (args_0: TPayload, args_1: TVariables, args_2: TContext) => Promise<import("graphql-yoga").Repeater<TPayload, void, unknown>>;
-diff --git a/dist/typings/index.d.ts b/dist/typings/index.d.ts
+diff --git a/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.ts b/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.ts
 index 2c6a965..fd86dac 100644
---- a/dist/typings/index.d.ts
-+++ b/dist/typings/index.d.ts
+--- a/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.ts
++++ b/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.ts
 @@ -1,7 +1,8 @@
  import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
  import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -329,10 +333,10 @@ index 2c6a965..fd86dac 100644
          preStartHook?: (app: FastifyInstance) => void;
      }): void;
      subscriptionWithFilter<TPayload, TVariables, TContext>(instanceRef: unknown, filterFn: (payload: TPayload, variables: TVariables, context: TContext) => boolean | Promise<boolean>, createSubscribeContext: Function): (args_0: TPayload, args_1: TVariables, args_2: TContext) => Promise<import("graphql-yoga").Repeater<TPayload, void, unknown>>;
-diff --git a/src/index.ts b/src/index.ts
+diff --git a/node_modules/@graphql-yoga/nestjs/src/index.ts b/node_modules/@graphql-yoga/nestjs/src/index.ts
 index ce142f6..d3e7bab 100644
---- a/src/index.ts
-+++ b/src/index.ts
+--- a/node_modules/@graphql-yoga/nestjs/src/index.ts
++++ b/node_modules/@graphql-yoga/nestjs/src/index.ts
 @@ -1,9 +1,10 @@
  import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
  import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -349,7 +353,7 @@ index ce142f6..d3e7bab 100644
 @@ -11,23 +12,31 @@ import {
    SubscriptionConfig,
  } from '@nestjs/graphql';
-
+ 
 +export type YogaSchemaDefinition<TContext> =
 +  | PromiseOrValue<GraphQLSchemaWithContext<TContext>>
 +  | ((
@@ -357,7 +361,7 @@ index ce142f6..d3e7bab 100644
 +  ) => PromiseOrValue<GraphQLSchemaWithContext<TContext>>);
 +
  export type YogaDriverPlatform = 'express' | 'fastify';
-
+ 
  export type YogaDriverServerContext<Platform extends YogaDriverPlatform> =
    Platform extends 'fastify'
 -    ? {
@@ -376,7 +380,7 @@ index ce142f6..d3e7bab 100644
 +    req: ExpressRequest;
 +    res: ExpressResponse;
 +  };
-
+ 
  export type YogaDriverServerOptions<Platform extends YogaDriverPlatform> = Omit<
    YogaServerOptions<YogaDriverServerContext<Platform>, never>,
    'context' | 'schema'
@@ -384,7 +388,7 @@ index ce142f6..d3e7bab 100644
 +> & {
 +  conditionalSchema?: YogaSchemaDefinition<YogaDriverServerContext<Platform>> | undefined;
 +};
-
+ 
  export type YogaDriverServerInstance<Platform extends YogaDriverPlatform> = YogaServerInstance<
    YogaDriverServerContext<Platform>,
 @@ -53,6 +62,8 @@ export type YogaDriverSubscriptionConfig = {
@@ -394,11 +398,11 @@ index ce142f6..d3e7bab 100644
 +  schemaCache = new Map();
 +
    protected yoga!: YogaDriverServerInstance<Platform>;
-
+ 
    public async start(options: YogaDriverConfig<Platform>) {
 @@ -78,7 +89,7 @@ export abstract class AbstractYogaDriver<
    }
-
+ 
    protected registerExpress(
 -    options: YogaDriverConfig<'express'>,
 +    { conditionalSchema, ...options }: YogaDriverConfig<'express'>,
@@ -406,15 +410,16 @@ index ce142f6..d3e7bab 100644
    ) {
      const app: Express = this.httpAdapterHost.httpAdapter.getInstance();
 @@ -98,6 +109,39 @@ export abstract class AbstractYogaDriver<
-
+ 
      const yoga = createYoga<YogaDriverServerContext<'express'>>({
        ...options,
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.workspaceMetadataVersion
 +        const url = request.req.baseUrl
++        const appId = request.req.appId ?? 'all'
 +
-+        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
++        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -454,11 +459,11 @@ index ce142f6..d3e7bab 100644
 +            ? new LoggerWithInfo('YogaDriver')
 +            : options.logging,
      });
-
+ 
      this.yoga = yoga as YogaDriverServerInstance<Platform>;
 @@ -115,7 +159,7 @@ export abstract class AbstractYogaDriver<
    }
-
+ 
    protected registerFastify(
 -    options: YogaDriverConfig<'fastify'>,
 +    { conditionalSchema, ...options }: YogaDriverConfig<'fastify'>,
@@ -466,15 +471,16 @@ index ce142f6..d3e7bab 100644
    ) {
      const app: FastifyInstance = this.httpAdapterHost.httpAdapter.getInstance();
 @@ -124,6 +168,39 @@ export abstract class AbstractYogaDriver<
-
+ 
      const yoga = createYoga<YogaDriverServerContext<'fastify'>>({
        ...options,
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.workspaceMetadataVersion
 +        const url = request.req.baseUrl
++        const appId = request.req.appId ?? 'all'
 +
-+        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}`
++        const cacheKey = `${workspaceId}-${url}-${workspaceCacheVersion}-${appId}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -514,5 +520,5 @@ index ce142f6..d3e7bab 100644
 +            'graphql-ws': true,
 +          }
            : options.subscriptions;
-
+ 
        if (config['graphql-ws']) {
