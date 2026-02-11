@@ -574,7 +574,7 @@ export class ApiService {
       );
 
       const response: AxiosResponse = await this.client.post(
-        '/graphql',
+        '/metadata',
         formData,
       );
 
