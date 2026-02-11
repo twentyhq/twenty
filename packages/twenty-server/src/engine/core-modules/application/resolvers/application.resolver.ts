@@ -110,8 +110,11 @@ export class ApplicationResolver {
     @Args() { applicationId }: GenerateApplicationTokenInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AuthToken> {
+    const nodeEnv = this.twentyConfigService.get('NODE_ENV');
+
     if (
-      this.twentyConfigService.get('NODE_ENV') !== NodeEnvironment.DEVELOPMENT
+      nodeEnv !== NodeEnvironment.DEVELOPMENT &&
+      nodeEnv !== NodeEnvironment.TEST
     ) {
       throw new ApplicationException(
         'This endpoint is only available in development mode',
