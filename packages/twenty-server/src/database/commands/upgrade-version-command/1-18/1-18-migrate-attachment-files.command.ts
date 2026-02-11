@@ -14,6 +14,7 @@ import { v4 } from 'uuid';
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -22,11 +23,9 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
 @Command({
@@ -44,6 +43,7 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fieldMetadataService: FieldMetadataService,
+    private readonly applicationService: ApplicationService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -73,15 +73,11 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
       `${isDryRun ? '[DRY RUN] ' : ''}Starting attachment files migration for workspace ${workspaceId}`,
     );
 
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-      'flatApplicationMaps',
-    ]);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
 
     const attachmentObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
@@ -97,80 +93,88 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
       return;
     }
 
-    const twentyStandardApplication = Object.values(
-      flatApplicationMaps.byId,
-    ).find(
-      (app) =>
-        app?.universalIdentifier ===
-        TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    );
-
-    if (!isDefined(twentyStandardApplication)) {
-      this.logger.error(
-        `Twenty standard application not found for workspace ${workspaceId}`,
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
       );
 
-      return;
-    }
+    let attachmentFileflatFieldMetadata = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatFieldMetadataMaps,
+      universalIdentifier:
+        STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+    });
 
-    const fileUniversalIdentifier =
-      STANDARD_OBJECTS.attachment.fields.file.universalIdentifier;
-
-    let fileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
-      attachmentObjectMetadata,
-      flatFieldMetadataMaps,
-    ).find(
-      (field) =>
-        field.type === FieldMetadataType.FILES &&
-        field.universalIdentifier === fileUniversalIdentifier,
-    ) as FlatFieldMetadata | undefined;
-
-    if (!isDefined(fileFieldMetadata)) {
+    if (!isDefined(attachmentFileflatFieldMetadata)) {
       this.logger.log(
         `File field metadata not found for attachments in workspace ${workspaceId}, creating it`,
       );
 
       if (!isDryRun) {
-        await this.fieldMetadataService.createOneField({
-          createFieldInput: {
-            objectMetadataId: attachmentObjectMetadata.id,
-            type: FieldMetadataType.FILES,
-            name: 'file',
-            label: 'File',
-            description: 'Attachment file',
-            icon: 'IconFileUpload',
-            isNullable: true,
-            isUIReadOnly: true,
-            isSystem: true,
-            settings: {
-              maxNumberOfValues: 1,
-            },
-            universalIdentifier: fileUniversalIdentifier,
-          },
-          workspaceId,
-          ownerFlatApplication: twentyStandardApplication,
-        });
-
-        const { flatFieldMetadataMaps: updatedFlatFieldMetadataMaps } =
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'flatFieldMetadataMaps',
-          ]);
-
-        fileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
+        const attachmentFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
           attachmentObjectMetadata,
-          updatedFlatFieldMetadataMaps,
-        ).find(
-          (field) =>
-            field.type === FieldMetadataType.FILES &&
-            field.universalIdentifier === fileUniversalIdentifier,
-        ) as FlatFieldMetadata | undefined;
+          flatFieldMetadataMaps,
+        );
 
-        if (!isDefined(fileFieldMetadata)) {
-          this.logger.error(
-            `Failed to create file field metadata for workspace ${workspaceId}`,
+        const existingFieldWithSameName = attachmentFieldMetadatas.find(
+          (fieldMetadata) => fieldMetadata.name === 'file',
+        );
+
+        if (isDefined(existingFieldWithSameName)) {
+          this.logger.log(
+            `Found existing field with name 'file' (id: ${existingFieldWithSameName.id}), renaming it to 'old-file'`,
           );
 
-          return;
+          try {
+            await this.fieldMetadataService.updateOneField({
+              updateFieldInput: {
+                id: existingFieldWithSameName.id,
+                name: 'oldFile',
+                label: 'Old File',
+              },
+              workspaceId,
+              ownerFlatApplication: twentyStandardFlatApplication,
+            });
+          } catch (error) {
+            this.logger.error(
+              `Failed to rename existing 'file' field to 'old-file' for workspace ${workspaceId}: ${error.message}`,
+            );
+            throw error;
+          }
+
+          this.logger.log(
+            `Renamed existing 'file' field to 'oldFile' for workspace ${workspaceId}`,
+          );
+        }
+
+        try {
+          attachmentFileflatFieldMetadata =
+            await this.fieldMetadataService.createOneField({
+              createFieldInput: {
+                objectMetadataId: attachmentObjectMetadata.id,
+                type: FieldMetadataType.FILES,
+                name: 'file',
+                label: 'File',
+                description: 'Attachment file',
+                icon: 'IconFileUpload',
+                isNullable: true,
+                isUIReadOnly: true,
+                isSystem: true,
+                settings: {
+                  maxNumberOfValues: 1,
+                },
+                universalIdentifier:
+                  STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+              },
+              workspaceId,
+              ownerFlatApplication: twentyStandardFlatApplication,
+            });
+        } catch (error) {
+          this.logger.error(
+            `Failed to create file field metadata for attachments in workspace ${workspaceId}: ${error.message}`,
+          );
+          throw error;
         }
       }
       this.logger.log(
@@ -178,7 +182,7 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
       );
     }
 
-    if (!isDefined(fileFieldMetadata)) {
+    if (!isDefined(attachmentFileflatFieldMetadata)) {
       this.logger.error(
         `File field metadata not found for attachments in workspace ${workspaceId}`,
       );
@@ -228,16 +232,16 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
 
         const fileId = v4();
         const newFilename = `${fileId}${isNonEmptyString(fileExtension) ? `.${fileExtension}` : ''}`;
-        const newResourcePath = `${FileFolder.FilesField}/${fileFieldMetadata.universalIdentifier}/${newFilename}`;
+        const newResourcePath = `${FileFolder.FilesField}/${attachmentFileflatFieldMetadata.universalIdentifier}/${newFilename}`;
 
         if (!isDryRun) {
-          await this.fileStorageService.copy({
+          await this.fileStorageService.copyLegacy({
             from: {
               folderPath: `workspace-${workspaceId}`,
               filename: attachment.fullPath,
             },
             to: {
-              folderPath: `${workspaceId}/${twentyStandardApplication.universalIdentifier}`,
+              folderPath: `${workspaceId}/${twentyStandardFlatApplication.universalIdentifier}`,
               filename: newResourcePath,
             },
           });
@@ -246,7 +250,7 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
             id: fileId,
             path: newResourcePath,
             workspaceId,
-            applicationId: twentyStandardApplication.id,
+            applicationId: twentyStandardFlatApplication.id,
             size: -1,
             settings: {
               isTemporaryFile: true,
@@ -278,6 +282,13 @@ export class MigrateAttachmentFilesCommand extends ActiveOrSuspendedWorkspacesMi
         );
         throw error;
       }
+    }
+
+    if (!isDryRun) {
+      await this.featureFlagService.enableFeatureFlags(
+        [FeatureFlagKey.IS_FILES_FIELD_MIGRATED],
+        workspaceId,
+      );
     }
 
     this.logger.log(

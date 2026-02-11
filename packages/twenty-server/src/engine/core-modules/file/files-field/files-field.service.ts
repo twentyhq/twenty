@@ -4,10 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Readable } from 'stream';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
@@ -45,19 +45,16 @@ export class FilesFieldService {
   async uploadFile({
     file,
     filename,
-    declaredMimeType,
     workspaceId,
     fieldMetadataId,
   }: {
     file: Buffer;
     filename: string;
-    declaredMimeType: string | undefined;
     workspaceId: string;
     fieldMetadataId: string;
   }): Promise<FileEntity> {
     const { mimeType, ext } = await extractFileInfo({
       file,
-      declaredMimeType,
       filename,
     });
 

@@ -15,6 +15,7 @@ import { v4 } from 'uuid';
 import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -23,11 +24,9 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Command({
@@ -45,6 +44,7 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fieldMetadataService: FieldMetadataService,
+    private readonly applicationService: ApplicationService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
@@ -76,15 +76,11 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
       }Starting person avatar files migration for workspace ${workspaceId}`,
     );
 
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-      'flatApplicationMaps',
-    ]);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
 
     const personObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
@@ -100,15 +96,14 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    const twentyStandardApplication = Object.values(
-      flatApplicationMaps.byId,
-    ).find(
-      (app) =>
-        app?.universalIdentifier ===
-        TWENTY_STANDARD_APPLICATION.universalIdentifier,
-    );
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        {
+          workspaceId,
+        },
+      );
 
-    if (!isDefined(twentyStandardApplication)) {
+    if (!isDefined(twentyStandardFlatApplication)) {
       this.logger.error(
         `Twenty standard application not found for workspace ${workspaceId}`,
       );
@@ -116,17 +111,11 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
       return;
     }
 
-    const avatarFileUniversalIdentifier =
-      STANDARD_OBJECTS.person.fields.avatarFile.universalIdentifier;
-
-    let avatarFileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
-      personObjectMetadata,
-      flatFieldMetadataMaps,
-    ).find(
-      (field) =>
-        field.type === FieldMetadataType.FILES &&
-        field.universalIdentifier === avatarFileUniversalIdentifier,
-    ) as FlatFieldMetadata | undefined;
+    let avatarFileFieldMetadata = findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatFieldMetadataMaps,
+      universalIdentifier:
+        STANDARD_OBJECTS.person.fields.avatarFile.universalIdentifier,
+    });
 
     if (!isDefined(avatarFileFieldMetadata)) {
       this.logger.log(
@@ -134,45 +123,68 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
       );
 
       if (!isDryRun) {
-        await this.fieldMetadataService.createOneField({
-          createFieldInput: {
-            objectMetadataId: personObjectMetadata.id,
-            type: FieldMetadataType.FILES,
-            name: 'avatarFile',
-            label: 'Avatar File',
-            description: "Contact's avatar file",
-            icon: 'IconFileUpload',
-            isSystem: true,
-            isNullable: true,
-            settings: {
-              maxNumberOfValues: 1,
-            },
-            universalIdentifier: avatarFileUniversalIdentifier,
-          },
-          workspaceId,
-          ownerFlatApplication: twentyStandardApplication,
-        });
-
-        const { flatFieldMetadataMaps: updatedFlatFieldMetadataMaps } =
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'flatFieldMetadataMaps',
-          ]);
-
-        avatarFileFieldMetadata = getFlatFieldsFromFlatObjectMetadata(
+        const personFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
           personObjectMetadata,
-          updatedFlatFieldMetadataMaps,
-        ).find(
-          (field) =>
-            field.type === FieldMetadataType.FILES &&
-            field.universalIdentifier === avatarFileUniversalIdentifier,
-        ) as FlatFieldMetadata | undefined;
+          flatFieldMetadataMaps,
+        );
 
-        if (!isDefined(avatarFileFieldMetadata)) {
-          this.logger.error(
-            `Failed to create avatarFile field metadata for workspace ${workspaceId}`,
+        const existingFieldWithSameName = personFieldMetadatas.find(
+          (fieldMetadata) => fieldMetadata.name === 'avatarFile',
+        );
+
+        if (isDefined(existingFieldWithSameName)) {
+          this.logger.log(
+            `Found existing field with name 'avatarFile' (id: ${existingFieldWithSameName.id}), renaming it to 'old-avatarFile'`,
           );
 
-          return;
+          try {
+            await this.fieldMetadataService.updateOneField({
+              updateFieldInput: {
+                id: existingFieldWithSameName.id,
+                name: 'oldAvatarFile',
+                label: 'Old Avatar File',
+              },
+              workspaceId,
+              ownerFlatApplication: twentyStandardFlatApplication,
+            });
+          } catch (error) {
+            this.logger.error(
+              `Failed to rename existing 'avatarFile' field to 'old-avatarFile' for workspace ${workspaceId}: ${error.message}`,
+            );
+            throw error;
+          }
+
+          this.logger.log(
+            `Renamed existing 'avatarFile' field to 'oldAvatarFile' for workspace ${workspaceId}`,
+          );
+        }
+
+        try {
+          avatarFileFieldMetadata =
+            await this.fieldMetadataService.createOneField({
+              createFieldInput: {
+                objectMetadataId: personObjectMetadata.id,
+                type: FieldMetadataType.FILES,
+                name: 'avatarFile',
+                label: 'Avatar File',
+                description: "Contact's avatar file",
+                icon: 'IconFileUpload',
+                isSystem: true,
+                isNullable: true,
+                settings: {
+                  maxNumberOfValues: 1,
+                },
+                universalIdentifier:
+                  STANDARD_OBJECTS.person.fields.avatarFile.universalIdentifier,
+              },
+              workspaceId,
+              ownerFlatApplication: twentyStandardFlatApplication,
+            });
+        } catch (error) {
+          this.logger.error(
+            `Failed to create avatarFile field metadata for workspace ${workspaceId}: ${error.message}`,
+          );
+          throw error;
         }
       }
       this.logger.log(
@@ -230,13 +242,13 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
         const newResourcePath = `${FileFolder.FilesField}/${avatarFileFieldMetadata.universalIdentifier}/${newFileName}`;
 
         if (!isDryRun) {
-          await this.fileStorageService.copy({
+          await this.fileStorageService.copyLegacy({
             from: {
               folderPath: `workspace-${workspaceId}`,
               filename: person.avatarUrl,
             },
             to: {
-              folderPath: `${workspaceId}/${twentyStandardApplication.universalIdentifier}`,
+              folderPath: `${workspaceId}/${twentyStandardFlatApplication.universalIdentifier}`,
               filename: newResourcePath,
             },
           });
@@ -245,7 +257,7 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
             id: fileId,
             path: newResourcePath,
             workspaceId,
-            applicationId: twentyStandardApplication.id,
+            applicationId: twentyStandardFlatApplication.id,
             size: -1,
             settings: {
               isTemporaryFile: true,
@@ -275,13 +287,6 @@ export class MigratePersonAvatarFilesCommand extends ActiveOrSuspendedWorkspaces
         );
         throw error;
       }
-    }
-
-    if (!isDryRun) {
-      await this.featureFlagService.enableFeatureFlags(
-        [FeatureFlagKey.IS_FILES_FIELD_MIGRATED],
-        workspaceId,
-      );
     }
 
     this.logger.log(
