@@ -4,6 +4,10 @@ import {
 } from 'twenty-shared/application';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -30,8 +34,9 @@ const getRelationTargetUniversalIdentifiers = (
     !fieldManifest.relationTargetFieldMetadataUniversalIdentifier ||
     !fieldManifest.relationTargetObjectMetadataUniversalIdentifier
   ) {
-    throw new Error(
+    throw new ApplicationException(
       `Field "${fieldManifest.name}" is of type ${fieldManifest.type} but is missing relationTargetFieldMetadataUniversalIdentifier or relationTargetObjectMetadataUniversalIdentifier`,
+      ApplicationExceptionCode.INVALID_INPUT,
     );
   }
 

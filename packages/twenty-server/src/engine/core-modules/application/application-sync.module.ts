@@ -9,7 +9,6 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/serv
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/applicationVariable/application-variable.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -25,7 +24,6 @@ import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workf
     TypeOrmModule.forFeature([FileEntity]),
     ApplicationModule,
     ApplicationVariableEntityModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     PermissionsModule,
     ObjectPermissionModule,

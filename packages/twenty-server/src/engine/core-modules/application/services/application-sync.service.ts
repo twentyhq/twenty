@@ -4,20 +4,24 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 
+import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application-layer/utils/get-default-application-package-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { APPLICATION_MANIFEST_METADATA_NAMES } from 'src/engine/core-modules/application/constants/application-manifest-metadata-names.constant';
 import { ApplicationInput } from 'src/engine/core-modules/application/dtos/application.input';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/services/application-manifest-migration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/services/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application-layer/utils/get-default-application-package-fields.util';
+import { getEmptyApplicationManifestAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-empty-application-manifest-all-universal-flat-entity-maps.util';
+import { getSubApplicationFromToAllFlatEntityMaps } from 'src/engine/core-modules/application/utils/get-sub-application-from-to-all-flat-entity-maps.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/applicationVariable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -29,8 +33,8 @@ export class ApplicationSyncService {
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly fileStorageService: FileStorageService,
   ) {}
 
@@ -126,27 +130,6 @@ export class ApplicationSyncService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
   }) {
-    const {
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatIndexMaps: existingFlatIndexMetadataMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      flatFrontComponentMaps: existingFlatFrontComponentMaps,
-      flatLogicFunctionMaps: existingFlatLogicFunctionMaps,
-      flatRoleMaps: existingFlatRoleMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatIndexMaps',
-          'flatFieldMetadataMaps',
-          'flatFrontComponentMaps',
-          'flatLogicFunctionMaps',
-          'flatRoleMaps',
-        ],
-      },
-    );
-
     const application = await this.applicationService.findByUniversalIdentifier(
       { universalIdentifier: applicationUniversalIdentifier, workspaceId },
     );
@@ -165,80 +148,44 @@ export class ApplicationSyncService {
       );
     }
 
-    const flatObjectMetadataMapsByApplicationId =
-      findFlatEntitiesByApplicationId({
-        flatEntityMaps: existingFlatObjectMetadataMaps,
-        applicationId: application.id,
-      });
+    const flatEntityMapsCacheKeys = APPLICATION_MANIFEST_METADATA_NAMES.map(
+      getMetadataFlatEntityMapsKey,
+    );
 
-    const flatIndexMetadataMapsByApplicationId =
-      findFlatEntitiesByApplicationId({
-        flatEntityMaps: existingFlatIndexMetadataMaps,
-        applicationId: application.id,
-      });
+    const cacheResult = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      [...flatEntityMapsCacheKeys, 'featureFlagsMap'],
+    );
 
-    const flatFieldMetadataMapsByApplicationId =
-      findFlatEntitiesByApplicationId({
-        flatEntityMaps: existingFlatFieldMetadataMaps,
-        applicationId: application.id,
-      });
+    const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
 
-    const flatFrontComponentMapsByApplicationId =
-      findFlatEntitiesByApplicationId({
-        flatEntityMaps: existingFlatFrontComponentMaps,
-        applicationId: application.id,
-      });
-
-    const flatLogicFunctionMapsByApplicationId =
-      findFlatEntitiesByApplicationId({
-        flatEntityMaps: existingFlatLogicFunctionMaps,
-        applicationId: application.id,
-      });
-
-    const flatRoleMapsByApplicationId = findFlatEntitiesByApplicationId({
-      flatEntityMaps: existingFlatRoleMaps,
+    const fromToAllFlatEntityMaps = getSubApplicationFromToAllFlatEntityMaps({
       applicationId: application.id,
+      fromAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps:
+        getEmptyApplicationManifestAllUniversalFlatEntityMaps(),
     });
 
-    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-      {
-        allFlatEntityOperationByMetadataName: {
-          objectMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: flatObjectMetadataMapsByApplicationId,
-            flatEntityToUpdate: [],
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+        {
+          buildOptions: {
+            isSystemBuild: true,
+            inferDeletionFromMissingEntities: true,
           },
-          index: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: flatIndexMetadataMapsByApplicationId,
-            flatEntityToUpdate: [],
-          },
-          fieldMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: flatFieldMetadataMapsByApplicationId,
-            flatEntityToUpdate: [],
-          },
-          frontComponent: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: flatFrontComponentMapsByApplicationId,
-            flatEntityToUpdate: [],
-          },
-          logicFunction: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: flatLogicFunctionMapsByApplicationId,
-            flatEntityToUpdate: [],
-          },
-          role: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: flatRoleMapsByApplicationId,
-            flatEntityToUpdate: [],
-          },
+          fromToAllFlatEntityMaps,
+          workspaceId,
+          additionalCacheDataMaps: { featureFlagsMap },
+          applicationUniversalIdentifier,
         },
-        workspaceId,
-        isSystemBuild: true,
-        applicationUniversalIdentifier,
-      },
-    );
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderException(
+        validateAndBuildResult,
+        'Validation errors occurred while uninstalling application',
+      );
+    }
 
     await this.applicationService.delete(
       applicationUniversalIdentifier,
