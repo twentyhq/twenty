@@ -14,7 +14,6 @@ import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/i
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
-import { getLogicFunctionBaseFolderPath } from 'src/engine/core-modules/logic-function/logic-function-resource/utils/get-logic-function-handler-path.util';
 import {
   getLogicFunctionSeedProjectFiles,
   LogicFunctionSeedProjectFile,
@@ -232,30 +231,25 @@ export class LogicFunctionResourceService {
     workspaceId,
     applicationUniversalIdentifier,
   }: CopySourceParams): Promise<void> {
-    const fromSourceBaseFolderPath = getLogicFunctionBaseFolderPath(
+    const fromBuiltHandlerPath = getBuiltHandlerPathFromSourceHandlerPath(
       fromSourceHandlerPath,
     );
-    const toSourceBaseFolderPath =
-      getLogicFunctionBaseFolderPath(toSourceHandlerPath);
-    const fromBuiltBaseFolderPath = getLogicFunctionBaseFolderPath(
-      getBuiltHandlerPathFromSourceHandlerPath(fromSourceBaseFolderPath),
-    );
-    const toBuiltBaseFolderPath = getLogicFunctionBaseFolderPath(
-      getBuiltHandlerPathFromSourceHandlerPath(toSourceBaseFolderPath),
-    );
+
+    const toBuiltHandlerPath =
+      getBuiltHandlerPathFromSourceHandlerPath(toSourceHandlerPath);
 
     await this.fileStorageService.copy({
       from: {
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: fromSourceBaseFolderPath,
+        resourcePath: fromSourceHandlerPath,
       },
       to: {
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Source,
-        resourcePath: toSourceBaseFolderPath,
+        resourcePath: toSourceHandlerPath,
       },
     });
 
@@ -264,13 +258,13 @@ export class LogicFunctionResourceService {
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: fromBuiltBaseFolderPath,
+        resourcePath: fromBuiltHandlerPath,
       },
       to: {
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
-        resourcePath: toBuiltBaseFolderPath,
+        resourcePath: toBuiltHandlerPath,
       },
     });
   }
