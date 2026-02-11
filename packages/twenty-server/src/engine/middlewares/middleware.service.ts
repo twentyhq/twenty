@@ -135,9 +135,6 @@ export class MiddlewareService {
         )
       : undefined;
 
-    // eslint-disable-next-line no-console
-    console.log('[DEBUG:hydrateGraphqlRequest]', data.application?.id);
-
     bindDataToRequestObject(data, request, metadataVersion);
   }
 
