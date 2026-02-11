@@ -1,4 +1,3 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { GET_LOGIC_FUNCTION_SOURCE_CODE } from '@/logic-functions/graphql/queries/getLogicFunctionSourceCode';
 import { useQuery } from '@apollo/client';
 import {
@@ -11,12 +10,10 @@ export const useGetLogicFunctionSourceCode = ({
 }: {
   logicFunctionId: string;
 }) => {
-  const apolloMetadataClient = useApolloCoreClient();
   const { data, loading } = useQuery<
     GetLogicFunctionSourceCodeQuery,
     GetLogicFunctionSourceCodeQueryVariables
   >(GET_LOGIC_FUNCTION_SOURCE_CODE, {
-    client: apolloMetadataClient ?? undefined,
     variables: {
       input: { id: logicFunctionId },
     },
