@@ -10,6 +10,8 @@ import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -34,6 +36,7 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
@@ -58,6 +61,7 @@ export class ApplicationResolver {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationService: ApplicationService,
     private readonly applicationTokenService: ApplicationTokenService,
+    private readonly twentyConfigService: TwentyConfigService,
     private readonly fileStorageService: FileStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -106,7 +110,19 @@ export class ApplicationResolver {
     @Args() { applicationId }: GenerateApplicationTokenInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AuthToken> {
-    const APPLICATION_TOKEN_EXPIRY_SECONDS = 30 * 24 * 60 * 60; // 30 days
+    const nodeEnv = this.twentyConfigService.get('NODE_ENV');
+
+    if (
+      nodeEnv !== NodeEnvironment.DEVELOPMENT &&
+      nodeEnv !== NodeEnvironment.TEST
+    ) {
+      throw new ApplicationException(
+        'This endpoint is only available in development mode',
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    const APPLICATION_TOKEN_EXPIRY_SECONDS = 30 * 24 * 60 * 60;
 
     return this.applicationTokenService.generateApplicationToken({
       workspaceId,
