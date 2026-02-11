@@ -229,7 +229,7 @@ export class LogicFunctionFromSourceService {
       workspaceId,
     });
 
-    if (flatLogicFunction.isBuildUpToDate) {
+    if (!flatLogicFunction.isBuildUpToDate) {
       await this.buildOneFromSource({ workspaceId, id });
     }
 
