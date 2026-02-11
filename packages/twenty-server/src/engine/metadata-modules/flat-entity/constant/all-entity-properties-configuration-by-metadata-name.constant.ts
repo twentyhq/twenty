@@ -228,6 +228,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
+    defaultTabToFocusOnMobileAndSidePanelId: {
+      toStringify: false,
+      universalProperty:
+        'defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier',
+    },
     deletedAt: { toStringify: false, universalProperty: undefined },
   },
   pageLayoutWidget: {

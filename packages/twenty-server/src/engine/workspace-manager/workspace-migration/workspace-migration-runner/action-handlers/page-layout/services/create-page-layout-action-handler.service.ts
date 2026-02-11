@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { resolveUniversalRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
 import {
@@ -30,12 +32,37 @@ export class CreatePageLayoutActionHandlerService extends WorkspaceMigrationRunn
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreatePageLayoutAction>): Promise<FlatCreatePageLayoutAction> {
-    const { objectMetadataId, defaultTabToFocusOnMobileAndSidePanelId } =
-      resolveUniversalRelationIdentifiersToIds({
-        flatEntityMaps: allFlatEntityMaps,
-        metadataName: action.metadataName,
-        universalForeignKeyValues: action.flatEntity,
+    const { objectMetadataId } = resolveUniversalRelationIdentifiersToIds<
+      'pageLayout',
+      'objectMetadataUniversalIdentifier'
+    >({
+      flatEntityMaps: allFlatEntityMaps,
+      metadataName: 'pageLayout',
+      universalForeignKeyValues: {
+        objectMetadataUniversalIdentifier:
+          action.flatEntity.objectMetadataUniversalIdentifier,
+      },
+    });
+
+    let defaultTabToFocusOnMobileAndSidePanelId: string | null = null;
+
+    if (
+      isDefined(
+        action.flatEntity
+          .defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
+      )
+    ) {
+      const existingTab = findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
+        universalIdentifier:
+          action.flatEntity
+            .defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier,
       });
+
+      if (isDefined(existingTab)) {
+        defaultTabToFocusOnMobileAndSidePanelId = existingTab.id;
+      }
+    }
 
     return {
       ...action,
