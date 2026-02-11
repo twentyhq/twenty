@@ -15,6 +15,7 @@ export type FromToApplicationManifestAllUniversalFlatEntityMaps = {
     AllUniversalFlatEntityMaps[P]
   >;
 };
+
 export const getSubApplicationFromToAllFlatEntityMaps = ({
   applicationId,
   fromAllFlatEntityMaps,

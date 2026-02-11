@@ -107,8 +107,10 @@ export class ApplicationManifestMigrationService {
   }
 
   /**
-   *
-   * @deprecated should be remove donce
+   * @deprecated should be remove once below issues are resolved:
+   *  - [objectPermission](https://github.com/twentyhq/core-team-issues/issues/2223)
+   *  - [fieldPermission](https://github.com/twentyhq/core-team-issues/issues/2224)
+   *  - [permissionFlag](https://github.com/twentyhq/core-team-issues/issues/2225)
    */
   private async syncRolePermissionsAndDefaultRole({
     manifest,

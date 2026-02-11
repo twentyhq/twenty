@@ -50,14 +50,12 @@ const getRelationTargetUniversalIdentifiers = (
 
 export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   fieldManifest,
-  objectUniversalIdentifier,
   applicationUniversalIdentifier,
   now,
 }: {
   fieldManifest: FieldManifest<FieldMetadataType> & {
     objectUniversalIdentifier: string;
   };
-  objectUniversalIdentifier: string;
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatFieldMetadata => {
@@ -87,7 +85,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isUnique: false,
     isLabelSyncedWithName: false,
     morphId: null,
-    objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+    objectMetadataUniversalIdentifier: fieldManifest.objectUniversalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier,
     viewFieldUniversalIdentifiers: [],

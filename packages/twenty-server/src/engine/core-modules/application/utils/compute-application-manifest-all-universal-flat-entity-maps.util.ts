@@ -56,7 +56,6 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
               ...fieldManifest,
               objectUniversalIdentifier: objectManifest.universalIdentifier,
             },
-            objectUniversalIdentifier: objectManifest.universalIdentifier,
             applicationUniversalIdentifier,
             now,
           }),
@@ -66,16 +65,12 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     }
   }
 
-  // Standalone fields (object extensions)
   for (const fieldManifest of manifest.fields) {
     addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
       {
         metadataName: 'fieldMetadata',
         universalFlatEntity: fromFieldManifestToUniversalFlatFieldMetadata({
-          fieldManifest: fieldManifest as Parameters<
-            typeof fromFieldManifestToUniversalFlatFieldMetadata
-          >[0]['fieldManifest'],
-          objectUniversalIdentifier: fieldManifest.objectUniversalIdentifier,
+          fieldManifest: fieldManifest,
           applicationUniversalIdentifier,
           now,
         }),
