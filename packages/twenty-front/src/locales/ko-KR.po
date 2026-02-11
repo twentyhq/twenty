@@ -13261,6 +13261,11 @@ msgstr "파일 업로드"
 msgid "Upload the XML file with your connection infos"
 msgstr "연결 정보가 포함된 XML 파일을 업로드하세요"
 
+#. js-lingui-id: XzIB4l
+#: src/modules/apollo/services/apollo.factory.ts
+msgid "Uploaded content is too large."
+msgstr ""
+
 #. js-lingui-id: GxkJXS
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "Uploading..."

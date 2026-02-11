@@ -13261,6 +13261,11 @@ msgstr "העלאת קבצים"
 msgid "Upload the XML file with your connection infos"
 msgstr "העלה את קובץ ה-XML עם המידע על החיבור שלך"
 
+#. js-lingui-id: XzIB4l
+#: src/modules/apollo/services/apollo.factory.ts
+msgid "Uploaded content is too large."
+msgstr ""
+
 #. js-lingui-id: GxkJXS
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "Uploading..."

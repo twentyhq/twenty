@@ -13261,6 +13261,11 @@ msgstr "上傳文件"
 msgid "Upload the XML file with your connection infos"
 msgstr "上傳包含連接信息的 XML 文件"
 
+#. js-lingui-id: XzIB4l
+#: src/modules/apollo/services/apollo.factory.ts
+msgid "Uploaded content is too large."
+msgstr ""
+
 #. js-lingui-id: GxkJXS
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "Uploading..."
